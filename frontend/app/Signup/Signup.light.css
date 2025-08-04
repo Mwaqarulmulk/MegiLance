@@ -1,8 +1,22 @@
-/* @AI-HINT: Light theme overrides for Signup page. Do not use global or theme CSS. */
+/* @AI-HINT: Light theme overrides for Signup. Do not use global or theme CSS. */
 .Signup--light {
-  background: #fff;
-  color: #23272f;
+  background-color: #f8f9fa;
 }
-.Signup--light .Signup-header h1 {
-  color: #3C3C88;
+
+.Signup--light .Signup-container {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+}
+
+.Signup--light .Signup-title {
+  color: #212529;
+}
+
+.Signup--light .Signup-login-link a {
+  color: #2F80ED;
+}
+
+.Signup--light .Signup-login-link a:hover {
+  color: #1a6ac4;
 }

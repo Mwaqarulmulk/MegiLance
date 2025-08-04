@@ -1,0 +1,21 @@
+/* @AI-HINT: Dark theme overrides for Settings. Do not use global or theme CSS. */
+.Settings--dark {
+  background-color: #1a1a1a;
+  color: #e2e6ee;
+}
+
+.Settings--dark .Settings-section {
+  border-color: #333;
+}
+
+.Settings--dark .Settings-textarea {
+  background-color: #2c2c2c;
+  border-color: #444;
+  color: #e2e6ee;
+}
+
+.Settings--dark .Settings-textarea:focus {
+  border-color: #4a90e2;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}

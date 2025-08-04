@@ -19,7 +19,6 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from "./contexts/ThemeContext";
 import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
-import styles from "./layout.module.css";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

@@ -2,41 +2,49 @@
 .Dashboard {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  font-family: 'Inter', Arial, sans-serif;
-  padding: 2rem 1rem;
+  height: 100vh;
 }
+
 .Dashboard-header {
-  margin-bottom: 2rem;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid;
 }
+
 .Dashboard-main {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-  max-width: 600px;
-}
-.Dashboard-activity {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 1rem;
-}
-.Dashboard-activity li {
-  margin-bottom: 0.5em;
+  flex-grow: 1;
+  overflow: hidden;
 }
 
-/* Layout for Dashboard page (was inline style) */
-.Dashboard-layout {
-  display: flex;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+.Dashboard-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  padding: 1.5rem;
+  border-right: 1px solid;
+  overflow-y: auto;
 }
 
-.Dashboard-maincol {
-  flex: 1;
+.Dashboard-content {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
 }
 
+.Dashboard-content-header {
+  margin-bottom: 2rem;
+}
+
+.Dashboard-content-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.Dashboard-widgets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}

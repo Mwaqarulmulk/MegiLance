@@ -1,13 +1,26 @@
-/* @AI-HINT: Dark theme overrides for Login page. Do not use global or theme CSS. */
+/* @AI-HINT: Dark theme overrides for Login. Do not use global or theme CSS. */
 .Login--dark {
-  background: #1d2127;
-  color: #fff;
+  background-color: #121212;
 }
-.Login--dark .Login-header h1 {
-  color: #4573df;
+
+.Login--dark .Login-container {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
-.Login--dark .Login-form input {
-  background: #23272f;
-  color: #fff;
-  border: 1px solid #444;
+
+.Login--dark .Login-title {
+  color: #ffffff;
+}
+
+.Login--dark .Login-subtitle {
+  color: #a0a0a0;
+}
+
+.Login--dark .Login-signup-link a {
+  color: #4a90e2;
+}
+
+.Login--dark .Login-signup-link a:hover {
+  color: #6fa8f2;
 }

@@ -1,0 +1,21 @@
+/* @AI-HINT: Light theme overrides for Settings. Do not use global or theme CSS. */
+.Settings--light {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.Settings--light .Settings-section {
+  border-color: #dee2e6;
+}
+
+.Settings--light .Settings-textarea {
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #212529;
+}
+
+.Settings--light .Settings-textarea:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}

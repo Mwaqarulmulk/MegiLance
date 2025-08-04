@@ -1,12 +1,22 @@
-/* @AI-HINT: Light theme overrides for Login page. Do not use global or theme CSS. */
+/* @AI-HINT: Light theme overrides for Login. Do not use global or theme CSS. */
 .Login--light {
-  background: #fff;
-  color: #23272f;
+  background-color: #f8f9fa;
 }
-.Login--light .Login-header h1 {
-  color: #3C3C88;
+
+.Login--light .Login-container {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
 }
-.Login--light .Login-form input {
-  background: #f4f6f8;
-  color: #23272f;
+
+.Login--light .Login-title {
+  color: #212529;
+}
+
+.Login--light .Login-signup-link a {
+  color: #2F80ED;
+}
+
+.Login--light .Login-signup-link a:hover {
+  color: #1a6ac4;
 }

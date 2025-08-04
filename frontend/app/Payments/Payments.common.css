@@ -1,0 +1,45 @@
+/* @AI-HINT: Shared styles for Payments page. Do not use or import any global or theme CSS. */
+.Payments {
+  padding: 2rem;
+}
+
+.Payments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.Payments-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.Payments-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .Payments-content {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+.Payments-summary h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.Payments-balance {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.Payments-history h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}

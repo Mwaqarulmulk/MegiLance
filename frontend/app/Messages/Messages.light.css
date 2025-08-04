@@ -1,0 +1,14 @@
+/* @AI-HINT: Light theme overrides for Messages. Do not use global or theme CSS. */
+.Messages--light {
+  background-color: #ffffff;
+}
+
+.Messages--light .Messages-sidebar,
+.Messages--light .Messages-sidebar-header,
+.Messages--light .Messages-chat-input {
+  border-color: #dee2e6;
+}
+
+.Messages--light .Messages-sidebar {
+  background-color: #f8f9fa;
+}

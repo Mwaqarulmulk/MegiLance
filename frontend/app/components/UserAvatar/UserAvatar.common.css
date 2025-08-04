@@ -4,23 +4,32 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #e2e6ee;
-  color: #3C3C88;
-  font-weight: 700;
+  font-weight: 600;
   overflow: hidden;
+  -webkit-user-select: none; /* For Safari */
   user-select: none;
 }
-.UserAvatar-img {
-  display: block;
+
+.UserAvatar--small {
+  width: 32px;
+  height: 32px;
+  font-size: 0.8rem;
+}
+
+.UserAvatar--medium {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+
+.UserAvatar--large {
+  width: 56px;
+  height: 56px;
+  font-size: 1.25rem;
+}
+
+.UserAvatar--image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-}
-.UserAvatar-initials {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
 }

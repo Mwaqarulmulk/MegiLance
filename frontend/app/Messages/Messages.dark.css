@@ -1,0 +1,15 @@
+/* @AI-HINT: Dark theme overrides for Messages. Do not use global or theme CSS. */
+.Messages--dark {
+  background-color: #121212;
+  color: #e2e6ee;
+}
+
+.Messages--dark .Messages-sidebar,
+.Messages--dark .Messages-sidebar-header,
+.Messages--dark .Messages-chat-input {
+  border-color: #333;
+}
+
+.Messages--dark .Messages-sidebar {
+  background-color: #1e1e1e;
+}

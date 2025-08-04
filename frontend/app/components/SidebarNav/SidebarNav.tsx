@@ -1,5 +1,6 @@
 // @AI-HINT: This is the SidebarNav component for navigation links in the sidebar. All styles are per-component only. See SidebarNav.common.css, SidebarNav.light.css, and SidebarNav.dark.css for theming.
 import React from "react";
+import Link from 'next/link';
 import "./SidebarNav.common.css";
 import "./SidebarNav.light.css";
 import "./SidebarNav.dark.css";
@@ -16,13 +17,14 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ theme = "light", links, activeH
       <ul className="SidebarNav-list">
         {links.map(link => (
           <li key={link.href}>
-            <a
-              href={link.href}
-              className={`SidebarNav-link${activeHref === link.href ? " SidebarNav-link--active" : ""}`}
-              aria-current={activeHref === link.href ? "page" : undefined}
-            >
-              {link.label}
-            </a>
+            <Link href={link.href} legacyBehavior>
+              <a
+                className={`SidebarNav-link${activeHref === link.href ? " SidebarNav-link--active" : ""}`}
+                aria-current={activeHref === link.href ? "page" : undefined}
+              >
+                {link.label}
+              </a>
+            </Link>
           </li>
         ))}
       </ul>

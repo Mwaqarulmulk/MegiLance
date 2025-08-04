@@ -1,0 +1,17 @@
+/* @AI-HINT: Light theme overrides for Payments. Do not use global or theme CSS. */
+.Payments--light {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.Payments--light .Payments-summary,
+.Payments--light .Payments-history {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.Payments--light .Payments-balance {
+  color: #2F80ED;
+}

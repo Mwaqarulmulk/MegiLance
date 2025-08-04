@@ -1,8 +1,14 @@
-/* @AI-HINT: Dark theme overrides for Dashboard page. Do not use global or theme CSS. */
+/* @AI-HINT: Dark theme overrides for Dashboard. Do not use global or theme CSS. */
 .Dashboard--dark {
-  background: #1d2127;
-  color: #fff;
+  background-color: #121212;
+  color: #e2e6ee;
 }
-.Dashboard--dark .Dashboard-header h1 {
-  color: #4573df;
+
+.Dashboard--dark .Dashboard-header,
+.Dashboard--dark .Dashboard-sidebar {
+  border-color: #333;
+}
+
+.Dashboard--dark .Dashboard-header {
+  background-color: #1e1e1e;
 }

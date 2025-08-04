@@ -1,0 +1,67 @@
+/* @AI-HINT: Shared styles for Settings page. Do not use or import any global or theme CSS. */
+.Settings {
+  padding: 2rem;
+}
+
+.Settings-header {
+  margin-bottom: 2rem;
+}
+
+.Settings-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.Settings-content {
+  max-width: 800px;
+}
+
+.Settings-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid;
+}
+
+.Settings-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.Settings-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.Settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.Settings-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.Settings-form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.Settings-textarea {
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  width: 100%;
+}
+
+.Settings-theme-switcher {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}

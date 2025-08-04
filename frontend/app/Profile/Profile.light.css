@@ -1,0 +1,13 @@
+/* @AI-HINT: Light theme styles for the Profile page. */
+.Profile--light {
+  background-color: #ffffff;
+  color: #1a202c;
+}
+
+.Profile--light .Profile-bio {
+  color: #4a5568;
+}
+
+.Profile--light .Profile-content h2 {
+  border-color: #e2e8f0;
+}

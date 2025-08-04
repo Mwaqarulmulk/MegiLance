@@ -1,0 +1,17 @@
+/* @AI-HINT: Dark theme overrides for Payments. Do not use global or theme CSS. */
+.Payments--dark {
+  background-color: #1a1a1a;
+  color: #e2e6ee;
+}
+
+.Payments--dark .Payments-summary,
+.Payments--dark .Payments-history {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.Payments--dark .Payments-balance {
+  color: #4a90e2;
+}

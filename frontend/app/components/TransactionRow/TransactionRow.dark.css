@@ -1,0 +1,6 @@
+/* @AI-HINT: Dark theme overrides for TransactionRow. Do not use global or theme CSS. */
+.TransactionRow--dark {
+  background: #23272f;
+  color: #fff;
+  border: 1px solid #2a2e38;
+}

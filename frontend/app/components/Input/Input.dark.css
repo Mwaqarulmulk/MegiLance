@@ -1,8 +1,14 @@
 /* @AI-HINT: Dark theme overrides for Input. Do not use global or theme CSS. */
 .Input--dark {
-  background: #23272f;
+  background: #2a2e38;
   color: #fff;
-  border: 1px solid #444;
+  border: 1px solid #3a3f4b;
+}
+
+.Input--dark + .Input-label, /* This is incorrect, need to target label inside wrapper */
+.Input-wrapper .Input-label {
+  /* A bit of a hack until we can get the theme to the wrapper */
+  color: #e2e6ee;
 }
 .Input--dark:focus {
   border-color: #4573df;

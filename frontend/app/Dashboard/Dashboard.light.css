@@ -1,8 +1,14 @@
-/* @AI-HINT: Light theme overrides for Dashboard page. Do not use global or theme CSS. */
+/* @AI-HINT: Light theme overrides for Dashboard. Do not use global or theme CSS. */
 .Dashboard--light {
-  background: #f4f6f8;
-  color: #23272f;
+  background-color: #ffffff;
+  color: #212529;
 }
-.Dashboard--light .Dashboard-header h1 {
-  color: #3C3C88;
+
+.Dashboard--light .Dashboard-header,
+.Dashboard--light .Dashboard-sidebar {
+  border-color: #dee2e6;
+}
+
+.Dashboard--light .Dashboard-header {
+  background-color: #f8f9fa;
 }

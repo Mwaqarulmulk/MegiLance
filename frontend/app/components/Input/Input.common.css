@@ -1,11 +1,39 @@
 /* @AI-HINT: Shared styles for Input component. Do not use or import any global or theme CSS. */
+.Input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  width: 100%;
+}
+
+.Input--error {
+  border-color: #dc3545 !important;
+}
+
+.Input-error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.Input-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
 .Input {
-  font-family: 'Inter', Arial, sans-serif;
+  width: 100%;
+  padding: 0.8em 1em;
+  border-radius: 8px;
   font-size: 1rem;
-  padding: 0.7em 1em;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  font-family: 'Inter', Arial, sans-serif;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.Input:focus {
   outline: none;
-  margin: 0.25em 0;
-  transition: border-color 0.14s, background 0.14s, color 0.14s;
+  border-color: #2F80ED;
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
 }

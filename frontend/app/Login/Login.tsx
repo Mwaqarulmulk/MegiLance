@@ -1,6 +1,9 @@
 // @AI-HINT: This is the Login page root component. All styles are per-component only. See Login.common.css, Login.light.css, and Login.dark.css for theming.
-import React from "react";
-import Button from "../components/Button/Button";
+'use client';
+import React, { useState } from "react";
+import Link from 'next/link';
+import Button from "@/app/components/Button/Button";
+import Input from "@/app/components/Input/Input";
 import "./Login.common.css";
 import "./Login.light.css";
 import "./Login.dark.css";
@@ -10,20 +13,91 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ theme = "light" }) => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
+
+  const validate = () => {
+    const newErrors = { email: '', password: '' };
+    let isValid = true;
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required.';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email address is invalid.';
+      isValid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required.';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validate()) {
+      setLoading(true);
+      console.log('Form submitted:', formData);
+      // Simulate API call
+      setTimeout(() => {
+        setLoading(false);
+        // Handle successful submission (e.g., redirect)
+      }, 2000);
+    }
+  };
   return (
     <div className={`Login Login--${theme}`}>
-      <header className="Login-header">
-        <h1>Sign In</h1>
-      </header>
-      <main className="Login-main">
-        <form className="Login-form">
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" name="email" required />
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" required />
-          <Button theme={theme} variant="primary" type="submit">Sign In</Button>
+      <div className="Login-container">
+        <h1 className="Login-title">Welcome Back</h1>
+        <p className="Login-subtitle">Log in to continue to your MegiLance account.</p>
+        <form className="Login-form" onSubmit={handleSubmit} noValidate>
+          <Input
+            theme={theme}
+            label="Email Address"
+            type="email"
+            placeholder="you@example.com"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            required
+          />
+          <Input
+            theme={theme}
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            required
+          />
+          <Button theme={theme} variant="primary" fullWidth type="submit" disabled={loading}>
+            {loading ? 'Logging In...' : 'Log In'}
+          </Button>
         </form>
-      </main>
+        <p className="Login-signup-link">
+          Don&apos;t have an account? <Link href="/Signup">Sign Up</Link>
+        </p>
+      </div>
     </div>
   );
 };
