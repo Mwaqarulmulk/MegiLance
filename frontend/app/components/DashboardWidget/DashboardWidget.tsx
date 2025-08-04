@@ -1,4 +1,4 @@
-// @AI-HINT: This is the DashboardWidget component for displaying key stats or summaries in the dashboard. All styles are per-component only. See DashboardWidget.common.css, DashboardWidget.light.css, and DashboardWidget.dark.css for theming.
+// @AI-HINT: Enhanced DashboardWidget component for displaying key metrics with trends, icons, and professional styling. Supports enterprise-grade dashboard layouts with comprehensive theming. Uses per-component CSS architecture.
 import React from "react";
 import "./DashboardWidget.common.css";
 import "./DashboardWidget.light.css";
@@ -8,18 +8,38 @@ export interface DashboardWidgetProps {
   theme?: "light" | "dark";
   title: string;
   value: string | number;
-  icon?: React.ReactNode;
+  icon?: React.ReactNode | string;
   footer?: React.ReactNode;
+  trend?: string;
+  trendType?: 'positive' | 'negative' | 'neutral';
+  onClick?: () => void;
 }
 
-const DashboardWidget: React.FC<DashboardWidgetProps> = ({ theme = "light", title, value, icon, footer }) => {
+const DashboardWidget: React.FC<DashboardWidgetProps> = ({ 
+  theme = "light", 
+  title, 
+  value, 
+  icon, 
+  footer, 
+  trend, 
+  trendType = 'neutral',
+  onClick 
+}) => {
   return (
-    <div className={`DashboardWidget DashboardWidget--${theme}`}>
+    <div 
+      className={`DashboardWidget DashboardWidget--${theme} ${onClick ? 'DashboardWidget--clickable' : ''}`}
+      onClick={onClick}
+    >
       <div className="DashboardWidget-header">
         {icon && <span className="DashboardWidget-icon">{icon}</span>}
         <span className="DashboardWidget-title">{title}</span>
       </div>
       <div className="DashboardWidget-value">{value}</div>
+      {trend && (
+        <div className={`DashboardWidget-trend DashboardWidget-trend--${trendType}`}>
+          <span className="DashboardWidget-trend-text">{trend}</span>
+        </div>
+      )}
       {footer && <div className="DashboardWidget-footer">{footer}</div>}
     </div>
   );

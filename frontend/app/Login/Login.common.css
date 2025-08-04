@@ -35,6 +35,15 @@
   text-align: left;
 }
 
+.Login-mock-credentials {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
 .Login-signup-link {
   margin-top: 1.5rem;
   font-size: 0.95rem;

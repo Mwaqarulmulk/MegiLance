@@ -79,7 +79,7 @@ const handleSubmit = (e: React.FormEvent) => {
       <div className="Login-container">
         <h1 className="Login-title">Welcome Back</h1>
         <p className="Login-subtitle">Log in to continue to your MegiLance account.</p>
-        <div style={{ background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: 6, padding: 12, marginBottom: 16 }}>
+        <div className="Login-mock-credentials">
           <strong>Mock Test Credentials</strong><br />
           Email: <code>testuser@example.com</code><br />
           Password: <code>testpass123</code>
