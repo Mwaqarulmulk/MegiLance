@@ -1,0 +1,14 @@
+/* @AI-HINT: Light theme overrides for Notification. Do not use global or theme CSS. */
+.Notification--light {
+  background: #fff;
+  color: #23272f;
+}
+.Notification--light.Notification--success {
+  background: #e7fbe7;
+}
+.Notification--light.Notification--error {
+  background: #fde7e7;
+}
+.Notification--light.Notification--info {
+  background: #e7f1fd;
+}

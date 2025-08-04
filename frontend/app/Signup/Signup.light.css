@@ -1,0 +1,8 @@
+/* @AI-HINT: Light theme overrides for Signup page. Do not use global or theme CSS. */
+.Signup--light {
+  background: #fff;
+  color: #23272f;
+}
+.Signup--light .Signup-header h1 {
+  color: #3C3C88;
+}

@@ -1,0 +1,8 @@
+/* @AI-HINT: Dark theme overrides for Signup page. Do not use global or theme CSS. */
+.Signup--dark {
+  background: #1d2127;
+  color: #fff;
+}
+.Signup--dark .Signup-header h1 {
+  color: #4573df;
+}

@@ -1,0 +1,51 @@
+/* @AI-HINT: Shared styles for ProfileMenu component. Do not use or import any global or theme CSS. */
+.ProfileMenu {
+  position: relative;
+  display: inline-block;
+}
+.ProfileMenu-avatar {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3em 0.8em;
+  border-radius: 18px;
+}
+.ProfileMenu-avatar img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.ProfileMenu-name {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.ProfileMenu-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  min-width: 160px;
+  background: inherit;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px 0 rgba(60,60,136,0.11);
+  z-index: 99;
+  padding: 0.5em 0;
+  display: flex;
+  flex-direction: column;
+}
+.ProfileMenu-item {
+  background: none;
+  border: none;
+  padding: 0.7em 1.2em;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.17s;
+}
+.ProfileMenu-item:hover {
+  background: #f4f6f8;
+}

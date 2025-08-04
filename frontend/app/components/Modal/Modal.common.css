@@ -1,0 +1,43 @@
+/* @AI-HINT: Shared styles for Modal component. Do not use or import any global or theme CSS. */
+.Modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.Modal-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(44, 48, 60, 0.45);
+  z-index: 1;
+}
+.Modal-content {
+  position: relative;
+  z-index: 2;
+  background: inherit;
+  border-radius: 14px;
+  min-width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px 0 rgba(60,60,136,0.13);
+  padding: 2em 1.5em 1em 1.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.Modal-header h2 {
+  margin: 0 0 1em 0;
+  font-size: 1.22rem;
+  font-weight: 600;
+}
+.Modal-close {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  background: none;
+  border: none;
+  font-size: 1.3em;
+  cursor: pointer;
+  color: inherit;
+}

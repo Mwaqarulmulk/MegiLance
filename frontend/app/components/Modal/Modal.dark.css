@@ -1,0 +1,6 @@
+/* @AI-HINT: Dark theme overrides for Modal. Do not use global or theme CSS. */
+.Modal--dark .Modal-content {
+  background: #23272f;
+  color: #fff;
+  border: 1px solid #2a2e38;
+}

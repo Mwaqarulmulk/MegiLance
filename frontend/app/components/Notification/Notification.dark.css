@@ -1,0 +1,14 @@
+/* @AI-HINT: Dark theme overrides for Notification. Do not use global or theme CSS. */
+.Notification--dark {
+  background: #23272f;
+  color: #fff;
+}
+.Notification--dark.Notification--success {
+  background: #1e2e1e;
+}
+.Notification--dark.Notification--error {
+  background: #2a1e1e;
+}
+.Notification--dark.Notification--info {
+  background: #1e2530;
+}

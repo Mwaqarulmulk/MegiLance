@@ -1,0 +1,35 @@
+/* @AI-HINT: Shared styles for Notification component. Do not use or import any global or theme CSS. */
+.Notification {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  border-radius: 8px;
+  padding: 0.9em 1.5em;
+  font-size: 1rem;
+  font-family: 'Inter', Arial, sans-serif;
+  margin: 1em 0;
+  box-shadow: 0 2px 8px 0 rgba(60,60,136,0.07);
+  position: relative;
+}
+.Notification-message {
+  flex: 1;
+}
+.Notification-close {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: inherit;
+  position: absolute;
+  top: 0.6em;
+  right: 1em;
+}
+.Notification--success {
+  border: 1.5px solid #27AE60;
+}
+.Notification--error {
+  border: 1.5px solid #E74C3C;
+}
+.Notification--info {
+  border: 1.5px solid #2F80ED;
+}

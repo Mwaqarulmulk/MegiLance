@@ -1,0 +1,9 @@
+/* @AI-HINT: Light theme overrides for ProfileMenu. Do not use global or theme CSS. */
+.ProfileMenu--light .ProfileMenu-dropdown {
+  background: #fff;
+  color: #23272f;
+  border: 1px solid #e2e6ee;
+}
+.ProfileMenu--light .ProfileMenu-item:hover {
+  background: #e2e6ee;
+}

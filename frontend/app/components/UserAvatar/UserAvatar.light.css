@@ -1,0 +1,5 @@
+/* @AI-HINT: Light theme overrides for UserAvatar. Do not use global or theme CSS. */
+.UserAvatar--light {
+  background: #e2e6ee;
+  color: #3C3C88;
+}

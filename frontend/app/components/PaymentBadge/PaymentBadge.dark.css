@@ -1,0 +1,13 @@
+/* @AI-HINT: Dark theme overrides for PaymentBadge. Do not use global or theme CSS. */
+.PaymentBadge--dark.PaymentBadge--paid {
+  background: #1e2e1e;
+  color: #27AE60;
+}
+.PaymentBadge--dark.PaymentBadge--pending {
+  background: #2a2420;
+  color: #F2994A;
+}
+.PaymentBadge--dark.PaymentBadge--failed {
+  background: #2a1e1e;
+  color: #E74C3C;
+}

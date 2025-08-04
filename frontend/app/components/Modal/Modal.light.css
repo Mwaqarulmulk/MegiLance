@@ -1,0 +1,6 @@
+/* @AI-HINT: Light theme overrides for Modal. Do not use global or theme CSS. */
+.Modal--light .Modal-content {
+  background: #fff;
+  color: #23272f;
+  border: 1px solid #e2e6ee;
+}

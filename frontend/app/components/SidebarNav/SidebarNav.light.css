@@ -1,0 +1,9 @@
+/* @AI-HINT: Light theme overrides for SidebarNav. Do not use global or theme CSS. */
+.SidebarNav--light .SidebarNav-link:hover {
+  background: #f4f6f8;
+  color: #2F80ED;
+}
+.SidebarNav--light .SidebarNav-link--active {
+  background: #e2e6ee;
+  color: #3C3C88;
+}

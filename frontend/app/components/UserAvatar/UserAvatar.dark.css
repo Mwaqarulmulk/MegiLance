@@ -1,0 +1,5 @@
+/* @AI-HINT: Dark theme overrides for UserAvatar. Do not use global or theme CSS. */
+.UserAvatar--dark {
+  background: #2a2e38;
+  color: #fff;
+}

@@ -1,0 +1,12 @@
+/* @AI-HINT: Dark theme overrides for SidebarNav. Do not use global or theme CSS. */
+.SidebarNav--dark .SidebarNav-link {
+  color: #fff;
+}
+.SidebarNav--dark .SidebarNav-link:hover {
+  background: #23272f;
+  color: #2F80ED;
+}
+.SidebarNav--dark .SidebarNav-link--active {
+  background: #2a2e38;
+  color: #2F80ED;
+}

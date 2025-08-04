@@ -1,0 +1,27 @@
+/* @AI-HINT: Shared styles for SidebarNav component. Do not use or import any global or theme CSS. */
+.SidebarNav {
+  padding: 1.5em 0.5em;
+}
+.SidebarNav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+.SidebarNav-link {
+  display: block;
+  font-size: 1.06rem;
+  font-weight: 500;
+  padding: 0.6em 1.1em;
+  border-radius: 7px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.16s, color 0.16s;
+}
+.SidebarNav-link--active {
+  font-weight: 600;
+  background: #e2e6ee;
+  color: #3C3C88;
+}
