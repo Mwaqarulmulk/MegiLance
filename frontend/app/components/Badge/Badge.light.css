@@ -27,3 +27,8 @@
   background-color: #fee2e2; /* Red 100 */
   color: #991b1b; /* Red 800 */
 }
+
+.Badge--light.Badge--info {
+  background-color: #e0e7ff; /* Indigo 100 */
+  color: #3730a3; /* Indigo 800 */
+}

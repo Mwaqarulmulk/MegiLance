@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import ProjectCard from '@/app/components/ProjectCard/ProjectCard'; // Re-using ProjectCard for consistency
+
 import Button from '@/app/components/Button/Button';
 import './Projects.common.css';
 import './Projects.light.css';

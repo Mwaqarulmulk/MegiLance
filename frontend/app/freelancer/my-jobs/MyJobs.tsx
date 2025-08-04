@@ -3,6 +3,7 @@
 
 import React from 'react';
 import ProjectCard from '@/app/components/ProjectCard/ProjectCard'; // Re-using ProjectCard for consistency
+import ProgressBar from '@/app/components/ProgressBar/ProgressBar';
 import './MyJobs.common.css';
 import './MyJobs.light.css';
 import './MyJobs.dark.css';
@@ -16,14 +17,14 @@ const MyJobs: React.FC<MyJobsProps> = ({ theme = 'light' }) => {
   const activeJobs = [
     {
       title: 'AI Chatbot Integration',
-      clientName: 'Innovate Inc.',
+      client: 'Innovate Inc.',
       budget: '$5,000',
       status: 'In Progress',
       progress: 75,
     },
     {
       title: 'Data Analytics Dashboard',
-      clientName: 'DataDriven Co.',
+      client: 'DataDriven Co.',
       budget: '$12,000',
       status: 'Awaiting Feedback',
       progress: 90,
@@ -33,7 +34,7 @@ const MyJobs: React.FC<MyJobsProps> = ({ theme = 'light' }) => {
   const completedJobs = [
     {
       title: 'E-commerce Platform UI/UX',
-      clientName: 'Shopify Plus Experts',
+      client: 'Shopify Plus Experts',
       budget: '$8,000',
       status: 'Completed',
       completionDate: '2025-07-15',
@@ -53,12 +54,10 @@ const MyJobs: React.FC<MyJobsProps> = ({ theme = 'light' }) => {
           <div className="MyJobs-list">
             {activeJobs.map((job, index) => (
               <div key={index} className={`JobItem JobItem--${theme}`}>
-                <ProjectCard theme={theme} title={job.title} clientName={job.clientName} budget={job.budget} />
+                <ProjectCard theme={theme} title={job.title} client={job.client} budget={job.budget} status={job.status === 'Completed' ? 'completed' : 'active'} />
                 <div className="JobItem-status">
                   <span>{job.status}</span>
-                  <div className="JobItem-progress-bar">
-                    <div className="JobItem-progress" style={{ width: `${job.progress}%` }}></div>
-                  </div>
+                  <ProgressBar theme={theme} progress={job.progress} />
                 </div>
               </div>
             ))}
@@ -70,7 +69,7 @@ const MyJobs: React.FC<MyJobsProps> = ({ theme = 'light' }) => {
           <div className="MyJobs-list">
             {completedJobs.map((job, index) => (
               <div key={index} className={`JobItem JobItem--${theme}`}>
-                <ProjectCard theme={theme} title={job.title} clientName={job.clientName} budget={job.budget} />
+                <ProjectCard theme={theme} title={job.title} client={job.client} budget={job.budget} status={job.status === 'Completed' ? 'completed' : 'active'} />
                 <div className="JobItem-status">
                   <span>{job.status} on {job.completionDate}</span>
                 </div>

@@ -77,7 +77,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ theme = 'light', projec
                         <strong>{p.freelancerName}</strong>
                         <span>{p.rate}</span>
                       </div>
-                      <p>"{p.coverLetterSnippet}"</p>
+                      <p>&quot;{p.coverLetterSnippet}&quot;</p>
                       <div className="ProposalCard-actions">
                         <Button theme={theme} variant="outline" size="small">View Proposal</Button>
                         <Button theme={theme} variant="primary" size="small">Hire</Button>

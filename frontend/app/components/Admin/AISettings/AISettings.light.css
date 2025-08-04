@@ -1,0 +1,30 @@
+.AISettings-container--light {
+  background-color: #f7fafc;
+}
+
+.AISettings-title--light {
+  color: #1a202c;
+}
+
+.AISettings-form--light {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.Form-group label {
+  color: #2d3748;
+}
+
+.Form-group small {
+  color: #718096;
+}
+
+.AISettings-select--light {
+  background-color: #ffffff;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.Save-confirmation--light {
+  color: #2f855a;
+}

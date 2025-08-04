@@ -34,16 +34,18 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ theme = 'light', userName, us
     };
   }, []);
 
+  
+
   return (
     <div className="ProfileMenu" ref={menuRef}>
       <button
         className="ProfileMenu-trigger"
         onClick={toggleMenu}
         aria-haspopup="true"
-        aria-expanded={isOpen}
+        aria-expanded={isOpen ? 'true' : 'false'}
         aria-label="Toggle user menu"
       >
-        <UserAvatar theme={theme} name={userName} imageUrl={userImageUrl} />
+        <UserAvatar theme={theme} name={userName} src={userImageUrl} />
       </button>
 
       {isOpen && (

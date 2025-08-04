@@ -1,0 +1,30 @@
+.Table-container--light {
+  border: 1px solid #e5e7eb; /* Gray 200 */
+}
+
+.Table--light caption {
+  background-color: #f9fafb; /* Gray 50 */
+  color: #111827; /* Gray 900 */
+}
+
+.Table--light thead {
+  background-color: #f9fafb; /* Gray 50 */
+  border-color: #e5e7eb; /* Gray 200 */
+}
+
+.Table--light th {
+  color: #6b7280; /* Gray 500 */
+}
+
+.Table--light tbody tr {
+  background-color: #ffffff; /* White */
+  border-color: #e5e7eb; /* Gray 200 */
+}
+
+.Table--light tbody tr:hover {
+  background-color: #f9fafb; /* Gray 50 */
+}
+
+.Table--light td {
+  color: #374151; /* Gray 700 */
+}

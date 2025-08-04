@@ -1,0 +1,28 @@
+.AnalyticsPage-container--dark {
+  background-color: #111827;
+}
+
+.AnalyticsPage-title--dark {
+  color: #ffffff;
+}
+
+.AnalyticsPage-subtitle--dark {
+  color: #d1d5db;
+}
+
+.AnalyticsPage-kpi-card--dark, .AnalyticsPage-chart-card--dark {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.AnalyticsPage-kpi-label--dark {
+  color: #9ca3af;
+}
+
+.AnalyticsPage-kpi-value--dark {
+  color: #ffffff;
+}
+
+.AnalyticsPage-card-title--dark {
+  color: #f3f4f6;
+}

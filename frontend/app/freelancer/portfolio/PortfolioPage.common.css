@@ -1,0 +1,40 @@
+.PortfolioPage-container {
+  padding: 2rem 1rem;
+}
+
+.PortfolioPage-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.PortfolioPage-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.PortfolioPage-subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.PortfolioPage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.PortfolioPage-empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  border-radius: 8px;
+}
+
+.PortfolioPage-empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}

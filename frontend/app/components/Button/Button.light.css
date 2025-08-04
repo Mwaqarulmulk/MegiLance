@@ -14,6 +14,15 @@
   background-color: #e0e7ff;
 }
 
+.Button--light.Button--danger {
+  background-color: #ef4444; /* Red-500 */
+  color: #ffffff;
+}
+
+.Button--light.Button--danger:hover {
+  background-color: #dc2626; /* Red-600 */
+}
+
 .Button--outline.Button--light {
   background-color: transparent;
   border-color: #4f46e5;

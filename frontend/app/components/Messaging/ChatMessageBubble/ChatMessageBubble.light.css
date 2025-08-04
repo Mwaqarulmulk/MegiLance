@@ -1,0 +1,17 @@
+.ChatMessageBubble--sender.ChatMessageBubble--light {
+  background-color: #3b82f6; /* blue-500 */
+  color: #ffffff;
+}
+
+.ChatMessageBubble--receiver.ChatMessageBubble--light {
+  background-color: #e5e7eb; /* gray-200 */
+  color: #1f2937; /* gray-800 */
+}
+
+.ChatMessageBubble--sender.ChatMessageBubble--light .ChatMessageBubble-timestamp {
+  color: #eff6ff;
+}
+
+.ChatMessageBubble--receiver.ChatMessageBubble--light .ChatMessageBubble-timestamp {
+  color: #4b5563;
+}

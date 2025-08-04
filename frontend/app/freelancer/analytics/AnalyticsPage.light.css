@@ -1,0 +1,28 @@
+.AnalyticsPage-container--light {
+  background-color: #f9fafb;
+}
+
+.AnalyticsPage-title--light {
+  color: #111827;
+}
+
+.AnalyticsPage-subtitle--light {
+  color: #4b5563;
+}
+
+.AnalyticsPage-kpi-card--light, .AnalyticsPage-chart-card--light {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.AnalyticsPage-kpi-label--light {
+  color: #6b7280;
+}
+
+.AnalyticsPage-kpi-value--light {
+  color: #111827;
+}
+
+.AnalyticsPage-card-title--light {
+  color: #1f2937;
+}

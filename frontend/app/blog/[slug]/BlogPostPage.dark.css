@@ -1,0 +1,21 @@
+.BlogPostPage-container--dark {
+  background-color: #1f2937;
+}
+
+.BlogPostPage-title--dark {
+  color: #ffffff;
+}
+
+.BlogPostPage-meta--dark {
+  color: #9ca3af;
+}
+
+.BlogPostPage-content--dark {
+  color: #d1d5db;
+}
+
+.BlogPostPage-content--dark h2 {
+  color: #ffffff;
+  border-bottom: 2px solid #4b5563;
+  padding-bottom: 0.5rem;
+}

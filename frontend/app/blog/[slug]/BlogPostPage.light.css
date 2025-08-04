@@ -1,0 +1,21 @@
+.BlogPostPage-container--light {
+  background-color: #ffffff;
+}
+
+.BlogPostPage-title--light {
+  color: #111827;
+}
+
+.BlogPostPage-meta--light {
+  color: #6b7280;
+}
+
+.BlogPostPage-content--light {
+  color: #374151;
+}
+
+.BlogPostPage-content--light h2 {
+  color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}

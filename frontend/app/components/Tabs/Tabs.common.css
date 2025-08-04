@@ -1,0 +1,21 @@
+.Tabs-list {
+  display: flex;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.Tabs-button {
+  padding: 0.75rem 1.5rem;
+  margin-bottom: -1px; /* To make the active tab's bottom border overlap the list's border */
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  border-bottom: 2px solid transparent;
+}
+
+.Tabs-panel {
+  padding: 1.5rem 0;
+}

@@ -1,0 +1,11 @@
+.RankGauge--light .RankGauge-fill {
+  background-color: #4f46e5; /* A vibrant indigo for light mode */
+}
+
+.RankGauge--light .RankGauge-cover {
+  background-color: #e0e7ff; /* A light indigo background */
+}
+
+.RankGauge--light .RankGauge-score {
+  color: #312e81; /* A deep indigo for the score text */
+}

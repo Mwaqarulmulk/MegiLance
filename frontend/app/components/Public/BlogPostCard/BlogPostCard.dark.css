@@ -1,0 +1,20 @@
+.BlogPostCard-link--dark:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+.BlogPostCard-container--dark {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.BlogPostCard-title--dark {
+  color: #f7fafc;
+}
+
+.BlogPostCard-excerpt--dark {
+  color: #cbd5e0;
+}
+
+.BlogPostCard-meta--dark {
+  color: #a0aec0;
+}

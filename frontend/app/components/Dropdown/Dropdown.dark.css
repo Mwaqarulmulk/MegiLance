@@ -1,0 +1,18 @@
+.Dropdown--dark .Dropdown-selected {
+  background-color: #374151; /* Gray 700 */
+  border-color: #4b5563; /* Gray 600 */
+  color: #f9fafb;
+}
+
+.Dropdown--dark .Dropdown-selected:hover {
+  border-color: #6b7280; /* Gray 500 */
+}
+
+.Dropdown--dark .Dropdown-options {
+  background-color: #374151; /* Gray 700 */
+  border-color: #4b5563; /* Gray 600 */
+}
+
+.Dropdown--dark .Dropdown-option:hover {
+  background-color: #4b5563; /* Gray 600 */
+}

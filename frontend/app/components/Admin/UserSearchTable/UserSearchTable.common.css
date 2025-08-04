@@ -1,0 +1,56 @@
+.UserSearchTable-container {
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.UserSearchTable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.UserSearchTable-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.UserSearchTable-search-input {
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: 1px solid;
+  min-width: 300px;
+}
+
+.UserSearchTable-table-wrapper {
+  overflow-x: auto;
+}
+
+.UserSearchTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.UserSearchTable th, .UserSearchTable td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.UserSearchTable th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.UserSearchTable tbody tr {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.UserSearchTable-actions {
+  display: flex;
+  gap: 0.5rem;
+}

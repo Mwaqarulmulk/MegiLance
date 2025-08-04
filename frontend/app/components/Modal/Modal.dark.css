@@ -1,4 +1,27 @@
-/* @AI-HINT: Dark theme overrides for Modal. Do not use global or theme CSS. */
+.Modal-overlay--dark {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.Modal-content--dark {
+  background-color: #1f2937; /* Gray 800 */
+}
+
+.Modal-content--dark .Modal-header {
+  border-color: #374151; /* Gray 700 */
+}
+
+.Modal-content--dark .Modal-title {
+  color: #f9fafb; /* Gray 50 */
+}
+
+.Modal-content--dark .Modal-close-button {
+  color: #9ca3af; /* Gray 400 */
+}
+
+.Modal-content--dark .Modal-close-button:hover {
+  color: #f9fafb; /* Gray 50 */
+}
+
 .Modal--dark .Modal-content {
   background: #23272f;
   color: #fff;

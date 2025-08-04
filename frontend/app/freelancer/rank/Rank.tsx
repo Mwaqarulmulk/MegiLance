@@ -2,6 +2,8 @@
 'use client';
 
 import React from 'react';
+import ProgressBar from '@/app/components/ProgressBar/ProgressBar';
+import RankGauge from '@/app/components/RankGauge/RankGauge';
 import './Rank.common.css';
 import './Rank.light.css';
 import './Rank.dark.css';
@@ -17,9 +19,7 @@ const RankFactor: React.FC<{ theme: 'light' | 'dark'; label: string; score: numb
       <span className="RankFactor-label">{label}</span>
       <span className="RankFactor-score">{score}/100</span>
     </div>
-    <div className="RankFactor-progress-bar">
-      <div className="RankFactor-progress" style={{ width: `${score}%` }}></div>
-    </div>
+    <ProgressBar theme={theme} progress={score} />
     <p className="RankFactor-description">{description}</p>
   </div>
 );
@@ -48,11 +48,7 @@ const Rank: React.FC<RankProps> = ({ theme = 'light' }) => {
         <div className={`Rank-display-card Rank-display-card--${theme}`}>
           <h2>Your Current Rank is</h2>
           <p className="Rank-score-text">{rankData.overallRank}</p>
-          <div className="Rank-gauge">
-            <div className="Rank-gauge-fill" style={{ transform: `rotate(${rankData.rankScore / 100 * 180}deg)` }}></div>
-            <div className="Rank-gauge-cover"></div>
-            <span className="Rank-gauge-score">{rankData.rankScore}</span>
-          </div>
+          <RankGauge score={rankData.rankScore} />
         </div>
 
         <section className="Rank-factors">

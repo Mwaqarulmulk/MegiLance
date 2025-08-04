@@ -1,0 +1,21 @@
+.TagInput-container--light .TagInput-label {
+  color: #374151;
+}
+
+.TagInput-wrapper--light {
+  border-color: #d1d5db;
+  background-color: #ffffff;
+}
+
+.TagInput-tag--light {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.TagInput-remove-btn--light {
+  color: #4b5563;
+}
+
+.TagInput-input--light {
+  color: #111827;
+}

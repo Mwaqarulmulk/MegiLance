@@ -1,4 +1,27 @@
-/* @AI-HINT: Light theme overrides for Modal. Do not use global or theme CSS. */
+.Modal-overlay--light {
+  background-color: rgba(17, 24, 39, 0.5); /* Gray 900 with 50% opacity */
+}
+
+.Modal-content--light {
+  background-color: #ffffff; /* White */
+}
+
+.Modal-content--light .Modal-header {
+  border-color: #e5e7eb; /* Gray 200 */
+}
+
+.Modal-content--light .Modal-title {
+  color: #111827; /* Gray 900 */
+}
+
+.Modal-content--light .Modal-close-button {
+  color: #6b7280; /* Gray 500 */
+}
+
+.Modal-content--light .Modal-close-button:hover {
+  color: #111827; /* Gray 900 */
+}
+
 .Modal--light .Modal-content {
   background: #fff;
   color: #23272f;

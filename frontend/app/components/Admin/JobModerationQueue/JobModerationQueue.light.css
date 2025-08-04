@@ -1,0 +1,33 @@
+.JobModerationQueue-container--light {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.JobModerationQueue-title--light {
+  color: #1a202c;
+}
+
+.JobModerationQueue--light th {
+  color: #718096;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.JobModerationQueue--light td {
+  color: #4a5568;
+}
+
+.JobModerationQueue--light tbody tr {
+  border-bottom-color: #e2e8f0;
+}
+
+.JobModerationQueue--light tbody tr:last-child {
+  border-bottom: none;
+}
+
+.JobModerationQueue--light tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+.JobModerationQueue-empty--light {
+    color: #718096;
+}

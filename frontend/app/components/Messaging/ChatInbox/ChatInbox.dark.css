@@ -1,0 +1,36 @@
+.ChatInbox-container--dark {
+  background-color: #1a202c;
+  border-right-color: #4a5568;
+}
+
+.ChatInbox-header--dark {
+  border-bottom-color: #4a5568;
+}
+
+.ChatInbox-title--dark {
+  color: #f7fafc;
+}
+
+.ChatInbox-item--dark {
+  border-bottom-color: #4a5568;
+}
+
+.ChatInbox-item--dark:hover {
+  background-color: #2d3748;
+}
+
+.ChatInbox-item--dark.active {
+  background-color: #4a5568;
+}
+
+.ChatInbox-userName--dark {
+  color: #e2e8f0;
+}
+
+.ChatInbox-timestamp--dark {
+  color: #a0aec0;
+}
+
+.ChatInbox-lastMessage--dark {
+  color: #cbd5e0;
+}

@@ -1,0 +1,24 @@
+.PortfolioPage-container--dark {
+  background-color: #111827;
+}
+
+.PortfolioPage-title--dark {
+  color: #ffffff;
+}
+
+.PortfolioPage-subtitle--dark {
+  color: #d1d5db;
+}
+
+.PortfolioPage-empty-state--dark {
+  background-color: #1f2937;
+  border: 2px dashed #374151;
+}
+
+.PortfolioPage-empty-title--dark {
+  color: #f3f4f6;
+}
+
+.PortfolioPage-empty-state--dark p {
+  color: #9ca3af;
+}

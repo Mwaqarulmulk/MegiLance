@@ -27,7 +27,7 @@ const PriceEstimator: React.FC<PriceEstimatorProps> = ({ theme = 'light' }) => {
       <div className="PriceEstimator-container">
         <header className="PriceEstimator-header">
           <h1>AI Project Price Estimator</h1>
-          <p>Get a data-driven estimate for your project's budget.</p>
+          <p>Get a data-driven estimate for your project&apos;s budget.</p>
         </header>
 
         <form className={`PriceEstimator-form Card--${theme}`} onSubmit={handleEstimation}>

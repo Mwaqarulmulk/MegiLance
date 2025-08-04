@@ -1,0 +1,99 @@
+.ReferralPage-container {
+  width: 100%;
+  padding: 2rem 1rem;
+}
+
+.ReferralPage-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.ReferralPage-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.ReferralPage-subtitle {
+  font-size: 1.125rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ReferralPage-main {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ReferralPage-card, .ReferralPage-stats-card {
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.ReferralPage-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.ReferralPage-link-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ReferralPage-link-input {
+  flex-grow: 1;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid;
+  font-family: monospace;
+}
+
+.ReferralPage-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  text-align: center;
+}
+
+.ReferralPage-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.ReferralPage-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.ReferralPage-stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+  .ReferralPage-container {
+    padding: 4rem 2rem;
+  }
+
+  .ReferralPage-title {
+    font-size: 3rem;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

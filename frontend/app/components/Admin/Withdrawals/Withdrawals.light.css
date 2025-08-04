@@ -1,0 +1,33 @@
+.Withdrawals-container--light {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.Withdrawals-title--light {
+  color: #1a202c;
+}
+
+.Withdrawals-table--light th {
+  color: #718096;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.Withdrawals-table--light td {
+  color: #4a5568;
+}
+
+.Withdrawals-table--light tbody tr {
+  border-bottom-color: #e2e8f0;
+}
+
+.Withdrawals-table--light tbody tr:last-child {
+  border-bottom: none;
+}
+
+.Withdrawals-table--light tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+.Withdrawals-empty--light {
+    color: #718096;
+}

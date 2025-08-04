@@ -1,0 +1,28 @@
+.PolicyEditor-container--light {
+  background-color: #f7fafc;
+}
+
+.PolicyEditor-title--light {
+  color: #1a202c;
+}
+
+.PolicyEditor-editor--light {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.PolicyEditor-select--light {
+  background-color: #ffffff;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.PolicyEditor-textarea--light {
+  background-color: #fdfdfe;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.Save-confirmation--light {
+  color: #2f855a;
+}

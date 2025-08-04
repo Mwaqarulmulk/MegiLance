@@ -1,0 +1,67 @@
+.ContractsPage-container {
+  padding: 2rem 1rem;
+}
+
+.ContractsPage-header {
+  margin-bottom: 2rem;
+}
+
+.ContractsPage-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.ContractsPage-subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.ContractsPage-main {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ContractsPage-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.ContractsPage-table {
+  min-width: 800px;
+}
+
+.ContractsPage-table-header, .ContractsPage-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  align-items: center;
+}
+
+.ContractsPage-table-header {
+  font-weight: 600;
+  border-bottom: 2px solid;
+}
+
+.ContractsPage-table-row {
+  border-bottom: 1px solid;
+}
+
+.ContractsPage-table-row:last-child {
+  border-bottom: none;
+}
+
+.ContractsPage-project-title {
+  font-weight: 500;
+}
+
+.ContractsPage-link {
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ContractsPage-link:hover {
+  text-decoration: underline;
+}

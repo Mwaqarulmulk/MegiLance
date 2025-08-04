@@ -1,0 +1,40 @@
+.WithdrawPage-container--light {
+  background-color: #f9fafb;
+}
+
+.WithdrawPage-title--light, .WithdrawPage-card-title--light {
+  color: #111827;
+}
+
+.WithdrawPage-subtitle--light {
+  color: #4b5563;
+}
+
+.WithdrawPage-card--light {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.WithdrawPage-balance-label--light {
+  color: #6b7280;
+}
+
+.WithdrawPage-balance-value--light {
+  color: #3b82f6;
+}
+
+.WithdrawPage-input--light {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.WithdrawPage-history-header--light {
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.WithdrawPage-history-row--light {
+  border-color: #e5e7eb;
+  color: #374151;
+}

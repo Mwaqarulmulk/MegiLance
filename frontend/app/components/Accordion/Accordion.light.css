@@ -1,0 +1,22 @@
+.AccordionItem-container--light {
+  border-color: #e5e7eb;
+}
+
+.AccordionItem-button--light {
+  color: #1f2937;
+}
+
+.AccordionItem-button--light:hover {
+  background-color: #f9fafb;
+}
+
+.AccordionItem-content--light {
+  color: #4b5563;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+}
+
+.AccordionItem-icon--light svg {
+  stroke: #6b7280;
+}

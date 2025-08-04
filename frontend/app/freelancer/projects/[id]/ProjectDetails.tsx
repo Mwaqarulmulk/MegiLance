@@ -13,7 +13,7 @@ interface ProjectDetailsProps {
   projectId: string;
 }
 
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({ theme = 'light', projectId }) => {
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({ theme = 'light' /* projectId is available in props */ }) => {
   // Mock data for a single project - in a real app, this would be fetched based on projectId
   const project = {
     title: 'AI Chatbot Integration',
@@ -47,7 +47,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ theme = 'light', projec
           <div className={`Sidebar-card Sidebar-card--${theme}`}>
             <h3>About the Client</h3>
             <div className="Client-info">
-              <UserAvatar theme={theme} name={project.clientName} imageUrl={project.clientAvatar} />
+              <UserAvatar theme={theme} name={project.clientName} src={project.clientAvatar} />
               <strong>{project.clientName}</strong>
             </div>
             <Button theme={theme} variant="primary" fullWidth>Submit a Proposal</Button>

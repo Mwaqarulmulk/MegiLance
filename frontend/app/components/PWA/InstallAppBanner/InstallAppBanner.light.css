@@ -1,0 +1,8 @@
+.InstallAppBanner--light .InstallAppBanner-content {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
+.InstallAppBanner--light p {
+  color: #333333;
+}

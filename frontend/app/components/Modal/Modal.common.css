@@ -1,4 +1,54 @@
-/* @AI-HINT: Shared styles for Modal component. Do not use or import any global or theme CSS. */
+.Modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.Modal-content {
+  position: relative;
+  max-width: 500px;
+  width: 90%;
+  border-radius: 0.75rem; /* 12px */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.Modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.Modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.Modal-close-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.Modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
 .Modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

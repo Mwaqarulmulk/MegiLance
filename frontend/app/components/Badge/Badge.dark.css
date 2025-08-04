@@ -24,6 +24,11 @@
 }
 
 .Badge--dark.Badge--danger {
-  background-color: #7f1d1d; /* Red 900 */
-  color: #fecaca; /* Red 200 */
+  background-color: #fca5a5; /* Red-300 */
+  color: #7f1d1d; /* Red-900 */
+}
+
+.Badge--dark.Badge--info {
+  background-color: #a5b4fc; /* Indigo-300 */
+  color: #312e81; /* Indigo-900 */
 }

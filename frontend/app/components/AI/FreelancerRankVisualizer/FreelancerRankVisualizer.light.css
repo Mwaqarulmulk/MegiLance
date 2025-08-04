@@ -1,0 +1,16 @@
+.RankVisualizer--light {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+}
+
+.RankVisualizer--light .RankVisualizer-rank-name {
+  color: #333333;
+}
+
+.RankVisualizer--light .RankVisualizer-score {
+  color: #555555;
+}
+
+.RankVisualizer--light .RankVisualizer-progress-bar-container {
+  background-color: #e0e0e0;
+}

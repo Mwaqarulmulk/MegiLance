@@ -40,24 +40,21 @@ const Profile: React.FC<ProfileProps> = ({ theme = 'light' }) => {
 
         <form className="Profile-form">
           <div className="Profile-section">
-            <h2>About Me</h2>
-            <textarea defaultValue={userProfile.bio} rows={5} className={`Profile-textarea Profile-textarea--${theme}`} />
+            <label htmlFor="bio-textarea">About Me</label>
+            <textarea id="bio-textarea" defaultValue={userProfile.bio} rows={5} className={`Profile-textarea Profile-textarea--${theme}`} />
           </div>
 
           <div className="Profile-section">
-            <h2>Skills</h2>
-            <Input theme={theme} type="text" defaultValue={userProfile.skills.join(', ')} />
+            <Input theme={theme} label="Skills" type="text" defaultValue={userProfile.skills.join(', ')} />
             <small>Separate skills with a comma.</small>
           </div>
 
           <div className="Profile-section Profile-section--inline">
             <div className="Profile-form-group">
-              <label>Hourly Rate ($/hr)</label>
-              <Input theme={theme} type="number" defaultValue={userProfile.hourlyRate} />
+              <Input theme={theme} label="Hourly Rate ($/hr)" type="number" defaultValue={userProfile.hourlyRate} />
             </div>
             <div className="Profile-form-group">
-              <label>Portfolio URL</label>
-              <Input theme={theme} type="text" defaultValue={userProfile.portfolioUrl} />
+              <Input theme={theme} label="Portfolio URL" type="text" defaultValue={userProfile.portfolioUrl} />
             </div>
           </div>
 

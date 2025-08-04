@@ -8,4 +8,5 @@
 .ProgressBar-fill {
   height: 100%;
   transition: width 0.3s ease-in-out;
+  width: var(--progress-width, 0%);
 }

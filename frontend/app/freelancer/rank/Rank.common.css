@@ -67,6 +67,7 @@
   border-radius: 0 0 200px 200px;
   transform-origin: 50% 0;
   transition: transform 0.8s ease-in-out;
+  transform: var(--rank-gauge-rotation, rotate(0deg));
 }
 
 .Rank-gauge-score {
@@ -113,6 +114,7 @@
 .RankFactor-progress {
   height: 100%;
   border-radius: 4px;
+  width: var(--rank-factor-progress, 0%);
 }
 
 .RankFactor-description {

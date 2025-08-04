@@ -6,13 +6,15 @@ import './Button.dark.css';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   theme?: 'light' | 'dark';
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger';
+  size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
   theme = 'light',
   variant = 'primary',
+  size = 'medium',
   fullWidth = false,
   children,
   ...rest
@@ -21,6 +23,7 @@ const Button: React.FC<ButtonProps> = ({
     Button
     Button--${theme}
     Button--${variant}
+    Button--${size}
     ${fullWidth ? 'Button--fullWidth' : ''}
   `;
 

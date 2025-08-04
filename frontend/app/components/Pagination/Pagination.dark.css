@@ -1,0 +1,18 @@
+.Pagination--dark .Pagination-button {
+  background-color: #374151; /* Gray 700 */
+  border-color: #4b5563; /* Gray 600 */
+  color: #f9fafb; /* Gray 50 */
+}
+
+.Pagination--dark .Pagination-button:hover:not(:disabled) {
+  background-color: #4b5563; /* Gray 600 */
+}
+
+.Pagination--dark .Pagination-button:disabled {
+  background-color: #1f2937; /* Gray 800 */
+  color: #6b7280; /* Gray 500 */
+}
+
+.Pagination--dark .Pagination-info {
+  color: #9ca3af; /* Gray 400 */
+}

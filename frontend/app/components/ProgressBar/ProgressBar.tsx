@@ -12,15 +12,22 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress, theme = 'light' }) => {
-  const clampedProgress = Math.min(100, Math.max(0, progress));
+  const progressId = React.useId();
+  const safeProgress = Math.min(100, Math.max(0, progress || 0));
 
   return (
-    <div className={`ProgressBar ProgressBar--${theme}`}>
-      <div
-        className="ProgressBar-fill"
-        style={{ width: `${clampedProgress}%` }}
-      ></div>
-    </div>
+    <>
+      <style>
+        {`
+          [data-progress-id="${progressId}"] .ProgressBar-fill {
+            width: ${safeProgress}%;
+          }
+        `}
+      </style>
+      <div className={`ProgressBar ProgressBar--${theme}`} data-progress-id={progressId}>
+        <div className="ProgressBar-fill"></div>
+      </div>
+    </>
   );
 };
 

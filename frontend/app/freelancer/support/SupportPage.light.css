@@ -1,0 +1,30 @@
+.SupportPage-container--light {
+  background-color: #f9fafb;
+}
+
+.SupportPage-title--light, .SupportPage-card-title--light {
+  color: #111827;
+}
+
+.SupportPage-subtitle--light {
+  color: #4b5563;
+}
+
+.SupportPage-card--light {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.SupportPage-form-group label {
+    color: #374151;
+}
+
+.SupportPage-input--light, .SupportPage-textarea--light {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.SupportPage-input--light::placeholder, .SupportPage-textarea--light::placeholder {
+    color: #9ca3af;
+}

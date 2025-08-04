@@ -1,0 +1,7 @@
+.TypingIndicator-container--light {
+    background-color: #e5e7eb; /* gray-200 */
+}
+
+.TypingIndicator-container--light .TypingIndicator-dot {
+    background-color: #6b7280; /* gray-500 */
+}

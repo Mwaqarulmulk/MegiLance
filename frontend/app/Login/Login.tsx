@@ -1,6 +1,7 @@
 // @AI-HINT: This is the Login page root component. All styles are per-component only. See Login.common.css, Login.light.css, and Login.dark.css for theming.
 'use client';
 import React, { useState } from "react";
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from "@/app/components/Button/Button";
 import Input from "@/app/components/Input/Input";
@@ -13,6 +14,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ theme = "light" }) => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -50,16 +52,26 @@ const Login: React.FC<LoginProps> = ({ theme = "light" }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const MOCK_EMAIL = 'testuser@example.com';
+const MOCK_PASSWORD = 'testpass123';
+
+const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
       setLoading(true);
-      console.log('Form submitted:', formData);
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false);
-        // Handle successful submission (e.g., redirect)
-      }, 2000);
+      if (formData.email === MOCK_EMAIL && formData.password === MOCK_PASSWORD) {
+        setTimeout(() => {
+          setLoading(false);
+          router.push('/dashboard'); // Redirect to dashboard after mock login
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          setLoading(false);
+          setErrors({ ...errors, password: 'Invalid email or password (mock only)' });
+        }, 1000);
+      }
+      // Handle successful submission (e.g., redirect)
+
     }
   };
   return (
@@ -67,6 +79,11 @@ const Login: React.FC<LoginProps> = ({ theme = "light" }) => {
       <div className="Login-container">
         <h1 className="Login-title">Welcome Back</h1>
         <p className="Login-subtitle">Log in to continue to your MegiLance account.</p>
+        <div style={{ background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: 6, padding: 12, marginBottom: 16 }}>
+          <strong>Mock Test Credentials</strong><br />
+          Email: <code>testuser@example.com</code><br />
+          Password: <code>testpass123</code>
+        </div>
         <form className="Login-form" onSubmit={handleSubmit} noValidate>
           <Input
             theme={theme}

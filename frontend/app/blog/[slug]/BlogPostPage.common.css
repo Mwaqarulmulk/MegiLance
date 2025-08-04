@@ -1,0 +1,60 @@
+.BlogPostPage-container {
+  padding: 2rem 1rem;
+}
+
+.BlogPostPage-article {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.BlogPostPage-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.BlogPostPage-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+.BlogPostPage-meta {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.BlogPostPage-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 50%; /* 2:1 Aspect Ratio */
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.BlogPostPage-content {
+  line-height: 1.7;
+}
+
+.BlogPostPage-content h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 2.5rem 0 1rem 0;
+}
+
+.BlogPostPage-content p {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .BlogPostPage-container {
+    padding: 4rem 2rem;
+  }
+
+  .BlogPostPage-title {
+    font-size: 2.75rem;
+  }
+}

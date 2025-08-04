@@ -18,7 +18,7 @@ const Pricing: React.FC<PricingProps> = ({ theme = 'light' }) => {
       <div className="Pricing-container">
         <header className="Pricing-header">
           <h1>Simple, Transparent Pricing</h1>
-          <p>Choose the plan that's right for you. All payments are secured via blockchain.</p>
+          <p>Choose the plan that&apos;s right for you. All payments are secured via blockchain.</p>
         </header>
 
         <div className="Pricing-grid">
@@ -55,7 +55,7 @@ const Pricing: React.FC<PricingProps> = ({ theme = 'light' }) => {
         </div>
 
         <section className="Pricing-estimator-promo">
-          <h2>Not Sure About Your Project's Cost?</h2>
+          <h2>Not Sure About Your Project&apos;s Cost?</h2>
           <p>Use our AI-powered price estimator to get a data-driven budget recommendation for your project based on its scope, complexity, and required skills.</p>
           <Link href="/ai/price-estimator">
             <Button theme={theme} variant="outline">Try the AI Estimator</Button>

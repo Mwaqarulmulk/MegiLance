@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
+
 import Button from '@/app/components/Button/Button';
 import './Reviews.common.css';
 import './Reviews.light.css';
@@ -12,7 +12,7 @@ interface ReviewsProps {
   theme?: 'light' | 'dark';
 }
 
-const StarRatingInput = ({ theme }: { theme: 'light' | 'dark' }) => {
+const StarRatingInput = () => {
   const [rating, setRating] = React.useState(0);
   const [hover, setHover] = React.useState(0);
   return (
@@ -56,12 +56,12 @@ const Reviews: React.FC<ReviewsProps> = ({ theme = 'light' }) => {
 
         {projectsToReview.map(project => (
           <div key={project.id} className={`ReviewForm-card ReviewForm-card--${theme}`}>
-            <h2>Review for "{project.title}"</h2>
+            <h2>Review for &quot;{project.title}&quot;</h2>
             <p>How was your experience working with <strong>{project.freelancerName}</strong>?</p>
             <form className="Review-form">
               <div className="Form-group">
                 <label>Overall Rating</label>
-                <StarRatingInput theme={theme} />
+                <StarRatingInput />
               </div>
               <div className="Form-group">
                 <label htmlFor={`comment-${project.id}`}>Public Feedback</label>

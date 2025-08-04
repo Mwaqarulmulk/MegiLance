@@ -33,7 +33,13 @@ const faqData = [
   },
 ];
 
-const FaqItem = ({ item, isOpen, onClick, theme }: any) => (
+interface FaqItemProps {
+  item: { question: string; answer: string; };
+  isOpen: boolean;
+  onClick: () => void;
+}
+
+const FaqItem = ({ item, isOpen, onClick }: FaqItemProps) => (
   <div className="FaqItem">
     <button className="FaqItem-question" onClick={onClick}>
       <span>{item.question}</span>
@@ -64,7 +70,6 @@ const Faq: React.FC<FaqProps> = ({ theme = 'light' }) => {
               item={item}
               isOpen={openIndex === index}
               onClick={() => handleClick(index)}
-              theme={theme}
             />
           ))}
         </div>

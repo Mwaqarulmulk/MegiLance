@@ -1,0 +1,30 @@
+.AISettings-container--dark {
+  background-color: #1a202c;
+}
+
+.AISettings-title--dark {
+  color: #f7fafc;
+}
+
+.AISettings-form--dark {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.Form-group label {
+  color: #e2e8f0;
+}
+
+.Form-group small {
+  color: #a0aec0;
+}
+
+.AISettings-select--dark {
+  background-color: #4a5568;
+  border-color: #718096;
+  color: #e2e8f0;
+}
+
+.Save-confirmation--dark {
+  color: #9ae6b4;
+}

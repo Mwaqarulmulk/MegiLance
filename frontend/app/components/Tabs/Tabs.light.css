@@ -1,0 +1,16 @@
+.Tabs--light .Tabs-list {
+  border-color: #d1d5db; /* Gray 300 */
+}
+
+.Tabs--light .Tabs-button {
+  color: #6b7280; /* Gray 500 */
+}
+
+.Tabs--light .Tabs-button:hover {
+  color: #111827; /* Gray 900 */
+}
+
+.Tabs--light .Tabs-button.active {
+  color: #4f46e5; /* Indigo 600 */
+  border-color: #4f46e5; /* Indigo 600 */
+}

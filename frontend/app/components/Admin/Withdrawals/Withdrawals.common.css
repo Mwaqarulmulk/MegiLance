@@ -1,0 +1,54 @@
+.Withdrawals-container {
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.Withdrawals-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 1.5rem;
+}
+
+.Withdrawals-table-wrapper {
+  overflow-x: auto;
+}
+
+.Withdrawals-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.Withdrawals-table th, .Withdrawals-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.Withdrawals-table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.Withdrawals-table tbody tr {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.Withdrawals-address {
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.Withdrawals-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.Withdrawals-empty {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+}

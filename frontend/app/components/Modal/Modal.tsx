@@ -1,36 +1,57 @@
 // @AI-HINT: This is the Modal component for dialogs, confirmations, and overlays. All styles are per-component only. See Modal.common.css, Modal.light.css, and Modal.dark.css for theming.
-import React, { useEffect, useRef } from "react";
-import "./Modal.common.css";
-import "./Modal.light.css";
-import "./Modal.dark.css";
+'use client';
 
-export interface ModalProps {
-  theme?: "light" | "dark";
-  open: boolean;
+import React, { useEffect, useRef } from 'react';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import './Modal.common.css';
+import './Modal.light.css';
+import './Modal.dark.css';
+
+interface ModalProps {
+  isOpen: boolean;
   onClose: () => void;
-  title?: string;
   children: React.ReactNode;
+  title?: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ theme = "light", open, onClose, title, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
+  const { theme } = useTheme();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    if (open) document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
 
-  if (!open) return null;
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <div className={`Modal Modal--${theme}`} role="dialog" aria-modal="true" ref={modalRef}>
-      <div className="Modal-backdrop" onClick={onClose} />
-      <div className="Modal-content">
-        {title && <header className="Modal-header"><h2>{title}</h2></header>}
-        <main className="Modal-body">{children}</main>
-        <button className="Modal-close" onClick={onClose} aria-label="Close modal">×</button>
+    <div className={`Modal-overlay Modal-overlay--${theme}`} onClick={onClose} role="dialog" aria-modal="true">
+      <div className={`Modal-content Modal-content--${theme}`} ref={modalRef} onClick={(e) => e.stopPropagation()}>
+        <div className="Modal-header">
+          {title && <h2 className="Modal-title">{title}</h2>}
+          <button onClick={onClose} className="Modal-close-button" aria-label="Close modal">&times;</button>
+        </div>
+        <div className="Modal-body">
+          {children}
+        </div>
       </div>
     </div>
   );

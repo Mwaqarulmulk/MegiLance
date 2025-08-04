@@ -1,0 +1,54 @@
+.BlogPostCard-link {
+  text-decoration: none;
+  display: block;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.BlogPostCard-link:hover {
+  transform: translateY(-5px);
+}
+
+.BlogPostCard-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.BlogPostCard-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.BlogPostCard-image-wrapper img {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.BlogPostCard-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.BlogPostCard-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.BlogPostCard-excerpt {
+  margin: 0 0 1rem 0;
+  flex-grow: 1;
+}
+
+.BlogPostCard-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}

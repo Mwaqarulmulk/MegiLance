@@ -1,0 +1,62 @@
+.AISettings-container {
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.AISettings-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 1.5rem;
+}
+
+.AISettings-form {
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid;
+  max-width: 600px;
+}
+
+.Form-group {
+  margin-bottom: 1.5rem;
+}
+
+.Form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.Form-group input[type='range'] {
+  width: 70%;
+  margin-right: 1rem;
+  vertical-align: middle;
+}
+
+.Form-group span {
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.Form-group small {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.AISettings-select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid;
+}
+
+.Form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.Save-confirmation {
+  font-weight: 500;
+}

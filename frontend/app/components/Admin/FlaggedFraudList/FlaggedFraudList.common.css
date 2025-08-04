@@ -1,0 +1,49 @@
+.FlaggedFraudList-container {
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.FlaggedFraudList-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 1.5rem;
+}
+
+.FlaggedFraudList-table-wrapper {
+  overflow-x: auto;
+}
+
+.FlaggedFraudList {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.FlaggedFraudList th, .FlaggedFraudList td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.FlaggedFraudList th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.FlaggedFraudList tbody tr {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.FlaggedFraudList-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.FlaggedFraudList-empty {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+}

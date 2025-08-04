@@ -1,0 +1,38 @@
+.ContractsPage-container--dark {
+  background-color: #111827;
+}
+
+.ContractsPage-title--dark {
+  color: #ffffff;
+}
+
+.ContractsPage-subtitle--dark {
+  color: #d1d5db;
+}
+
+.ContractsPage-card--dark {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.ContractsPage-table-header--dark {
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.ContractsPage-table-row--dark {
+  border-color: #374151;
+  color: #d1d5db;
+}
+
+.ContractsPage-project-title--dark {
+  color: #f3f4f6;
+}
+
+.ContractsPage-link--dark {
+  color: #60a5fa;
+}
+
+.ContractsPage-link--dark:hover {
+  color: #93c5fd;
+}

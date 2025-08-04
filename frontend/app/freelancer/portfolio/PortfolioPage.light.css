@@ -1,0 +1,24 @@
+.PortfolioPage-container--light {
+  background-color: #f9fafb;
+}
+
+.PortfolioPage-title--light {
+  color: #111827;
+}
+
+.PortfolioPage-subtitle--light {
+  color: #4b5563;
+}
+
+.PortfolioPage-empty-state--light {
+  background-color: #ffffff;
+  border: 2px dashed #e5e7eb;
+}
+
+.PortfolioPage-empty-title--light {
+  color: #1f2937;
+}
+
+.PortfolioPage-empty-state--light p {
+  color: #6b7280;
+}

@@ -1,0 +1,38 @@
+.RankGauge {
+  width: 200px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+}
+
+.RankGauge-fill,
+.RankGauge-cover {
+  width: 200px;
+  height: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+}
+
+.RankGauge-fill {
+  transform-origin: center bottom;
+  transition: transform 0.5s ease-in-out;
+}
+
+.RankGauge-cover {
+  z-index: 1;
+}
+
+.RankGauge-score {
+  position: relative;
+  z-index: 2;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: -1rem;
+}

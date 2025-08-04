@@ -1,0 +1,7 @@
+.LineChart-line--light {
+  stroke: #3b82f6; /* blue-500 */
+}
+
+.LineChart-label-text--light {
+  fill: #4b5563; /* gray-600 */
+}

@@ -1,14 +1,10 @@
-// @AI-HINT: This is the Next.js dynamic route file for a single client project. It extracts the project ID from the URL.
-'use client';
+// @AI-HINT: This is the Next.js dynamic route file for a single client project. It extracts the project ID from the URL and passes it to a client component.
 
 import React from 'react';
-import ProjectDetails from './ProjectDetails';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import ProjectDetailsClient from './ProjectDetailsClient';
 
 const ProjectDetailsPage = ({ params }: { params: { id: string } }) => {
-  const { theme } = useTheme();
-
-  return <ProjectDetails theme={theme} projectId={params.id} />;
+  return <ProjectDetailsClient projectId={params.id} />;
 };
 
 export default ProjectDetailsPage;

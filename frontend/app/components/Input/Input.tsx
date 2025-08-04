@@ -6,7 +6,7 @@ import './Input.dark.css';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   theme?: 'light' | 'dark';
-  label: string;
+  label?: string;
   error?: string;
 }
 

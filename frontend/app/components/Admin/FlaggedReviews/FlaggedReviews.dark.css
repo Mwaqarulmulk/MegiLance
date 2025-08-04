@@ -1,0 +1,33 @@
+.FlaggedReviews-container--dark {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+}
+
+.FlaggedReviews-title--dark {
+  color: #f7fafc;
+}
+
+.FlaggedReviews-item--dark {
+  background-color: #1a202c;
+  border-color: #4a5568;
+}
+
+.FlaggedReviews-item-header--dark strong {
+  color: #e2e8f0;
+}
+
+.FlaggedReviews-rating--dark {
+  color: #f6e05e; /* yellow-400 */
+}
+
+.FlaggedReviews-content--dark {
+  color: #cbd5e0;
+}
+
+.FlaggedReviews-actions--dark small {
+  color: #a0aec0;
+}
+
+.FlaggedReviews-empty--dark {
+  color: #a0aec0;
+}

@@ -36,12 +36,12 @@ const Terms: React.FC<TermsProps> = ({ theme = 'light' }) => {
 
         <section className="LegalPage-section">
           <h2>4. Payments and Fees</h2>
-          <p>Clients agree to pay a 5% platform fee on all project payments. All payments are made in USDC and are held in a smart contract escrow until the project is completed to the client's satisfaction.</p>
+          <p>Clients agree to pay a 5% platform fee on all project payments. All payments are made in USDC and are held in a smart contract escrow until the project is completed to the client&apos;s satisfaction.</p>
         </section>
 
         <section className="LegalPage-section">
           <h2>5. Disclaimers</h2>
-          <p>The platform is provided 'as is'. We make no warranties regarding the quality of services provided by freelancers or the accuracy of our AI-powered recommendations.</p>
+          <p>The platform is provided &apos;as is&apos;. We make no warranties regarding the quality of services provided by freelancers or the accuracy of our AI-powered recommendations.</p>
         </section>
 
         {/* Add more sections as required */}

@@ -1,0 +1,16 @@
+.FraudAlertBanner--dark {
+  background-color: #3e341a;
+  border-color: #8d6e3a;
+}
+
+.FraudAlertBanner--dark .FraudAlertBanner-icon {
+  color: #ffc53d;
+}
+
+.FraudAlertBanner--dark .FraudAlertBanner-content strong {
+  color: #ffc53d;
+}
+
+.FraudAlertBanner--dark .FraudAlertBanner-content p {
+  color: #e6dcb9;
+}

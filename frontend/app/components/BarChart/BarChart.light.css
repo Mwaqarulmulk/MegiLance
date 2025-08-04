@@ -1,0 +1,8 @@
+.BarChart--light .BarChart-bar-wrapper {
+  background-color: #eef2ff; /* Light indigo background */
+}
+
+.BarChart--light .BarChart-label,
+.BarChart--light .BarChart-percentage {
+  color: #4338ca; /* Deep indigo text */
+}

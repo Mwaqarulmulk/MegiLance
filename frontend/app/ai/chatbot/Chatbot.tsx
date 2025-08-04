@@ -56,7 +56,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ theme = 'light' }) => {
         <div className="Chatbot-messages">
           {messages.map(msg => (
             <div key={msg.id} className={`Message Message--${msg.sender} Message--${theme}`}>
-              {msg.sender === 'bot' && <UserAvatar theme={theme} src="/ai-avatar.png" alt="AI Avatar" size="small" />}
+              {msg.sender === 'bot' && <UserAvatar theme={theme} name="AI Assistant" src="/ai-avatar.png" size="small" />}
               <div className="Message-bubble">{msg.text}</div>
             </div>
           ))}

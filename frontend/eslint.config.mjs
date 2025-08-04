@@ -11,6 +11,13 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      // @AI-HINT: The 'style' prop is used for dynamic theming with CSS custom properties.
+      // This is a deliberate architectural choice, so we disable the rule that forbids it.
+      "@next/next/no-inline-styles": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

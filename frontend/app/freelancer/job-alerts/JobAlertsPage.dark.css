@@ -1,0 +1,34 @@
+.JobAlertsPage-container--dark {
+  background-color: #111827;
+}
+
+.JobAlertsPage-title--dark {
+  color: #ffffff;
+}
+
+.JobAlertsPage-subtitle--dark {
+  color: #d1d5db;
+}
+
+.JobAlertsPage-card--dark {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.JobAlertsPage-input--dark {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.JobAlertsPage-list-item--dark {
+  border-color: #374151;
+}
+
+.JobAlertsPage-alert-name--dark {
+  color: #f3f4f6;
+}
+
+.JobAlertsPage-alert-keywords--dark {
+  color: #9ca3af;
+}
