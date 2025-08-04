@@ -69,3 +69,5 @@ AI agents work best when they have unified access to all code (frontend, backend
 - `db/` (database migrations/config)
 - `.github/` (CI/CD workflows)
 - `docker-compose.yml` (for local development)
+
+

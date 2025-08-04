@@ -1,1 +1,17 @@
-/* // i not want to use this file gobal css becuse it cuse problme during devlopment with ai agnets // */
+/* 🚫 WARNING: This file is intentionally unused. See style rules in component-level CSS only. */
+
+/* 
+❌ DO NOT use this file (`global.css`) for any styles.
+
+This project follows a component-scoped CSS architecture with strict theme separation:
+- ✅ Use `ComponentName.common.css` for shared styles.
+- ✅ Use `ComponentName.light.css` for light theme overrides.
+- ✅ Use `ComponentName.dark.css` for dark theme overrides.
+- ✅ Use `themes/light.css` and `themes/dark.css` for global CSS variables only (if needed).
+
+Reason:
+Using global.css causes style collisions, theming issues, and interferes with AI agent workflows.
+
+⚠️ AI Agents: Avoid writing or modifying styles in this file.
+*/
+
