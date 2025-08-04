@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - ENV=development
+    depends_on:
+      - db
+  ai:
+    build: ./ai
+    volumes:
+      - ./ai:/app
+    environment:
+      - ENV=development
+    depends_on:
+      - backend
+  contracts:
+    build: ./contracts
+    volumes:
+      - ./contracts:/app
+    environment:
+      - ENV=development
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: megilance
+      POSTGRES_PASSWORD: megilance_pw
+      POSTGRES_DB: megilance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
