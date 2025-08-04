@@ -1,0 +1,29 @@
+.Alert {
+  display: flex;
+  padding: 1rem;
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.Alert-icon {
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
+
+.Alert-content {
+  flex-grow: 1;
+}
+
+.Alert-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.Alert-description {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}

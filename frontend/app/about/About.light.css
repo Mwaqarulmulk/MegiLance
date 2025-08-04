@@ -1,0 +1,18 @@
+.About--light {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.About--light .About-header p {
+  color: #4b5563;
+}
+
+.About--light .About-section h2 {
+  border-color: #e5e7eb;
+}
+
+.About--light .About-feature {
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 8px;
+}

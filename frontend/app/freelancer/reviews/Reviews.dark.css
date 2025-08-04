@@ -1,0 +1,30 @@
+.Reviews--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Reviews--dark .Reviews-header p {
+  color: #9ca3af;
+}
+
+.Reviews--dark .Reviews-summary-card {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Reviews--dark .star-empty {
+  color: #4b5563; /* Gray 600 */
+}
+
+.Reviews--dark .ReviewItem {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Reviews--dark .ReviewItem-info span {
+  color: #9ca3af;
+}
+
+.Reviews--dark .ReviewItem-date {
+  color: #9ca3af;
+}

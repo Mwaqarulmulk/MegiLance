@@ -1,0 +1,55 @@
+.Support--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Support--dark .Support-header p {
+  color: #9ca3af;
+}
+
+.Support--dark .Support-table-container {
+  border: 1px solid #374151;
+}
+
+.Support--dark .Support-table th {
+  background-color: #1f2937;
+  color: #9ca3af;
+}
+
+.Support--dark .Support-table tbody tr {
+  border-top: 1px solid #374151;
+}
+
+.Support--dark .Support-table tbody tr:hover {
+  background-color: #2b3748;
+}
+
+.Support--dark .priority-badge--High {
+  background-color: #7f1d1d; /* Red 900 */
+  color: #fecaca; /* Red 200 */
+}
+
+.Support--dark .priority-badge--Medium {
+  background-color: #78350f; /* Amber 900 */
+  color: #fde68a; /* Amber 200 */
+}
+
+.Support--dark .priority-badge--Low {
+  background-color: #1e3a8a; /* Blue 900 */
+  color: #bfdbfe; /* Blue 200 */
+}
+
+.Support--dark .status-badge--Open {
+  background-color: #14532d; /* Green 900 */
+  color: #bbf7d0; /* Green 200 */
+}
+
+.Support--dark .status-badge--In-Progress {
+  background-color: #312e81; /* Indigo 900 */
+  color: #c7d2fe; /* Indigo 200 */
+}
+
+.Support--dark .status-badge--Closed {
+  background-color: #374151; /* Gray 700 */
+  color: #d1d5db; /* Gray 300 */
+}

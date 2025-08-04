@@ -1,0 +1,22 @@
+.AIMonitoring--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.AIMonitoring--dark .AIMonitoring-header p {
+  color: #9ca3af;
+}
+
+.AIMonitoring--dark .Alerts-list-card {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.AIMonitoring--dark .Alert-item {
+  background-color: #422006; /* Yellow 950 */
+  border: 1px solid #854d0e; /* Yellow 800 */
+}
+
+.AIMonitoring--dark .Alert-details small {
+  color: #fef08a; /* Yellow 200 */
+}

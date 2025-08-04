@@ -1,0 +1,24 @@
+.Dashboard--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Dashboard--dark .Project-list-item {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Dashboard--dark .status--In-Progress {
+  background-color: #1e40af;
+  color: #dbeafe;
+}
+
+.Dashboard--dark .status--Awaiting-Feedback {
+  background-color: #713f12;
+  color: #fef08a;
+}
+
+.Dashboard--dark .status--Completed {
+  background-color: #166534;
+  color: #dcfce7;
+}

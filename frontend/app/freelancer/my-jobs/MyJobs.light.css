@@ -1,0 +1,25 @@
+.MyJobs--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.MyJobs--light .MyJobs-header p {
+  color: #6b7280;
+}
+
+.MyJobs--light .JobItem {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.MyJobs--light .JobItem-status span {
+  color: #4b5563;
+}
+
+.MyJobs--light .JobItem-progress-bar {
+  background-color: #e5e7eb;
+}
+
+.MyJobs--light .JobItem-progress {
+  background-color: #4f46e5;
+}

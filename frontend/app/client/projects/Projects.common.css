@@ -1,0 +1,84 @@
+.Projects {
+  padding: 2rem 3rem;
+}
+
+.Projects-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.Projects-header {
+  margin-bottom: 2.5rem;
+}
+
+.Projects-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Projects-header p {
+  font-size: 1.125rem;
+}
+
+.Projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.ClientProjectCard {
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.ClientProjectCard-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.ClientProjectCard-status {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Shared status styles from client dashboard */
+.status--In-Progress {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.status--Reviewing-Proposals {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status--Completed {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.status--Open-for-Proposals {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.ClientProjectCard-info {
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.ClientProjectCard-info p {
+  margin: 0.25rem 0;
+}
+
+.ClientProjectCard-actions {
+  display: flex;
+  gap: 0.75rem;
+}

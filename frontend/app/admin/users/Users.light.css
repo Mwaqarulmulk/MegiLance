@@ -1,0 +1,25 @@
+.Users--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Users--light .Users-table-container {
+  border: 1px solid #e5e7eb;
+}
+
+.Users--light .Users-table th {
+  background-color: #f9fafb;
+  color: #6b7280;
+}
+
+.Users--light .Users-table tbody tr {
+  border-top: 1px solid #e5e7eb;
+}
+
+.Users--light .Users-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.Users--light .User-info span {
+  color: #6b7280;
+}

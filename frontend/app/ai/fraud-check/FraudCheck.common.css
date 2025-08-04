@@ -1,0 +1,96 @@
+.FraudCheck {
+  padding: 3rem 1rem;
+}
+
+.FraudCheck-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.FraudCheck-header {
+  text-align: center;
+}
+
+.FraudCheck-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.FraudCheck-header p {
+  font-size: 1.125rem;
+  margin-top: 0.5rem;
+}
+
+.FraudCheck-form {
+  padding: 2.5rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.FraudCheck-form .Button {
+  align-self: flex-end;
+}
+
+.Textarea {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: 1px solid;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+}
+
+.Textarea:focus {
+  outline: none;
+}
+
+.AnalysisResult {
+  padding: 2rem;
+  border-radius: 16px;
+  border-left-width: 8px;
+}
+
+.AnalysisResult h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.Result-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.Result-score {
+  font-size: 4rem;
+  font-weight: 800;
+}
+
+.Result-level {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.Result-warnings h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.Result-warnings ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

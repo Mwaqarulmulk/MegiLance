@@ -1,0 +1,90 @@
+.ProjectDetails {
+  padding: 2rem 3rem;
+}
+
+.ProjectDetails-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 3rem;
+}
+
+.ProjectDetails-main {
+  max-width: 800px;
+}
+
+.ProjectDetails-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.ProjectDetails-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.Tag {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.ProjectDetails-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.ProjectDetails-section p {
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.ProjectDetails-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.Sidebar-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.Sidebar-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Client-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.Client-info strong {
+  font-weight: 700;
+}
+
+.Sidebar-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Sidebar-card ul li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.Sidebar-card ul li:last-child {
+  margin-bottom: 0;
+}

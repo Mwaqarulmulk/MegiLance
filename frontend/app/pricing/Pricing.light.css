@@ -1,0 +1,34 @@
+.Pricing--light {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.Pricing--light .Pricing-header p {
+  color: #4b5563;
+}
+
+.Pricing--light .Pricing-card {
+  border-color: #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.Pricing--light .Pricing-card.popular {
+  border-color: #4f46e5;
+}
+
+.Pricing--light .Pricing-card-badge {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+.Pricing--light .Pricing-card-fee, .Pricing--light .Pricing-card-desc {
+  color: #6b7280;
+}
+
+.Pricing--light .Pricing-card ul li::before {
+  color: #22c55e;
+}
+
+.Pricing--light .Pricing-estimator-promo {
+  background-color: #eef2ff;
+}

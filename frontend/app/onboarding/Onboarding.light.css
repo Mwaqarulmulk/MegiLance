@@ -1,0 +1,16 @@
+.Onboarding--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Onboarding--light .Onboarding-step p {
+  color: #4b5563;
+}
+
+.Onboarding--light .Onboarding-progress-dot {
+  background-color: #e5e7eb;
+}
+
+.Onboarding--light .Onboarding-progress-dot.active {
+  background-color: #4f46e5;
+}

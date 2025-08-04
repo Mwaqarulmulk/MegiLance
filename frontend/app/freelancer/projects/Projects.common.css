@@ -1,0 +1,40 @@
+.Projects {
+  padding: 2rem 3rem;
+}
+
+.Projects-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.Projects-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.Projects-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Projects-header p {
+  font-size: 1.125rem;
+  max-width: 600px;
+  margin: 0.5rem auto 0;
+}
+
+.Projects-search-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.Projects-search-bar .Input {
+  flex-grow: 1;
+}
+
+.Projects-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}

@@ -1,0 +1,9 @@
+.DashboardLayout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.DashboardLayout-main {
+  flex-grow: 1;
+  overflow-y: auto;
+}

@@ -1,0 +1,9 @@
+.Dashboard--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Dashboard--light .Project-list-item {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}

@@ -1,0 +1,42 @@
+.Rank--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Rank--dark .Rank-header p {
+  color: #9ca3af;
+}
+
+.Rank--dark .Rank-display-card {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Rank--dark .Rank-score-text {
+  color: #a5b4fc;
+}
+
+.Rank--dark .Rank-gauge-cover {
+  background: #111827;
+}
+
+.Rank--dark .Rank-gauge-fill {
+  background: linear-gradient(90deg, #a5b4fc, #6366f1);
+}
+
+.Rank--dark .RankFactor {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Rank--dark .RankFactor-progress-bar {
+  background-color: #4b5563;
+}
+
+.Rank--dark .RankFactor-progress {
+  background-color: #818cf8;
+}
+
+.Rank--dark .RankFactor-description {
+  color: #9ca3af;
+}

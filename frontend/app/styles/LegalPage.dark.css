@@ -1,0 +1,12 @@
+.LegalPage--dark {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.LegalPage--dark .LegalPage-header p {
+  color: #9ca3af;
+}
+
+.LegalPage--dark .LegalPage-section p {
+  color: #d1d5db;
+}

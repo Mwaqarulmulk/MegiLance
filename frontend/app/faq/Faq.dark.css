@@ -1,0 +1,20 @@
+.Faq--dark {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.Faq--dark .Faq-header p {
+  color: #d1d5db;
+}
+
+.Faq--dark .FaqItem {
+  border-color: #4b5563;
+}
+
+.Faq--dark .FaqItem-question {
+  color: #f9fafb;
+}
+
+.Faq--dark .FaqItem-answer p {
+  color: #d1d5db;
+}

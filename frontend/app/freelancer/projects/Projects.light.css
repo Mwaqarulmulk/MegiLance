@@ -1,0 +1,8 @@
+.Projects--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Projects--light .Projects-header p {
+  color: #6b7280;
+}

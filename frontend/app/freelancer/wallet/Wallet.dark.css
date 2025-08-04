@@ -1,0 +1,21 @@
+.Wallet--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Wallet--dark .Wallet-header p {
+  color: #9ca3af;
+}
+
+.Wallet--dark .Wallet-balance-card {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Wallet--dark .Wallet-balance-card h2 {
+  color: #9ca3af;
+}
+
+.Wallet--dark .Transaction-list-header {
+  color: #9ca3af;
+}

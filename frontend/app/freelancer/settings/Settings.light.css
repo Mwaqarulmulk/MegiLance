@@ -1,0 +1,30 @@
+.Settings--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Settings--light .Settings-header p {
+  color: #6b7280;
+}
+
+.Settings--light .Settings-nav button {
+  color: #374151;
+}
+
+.Settings--light .Settings-nav button:hover {
+  background-color: #f3f4f6;
+}
+
+.Settings--light .Settings-nav button.active {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+
+.Settings--light .Settings-content {
+  border-left: 1px solid #e5e7eb;
+}
+
+.Settings--light .Toggle-group {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}

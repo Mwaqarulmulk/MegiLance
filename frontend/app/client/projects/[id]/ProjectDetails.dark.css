@@ -1,0 +1,28 @@
+.ProjectDetails--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.ProjectDetails--dark .status--In-Progress {
+  background-color: #1e40af;
+  color: #dbeafe;
+}
+
+.ProjectDetails--dark .ProjectDetails-section p {
+  color: #d1d5db;
+}
+
+.ProjectDetails--dark .FreelancerInfoCard, 
+.ProjectDetails--dark .ProposalCard, 
+.ProjectDetails--dark .Sidebar-card {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.ProjectDetails--dark .FreelancerInfo-details span {
+  color: #9ca3af;
+}
+
+.ProjectDetails--dark .ProposalCard p {
+  color: #9ca3af;
+}

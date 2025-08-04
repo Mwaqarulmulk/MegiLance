@@ -1,0 +1,8 @@
+.Projects--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Projects--dark .Projects-header p {
+  color: #9ca3af;
+}

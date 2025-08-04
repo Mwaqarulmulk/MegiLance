@@ -1,0 +1,87 @@
+.Contact {
+  padding: 4rem 2rem;
+}
+
+.Contact-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.Contact-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.Contact-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.Contact-header p {
+  font-size: 1.25rem;
+}
+
+.Contact-content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .Contact-content-wrapper {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.Contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.Contact-form .Input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.Contact-form label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.Contact-form textarea {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.Contact-success-message {
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.Contact-success-message h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.Contact-info-container h3, .Contact-info-container h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.Contact-info-container h4 {
+  margin-top: 2rem;
+}
+
+.Contact-info-container a {
+  text-decoration: none;
+}

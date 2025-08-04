@@ -1,0 +1,29 @@
+.Badge--dark.Badge--default {
+  background-color: #4b5563; /* Gray 600 */
+  color: #d1d5db; /* Gray 300 */
+}
+
+.Badge--dark.Badge--primary {
+  background-color: #312e81; /* Indigo 900 */
+  color: #c7d2fe; /* Indigo 200 */
+}
+
+.Badge--dark.Badge--secondary {
+  background-color: #374151; /* Gray 700 */
+  color: #d1d5db; /* Gray 300 */
+}
+
+.Badge--dark.Badge--success {
+  background-color: #14532d; /* Green 900 */
+  color: #bbf7d0; /* Green 200 */
+}
+
+.Badge--dark.Badge--warning {
+  background-color: #713f12; /* Yellow 900 */
+  color: #fef08a; /* Yellow 200 */
+}
+
+.Badge--dark.Badge--danger {
+  background-color: #7f1d1d; /* Red 900 */
+  color: #fecaca; /* Red 200 */
+}

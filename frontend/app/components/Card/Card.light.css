@@ -1,4 +1,8 @@
-/* @AI-HINT: Light theme overrides for Card. Do not use global or theme CSS. */
+.Card--light {
+  background-color: #ffffff; /* White */
+  border: 1px solid #e5e7eb; /* Gray 200 */
+}
+
 .Card--light {
   background: #fff;
   color: #23272f;

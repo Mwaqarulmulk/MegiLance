@@ -1,0 +1,32 @@
+.Reviews--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Reviews--light .Reviews-header p {
+  color: #6b7280;
+}
+
+.Reviews--light .ReviewForm-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.Reviews--light .ReviewForm-card p {
+  color: #4b5563;
+}
+
+.Reviews--light .star-empty {
+  color: #d1d5db; /* Gray 300 */
+}
+
+.Reviews--light .Textarea {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.Reviews--light .Textarea:focus {
+  outline: 2px solid #4f46e5;
+  border-color: transparent;
+}

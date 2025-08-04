@@ -1,0 +1,29 @@
+.Hire--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Hire--dark .Hire-header p {
+  color: #9ca3af;
+}
+
+.Hire--dark .Hire-card {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Hire--dark .Hire-freelancer-info {
+  border-bottom-color: #374151;
+}
+
+.Hire--dark .Term-item span {
+  color: #9ca3af;
+}
+
+.Hire--dark .Hire-milestone p {
+  color: #9ca3af;
+}
+
+.Hire--dark .Milestone-details {
+  background-color: #374151;
+}

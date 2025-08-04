@@ -1,0 +1,7 @@
+.ProgressBar--light {
+  background-color: #e5e7eb; /* Gray 200 */
+}
+
+.ProgressBar--light .ProgressBar-fill {
+  background-color: #4f46e5; /* Indigo 600 */
+}

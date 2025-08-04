@@ -1,0 +1,42 @@
+.Chatbot--light {
+  background-color: #f3f4f6; /* Gray 100 */
+}
+
+.Card--light {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.Chatbot--light .Chatbot-header {
+  border-bottom-color: #e5e7eb;
+}
+
+.Chatbot--light .status-indicator {
+  color: #16a34a; /* Green 600 */
+}
+
+.Message--user .Message-bubble {
+  background-color: #4f46e5; /* Indigo 600 */
+  color: #ffffff;
+}
+
+.Message--bot .Message-bubble {
+  background-color: #e5e7eb; /* Gray 200 */
+  color: #1f2937;
+}
+
+.Chatbot--light .Chatbot-input-form {
+  border-top-color: #e5e7eb;
+}
+
+.Chatbot-input--light {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.Chatbot-input--light:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}

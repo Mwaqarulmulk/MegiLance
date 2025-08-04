@@ -1,0 +1,119 @@
+.Pricing {
+  padding: 4rem 2rem;
+}
+
+.Pricing-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.Pricing-header {
+  margin-bottom: 4rem;
+}
+
+.Pricing-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.Pricing-header p {
+  font-size: 1.25rem;
+}
+
+.Pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .Pricing-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}
+
+.Pricing-card {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: left;
+  position: relative;
+}
+
+.Pricing-card.popular {
+  transform: scale(1.05);
+}
+
+.Pricing-card-badge {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.Pricing-card h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Pricing-card-price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.Pricing-card-fee {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.Pricing-card-desc {
+  margin-bottom: 1.5rem;
+}
+
+.Pricing-card ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.Pricing-card ul li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.Pricing-card ul li::before {
+  content: '✓';
+  font-weight: 700;
+}
+
+.Pricing-estimator-promo {
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.Pricing-estimator-promo h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Pricing-estimator-promo p {
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
+  line-height: 1.6;
+}

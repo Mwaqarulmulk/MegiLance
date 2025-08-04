@@ -1,0 +1,45 @@
+.FraudCheck--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.FraudCheck--light .FraudCheck-header p {
+  color: #6b7280;
+}
+
+.Card--light {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.Textarea--light {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.Textarea--light:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.AnalysisResult.risk--Low {
+  border-left-color: #22c55e; /* Green 500 */
+  background-color: #f0fdf4; /* Green 50 */
+}
+
+.AnalysisResult.risk--Medium {
+  border-left-color: #f59e0b; /* Amber 500 */
+  background-color: #fffbeb; /* Amber 50 */
+}
+
+.AnalysisResult.risk--High {
+  border-left-color: #ef4444; /* Red 500 */
+  background-color: #fef2f2; /* Red 50 */
+}
+
+.AnalysisResult.risk--Critical {
+  border-left-color: #b91c1c; /* Red 700 */
+  background-color: #fee2e2; /* Red 100 */
+}

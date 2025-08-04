@@ -1,0 +1,12 @@
+.Install--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Install--light .Install-header p {
+  color: #6b7280;
+}
+
+.Install--light .Install-feature p {
+  color: #374151;
+}

@@ -1,0 +1,12 @@
+.Install--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Install--dark .Install-header p {
+  color: #9ca3af;
+}
+
+.Install--dark .Install-feature p {
+  color: #d1d5db;
+}

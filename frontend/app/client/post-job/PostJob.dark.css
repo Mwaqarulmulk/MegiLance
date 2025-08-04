@@ -1,0 +1,23 @@
+.PostJob--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.PostJob--dark .PostJob-header p {
+  color: #9ca3af;
+}
+
+.PostJob--dark .Input-group label {
+  color: #d1d5db;
+}
+
+.PostJob--dark .Textarea, .PostJob--dark .Select {
+  background-color: #1f2937;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.PostJob--dark .Textarea:focus, .PostJob--dark .Select:focus {
+  outline: 2px solid #818cf8;
+  border-color: transparent;
+}

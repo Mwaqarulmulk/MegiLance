@@ -1,0 +1,94 @@
+.Hire {
+  padding: 3rem 2rem;
+}
+
+.Hire-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.Hire-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.Hire-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Hire-header p {
+  font-size: 1.125rem;
+  margin-top: 0.5rem;
+}
+
+.Hire-card {
+  border-radius: 16px;
+  padding: 2.5rem;
+}
+
+.Hire-freelancer-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid;
+}
+
+.Hire-freelancer-info h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.Hire-terms h3, .Hire-milestone h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Terms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.Term-item span {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.Term-item strong {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.Hire-milestone p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.Milestone-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2.5rem;
+}
+
+.Milestone-details strong {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.Hire-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}

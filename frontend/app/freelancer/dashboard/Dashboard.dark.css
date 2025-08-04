@@ -1,0 +1,8 @@
+.Dashboard--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Dashboard--dark .Dashboard-header p {
+  color: #9ca3af;
+}

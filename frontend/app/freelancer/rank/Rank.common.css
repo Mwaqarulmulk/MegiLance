@@ -1,0 +1,120 @@
+.Rank {
+  padding: 2rem 3rem;
+}
+
+.Rank-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.Rank-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.Rank-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Rank-header p {
+  font-size: 1.125rem;
+}
+
+.Rank-display-card {
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.Rank-display-card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.Rank-score-text {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+/* Gauge styles */
+.Rank-gauge {
+  width: 200px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.Rank-gauge-cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 200px 200px 0 0;
+  top: 0;
+  left: 0;
+}
+
+.Rank-gauge-fill {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: inherit;
+  height: inherit;
+  border-radius: 0 0 200px 200px;
+  transform-origin: 50% 0;
+  transition: transform 0.8s ease-in-out;
+}
+
+.Rank-gauge-score {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.Rank-factors h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.Rank-factors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.RankFactor {
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.RankFactor-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.RankFactor-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.RankFactor-progress {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.RankFactor-description {
+  font-size: 0.875rem;
+}

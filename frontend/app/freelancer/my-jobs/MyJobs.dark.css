@@ -1,0 +1,25 @@
+.MyJobs--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.MyJobs--dark .MyJobs-header p {
+  color: #9ca3af;
+}
+
+.MyJobs--dark .JobItem {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.MyJobs--dark .JobItem-status span {
+  color: #d1d5db;
+}
+
+.MyJobs--dark .JobItem-progress-bar {
+  background-color: #4b5563;
+}
+
+.MyJobs--dark .JobItem-progress {
+  background-color: #818cf8;
+}

@@ -1,0 +1,38 @@
+.Projects--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Projects--dark .Projects-header p {
+  color: #9ca3af;
+}
+
+.Projects--dark .ClientProjectCard {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Projects--dark .ClientProjectCard-info {
+  color: #d1d5db;
+}
+
+/* Dark theme status styles */
+.Projects--dark .status--In-Progress {
+  background-color: #1e40af;
+  color: #dbeafe;
+}
+
+.Projects--dark .status--Reviewing-Proposals {
+  background-color: #78350f;
+  color: #fde68a;
+}
+
+.Projects--dark .status--Completed {
+  background-color: #166534;
+  color: #dcfce7;
+}
+
+.Projects--dark .status--Open-for-Proposals {
+    background-color: #065f46;
+    color: #a7f3d0;
+}

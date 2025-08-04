@@ -1,0 +1,23 @@
+.Alert--dark.Alert--info {
+  background-color: #1e293b; /* Slate 800 */
+  border-color: #3b82f6; /* Blue 500 */
+  color: #93c5fd; /* Blue 300 */
+}
+
+.Alert--dark.Alert--success {
+  background-color: #14532d; /* Green 900 */
+  border-color: #4ade80; /* Green 400 */
+  color: #bbf7d0; /* Green 200 */
+}
+
+.Alert--dark.Alert--warning {
+  background-color: #78350f; /* Amber 900 */
+  border-color: #facc15; /* Yellow 400 */
+  color: #fde68a; /* Amber 200 */
+}
+
+.Alert--dark.Alert--danger {
+  background-color: #7f1d1d; /* Red 900 */
+  border-color: #f87171; /* Red 400 */
+  color: #fecaca; /* Red 200 */
+}

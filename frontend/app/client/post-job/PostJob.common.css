@@ -1,0 +1,58 @@
+.PostJob {
+  padding: 2rem 3rem;
+}
+
+.PostJob-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.PostJob-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.PostJob-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.PostJob-header p {
+  font-size: 1.125rem;
+}
+
+.PostJob-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.Input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.Input-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.Textarea, .Select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.PostJob-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.PostJob-form .Button {
+  margin-top: 1rem;
+  align-self: flex-start;
+}

@@ -1,0 +1,23 @@
+.Alert--light.Alert--info {
+  background-color: #eff6ff; /* Blue 50 */
+  border-color: #bfdbfe; /* Blue 200 */
+  color: #1e40af; /* Blue 800 */
+}
+
+.Alert--light.Alert--success {
+  background-color: #f0fdf4; /* Green 50 */
+  border-color: #bbf7d0; /* Green 200 */
+  color: #166534; /* Green 800 */
+}
+
+.Alert--light.Alert--warning {
+  background-color: #fefce8; /* Yellow 50 */
+  border-color: #fef08a; /* Yellow 200 */
+  color: #a16207; /* Yellow 700 */
+}
+
+.Alert--light.Alert--danger {
+  background-color: #fef2f2; /* Red 50 */
+  border-color: #fecaca; /* Red 200 */
+  color: #991b1b; /* Red 800 */
+}

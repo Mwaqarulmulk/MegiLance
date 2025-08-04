@@ -2,7 +2,7 @@
 .Button {
   padding: 0.8em 1.5em;
   border-radius: 8px;
-  border: none;
+  border: 1px solid transparent;
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Inter', Arial, sans-serif;

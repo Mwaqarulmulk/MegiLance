@@ -1,0 +1,44 @@
+.FraudCheck--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.FraudCheck--dark .FraudCheck-header p {
+  color: #9ca3af;
+}
+
+.Card--dark {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.Textarea--dark {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.Textarea--dark:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.AnalysisResult.risk--Low {
+  border-left-color: #4ade80; /* Green 400 */
+  background-color: #162a22; /* Custom Green Dark */
+}
+
+.AnalysisResult.risk--Medium {
+  border-left-color: #facc15; /* Yellow 400 */
+  background-color: #2a2618; /* Custom Yellow Dark */
+}
+
+.AnalysisResult.risk--High {
+  border-left-color: #f87171; /* Red 400 */
+  background-color: #2a1a1a; /* Custom Red Dark */
+}
+
+.AnalysisResult.risk--Critical {
+  border-left-color: #fca5a5; /* Red 300 */
+  background-color: #450a0a; /* Red 950 */
+}

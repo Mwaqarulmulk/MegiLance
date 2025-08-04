@@ -1,0 +1,98 @@
+.Wallet {
+  padding: 2rem 3rem;
+}
+
+.Wallet-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.Wallet-header {
+  margin-bottom: 2.5rem;
+}
+
+.Wallet-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Wallet-header p {
+  font-size: 1.125rem;
+}
+
+.Wallet-main-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 3rem;
+}
+
+.Wallet-balance-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.Wallet-balance-card {
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.Wallet-balance-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.Wallet-balance-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.Payment-methods-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.Payment-methods-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Payment-method {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.Payment-method:not(:last-of-type) {
+  border-bottom: 1px solid;
+}
+
+.Payment-methods-card .Button {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.Wallet-transactions h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.Transaction-list-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: 0 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.Transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

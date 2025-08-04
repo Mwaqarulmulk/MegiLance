@@ -1,0 +1,65 @@
+.Wallet {
+  padding: 2rem 3rem;
+}
+
+.Wallet-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.Wallet-header {
+  margin-bottom: 2.5rem;
+}
+
+.Wallet-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Wallet-header p {
+  font-size: 1.125rem;
+}
+
+.Wallet-overview {
+  margin-bottom: 3rem;
+}
+
+.Wallet-balance-card {
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.Wallet-balance-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.Wallet-balance-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.Wallet-transactions h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.Transaction-list-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: 0 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.Transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

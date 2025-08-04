@@ -1,17 +1,22 @@
-// @AI-HINT: This is the Card component entry point. All styles are per-component only. See Card.common.css, Card.light.css, and Card.dark.css for theming.
-import React, { ReactNode, HTMLAttributes } from "react";
-import "./Card.common.css";
-import "./Card.light.css";
-import "./Card.dark.css";
+// @AI-HINT: This is a Card component, a molecular element used as a reusable container for content sections.
+'use client';
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  theme?: "light" | "dark";
-  children: ReactNode;
+import React from 'react';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import './Card.common.css';
+import './Card.light.css';
+import './Card.dark.css';
+
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
 }
 
-const Card: React.FC<CardProps> = ({ theme = "light", children, ...rest }) => {
+const Card: React.FC<CardProps> = ({ children, className = '' }) => {
+  const { theme } = useTheme();
+
   return (
-    <div className={`Card Card--${theme}`} {...rest}>
+    <div className={`Card Card--${theme} ${className}`}>
       {children}
     </div>
   );

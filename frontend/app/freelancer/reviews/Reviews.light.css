@@ -1,0 +1,26 @@
+.Reviews--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Reviews--light .Reviews-header p {
+  color: #6b7280;
+}
+
+.Reviews--light .Reviews-summary-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.Reviews--light .ReviewItem {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.Reviews--light .ReviewItem-info span {
+  color: #6b7280;
+}
+
+.Reviews--light .ReviewItem-date {
+  color: #6b7280;
+}

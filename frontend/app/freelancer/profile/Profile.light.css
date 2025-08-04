@@ -1,0 +1,23 @@
+.Profile--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Profile--light .Profile-header-info p {
+  color: #6b7280;
+}
+
+.Profile--light .Profile-rank {
+  background-color: #eef2ff;
+  color: #4338ca;
+}
+
+.Profile--light .Profile-textarea {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+}
+
+.Profile--light small {
+  color: #6b7280;
+}

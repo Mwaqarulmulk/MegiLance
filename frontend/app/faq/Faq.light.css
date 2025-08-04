@@ -1,0 +1,20 @@
+.Faq--light {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.Faq--light .Faq-header p {
+  color: #4b5563;
+}
+
+.Faq--light .FaqItem {
+  border-color: #e5e7eb;
+}
+
+.Faq--light .FaqItem-question {
+  color: #111827;
+}
+
+.Faq--light .FaqItem-answer p {
+  color: #374151;
+}

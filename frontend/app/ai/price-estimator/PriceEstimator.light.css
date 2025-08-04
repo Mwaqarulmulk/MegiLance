@@ -1,0 +1,41 @@
+.PriceEstimator--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.PriceEstimator--light .PriceEstimator-header p {
+  color: #6b7280;
+}
+
+.Card--light {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.Input-label--light {
+    color: #374151;
+}
+
+.Textarea--light, .Select--light {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.Textarea--light:focus, .Select--light:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.EstimationResult.Card--light {
+  border-color: #4f46e5;
+}
+
+.EstimationResult--light .price {
+  color: #4f46e5;
+}
+
+.EstimationResult--light small {
+  color: #6b7280;
+}

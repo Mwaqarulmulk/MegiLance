@@ -8,3 +8,13 @@
   color: #fff;
   border: 2px solid #fff;
 }
+
+.Button--outline.Button--dark {
+  background-color: transparent;
+  border-color: #818cf8;
+  color: #818cf8;
+}
+
+.Button--outline.Button--dark:hover {
+  background-color: #312e81;
+}

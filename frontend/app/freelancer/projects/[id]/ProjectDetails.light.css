@@ -1,0 +1,18 @@
+.ProjectDetails--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.ProjectDetails--light .Tag {
+  background-color: #eef2ff;
+  color: #4338ca;
+}
+
+.ProjectDetails--light .ProjectDetails-section p {
+  color: #374151;
+}
+
+.ProjectDetails--light .Sidebar-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}

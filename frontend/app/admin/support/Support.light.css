@@ -1,0 +1,25 @@
+.Support--light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.Support--light .Support-header p {
+  color: #6b7280;
+}
+
+.Support--light .Support-table-container {
+  border: 1px solid #e5e7eb;
+}
+
+.Support--light .Support-table th {
+  background-color: #f9fafb;
+  color: #6b7280;
+}
+
+.Support--light .Support-table tbody tr {
+  border-top: 1px solid #e5e7eb;
+}
+
+.Support--light .Support-table tbody tr:hover {
+  background-color: #f3f4f6;
+}

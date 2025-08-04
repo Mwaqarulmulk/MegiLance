@@ -1,0 +1,95 @@
+.Reviews {
+  padding: 2rem 3rem;
+}
+
+.Reviews-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.Reviews-header {
+  margin-bottom: 2.5rem;
+}
+
+.Reviews-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Reviews-header p {
+  font-size: 1.125rem;
+}
+
+.Reviews-summary-card {
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.Reviews-summary-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Summary-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.Summary-rating-score {
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.StarRating {
+  font-size: 1.5rem;
+}
+
+.star-filled {
+  color: #f59e0b; /* Amber 500 */
+}
+
+.star-empty {
+  color: #d1d5db; /* Gray 300 */
+}
+
+.Reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ReviewItem {
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.ReviewItem-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ReviewItem-info strong {
+  display: block;
+  font-weight: 700;
+}
+
+.ReviewItem-rating {
+  margin-left: auto;
+  text-align: right;
+}
+
+.ReviewItem-date {
+  font-size: 0.875rem;
+}
+
+.ReviewItem-comment {
+  line-height: 1.6;
+}

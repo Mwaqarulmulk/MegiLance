@@ -6,7 +6,7 @@ import './Button.dark.css';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   theme?: 'light' | 'dark';
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'outline';
   fullWidth?: boolean;
 }
 

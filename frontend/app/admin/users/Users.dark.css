@@ -1,0 +1,35 @@
+.Users--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Users--dark .Users-table-container {
+  border: 1px solid #374151;
+}
+
+.Users--dark .Users-table th {
+  background-color: #1f2937;
+  color: #9ca3af;
+}
+
+.Users--dark .Users-table tbody tr {
+  border-top: 1px solid #374151;
+}
+
+.Users--dark .Users-table tbody tr:hover {
+  background-color: #2b3748;
+}
+
+.Users--dark .User-info span {
+  color: #9ca3af;
+}
+
+.Users--dark .status-badge--Active {
+  background-color: #14532d; /* Green 900 */
+  color: #bbf7d0; /* Green 200 */
+}
+
+.Users--dark .status-badge--Suspended {
+  background-color: #7f1d1d; /* Red 900 */
+  color: #fecaca; /* Red 200 */
+}

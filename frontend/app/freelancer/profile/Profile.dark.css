@@ -1,0 +1,23 @@
+.Profile--dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.Profile--dark .Profile-header-info p {
+  color: #9ca3af;
+}
+
+.Profile--dark .Profile-rank {
+  background-color: #3730a3;
+  color: #e0e7ff;
+}
+
+.Profile--dark .Profile-textarea {
+  background-color: #1f2937;
+  border: 1px solid #4b5563;
+  color: #f9fafb;
+}
+
+.Profile--dark small {
+  color: #9ca3af;
+}

@@ -1,0 +1,85 @@
+.Reviews {
+  padding: 2rem 3rem;
+}
+
+.Reviews-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.Reviews-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.Reviews-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.Reviews-header p {
+  font-size: 1.125rem;
+}
+
+.ReviewForm-card {
+  padding: 2.5rem;
+  border-radius: 16px;
+}
+
+.ReviewForm-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.ReviewForm-card p {
+  margin-top: 0.25rem;
+  margin-bottom: 2rem;
+  font-size: 1.125rem;
+}
+
+.Review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.Form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.Form-group label {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.StarRatingInput {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.StarRatingInput button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 2rem;
+  padding: 0;
+}
+
+.star-filled {
+  color: #f59e0b; /* Amber 500 */
+}
+
+.Textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.Review-form .Button {
+  align-self: flex-start;
+}

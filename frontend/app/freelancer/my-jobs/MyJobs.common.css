@@ -1,0 +1,71 @@
+.MyJobs {
+  padding: 2rem 3rem;
+}
+
+.MyJobs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.MyJobs-header {
+  margin-bottom: 2.5rem;
+}
+
+.MyJobs-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.MyJobs-header p {
+  font-size: 1.125rem;
+}
+
+.MyJobs-section {
+  margin-bottom: 3rem;
+}
+
+.MyJobs-section h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.MyJobs-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.JobItem {
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.JobItem .ProjectCard {
+  border: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.JobItem-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.JobItem-status span {
+  font-weight: 600;
+}
+
+.JobItem-progress-bar {
+  flex-grow: 1;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.JobItem-progress {
+  height: 100%;
+  border-radius: 4px;
+}

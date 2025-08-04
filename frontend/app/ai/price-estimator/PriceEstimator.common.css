@@ -1,0 +1,83 @@
+.PriceEstimator {
+  padding: 3rem 1rem;
+}
+
+.PriceEstimator-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.PriceEstimator-header {
+  text-align: center;
+}
+
+.PriceEstimator-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.PriceEstimator-header p {
+  font-size: 1.125rem;
+  margin-top: 0.5rem;
+}
+
+.PriceEstimator-form {
+  padding: 2.5rem;
+  border-radius: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.full-span {
+  grid-column: 1 / -1;
+}
+
+.Textarea, .Select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: 1px solid;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.Textarea:focus, .Select:focus {
+  outline: none;
+}
+
+.Input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.EstimationResult {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+.EstimationResult h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.EstimationResult .price {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.EstimationResult small {
+  font-size: 0.875rem;
+  font-style: italic;
+}
