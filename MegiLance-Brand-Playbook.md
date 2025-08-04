@@ -8,6 +8,7 @@ ai_agent_optimized: true
 
 # 1. Project Metadata
 
+
 | Key         | Value                                      |
 |-------------|--------------------------------------------|
 | Project     | MegiLance                                  |
