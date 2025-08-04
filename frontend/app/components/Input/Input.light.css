@@ -44,13 +44,3 @@
   border-color: #e5e7eb;
   color: #9ca3af;
 }
-
-.Input--light {
-  background: #f4f6f8;
-  color: #23272f;
-  border: 1px solid #ccc;
-}
-.Input--light:focus {
-  border-color: #4573df;
-  background: #fff;
-}

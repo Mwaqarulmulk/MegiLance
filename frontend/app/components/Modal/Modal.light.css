@@ -1,29 +1,40 @@
+:root {
+  --modal-overlay-bg-light: rgba(17, 24, 39, 0.5); /* Gray 900 @ 50% */
+  --modal-content-bg-light: #ffffff;
+  --modal-border-color-light: #e5e7eb; /* Gray 200 */
+  --modal-title-color-light: #111827; /* Gray 900 */
+  --modal-close-icon-color-light: #6b7280; /* Gray 500 */
+  --modal-close-icon-hover-color-light: #111827; /* Gray 900 */
+  --modal-close-bg-hover-light: #f3f4f6; /* Gray 100 */
+  --modal-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
 .Modal-overlay--light {
-  background-color: rgba(17, 24, 39, 0.5); /* Gray 900 with 50% opacity */
+  background-color: var(--modal-overlay-bg-light);
 }
 
 .Modal-content--light {
-  background-color: #ffffff; /* White */
+  background-color: var(--modal-content-bg-light);
+  box-shadow: var(--modal-shadow-light);
 }
 
 .Modal-content--light .Modal-header {
-  border-color: #e5e7eb; /* Gray 200 */
+  border-color: var(--modal-border-color-light);
 }
 
 .Modal-content--light .Modal-title {
-  color: #111827; /* Gray 900 */
+  color: var(--modal-title-color-light);
 }
 
 .Modal-content--light .Modal-close-button {
-  color: #6b7280; /* Gray 500 */
+  color: var(--modal-close-icon-color-light);
 }
 
 .Modal-content--light .Modal-close-button:hover {
-  color: #111827; /* Gray 900 */
+  color: var(--modal-close-icon-hover-color-light);
+  background-color: var(--modal-close-bg-hover-light);
 }
 
-.Modal--light .Modal-content {
-  background: #fff;
-  color: #23272f;
-  border: 1px solid #e2e6ee;
+.Modal-content--light .Modal-footer {
+  border-color: var(--modal-border-color-light);
 }

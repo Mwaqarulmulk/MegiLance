@@ -1,6 +1,22 @@
 /* @AI-HINT: Dark theme overrides for Sidebar. Do not use global or theme CSS. */
-.Sidebar--dark {
-  background: #23272f;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.10);
+
+:root .dark {
+  --sidebar-bg: #1F2937; /* Gray 800 */
+  --sidebar-text-color: #F9FAFB; /* Gray 50 */
+  --sidebar-border-color: #374151; /* Gray 700 */
+  --sidebar-toggle-color: #D1D5DB; /* Gray 300 */
+  --sidebar-toggle-hover-bg: #374151; /* Gray 700 */
+}
+
+.dark .Sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text-color);
+}
+
+.dark .Sidebar-title {
+  color: var(--sidebar-text-color);
+}
+
+.dark .Sidebar-toggle {
+  color: var(--sidebar-toggle-color);
 }

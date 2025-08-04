@@ -1,4 +1,118 @@
 /* @AI-HINT: Dark theme overrides for Notification. Do not use global or theme CSS. */
+
+:root {
+  --notification-bg-dark: #1f2937; /* Gray 800 */
+  --notification-border-dark: #374151; /* Gray 700 */
+  --notification-text-dark: #d1d5db; /* Gray 300 */
+  --notification-title-dark: #f9fafb; /* Gray 50 */
+  --notification-close-hover-dark: rgba(255, 255, 255, 0.1);
+  --notification-focus-dark: #6366f1; /* Indigo 500 */
+  
+  /* Success colors */
+  --notification-success-bg-dark: #064e3b; /* Green 900 */
+  --notification-success-border-dark: #065f46; /* Green 800 */
+  --notification-success-icon-dark: #34d399; /* Green 400 */
+  --notification-success-progress-dark: #34d399;
+  
+  /* Error colors */
+  --notification-error-bg-dark: #7f1d1d; /* Red 900 */
+  --notification-error-border-dark: #991b1b; /* Red 800 */
+  --notification-error-icon-dark: #f87171; /* Red 400 */
+  --notification-error-progress-dark: #f87171;
+  
+  /* Warning colors */
+  --notification-warning-bg-dark: #78350f; /* Amber 900 */
+  --notification-warning-border-dark: #92400e; /* Amber 800 */
+  --notification-warning-icon-dark: #fbbf24; /* Amber 400 */
+  --notification-warning-progress-dark: #fbbf24;
+  
+  /* Info colors */
+  --notification-info-bg-dark: #1e3a8a; /* Blue 900 */
+  --notification-info-border-dark: #1e40af; /* Blue 800 */
+  --notification-info-icon-dark: #60a5fa; /* Blue 400 */
+  --notification-info-progress-dark: #60a5fa;
+}
+
+.Notification--dark {
+  background-color: var(--notification-bg-dark);
+  border: 1px solid var(--notification-border-dark);
+}
+
+.Notification--dark .Notification-title {
+  color: var(--notification-title-dark);
+}
+
+.Notification--dark .Notification-message {
+  color: var(--notification-text-dark);
+}
+
+.Notification--dark .Notification-close:hover {
+  background-color: var(--notification-close-hover-dark);
+}
+
+.Notification--dark:focus {
+  outline-color: var(--notification-focus-dark);
+}
+
+.Notification--dark .Notification-close:focus {
+  outline-color: var(--notification-focus-dark);
+}
+
+/* Success variant */
+.Notification--dark.Notification--success {
+  background-color: var(--notification-success-bg-dark);
+  border-color: var(--notification-success-border-dark);
+}
+
+.Notification--dark.Notification--success .Notification-icon {
+  color: var(--notification-success-icon-dark);
+}
+
+.Notification--dark.Notification--success .Notification-progress {
+  background-color: var(--notification-success-progress-dark);
+}
+
+/* Error variant */
+.Notification--dark.Notification--error {
+  background-color: var(--notification-error-bg-dark);
+  border-color: var(--notification-error-border-dark);
+}
+
+.Notification--dark.Notification--error .Notification-icon {
+  color: var(--notification-error-icon-dark);
+}
+
+.Notification--dark.Notification--error .Notification-progress {
+  background-color: var(--notification-error-progress-dark);
+}
+
+/* Warning variant */
+.Notification--dark.Notification--warning {
+  background-color: var(--notification-warning-bg-dark);
+  border-color: var(--notification-warning-border-dark);
+}
+
+.Notification--dark.Notification--warning .Notification-icon {
+  color: var(--notification-warning-icon-dark);
+}
+
+.Notification--dark.Notification--warning .Notification-progress {
+  background-color: var(--notification-warning-progress-dark);
+}
+
+/* Info variant */
+.Notification--dark.Notification--info {
+  background-color: var(--notification-info-bg-dark);
+  border-color: var(--notification-info-border-dark);
+}
+
+.Notification--dark.Notification--info .Notification-icon {
+  color: var(--notification-info-icon-dark);
+}
+
+.Notification--dark.Notification--info .Notification-progress {
+  background-color: var(--notification-info-progress-dark);
+}
 .Notification--dark {
   background: #23272f;
   color: #fff;

@@ -79,25 +79,7 @@
   box-shadow: none;
 }
 
-.Button--light.Button--primary {
-  background: #4573df; /* Brand Primary (Blue) */
-  color: #fff;
-}
 
-.Button--light.Button--secondary {
-  background: transparent;
-  color: #4573df;
-  border: 2px solid #4573df;
-}
-
-.Button--light.Button--secondary:hover {
-  background-color: #e0e7ff;
-}
-
-.Button--light.Button--danger {
-  background-color: #ef4444; /* Red-500 */
-  color: #ffffff;
-}
 
 .Button--light.Button--danger:hover {
   background-color: #dc2626; /* Red-600 */

@@ -1,7 +1,63 @@
-.ProgressBar--dark {
-  background-color: #374151; /* Gray 700 */
+:root {
+  --progressbar-bg-dark: #1f2937; /* Gray 800 */
+  --progressbar-track-dark: #374151; /* Gray 700 */
+  --progressbar-text-dark: #d1d5db; /* Gray 300 */
+  --progressbar-percentage-dark: #f9fafb; /* Gray 50 */
+  --progressbar-focus-dark: #6366f1; /* Indigo 500 */
+  
+  /* Default variant */
+  --progressbar-default-dark: #818cf8; /* Indigo 400 */
+  
+  /* Success variant */
+  --progressbar-success-dark: #34d399; /* Green 400 */
+  
+  /* Error variant */
+  --progressbar-error-dark: #f87171; /* Red 400 */
+  
+  /* Warning variant */
+  --progressbar-warning-dark: #fbbf24; /* Amber 400 */
+  
+  /* Info variant */
+  --progressbar-info-dark: #60a5fa; /* Blue 400 */
 }
 
-.ProgressBar--dark .ProgressBar-fill {
-  background-color: #818cf8; /* Indigo 400 */
+.ProgressBar--dark {
+  background-color: var(--progressbar-track-dark);
+}
+
+.ProgressBar--dark .ProgressBar-label {
+  color: var(--progressbar-text-dark);
+}
+
+.ProgressBar--dark .ProgressBar-percentage {
+  color: var(--progressbar-percentage-dark);
+}
+
+.ProgressBar--dark:focus {
+  outline-color: var(--progressbar-focus-dark);
+}
+
+/* Default variant */
+.ProgressBar--dark.ProgressBar--default .ProgressBar-fill {
+  background-color: var(--progressbar-default-dark);
+}
+
+/* Success variant */
+.ProgressBar--dark.ProgressBar--success .ProgressBar-fill {
+  background-color: var(--progressbar-success-dark);
+}
+
+/* Error variant */
+.ProgressBar--dark.ProgressBar--error .ProgressBar-fill {
+  background-color: var(--progressbar-error-dark);
+}
+
+/* Warning variant */
+.ProgressBar--dark.ProgressBar--warning .ProgressBar-fill {
+  background-color: var(--progressbar-warning-dark);
+}
+
+/* Info variant */
+.ProgressBar--dark.ProgressBar--info .ProgressBar-fill {
+  background-color: var(--progressbar-info-dark);
 }

@@ -1,24 +1,44 @@
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
 .Modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+  font-family: 'Inter', sans-serif;
 }
 
 .Modal-content {
   position: relative;
-  max-width: 500px;
-  width: 90%;
-  border-radius: 0.75rem; /* 12px */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 95%;
   max-height: 90vh;
+  border-radius: 0.75rem; /* 12px */
   display: flex;
   flex-direction: column;
+  outline: none;
+  animation: slideIn 0.25s ease-out;
+}
+
+/* Size Variants */
+.Modal-content--small {
+  max-width: 400px;
+}
+.Modal-content--medium {
+  max-width: 600px;
+}
+.Modal-content--large {
+  max-width: 800px;
 }
 
 .Modal-header {
@@ -26,13 +46,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
+  border-bottom: 1px solid;
+  flex-shrink: 0;
 }
 
 .Modal-title {
   font-size: 1.25rem;
   font-weight: 600;
+  margin: 0;
 }
 
 .Modal-close-button {
@@ -41,53 +62,25 @@
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
-  padding: 0;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
 }
 
 .Modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+  flex-grow: 1;
 }
 
-.Modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 9999;
+.Modal-footer {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.Modal-backdrop {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(44, 48, 60, 0.45);
-  z-index: 1;
-}
-.Modal-content {
-  position: relative;
-  z-index: 2;
-  background: inherit;
-  border-radius: 14px;
-  min-width: 320px;
-  max-width: 90vw;
-  box-shadow: 0 8px 32px 0 rgba(60,60,136,0.13);
-  padding: 2em 1.5em 1em 1.5em;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-.Modal-header h2 {
-  margin: 0 0 1em 0;
-  font-size: 1.22rem;
-  font-weight: 600;
-}
-.Modal-close {
-  position: absolute;
-  top: 1em;
-  right: 1em;
-  background: none;
-  border: none;
-  font-size: 1.3em;
-  cursor: pointer;
-  color: inherit;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid;
+  flex-shrink: 0;
 }

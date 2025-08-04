@@ -33,6 +33,21 @@
 /* ---------------------------------------- */
 /* --- Base & Layout -------------------- */
 /* ---------------------------------------- */
+.Dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.Dashboard-main-content {
+  flex-grow: 1;
+  padding-left: var(--sidebar-width, 260px); /* Match sidebar width */
+  transition: padding-left 0.3s ease;
+}
+
+.Sidebar-collapsed ~ .Dashboard-main-content {
+  padding-left: var(--sidebar-collapsed-width, 80px); /* Match collapsed sidebar width */
+}
+
 .Dashboard {
   display: flex;
   height: 100vh;
@@ -197,117 +212,24 @@
   grid-column: span 1 / span 1;
 }
 
-/* ---------------------------------------- */
-/* --- Cards (Project, Activity) -------- */
-/* ---------------------------------------- */
-.Dashboard-card {
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  transition: var(--transition-std);
-}
-
-.Dashboard-card:hover {
-  border-color: var(--color-border-hover);
-  box-shadow: var(--shadow-card-hover);
-}
-
 .Dashboard-projects-list,
 .Dashboard-activity-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 1rem;
+  margin-top: 1rem; /* Space below widget header */
 }
 
-/* Project Card */
-.Dashboard-project-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  background-color: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-lg);
-  transition: var(--transition-std);
-}
-
-.Dashboard-project-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-brand-primary);
-}
-
-.Dashboard-project-header {
+.Dashboard-project-item, .Dashboard-activity-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-4);
-}
-
-.Dashboard-project-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.Dashboard-project-status {
-  font-size: 12px;
-  font-weight: 500;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-}
-
-.Dashboard-project-meta {
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
-  font-size: 13px;
-  color: var(--color-text-secondary);
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--dashboard-border-color);
 }
 
-.Dashboard-project-meta > div {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.Dashboard-project-meta .icon {
-  width: 16px;
-  height: 16px;
-}
-
-.Dashboard-project-progress {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.Dashboard-progress-bar {
-  flex-grow: 1;
-  height: 8px;
-  background-color: var(--color-bg-tertiary);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.Dashboard-progress-fill {
-  height: 100%;
-  background-color: var(--color-brand-primary);
-  border-radius: var(--radius-full);
-  transition: width 0.5s ease;
-}
-
-.Dashboard-progress-text {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-}
-
-/* Activity Item */
-.Dashboard-activity-item {
-  display: flex;
+.Dashboard-projects-list .Dashboard-project-item:last-child,
+.Dashboard-activity-list .Dashboard-activity-item:last-child {
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-3) 0;

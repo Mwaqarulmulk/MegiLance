@@ -1,4 +1,15 @@
+:root {
+  --tooltip-bg-dark: #f3f4f6; /* Gray 100 */
+  --tooltip-text-dark: #1f2937; /* Gray 800 */
+  --tooltip-shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+}
+
 .Tooltip--dark {
-  background-color: #f9fafb; /* Gray 50 */
-  color: #111827; /* Gray 900 */
+  background-color: var(--tooltip-bg-dark);
+  color: var(--tooltip-text-dark);
+  box-shadow: var(--tooltip-shadow-dark);
+}
+
+.Tooltip--dark .Tooltip-arrow::before {
+  background-color: var(--tooltip-bg-dark);
 }

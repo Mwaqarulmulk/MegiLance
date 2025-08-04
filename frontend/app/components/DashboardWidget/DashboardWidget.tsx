@@ -7,12 +7,17 @@ import "./DashboardWidget.dark.css";
 export interface DashboardWidgetProps {
   theme?: "light" | "dark";
   title: string;
-  value: string | number;
+  value?: string | number;
   icon?: React.ReactNode | string;
   footer?: React.ReactNode;
   trend?: string;
   trendType?: 'positive' | 'negative' | 'neutral';
   onClick?: () => void;
+  children?: React.ReactNode;
+  actionButton?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 const DashboardWidget: React.FC<DashboardWidgetProps> = ({ 
@@ -23,7 +28,9 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
   footer, 
   trend, 
   trendType = 'neutral',
-  onClick 
+  onClick,
+  children,
+  actionButton
 }) => {
   return (
     <div 
@@ -33,12 +40,23 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       <div className="DashboardWidget-header">
         {icon && <span className="DashboardWidget-icon">{icon}</span>}
         <span className="DashboardWidget-title">{title}</span>
+        {actionButton && (
+          <button onClick={actionButton.onClick} className="DashboardWidget-action-btn">
+            {actionButton.label}
+          </button>
+        )}
       </div>
-      <div className="DashboardWidget-value">{value}</div>
-      {trend && (
-        <div className={`DashboardWidget-trend DashboardWidget-trend--${trendType}`}>
-          <span className="DashboardWidget-trend-text">{trend}</span>
-        </div>
+      {children ? (
+        <div className="DashboardWidget-content">{children}</div>
+      ) : (
+        <>
+          <div className="DashboardWidget-value">{value}</div>
+          {trend && (
+            <div className={`DashboardWidget-trend DashboardWidget-trend--${trendType}`}>
+              <span className="DashboardWidget-trend-text">{trend}</span>
+            </div>
+          )}
+        </>
       )}
       {footer && <div className="DashboardWidget-footer">{footer}</div>}
     </div>

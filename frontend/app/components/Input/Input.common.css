@@ -93,26 +93,3 @@
 .Input-wrapper--disabled .Input-field {
   cursor: not-allowed;
 }
-
-.Input-error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-
-.Input {
-  width: 100%;
-  padding: 0.8em 1em;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: 'Inter', Arial, sans-serif;
-  box-sizing: border-box;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.Input:focus {
-  outline: none;
-  border-color: #2F80ED;
-  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
-}

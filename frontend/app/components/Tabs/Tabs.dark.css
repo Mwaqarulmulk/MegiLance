@@ -1,16 +1,29 @@
+:root {
+  --tabs-border-dark: #4b5563; /* Gray 600 */
+  --tabs-text-dark: #9ca3af; /* Gray 400 */
+  --tabs-text-hover-dark: #f9fafb; /* Gray 50 */
+  --tabs-active-border-dark: #818cf8; /* Indigo 400 */
+  --tabs-active-text-dark: #818cf8; /* Indigo 400 */
+  --tabs-focus-outline-dark: #6366f1; /* Indigo 500 */
+}
+
 .Tabs--dark .Tabs-list {
-  border-color: #4b5563; /* Gray 600 */
+  border-color: var(--tabs-border-dark);
 }
 
-.Tabs--dark .Tabs-button {
-  color: #9ca3af; /* Gray 400 */
+.Tabs--dark .Tabs-tab {
+  color: var(--tabs-text-dark);
 }
 
-.Tabs--dark .Tabs-button:hover {
-  color: #f9fafb; /* Gray 50 */
+.Tabs--dark .Tabs-tab:hover {
+  color: var(--tabs-text-hover-dark);
 }
 
-.Tabs--dark .Tabs-button.active {
-  color: #a5b4fc; /* Indigo 300 */
-  border-color: #a5b4fc; /* Indigo 300 */
+.Tabs--dark .Tabs-tab[aria-selected='true'] {
+  color: var(--tabs-active-text-dark);
+  border-color: var(--tabs-active-border-dark);
+}
+
+.Tabs--dark .Tabs-tab:focus-visible {
+  outline-color: var(--tabs-focus-outline-dark);
 }

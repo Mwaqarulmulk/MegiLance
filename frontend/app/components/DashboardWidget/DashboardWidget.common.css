@@ -26,6 +26,7 @@
 .DashboardWidget-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.7em;
   margin-bottom: 0.7em;
 }
@@ -82,6 +83,25 @@
   color: #888;
   margin-top: auto;
   margin-bottom: -0.2em;
+}
+.DashboardWidget-content {
+  flex-grow: 1;
+  margin-top: 0.5em;
+}
+.DashboardWidget-action-btn {
+  background-color: var(--button-bg, #f0f2f5);
+  color: var(--button-text, #333);
+  border: 1px solid var(--button-border, #ddd);
+  padding: 0.4em 0.8em;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.DashboardWidget-action-btn:hover {
+  background-color: var(--button-hover-bg, #e9ecef);
+  border-color: var(--button-hover-border, #ccc);
 }
 @media (max-width: 600px) {
   .DashboardWidget {

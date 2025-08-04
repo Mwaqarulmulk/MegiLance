@@ -1,0 +1,22 @@
+/* @AI-HINT: Light theme styles for the SidebarNav component. */
+
+:root {
+  --sidebar-nav-item-text-color: #374151; /* Gray-700 */
+  --sidebar-nav-item-hover-bg: #F3F4F6; /* Gray-100 */
+  --sidebar-nav-item-active-bg: #E0E7FF; /* Indigo-100 */
+  --sidebar-nav-item-active-text-color: #4338CA; /* Indigo-700 */
+}
+
+.SidebarNavItem-link {
+  color: var(--sidebar-nav-item-text-color);
+}
+
+.SidebarNavItem-link:hover {
+  background-color: var(--sidebar-nav-item-hover-bg);
+}
+
+.SidebarNavItem-link-active {
+  background-color: var(--sidebar-nav-item-active-bg);
+  color: var(--sidebar-nav-item-active-text-color);
+  font-weight: 600;
+}

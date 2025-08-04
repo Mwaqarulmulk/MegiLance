@@ -44,13 +44,3 @@
   border-color: #2d333a;
   color: #6b7280;
 }
-
-.Input-wrapper .Input-label {
-  /* A bit of a hack until we can get the theme to the wrapper */
-  color: #e2e6ee;
-}
-
-.Input--dark:focus {
-  border-color: #4573df;
-  background: #1d2127;
-}

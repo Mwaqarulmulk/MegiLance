@@ -1,16 +1,29 @@
+:root {
+  --tabs-border-light: #d1d5db; /* Gray 300 */
+  --tabs-text-light: #6b7280; /* Gray 500 */
+  --tabs-text-hover-light: #111827; /* Gray 900 */
+  --tabs-active-border-light: #4f46e5; /* Indigo 600 */
+  --tabs-active-text-light: #4f46e5; /* Indigo 600 */
+  --tabs-focus-outline-light: #a5b4fc; /* Indigo 300 */
+}
+
 .Tabs--light .Tabs-list {
-  border-color: #d1d5db; /* Gray 300 */
+  border-color: var(--tabs-border-light);
 }
 
-.Tabs--light .Tabs-button {
-  color: #6b7280; /* Gray 500 */
+.Tabs--light .Tabs-tab {
+  color: var(--tabs-text-light);
 }
 
-.Tabs--light .Tabs-button:hover {
-  color: #111827; /* Gray 900 */
+.Tabs--light .Tabs-tab:hover {
+  color: var(--tabs-text-hover-light);
 }
 
-.Tabs--light .Tabs-button.active {
-  color: #4f46e5; /* Indigo 600 */
-  border-color: #4f46e5; /* Indigo 600 */
+.Tabs--light .Tabs-tab[aria-selected='true'] {
+  color: var(--tabs-active-text-light);
+  border-color: var(--tabs-active-border-light);
+}
+
+.Tabs--light .Tabs-tab:focus-visible {
+  outline-color: var(--tabs-focus-outline-light);
 }

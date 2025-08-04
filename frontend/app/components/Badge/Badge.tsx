@@ -2,20 +2,43 @@
 'use client';
 
 import React from 'react';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import './Badge.common.css';
 import './Badge.light.css';
 import './Badge.dark.css';
 
-interface BadgeProps {
+export interface BadgeProps {
   children: React.ReactNode;
   variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
-  theme?: 'light' | 'dark';
+  size?: 'small' | 'medium';
+  iconBefore?: React.ReactNode;
+  iconAfter?: React.ReactNode;
+  className?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({ children, variant = 'default', theme = 'light' }) => {
+const Badge: React.FC<BadgeProps> = ({
+  children,
+  variant = 'default',
+  size = 'medium',
+  iconBefore,
+  iconAfter,
+  className = '',
+}) => {
+  const { theme } = useTheme();
+
+  const badgeClasses = [
+    'Badge',
+    `Badge--${variant}`,
+    `Badge--${theme}`,
+    `Badge--${size}`,
+    className,
+  ].filter(Boolean).join(' ');
+
   return (
-    <span className={`Badge Badge--${variant} Badge--${theme}`}>
+    <span className={badgeClasses}>
+      {iconBefore && <span className="Badge-icon Badge-icon--before">{iconBefore}</span>}
       {children}
+      {iconAfter && <span className="Badge-icon Badge-icon--after">{iconAfter}</span>}
     </span>
   );
 };

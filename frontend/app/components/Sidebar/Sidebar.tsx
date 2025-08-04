@@ -1,18 +1,50 @@
-// @AI-HINT: This is the Sidebar component entry point. All styles are per-component only. See Sidebar.common.css, Sidebar.light.css, and Sidebar.dark.css for theming.
-import React, { ReactNode, HTMLAttributes } from "react";
-import "./Sidebar.common.css";
-import "./Sidebar.light.css";
-import "./Sidebar.dark.css";
+// @AI-HINT: This is the Sidebar component. It provides the main navigation for the application dashboard. It is designed to be responsive, themed, and accessible.
+'use client';
 
-interface SidebarProps extends HTMLAttributes<HTMLElement> {
-  theme?: "light" | "dark";
-  children?: ReactNode;
+import React, { useState, ReactNode, Children, cloneElement, isValidElement } from 'react';
+import Link from 'next/link';
+import { MegiLanceLogo } from '../Public/MegiLanceLogo';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+
+import './Sidebar.common.css';
+import './Sidebar.light.css';
+import './Sidebar.dark.css';
+
+export interface SidebarProps {
+  children: ReactNode; // To hold SidebarNav
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ theme = "light", children, ...rest }) => {
+const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <aside className={`Sidebar Sidebar--${theme}`} {...rest}>
-      {children}
+    <aside className={`Sidebar ${isCollapsed ? 'Sidebar-collapsed' : ''}`}>
+      <div className="Sidebar-header">
+        <Link href="/dashboard" className="Sidebar-logo-link">
+          <MegiLanceLogo />
+          <h1 className="Sidebar-title">MegiLance</h1>
+        </Link>
+      </div>
+
+      <div className="Sidebar-content">
+        {Children.map(children, (child) => {
+          if (isValidElement(child)) {
+            // @ts-ignore - Intentionally passing a prop the child component will use.
+            return cloneElement(child, { isCollapsed });
+          }
+          return child;
+        })}
+      </div>
+
+      <div className="Sidebar-footer">
+        <button onClick={toggleCollapse} className="Sidebar-toggle" aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+          {isCollapsed ? <FaAngleRight /> : <FaAngleLeft />}
+        </button>
+      </div>
     </aside>
   );
 };

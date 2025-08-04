@@ -1,14 +1,37 @@
 .Badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25em 0.6em;
-  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1;
-  text-align: center;
   white-space: nowrap;
-  vertical-align: baseline;
+  vertical-align: middle; /* Better alignment */
   border-radius: 9999px;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-/* Variant styles will be defined in theme-specific files */
+/* Size Variants */
+.Badge--small {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.Badge--medium {
+  padding: 0.25rem 0.65rem;
+  font-size: 0.875rem;
+}
+
+/* Icon Styles */
+.Badge-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.1em; /* Relative to parent font-size */
+}
+
+.Badge-icon--before {
+  margin-right: 0.35em;
+}
+
+.Badge-icon--after {
+  margin-left: 0.35em;
+}

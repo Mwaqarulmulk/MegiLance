@@ -1,13 +1,101 @@
 /* @AI-HINT: Shared styles for Sidebar component. Do not use or import any global or theme CSS. */
+
 .Sidebar {
-  width: 220px;
-  min-height: 80vh;
-  border-radius: 10px;
-  margin: 2rem 0.5rem;
-  padding: 1.5rem 1rem;
-  font-family: 'Inter', Arial, sans-serif;
-  box-shadow: 0 2px 8px rgba(44, 50, 58, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  width: var(--sidebar-width, 260px);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s ease;
+  z-index: 1000;
+}
+
+.Sidebar-collapsed {
+  width: var(--sidebar-collapsed-width, 80px);
+}
+
+.Sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  height: var(--navbar-height, 64px);
+  border-bottom: 1px solid var(--sidebar-border-color);
+}
+
+.Sidebar-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 0.75rem;
+  overflow: hidden;
+}
+
+.Sidebar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.Sidebar-collapsed .Sidebar-title {
+  opacity: 0;
+  width: 0;
+}
+
+.Sidebar-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.Sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--sidebar-border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.Sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-md);
+}
+
+.Sidebar-toggle:hover {
+  background-color: var(--sidebar-toggle-hover-bg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .Sidebar {
+    transform: translateX(-100%);
+    width: var(--sidebar-width, 260px);
+  }
+
+  .Sidebar.Sidebar-mobile-open {
+    transform: translateX(0);
+  }
+
+  .Sidebar-collapsed {
+    transform: translateX(-100%);
+  }
+
+  .Sidebar-title {
+    opacity: 1;
+    width: auto;
+  }
+
+  .Sidebar-collapsed .Sidebar-title {
+    opacity: 0;
+    width: 0;
+  }
 }

@@ -1,74 +1,95 @@
 /* @AI-HINT: Light theme styles for Dashboard following MegiLance brand guidelines. Professional, clean styling with proper contrast and accessibility. */
 
+:root {
+  --dashboard-bg: #F9FAFB; /* Gray 50 */
+  --dashboard-text-primary: #1F2937; /* Gray 800 */
+  --dashboard-text-secondary: #6B7280; /* Gray 500 */
+  --dashboard-border-color: #E5E7EB; /* Gray 200 */
+  --dashboard-title-color: #111827; /* Gray 900 */
+  --dashboard-subtitle-color: #4B5563; /* Gray 600 */
+  --dashboard-icon-color: #4B5563; /* Gray 600 */
+  --dashboard-badge-bg: #EF4444; /* Red 500 */
+  --dashboard-badge-text-color: #FFFFFF;
+
+  /* Status Badges */
+  --status-inprogress-bg: #DBEAFE; /* Blue 100 */
+  --status-inprogress-text: #1E40AF; /* Blue 800 */
+  --status-review-bg: #FEF3C7; /* Amber 100 */
+  --status-review-text: #92400E; /* Amber 800 */
+  --status-completed-bg: #D1FAE5; /* Green 100 */
+  --status-completed-text: #065F46; /* Green 800 */
+}
+
 .Dashboard--light {
-  background-color: #ffffff;
-  color: #23272f;
+  background-color: var(--dashboard-bg);
+  color: var(--dashboard-text-primary);
 }
 
 /* Sidebar Light Theme */
 .Dashboard--light .Dashboard-sidebar {
-  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-  border-right-color: #e5e7eb;
+  background: linear-gradient(180deg, var(--dashboard-bg) 0%, #F9FAFB 100%);
+  border-right-color: var(--dashboard-border-color);
 }
 
 .Dashboard--light .Dashboard-logo-text {
-  color: #4573df;
+  color: var(--dashboard-icon-color);
 }
 
 /* Header Light Theme */
 .Dashboard--light .Dashboard-header {
   background: rgba(255, 255, 255, 0.95);
-  border-bottom-color: #e5e7eb;
+  border-bottom-color: var(--dashboard-border-color);
 }
 
 .Dashboard--light .Dashboard-title {
-  color: #23272f;
+  color: var(--dashboard-title-color);
 }
 
 .Dashboard--light .Dashboard-subtitle {
-  color: var(--color-text-secondary);
+  color: var(--dashboard-subtitle-color);
 }
 
 .Dashboard--light .Dashboard-notification-btn {
-  color: var(--color-text-primary);
+  color: var(--dashboard-text-primary);
 }
 
 .Dashboard--light .Dashboard-notification-btn:hover {
-  background: var(--color-bg-tertiary);
+  background: var(--dashboard-bg);
 }
 
 /* Content Light Theme */
 .Dashboard--light .Dashboard-content {
-  background: var(--color-bg-primary);
+  background: var(--dashboard-bg);
 }
 
 .Dashboard--light .Dashboard-section-title {
-  color: var(--color-text-title);
+  color: var(--dashboard-title-color);
 }
 
 /* Action Cards Light Theme */
 .Dashboard--light .Dashboard-action-card {
-  background: var(--color-bg-secondary);
-  border-color: var(--color-border-primary);
-  color: var(--color-text-primary);
+  background: var(--dashboard-bg);
+  border-color: var(--dashboard-border-color);
+  color: var(--dashboard-text-primary);
   box-shadow: var(--shadow-card);
 }
 
 .Dashboard--light .Dashboard-action-card:hover {
-  border-color: var(--color-border-hover);
-  background: var(--color-bg-tertiary);
+  border-color: var(--dashboard-border-color);
+  background: var(--dashboard-bg);
   box-shadow: var(--shadow-card-hover);
 }
 
 /* Projects Section Light Theme */
 .Dashboard--light .Dashboard-projects {
-  background: var(--color-bg-secondary);
-  border-color: var(--color-border-primary);
+  background: var(--dashboard-bg);
+  border-color: var(--dashboard-border-color);
   box-shadow: var(--shadow-card);
 }
 
 .Dashboard--light .Dashboard-project-card {
-  background: var(--color-bg-secondary);
+  background: var(--dashboard-bg);
+  border-color: var(--dashboard-border-color);
   border-color: var(--color-border-primary);
 }
 

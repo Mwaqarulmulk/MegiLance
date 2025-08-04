@@ -1,34 +1,45 @@
+:root {
+  --badge-default-bg-dark: #4b5563;      /* Gray 600 */
+  --badge-default-text-dark: #d1d5db;     /* Gray 300 */
+  --badge-primary-bg-dark: #312e81;      /* Indigo 900 */
+  --badge-primary-text-dark: #c7d2fe;     /* Indigo 200 */
+  --badge-secondary-bg-dark: #374151;    /* Gray 700 */
+  --badge-secondary-text-dark: #d1d5db;   /* Gray 300 */
+  --badge-success-bg-dark: #14532d;      /* Green 900 */
+  --badge-success-text-dark: #bbf7d0;     /* Green 200 */
+  --badge-warning-bg-dark: #713f12;      /* Yellow 900 */
+  --badge-warning-text-dark: #fef08a;     /* Yellow 200 */
+  --badge-danger-bg-dark: #7f1d1d;       /* Red 900 */
+  --badge-danger-text-dark: #fecaca;      /* Red 200 */
+  --badge-info-bg-dark: #1e293b;         /* Slate 800 */
+  --badge-info-text-dark: #93c5fd;        /* Blue 300 */
+}
+
 .Badge--dark.Badge--default {
-  background-color: #4b5563; /* Gray 600 */
-  color: #d1d5db; /* Gray 300 */
+  background-color: var(--badge-default-bg-dark);
+  color: var(--badge-default-text-dark);
 }
-
 .Badge--dark.Badge--primary {
-  background-color: #312e81; /* Indigo 900 */
-  color: #c7d2fe; /* Indigo 200 */
+  background-color: var(--badge-primary-bg-dark);
+  color: var(--badge-primary-text-dark);
 }
-
 .Badge--dark.Badge--secondary {
-  background-color: #374151; /* Gray 700 */
-  color: #d1d5db; /* Gray 300 */
+  background-color: var(--badge-secondary-bg-dark);
+  color: var(--badge-secondary-text-dark);
 }
-
 .Badge--dark.Badge--success {
-  background-color: #14532d; /* Green 900 */
-  color: #bbf7d0; /* Green 200 */
+  background-color: var(--badge-success-bg-dark);
+  color: var(--badge-success-text-dark);
 }
-
 .Badge--dark.Badge--warning {
-  background-color: #713f12; /* Yellow 900 */
-  color: #fef08a; /* Yellow 200 */
+  background-color: var(--badge-warning-bg-dark);
+  color: var(--badge-warning-text-dark);
 }
-
 .Badge--dark.Badge--danger {
-  background-color: #fca5a5; /* Red-300 */
-  color: #7f1d1d; /* Red-900 */
+  background-color: var(--badge-danger-bg-dark);
+  color: var(--badge-danger-text-dark);
 }
-
 .Badge--dark.Badge--info {
-  background-color: #a5b4fc; /* Indigo-300 */
-  color: #312e81; /* Indigo-900 */
+  background-color: var(--badge-info-bg-dark);
+  color: var(--badge-info-text-dark);
 }

@@ -1,9 +1,11 @@
 // @AI-HINT: Enterprise-grade Dashboard component for MegiLance platform. Features comprehensive metrics, activity feeds, project management, and responsive design following brand guidelines. Uses per-component CSS architecture with theme support.
+// @AI-HINT: Enterprise-grade Dashboard component for MegiLance platform. Features comprehensive metrics, activity feeds, project management, and responsive design following brand guidelines. Uses per-component CSS architecture with theme support.
 import React from 'react';
-import Navbar, { NavItem } from '@/app/components/Navbar/Navbar';
+import Navbar, { NavItem as NavbarNavItem } from '@/app/components/Navbar/Navbar';
 import { ProfileMenuItem } from '@/app/components/ProfileMenu/ProfileMenu';
-import { FaBell, FaCog, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import SidebarNav from '@/app/components/SidebarNav/SidebarNav';
+import Sidebar from '@/app/components/Sidebar/Sidebar';
+import SidebarNav, { NavItem as SidebarNavItem } from '@/app/components/Sidebar/SidebarNav';
+import { FaBell, FaCog, FaUser, FaSignOutAlt, FaTachometerAlt, FaBriefcase, FaComments, FaCreditCard, FaCogs, FaChartBar, FaClipboardCheck, FaUsers, FaFileSignature, FaSearch, FaUniversity, FaUserEdit } from 'react-icons/fa';
 import DashboardWidget from '@/app/components/DashboardWidget/DashboardWidget';
 import './dashboard.common.css';
 import './dashboard.light.css';
@@ -15,7 +17,7 @@ interface DashboardProps {
 
 const user = { name: 'Alexia Christian', email: 'alexia.c@megilance.com' };
 
-const navItems: NavItem[] = [
+const navItems: NavbarNavItem[] = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Projects', href: '/projects' },
   { label: 'Tasks', href: '/tasks' },
@@ -29,12 +31,12 @@ const profileMenuItems: ProfileMenuItem[] = [
 ];
 
 const Dashboard: React.FC<DashboardProps> = ({ theme = 'light' }) => {
-  const sidebarLinks = [
-    { label: 'Dashboard', href: '/dashboard', icon: '📊' },
-    { label: 'Projects', href: '/projects', icon: '💼' },
-    { label: 'Messages', href: '/messages', icon: '💬' },
-    { label: 'Payments', href: '/payments', icon: '💰' },
-    { label: 'Settings', href: '/settings', icon: '⚙️' },
+  const sidebarNavItems: SidebarNavItem[] = [
+    { href: '/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
+    { href: '/projects', label: 'Projects', icon: FaBriefcase },
+    { href: '/messages', label: 'Messages', icon: FaComments },
+    { href: '/payments', label: 'Payments', icon: FaCreditCard },
+    { href: '/settings', label: 'Settings', icon: FaCogs },
   ];
 
   const recentProjects = [
@@ -44,81 +46,32 @@ const Dashboard: React.FC<DashboardProps> = ({ theme = 'light' }) => {
   ];
 
   const recentActivity = [
-    { id: 1, message: 'Received payment from Innovate Inc.', time: '2h ago', amount: '+$15,000', icon: 'dollar-sign' },
-    { id: 2, message: 'Task "Deploy to Staging" completed', time: '5h ago', icon: 'check-circle' },
-    { id: 3, message: 'New project "Brand Redesign" created', time: '1d ago', icon: 'briefcase' },
-    { id: 4, message: '@jane.doe joined the AI Dashboard team', time: '2d ago', icon: 'user-plus' },
-  ];
-
-  const quickActions = [
-    { id: 1, label: 'Create Proposal', icon: '📝', action: 'proposal' },
-    { id: 2, label: 'Browse Jobs', icon: '🔍', action: 'browse' },
-    { id: 3, label: 'Withdraw Funds', icon: '🏦', action: 'withdraw' },
-    { id: 4, label: 'Update Profile', icon: '👤', action: 'profile' },
+    { id: 1, message: 'Received payment from Innovate Inc.', time: '2h ago' },
+    { id: 2, message: 'Task "Deploy to Staging" completed', time: '5h ago' },
+    { id: 3, message: 'New project "Brand Redesign" created', time: '1d ago' },
+    { id: 4, message: '@jane.doe joined the AI Dashboard team', time: '2d ago' },
   ];
 
   const metrics = [
-    { id: 1, label: 'Active Projects', value: '12', icon: 'briefcase' },
-    { id: 2, label: 'Pending Tasks', value: '8', icon: 'clipboard-check' },
-    { id: 3, label: 'Team Members', value: '24', icon: 'users' },
-    { id: 4, label: 'Revenue', value: '$45.8K', icon: 'chart-bar' },
+    { id: 1, label: 'Active Projects', value: '12', icon: <FaBriefcase /> },
+    { id: 2, label: 'Pending Tasks', value: '8', icon: <FaClipboardCheck /> },
+    { id: 3, label: 'Team Members', value: '24', icon: <FaUsers /> },
+    { id: 4, label: 'Revenue', value: '$45.8K', icon: <FaChartBar /> },
   ];
-
-  const logo = (
-    <div className="flex items-center gap-2">
-      <svg className="h-8 w-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2L2 7l10 5 10-5-10-5-10 5z" />
-      </svg>
-      <span className="text-xl font-bold">MegiLance</span>
-    </div>
-  );
-
-  const Icon = ({ name, className }: { name: string; className?: string }) => {
-    const iconPaths: { [key: string]: React.ReactNode } = {
-      briefcase: <><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></>,
-      users: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></>,
-      user: <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></>,
-      'logo-icon': <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>,
-      // Add other icons here
-    };
-
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className={`icon icon-${name} ${className || ''}`}
-      >
-        {iconPaths[name] || <circle cx="12" cy="12" r="10" />}{/* Fallback icon */}
-      </svg>
-    );
-  };
 
   return (
     <div className={`Dashboard Dashboard--${theme}`}>
       <div className="Dashboard-container">
-        <aside className="Dashboard-sidebar">
-          <div className="Dashboard-logo">
-            <h1 className="Dashboard-logo-text">MegiLance</h1>
-            <span className="Dashboard-logo-badge">Pro</span>
-          </div>
-          <SidebarNav theme={theme} navItems={sidebarLinks} />
-        </aside>
+        <Sidebar>
+          <SidebarNav navItems={sidebarNavItems} />
+        </Sidebar>
         
-        <div className="Dashboard-main-wrapper">
+        <div className="Dashboard-main-content">
           <Navbar
-            theme={theme}
             navItems={navItems}
             profileMenuItems={profileMenuItems}
             userName={user.name}
             userEmail={user.email}
-            logo={logo}
           />
           <main className="Dashboard-main">
             <header className="Dashboard-header">
@@ -137,88 +90,41 @@ const Dashboard: React.FC<DashboardProps> = ({ theme = 'light' }) => {
             </header>
 
             <div className="Dashboard-content">
-              {/* Key Metrics Section */}
-              <section className="Dashboard-metrics">
-                <div className="Dashboard-metrics-grid">
-                  {metrics.map(metric => (
-                    <div key={metric.id} className="Dashboard-card">
-                      <Icon name={metric.icon} />
-                      <span>{metric.label}</span>
-                      <strong>{metric.value}</strong>
-                    </div>
-                  ))}
-                </div>
-              </section>
+              <div className="Dashboard-metrics-grid">
+                {metrics.map(metric => (
+                  <DashboardWidget key={metric.id} icon={metric.icon} title={metric.label} value={metric.value} />
+                ))}
+              </div>
 
-              {/* Quick Actions */}
-              <section className="Dashboard-quick-actions">
-                <h2 className="Dashboard-section-title">Quick Actions</h2>
-                <div className="Dashboard-actions-grid">
-                  {quickActions.map(action => (
-                    <button key={action.id} className="Dashboard-card">
-                      <Icon name={action.icon} />
-                      <span>{action.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <div className="Dashboard-content-grid">
-                {/* Recent Projects */}
-                <section className="Dashboard-projects">
-                  <div className="Dashboard-section-header">
-                    <h2 className="Dashboard-section-title">Recent Projects</h2>
-                    <button className="Dashboard-section-action">View All</button>
-                  </div>
+              <div className="Dashboard-main-grid">
+                <DashboardWidget title="Recent Projects" actionButton={{ label: 'View All', onClick: () => alert('Viewing all projects...') }}>
                   <div className="Dashboard-projects-list">
                     {recentProjects.map(project => (
-                      <div key={project.id} className="Dashboard-project-card">
-                        <div className="Dashboard-project-header">
+                      <div key={project.id} className="Dashboard-project-item">
+                        <div className="Dashboard-project-info">
                           <h3 className="Dashboard-project-title">{project.title}</h3>
-                          <span className={`Dashboard-project-status Dashboard-project-status--${project.status.toLowerCase().replace(' ', '-')}`}>
-                            {project.status}
-                          </span>
+                          <p className="Dashboard-project-client">{project.client}</p>
                         </div>
-                        <div className="Dashboard-project-meta">
-                          <span className="Dashboard-project-client">👤 {project.client}</span>
-                          <span className="Dashboard-project-budget">💰 {project.budget}</span>
-                          <span className="Dashboard-project-deadline">📅 {project.deadline}</span>
-                        </div>
-                        <div className="Dashboard-project-progress">
-                          <div className="Dashboard-progress-bar">
-                            <div 
-                              className="Dashboard-progress-fill" 
-                              data-progress={project.progress}
-                            ></div>
-                          </div>
-                          <span className="Dashboard-progress-text">{project.progress}%</span>
+                        <div className="Dashboard-project-status">
+                          <span className={`status-badge status-${project.status.toLowerCase().replace(' ', '-')}`}>{project.status}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                </section>
+                </DashboardWidget>
 
-                {/* Recent Activity */}
-                <section className="Dashboard-activity">
-                  <div className="Dashboard-section-header">
-                    <h2 className="Dashboard-section-title">Recent Activity</h2>
-                    <button className="Dashboard-section-action">View All</button>
-                  </div>
+                <DashboardWidget title="Recent Activity" actionButton={{ label: 'View All', onClick: () => alert('Viewing all activity...') }}>
                   <div className="Dashboard-activity-list">
                     {recentActivity.map(item => (
                       <div key={item.id} className="Dashboard-activity-item">
-                        <div className="Dashboard-activity-icon">{item.icon}</div>
                         <div className="Dashboard-activity-content">
                           <p className="Dashboard-activity-message">{item.message}</p>
                           <span className="Dashboard-activity-time">{item.time}</span>
                         </div>
-                        {item.amount && (
-                          <div className="Dashboard-activity-amount">{item.amount}</div>
-                        )}
                       </div>
                     ))}
                   </div>
-                </section>
+                </DashboardWidget>
               </div>
             </div>
           </main>

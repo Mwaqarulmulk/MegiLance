@@ -1,6 +1,22 @@
 /* @AI-HINT: Light theme overrides for Sidebar. Do not use global or theme CSS. */
-.Sidebar--light {
-  background: #fff;
-  color: #23272f;
-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.04);
+
+:root {
+  --sidebar-bg: #FFFFFF;
+  --sidebar-text-color: #111827; /* Gray 900 */
+  --sidebar-border-color: #E5E7EB; /* Gray 200 */
+  --sidebar-toggle-color: #4B5563; /* Gray 600 */
+  --sidebar-toggle-hover-bg: #F3F4F6; /* Gray 100 */
+}
+
+.Sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text-color);
+}
+
+.Sidebar-title {
+  color: var(--sidebar-text-color);
+}
+
+.Sidebar-toggle {
+  color: var(--sidebar-toggle-color);
 }

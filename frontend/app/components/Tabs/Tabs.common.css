@@ -1,21 +1,42 @@
-.Tabs-list {
-  display: flex;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.Tabs-button {
-  padding: 0.75rem 1.5rem;
-  margin-bottom: -1px; /* To make the active tab's bottom border overlap the list's border */
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
+.Tabs {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.Tabs-list {
+  display: flex;
+  border-bottom: 1px solid;
+}
+
+.Tabs-tab {
+  padding: 0.75rem 1.25rem;
   font-size: 1rem;
-  font-weight: 500;
-  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  font-weight: 600;
+  background-color: transparent;
+  border: none;
   border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px; /* Overlap the list's border-bottom */
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.Tabs-tab:focus-visible {
+  outline: 2px solid;
+  outline-offset: -2px;
+  border-radius: 0.375rem; /* 6px */
 }
 
 .Tabs-panel {
-  padding: 1.5rem 0;
+  padding: 1.5rem 0.25rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.Tabs-panel[hidden] {
+  display: none;
 }

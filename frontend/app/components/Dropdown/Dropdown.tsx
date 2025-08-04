@@ -1,7 +1,8 @@
 // @AI-HINT: This is a Dropdown component, a molecular element for selecting an option from a list.
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
+import { IoChevronDown } from 'react-icons/io5';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import './Dropdown.common.css';
 import './Dropdown.light.css';
@@ -12,21 +13,27 @@ export interface DropdownOption {
   label: string;
 }
 
-interface DropdownProps {
+export interface DropdownProps {
   options: DropdownOption[];
   selected: DropdownOption | null;
   onSelect: (option: DropdownOption) => void;
   placeholder?: string;
+  className?: string;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeholder = 'Select...' }) => {
+const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeholder = 'Select...', className = '' }) => {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listId = useId();
+  const labelId = useId();
 
   const handleSelect = (option: DropdownOption) => {
     onSelect(option);
     setIsOpen(false);
+    triggerRef.current?.focus();
   };
 
   useEffect(() => {
@@ -35,25 +42,87 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeh
         setIsOpen(false);
       }
     };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      switch (event.key) {
+        case 'Escape':
+          setIsOpen(false);
+          triggerRef.current?.focus();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          setFocusedIndex((prevIndex) => (prevIndex + 1) % options.length);
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          setFocusedIndex((prevIndex) => (prevIndex - 1 + options.length) % options.length);
+          break;
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          if (focusedIndex >= 0) {
+            handleSelect(options[focusedIndex]);
+          }
+          break;
+        case 'Home':
+            event.preventDefault();
+            setFocusedIndex(0);
+            break;
+        case 'End':
+            event.preventDefault();
+            setFocusedIndex(options.length - 1);
+            break;
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [isOpen, focusedIndex, options, handleSelect]);
+
+  useEffect(() => {
+    if (isOpen && focusedIndex !== -1) {
+      const optionElement = document.getElementById(`${listId}-option-${focusedIndex}`);
+      optionElement?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [isOpen, focusedIndex, listId]);
 
   return (
-    <div className={`Dropdown Dropdown--${theme}`} ref={dropdownRef}>
-      <div className="Dropdown-selected" onClick={() => setIsOpen(!isOpen)}>
-        {selected ? selected.label : placeholder}
-        <span className={`Dropdown-caret ${isOpen ? 'open' : ''}`}>▼</span>
-      </div>
+    <div className={`Dropdown Dropdown--${theme} ${className}`} ref={dropdownRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className="Dropdown-trigger"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls={listId}
+        aria-labelledby={`${labelId} ${triggerRef.current?.id}`}
+      >
+        <span id={labelId}>{selected ? selected.label : placeholder}</span>
+        <IoChevronDown className={`Dropdown-caret ${isOpen ? 'open' : ''}`} />
+      </button>
       {isOpen && (
-        <ul className="Dropdown-options">
-          {options.map((option) => (
+        <ul
+          id={listId}
+          className="Dropdown-options"
+          role="listbox"
+          aria-activedescendant={focusedIndex >= 0 ? `${listId}-option-${focusedIndex}` : undefined}
+        >
+          {options.map((option, index) => (
             <li
+              id={`${listId}-option-${index}`}
               key={option.value}
-              className="Dropdown-option"
+              className={`Dropdown-option ${focusedIndex === index ? 'focused' : ''}`}
               onClick={() => handleSelect(option)}
+              onMouseEnter={() => setFocusedIndex(index)}
+              role="option"
+              aria-selected={selected?.value === option.value}
             >
               {option.label}
             </li>
