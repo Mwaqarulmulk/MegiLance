@@ -130,7 +130,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
               })()}
             </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );

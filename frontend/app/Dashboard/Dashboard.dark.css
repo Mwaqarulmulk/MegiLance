@@ -1,6 +1,44 @@
 /* @AI-HINT: Dark theme styles for Dashboard following MegiLance brand guidelines. Professional dark mode with proper contrast, accessibility, and visual hierarchy. */
 
 .Dashboard--dark {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+.Dashboard--dark .Dashboard-main {
+  background-color: #111827;
+}
+
+.Dashboard--dark .Dashboard-title {
+  color: #f9fafb;
+}
+
+.Dashboard--dark .Dashboard-subtitle {
+  color: #9ca3af;
+}
+
+.Dashboard--dark .Dashboard-notification-btn {
+  background: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.Dashboard--dark .Dashboard-notification-btn:hover {
+  background: #4b5563;
+  border-color: #6b7280;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.Dashboard--dark .Dashboard-notification-icon {
+  color: #d1d5db;
+}
+
+.Dashboard--dark .Dashboard-notification-badge {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.Dashboard--dark {
   background-color: #1d2127;
   color: #ffffff;
 }

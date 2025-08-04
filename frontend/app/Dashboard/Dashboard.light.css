@@ -1,5 +1,43 @@
 /* @AI-HINT: Light theme styles for Dashboard following MegiLance brand guidelines. Professional, clean styling with proper contrast and accessibility. */
 
+.Dashboard--light {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.Dashboard--light .Dashboard-main {
+  background-color: #f8fafc;
+}
+
+.Dashboard--light .Dashboard-title {
+  color: #111827;
+}
+
+.Dashboard--light .Dashboard-subtitle {
+  color: #6b7280;
+}
+
+.Dashboard--light .Dashboard-notification-btn {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  color: #374151;
+}
+
+.Dashboard--light .Dashboard-notification-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.Dashboard--light .Dashboard-notification-icon {
+  color: #6b7280;
+}
+
+.Dashboard--light .Dashboard-notification-badge {
+  background: #ef4444;
+  color: #ffffff;
+}
+
 :root {
   --dashboard-bg: #F9FAFB; /* Gray 50 */
   --dashboard-text-primary: #1F2937; /* Gray 800 */
