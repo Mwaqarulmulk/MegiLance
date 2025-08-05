@@ -1,12 +1,12 @@
 /* @AI-HINT: Light theme styles for the AppearanceSettings component. */
 
 .AppearanceSettings-button:hover {
-  border-color: var(--color-gray-400);
-  background-color: var(--color-gray-100);
+  border-color: var(--border);
+  background-color: var(--surface);
 }
 
 .AppearanceSettings-button.is-active {
-  background-color: var(--color-brand-primary-50);
-  border-color: var(--color-brand-primary-500);
-  color: var(--color-brand-primary-600);
+  background-color: var(--surface-alt);
+  border-color: var(--primary);
+  color: var(--primary);
 }

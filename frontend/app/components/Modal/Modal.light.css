@@ -8,16 +8,16 @@
  * ------------------------------------------------------------------------ */
 
 .Modal-overlay {
-  --modal-overlay-bg: var(--color-brand-overlay-light);
+  --modal-overlay-bg: var(--overlay-light);
 }
 
 .Modal-content {
-  --modal-bg: var(--color-brand-white);
-  --modal-border: var(--color-brand-gray-200);
+  --modal-bg: var(--surface);
+  --modal-border: var(--border);
   --modal-shadow: var(--shadow-modal-light);
-  --modal-title-text: var(--color-brand-gray-900);
-  --modal-body-text: var(--color-brand-gray-700);
-  --modal-close-icon: var(--color-brand-gray-500);
-  --modal-close-icon-hover: var(--color-brand-gray-900);
-  --modal-close-bg-hover: var(--color-brand-gray-100);
+  --modal-title-text: var(--text-primary);
+  --modal-body-text: var(--text-secondary);
+  --modal-close-icon: var(--text-secondary);
+  --modal-close-icon-hover: var(--text-primary);
+  --modal-close-bg-hover: var(--surface-hover);
 }

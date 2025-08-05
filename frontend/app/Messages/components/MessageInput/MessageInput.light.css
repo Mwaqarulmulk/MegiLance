@@ -1,5 +1,5 @@
 /* @AI-HINT: Light theme styles for the MessageInput component. */
 
 .MessageInput-input:focus {
-  box-shadow: 0 0 0 3px var(--color-brand-primary-100);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
 }

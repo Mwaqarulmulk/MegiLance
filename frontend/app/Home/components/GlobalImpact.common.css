@@ -27,8 +27,8 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   margin-bottom: var(--spacing-6);
-  background: linear-gradient(135deg, var(--color-brand-success), var(--color-brand-primary));
-  color: white;
+  background: linear-gradient(135deg, var(--success), var(--primary));
+  color: var(--text-on-primary);
 }
 
 .GlobalImpact-badge-icon {
@@ -41,11 +41,11 @@
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   margin-bottom: var(--spacing-6);
-  color: var(--color-brand-text-main);
+  color: var(--text-primary);
 }
 
 .GlobalImpact-title-highlight {
-  background: linear-gradient(135deg, var(--color-brand-success), var(--color-brand-primary));
+  background: linear-gradient(135deg, var(--success), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -54,7 +54,7 @@
 .GlobalImpact-subtitle {
   font-size: var(--font-size-lg);
   line-height: 1.6;
-  color: var(--color-brand-text-secondary);
+  color: var(--text-secondary);
   max-width: 700px;
   margin: 0 auto;
 }
@@ -71,8 +71,8 @@
   gap: var(--spacing-4);
   padding: var(--spacing-6);
   border-radius: var(--border-radius-xl);
-  background: var(--color-brand-background-elevated);
-  border: 1px solid var(--color-brand-border);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
   transition: all var(--transition-duration-normal) var(--transition-timing-function-ease);
 }
 
@@ -88,8 +88,8 @@
   width: 60px;
   height: 60px;
   border-radius: var(--border-radius-lg);
-  background: linear-gradient(135deg, var(--color-brand-success), var(--color-brand-primary));
-  color: white;
+  background: linear-gradient(135deg, var(--success), var(--primary));
+  color: var(--text-on-primary);
   font-size: var(--font-size-xl);
   flex-shrink: 0;
 }
@@ -109,13 +109,13 @@
 .GlobalImpact-stat-label {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
-  color: var(--color-brand-text-main);
+  color: var(--text-primary);
   margin-bottom: var(--spacing-1);
 }
 
 .GlobalImpact-stat-description {
   font-size: var(--font-size-sm);
-  color: var(--color-brand-text-secondary);
+  color: var(--text-secondary);
 }
 
 .GlobalImpact-mission {
@@ -126,8 +126,8 @@
   margin-bottom: var(--spacing-16);
   padding: var(--spacing-12);
   border-radius: var(--border-radius-xl);
-  background: var(--color-brand-background-elevated);
-  border: 1px solid var(--color-brand-border);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
 }
 
 .GlobalImpact-mission-title {
@@ -135,13 +135,13 @@
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--spacing-4);
-  color: var(--color-brand-text-main);
+  color: var(--text-primary);
 }
 
 .GlobalImpact-mission-text {
   font-size: var(--font-size-base);
   line-height: 1.6;
-  color: var(--color-brand-text-secondary);
+  color: var(--text-secondary);
   margin-bottom: var(--spacing-6);
 }
 
@@ -160,14 +160,14 @@
 }
 
 .GlobalImpact-mission-feature-icon {
-  color: var(--color-brand-success);
+  color: var(--success);
   font-size: var(--font-size-lg);
 }
 
 .GlobalImpact-world-map {
   position: relative;
   height: 300px;
-  background: radial-gradient(circle at center, var(--color-brand-primary) 1px, transparent 1px);
+  background: radial-gradient(circle at center, var(--primary) 1px, transparent 1px);
   background-size: 20px 20px;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
@@ -183,7 +183,7 @@
   position: absolute;
   width: 12px;
   height: 12px;
-  background: var(--color-brand-success);
+  background: var(--success);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -214,7 +214,7 @@
   left: -6px;
   width: 24px;
   height: 24px;
-  border: 2px solid var(--color-brand-success);
+  border: 2px solid var(--success);
   border-radius: 50%;
   animation: pulse-ring 2s infinite;
 }
@@ -226,11 +226,11 @@
   transform: translateX(-50%);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  color: var(--color-brand-text-main);
-  background: var(--color-brand-background-elevated);
+  color: var(--text-primary);
+  background: var(--surface-alt);
   padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--border-radius-sm);
-  border: 1px solid var(--color-brand-border);
+  border: 1px solid var(--border);
   white-space: nowrap;
   opacity: 0;
   transition: opacity var(--transition-duration-fast) var(--transition-timing-function-ease);
@@ -249,7 +249,7 @@
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--spacing-8);
-  color: var(--color-brand-text-main);
+  color: var(--text-primary);
 }
 
 .GlobalImpact-stories-grid {
@@ -261,8 +261,8 @@
 .GlobalImpact-story {
   padding: var(--spacing-6);
   border-radius: var(--border-radius-xl);
-  background: var(--color-brand-background-elevated);
-  border: 1px solid var(--color-brand-border);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
   text-align: left;
   transition: all var(--transition-duration-normal) var(--transition-timing-function-ease);
 }
@@ -282,8 +282,8 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-brand-success), var(--color-brand-primary));
-  color: white;
+  background: linear-gradient(135deg, var(--success), var(--primary));
+  color: var(--text-on-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -293,19 +293,19 @@
 
 .GlobalImpact-story-name {
   font-weight: var(--font-weight-bold);
-  color: var(--color-brand-text-main);
+  color: var(--text-primary);
   margin-bottom: var(--spacing-1);
 }
 
 .GlobalImpact-story-role {
   font-size: var(--font-size-sm);
-  color: var(--color-brand-primary);
+  color: var(--primary);
   font-weight: var(--font-weight-medium);
 }
 
 .GlobalImpact-story-location {
   font-size: var(--font-size-xs);
-  color: var(--color-brand-text-tertiary);
+  color: var(--text-tertiary);
 }
 
 .GlobalImpact-story-achievement {
@@ -314,15 +314,15 @@
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  background: var(--color-brand-success);
-  color: white;
+  background: var(--success);
+  color: var(--text-on-primary);
   margin-bottom: var(--spacing-4);
 }
 
 .GlobalImpact-story-quote {
   font-style: italic;
-  color: var(--color-brand-text-secondary);
-  border-left: 3px solid var(--color-brand-primary);
+  color: var(--text-secondary);
+  border-left: 3px solid var(--primary);
   padding-left: var(--spacing-4);
   margin: 0;
 }

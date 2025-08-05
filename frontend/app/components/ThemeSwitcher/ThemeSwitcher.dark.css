@@ -8,9 +8,9 @@
  * ------------------------------------------------------------------------ */
 
 .Dashboard--dark .ThemeSwitcher {
-  --themeswitcher-bg: var(--color-brand-gray-800);
-  --themeswitcher-text: var(--color-brand-gray-300);
-  --themeswitcher-border: var(--color-brand-gray-600);
-  --themeswitcher-bg-hover: var(--color-brand-gray-700);
-  --themeswitcher-text-hover: var(--color-brand-white);
+  --themeswitcher-bg: var(--surface-alt);
+  --themeswitcher-text: var(--text-secondary);
+  --themeswitcher-border: var(--border);
+  --themeswitcher-bg-hover: var(--surface);
+  --themeswitcher-text-hover: var(--text-primary);
 }

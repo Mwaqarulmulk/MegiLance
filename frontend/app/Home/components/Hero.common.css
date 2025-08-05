@@ -39,8 +39,8 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   margin-bottom: var(--spacing-6);
-  border: 1px solid var(--color-brand-primary);
-  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent));
+  border: 1px solid var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   color: white;
   animation: pulse 2s infinite;
 }
@@ -55,14 +55,14 @@
   font-weight: var(--font-weight-bold);
   line-height: 1.1;
   margin-bottom: var(--spacing-6);
-  background: linear-gradient(135deg, var(--color-brand-text-main), var(--color-brand-primary));
+  background: linear-gradient(135deg, var(--text-primary), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .Hero-title-highlight {
-  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -72,7 +72,7 @@
   font-size: var(--font-size-xl);
   line-height: 1.6;
   margin-bottom: var(--spacing-8);
-  color: var(--color-brand-text-secondary);
+  color: var(--text-secondary);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -104,7 +104,7 @@
 
 .Hero-feature-icon {
   font-size: var(--font-size-lg);
-  color: var(--color-brand-primary);
+  color: var(--primary);
 }
 
 .Hero-cta {
@@ -126,7 +126,7 @@
 .Hero-trust-text {
   display: block;
   font-size: var(--font-size-sm);
-  color: var(--color-brand-text-tertiary);
+  color: var(--text-tertiary);
   margin-bottom: var(--spacing-3);
 }
 
@@ -142,8 +142,8 @@
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  background: var(--color-brand-gray-100);
-  color: var(--color-brand-text-secondary);
+  background: var(--surface);
+  color: var(--text-secondary);
 }
 
 .Hero-stats {
@@ -154,7 +154,7 @@
   padding: var(--spacing-8);
   border-radius: var(--border-radius-xl);
   background: transparent;
-  border: 1px solid var(--color-brand-border);
+  border: 1px solid var(--border);
 }
 
 .Hero-stat {
@@ -165,13 +165,13 @@
   font-family: var(--font-family-headings);
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-brand-primary);
+  color: var(--primary);
   margin-bottom: var(--spacing-1);
 }
 
 .Hero-stat-label {
   font-size: var(--font-size-sm);
-  color: var(--color-brand-text-secondary);
+  color: var(--text-secondary);
   font-weight: var(--font-weight-medium);
 }
 
@@ -196,7 +196,7 @@
 .Hero-gradient-orb--primary {
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   top: 10%;
   right: 10%;
   animation-delay: 0s;
@@ -205,7 +205,7 @@
 .Hero-gradient-orb--secondary {
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, var(--color-brand-accent), var(--color-brand-success));
+  background: linear-gradient(135deg, var(--accent), var(--success));
   bottom: 10%;
   left: 10%;
   animation-delay: 3s;
@@ -217,8 +217,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(circle at 25% 25%, var(--color-brand-primary) 1px, transparent 1px),
-                    radial-gradient(circle at 75% 75%, var(--color-brand-accent) 1px, transparent 1px);
+  background-image: radial-gradient(circle at 25% 25%, var(--primary) 1px, transparent 1px),
+                    radial-gradient(circle at 75% 75%, var(--accent) 1px, transparent 1px);
   background-size: 50px 50px;
   opacity: 0.05;
 }

@@ -60,8 +60,8 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: var(--color-brand-danger-500);
-  color: var(--color-brand-white);
+  background: var(--error);
+  color: var(--text-on-color);
   font-size: 10px;
   font-weight: var(--font-weight-semibold);
   height: 18px;

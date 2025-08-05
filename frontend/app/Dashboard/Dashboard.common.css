@@ -14,11 +14,11 @@
   display: grid;
   grid-template-columns: var(--size-sidebar-width) 1fr;
   transition: grid-template-columns var(--transition-duration-normal) var(--transition-timing-function-ease);
-  background: var(--color-brand-background-light);
+  background: var(--surface);
   font-family: var(--font-family-body);
   font-size: var(--font-size-body);
   line-height: var(--line-height-body);
-  color: var(--color-brand-text-main);
+  color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
   
@@ -46,10 +46,10 @@
   position: relative;
   
   /* Premium container with subtle depth */
-  background: var(--color-brand-background-light);
+  background: var(--surface);
   border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   box-shadow: 
-    0 -1px 0 0 var(--color-brand-gray-200),
+    0 -1px 0 0 var(--border),
     0 1px 3px 0 rgba(0, 0, 0, 0.05);
   
   /* Smooth transitions for premium feel */
@@ -69,12 +69,12 @@
   gap: var(--spacing-xl);
   
   /* Premium main content area with perfect spacing */
-  background: var(--color-brand-background-light);
+  background: var(--surface);
   position: relative;
   
   /* Subtle grid pattern for premium SaaS feel */
   background-image: 
-    radial-gradient(circle at 1px 1px, var(--color-brand-gray-100) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, var(--surface-alt) 1px, transparent 0);
   background-size: 24px 24px;
   background-position: 0 0;
   
@@ -88,18 +88,18 @@
   }
   
   &::-webkit-scrollbar-track {
-    background: var(--color-brand-gray-100);
+    background: var(--surface-alt);
     border-radius: var(--border-radius-full);
   }
   
   &::-webkit-scrollbar-thumb {
-    background: var(--color-brand-gray-300);
+    background: var(--border);
     border-radius: var(--border-radius-full);
     transition: background var(--transition-duration-fast) var(--transition-timing-ease);
   }
   
   &::-webkit-scrollbar-thumb:hover {
-    background: var(--color-brand-primary-500);
+    background: var(--primary);
   }
 }
 

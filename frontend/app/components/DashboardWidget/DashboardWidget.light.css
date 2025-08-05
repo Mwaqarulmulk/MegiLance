@@ -1,20 +1,20 @@
 /* @AI-HINT: Light theme for DashboardWidget. Brand-compliant metrics card, trend colors, and clickable state. */
 
 .DashboardWidget--light {
-  --widget-bg: var(--color-brand-white);
-  --widget-border-color: var(--color-brand-gray-200);
-  --widget-border-color-hover: var(--color-brand-primary-500);
-  --widget-icon-bg: var(--color-brand-gray-100);
-  --widget-icon-color: var(--color-brand-primary-600);
-  --widget-title-color: var(--color-brand-gray-500);
-  --widget-value-color: var(--color-brand-gray-800);
-  --widget-trend-positive-color: var(--color-brand-success-600);
-  --widget-trend-negative-color: var(--color-brand-error-600);
-  --widget-trend-neutral-color: var(--color-brand-gray-500);
-  --widget-footer-color: var(--color-brand-gray-500);
-  --widget-button-bg: var(--color-brand-gray-100);
-  --widget-button-text-color: var(--color-brand-gray-700);
-  --widget-button-border-color: var(--color-brand-gray-300);
-  --widget-button-bg-hover: var(--color-brand-gray-200);
-  --widget-button-border-color-hover: var(--color-brand-gray-400);
+  --widget-bg: var(--surface);
+  --widget-border-color: var(--border);
+  --widget-border-color-hover: var(--primary);
+  --widget-icon-bg: var(--surface-alt);
+  --widget-icon-color: var(--primary-strong);
+  --widget-title-color: var(--text-secondary);
+  --widget-value-color: var(--text-primary);
+  --widget-trend-positive-color: var(--success-strong);
+  --widget-trend-negative-color: var(--error-strong);
+  --widget-trend-neutral-color: var(--text-secondary);
+  --widget-footer-color: var(--text-secondary);
+  --widget-button-bg: var(--surface-alt);
+  --widget-button-text-color: var(--text-primary);
+  --widget-button-border-color: var(--border);
+  --widget-button-bg-hover: var(--surface-alt-hover);
+  --widget-button-border-color-hover: var(--border-hover);
 }

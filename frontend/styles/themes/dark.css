@@ -10,7 +10,7 @@ crucial for maintaining a scalable and maintainable codebase. */
   /* Semantic Colors */
   --success-27AE60: #27AE60;
   --error-e81123: #e81123;
-  --warning-F2C94C: #F2C94C;
+  --warning-f2c94c: #F2C94C;
 
   /* UI Surfaces & Backgrounds */
   --background-1d2127: #1d2127;
@@ -27,15 +27,15 @@ crucial for maintaining a scalable and maintainable codebase. */
   --text-on-dark-f5f7fa: #f5f7fa;
 
   /* Extended Brand Palette (remain the same) */
-  --brand-indigo-3C3C88: #3C3C88;
-  --brand-electric-blue-2F80ED: #2F80ED;
+  --brand-indigo-3c3c88: #3C3C88;
+  --brand-electric-blue-2f80ed: #2F80ED;
 
   /* Abstracted Theme Variables (for component use) */
   --primary: var(--primary-4573df);
   --accent: var(--accent-ff9800);
   --success: var(--success-27AE60);
   --error: var(--error-e81123);
-  --warning: var(--warning-F2C94C);
+  --warning: var(--warning-f2c94c);
   --background: var(--background-1d2127);
   --surface: var(--surface-272b32);
   --surface-alt: var(--surface-alt-2c323a);
@@ -46,8 +46,8 @@ crucial for maintaining a scalable and maintainable codebase. */
   --text-on-primary: var(--text-on-primary-ffffff);
   --text-on-accent: var(--text-on-accent-ffffff);
   --text-on-dark: var(--text-on-dark-f5f7fa);
-  --brand-indigo: var(--brand-indigo-3C3C88);
-  --brand-electric-blue: var(--brand-electric-blue-2F80ED);
+  --brand-indigo: var(--brand-indigo-3c3c88);
+  --brand-electric-blue: var(--brand-electric-blue-2f80ed);
 }
 
 

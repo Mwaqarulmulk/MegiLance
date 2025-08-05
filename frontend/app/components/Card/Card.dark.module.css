@@ -8,7 +8,7 @@
 
 .card:hover {
   background-color: var(--surface-alt);
-  border-color: var(--color-brand-primary-700);
+  border-color: var(--primary);
 }
 
 .cardTitle {
@@ -16,5 +16,5 @@
 }
 
 .cardIcon {
-  color: var(--color-brand-primary-400);
+  color: var(--primary);
 }

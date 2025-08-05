@@ -10,12 +10,12 @@ crucial for maintaining a scalable and maintainable codebase. */
   /* Semantic Colors */
   --success-27AE60: #27AE60;
   --error-e81123: #e81123;
-  --warning-F2C94C: #F2C94C;
+  --warning-f2c94c: #F2C94C;
 
   /* UI Surfaces & Backgrounds */
   --background-ffffff: #ffffff;
   --surface-f5f7fa: #f5f7fa; /* For cards, forms, light containers */
-  --surface-alt-F4F6F8: #F4F6F8; /* A slightly different gray for variation */
+  --surface-alt-f4f6f8: #F4F6F8; /* A slightly different gray for variation */
   --container-dark-2c323a: #2c323a; /* For dark elements in light mode, e.g., modals */
   --border-e0e0e0: #e0e0e0; /* A light border color */
 
@@ -27,18 +27,18 @@ crucial for maintaining a scalable and maintainable codebase. */
   --text-on-dark-ffffff: #ffffff;
 
   /* Extended Brand Palette (for specific use cases) */
-  --brand-indigo-3C3C88: #3C3C88;
-  --brand-electric-blue-2F80ED: #2F80ED;
+  --brand-indigo-3c3c88: #3C3C88;
+  --brand-electric-blue-2f80ed: #2F80ED;
 
   /* Abstracted Theme Variables (for component use) */
   --primary: var(--primary-4573df);
   --accent: var(--accent-ff9800);
   --success: var(--success-27AE60);
   --error: var(--error-e81123);
-  --warning: var(--warning-F2C94C);
+  --warning: var(--warning-f2c94c);
   --background: var(--background-ffffff);
   --surface: var(--surface-f5f7fa);
-  --surface-alt: var(--surface-alt-F4F6F8);
+  --surface-alt: var(--surface-alt-f4f6f8);
   --container-dark: var(--container-dark-2c323a);
   --border: var(--border-e0e0e0);
   --text-primary: var(--text-primary-23272f);
@@ -46,8 +46,8 @@ crucial for maintaining a scalable and maintainable codebase. */
   --text-on-primary: var(--text-on-primary-ffffff);
   --text-on-accent: var(--text-on-accent-ffffff);
   --text-on-dark: var(--text-on-dark-ffffff);
-  --brand-indigo: var(--brand-indigo-3C3C88);
-  --brand-electric-blue: var(--brand-electric-blue-2F80ED);
+  --brand-indigo: var(--brand-indigo-3c3c88);
+  --brand-electric-blue: var(--brand-electric-blue-2f80ed);
 }
 
 

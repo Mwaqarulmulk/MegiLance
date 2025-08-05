@@ -1,6 +1,6 @@
 /* @AI-HINT: Dark theme styles for the ProfileSettings form. */
 
 .Form-textarea:focus {
-  border-color: var(--color-brand-primary-400);
-  box-shadow: 0 0 0 3px var(--color-brand-primary-900);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
 }

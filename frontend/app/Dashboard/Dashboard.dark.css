@@ -3,18 +3,18 @@
 
 .Dashboard--dark {
   /* Premium dark theme color palette */
-  --dashboard-bg-primary: var(--color-brand-background-dark);
-  --dashboard-bg-secondary: var(--color-brand-gray-900);
-  --dashboard-text-primary: var(--color-brand-white);
-  --dashboard-text-secondary: var(--color-brand-gray-400);
-  --dashboard-border-color: var(--color-brand-gray-700);
-  --dashboard-card-bg: var(--color-brand-gray-800);
-  --dashboard-hover-bg: var(--color-brand-gray-700);
+  --dashboard-bg-primary: var(--surface);
+  --dashboard-bg-secondary: var(--surface-alt);
+  --dashboard-text-primary: var(--text-primary);
+  --dashboard-text-secondary: var(--text-secondary);
+  --dashboard-border-color: var(--border);
+  --dashboard-card-bg: var(--surface-alt);
+  --dashboard-hover-bg: var(--surface-alt-hover);
   
   /* Premium dark theme specific styling */
   background: linear-gradient(135deg, 
-    var(--color-brand-background-dark) 0%, 
-    var(--color-brand-gray-900) 100%);
+    var(--surface) 0%, 
+    var(--surface-alt) 100%);
   
   /* Enhanced dark theme shadows for depth */
   --dashboard-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
@@ -22,9 +22,9 @@
   --dashboard-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
   
   /* Dark theme borders with subtle glow */
-  --dashboard-border-light: var(--color-brand-gray-800);
-  --dashboard-border-medium: var(--color-brand-gray-700);
-  --dashboard-border-strong: var(--color-brand-gray-600);
+  --dashboard-border-light: var(--border);
+  --dashboard-border-medium: var(--border-alt);
+  --dashboard-border-strong: var(--border-strong);
   
   /* Dark theme backdrop effect */
   &::before {
@@ -36,15 +36,15 @@
   
   /* Enhanced card styling for dark mode */
   .Dashboard-section {
-    background: var(--color-brand-gray-800);
-    border-color: var(--color-brand-gray-700);
+    background: var(--surface-alt);
+    border-color: var(--border);
     box-shadow: 
       0 1px 3px 0 rgba(0, 0, 0, 0.3),
       0 1px 2px 0 rgba(0, 0, 0, 0.4);
     
     &:hover {
-      background: var(--color-brand-gray-750);
-      border-color: var(--color-brand-primary-600);
+      background: var(--surface-alt-hover);
+      border-color: var(--primary-strong);
       box-shadow: 
         0 4px 6px -1px rgba(0, 0, 0, 0.4),
         0 2px 4px -1px rgba(0, 0, 0, 0.3),
@@ -54,14 +54,14 @@
   
   /* Premium project cards for dark mode */
   .Dashboard-project-card {
-    background: var(--color-brand-gray-800);
-    border-color: var(--color-brand-gray-700);
+    background: var(--surface);
+    border-color: var(--border);
     box-shadow: 
       0 1px 3px 0 rgba(0, 0, 0, 0.3),
       0 1px 2px 0 rgba(0, 0, 0, 0.4);
     
     &:hover {
-      background: var(--color-brand-gray-750);
+      background: var(--surface-alt);
       box-shadow: 
         0 4px 6px -1px rgba(0, 0, 0, 0.4),
         0 2px 4px -1px rgba(0, 0, 0, 0.3),
@@ -71,30 +71,30 @@
 }
 
 .Dashboard--dark .Dashboard-activity {
-  background: #2c323a;
-  border-color: #3f4651;
+  background: var(--surface-alt);
+  border-color: var(--border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .Dashboard--dark .Dashboard-activity-item:hover {
-  background: #323943;
+  background: color-mix(in srgb, var(--surface-alt) 90%, white);
 }
 
 .Dashboard--dark .Dashboard-activity-icon {
-  background: #374151;
-  color: #9ca3af;
+  background: var(--surface);
+  color: var(--text-secondary);
 }
 
 .Dashboard--dark .Dashboard-activity-message {
-  color: #d1d5db;
+  color: var(--text-primary);
 }
 
 .Dashboard--dark .Dashboard-activity-time {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .Dashboard--dark .Dashboard-activity-amount {
-  color: #10b981;
+  color: var(--success);
 }
 
 .Dashboard--dark .Dashboard-section-action:hover {

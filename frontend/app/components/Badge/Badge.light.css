@@ -9,42 +9,42 @@
 
 /* Default Variant */
 .Badge--default {
-  --badge-bg: var(--color-brand-gray-200);
-  --badge-text: var(--color-brand-gray-700);
+  --badge-bg: var(--surface-alt);
+  --badge-text: var(--text-secondary);
 }
 
 /* Primary Variant */
 .Badge--primary {
-  --badge-bg: var(--color-brand-primary-100);
-  --badge-text: var(--color-brand-primary-800);
+  --badge-bg: var(--primary-soft);
+  --badge-text: var(--primary-stronger);
 }
 
 /* Secondary Variant */
 .Badge--secondary {
-  --badge-bg: var(--color-brand-gray-100);
-  --badge-text: var(--color-brand-gray-700);
+  --badge-bg: var(--surface-alt);
+  --badge-text: var(--text-secondary);
 }
 
 /* Success Variant */
 .Badge--success {
-  --badge-bg: var(--color-brand-success-100);
-  --badge-text: var(--color-brand-success-800);
+  --badge-bg: var(--success-soft);
+  --badge-text: var(--success-stronger);
 }
 
 /* Warning Variant */
 .Badge--warning {
-  --badge-bg: var(--color-brand-warning-100);
-  --badge-text: var(--color-brand-warning-800);
+  --badge-bg: var(--warning-soft);
+  --badge-text: var(--warning-stronger);
 }
 
 /* Danger Variant */
 .Badge--danger {
-  --badge-bg: var(--color-brand-danger-100);
-  --badge-text: var(--color-brand-danger-800);
+  --badge-bg: var(--error-soft);
+  --badge-text: var(--error-stronger);
 }
 
 /* Info Variant */
 .Badge--info {
-  --badge-bg: var(--color-brand-info-100);
-  --badge-text: var(--color-brand-info-800);
+  --badge-bg: var(--info-soft);
+  --badge-text: var(--info-stronger);
 }

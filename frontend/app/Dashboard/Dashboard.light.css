@@ -4,18 +4,18 @@
 
 .Dashboard {
   /* Premium light theme color palette */
-  --dashboard-bg-primary: var(--color-brand-background-light);
-  --dashboard-bg-secondary: var(--color-brand-gray-50);
-  --dashboard-text-primary: var(--color-brand-text-main);
-  --dashboard-text-secondary: var(--color-brand-text-secondary);
-  --dashboard-border-color: var(--color-brand-gray-200);
-  --dashboard-card-bg: var(--color-brand-white);
-  --dashboard-hover-bg: var(--color-brand-gray-50);
+  --dashboard-bg-primary: var(--surface);
+  --dashboard-bg-secondary: var(--surface-alt);
+  --dashboard-text-primary: var(--text-primary);
+  --dashboard-text-secondary: var(--text-secondary);
+  --dashboard-border-color: var(--border);
+  --dashboard-card-bg: var(--surface-alt);
+  --dashboard-hover-bg: var(--surface-alt);
   
   /* Premium light theme specific styling */
   background: linear-gradient(135deg, 
-    var(--color-brand-background-light) 0%, 
-    var(--color-brand-gray-50) 100%);
+    var(--surface) 0%, 
+    var(--surface-alt) 100%);
   
   /* Light theme shadows */
   --dashboard-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -23,18 +23,16 @@
   --dashboard-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   
   /* Light theme borders */
-  --dashboard-border-light: var(--color-brand-gray-100);
-  --dashboard-border-medium: var(--color-brand-gray-200);
-  --dashboard-border-strong: var(--color-brand-gray-300);
+  --dashboard-border-light: var(--border);
+  --dashboard-border-medium: var(--border-alt);
+  --dashboard-border-strong: var(--border-strong);
 }
 
 /* Status Badges */
 .Dashboard .status-badge--completed {
-  background: linear-gradient(135deg, 
-    var(--color-brand-primary-50) 0%, 
-    var(--color-brand-primary-100) 100%);
-  color: var(--color-brand-primary-700);
-  border: 1px solid var(--color-brand-primary-200);
+  background: var(--primary-subtle);
+  color: var(--primary-strong);
+  border: 1px solid var(--primary-border);
   box-shadow: 0 1px 2px 0 rgba(69, 115, 223, 0.1);
   
   /* Premium badge styling */
@@ -48,10 +46,10 @@
 
 .Dashboard .status-badge--active {
   background: linear-gradient(135deg, 
-    var(--color-brand-success-50) 0%, 
-    var(--color-brand-success-100) 100%);
-  color: var(--color-brand-success-700);
-  border: 1px solid var(--color-brand-success-200);
+    color-mix(in srgb, var(--success) 10%, white) 0%, 
+    color-mix(in srgb, var(--success) 20%, white) 100%);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, white);
   box-shadow: 0 1px 2px 0 rgba(39, 174, 96, 0.1);
   
   /* Premium badge styling */

@@ -9,42 +9,42 @@
 
 /* Default Variant */
 .Dashboard--dark .Badge--default {
-  --badge-bg: var(--color-brand-gray-600);
-  --badge-text: var(--color-brand-gray-200);
+  --badge-bg: var(--surface-alt);
+  --badge-text: var(--text-secondary);
 }
 
 /* Primary Variant */
 .Dashboard--dark .Badge--primary {
-  --badge-bg: var(--color-brand-primary-800);
-  --badge-text: var(--color-brand-primary-200);
+  --badge-bg: var(--primary-soft);
+  --badge-text: var(--primary-stronger);
 }
 
 /* Secondary Variant */
 .Dashboard--dark .Badge--secondary {
-  --badge-bg: var(--color-brand-gray-700);
-  --badge-text: var(--color-brand-gray-200);
+  --badge-bg: var(--surface-alt);
+  --badge-text: var(--text-secondary);
 }
 
 /* Success Variant */
 .Dashboard--dark .Badge--success {
-  --badge-bg: var(--color-brand-success-800);
-  --badge-text: var(--color-brand-success-200);
+  --badge-bg: var(--success-soft);
+  --badge-text: var(--success-stronger);
 }
 
 /* Warning Variant */
 .Dashboard--dark .Badge--warning {
-  --badge-bg: var(--color-brand-warning-800);
-  --badge-text: var(--color-brand-warning-200);
+  --badge-bg: var(--warning-soft);
+  --badge-text: var(--warning-stronger);
 }
 
 /* Danger Variant */
 .Dashboard--dark .Badge--danger {
-  --badge-bg: var(--color-brand-danger-800);
-  --badge-text: var(--color-brand-danger-200);
+  --badge-bg: var(--error-soft);
+  --badge-text: var(--error-stronger);
 }
 
 /* Info Variant */
 .Dashboard--dark .Badge--info {
-  --badge-bg: var(--color-brand-info-800);
-  --badge-text: var(--color-brand-info-200);
+  --badge-bg: var(--info-soft);
+  --badge-text: var(--info-stronger);
 }

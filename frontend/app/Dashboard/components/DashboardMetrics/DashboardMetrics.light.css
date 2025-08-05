@@ -2,7 +2,7 @@
 
 .DashboardMetricCard {
   /* In light mode, we might want a slightly more subtle background for the icon */
-  --icon-bg: var(--color-brand-primary-50);
+  --icon-bg: var(--primary-subtle);
 }
 
 .MetricCard-icon-wrapper {

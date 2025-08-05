@@ -34,8 +34,8 @@
 
 .Form-textarea:focus {
   outline: none;
-  border-color: var(--color-brand-primary-500);
-  box-shadow: 0 0 0 2px var(--color-brand-primary-200);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 25%, transparent);
 }
 
 .Form-actions {

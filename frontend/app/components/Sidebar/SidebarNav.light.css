@@ -8,12 +8,12 @@
  * ------------------------------------------------------------------------ */
 
 .Sidebar {
-  --sidebar-nav-item-text: var(--color-brand-gray-700);
+  --sidebar-nav-item-text: var(--text-secondary);
   --sidebar-nav-item-bg: transparent;
-  --sidebar-nav-item-text-hover: var(--color-brand-gray-900);
-  --sidebar-nav-item-bg-hover: var(--color-brand-gray-100);
-  --sidebar-nav-item-text-active: var(--color-brand-primary-700);
-  --sidebar-nav-item-bg-active: var(--color-brand-primary-100);
-  --sidebar-nav-item-icon: var(--color-brand-gray-500);
-  --sidebar-nav-item-icon-active: var(--color-brand-primary-600);
+  --sidebar-nav-item-text-hover: var(--text-primary);
+  --sidebar-nav-item-bg-hover: var(--surface-hover);
+  --sidebar-nav-item-text-active: var(--primary-stronger);
+  --sidebar-nav-item-bg-active: var(--primary-subtle);
+  --sidebar-nav-item-icon: var(--text-secondary);
+  --sidebar-nav-item-icon-active: var(--primary-strong);
 }

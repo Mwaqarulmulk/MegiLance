@@ -1,11 +1,11 @@
 /* @AI-HINT: Dark theme styles for the ConversationList component. */
 
 .ConversationList-item:hover {
-  background-color: var(--color-gray-800);
+  background-color: var(--surface);
 }
 
 .ConversationList-item.is-active {
-  background-color: var(--color-brand-primary-900);
-  border-right: 3px solid var(--color-brand-primary-400);
+  background-color: var(--surface-alt);
+  border-right: 3px solid var(--primary);
   padding-right: calc(var(--space-5) - 3px);
 }

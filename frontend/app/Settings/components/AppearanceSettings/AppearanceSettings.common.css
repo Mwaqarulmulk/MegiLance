@@ -26,7 +26,7 @@
 }
 
 .AppearanceSettings-button.is-active {
-  border-color: var(--color-brand-primary-500);
-  color: var(--color-brand-primary-500);
-  background-color: var(--color-brand-primary-50);
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--surface-alt);
 }

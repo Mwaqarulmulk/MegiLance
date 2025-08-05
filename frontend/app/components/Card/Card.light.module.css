@@ -1,8 +1,8 @@
 /* @AI-HINT: Light theme styles for the Card component. */
 
 .card {
-  background-color: var(--color-brand-white);
-  border: 1px solid var(--color-brand-gray-200);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
@@ -12,9 +12,9 @@
 }
 
 .cardTitle {
-  color: var(--color-brand-gray-900);
+  color: var(--text-primary);
 }
 
 .cardIcon {
-  color: var(--color-brand-primary-500);
+  color: var(--primary);
 }

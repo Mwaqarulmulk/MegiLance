@@ -1,16 +1,16 @@
 /* @AI-HINT: Light theme styles for the ProjectsHeader component. */
 
-.ProjectsHeader-add-button {
-  background-color: var(--color-brand-primary-600);
-  color: var(--color-white);
+.ProjectsHeader-add-button.Button--primary {
+  background-color: var(--primary);
+  color: var(--text-on-primary);
 }
 
-.ProjectsHeader-add-button:hover {
-  background-color: var(--color-brand-primary-700);
+.ProjectsHeader-add-button.Button--primary:hover {
+  background-color: color-mix(in srgb, var(--primary) 90%, black);
   box-shadow: var(--shadow-md);
 }
 
-.ProjectsHeader-add-button:focus-visible {
-  outline: 2px solid var(--color-brand-primary-300);
+.ProjectsHeader-add-button.Button--primary:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 50%, transparent);
   outline-offset: 2px;
 }

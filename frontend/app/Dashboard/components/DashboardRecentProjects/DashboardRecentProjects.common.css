@@ -33,13 +33,13 @@
 .DashboardSection-view-all {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-brand-primary-500);
+  color: var(--primary);
   text-decoration: none;
   transition: color var(--transition-duration-fast) ease-in-out;
 }
 
 .DashboardSection-view-all:hover {
-  color: var(--color-brand-primary-600);
+  color: var(--primary-strong);
   text-decoration: underline;
 }
 
@@ -61,7 +61,7 @@
 .ProjectCard:hover {
   transform: translateY(-2px);
   box-shadow: var(--dashboard-shadow-sm);
-  border-color: var(--color-brand-primary-300);
+  border-color: var(--primary-border);
 }
 
 .ProjectCard-header {
@@ -112,7 +112,7 @@
 .ProjectCard-progress-fill {
   height: 100%;
   width: var(--progress-width, 0%);
-  background-color: var(--color-brand-primary-500);
+  background-color: var(--primary);
   border-radius: var(--border-radius-full);
   transition: width 0.5s ease-in-out;
 }
@@ -133,31 +133,31 @@
 
 /* Status-specific styles */
 .ProjectCard.status--in-progress {
-  border-left-color: var(--color-brand-primary-500);
+  border-left-color: var(--primary);
 }
 .ProjectCard.status--review {
-  border-left-color: var(--color-brand-warning-500);
+  border-left-color: var(--warning);
 }
 .ProjectCard.status--completed {
-  border-left-color: var(--color-brand-success-500);
+  border-left-color: var(--success);
 }
 .ProjectCard.status--overdue {
-  border-left-color: var(--color-brand-danger-500);
+  border-left-color: var(--error);
 }
 
 .ProjectCard-status.status--in-progress {
-  color: var(--color-brand-primary-600);
-  background-color: var(--color-brand-primary-100);
+  color: var(--primary-strong);
+  background-color: var(--primary-subtle);
 }
 .ProjectCard-status.status--review {
-  color: var(--color-brand-warning-600);
-  background-color: var(--color-brand-warning-100);
+  color: var(--warning-strong);
+  background-color: var(--warning-subtle);
 }
 .ProjectCard-status.status--completed {
-  color: var(--color-brand-success-600);
-  background-color: var(--color-brand-success-100);
+  color: var(--success-strong);
+  background-color: var(--success-subtle);
 }
 .ProjectCard-status.status--overdue {
-  color: var(--color-brand-danger-600);
-  background-color: var(--color-brand-danger-100);
+  color: var(--error-strong);
+  background-color: var(--error-subtle);
 }

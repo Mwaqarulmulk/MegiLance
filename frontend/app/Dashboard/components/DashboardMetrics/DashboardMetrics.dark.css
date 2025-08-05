@@ -1,10 +1,10 @@
 /* @AI-HINT: Dark theme styles for DashboardMetrics. Ensures the component has a premium feel in dark mode. */
 
 .Dashboard--dark .MetricCard-icon-wrapper {
-  background-color: rgba(69, 115, 223, 0.1);
-  color: var(--color-brand-primary-300);
+  background-color: var(--primary-subtle);
+  color: var(--primary-strong);
 }
 
 .Dashboard--dark .DashboardMetricCard:hover {
-  border-color: var(--color-brand-primary-500);
+  border-color: var(--primary);
 }

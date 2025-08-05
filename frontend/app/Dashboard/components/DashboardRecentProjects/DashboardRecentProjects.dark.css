@@ -5,23 +5,23 @@
 }
 
 .Dashboard--dark .ProjectCard:hover {
-  background-color: var(--color-brand-gray-700);
-  border-color: var(--color-brand-primary-500);
+  background-color: var(--surface-alt-hover);
+  border-color: var(--primary);
 }
 
 .Dashboard--dark .ProjectCard-status.status--in-progress {
-  color: var(--color-brand-primary-200);
-  background-color: rgba(69, 115, 223, 0.15);
+  color: var(--primary-strong);
+  background-color: var(--primary-subtle);
 }
 .Dashboard--dark .ProjectCard-status.status--review {
-  color: var(--color-brand-warning-200);
-  background-color: rgba(242, 201, 76, 0.15);
+  color: var(--warning-strong);
+  background-color: var(--warning-subtle);
 }
 .Dashboard--dark .ProjectCard-status.status--completed {
-  color: var(--color-brand-success-200);
-  background-color: rgba(39, 174, 96, 0.15);
+  color: var(--success-strong);
+  background-color: var(--success-subtle);
 }
 .Dashboard--dark .ProjectCard-status.status--overdue {
-  color: var(--color-brand-danger-200);
-  background-color: rgba(232, 17, 35, 0.15);
+  color: var(--error-strong);
+  background-color: var(--error-subtle);
 }

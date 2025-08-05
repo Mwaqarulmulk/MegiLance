@@ -36,21 +36,21 @@ const Login: React.FC<LoginProps> = () => {
       icon: FaUser,
       label: 'Freelancer',
       description: 'Find projects and grow your career',
-      color: 'var(--color-brand-primary-500)',
+      color: 'var(--primary)',
       redirectPath: '/dashboard'
     },
     client: {
       icon: FaBuilding,
       label: 'Client',
       description: 'Hire talented freelancers',
-      color: 'var(--color-brand-success-500)',
+      color: 'var(--success)',
       redirectPath: '/client/dashboard'
     },
     admin: {
       icon: FaShieldAlt,
       label: 'Admin',
       description: 'Platform administration',
-      color: 'var(--color-brand-warning-500)',
+      color: 'var(--warning)',
       redirectPath: '/admin/dashboard'
     }
   };

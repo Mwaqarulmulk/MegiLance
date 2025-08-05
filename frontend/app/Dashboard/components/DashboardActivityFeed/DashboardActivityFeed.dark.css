@@ -3,31 +3,31 @@
 */
 
 .ActivityItem-icon--new_project {
-  background-color: var(--color-brand-primary-900);
-  color: var(--color-brand-primary-200);
+  background-color: var(--primary-subtle);
+  color: var(--primary-strong);
 }
 
 .ActivityItem-icon--new_client {
-  background-color: var(--color-brand-accent-900);
-  color: var(--color-brand-accent-200);
+  background-color: var(--accent-subtle);
+  color: var(--accent-strong);
 }
 
 .ActivityItem-icon--project_milestone {
-  background-color: var(--color-brand-success-900);
-  color: var(--color-brand-success-200);
+  background-color: var(--success-subtle);
+  color: var(--success-strong);
 }
 
 .ActivityItem-icon--new_message {
-  background-color: var(--color-brand-info-900);
-  color: var(--color-brand-info-200);
+  background-color: var(--info-subtle);
+  color: var(--info-strong);
 }
 
 .ActivityItem-icon--payment_received {
-  background-color: var(--color-brand-success-900);
-  color: var(--color-brand-success-200);
+  background-color: var(--success-subtle);
+  color: var(--success-strong);
 }
 
 .ActivityItem-icon--deadline_approaching {
-  background-color: var(--color-brand-warning-900);
-  color: var(--color-brand-warning-200);
+  background-color: var(--warning-subtle);
+  color: var(--warning-strong);
 }

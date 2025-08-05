@@ -1,13 +1,11 @@
 /* @AI-HINT: Shared styles for Home component. Modern, professional navigation and layout design following MegiLance brand guidelines. */
 
 .Home {
-  background: var(--color-brand-background-main);
-
+  background: var(--background);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--home-bg, #ffffff);
   color: var(--home-text-color, #111827);
 }
 

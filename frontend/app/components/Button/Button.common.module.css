@@ -35,6 +35,10 @@
   font-size: 1rem; /* 16px */
 }
 
+.fullWidth {
+  width: 100%;
+}
+
 .icon {
   margin-right: 8px;
 }

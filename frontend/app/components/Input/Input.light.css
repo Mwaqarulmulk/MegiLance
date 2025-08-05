@@ -8,23 +8,23 @@
  * ------------------------------------------------------------------------ */
 
 .Input-wrapper {
-  --input-label-text: var(--color-brand-gray-800);
-  --input-text: var(--color-brand-gray-900);
-  --input-placeholder-text: var(--color-brand-gray-500);
-  --input-bg: var(--color-brand-white);
-  --input-border: var(--color-brand-gray-300);
-  --input-border-focus: var(--color-brand-primary-500);
-  --input-icon: var(--color-brand-gray-500);
+  --input-label-text: var(--text-primary);
+  --input-text: var(--text-primary);
+  --input-placeholder-text: var(--text-placeholder);
+  --input-bg: var(--surface);
+  --input-border: var(--border);
+  --input-border-focus: var(--primary);
+  --input-icon: var(--text-secondary);
 
   /* States */
-  --input-border-error: var(--color-brand-danger-500);
-  --input-border-error-focus: var(--color-brand-danger-600);
-  --input-error-text: var(--color-brand-danger-600);
-  --input-text-error: var(--color-brand-danger-900);
+  --input-border-error: var(--error);
+  --input-border-error-focus: var(--error-strong);
+  --input-error-text: var(--error-strong);
+  --input-text-error: var(--error-strongest);
 
-  --input-bg-disabled: var(--color-brand-gray-100);
-  --input-text-disabled: var(--color-brand-gray-500);
-  --input-border-disabled: var(--color-brand-gray-200);
+  --input-bg-disabled: var(--surface-disabled);
+  --input-text-disabled: var(--text-disabled);
+  --input-border-disabled: var(--border-disabled);
 
   /* Focus Rings */
   --focus-ring-primary: var(--shadow-focus-ring-primary);

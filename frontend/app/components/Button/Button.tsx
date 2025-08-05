@@ -14,6 +14,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: 'primary' | 'secondary';
   size?: 'small' | 'medium' | 'large';
   isLoading?: boolean;
+  fullWidth?: boolean;
   icon?: React.ElementType;
   children: React.ReactNode;
 }
@@ -23,6 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   isLoading = false,
+  fullWidth = false,
   icon: Icon,
   className = '',
   ...props
@@ -39,6 +41,7 @@ const Button: React.FC<ButtonProps> = ({
     ${commonStyles.button}
     ${commonStyles[variant]}
     ${commonStyles[size]}
+    ${fullWidth ? commonStyles.fullWidth : ''}
     ${themeStyles.button}
     ${themeStyles[variant]}
     ${className}

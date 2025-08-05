@@ -82,8 +82,8 @@
 }
 
 .ConversationList-item-unread {
-    background-color: var(--color-brand-primary-500);
-    color: white;
+    background-color: var(--primary);
+    color: var(--text-on-primary);
     font-size: var(--font-size-xs);
     font-weight: 600;
     border-radius: 50%;

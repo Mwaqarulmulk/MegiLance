@@ -21,13 +21,13 @@
 .DashboardMetricCard:hover {
   transform: translateY(-4px);
   box-shadow: var(--dashboard-shadow-md);
-  border-color: var(--color-brand-primary-300);
+  border-color: var(--primary-border);
 }
 
 .MetricCard-icon-wrapper {
   flex-shrink: 0;
-  background: var(--color-brand-primary-100);
-  color: var(--color-brand-primary-500);
+  background: var(--primary-subtle);
+  color: var(--primary);
   border-radius: var(--border-radius-lg);
   width: 48px;
   height: 48px;
@@ -68,9 +68,9 @@
 }
 
 .MetricCard-change--increase {
-  color: var(--color-brand-success-500);
+  color: var(--success);
 }
 
 .MetricCard-change--decrease {
-  color: var(--color-brand-danger-500);
+  color: var(--error);
 }

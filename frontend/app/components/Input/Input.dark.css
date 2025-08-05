@@ -8,21 +8,21 @@
  * ------------------------------------------------------------------------ */
 
 .Dashboard--dark .Input-wrapper {
-  --input-label-text: var(--color-brand-gray-200);
-  --input-text: var(--color-brand-gray-100);
-  --input-placeholder-text: var(--color-brand-gray-500);
-  --input-bg: var(--color-brand-gray-800);
-  --input-border: var(--color-brand-gray-600);
-  --input-border-focus: var(--color-brand-primary-400);
-  --input-icon: var(--color-brand-gray-400);
+  --input-label-text: var(--text-primary);
+  --input-text: var(--text-primary);
+  --input-placeholder-text: var(--text-placeholder);
+  --input-bg: var(--surface);
+  --input-border: var(--border);
+  --input-border-focus: var(--primary);
+  --input-icon: var(--text-secondary);
 
   /* States */
-  --input-border-error: var(--color-brand-danger-400);
-  --input-border-error-focus: var(--color-brand-danger-500);
-  --input-error-text: var(--color-brand-danger-400);
-  --input-text-error: var(--color-brand-danger-200);
+  --input-border-error: var(--error);
+  --input-border-error-focus: var(--error-strong);
+  --input-error-text: var(--error-strong);
+  --input-text-error: var(--error-strongest);
 
-  --input-bg-disabled: var(--color-brand-gray-800);
-  --input-text-disabled: var(--color-brand-gray-600);
-  --input-border-disabled: var(--color-brand-gray-700);
+  --input-bg-disabled: var(--surface-disabled);
+  --input-text-disabled: var(--text-disabled);
+  --input-border-disabled: var(--border-disabled);
 }

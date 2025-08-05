@@ -8,9 +8,9 @@
  * ------------------------------------------------------------------------ */
 
 .Sidebar {
-  --sidebar-bg: var(--color-brand-white);
-  --sidebar-border: var(--color-brand-gray-200);
-  --sidebar-logo-text: var(--color-brand-gray-900);
-  --sidebar-toggle-icon: var(--color-brand-gray-600);
-  --sidebar-toggle-bg-hover: var(--color-brand-gray-100);
+  --sidebar-bg: var(--surface);
+  --sidebar-border: var(--border);
+  --sidebar-logo-text: var(--text-primary);
+  --sidebar-toggle-icon: var(--text-secondary);
+  --sidebar-toggle-bg-hover: var(--surface-hover);
 }
