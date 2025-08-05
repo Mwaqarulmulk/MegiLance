@@ -1,4 +1,4 @@
-.Home--light .Home-cta-section {
+body.light .Home-cta-section {
   background-color: var(--primary-color);
 }
 

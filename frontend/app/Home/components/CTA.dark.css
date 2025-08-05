@@ -1,4 +1,4 @@
-.Home--dark .Home-cta-section {
+body.dark .Home-cta-section {
   background-color: var(--primary-color);
 }
 
