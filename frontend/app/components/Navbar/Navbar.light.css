@@ -1,26 +1,20 @@
-/* @AI-HINT: Light theme overrides for Navbar. Do not use global or theme CSS. */
+/* @AI-HINT: Light theme for Navbar. Do not use or import any other CSS. */
 
-.Navbar--light {
-  /*
-   * ===========================================================================
-   * Light Theme Color Variables for Navbar
-   * ===========================================================================
-   * Adheres to MegiLance Brand Playbook for a professional and consistent UI.
-   * These variables are used by Navbar.common.css.
-   * ------------------------------------------------------------------------ */
+/*
+ * ===========================================================================
+ * Light Theme for Navbar
+ * ===========================================================================
+ * Defines color variables for the light mode Navbar.
+ * ------------------------------------------------------------------------ */
 
- /* @AI-HINT: Light theme styles for the redesigned Navbar component. */
-:root {
-  --navbar-height: 64px;
-  --navbar-bg: #ffffff;
-  --navbar-border-color: #e2e8f0;
-  --navbar-link-color: #475569;
-  --navbar-link-hover-color: #0f172a;
-  --navbar-link-hover-bg: #f1f5f9;
-  --navbar-icon-color: #64748b;
-  --navbar-search-bg: #f8fafc;
-  --navbar-search-border-color: #e2e8f0;
-}
-  --navbar-link-hover-text-color: #1e293b; /* slate-800 */
-  --navbar-mobile-toggle-color: #475569; /* slate-600 */
+.Navbar {
+  --navbar-bg: var(--color-brand-white);
+  --navbar-border: var(--color-brand-gray-200);
+  --navbar-logo-text: var(--color-brand-gray-900);
+  --navbar-link-text: var(--color-brand-gray-600);
+  --navbar-link-text-hover: var(--color-brand-gray-900);
+  --navbar-link-bg-hover: var(--color-brand-gray-100);
+  --navbar-icon: var(--color-brand-gray-500);
+  --navbar-search-bg: var(--color-brand-gray-100);
+  --navbar-search-border: var(--color-brand-gray-300);
 }

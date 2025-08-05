@@ -1,0 +1,24 @@
+/* @AI-HINT: Common styles for the ThemeSwitcher component. Uses local CSS variables for theming. */
+
+.ThemeSwitcher {
+  display: flex;
+  align-items: center;
+}
+
+.ThemeSwitcher-button {
+  background-color: var(--themeswitcher-bg);
+  color: var(--themeswitcher-text);
+  border: var(--border-width-sm) solid var(--themeswitcher-border);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-medium);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--transition-duration-fast) var(--transition-timing-function-ease), color var(--transition-duration-fast) var(--transition-timing-function-ease);
+}
+
+.ThemeSwitcher-button:hover {
+  background-color: var(--themeswitcher-bg-hover);
+  color: var(--themeswitcher-text-hover);
+}

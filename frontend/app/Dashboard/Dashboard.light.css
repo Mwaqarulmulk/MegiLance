@@ -1,196 +1,22 @@
 /* @AI-HINT: Light theme styles for Dashboard following MegiLance brand guidelines. Professional, clean styling with proper contrast and accessibility. */
 
 .Dashboard--light {
-  background-color: #ffffff;
-  color: #111827;
-}
-
-.Dashboard--light .Dashboard-main {
-  background-color: #f8fafc;
-}
-
-.Dashboard--light .Dashboard-title {
-  color: #111827;
-}
-
-.Dashboard--light .Dashboard-subtitle {
-  color: #6b7280;
-}
-
-.Dashboard--light .Dashboard-notification-btn {
-  background: #ffffff;
-  border-color: #e5e7eb;
-  color: #374151;
-}
-
-.Dashboard--light .Dashboard-notification-btn:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.Dashboard--light .Dashboard-notification-icon {
-  color: #6b7280;
-}
-
-.Dashboard--light .Dashboard-notification-badge {
-  background: #ef4444;
-  color: #ffffff;
-}
-
-:root {
-  --dashboard-bg: #F9FAFB; /* Gray 50 */
-  --dashboard-text-primary: #1F2937; /* Gray 800 */
-  --dashboard-text-secondary: #6B7280; /* Gray 500 */
-  --dashboard-border-color: #E5E7EB; /* Gray 200 */
-  --dashboard-title-color: #111827; /* Gray 900 */
-  --dashboard-subtitle-color: #4B5563; /* Gray 600 */
-  --dashboard-icon-color: #4B5563; /* Gray 600 */
-  --dashboard-badge-bg: #EF4444; /* Red 500 */
-  --dashboard-badge-text-color: #FFFFFF;
+  --dashboard-bg-primary: var(--color-brand-white);
+  --dashboard-bg-secondary: var(--color-brand-gray-50);
+  --dashboard-text-primary: var(--color-brand-gray-800);
+  --dashboard-text-secondary: var(--color-brand-gray-500);
+  --dashboard-text-title: var(--color-brand-gray-900);
+  --dashboard-border-color: var(--color-brand-gray-200);
+  --dashboard-border-color-hover: var(--color-brand-gray-300);
+  --dashboard-card-bg: var(--color-brand-white);
+  --dashboard-card-bg-hover: var(--color-brand-gray-50);
+  --dashboard-icon-color: var(--color-brand-gray-600);
 
   /* Status Badges */
-  --status-inprogress-bg: #DBEAFE; /* Blue 100 */
-  --status-inprogress-text: #1E40AF; /* Blue 800 */
-  --status-review-bg: #FEF3C7; /* Amber 100 */
-  --status-review-text: #92400E; /* Amber 800 */
-  --status-completed-bg: #D1FAE5; /* Green 100 */
-  --status-completed-text: #065F46; /* Green 800 */
-}
-
-.Dashboard--light {
-  background-color: var(--dashboard-bg);
-  color: var(--dashboard-text-primary);
-}
-
-/* Sidebar Light Theme */
-.Dashboard--light .Dashboard-sidebar {
-  background: linear-gradient(180deg, var(--dashboard-bg) 0%, #F9FAFB 100%);
-  border-right-color: var(--dashboard-border-color);
-}
-
-.Dashboard--light .Dashboard-logo-text {
-  color: var(--dashboard-icon-color);
-}
-
-/* Header Light Theme */
-.Dashboard--light .Dashboard-header {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom-color: var(--dashboard-border-color);
-}
-
-.Dashboard--light .Dashboard-title {
-  color: var(--dashboard-title-color);
-}
-
-.Dashboard--light .Dashboard-subtitle {
-  color: var(--dashboard-subtitle-color);
-}
-
-.Dashboard--light .Dashboard-notification-btn {
-  color: var(--dashboard-text-primary);
-}
-
-.Dashboard--light .Dashboard-notification-btn:hover {
-  background: var(--dashboard-bg);
-}
-
-/* Content Light Theme */
-.Dashboard--light .Dashboard-content {
-  background: var(--dashboard-bg);
-}
-
-.Dashboard--light .Dashboard-section-title {
-  color: var(--dashboard-title-color);
-}
-
-/* Action Cards Light Theme */
-.Dashboard--light .Dashboard-action-card {
-  background: var(--dashboard-bg);
-  border-color: var(--dashboard-border-color);
-  color: var(--dashboard-text-primary);
-  box-shadow: var(--shadow-card);
-}
-
-.Dashboard--light .Dashboard-action-card:hover {
-  border-color: var(--dashboard-border-color);
-  background: var(--dashboard-bg);
-  box-shadow: var(--shadow-card-hover);
-}
-
-/* Projects Section Light Theme */
-.Dashboard--light .Dashboard-projects {
-  background: var(--dashboard-bg);
-  border-color: var(--dashboard-border-color);
-  box-shadow: var(--shadow-card);
-}
-
-.Dashboard--light .Dashboard-project-card {
-  background: var(--dashboard-bg);
-  border-color: var(--dashboard-border-color);
-  border-color: var(--color-border-primary);
-}
-
-.Dashboard--light .Dashboard-project-card:hover {
-  border-color: var(--color-border-secondary);
-  box-shadow: var(--shadow-card);
-}
-
-.Dashboard--light .Dashboard-project-title {
-  color: var(--color-text-title);
-}
-
-.Dashboard--light .Dashboard-project-meta {
-  color: var(--color-text-secondary);
-}
-
-/* Activity Section Light Theme */
-.Dashboard--light .Dashboard-activity {
-  background: var(--color-bg-secondary);
-  border-color: var(--color-border-primary);
-  box-shadow: var(--shadow-card);
-}
-
-.Dashboard--light .Dashboard-activity-item:hover {
-  background: var(--color-bg-tertiary);
-}
-
-.Dashboard--light .Dashboard-activity-icon {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-}
-
-.Dashboard--light .Dashboard-activity-message {
-  color: var(--color-text-primary);
-}
-
-.Dashboard--light .Dashboard-activity-time {
-  color: var(--color-text-secondary);
-}
-
-.Dashboard--light .Dashboard-activity-amount {
-  color: var(--color-brand-success);
-}
-
-/* Section Actions Light Theme */
-.Dashboard--light .Dashboard-section-action {
-  color: var(--color-brand-primary);
-}
-
-.Dashboard--light .Dashboard-section-action:hover {
-  background: #fafbff;
-  color: #3b5bdb;
-}
-
-/* Progress Bar Light Theme */
-.Dashboard--light .Dashboard-progress-bar {
-  background: #e5e7eb;
-}
-
-.Dashboard--light .Dashboard-progress-fill {
-  background: linear-gradient(90deg, #4573df, #5b8def);
-}
-
-.Dashboard--light .Dashboard-progress-text {
-  color: #374151;
+  --dashboard-status-inprogress-bg: var(--color-brand-blue-100);
+  --dashboard-status-inprogress-text: var(--color-brand-blue-800);
+  --dashboard-status-review-bg: var(--color-brand-amber-100);
+  --dashboard-status-review-text: var(--color-brand-amber-800);
+  --dashboard-status-completed-bg: var(--color-brand-green-100);
+  --dashboard-status-completed-text: var(--color-brand-green-800);
 }

@@ -10,19 +10,19 @@
    * ------------------------------------------------------------------------ */
 
   /* --- Base Colors --- */
-  --menu-bg-color: #ffffff; /* Clean white background */
-  --menu-border-color: #e2e8f0; /* Soft, light gray border */
-  --menu-divider-color: #f1f5f9; /* Very light gray for subtle divisions */
+  --menu-bg-color: var(--background-light-ffffff);
+  --menu-border-color: var(--border-color-standard-e5e7eb);
+  --menu-divider-color: var(--surface-light-f5f7fa);
 
   /* --- Text Colors --- */
-  --text-primary-color: #1a202c; /* Dark, readable text for primary content */
-  --text-secondary-color: #718096; /* Muted gray for secondary text like emails */
+  --text-primary-color: var(--text-main-23272f);
+  --text-secondary-color: var(--text-secondary-6b7280);
 
   /* --- Menu Item Colors --- */
-  --menu-item-text-color: #4a5568; /* Default text color for menu items */
-  --menu-item-hover-bg-color: #f7fafc; /* A very light gray for hover state */
-  --menu-item-hover-text-color: #2d3748; /* Slightly darker text on hover for emphasis */
+  --menu-item-text-color: var(--text-main-23272f);
+  --menu-item-hover-bg-color: var(--surface-light-f5f7fa);
+  --menu-item-hover-text-color: var(--text-main-23272f);
 
   /* --- Accessibility --- */
-  --focus-ring-color: #3b82f6; /* MegiLance primary blue for focus rings */
+  --focus-ring-color: var(--brand-primary-4573df);
 }

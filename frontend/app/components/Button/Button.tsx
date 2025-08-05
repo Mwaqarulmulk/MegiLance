@@ -11,7 +11,6 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   isLoading?: boolean;
   iconBefore?: React.ReactNode;
   iconAfter?: React.ReactNode;
-  theme?: 'light' | 'dark';
   fullWidth?: boolean;
 }
 
@@ -24,7 +23,6 @@ const Button: React.FC<ButtonProps> = ({
   iconBefore,
   iconAfter,
   className = '',
-  theme = 'light',
   fullWidth = false,
   ...props
 }) => {
@@ -34,7 +32,6 @@ const Button: React.FC<ButtonProps> = ({
     'Button',
     `Button--${variant}`,
     `Button--${size}`,
-    `Button--${theme}`,
     isDisabled ? 'Button--disabled' : '',
     isLoading ? 'Button--loading' : '',
     fullWidth ? 'Button--fullWidth' : '',

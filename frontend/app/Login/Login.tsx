@@ -90,15 +90,14 @@ const Login: React.FC<LoginProps> = ({ theme = 'light' }) => {
           <p className="Login-subtitle">Log in to continue to your MegiLance account.</p>
           
           <div className="Login-social-buttons">
-            <Button theme={theme} variant="secondary" fullWidth><FaGoogle /> Sign in with Google</Button>
-            <Button theme={theme} variant="secondary" fullWidth><FaGithub /> Sign in with GitHub</Button>
+            <Button variant="secondary" fullWidth><FaGoogle /> Sign in with Google</Button>
+            <Button variant="secondary" fullWidth><FaGithub /> Sign in with GitHub</Button>
           </div>
 
           <div className="Login-divider"><span>OR</span></div>
 
           <form className="Login-form" onSubmit={handleSubmit} noValidate>
             <Input
-              theme={theme}
               label="Email Address"
               type="email"
               placeholder="you@example.com"
@@ -109,7 +108,6 @@ const Login: React.FC<LoginProps> = ({ theme = 'light' }) => {
               required
             />
             <Input
-              theme={theme}
               label="Password"
               type="password"
               placeholder="••••••••"
@@ -122,7 +120,7 @@ const Login: React.FC<LoginProps> = ({ theme = 'light' }) => {
             <div className="Login-forgot-password">
               <Link href="/forgot-password">Forgot Password?</Link>
             </div>
-            <Button theme={theme} variant="primary" fullWidth type="submit" disabled={loading}>
+            <Button variant="primary" fullWidth type="submit" disabled={loading}>
               {loading ? 'Logging In...' : 'Log In'}
             </Button>
           </form>

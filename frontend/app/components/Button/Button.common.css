@@ -1,58 +1,64 @@
-/* @AI-HINT: Shared styles for the enterprise-grade Button component. Defines layout, typography, sizes, loading spinner, and states. Do not use or import any global or theme CSS. */
-
 .Button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  border: 1.5px solid transparent;
-  border-radius: 10px;
-  font-family: 'Poppins', 'Inter', sans-serif;
-  font-weight: 600;
+  border: var(--border-width-md) solid var(--btn-border);
+  border-radius: var(--border-radius-large);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-semibold);
+  color: var(--btn-text);
+  background-color: var(--btn-bg);
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
+  transition: var(--transition-all-fast);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   white-space: nowrap;
   vertical-align: middle;
-  -webkit-user-select: none;
   user-select: none;
 }
 
 .Button:focus-visible {
-  outline: 2px solid var(--focus-ring-color, #4573df);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--btn-focus-ring);
+}
+
+.Button:hover {
+  color: var(--btn-text-hover);
+  background-color: var(--btn-bg-hover);
+  border-color: var(--btn-border-hover);
 }
 
 .Button:active {
-  transform: scale(0.98);
+  transform: var(--transform-scale-active);
+  color: var(--btn-text-active);
+  background-color: var(--btn-bg-active);
+  border-color: var(--btn-border-active);
 }
 
-/* Sizes */
 .Button--small {
-  font-size: 0.875rem;
-  padding: 0.6em 1.2em;
-  border-radius: 8px;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-medium);
 }
 
 .Button--medium {
-  font-size: 1rem;
-  padding: 0.65em 1.5em;
+  font-size: var(--font-size-base);
+  padding: var(--spacing-3) var(--spacing-5);
 }
 
 .Button--large {
-  font-size: 1.125rem;
-  padding: 1em 2em;
-  border-radius: 12px;
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--border-radius-xl);
 }
 
-/* Content and Icons */
 .Button-content {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   visibility: visible;
-  gap: 0.6em;
+  gap: var(--spacing-2);
 }
 
 .Button-icon {
@@ -61,13 +67,14 @@
   justify-content: center;
 }
 
-/* Disabled State */
 .Button--disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: var(--opacity-disabled);
+  background-color: var(--btn-bg-disabled);
+  border-color: var(--btn-border-disabled);
+  color: var(--btn-text-disabled);
 }
 
-/* Loading State */
 .Button--loading .Button-content {
   visibility: hidden;
 }
@@ -92,14 +99,8 @@
   }
 }
 
-/* Full Width */
 .Button--fullWidth {
   width: 100%;
-}
-
-/* Danger variant */
-.Button--danger {
-  border-color: transparent;
 }
 
 

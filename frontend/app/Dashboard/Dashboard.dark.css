@@ -1,204 +1,26 @@
 /* @AI-HINT: Dark theme styles for Dashboard following MegiLance brand guidelines. Professional dark mode with proper contrast, accessibility, and visual hierarchy. */
 
 .Dashboard--dark {
-  background-color: #0f172a;
-  color: #f1f5f9;
+  --dashboard-bg-primary: var(--color-brand-gray-900);
+  --dashboard-bg-secondary: var(--color-brand-gray-800);
+  --dashboard-text-primary: var(--color-brand-gray-100);
+  --dashboard-text-secondary: var(--color-brand-gray-400);
+  --dashboard-text-title: var(--color-brand-white);
+  --dashboard-border-color: var(--color-brand-gray-700);
+  --dashboard-border-color-hover: var(--color-brand-gray-600);
+  --dashboard-card-bg: var(--color-brand-gray-800);
+  --dashboard-card-bg-hover: var(--color-brand-gray-700);
+  --dashboard-icon-color: var(--color-brand-gray-300);
+
+  /* Status Badges */
+  --dashboard-status-inprogress-bg: var(--color-brand-blue-900);
+  --dashboard-status-inprogress-text: var(--color-brand-blue-300);
+  --dashboard-status-review-bg: var(--color-brand-amber-900);
+  --dashboard-status-review-text: var(--color-brand-amber-300);
+  --dashboard-status-completed-bg: var(--color-brand-green-900);
+  --dashboard-status-completed-text: var(--color-brand-green-300);
 }
 
-.Dashboard--dark .Dashboard-main {
-  background-color: #111827;
-}
-
-.Dashboard--dark .Dashboard-title {
-  color: #f9fafb;
-}
-
-.Dashboard--dark .Dashboard-subtitle {
-  color: #9ca3af;
-}
-
-.Dashboard--dark .Dashboard-notification-btn {
-  background: #374151;
-  border-color: #4b5563;
-  color: #d1d5db;
-}
-
-.Dashboard--dark .Dashboard-notification-btn:hover {
-  background: #4b5563;
-  border-color: #6b7280;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-}
-
-.Dashboard--dark .Dashboard-notification-icon {
-  color: #d1d5db;
-}
-
-.Dashboard--dark .Dashboard-notification-badge {
-  background: #ef4444;
-  color: #ffffff;
-}
-
-.Dashboard--dark {
-  background-color: #1d2127;
-  color: #ffffff;
-}
-
-/* Sidebar Dark Theme */
-.Dashboard--dark .Dashboard-sidebar {
-  background: linear-gradient(180deg, #2c323a 0%, #272b32 100%);
-  border-right-color: #3f4651;
-}
-
-.Dashboard--dark .Dashboard-logo-text {
-  color: #5b8def;
-}
-
-.Dashboard--dark .Dashboard-logo-badge {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-}
-
-/* Header Dark Theme */
-.Dashboard--dark .Dashboard-header {
-  background: rgba(44, 50, 58, 0.95);
-  border-bottom-color: #3f4651;
-}
-
-.Dashboard--dark .Dashboard-title {
-  color: #ffffff;
-}
-
-.Dashboard--dark .Dashboard-subtitle {
-  color: #9ca3af;
-}
-
-.Dashboard--dark .Dashboard-notification-btn {
-  color: #d1d5db;
-}
-
-.Dashboard--dark .Dashboard-notification-btn:hover {
-  background: #374151;
-}
-
-/* Content Dark Theme */
-.Dashboard--dark .Dashboard-content {
-  background: #1d2127;
-}
-
-.Dashboard[data-theme='dark'] {
-  /* Brand Colors */
-  --color-brand-primary: #5e8eff; /* Brighter blue for dark mode */
-  --color-brand-accent: #ffac33; /* Brighter orange for dark mode */
-  --color-brand-success: #2ce67d; /* Brighter green for dark mode */
-  --color-brand-error: #ff5252;   /* Brighter red for dark mode */
-
-  /* Background Colors */
-  --color-bg-primary: #1B2559;   /* Deep blue-gray */
-  --color-bg-secondary: #2A3468; /* Slightly lighter for cards */
-  --color-bg-tertiary: #343F7C;  /* Hover states */
-
-  /* Text Colors */
-  --color-text-primary: #F0F2F5;   /* Off-white for primary text */
-  --color-text-secondary: #A0AEC0; /* Gray for muted/secondary text */
-  --color-text-title: #FFFFFF;     /* Pure white for major titles */
-  --color-text-logo: #FFFFFF;
-
-  /* Border Colors */
-  --color-border-primary: #343F7C;   /* Main borders */
-  --color-border-secondary: #4A558E; /* Borders within cards */
-  --color-border-hover: var(--color-brand-primary);
-
-  /* Shadow */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-card-hover: 0 8px 24px rgba(94, 142, 255, 0.15);
-
-  /* Status Colors */
-  --color-status-inprogress-bg: rgba(255, 172, 51, 0.15);
-  --color-status-inprogress-text: #ffac33;
-  --color-status-review-bg: rgba(94, 142, 255, 0.15);
-  --color-status-review-text: #89aeff;
-  --color-status-completed-bg: rgba(44, 230, 125, 0.15);
-  --color-status-completed-text: #57f792;
-}
-
-/* Section Actions Dark Theme */
-.Dashboard--dark .Dashboard-section-action {
-  color: #5b8def;
-}
-
-.Dashboard--dark .Dashboard-section-action:hover {
-  background: #323943;
-  color: #7dd3fc;
-}
-
-/* Progress Bar Dark Theme */
-.Dashboard--dark .Dashboard-progress-bar {
-  background: #374151;
-}
-
-.Dashboard--dark .Dashboard-progress-fill {
-  background: linear-gradient(90deg, #5b8def, #7dd3fc);
-}
-
-.Dashboard--dark .Dashboard-progress-text {
-  color: #d1d5db;
-}
-
-/* Action Cards Dark Theme */
-.Dashboard--dark .Dashboard-action-card {
-  background: #2c323a;
-  border-color: #3f4651;
-  color: #d1d5db;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.Dashboard--dark .Dashboard-action-card:hover {
-  border-color: #5b8def;
-  background: #323943;
-  box-shadow: 0 4px 12px rgba(91, 143, 239, 0.2);
-}
-
-/* Projects Section Dark Theme */
-.Dashboard--dark .Dashboard-projects {
-  background: #2c323a;
-  border-color: #3f4651;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.Dashboard--dark .Dashboard-project-card {
-  background: #323943;
-  border-color: #3f4651;
-}
-
-.Dashboard--dark .Dashboard-project-card:hover {
-  border-color: #4b5563;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-.Dashboard--dark .Dashboard-project-title {
-  color: #f9fafb;
-}
-
-.Dashboard--dark .Dashboard-project-meta {
-  color: #9ca3af;
-}
-
-/* Project Status Dark Theme */
-.Dashboard--dark .Dashboard-project-status--in-progress {
-  background: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
-}
-
-.Dashboard--dark .Dashboard-project-status--review {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-}
-
-.Dashboard--dark .Dashboard-project-status--completed {
-  background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
-}
-
-/* Activity Section Dark Theme */
 .Dashboard--dark .Dashboard-activity {
   background: #2c323a;
   border-color: #3f4651;

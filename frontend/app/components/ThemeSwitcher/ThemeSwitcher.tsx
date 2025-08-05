@@ -1,17 +1,27 @@
 'use client';
 // @AI-HINT: This is the ThemeSwitcher button for toggling light/dark mode. Must be a client component.
-import { useTheme } from "../../contexts/ThemeContext";
-import styles from "../../layout.module.css";
+import { useTheme } from '../../contexts/ThemeContext';
+import { FaSun, FaMoon } from 'react-icons/fa';
+
+import './ThemeSwitcher.common.css';
+import './ThemeSwitcher.light.css';
+import './ThemeSwitcher.dark.css';
 
 export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
   return (
-    <div className={styles.ThemeSwitcher}>
+    <div className="ThemeSwitcher">
       <button
-        className={styles.ThemeSwitcherButton}
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        className="ThemeSwitcher-button"
+        onClick={toggleTheme}
+        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       >
-        Switch to {theme === "light" ? "Dark" : "Light"} Mode
+        {theme === 'light' ? <FaMoon /> : <FaSun />}
       </button>
     </div>
   );

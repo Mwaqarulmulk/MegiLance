@@ -1,96 +1,93 @@
-/* @AI-HINT: Light theme for the enterprise-grade Button. Defines brand-compliant colors for all variants and states. Do not use global or theme CSS. */
+/* @AI-HINT: Light theme for Button. Do not use or import any other CSS. */
 
-.Button--light {
-  --focus-ring-color: #4573df;
-}
+/*
+ * ===========================================================================
+ * Light Theme for Button
+ * ===========================================================================
+ * Defines color variables for all button variants in light mode.
+ * ------------------------------------------------------------------------ */
 
 /* Primary Variant */
-.Button--light.Button--primary {
-  background-color: #4573df;
-  color: #ffffff;
-  box-shadow: 0 2px 8px 0 rgba(69, 115, 223, 0.25);
-}
-.Button--light.Button--primary:hover {
-  background-color: #3a65c9;
-  box-shadow: 0 4px 12px 0 rgba(69, 115, 223, 0.3);
-}
-.Button--light.Button--primary:active {
-  background-color: #3156ad;
+.Button--primary {
+  --btn-bg: var(--color-brand-primary-500);
+  --btn-text: var(--color-brand-white);
+  --btn-border: var(--color-brand-primary-500);
+  --btn-bg-hover: var(--color-brand-primary-600);
+  --btn-text-hover: var(--color-brand-white);
+  --btn-border-hover: var(--color-brand-primary-600);
+  --btn-bg-active: var(--color-brand-primary-700);
+  --btn-text-active: var(--color-brand-white);
+  --btn-border-active: var(--color-brand-primary-700);
+  --btn-focus-ring: var(--shadow-focus-ring-primary);
+  --btn-bg-disabled: var(--color-brand-gray-200);
+  --btn-text-disabled: var(--color-brand-gray-500);
+  --btn-border-disabled: var(--color-brand-gray-200);
 }
 
 /* Secondary Variant */
-.Button--light.Button--secondary {
-  background-color: #f0f4ff;
-  color: #4573df;
-}
-.Button--light.Button--secondary:hover {
-  background-color: #e6ecfa;
-}
-.Button--light.Button--secondary:active {
-  background-color: #dce4f5;
+.Button--secondary {
+  --btn-bg: var(--color-brand-primary-50);
+  --btn-text: var(--color-brand-primary-700);
+  --btn-border: var(--color-brand-primary-50);
+  --btn-bg-hover: var(--color-brand-primary-100);
+  --btn-text-hover: var(--color-brand-primary-800);
+  --btn-border-hover: var(--color-brand-primary-100);
+  --btn-bg-active: var(--color-brand-primary-200);
+  --btn-text-active: var(--color-brand-primary-900);
+  --btn-border-active: var(--color-brand-primary-200);
+  --btn-focus-ring: var(--shadow-focus-ring-primary);
+  --btn-bg-disabled: var(--color-brand-gray-100);
+  --btn-text-disabled: var(--color-brand-gray-500);
+  --btn-border-disabled: var(--color-brand-gray-100);
 }
 
 /* Outline Variant */
-.Button--light.Button--outline {
-  background-color: transparent;
-  color: #4573df;
-  border-color: #d1d5db;
-}
-.Button--light.Button--outline:hover {
-  background-color: #f0f4ff;
-  border-color: #4573df;
-}
-.Button--light.Button--outline:active {
-  background-color: #e6ecfa;
+.Button--outline {
+  --btn-bg: transparent;
+  --btn-text: var(--color-brand-primary-600);
+  --btn-border: var(--color-brand-gray-300);
+  --btn-bg-hover: var(--color-brand-primary-50);
+  --btn-text-hover: var(--color-brand-primary-700);
+  --btn-border-hover: var(--color-brand-primary-300);
+  --btn-bg-active: var(--color-brand-primary-100);
+  --btn-text-active: var(--color-brand-primary-800);
+  --btn-border-active: var(--color-brand-primary-400);
+  --btn-focus-ring: var(--shadow-focus-ring-primary);
+  --btn-bg-disabled: transparent;
+  --btn-text-disabled: var(--color-brand-gray-400);
+  --btn-border-disabled: var(--color-brand-gray-200);
 }
 
 /* Danger Variant */
-.Button--light.Button--danger {
-  background-color: #e81123;
-  color: #ffffff;
-  box-shadow: 0 2px 8px 0 rgba(232, 17, 35, 0.2);
-}
-.Button--light.Button--danger:hover {
-  background-color: #d30f1f;
-  box-shadow: 0 4px 12px 0 rgba(232, 17, 35, 0.25);
-}
-.Button--light.Button--danger:active {
-  background-color: #bb0d1b;
+.Button--danger {
+  --btn-bg: var(--color-brand-danger-500);
+  --btn-text: var(--color-brand-white);
+  --btn-border: var(--color-brand-danger-500);
+  --btn-bg-hover: var(--color-brand-danger-600);
+  --btn-text-hover: var(--color-brand-white);
+  --btn-border-hover: var(--color-brand-danger-600);
+  --btn-bg-active: var(--color-brand-danger-700);
+  --btn-text-active: var(--color-brand-white);
+  --btn-border-active: var(--color-brand-danger-700);
+  --btn-focus-ring: var(--shadow-focus-ring-danger);
+  --btn-bg-disabled: var(--color-brand-gray-200);
+  --btn-text-disabled: var(--color-brand-gray-500);
+  --btn-border-disabled: var(--color-brand-gray-200);
 }
 
 /* Ghost Variant */
-.Button--light.Button--ghost {
-  background-color: transparent;
-  color: #4573df;
-  border-color: transparent;
-}
-.Button--light.Button--ghost:hover {
-  background-color: #f0f4ff;
-}
-.Button--light.Button--ghost:active {
-  background-color: #e6ecfa;
-}
-
-/* Disabled State */
-.Button--light.Button--disabled {
-  background-color: #f3f4f6;
-  color: #9ca3af;
-  border-color: #e5e7eb;
-  box-shadow: none;
-}
-
-
-
-.Button--light.Button--danger:hover {
-  background-color: #dc2626; /* Red-600 */
-}
-
-.Button--outline.Button--light {
-  background-color: transparent;
-  border-color: #4f46e5;
-  color: #4f46e5;
-}
-
-.Button--outline.Button--light:hover {
-  background-color: #eef2ff;
+.Button--ghost {
+  --btn-bg: transparent;
+  --btn-text: var(--color-brand-primary-600);
+  --btn-border: transparent;
+  --btn-bg-hover: var(--color-brand-primary-50);
+  --btn-text-hover: var(--color-brand-primary-700);
+  --btn-border-hover: transparent;
+  --btn-bg-active: var(--color-brand-primary-100);
+  --btn-text-active: var(--color-brand-primary-800);
+  --btn-border-active: transparent;
+  --btn-focus-ring: var(--shadow-focus-ring-primary);
+  --btn-bg-disabled: transparent;
+  --btn-text-disabled: var(--color-brand-gray-400);
+  --btn-border-disabled: transparent;
 }

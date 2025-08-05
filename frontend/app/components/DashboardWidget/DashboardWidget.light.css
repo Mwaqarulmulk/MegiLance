@@ -1,37 +1,20 @@
 /* @AI-HINT: Light theme for DashboardWidget. Brand-compliant metrics card, trend colors, and clickable state. */
 
 .DashboardWidget--light {
-  background-color: #fff;
-  color: #23272f;
-  border-color: #e5e7eb;
-  --DashboardWidget-bg: #fff;
-}
-
-.DashboardWidget--light .DashboardWidget-icon {
-  background: #f5f7fa;
-  color: #4573df;
-}
-
-.DashboardWidget--light .DashboardWidget-title {
-  color: #6b7280;
-}
-
-.DashboardWidget--light .DashboardWidget-value {
-  color: #23272f;
-}
-
-.DashboardWidget--light .DashboardWidget-trend--positive {
-  color: #27ae60;
-}
-
-.DashboardWidget--light .DashboardWidget-trend--negative {
-  color: #e81123;
-}
-
-.DashboardWidget--light .DashboardWidget-trend--neutral {
-  color: #888;
-}
-
-.DashboardWidget--light .DashboardWidget-footer {
-  color: #888;
+  --widget-bg: var(--color-brand-white);
+  --widget-border-color: var(--color-brand-gray-200);
+  --widget-border-color-hover: var(--color-brand-primary-500);
+  --widget-icon-bg: var(--color-brand-gray-100);
+  --widget-icon-color: var(--color-brand-primary-600);
+  --widget-title-color: var(--color-brand-gray-500);
+  --widget-value-color: var(--color-brand-gray-800);
+  --widget-trend-positive-color: var(--color-brand-success-600);
+  --widget-trend-negative-color: var(--color-brand-error-600);
+  --widget-trend-neutral-color: var(--color-brand-gray-500);
+  --widget-footer-color: var(--color-brand-gray-500);
+  --widget-button-bg: var(--color-brand-gray-100);
+  --widget-button-text-color: var(--color-brand-gray-700);
+  --widget-button-border-color: var(--color-brand-gray-300);
+  --widget-button-bg-hover: var(--color-brand-gray-200);
+  --widget-button-border-color-hover: var(--color-brand-gray-400);
 }

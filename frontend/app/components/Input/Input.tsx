@@ -10,7 +10,6 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   iconBefore?: React.ReactNode;
   iconAfter?: React.ReactNode;
   error?: string | boolean;
-  theme?: 'light' | 'dark';
   wrapperClassName?: string;
 }
 
@@ -19,7 +18,6 @@ const Input: React.FC<InputProps> = ({
   iconBefore,
   iconAfter,
   error,
-  theme = 'light',
   className = '',
   wrapperClassName = '',
   ...props
@@ -29,7 +27,6 @@ const Input: React.FC<InputProps> = ({
 
   const wrapperClasses = [
     'Input-wrapper',
-    `Input-wrapper--${theme}`,
     hasError ? 'Input-wrapper--error' : '',
     props.disabled ? 'Input-wrapper--disabled' : '',
     wrapperClassName,

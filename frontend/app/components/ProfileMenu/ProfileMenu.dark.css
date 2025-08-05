@@ -10,19 +10,19 @@
    * ------------------------------------------------------------------------ */
 
   /* --- Base Colors --- */
-  --menu-bg-color: #1f2937; /* A deep, professional dark slate background */
-  --menu-border-color: #374151; /* A slightly lighter border for subtle separation */
-  --menu-divider-color: #374151; /* Use the same color as the border for dividers */
+  --menu-bg-color: var(--background-dark-1d2127);
+  --menu-border-color: var(--container-dark-2c323a);
+  --menu-divider-color: var(--container-dark-2c323a);
 
   /* --- Text Colors --- */
-  --text-primary-color: #f9fafb; /* Off-white for primary text, easy on the eyes */
-  --text-secondary-color: #9ca3af; /* Lighter gray for secondary text */
+  --text-primary-color: var(--text-light-ffffff);
+  --text-secondary-color: var(--text-light-ffffff);
 
   /* --- Menu Item Colors --- */
-  --menu-item-text-color: #d1d5db; /* Default text color for menu items */
-  --menu-item-hover-bg-color: #374151; /* A slightly lighter slate for hover */
-  --menu-item-hover-text-color: #ffffff; /* Pure white text on hover for emphasis */
+  --menu-item-text-color: var(--text-light-ffffff);
+  --menu-item-hover-bg-color: var(--background-dark-272b32);
+  --menu-item-hover-text-color: var(--text-light-ffffff);
 
   /* --- Accessibility --- */
-  --focus-ring-color: #3b82f6; /* MegiLance primary blue for focus rings */
+  --focus-ring-color: var(--brand-primary-4573df);
 }

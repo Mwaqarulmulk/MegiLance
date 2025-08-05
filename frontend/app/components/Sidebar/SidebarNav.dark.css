@@ -1,22 +1,19 @@
-/* @AI-HINT: Dark theme styles for the SidebarNav component. */
+/* @AI-HINT: Dark theme for SidebarNav. Do not use or import any other CSS. */
 
-:root .dark {
-  --sidebar-nav-item-text-color: #D1D5DB; /* Gray-300 */
-  --sidebar-nav-item-hover-bg: #374151; /* Gray-700 */
-  --sidebar-nav-item-active-bg: #312E81; /* Indigo-900 */
-  --sidebar-nav-item-active-text-color: #E0E7FF; /* Indigo-100 */
-}
+/*
+ * ===========================================================================
+ * Dark Theme for SidebarNav
+ * ===========================================================================
+ * Defines color variables for the dark mode SidebarNav.
+ * ------------------------------------------------------------------------ */
 
-.dark .SidebarNavItem-link {
-  color: var(--sidebar-nav-item-text-color);
-}
-
-.dark .SidebarNavItem-link:hover {
-  background-color: var(--sidebar-nav-item-hover-bg);
-}
-
-.dark .SidebarNavItem-link-active {
-  background-color: var(--sidebar-nav-item-active-bg);
-  color: var(--sidebar-nav-item-active-text-color);
-  font-weight: 600;
+.Dashboard--dark .Sidebar {
+  --sidebar-nav-item-text: var(--color-brand-gray-300);
+  --sidebar-nav-item-bg: transparent;
+  --sidebar-nav-item-text-hover: var(--color-brand-white);
+  --sidebar-nav-item-bg-hover: var(--color-brand-gray-700);
+  --sidebar-nav-item-text-active: var(--color-brand-primary-100);
+  --sidebar-nav-item-bg-active: var(--color-brand-primary-900);
+  --sidebar-nav-item-icon: var(--color-brand-gray-400);
+  --sidebar-nav-item-icon-active: var(--color-brand-primary-200);
 }

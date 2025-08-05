@@ -1,46 +1,32 @@
-/* @AI-HINT: Light theme for the enterprise-grade Input component. Defines brand-compliant colors for all states. Do not use or import any global or theme CSS. */
+/* @AI-HINT: Light theme for Input. Do not use or import any other CSS. */
 
-.Input-wrapper--light .Input-label {
-  color: #23272f; /* Main Text (Brand Playbook) */
-}
+/*
+ * ===========================================================================
+ * Light Theme for Input
+ * ===========================================================================
+ * Defines color variables for the light mode Input component.
+ * ------------------------------------------------------------------------ */
 
-.Input-wrapper--light .Input-field {
-  background-color: #ffffff;
-  border-color: #d1d5db; /* Default Border */
-  color: #23272f;
-}
+.Input-wrapper {
+  --input-label-text: var(--color-brand-gray-800);
+  --input-text: var(--color-brand-gray-900);
+  --input-placeholder-text: var(--color-brand-gray-500);
+  --input-bg: var(--color-brand-white);
+  --input-border: var(--color-brand-gray-300);
+  --input-border-focus: var(--color-brand-primary-500);
+  --input-icon: var(--color-brand-gray-500);
 
-.Input-wrapper--light .Input-field::placeholder {
-  color: #9ca3af; /* Placeholder Text */
-}
+  /* States */
+  --input-border-error: var(--color-brand-danger-500);
+  --input-border-error-focus: var(--color-brand-danger-600);
+  --input-error-text: var(--color-brand-danger-600);
+  --input-text-error: var(--color-brand-danger-900);
 
-.Input-wrapper--light .Input-field:focus {
-  --focus-border-color: #4573df; /* Primary Action (Brand Playbook) */
-  --focus-ring-color: rgba(69, 115, 223, 0.2);
-}
+  --input-bg-disabled: var(--color-brand-gray-100);
+  --input-text-disabled: var(--color-brand-gray-500);
+  --input-border-disabled: var(--color-brand-gray-200);
 
-/* Icon Colors */
-.Input-wrapper--light .Input-icon {
-  color: #6b7280; /* Icon Color */
-}
-
-/* Error State */
-.Input-wrapper--light.Input-wrapper--error .Input-label {
-  color: #e81123; /* Danger/Error (Brand Playbook) */
-}
-
-.Input-wrapper--light.Input-wrapper--error .Input-field {
-  --error-color: #e81123;
-  --error-focus-ring-color: rgba(232, 17, 35, 0.2);
-}
-
-.Input-wrapper--light.Input-wrapper--error .Input-error-message {
-  color: #e81123;
-}
-
-/* Disabled State */
-.Input-wrapper--light.Input-wrapper--disabled .Input-field {
-  background-color: #f3f4f6; /* Disabled Background */
-  border-color: #e5e7eb;
-  color: #9ca3af;
+  /* Focus Rings */
+  --focus-ring-primary: var(--shadow-focus-ring-primary);
+  --focus-ring-error: var(--shadow-focus-ring-danger);
 }

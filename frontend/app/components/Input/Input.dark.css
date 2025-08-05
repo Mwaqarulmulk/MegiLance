@@ -1,46 +1,28 @@
-/* @AI-HINT: Dark theme for the enterprise-grade Input component. Defines brand-compliant colors for all states. Do not use or import any global or theme CSS. */
+/* @AI-HINT: Dark theme for Input. Do not use or import any other CSS. */
 
-.Input-wrapper--dark .Input-label {
-  color: #f4f6f8; /* Main Text (Brand Playbook) */
-}
+/*
+ * ===========================================================================
+ * Dark Theme for Input
+ * ===========================================================================
+ * Defines color variables for the dark mode Input component.
+ * ------------------------------------------------------------------------ */
 
-.Input-wrapper--dark .Input-field {
-  background-color: #1c2026; /* Dark Background */
-  border-color: #3f4651; /* Dark Border */
-  color: #f4f6f8;
-}
+.Dashboard--dark .Input-wrapper {
+  --input-label-text: var(--color-brand-gray-200);
+  --input-text: var(--color-brand-gray-100);
+  --input-placeholder-text: var(--color-brand-gray-500);
+  --input-bg: var(--color-brand-gray-800);
+  --input-border: var(--color-brand-gray-600);
+  --input-border-focus: var(--color-brand-primary-400);
+  --input-icon: var(--color-brand-gray-400);
 
-.Input-wrapper--dark .Input-field::placeholder {
-  color: #6b7280; /* Dark Placeholder */
-}
+  /* States */
+  --input-border-error: var(--color-brand-danger-400);
+  --input-border-error-focus: var(--color-brand-danger-500);
+  --input-error-text: var(--color-brand-danger-400);
+  --input-text-error: var(--color-brand-danger-200);
 
-.Input-wrapper--dark .Input-field:focus {
-  --focus-border-color: #5a8eef; /* Primary Action (Darker) */
-  --focus-ring-color: rgba(90, 142, 239, 0.25);
-}
-
-/* Icon Colors */
-.Input-wrapper--dark .Input-icon {
-  color: #9ca3af; /* Dark Icon */
-}
-
-/* Error State */
-.Input-wrapper--dark.Input-wrapper--error .Input-label {
-  color: #ff5c5c; /* Danger/Error (Darker) */
-}
-
-.Input-wrapper--dark.Input-wrapper--error .Input-field {
-  --error-color: #ff5c5c;
-  --error-focus-ring-color: rgba(255, 92, 92, 0.25);
-}
-
-.Input-wrapper--dark.Input-wrapper--error .Input-error-message {
-  color: #ff5c5c;
-}
-
-/* Disabled State */
-.Input-wrapper--dark.Input-wrapper--disabled .Input-field {
-  background-color: #23272f; /* Dark Disabled Background */
-  border-color: #2d333a;
-  color: #6b7280;
+  --input-bg-disabled: var(--color-brand-gray-800);
+  --input-text-disabled: var(--color-brand-gray-600);
+  --input-border-disabled: var(--color-brand-gray-700);
 }

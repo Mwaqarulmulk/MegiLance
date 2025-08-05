@@ -1,22 +1,19 @@
-/* @AI-HINT: Light theme styles for the SidebarNav component. */
+/* @AI-HINT: Light theme for SidebarNav. Do not use or import any other CSS. */
 
-:root {
-  --sidebar-nav-item-text-color: #374151; /* Gray-700 */
-  --sidebar-nav-item-hover-bg: #F3F4F6; /* Gray-100 */
-  --sidebar-nav-item-active-bg: #E0E7FF; /* Indigo-100 */
-  --sidebar-nav-item-active-text-color: #4338CA; /* Indigo-700 */
-}
+/*
+ * ===========================================================================
+ * Light Theme for SidebarNav
+ * ===========================================================================
+ * Defines color variables for the light mode SidebarNav.
+ * ------------------------------------------------------------------------ */
 
-.SidebarNavItem-link {
-  color: var(--sidebar-nav-item-text-color);
-}
-
-.SidebarNavItem-link:hover {
-  background-color: var(--sidebar-nav-item-hover-bg);
-}
-
-.SidebarNavItem-link-active {
-  background-color: var(--sidebar-nav-item-active-bg);
-  color: var(--sidebar-nav-item-active-text-color);
-  font-weight: 600;
+.Sidebar {
+  --sidebar-nav-item-text: var(--color-brand-gray-700);
+  --sidebar-nav-item-bg: transparent;
+  --sidebar-nav-item-text-hover: var(--color-brand-gray-900);
+  --sidebar-nav-item-bg-hover: var(--color-brand-gray-100);
+  --sidebar-nav-item-text-active: var(--color-brand-primary-700);
+  --sidebar-nav-item-bg-active: var(--color-brand-primary-100);
+  --sidebar-nav-item-icon: var(--color-brand-gray-500);
+  --sidebar-nav-item-icon-active: var(--color-brand-primary-600);
 }
