@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, LayoutDashboard, Briefcase, Wallet, BarChart2, MessageSquare, Users } from 'lucide-react';
 
+import { useTheme } from '@/app/contexts/ThemeContext';
 import SidebarNav, { NavItem } from './SidebarNav';
 
 // AI-HINT: Import all necessary CSS modules. The theme-specific ones are passed as props to child components.
@@ -15,8 +16,7 @@ import darkStyles from './Sidebar.dark.module.css';
 import navLightStyles from './SidebarNav.light.module.css';
 import navDarkStyles from './SidebarNav.dark.module.css';
 
-// AI-HINT: In a real app, this would come from a global theme context.
-const MOCKED_CURRENT_THEME = 'light';
+
 
 // AI-HINT: Navigation items are defined as a data structure for easy management and role-based filtering in the future.
 const defaultNavItems: NavItem[] = [
@@ -30,12 +30,13 @@ const defaultNavItems: NavItem[] = [
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { theme: currentTheme } = useTheme();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const theme = MOCKED_CURRENT_THEME === 'light' ? lightStyles : darkStyles;
+    const theme = currentTheme === 'light' ? lightStyles : darkStyles;
 
   const sidebarClasses = `
     ${commonStyles.sidebar}
@@ -64,7 +65,7 @@ const Sidebar = () => {
           navItems={defaultNavItems}
           lightStyles={navLightStyles}
           darkStyles={navDarkStyles}
-          currentTheme={MOCKED_CURRENT_THEME}
+          currentTheme={currentTheme}
         />
       </div>
 

@@ -1,18 +1,21 @@
-// @AI-HINT: This is a versatile, enterprise-grade Button component for all user actions. It supports multiple variants (primary, secondary, outline, danger), sizes, loading/disabled states, and icons. All styles are per-component only. See Button.common.css, Button.light.css, and Button.dark.css for theming.
+// @AI-HINT: This is a versatile, enterprise-grade Button component for all user actions. It supports multiple variants (primary, secondary), sizes, loading/disabled states, and icons. All styles are per-component only.
+
+'use client';
 
 import React from 'react';
-import './Button.common.css';
-import './Button.light.css';
-import './Button.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { Loader2 } from 'lucide-react';
+
+import commonStyles from './Button.common.module.css';
+import lightStyles from './Button.light.module.css';
+import darkStyles from './Button.dark.module.css';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary';
   size?: 'small' | 'medium' | 'large';
   isLoading?: boolean;
-  iconBefore?: React.ReactNode;
-  iconAfter?: React.ReactNode;
-  fullWidth?: boolean;
-  theme?: 'light' | 'dark';
+  icon?: React.ElementType;
+  children: React.ReactNode;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,35 +23,37 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   isLoading = false,
-  disabled = false,
-  iconBefore,
-  iconAfter,
+  icon: Icon,
   className = '',
-  fullWidth = false,
-  theme,
   ...props
 }) => {
-  const isDisabled = isLoading || disabled;
+  const { theme } = useTheme();
 
-  const buttonClasses = [
-    'Button',
-    theme ? `Button--${theme}` : '',
-    `Button--${variant}`,
-    `Button--${size}`,
-    isDisabled ? 'Button--disabled' : '',
-    isLoading ? 'Button--loading' : '',
-    fullWidth ? 'Button--fullWidth' : '',
-    className,
-  ].filter(Boolean).join(' ');
+  if (!theme) {
+    return null; // Don't render until theme is resolved
+  }
+
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+
+  const buttonClasses = `
+    ${commonStyles.button}
+    ${commonStyles[variant]}
+    ${commonStyles[size]}
+    ${themeStyles.button}
+    ${themeStyles[variant]}
+    ${className}
+  `;
 
   return (
-    <button className={buttonClasses} disabled={isDisabled} {...props}>
-      {isLoading && <div className="Button-spinner"></div>}
-      <span className="Button-content">
-        {iconBefore && <span className="Button-icon Button-icon--before">{iconBefore}</span>}
-        {children}
-        {iconAfter && <span className="Button-icon Button-icon--after">{iconAfter}</span>}
-      </span>
+    <button className={buttonClasses} disabled={isLoading || props.disabled} {...props}>
+      {isLoading ? (
+        <Loader2 className={`${commonStyles.icon} ${commonStyles.loadingIcon}`} size={20} />
+      ) : (
+        <>
+          {Icon && <Icon className={commonStyles.icon} size={20} />}
+          <span>{children}</span>
+        </>
+      )}
     </button>
   );
 };

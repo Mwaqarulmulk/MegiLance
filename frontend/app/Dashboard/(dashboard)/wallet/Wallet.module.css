@@ -1,0 +1,416 @@
+/* @AI-HINT: This stylesheet provides a premium, investor-grade design for the Wallet page. It uses a CSS grid for layout, custom properties for theming, and is fully responsive. It covers the balance card, metric summaries, payment methods, and a detailed transaction history table. */
+
+.walletContainer {
+  padding: var(--space-6);
+  background-color: var(--color-background-secondary);
+  min-height: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.pageHeader h1 {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-xxl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.statementButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statementButton:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border-hover);
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "balance balance metrics"
+    "methods methods transactions"
+    "transactions transactions transactions";
+  gap: var(--space-6);
+}
+
+.balanceCard {
+  grid-area: balance;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.balanceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+}
+
+.moreIcon {
+  cursor: pointer;
+  color: var(--color-icon-secondary);
+}
+
+.balanceAmount {
+  font-size: 2.5rem; /* 40px */
+  font-weight: 600;
+  font-family: var(--font-poppins);
+  color: var(--color-text-primary);
+}
+
+.balanceActions {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: auto;
+}
+
+.addFundsButton, .withdrawButton {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addFundsButton {
+  background-color: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary);
+}
+
+.addFundsButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.withdrawButton {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.withdrawButton:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border-hover);
+}
+
+.metricsGrid {
+  grid-area: metrics;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.metricCard {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-4);
+}
+
+.metricCard h4 {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+}
+
+.metricCard p {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.paymentMethods {
+  grid-area: methods;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-6);
+}
+
+.paymentMethods h3, .transactionsSection h3 {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+
+.methodCard {
+  display: flex;
+  align-items: center;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.methodCard:last-child {
+  border-bottom: none;
+}
+
+.methodIcon {
+  color: var(--color-icon-primary);
+  margin-right: var(--space-4);
+}
+
+.methodDetails {
+  flex-grow: 1;
+}
+
+.methodType {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.methodExpiry {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.defaultBadge {
+  background-color: var(--color-success-background);
+  color: var(--color-success-text);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-right: var(--space-4);
+}
+
+.methodAction {
+  background: none;
+  border: none;
+  color: var(--color-icon-secondary);
+  cursor: pointer;
+}
+
+.addMethodButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    margin-top: var(--space-4);
+    background-color: transparent;
+    border: 1px dashed var(--color-border-hover);
+    color: var(--color-text-secondary);
+    border-radius: var(--border-radius-md);
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.addMethodButton:hover {
+    background-color: var(--color-background-hover);
+    color: var(--color-text-primary);
+}
+
+
+.transactionsSection {
+  grid-area: transactions;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-6);
+}
+
+.transactionControls {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.searchBox {
+  flex-grow: 1;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-icon-secondary);
+}
+
+.searchBox input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3) var(--space-2) 40px;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+}
+
+.filterButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border-hover);
+}
+
+.transactionHeader {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+  padding: 0 var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.amountHeader { text-align: right; }
+
+.transactionRow {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.transactionRow:hover {
+  background-color: var(--color-background-hover);
+}
+
+.transactionDescription {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.transactionDescription p {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.transactionDescription small {
+  color: var(--color-text-secondary);
+}
+
+.typeIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.depositIcon {
+    background-color: var(--color-success-background);
+    color: var(--color-success-text);
+}
+
+.withdrawalIcon {
+    background-color: var(--color-error-background);
+    color: var(--color-error-text);
+}
+
+
+.statusBadge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+}
+
+.statusCompleted {
+  background-color: var(--color-success-background);
+  color: var(--color-success-text);
+}
+
+.statusPending {
+  background-color: var(--color-warning-background);
+  color: var(--color-warning-text);
+}
+
+.statusFailed {
+  background-color: var(--color-error-background);
+  color: var(--color-error-text);
+}
+
+.transactionAmount {
+  text-align: right;
+  font-weight: 600;
+}
+
+.positiveAmount { color: var(--color-success-text); }
+.negativeAmount { color: var(--color-error-text); }
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .mainGrid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "balance metrics"
+      "methods methods"
+      "transactions transactions";
+  }
+}
+
+@media (max-width: 768px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "balance"
+      "metrics"
+      "methods"
+      "transactions";
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .balanceAmount {
+    font-size: 2rem; /* 32px */
+  }
+}

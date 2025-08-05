@@ -1,0 +1,278 @@
+/* @AI-HINT: Styles for the Projects page. This file creates a clean, professional table-based layout for managing projects, with clear typography, status indicators, and responsive design. */
+
+.projectsContainer {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.5rem;
+}
+
+.pageHeader h1 {
+  font-family: var(--font-poppins);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.newProjectButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-family: var(--font-inter);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.newProjectButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.controlsBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+}
+
+.searchBox input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-inter);
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.filterButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filterButton:hover {
+  background-color: var(--color-background-tertiary);
+}
+
+/* Project List Table */
+.projectList {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-large);
+  overflow: hidden;
+}
+
+.projectListHeader,
+.projectRow {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr 50px;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
+.projectListHeader {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background-tertiary);
+}
+
+.projectRow {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+.projectRow:last-child {
+  border-bottom: none;
+}
+
+.projectRow:hover {
+  background-color: var(--color-background-tertiary);
+}
+
+.projectInfo .projectId {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+}
+
+.projectInfo .projectTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0.1rem 0;
+}
+
+.projectInfo .projectClient {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.projectBudget,
+.projectDeadline {
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+}
+
+.projectTeam {
+  display: flex;
+}
+
+.teamAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--color-background-secondary);
+  margin-left: -10px;
+  object-fit: cover;
+}
+
+.teamAvatar:first-child {
+  margin-left: 0;
+}
+
+.projectActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* Status Badges */
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.statusInProgress {
+  background-color: var(--color-primary-accent-light);
+  color: var(--color-primary-dark);
+}
+
+.statusCompleted {
+  background-color: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.statusOnHold {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-dark);
+}
+
+.statusCanceled {
+  background-color: var(--color-error-light);
+  color: var(--color-error-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .projectListHeader {
+    display: none;
+  }
+
+  .projectRow {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .projectRow > * {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .projectRow > *::before {
+    content: attr(data-label);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-right: 1rem;
+  }
+
+  .projectInfo {
+    display: block;
+  }
+
+  .projectInfo::before {
+    display: none;
+  }
+
+  .projectActions {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .controlsBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .searchBox {
+    max-width: none;
+  }
+}

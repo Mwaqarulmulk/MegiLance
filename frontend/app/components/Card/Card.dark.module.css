@@ -1,0 +1,20 @@
+/* @AI-HINT: Dark theme styles for the Card component. */
+
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card:hover {
+  background-color: var(--surface-alt);
+  border-color: var(--color-brand-primary-700);
+}
+
+.cardTitle {
+  color: var(--text-primary);
+}
+
+.cardIcon {
+  color: var(--color-brand-primary-400);
+}

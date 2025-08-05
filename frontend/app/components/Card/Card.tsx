@@ -1,44 +1,41 @@
-// @AI-HINT: This is a Card component, a molecular element used as a reusable container for content sections.
+// @AI-HINT: This is a versatile and reusable Card component. It serves as a container for content sections and is fully theme-aware, adapting its styles based on the global theme context.
+
 'use client';
 
 import React from 'react';
-import './Card.common.css';
-import './Card.light.css';
-import './Card.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+
+import commonStyles from './Card.common.module.css';
+import lightStyles from './Card.light.module.css';
+import darkStyles from './Card.dark.module.css';
 
 export interface CardProps {
+  title?: string;
+  icon?: React.ElementType;
   children: React.ReactNode;
   className?: string;
-  title?: string;
-  actions?: React.ReactNode;
-  footer?: React.ReactNode;
-  paddingSize?: 'none' | 'small' | 'medium' | 'large';
 }
 
-const Card: React.FC<CardProps> = ({
-  children,
-  className = '',
-  title,
-  actions,
-  footer,
-  paddingSize = 'medium',
-}) => {
-  const cardClasses = [
-    'Card',
-    `Card--padding-${paddingSize}`,
-    className,
-  ].filter(Boolean).join(' ');
+const Card: React.FC<CardProps> = ({ title, icon: Icon, children, className = '' }) => {
+  const { theme } = useTheme();
+
+  if (!theme) {
+    return null; // Don't render until theme is resolved to prevent flash
+  }
+
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
   return (
-    <div className={cardClasses}>
-      {(title || actions) && (
-        <div className="Card-header">
-          {title && <h3 className="Card-title">{title}</h3>}
-          {actions && <div className="Card-actions">{actions}</div>}
+    <div className={`${commonStyles.card} ${themeStyles.card} ${className}`}>
+      {title && (
+        <div className={commonStyles.cardHeader}>
+          {Icon && <Icon className={commonStyles.cardIcon} size={22} />}
+          <h3 className={commonStyles.cardTitle}>{title}</h3>
         </div>
       )}
-      <div className="Card-body">{children}</div>
-      {footer && <div className="Card-footer">{footer}</div>}
+      <div className={commonStyles.cardContent}>
+        {children}
+      </div>
     </div>
   );
 };

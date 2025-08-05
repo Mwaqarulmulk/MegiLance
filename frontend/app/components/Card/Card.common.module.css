@@ -1,0 +1,29 @@
+/* @AI-HINT: Common, theme-agnostic styles for the reusable Card component. */
+
+.card {
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cardIcon {
+  margin-right: 12px;
+}
+
+.cardTitle {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  margin: 0;
+}
+
+.cardContent {
+  flex-grow: 1;
+}

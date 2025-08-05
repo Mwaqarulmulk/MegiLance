@@ -1,0 +1,25 @@
+/* @AI-HINT: Light theme styles for the Button component variants. */
+
+/* Primary Button */
+.primary {
+  background-color: var(--brand-primary-500);
+  color: var(--color-brand-white);
+  border-color: var(--brand-primary-500);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--brand-primary-600);
+  border-color: var(--brand-primary-600);
+}
+
+/* Secondary Button */
+.secondary {
+  background-color: var(--color-brand-gray-100);
+  color: var(--color-brand-gray-800);
+  border-color: var(--color-brand-gray-300);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-brand-gray-200);
+  border-color: var(--color-brand-gray-400);
+}

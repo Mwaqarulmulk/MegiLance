@@ -1,0 +1,274 @@
+/* @AI-HINT: Styles for the main Dashboard page. This file creates a premium, data-rich 'command center' layout with a responsive grid, styled KPI cards, and distinct sections for projects and tasks. */
+
+.dashboardContainer {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.dashboardHeader {
+  margin-bottom: 2rem;
+}
+
+.dashboardHeader h1 {
+  font-family: var(--font-poppins);
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.dashboardHeader p {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* KPI Cards */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.kpiCard {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-large);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.kpiCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+  border-color: var(--color-border-hover);
+}
+
+.kpiIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiTitle {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpiValue {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Main Content Grid */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sectionHeader h2 {
+  font-family: var(--font-poppins);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Recent Projects Section */
+.projectList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.projectCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-background-secondary);
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.projectCard:hover {
+  border-color: var(--color-border-hover);
+  background-color: var(--color-background-tertiary);
+}
+
+.projectInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.projectIcon {
+    color: var(--color-text-secondary);
+}
+
+.projectTitle {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.projectClient {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0.25rem 0 0 0;
+}
+
+.projectStatus {
+  text-align: right;
+  min-width: 150px;
+}
+
+.projectStatus span {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressBar > div {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 3px;
+}
+
+/* Upcoming Tasks Section */
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.taskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+}
+
+.taskItem:hover {
+    background-color: var(--color-background-secondary);
+}
+
+.taskInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.taskInfo p {
+    margin: 0;
+    color: var(--color-text-primary);
+}
+
+.taskIcon {
+    color: var(--color-success);
+}
+
+.taskDueDate {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-tertiary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-small);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+  .tasksSection {
+      margin-top: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 1rem;
+  }
+  .kpiGrid {
+    gap: 1rem;
+  }
+  .mainGrid {
+      gap: 1.5rem;
+  }
+}
+
+
+.pageHeader {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 700;
+  margin-bottom: 1.5rem; /* 24px */
+  color: var(--text-primary);
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem; /* 24px */
+}
+
+.statValue {
+  font-size: 2.25rem; /* 36px */
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-secondary);
+  margin-top: 0.5rem; /* 8px */
+}

@@ -10,7 +10,7 @@
 }
 
 .navLinkActive {
-  background-color: var(--primary);
+  background-color: var(--primary-4573df);
   color: var(--text-on-primary);
   box-shadow: 0 4px 12px -1px rgba(69, 115, 223, 0.3);
 }

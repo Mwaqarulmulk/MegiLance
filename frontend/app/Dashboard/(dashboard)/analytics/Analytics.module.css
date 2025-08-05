@@ -1,0 +1,67 @@
+/* @AI-HINT: Styles for the Analytics page, creating a responsive, data-rich dashboard layout. */
+
+.pageHeader {
+  font-family: var(--font-poppins);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 2rem;
+}
+
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.statValue {
+  font-family: var(--font-poppins);
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-family: var(--font-inter);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.mainChartContainer {
+  grid-column: 1 / -1; /* Span full width */
+}
+
+.chartPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  width: 100%;
+  border-radius: var(--border-radius);
+  background-color: var(--color-background-secondary);
+  border: 1px dashed var(--color-border);
+}
+
+.chartPlaceholder p {
+  font-family: var(--font-inter);
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pageHeader {
+    font-size: 1.75rem;
+  }
+
+  .statValue {
+    font-size: 2rem;
+  }
+
+  .analyticsGrid {
+    gap: 1rem;
+  }
+}

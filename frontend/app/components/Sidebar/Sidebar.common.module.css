@@ -68,15 +68,29 @@
   flex-grow: 1;
   overflow-y: auto;
   padding: 0 0.5rem;
+  /* Custom Scrollbar Styling for WebKit browsers */
 }
 
-/* Hide scrollbar but allow scrolling */
-.sidebarNavContainer::-webkit-scrollbar {
-  display: none;
+/* Standard scrollbar styling for Firefox and other supporting browsers */
+@supports (scrollbar-width: thin) {
+  .sidebarNavContainer {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+  }
 }
-.sidebarNavContainer {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+
+.sidebarNavContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebarNavContainer::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+}
+
+.sidebarNavContainer::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+  border-radius: 10px;
+  border: 2px solid var(--scrollbar-track-color);
 }
 
 .sidebarFooter {
