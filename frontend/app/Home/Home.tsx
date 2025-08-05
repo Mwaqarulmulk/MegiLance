@@ -41,13 +41,12 @@ import "./components/CTA.common.css";
 import "./components/CTA.light.css";
 import "./components/CTA.dark.css";
 
-interface HomeProps {
-  theme?: "light" | "dark";
-}
+import { useTheme } from '@/app/contexts/ThemeContext';
 
-const Home: React.FC<HomeProps> = ({ theme = "light" }) => {
+const Home: React.FC = () => {
+  const { theme } = useTheme();
   return (
-    <div className={`Home Home--${theme}`}>
+    <div className={`Home theme-${theme}`}>
       {/* Navigation Header */}
       <header className="Home-header">
         <nav className="Home-nav">
@@ -71,22 +70,22 @@ const Home: React.FC<HomeProps> = ({ theme = "light" }) => {
       <Hero theme={theme} />
 
       {/* Core Platform Features */}
-      <Features />
+      <Features theme={theme} />
       
       {/* AI-Powered Capabilities Showcase */}
-      <AIShowcase />
+      <AIShowcase theme={theme} />
       
       {/* Blockchain & Crypto Payment Features */}
-      <BlockchainShowcase />
+      <BlockchainShowcase theme={theme} />
       
       {/* How the Platform Works */}
-      <HowItWorks />
+      <HowItWorks theme={theme} />
       
       {/* Global Impact & Pakistani Focus */}
-      <GlobalImpact />
+      <GlobalImpact theme={theme} />
       
       {/* User Testimonials */}
-      <Testimonials />
+      <Testimonials theme={theme} />
       
       {/* Final Call-to-Action */}
       <CTA theme={theme} />

@@ -25,9 +25,10 @@ const features = [
   },
 ];
 
-const Features: React.FC = () => {
+interface FeaturesProps { theme?: "light" | "dark"; }
+const Features: React.FC<FeaturesProps> = ({ theme = "light" }) => {
   return (
-    <section className="Home-features">
+    <section className={`Home-features theme-${theme}`}>
       <div className="Home-container">
         <h2 className="Home-section-title">Why Choose MegiLance?</h2>
         <p className="Home-section-subtitle">The platform designed for the future of freelancing.</p>

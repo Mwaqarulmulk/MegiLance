@@ -14,9 +14,10 @@ const clientSteps = [
   { icon: <FaFileSignature />, title: 'Manage & Pay', description: 'Track project progress, communicate with your freelancer, and make secure payments upon completion.' },
 ];
 
-const HowItWorks: React.FC = () => {
+interface HowItWorksProps { theme?: "light" | "dark"; }
+const HowItWorks: React.FC<HowItWorksProps> = ({ theme = "light" }) => {
   return (
-    <section className="Home-how-it-works">
+    <section className={`Home-how-it-works theme-${theme}`}>
       <div className="Home-container">
         <h2 className="Home-section-title">How It Works</h2>
         <div className="Home-how-it-works-columns">

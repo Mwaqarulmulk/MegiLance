@@ -8,7 +8,8 @@ import './BlockchainShowcase.common.css';
 import './BlockchainShowcase.light.css';
 import './BlockchainShowcase.dark.css';
 
-const BlockchainShowcase: React.FC = () => {
+interface BlockchainShowcaseProps { theme?: "light" | "dark"; }
+const BlockchainShowcase: React.FC<BlockchainShowcaseProps> = ({ theme = "light" }) => {
   const blockchainFeatures = [
     {
       icon: FaBitcoin,
@@ -49,7 +50,7 @@ const BlockchainShowcase: React.FC = () => {
   ];
 
   return (
-    <section className="BlockchainShowcase">
+    <section className={`BlockchainShowcase theme-${theme}`}>
       <div className="BlockchainShowcase-container">
         <div className="BlockchainShowcase-header">
           <div className="BlockchainShowcase-badge">

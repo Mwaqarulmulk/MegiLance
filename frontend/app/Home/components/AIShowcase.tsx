@@ -8,7 +8,8 @@ import './AIShowcase.common.css';
 import './AIShowcase.light.css';
 import './AIShowcase.dark.css';
 
-const AIShowcase: React.FC = () => {
+interface AIShowcaseProps { theme?: "light" | "dark"; }
+const AIShowcase: React.FC<AIShowcaseProps> = ({ theme = "light" }) => {
   const aiFeatures = [
     {
       icon: FaBrain,
@@ -49,7 +50,7 @@ const AIShowcase: React.FC = () => {
   ];
 
   return (
-    <section className="AIShowcase">
+    <section className={`AIShowcase theme-${theme}`}>
       <div className="AIShowcase-container">
         <div className="AIShowcase-header">
           <div className="AIShowcase-badge">

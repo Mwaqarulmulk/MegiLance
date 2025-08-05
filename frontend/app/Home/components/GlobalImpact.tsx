@@ -8,7 +8,8 @@ import './GlobalImpact.common.css';
 import './GlobalImpact.light.css';
 import './GlobalImpact.dark.css';
 
-const GlobalImpact: React.FC = () => {
+interface GlobalImpactProps { theme?: "light" | "dark"; }
+const GlobalImpact: React.FC<GlobalImpactProps> = ({ theme = "light" }) => {
   const impactStats = [
     {
       icon: FaUsers,
@@ -61,7 +62,7 @@ const GlobalImpact: React.FC = () => {
   ];
 
   return (
-    <section className="GlobalImpact">
+    <section className={`GlobalImpact theme-${theme}`}>
       <div className="GlobalImpact-container">
         <div className="GlobalImpact-header">
           <div className="GlobalImpact-badge">

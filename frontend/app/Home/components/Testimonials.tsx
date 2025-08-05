@@ -22,9 +22,10 @@ const testimonials = [
   },
 ];
 
-const Testimonials: React.FC = () => {
+interface TestimonialsProps { theme?: "light" | "dark"; }
+const Testimonials: React.FC<TestimonialsProps> = ({ theme = "light" }) => {
   return (
-    <section className="Home-testimonials">
+    <section className={`Testimonials theme-${theme}`}>
       <div className="Home-container">
         <h2 className="Home-section-title">Loved by Freelancers & Clients</h2>
         <div className="Home-testimonials-grid">
