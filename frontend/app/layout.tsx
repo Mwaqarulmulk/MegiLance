@@ -4,7 +4,7 @@ import '../styles/themes/light.css';
 import '../styles/themes/dark.css';
 import './styles/theme.css';
 
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider } from 'next-themes';
 import ThemeSwitcher from './components/ThemeSwitcher/ThemeSwitcher';
 import InstallAppBanner from './components/PWA/InstallAppBanner/InstallAppBanner';
 import UpdateNotification from './components/PWA/UpdateNotification/UpdateNotification';
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className="font-body">
                   <body className="bg-[var(--background)] text-[var(--text-primary)]">
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true}>
           <ThemeSwitcher />
           {children}
           <InstallAppBanner />

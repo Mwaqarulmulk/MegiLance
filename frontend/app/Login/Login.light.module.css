@@ -1,5 +1,5 @@
 /* @AI-HINT: Light theme styles for Login component. */
-:root {
+.LoginLightTheme {
   /* Example variables */
   --login-bg: #fff;
   --login-text: #222;
