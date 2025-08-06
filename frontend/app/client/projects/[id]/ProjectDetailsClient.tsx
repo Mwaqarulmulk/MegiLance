@@ -42,7 +42,7 @@ const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({ projectId }
             <h1>{project.title}</h1>
             <span className={`status status--${project.status.replace(/\s+/g, '-')}`}>{project.status}</span>
           </div>
-          <Button theme={theme} variant="outline">Edit Job Post</Button>
+          <Button variant="outline">Edit Job Post</Button>
         </header>
 
         <div className="ProjectDetails-layout">
@@ -55,13 +55,13 @@ const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({ projectId }
             {project.status === 'In Progress' && project.hiredFreelancer && (
               <section className="ProjectDetails-section">
                 <h2>Hired Freelancer</h2>
-                <div className={`FreelancerInfoCard FreelancerInfoCard--${theme}`}>
-                  <UserAvatar theme={theme} name={project.hiredFreelancer.name} src={project.hiredFreelancer.avatarUrl} />
+                <div className="FreelancerInfoCard">
+                  <UserAvatar name={project.hiredFreelancer.name} src={project.hiredFreelancer.avatarUrl} />
                   <div className="FreelancerInfo-details">
                     <strong>{project.hiredFreelancer.name}</strong>
                     <span>Rank: {project.hiredFreelancer.rank}</span>
                   </div>
-                  <Button theme={theme} variant="primary">Send Message</Button>
+                  <Button variant="primary">Send Message</Button>
                 </div>
               </section>
             )}
@@ -71,15 +71,15 @@ const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({ projectId }
                 <h2>Proposals ({project.proposals.length})</h2>
                 <div className="Proposal-list">
                   {project.proposals.map(p => (
-                    <div key={p.id} className={`ProposalCard ProposalCard--${theme}`}>
+                    <div key={p.id} className="ProposalCard">
                       <div className="ProposalCard-header">
                         <strong>{p.freelancerName}</strong>
                         <span>{p.rate}</span>
                       </div>
                       <p>&quot;{p.coverLetterSnippet}&quot;</p>
                       <div className="ProposalCard-actions">
-                        <Button theme={theme} variant="outline" size="small">View Proposal</Button>
-                        <Button theme={theme} variant="primary" size="small">Hire</Button>
+                        <Button variant="outline" size="small">View Proposal</Button>
+                        <Button variant="primary" size="small">Hire</Button>
                       </div>
                     </div>
                   ))}
@@ -89,7 +89,7 @@ const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({ projectId }
           </main>
 
           <aside className="ProjectDetails-sidebar">
-            <div className={`Sidebar-card Sidebar-card--${theme}`}>
+            <div className="Sidebar-card">
               <h3>Project Details</h3>
               <p><strong>Budget:</strong> ${project.budget.toLocaleString()}</p>
               <p><strong>Job Type:</strong> {project.jobType}</p>

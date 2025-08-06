@@ -31,10 +31,7 @@ const Signup: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const styles = useMemo(() => {
-    const themeStyles = theme === 'light' ? lightStyles : darkStyles;
-    return { ...commonStyles, ...themeStyles };
-  }, [theme]);
+
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -94,60 +91,60 @@ const Signup: React.FC = () => {
 
   const RoleButton = ({ role, label, icon: Icon }: { role: Role; label: string; icon: React.ElementType }) => (
     <button
-      className={cn(styles.roleButton, selectedRole === role && styles.roleButtonSelected)}
+      className={cn(commonStyles.roleButton, selectedRole === role && commonStyles.roleButtonSelected)}
       onClick={() => setSelectedRole(role)}
     >
-      <Icon className={styles.roleIcon} />
+      <Icon className={commonStyles.roleIcon} />
       <span>{label}</span>
     </button>
   );
 
   return (
-    <div className={styles.signupContainer}>
-      <div className={styles.brandPanel}>
-        <div className={styles.brandContent}>
-          <Link href="/" className={styles.brandLogoLink}>
-            <FaBuilding className={styles.brandLogoIcon} />
-            <h1 className={styles.brandTitle}>MegiLance</h1>
+    <div className={cn(commonStyles.signupContainer, theme === 'light' ? lightStyles.SignupLightTheme : darkStyles.SignupDarkTheme)}>
+      <div className={commonStyles.brandPanel}>
+        <div className={commonStyles.brandContent}>
+          <Link href="/" className={commonStyles.brandLogoLink}>
+            <FaBuilding className={commonStyles.brandLogoIcon} />
+            <h1 className={commonStyles.brandTitle}>MegiLance</h1>
           </Link>
-          <p className={styles.brandSubtitle}>The Future of Decentralized Freelancing</p>
-          <p className={styles.brandText}>
+          <p className={commonStyles.brandSubtitle}>The Future of Decentralized Freelancing</p>
+          <p className={commonStyles.brandText}>
             Connect with top talent, manage projects with confidence, and transact securely using cryptocurrency.
           </p>
         </div>
       </div>
-      <div className={styles.formPanel}>
-        <div className={styles.formContainer}>
-          <h2 className={styles.title}>Create an Account</h2>
-          <p className={styles.subtitle}>Join a growing community of innovators and experts.</p>
+      <div className={commonStyles.formPanel}>
+        <div className={commonStyles.formContainer}>
+          <h2 className={commonStyles.title}>Create an Account</h2>
+          <p className={commonStyles.subtitle}>Join a growing community of innovators and experts.</p>
 
-          <div className={styles.roleSelector}>
+          <div className={commonStyles.roleSelector}>
             <RoleButton role="client" label="I'm a Client" icon={FaUserTie} />
             <RoleButton role="freelancer" label="I'm a Freelancer" icon={FaBriefcase} />
           </div>
 
-          <div className={styles.socialButtons}>
+          <div className={commonStyles.socialButtons}>
             <Button variant="secondary" fullWidth><FaGoogle className="mr-2" /> Sign up with Google</Button>
             <Button variant="secondary" fullWidth><FaGithub className="mr-2" /> Sign up with GitHub</Button>
           </div>
 
-          <div className={styles.divider}><span>OR</span></div>
+          <div className={commonStyles.divider}><span>OR</span></div>
 
-          <form onSubmit={handleSubmit} noValidate className={styles.form}>
+          <form onSubmit={handleSubmit} noValidate className={commonStyles.form}>
             <Input label="Full Name" type="text" placeholder="John Doe" name="fullName" value={formData.fullName} onChange={handleChange} error={errors.fullName} required />
             <Input label="Email Address" type="email" placeholder="you@example.com" name="email" value={formData.email} onChange={handleChange} error={errors.email} required />
             <Input label="Password" type="password" placeholder="Minimum 8 characters" name="password" value={formData.password} onChange={handleChange} error={errors.password} required />
             <Input label="Confirm Password" type="password" placeholder="Re-enter your password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} required />
             <Checkbox name="agreedToTerms" checked={formData.agreedToTerms} onChange={handleChange} error={errors.agreedToTerms}>
-              I agree to the <Link href="/terms" className={styles.link}>Terms of Service</Link> and <Link href="/privacy" className={styles.link}>Privacy Policy</Link>.
+              I agree to the <Link href="/terms" className={commonStyles.link}>Terms of Service</Link> and <Link href="/privacy" className={commonStyles.link}>Privacy Policy</Link>.
             </Checkbox>
             <Button variant="primary" fullWidth type="submit" disabled={loading}>
               {loading ? 'Creating Account...' : `Create ${selectedRole === 'client' ? 'Client' : 'Freelancer'} Account`}
             </Button>
           </form>
 
-          <p className={styles.loginLink}>
-            Already have an account? <Link href="/Login" className={styles.link}>Log In</Link>
+          <p className={commonStyles.loginLink}>
+            Already have an account? <Link href="/Login" className={commonStyles.link}>Log In</Link>
           </p>
         </div>
       </div>

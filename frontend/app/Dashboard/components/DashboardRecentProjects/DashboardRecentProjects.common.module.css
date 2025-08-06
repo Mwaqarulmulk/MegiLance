@@ -69,6 +69,24 @@
   text-transform: capitalize;
 }
 
+.projectCard {
+  /* Add styles for project card */
+}
+
+.progressBar {
+  height: 8px;
+  background-color: var(--surface-alt);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
 .statusDot {
   width: 8px;
   height: 8px;

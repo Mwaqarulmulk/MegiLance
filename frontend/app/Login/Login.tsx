@@ -1,9 +1,9 @@
 // @AI-HINT: Premium SaaS Login component for MegiLance platform. This is the main authentication interface that handles three user roles (Admin, Client, Freelancer) with investor-grade UI quality. Features secure login, role selection, social authentication, and responsive design following exact MegiLance brand guidelines. Uses per-component CSS architecture with .common.css, .light.css, .dark.css theming. Designed to match quality standards of Linear, Vercel, GitHub, and Upwork Pro.
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaGoogle, FaGithub, FaBuilding, FaUser, FaUserTie, FaCog, FaEye, FaEyeSlash, FaShieldAlt } from 'react-icons/fa';
+import { FaGoogle, FaGithub, FaBuilding, FaUser, FaShieldAlt, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Button from '@/app/components/Button/Button';
 import Input from '@/app/components/Input/Input';
 
@@ -13,8 +13,6 @@ import lightStyles from './Login.light.module.css';
 import darkStyles from './Login.dark.module.css';
 import { useTheme } from 'next-themes';
 
-
-
 // @AI-HINT: Premium SaaS Login component for MegiLance platform. Now fully theme-switchable using global theme context and per-component CSS modules.
 
 type UserRole = 'freelancer' | 'client' | 'admin';
@@ -23,6 +21,7 @@ interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
   const { theme } = useTheme();
+
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<UserRole>('freelancer');
   const [showPassword, setShowPassword] = useState(false);
@@ -41,24 +40,21 @@ const Login: React.FC<LoginProps> = () => {
   // Premium role configuration for three-role system
   const roleConfig = {
     freelancer: {
+      id: 'freelancer' as UserRole,
       icon: FaUser,
       label: 'Freelancer',
-      description: 'Find projects and grow your career',
-      color: 'var(--primary)',
       redirectPath: '/dashboard'
     },
     client: {
+      id: 'client' as UserRole,
       icon: FaBuilding,
       label: 'Client',
-      description: 'Hire talented freelancers',
-      color: 'var(--success)',
       redirectPath: '/client/dashboard'
     },
     admin: {
+      id: 'admin' as UserRole,
       icon: FaShieldAlt,
       label: 'Admin',
-      description: 'Platform administration',
-      color: 'var(--warning)',
       redirectPath: '/admin/dashboard'
     }
   };
@@ -92,9 +88,6 @@ const Login: React.FC<LoginProps> = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const MOCK_EMAIL = 'testuser@example.com';
-  const MOCK_PASSWORD = 'testpass123';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -103,13 +96,8 @@ const Login: React.FC<LoginProps> = () => {
     setErrors({ email: '', password: '', general: '' });
 
     try {
-      // Simulate API call with role-based authentication
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Mock successful login with role-based routing
       console.log('Login successful:', { ...formData, role: selectedRole });
-      
-      // Premium role-based navigation
       const redirectPath = roleConfig[selectedRole].redirectPath;
       router.push(redirectPath);
     } catch (error) {
@@ -144,7 +132,7 @@ const Login: React.FC<LoginProps> = () => {
   };
 
   return (
-    <div className={cn(commonStyles.login, theme === 'light' ? lightStyles.light : darkStyles.dark)}>
+    <div className={cn(commonStyles.login, theme === 'dark' ? darkStyles.dark : lightStyles.light)}>
       {/* AI-HINT: The 'cn' utility merges common styles with theme-specific (light/dark) styles. */}
       {/* Premium Brand Panel */}
       <div className={cn(commonStyles.loginPanel, commonStyles.loginPanelBrand)}>
@@ -156,63 +144,48 @@ const Login: React.FC<LoginProps> = () => {
             <p className={commonStyles.loginBrandSubtitle}>Empowering Freelancers with AI and Secure USDC Payments</p>
           </div>
           <div className={commonStyles.loginBrandFeatures}>
-            <div className={commonStyles.loginFeature}>
-              <FaShieldAlt className={commonStyles.loginFeatureIcon} />
-              <span>Secure Authentication</span>
-            </div>
-            <div className={commonStyles.loginFeature}>
-              <FaUser className={commonStyles.loginFeatureIcon} />
-              <span>Multi-Role Access</span>
-            </div>
-            <div className={commonStyles.loginFeature}>
-              <FaBuilding className={commonStyles.loginFeatureIcon} />
-              <span>Enterprise Ready</span>
-            </div>
-          </div>
+        </div>
+        <blockquote className={commonStyles.loginBrandingQuote}>
+          “The best platform to connect with top-tier talent and find your next big opportunity.”
+          <footer className={commonStyles.loginBrandingQuoteAuthor}>
+            - Jane Doe, CEO of TechCorp
+          </footer>
+        </blockquote>
         </div>
       </div>
-      
-      {/* Premium Login Form Panel */}
-      <div className={cn(commonStyles.loginPanel, commonStyles.loginPanelForm)}>
-        <div className={commonStyles.loginFormContainer}>
-        
-          
-          {/* Premium Role Selection */}
-          <div className={commonStyles.loginRoleSelection}>
-            <h2 className={commonStyles.loginFormTitle}>Welcome Back</h2>
-            <p className={commonStyles.loginFormSubtitle}>Select your role and sign in to continue</p>
-            
-            <div className={commonStyles.loginRoles}>
-              {Object.entries(roleConfig).map(([role, config]) => {
-                const IconComponent = config.icon;
-                return (
-                  <button
-                    key={role}
-                    type="button"
-                    className={cn(
-                      commonStyles.loginRoleButton,
-                      selectedRole === role && commonStyles.loginRoleButtonActive
-                    )}
-                    onClick={() => setSelectedRole(role as UserRole)}
-                    disabled={loading}
-                  >
-                    <IconComponent className={commonStyles.loginRoleIcon} />
-                    <div className={commonStyles.loginRoleContent}>
-                      <span className={commonStyles.loginRoleLabel}>{config.label}</span>
-                      <span className={commonStyles.loginRoleDescription}>{config.description}</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+
+      {/* Premium Form Section */}
+      <div className={commonStyles.loginFormContainer}>
+        <div className={commonStyles.loginFormWrapper}>
+          <div className={commonStyles.loginHeader}>
+            <h1 className={commonStyles.loginTitle}>Welcome Back</h1>
+            <p className={commonStyles.loginSubtitle}>Sign in to continue your journey with MegiLance.</p>
           </div>
-          
+
+          {/* Premium Role Selector */}
+          <div className={commonStyles.loginRoleSelector}>
+            {Object.values(roleConfig).map((role) => (
+              <button
+                key={role.id}
+                type="button"
+                className={cn(
+                  commonStyles.loginRoleButton,
+                  { [commonStyles.active]: selectedRole === role.id }
+                )}
+                onClick={() => setSelectedRole(role.id)}
+              >
+                <role.icon className={commonStyles.loginRoleIcon} />
+                <span>{role.label}</span>
+              </button>
+            ))}
+          </div>
+
           {/* Premium Social Authentication */}
-          <div className={commonStyles.loginSocialSection}>
+          <div className={commonStyles.loginSocialAuth}>
             <div className={commonStyles.loginSocialButtons}>
               <button
                 type="button"
-                className={cn(commonStyles.loginSocialButton, commonStyles.loginSocialButtonGoogle)}
+                className={commonStyles.loginSocialButton}
                 onClick={() => handleSocialLogin('google')}
                 disabled={loading}
               >
@@ -221,7 +194,7 @@ const Login: React.FC<LoginProps> = () => {
               </button>
               <button
                 type="button"
-                className={cn(commonStyles.loginSocialButton, commonStyles.loginSocialButtonGithub)}
+                className={commonStyles.loginSocialButton}
                 onClick={() => handleSocialLogin('github')}
                 disabled={loading}
               >
@@ -237,7 +210,7 @@ const Login: React.FC<LoginProps> = () => {
 
           {/* Premium Login Form */}
           <form className={commonStyles.loginForm} onSubmit={handleSubmit} noValidate>
-            {/* Premium Email Input */}
+            {errors.general && <p className="error-message">{errors.general}</p>}
             <div className={commonStyles.loginInputGroup}>
               <Input
                 label="Email Address"
@@ -248,11 +221,9 @@ const Login: React.FC<LoginProps> = () => {
                 onChange={handleChange}
                 error={errors.email}
                 required
-                className={commonStyles.loginInput}
               />
             </div>
             
-            {/* Premium Password Input with Show/Hide Toggle */}
             <div className={commonStyles.loginInputGroup}>
               <div className={commonStyles.loginPasswordWrapper}>
                 <Input
@@ -264,7 +235,6 @@ const Login: React.FC<LoginProps> = () => {
                   onChange={handleChange}
                   error={errors.password}
                   required
-                  className={commonStyles.loginInput}
                 />
                 <button
                   type="button"
@@ -276,7 +246,7 @@ const Login: React.FC<LoginProps> = () => {
                 </button>
               </div>
             </div>
-            {/* Premium Form Options */}
+
             <div className={commonStyles.loginFormOptions}>
               <div className={commonStyles.loginRememberGroup}>
                 <input
@@ -285,7 +255,7 @@ const Login: React.FC<LoginProps> = () => {
                   className={commonStyles.loginCheckbox}
                 />
                 <label htmlFor="remember-me" className={commonStyles.loginCheckboxLabel}>
-                  Remember me for 30 days
+                  Remember me
                 </label>
               </div>
               <Link href="/forgot-password" className={commonStyles.loginForgotLink}>
@@ -293,7 +263,6 @@ const Login: React.FC<LoginProps> = () => {
               </Link>
             </div>
 
-            {/* Premium Submit Button */}
             <Button 
               type="submit" 
               variant="primary" 
@@ -301,16 +270,15 @@ const Login: React.FC<LoginProps> = () => {
               isLoading={loading}
               className={commonStyles.loginSubmitButton}
             >
-              {loading ? `Signing in as ${roleConfig[selectedRole].label}...` : `Sign in as ${roleConfig[selectedRole].label}`}
+              {loading ? `Signing in...` : `Sign in as ${roleConfig[selectedRole].label}`}
             </Button>
           </form>
           
-          {/* Premium Sign Up Link */}
           <div className={commonStyles.loginSignupSection}>
             <p className={commonStyles.loginSignupText}>
               Don't have an account?
               <Link href="/signup" className={commonStyles.loginSignupLink}>
-                Create your account
+                Create an account
               </Link>
             </p>
           </div>

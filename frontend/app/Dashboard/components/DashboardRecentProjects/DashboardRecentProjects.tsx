@@ -50,40 +50,41 @@ const DashboardRecentProjects: React.FC = () => {
     fetchProjects();
   }, []);
 
-  if (loading) {
-    return <div className="DashboardSection-loading">Loading projects...</div>;
+    if (loading) {
+    return <div className={commonStyles.loading}>Loading projects...</div>;
   }
 
   if (error) {
-    return <div className="DashboardSection-error">Error: {error}</div>;
+    return <div className={commonStyles.error}>Error: {error}</div>;
   }
 
   return (
-    <div className="DashboardSection">
-      <div className="DashboardSection-header">
-        <h2>Recent Projects</h2>
-        <a href="/projects" className="DashboardSection-view-all">View All</a>
+    <div className={commonStyles.recentProjectsCard}>
+      <div className={commonStyles.cardHeader}>
+        <h2 className={commonStyles.cardTitle}>Recent Projects</h2>
+        <a href="/projects" className={commonStyles.viewAllLink}>View All</a>
       </div>
-      <div className="DashboardRecentProjects-list">
+      <div className={commonStyles.listContainer}>
         {projects.map((project) => (
-          <div key={project.id} className={`ProjectCard ${getStatusClass(project.status)}`}>
-            <div className="ProjectCard-header">
-              <h3 className="ProjectCard-title">{project.title}</h3>
-              <span className={`ProjectCard-status ${getStatusClass(project.status)}`}>{project.status}</span>
+          <div key={project.id} className={`${commonStyles.projectCard} ${getStatusClass(project.status)}`}>
+            <div className={commonStyles.projectHeader}>
+              <h3 className={commonStyles.projectTitle}>{project.title}</h3>
+              <span className={`${commonStyles.statusBadge} ${getStatusClass(project.status)}`}>{project.status}</span>
             </div>
-            <div className="ProjectCard-client">{project.client}</div>
-            <div className="ProjectCard-progress">
-              <div 
-                className="ProjectCard-progress-bar"
-                style={{ '--progress-width': `${project.progress}%` } as React.CSSProperties}
-              >
-                <div className="ProjectCard-progress-fill"></div>
+            <div className={commonStyles.clientName}>{project.client}</div>
+            <div className={commonStyles.progressContainer}>
+              <div className={commonStyles.progressBar}>
+                                {/* eslint-disable-next-line react/no-inline-styles */}
+                <div 
+                  className={commonStyles.progressFill}
+                  style={{ width: `${project.progress}%` }}
+                ></div>
               </div>
-              <span className="ProjectCard-progress-label">{project.progress}%</span>
+              <span className={commonStyles.progressLabel}>{project.progress}%</span>
             </div>
-            <div className="ProjectCard-footer">
-              <span className="ProjectCard-deadline">Deadline: {project.deadline}</span>
-              <span className="ProjectCard-budget">{project.budget}</span>
+            <div className={commonStyles.projectFooter}>
+              <span className={commonStyles.deadline}>Deadline: {project.deadline}</span>
+              <span className={commonStyles.budget}>{project.budget}</span>
             </div>
           </div>
         ))}

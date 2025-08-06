@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { useTheme } from 'next-themes';
+import { User } from './types';
 
 import DashboardHeader from './components/DashboardHeader/DashboardHeader';
 import DashboardMetrics from './components/DashboardMetrics/DashboardMetrics';
@@ -17,15 +19,19 @@ import darkStyles from './dashboard.dark.module.css';
 
 
 
-const Dashboard: React.FC = () => {
-    // This is a placeholder. In a real app, you'd fetch this based on the logged-in user.
-    const user = { name: 'Admin User', role: 'Admin' };
+interface DashboardProps {
+  userRole: string;
+  user: User;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ userRole, user }) => {
+    const { theme } = useTheme();
+    const styles = theme === 'dark' ? darkStyles : lightStyles;
 
     return (
-        <div className={commonStyles.dashboardLayout}>
+        <div className={`${commonStyles.dashboardLayout} ${styles.dashboardLayout}`}>
             <div className={styles.header}>
-
-                <DashboardHeader userName={user.name} userRole={user.role} />
+                <DashboardHeader userName={user.fullName} userRole={userRole} />
             </div>
             <main className={styles.mainContent}>
                 <div className={styles.metrics}>

@@ -7,7 +7,7 @@
 /* Premium SaaS Dashboard - Investor-grade UI matching Linear/Vercel quality standards */
 /* @AI-HINT: This CSS creates a polished, premium dashboard experience with perfect visual hierarchy, micro-interactions, and brand-aligned styling for MegiLance's three-role system (Admin, Client, Freelancer) */
 
-.Dashboard {
+.dashboardLayout {
   min-height: 100vh;
   display: grid;
   grid-template-columns: var(--size-sidebar-width) 1fr;
@@ -19,22 +19,22 @@
   color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
-  
-  /* Premium backdrop blur effect for modern SaaS feel */
-  &::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, 
-      rgba(69, 115, 223, 0.02) 0%, 
-      rgba(255, 152, 0, 0.01) 50%, 
-      rgba(39, 174, 96, 0.02) 100%);
-    pointer-events: none;
-    z-index: -1;
-  }
+}
+
+/* Premium backdrop blur effect for modern SaaS feel */
+.dashboardLayout::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(69, 115, 223, 0.02) 0%, 
+    rgba(255, 152, 0, 0.01) 50%, 
+    rgba(39, 174, 96, 0.02) 100%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .Dashboard-container {

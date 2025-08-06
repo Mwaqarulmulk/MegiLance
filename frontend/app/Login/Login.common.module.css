@@ -1,20 +1,303 @@
-/* @AI-HINT: Common styles for Login component. */
-.loginSocialButton {}
-.loginSocialButtonGithub {}
-.loginSocialIcon {}
-.loginDivider {}
-.loginDividerText {}
-.loginForm {}
-.loginInputGroup {}
-.loginInput {}
-.loginPasswordWrapper {}
-.loginPasswordToggle {}
-.loginFormOptions {}
-.loginRememberGroup {}
-.loginCheckbox {}
-.loginCheckboxLabel {}
-.loginForgotLink {}
-.loginSubmitButton {}
-.loginSignupSection {}
-.loginSignupText {}
-.loginSignupLink {}
+/* @AI-HINT: Common, theme-agnostic styles for the premium Login component. Defines layout, spacing, and base styles. */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loginContainer {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.loginBranding {
+  width: 50%;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.5s ease-in-out;
+}
+
+.loginBrandingLogo {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--brand-logo-color);
+}
+
+.loginBrandingQuote {
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  max-width: 80%;
+  color: var(--brand-quote-color);
+}
+
+.loginBrandingQuoteAuthor {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brand-quote-color);
+  opacity: 0.8;
+}
+
+.loginFormContainer {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.loginFormWrapper {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+}
+
+.loginHeader {
+  margin-bottom: 2rem;
+  animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+.loginTitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.loginSubtitle {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+}
+
+.loginRoleSelector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  background-color: var(--background-secondary);
+}
+
+.loginRoleButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid transparent;
+  color: var(--text-secondary);
+}
+
+.loginRoleButton.active {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.loginRoleIcon {
+  font-size: 1.2rem;
+}
+
+.loginSocialAuth {
+  margin-bottom: 1.5rem;
+}
+
+.loginSocialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.loginSocialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-primary);
+  color: var(--text-secondary);
+}
+
+.loginSocialButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: var(--background-secondary);
+}
+
+.loginSocialIcon {
+  font-size: 1.25rem;
+}
+
+.loginDivider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.loginDivider::before,
+.loginDivider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.loginDividerText {
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.loginInputGroup {
+  position: relative;
+}
+
+.loginPasswordWrapper {
+  position: relative;
+}
+
+.loginPasswordToggle {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.2rem;
+  color: var(--text-tertiary);
+  transition: color 0.2s ease-in-out;
+}
+
+.loginPasswordToggle:hover {
+  color: var(--text-primary);
+}
+
+.loginFormOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.loginRememberGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loginCheckbox {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.loginCheckboxLabel {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.loginForgotLink {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.loginForgotLink:hover {
+  text-decoration: underline;
+}
+
+.loginSubmitButton {
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.loginSignupSection {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.loginSignupText {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.loginSignupLink {
+  font-weight: 600;
+  margin-left: 0.5rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.loginSignupLink:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .loginBranding {
+    display: none;
+  }
+  .loginFormContainer {
+    width: 100%;
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginFormContainer {
+    padding: 1.5rem;
+  }
+  .loginTitle {
+    font-size: 2rem;
+  }
+  .loginSubtitle {
+    font-size: 1rem;
+  }
+  .loginRoleSelector {
+    flex-direction: column;
+  }
+}
+

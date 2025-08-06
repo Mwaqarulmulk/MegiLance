@@ -1,6 +1,28 @@
-/* @AI-HINT: Light theme styles for Login component. */
-.LoginLightTheme {
-  /* Example variables */
-  --login-bg: #fff;
-  --login-text: #222;
+/* @AI-HINT: Light theme styles for the premium Login component. Defines colors, backgrounds, and shadows for a bright, clean interface. */
+.light {
+  --background-primary: #ffffff;
+  --background-secondary: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --border-color: #e5e7eb;
+  
+  --color-primary: #4573df;
+  --color-primary-accent: #eef2ff;
+
+  --brand-image: url('/images/branding-light.jpg');
+  --brand-logo-color: var(--color-primary);
+  --brand-quote-color: var(--text-primary);
+  --brand-text-color: var(--text-primary);
+
+  --login-role-button-active-bg: var(--background-primary);
+  --login-role-button-active-text: var(--color-primary);
+  --login-role-button-active-shadow: 0 2px 4px rgba(69, 115, 223, 0.1);
+  
+  --social-button-bg: var(--background-primary);
+  --social-button-text: var(--text-secondary);
+  --social-button-border: var(--border-color);
+  --social-button-hover-bg: var(--background-secondary);
+  --social-button-hover-text: var(--color-primary);
+  --social-button-hover-border: var(--color-primary);
 }

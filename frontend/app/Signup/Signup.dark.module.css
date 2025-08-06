@@ -1,13 +1,11 @@
-/* Migrated from Signup.dark.css to Signup.dark.module.css */
-/* @AI-HINT: This file defines the CSS variables for the dark theme of the Signup component. */
-
-@import './Signup.common.module.css';
-
-/* Place all Signup.dark.css content here */
-
-.SignupDarkTheme {
-  --brand-panel-bg: #1a1d21; /* A very dark, slightly off-black */
-  --brand-panel-text: #f8f9fa; /* Light grey/off-white for text */
-  --primary-hover-bg: rgba(69, 115, 223, 0.1); /* Primary color with low opacity */
-  --primary-contrast-text: #ffffff; /* White text on primary color buttons */
+:root {
+  --background-primary: var(--dark-color-background-primary, #111827);
+  --text-primary: var(--dark-color-text-primary, #f9fafb);
+  --text-secondary: var(--dark-color-text-secondary, #9ca3af);
+  --text-tertiary: var(--dark-color-text-tertiary, #6b7280);
+  --border-color: var(--dark-color-border-primary, #374151);
+  --brand-panel-bg: var(--dark-color-background-secondary, #1f2937);
+  --brand-panel-text: var(--dark-color-text-primary, #f9fafb);
+  --primary-hover-bg: rgba(69, 115, 223, 0.1);
+  --primary-contrast-text: #ffffff;
 }

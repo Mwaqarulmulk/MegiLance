@@ -1,11 +1,11 @@
-/* Migrated from Signup.light.css to Signup.light.module.css */
-@import './Signup.common.module.css';
-
-/* @AI-HINT: This file defines the CSS variables for the light theme of the Signup component. */
-
-.SignupLightTheme {
-  --brand-panel-bg: #f8f9fa; /* A very light grey, almost white */
-  --brand-panel-text: #212529; /* Dark grey for high contrast text */
-  --primary-hover-bg: #eef2ff; /* A very light, slightly blueish tint */
-  --primary-contrast-text: #ffffff; /* White text on primary color buttons */
+:root {
+  --background-primary: var(--color-background-secondary, #ffffff);
+  --text-primary: var(--color-text-primary, #111827);
+  --text-secondary: var(--color-text-secondary, #6b7280);
+  --text-tertiary: var(--color-text-tertiary, #9ca3af);
+  --border-color: var(--color-border-primary, #e5e7eb);
+  --brand-panel-bg: var(--color-background-primary, #f9fafb);
+  --brand-panel-text: var(--color-text-primary, #111827);
+  --primary-hover-bg: rgba(69, 115, 223, 0.05);
+  --primary-contrast-text: #ffffff;
 }

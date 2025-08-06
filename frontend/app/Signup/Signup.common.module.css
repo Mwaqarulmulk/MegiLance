@@ -1,10 +1,16 @@
-/* Migrated from Signup.common.css/* @AI-HINT: This file contains the common, structural styles for the Signup component. It uses CSS variables for theming, which are defined in the corresponding .light.module.css and .dark.module.css files. */
+/* @AI-HINT: This file contains the common, structural styles for the Signup component. It uses CSS variables for theming, which are defined in the corresponding .light.module.css and .dark.module.css files. */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .signupContainer {
   display: flex;
   min-height: 100vh;
   width: 100%;
   background-color: var(--background-primary);
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .brandPanel {
@@ -18,10 +24,12 @@
   color: var(--brand-panel-text);
   text-align: center;
   border-right: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .brandContent {
   max-width: 450px;
+  animation: fadeIn 0.6s ease-in-out forwards;
 }
 
 .brandLogoLink {
@@ -37,6 +45,7 @@
 .brandLogoIcon {
   font-size: 2.5rem;
   color: var(--color-primary);
+  transition: color 0.3s ease;
 }
 
 .brandTitle {
@@ -68,6 +77,7 @@
 .formContainer {
   width: 100%;
   max-width: 420px;
+  animation: fadeIn 0.7s ease-in-out forwards;
 }
 
 .title {
@@ -106,18 +116,22 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  transform: translateY(0);
 }
 
 .roleButton:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background-color: var(--primary-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .roleButtonSelected {
   border-color: var(--color-primary);
   background-color: var(--color-primary);
   color: var(--primary-contrast-text);
+  box-shadow: 0 4px 12px rgba(69, 115, 223, 0.3);
 }
 
 .roleIcon {
@@ -171,6 +185,7 @@
 
 .link:hover {
   text-decoration: underline;
+  color: var(--color-primary-dark);
 }
 
 .loginLink {
