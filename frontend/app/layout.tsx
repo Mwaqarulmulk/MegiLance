@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="font-body">
+    <html lang="en">
                   <body className="bg-[var(--background)] text-[var(--text-primary)]">
         <ThemeProvider 
           attribute="class" 
