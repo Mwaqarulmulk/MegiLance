@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './UserAvatar.common.module.css';
 import lightStyles from './UserAvatar.light.module.css';
@@ -23,6 +23,10 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   className,
 }) => {
   const { theme } = useTheme();
+
+  if (!theme) {
+    return null; // Avoid hydration mismatch
+  }
   const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
   const sizeMap = {

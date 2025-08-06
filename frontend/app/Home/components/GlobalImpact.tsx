@@ -150,7 +150,7 @@ const GlobalImpact: React.FC = () => {
                   <div className={cn(commonStyles.storyAvatar, themeStyles.storyAvatar)}>
                     {story.name.split(' ').map(n => n[0]).join('')}
                   </div>
-                  <div className="story-info">
+                  <div className={commonStyles.storyInfo}>
                     <div className={cn(commonStyles.storyName, themeStyles.storyName)}>{story.name}</div>
                     <div className={cn(commonStyles.storyRole, themeStyles.storyRole)}>{story.role}</div>
                     <div className={cn(commonStyles.storyLocation, themeStyles.storyLocation)}>{story.city}, Pakistan</div>

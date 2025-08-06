@@ -2,10 +2,25 @@
 
 .dashboardLayout {
   display: grid;
-  grid-template-columns: auto 1fr;
+  /* Use a variable for the sidebar width, controlled by the Sidebar component */
+  grid-template-columns: var(--sidebar-width, 250px) 1fr;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  transition: grid-template-columns 0.3s ease-in-out;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  .dashboardLayout {
+    /* Stack layout and hide sidebar off-screen */
+    grid-template-columns: 0 1fr;
+  }
+
+  .dashboardLayout.sidebar-visible {
+    /* Bring sidebar into view when toggled */
+    grid-template-columns: 250px 1fr;
+  }
 }
 
 .mainContent {

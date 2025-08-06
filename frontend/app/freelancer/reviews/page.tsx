@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Reviews from './Reviews';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const ReviewsPage = () => {
-  const { theme } = useTheme();
-
-  return <Reviews theme={theme} />;
+  return <Reviews />;
 };
 
 export default ReviewsPage;

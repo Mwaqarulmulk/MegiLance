@@ -8,7 +8,6 @@ import Input from '@/app/components/Input/Input';
 import commonStyles from './Profile.common.module.css';
 import lightStyles from './Profile.light.module.css';
 import darkStyles from './Profile.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 // @AI-HINT: This is the Freelancer Profile page component. It allows freelancers to view and edit their public profile. All styles are per-component only. Now fully theme-switchable using global theme context.
 
@@ -25,21 +24,17 @@ const Profile: React.FC = () => {
   };
 
   return (
-    const { theme } = useTheme();
-    const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
-    return (
-      <div className={`${commonStyles.profile} ${themeStyles.profile}`}>
-        <div className={commonStyles.container}>
-          <header className={commonStyles.header}>
-            <UserAvatar name={userProfile.name} size="large" />
-            <div className={commonStyles.headerInfo}>
-              <h1>{userProfile.name}</h1>
-              <p>{userProfile.title}</p>
-              <span className={commonStyles.rank}>Freelancer Rank: {userProfile.rank}</span>
-            </div>
-            <Button variant="secondary">Edit Profile</Button>
-          </header>
+    <div className={commonStyles.profile}>
+      <div className={commonStyles.container}>
+        <header className={commonStyles.header}>
+          <UserAvatar name={userProfile.name} size="large" />
+          <div className={commonStyles.headerInfo}>
+            <h1>{userProfile.name}</h1>
+            <p>{userProfile.title}</p>
+            <span className={commonStyles.rank}>Freelancer Rank: {userProfile.rank}</span>
+          </div>
+          <Button variant="secondary">Edit Profile</Button>
+        </header>
 
         <form className={commonStyles.form}>
           <div className={commonStyles.section}>

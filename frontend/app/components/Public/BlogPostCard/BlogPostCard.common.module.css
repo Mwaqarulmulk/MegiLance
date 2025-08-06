@@ -1,63 +1,8 @@
-/* @AI-HINT: Provides theme-agnostic structural styles for the BlogPostCard. All colors are inherited directly from global CSS variables, ensuring it adapts to the current theme. */
-
-.blogPostCardLink {
-  text-decoration: none;
-  display: block;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.blogPostCardLink:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--card-shadow-hover);
-}
-
-.container {
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--border-subtle);
-  background-color: var(--surface-secondary);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.imageWrapper {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
-}
-
-.imageWrapper img {
-  border-top-left-radius: var(--radius-lg);
-  border-top-right-radius: var(--radius-lg);
-}
-
-.content {
-  padding: var(--spacing-6);
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  margin: 0 0 0.5rem 0;
-  color: var(--text-primary);
-}
-
-.excerpt {
-  margin: 0 0 1rem 0;
-  flex-grow: 1;
-  color: var(--text-secondary);
-}
-
-.meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: var(--font-size-sm);
-  color: var(--text-tertiary);
-}
-
-
+.container {}
+.imageWrapper {}
+.content {}
+.title {}
+.excerpt {}
+.meta {}
+.author {}
+.date {}

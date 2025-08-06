@@ -3,12 +3,10 @@
 
 import React from 'react';
 import FraudCheck from './FraudCheck';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const FraudCheckPage = () => {
-  const { theme } = useTheme();
-
-  return <FraudCheck theme={theme} />;
+  return <FraudCheck />;
 };
 
 export default FraudCheckPage;

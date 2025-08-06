@@ -18,11 +18,9 @@ const iconMap: { [key: string]: React.ElementType } = {
 };
 
 // @AI-HINT: This component displays a feed of recent user and system activities. It's designed to be clear, scannable, and informative, enhancing user engagement and providing transparency, which are hallmarks of a premium SaaS experience. Now fully theme-switchable.
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const DashboardActivityFeed: React.FC = () => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   const [activities, setActivities] = useState<ActivityFeedItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

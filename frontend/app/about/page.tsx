@@ -3,12 +3,9 @@
 
 import React from 'react';
 import About from './About';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const AboutPage = () => {
-  const { theme } = useTheme();
-
-  return <About theme={theme} />;
+  return <About />;
 };
 
 export default AboutPage;

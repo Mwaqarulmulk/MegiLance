@@ -1,11 +1,7 @@
-.BlogPage-container--light {
-  background-color: #f9fafb;
-}
-
-.BlogPage-title--light {
-  color: #111827;
-}
-
-.BlogPage-subtitle--light {
-  color: #4b5563;
-}
+/* @AI-HINT: Light theme styles for BlogPage. */
+.BlogPage-container {}
+.BlogPage-header {}
+.BlogPage-title {}
+.BlogPage-subtitle {}
+.BlogPage-main {}
+.BlogPage-grid {}

@@ -3,7 +3,7 @@
 'use client';
 
 import React, { useId } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './Input.common.module.css';
 import lightStyles from './Input.light.module.css';

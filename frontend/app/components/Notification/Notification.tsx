@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { FiCheckCircle, FiAlertCircle, FiInfo, FiX, FiAlertTriangle } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
 import commonStyles from './Notification.common.module.css';
@@ -28,12 +28,12 @@ const iconMap = {
 };
 
 const positionMap = {
-  'top-right': commonStyles.topRight,
-  'top-left': commonStyles.topLeft,
-  'bottom-right': commonStyles.bottomRight,
-  'bottom-left': commonStyles.bottomLeft,
-  'top-center': commonStyles.topCenter,
-  'bottom-center': commonStyles.bottomCenter,
+  'top-right': commonStyles.positionTopRight,
+  'top-left': commonStyles.positionTopLeft,
+  'bottom-right': commonStyles.positionBottomRight,
+  'bottom-left': commonStyles.positionBottomLeft,
+  'top-center': commonStyles.positionTopCenter,
+  'bottom-center': commonStyles.positionBottomCenter,
 };
 
 const Notification: React.FC<NotificationProps> = ({ 

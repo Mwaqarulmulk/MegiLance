@@ -3,12 +3,10 @@
 
 import React from 'react';
 import PostJob from './PostJob';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const PostJobPage = () => {
-  const { theme } = useTheme();
-
-  return <PostJob theme={theme} />;
+  return <PostJob />;
 };
 
 export default PostJobPage;

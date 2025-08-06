@@ -2,7 +2,6 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
 import './WithdrawPage.common.css';
@@ -29,17 +28,15 @@ const getStatusBadgeVariant = (status: string) => {
 };
 
 const WithdrawPage: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className={`WithdrawPage-container WithdrawPage-container--${theme}`}>
+    <div className="WithdrawPage-container">
       <header className="WithdrawPage-header">
         <h1 className="WithdrawPage-title">Withdraw Funds</h1>
         <p className="WithdrawPage-subtitle">Transfer your earnings to your personal crypto wallet.</p>
       </header>
 
       <main className="WithdrawPage-main">
-        <div className={`WithdrawPage-card WithdrawPage-card--${theme}`}>
+        <div className="WithdrawPage-card">
           <div className="WithdrawPage-balance-card">
             <span className="WithdrawPage-balance-label">Available Balance</span>
             <span className="WithdrawPage-balance-value">{withdrawData.availableBalance.toFixed(2)} USDC</span>
@@ -47,17 +44,17 @@ const WithdrawPage: React.FC = () => {
           <form className="WithdrawPage-form">
             <div className="WithdrawPage-form-group">
               <label htmlFor="amount">Amount (USDC)</label>
-              <input type="number" id="amount" placeholder="0.00" className={`WithdrawPage-input WithdrawPage-input--${theme}`} />
+              <input type="number" id="amount" placeholder="0.00" className="WithdrawPage-input" />
             </div>
             <div className="WithdrawPage-form-group">
               <label htmlFor="walletAddress">Wallet Address</label>
-              <input type="text" id="walletAddress" placeholder="0x..." className={`WithdrawPage-input WithdrawPage-input--${theme}`} />
+              <input type="text" id="walletAddress" placeholder="0x..." className="WithdrawPage-input" />
             </div>
-            <Button theme={theme} variant="primary" fullWidth>Request Withdrawal</Button>
+            <Button variant="primary" fullWidth>Request Withdrawal</Button>
           </form>
         </div>
 
-        <div className={`WithdrawPage-card WithdrawPage-card--${theme}`}>
+        <div className="WithdrawPage-card">
           <h2 className="WithdrawPage-card-title">Withdrawal History</h2>
           <div className="WithdrawPage-history-table">
             <div className="WithdrawPage-history-header">
@@ -71,7 +68,7 @@ const WithdrawPage: React.FC = () => {
                 <div key={tx.id} className="WithdrawPage-history-row">
                   <span>{tx.date}</span>
                   <span>{tx.amount.toFixed(2)} USDC</span>
-                  <span><Badge theme={theme} variant={getStatusBadgeVariant(tx.status)}>{tx.status}</Badge></span>
+                  <span><Badge variant={getStatusBadgeVariant(tx.status)}>{tx.status}</Badge></span>
                   <span className="WithdrawPage-address">{tx.address}</span>
                 </div>
               ))}

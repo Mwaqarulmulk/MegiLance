@@ -1,8 +1,1 @@
-/* @AI-HINT: Defines light theme styles for the StepCard. It provides theme-specific overrides while relying on global variables for the base look. */
-
-.stepCardContainer {
-  --icon-color: var(--color-primary);
-  --number-bg: var(--color-primary);
-  --number-text: var(--color-white);
-  --card-shadow-hover: var(--shadow-lg);
-}
+.stepCardContainer {}

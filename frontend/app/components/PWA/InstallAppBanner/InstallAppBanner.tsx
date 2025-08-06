@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import { cn } from '@/lib/utils';
 import Button from '@/app/components/Button/Button';
 import commonStyles from './InstallAppBanner.common.module.css';
@@ -18,7 +18,6 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const InstallAppBanner: React.FC = () => {
-  const { theme } = useTheme();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -50,10 +49,8 @@ const InstallAppBanner: React.FC = () => {
     return null;
   }
 
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={cn(commonStyles.installAppBanner, themeStyles.installAppBanner)}>
+    <div className={commonStyles.installAppBanner}>
       <div className={commonStyles.content}>
         <p className={commonStyles.text}>Get the full MegiLance experience. Install the app on your device.</p>
         <Button variant="primary" onClick={handleInstallClick}>Install App</Button>

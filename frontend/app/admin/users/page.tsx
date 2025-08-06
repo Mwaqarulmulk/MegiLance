@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Users from './Users';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const UsersPage = () => {
-  const { theme } = useTheme();
-
-  return <Users theme={theme} />;
+  return <Users />;
 };
 
 export default UsersPage;

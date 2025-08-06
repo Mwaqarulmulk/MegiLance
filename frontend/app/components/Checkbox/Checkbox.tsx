@@ -1,7 +1,7 @@
 // @AI-HINT: This is a reusable Checkbox component. It is designed to be themeable and accessible.
 'use client';
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './Checkbox.common.module.css';
 import lightStyles from './Checkbox.light.module.css';

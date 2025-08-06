@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import ProfileMenu from '@/app/components/ProfileMenu/ProfileMenu';
 import type { ProfileMenuItem } from '@/app/components/ProfileMenu/ProfileMenu';
 import ThemeSwitcher from '@/app/components/ThemeSwitcher/ThemeSwitcher';

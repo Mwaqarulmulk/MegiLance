@@ -7,7 +7,6 @@ import Button from '@/app/components/Button/Button';
 import commonStyles from './Wallet.common.module.css';
 import lightStyles from './Wallet.light.module.css';
 import darkStyles from './Wallet.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 // @AI-HINT: This is the Wallet page for freelancers to manage their earnings and transactions. All styles are per-component only. Now fully theme-switchable using global theme context.
 
@@ -21,11 +20,8 @@ const Wallet: React.FC = () => {
     { type: 'fee', amount: '-75', date: '2025-07-28', description: 'Platform fee for Project Y' },
   ];
 
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={`${commonStyles.wallet} ${themeStyles.wallet}`}>
+    <div className={commonStyles.wallet}>
       <div className={commonStyles.container}>
         <header className={commonStyles.header}>
           <h1>My Wallet</h1>
@@ -33,7 +29,7 @@ const Wallet: React.FC = () => {
         </header>
 
         <div className={commonStyles.overview}>
-          <div className={`${commonStyles.balanceCard} ${themeStyles.balanceCard}`}>
+          <div className={commonStyles.balanceCard}>
             <h2>Available Balance</h2>
             <p className={commonStyles.balanceAmount}>${balance.toLocaleString()}</p>
             <Button variant="primary">Withdraw Funds</Button>
@@ -42,7 +38,7 @@ const Wallet: React.FC = () => {
 
         <section className={commonStyles.transactions}>
           <h2>Transaction History</h2>
-          <div className={`${commonStyles.transactionListHeader} ${themeStyles.transactionListHeader}`}>
+          <div className={commonStyles.transactionListHeader}>
             <span>Description</span>
             <span>Date</span>
             <span>Amount</span>

@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Payments from './Payments';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const PaymentsPage = () => {
-  const { theme } = useTheme();
-
-  return <Payments theme={theme} />;
+  return <Payments />;
 };
 
 export default PaymentsPage;

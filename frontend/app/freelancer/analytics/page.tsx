@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import LineChart from '@/app/components/DataViz/LineChart/LineChart';
 import './AnalyticsPage.common.css';
 import './AnalyticsPage.light.css';
@@ -27,10 +27,8 @@ const analyticsData = {
 };
 
 const AnalyticsPage: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className={`AnalyticsPage-container AnalyticsPage-container--${theme}`}>
+    <div className="AnalyticsPage-container">
       <header className="AnalyticsPage-header">
         <h1 className="AnalyticsPage-title">Your Analytics</h1>
         <p className="AnalyticsPage-subtitle">Track your performance and find new opportunities for growth.</p>

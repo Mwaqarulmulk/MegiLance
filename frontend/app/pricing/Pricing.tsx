@@ -1,18 +1,15 @@
-// @AI-HINT: This is the Pricing page component. It displays pricing tiers, features, a monthly/yearly toggle, and an FAQ section. It is designed to be responsive and themeable, following the MegiLance brand playbook.
+// @AI-HINT: This is the Pricing page component, refactored to use next-themes and modular CSS.
 'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Button from '@/app/components/Button/Button';
 import { FaCheckCircle, FaChevronDown, FaUser, FaBuilding, FaRocket } from 'react-icons/fa';
-import './Pricing.common.css';
-import './Pricing.light.css';
-import './Pricing.dark.css';
+import { cn } from '@/lib/utils';
+import styles from './Pricing.module.css';
 
-// --- COMPONENT PROPS --- //
-interface PricingProps {
-  theme?: 'light' | 'dark';
-}
+
+
 
 // --- MOCK DATA --- //
 const pricingTiers = [
@@ -82,12 +79,12 @@ const faqItems = [
 // --- FAQ Item Sub-component --- //
 const FaqItem = ({ item, isOpen, onClick }: { item: { question: string; answer: string }, isOpen: boolean, onClick: () => void }) => {
   return (
-    <div className="Faq-item">
-      <button className="Faq-question" onClick={onClick}>
+    <div className={styles.faqItem}>
+      <button className={styles.faqQuestion} onClick={onClick}>
         <span>{item.question}</span>
-        <FaChevronDown className={`Faq-chevron ${isOpen ? 'open' : ''}`} />
+        <FaChevronDown className={cn(styles.faqChevron, { [styles.open]: isOpen })} />
       </button>
-      <div className={`Faq-answer ${isOpen ? 'open' : ''}`}>
+      <div className={cn(styles.faqAnswer, { [styles.open]: isOpen })}>
         <p>{item.answer}</p>
       </div>
     </div>
@@ -95,82 +92,82 @@ const FaqItem = ({ item, isOpen, onClick }: { item: { question: string; answer: 
 };
 
 // --- Main Pricing Component --- //
-const Pricing: React.FC<PricingProps> = ({ theme = 'light' }) => {
+const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [openFaq, setOpenFaq] = useState<number | null>(0); // Keep the first FAQ item open by default
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const handleFaqToggle = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
   return (
-    <div className={`Pricing Pricing--${theme}`}>
-      <div className="Pricing-container">
-        <header className="Pricing-header">
-          <span className="Pricing-header-eyebrow">Pricing Plans</span>
+    <div className={styles.pricingPage}>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <span className={styles.headerEyebrow}>Pricing Plans</span>
           <h1>Find the Perfect Plan for Your Needs</h1>
-          <p className="Pricing-header-description">From individual freelancers to large enterprises, MegiLance offers a tailored solution to achieve your goals with the power of AI and secure payments.</p>
+          <p className={styles.headerDescription}>From individual freelancers to large enterprises, MegiLance offers a tailored solution to achieve your goals with the power of AI and secure payments.</p>
         </header>
 
-        <div className="Pricing-toggle-wrapper">
-          <span className={`Pricing-toggle-label ${billingCycle === 'monthly' ? 'active' : ''}`}>Monthly</span>
-          <div className="Pricing-toggle">
+        <div className={styles.toggleWrapper}>
+          <span className={cn(styles.toggleLabel, { [styles.active]: billingCycle === 'monthly' })}>Monthly</span>
+          <label className={styles.toggle} htmlFor="billing-toggle">
             <input
               type="checkbox"
               id="billing-toggle"
-              className="Pricing-toggle-checkbox"
+              className={styles.toggleCheckbox}
               checked={billingCycle === 'yearly'}
               onChange={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
               aria-label="Billing cycle toggle"
             />
-            <label htmlFor="billing-toggle" className="Pricing-toggle-slider"></label>
-          </div>
-          <span className={`Pricing-toggle-label ${billingCycle === 'yearly' ? 'active' : ''}`}>Yearly</span>
-          <span className="Pricing-toggle-discount">Save 20%</span>
+            <span className={styles.toggleSlider}></span>
+          </label>
+          <span className={cn(styles.toggleLabel, { [styles.active]: billingCycle === 'yearly' })}>Yearly</span>
+          <span className={styles.toggleDiscount}>Save 20%</span>
         </div>
 
-        <div className="Pricing-grid">
+        <div className={styles.pricingGrid}>
           {pricingTiers.map(tier => (
-            <div key={tier.name} className={`Pricing-card ${tier.isPopular ? 'popular' : ''}`}>
-              {tier.isPopular && <div className="Pricing-card-popular-badge">Most Popular</div>}
-              <div className="Pricing-card-header">
-                <div className="Pricing-card-icon">{tier.icon}</div>
-                <h2 className="Pricing-card-tier">{tier.name}</h2>
+            <div key={tier.name} className={cn(styles.pricingCard, { [styles.popular]: tier.isPopular })}>
+              {tier.isPopular && <div className={styles.popularBadge}>Most Popular</div>}
+              <div className={styles.cardHeader}>
+                <div className={styles.cardIcon}>{tier.icon}</div>
+                <h2 className={styles.cardTier}>{tier.name}</h2>
               </div>
-              <div className="Pricing-card-price-section">
+              <div className={styles.priceSection}>
                 {typeof tier.price === 'string' ? (
-                  <div className="Pricing-card-price custom">{tier.price}</div>
+                  <div className={cn(styles.price, styles.custom)}>{tier.price}</div>
                 ) : (
-                  <div className="Pricing-card-price">
-                    <span className="price-amount">${billingCycle === 'monthly' ? tier.price.monthly : tier.price.yearly}</span>
-                    <span className="price-period">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                  <div className={styles.price}>
+                    <span className={styles.priceAmount}>${billingCycle === 'monthly' ? tier.price.monthly : tier.price.yearly}</span>
+                    <span className={styles.pricePeriod}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
                   </div>
                 )}
-                <p className="Pricing-card-description">{tier.description}</p>
+                <p className={styles.cardDescription}>{tier.description}</p>
               </div>
-              <ul className="Pricing-card-features">
+              <ul className={styles.features}>
                 {tier.features.map(feature => (
-                  <li key={feature} className="Pricing-card-feature-item">
-                    <FaCheckCircle className="Pricing-card-feature-icon" />
+                  <li key={feature} className={styles.featureItem}>
+                    <FaCheckCircle className={styles.featureIcon} />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
-              <div className="Pricing-card-cta">
+              <div className={styles.cardCta}>
                 <Link href={tier.button.href} passHref>
-                  <Button theme={theme} variant={tier.button.variant} fullWidth>{tier.button.text}</Button>
+                  <Button variant={tier.button.variant} fullWidth>{tier.button.text}</Button>
                 </Link>
               </div>
             </div>
           ))}
         </div>
 
-        <section className="Pricing-faq">
-          <div className="Pricing-faq-header">
+        <section className={styles.faq}>
+          <div className={styles.faqHeader}>
             <h2>Frequently Asked Questions</h2>
             <p>Have questions? We've got answers. If you can't find what you're looking for, feel free to contact us.</p>
           </div>
-          <div className="Pricing-faq-list">
+          <div className={styles.faqList}>
             {faqItems.map((item, index) => (
               <FaqItem 
                 key={item.question} 

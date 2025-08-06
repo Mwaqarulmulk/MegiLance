@@ -10,13 +10,11 @@ import lightStyles from './Dashboard.light.module.css';
 import darkStyles from './Dashboard.dark.module.css';
 
 // @AI-HINT: This is the Freelancer Dashboard root component. It serves as the main hub for freelancers. All styles are per-component only. Now fully theme-switchable using global theme context.
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const Dashboard: React.FC = () => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   return (
-    <div className={`Dashboard Dashboard--${theme}`}>
+    <div className="Dashboard">
       <header className="Dashboard-header">
         <h1>Welcome back, Freelancer!</h1>
         <p>Here’s what’s happening with your projects today.</p>

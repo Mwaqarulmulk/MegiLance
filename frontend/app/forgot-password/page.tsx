@@ -3,12 +3,10 @@
 
 import React from 'react';
 import ForgotPassword from './ForgotPassword';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const ForgotPasswordPage = () => {
-  const { theme } = useTheme();
-
-  return <ForgotPassword theme={theme} />;
+  return <ForgotPassword />;
 };
 
 export default ForgotPasswordPage;

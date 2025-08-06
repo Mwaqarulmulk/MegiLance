@@ -25,8 +25,8 @@ const HowItWorks: React.FC = () => {
 
   return (
     <section className={cn(commonStyles.howItWorks, themeStyles.howItWorks)}>
-      <div className="Home-container">
-        <h2 className="Home-section-title">How It Works</h2>
+      <div className={commonStyles.container}>
+        <h2 className={commonStyles.sectionTitle}>How It Works</h2>
         <div className={commonStyles.howItWorksColumns}>
           <div className={commonStyles.column}>
             <h3 className={cn(commonStyles.columnTitle, themeStyles.columnTitle)}>For Freelancers</h3>

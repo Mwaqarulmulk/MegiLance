@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Profile from './Profile';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const ProfilePage = () => {
-  const { theme } = useTheme();
-
-  return <Profile theme={theme} />;
+  return <Profile />;
 };
 
 export default ProfilePage;

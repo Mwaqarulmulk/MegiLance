@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './TransactionRow.common.module.css';
 import lightStyles from './TransactionRow.light.module.css';
@@ -15,6 +15,11 @@ export interface TransactionRowProps {
 
 const TransactionRow: React.FC<TransactionRowProps> = ({ date, description, amount }) => {
   const { theme } = useTheme();
+
+  if (!theme) {
+    return null;
+  }
+
   const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
   return (

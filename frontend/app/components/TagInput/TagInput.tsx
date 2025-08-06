@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, KeyboardEvent } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './TagInput.common.module.css';
 import lightStyles from './TagInput.light.module.css';

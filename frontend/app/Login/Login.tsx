@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './Login.common.module.css';
 import lightStyles from './Login.light.module.css';
 import darkStyles from './Login.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 
 
 

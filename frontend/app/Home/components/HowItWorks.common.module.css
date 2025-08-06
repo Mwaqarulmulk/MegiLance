@@ -1,53 +1,99 @@
 .howItWorks {
-  padding: 5rem 1rem;
+  padding: var(--spacing-20) 0;
+  background: var(--surface-alt);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
   text-align: center;
+}
+
+.sectionTitle {
+  font-family: var(--font-family-headings);
+  font-size: clamp(2.5rem, 5vw, 3rem);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-12);
 }
 
 .howItWorksColumns {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 4rem;
-  margin-top: 3rem;
-}
-
-@media (min-width: 768px) {
-  .howItWorksColumns {
-    grid-template-columns: 1fr 1fr;
-  }
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-12);
+  text-align: left;
 }
 
 .columnTitle {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-8);
+  position: relative;
+  padding-bottom: var(--spacing-4);
+}
+
+.columnTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: var(--border-radius-sm);
 }
 
 .steps {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  text-align: left;
+  gap: var(--spacing-8);
 }
 
 .stepCard {
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: var(--spacing-6);
+  padding: var(--spacing-6);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all var(--transition-duration-normal) ease;
+}
+
+.stepCard:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
 }
 
 .stepIcon {
-  font-size: 2rem;
+  font-size: 1.75rem;
   flex-shrink: 0;
-  margin-top: 0.25rem;
+  margin-top: 5px;
+  color: var(--primary);
 }
 
 .stepTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-2);
 }
 
 .stepDescription {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .howItWorksColumns {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-12);
+  }
+  .container {
+    padding: 0 var(--spacing-4);
+  }
 }

@@ -3,12 +3,10 @@
 
 import React from 'react';
 import PriceEstimator from './PriceEstimator';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const PriceEstimatorPage = () => {
-  const { theme } = useTheme();
-
-  return <PriceEstimator theme={theme} />;
+  return <PriceEstimator />;
 };
 
 export default PriceEstimatorPage;

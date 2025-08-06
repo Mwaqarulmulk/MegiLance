@@ -5,33 +5,25 @@ import React from 'react';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import commonStyles from './Reviews.common.module.css';
 import lightStyles from './Reviews.light.module.css';
-import darkStyles from './Reviews.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 // @AI-HINT: This is the Reviews page for freelancers to see client feedback. All styles are per-component only. Now fully theme-switchable using global theme context.
 
 const StarRating = ({ rating }: { rating: number }) => {
   return (
-    const { theme } = useTheme();
-    const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-    return (
-      <div className={`${commonStyles.starRating} ${themeStyles.starRating}`}>
-        {[...Array(5)].map((_, index) => (
-          <span
-            key={index}
-            className={index < rating ? commonStyles.starFilled : commonStyles.starEmpty}
-          >
-            ★
-          </span>
-        ))}
-      </div>
-    );
+    <div className={commonStyles.starRating}>
+      {[...Array(5)].map((_, index) => (
+        <span
+          key={index}
+          className={index < rating ? commonStyles.starFilled : commonStyles.starEmpty}
+        >
+          ★
+        </span>
+      ))}
+    </div>
   );
 };
 
 const Reviews: React.FC = () => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   // Mock data for reviews
   const reviews = [
     {
@@ -60,14 +52,14 @@ const Reviews: React.FC = () => {
   const averageRating = (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1);
 
   return (
-    <div className={`${commonStyles.reviews} ${themeStyles.reviews}`}>
+    <div className={commonStyles.reviews}>
       <div className={commonStyles.container}>
         <header className={commonStyles.header}>
           <h1>My Reviews</h1>
           <p>See what clients are saying about your work.</p>
         </header>
 
-        <div className={`${commonStyles.summaryCard} ${themeStyles.summaryCard}`}>
+        <div className={commonStyles.summaryCard}>
           <h2>Overall Rating</h2>
           <div className="Summary-rating">
             <span className="Summary-rating-score">{averageRating}</span>
@@ -78,9 +70,9 @@ const Reviews: React.FC = () => {
 
         <div className="Reviews-list">
           {reviews.map((review, index) => (
-            <div key={index} className={`ReviewItem ReviewItem--${theme}`}>
+            <div key={index} className="ReviewItem">
               <div className="ReviewItem-header">
-                <UserAvatar theme={theme} name={review.clientName} />
+                <UserAvatar name={review.clientName} />
                 <div className="ReviewItem-info">
                   <strong>{review.clientName}</strong>
                   <span>for {review.projectName}</span>

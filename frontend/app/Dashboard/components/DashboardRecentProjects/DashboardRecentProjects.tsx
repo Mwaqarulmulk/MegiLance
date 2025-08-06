@@ -24,11 +24,9 @@ const getStatusClass = (status: RecentProject['status']) => {
 };
 
 // @AI-HINT: This component displays a list of recent projects. It's designed to provide a quick, scannable overview of project status, progress, and deadlines, a key feature in premium project management dashboards. Now fully theme-switchable.
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const DashboardRecentProjects: React.FC = () => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   const [projects, setProjects] = useState<RecentProject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

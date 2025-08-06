@@ -3,12 +3,9 @@
 
 import React from 'react';
 import ProjectDetails from './ProjectDetails';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const ProjectDetailsPage = ({ params }: { params: { id: string } }) => {
-  const { theme } = useTheme();
-
-  return <ProjectDetails theme={theme} projectId={params.id} />;
+  return <ProjectDetails projectId={params.id} />;
 };
 
 export default ProjectDetailsPage;

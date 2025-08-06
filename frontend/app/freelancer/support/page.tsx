@@ -2,7 +2,6 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Accordion, { AccordionItem } from '@/app/components/Accordion/Accordion';
 import './SupportPage.common.css';
@@ -30,32 +29,30 @@ const faqItems = [
 ];
 
 const SupportPage: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className={`SupportPage-container SupportPage-container--${theme}`}>
+    <div className="SupportPage-container">
       <header className="SupportPage-header">
         <h1 className="SupportPage-title">Support Center</h1>
         <p className="SupportPage-subtitle">We&apos;re here to help. Find answers or get in touch with our team.</p>
       </header>
 
       <main className="SupportPage-main">
-        <div className={`SupportPage-card SupportPage-card--${theme}`}>
+        <div className="SupportPage-card">
           <h2 className="SupportPage-card-title">Contact Support</h2>
           <form className="SupportPage-form">
             <div className="SupportPage-form-group">
               <label htmlFor="subject">Subject</label>
-              <input type="text" id="subject" placeholder="e.g., Issue with a contract" className={`SupportPage-input SupportPage-input--${theme}`} />
+              <input type="text" id="subject" placeholder="e.g., Issue with a contract" className="SupportPage-input" />
             </div>
             <div className="SupportPage-form-group">
               <label htmlFor="message">Message</label>
-              <textarea id="message" rows={6} placeholder="Describe your issue in detail..." className={`SupportPage-textarea SupportPage-textarea--${theme}`}></textarea>
+              <textarea id="message" rows={6} placeholder="Describe your issue in detail..." className="SupportPage-textarea"></textarea>
             </div>
-            <Button theme={theme} variant="primary" fullWidth>Submit Ticket</Button>
+            <Button variant="primary" fullWidth>Submit Ticket</Button>
           </form>
         </div>
 
-        <div className={`SupportPage-card SupportPage-card--${theme}`}>
+        <div className="SupportPage-card">
           <h2 className="SupportPage-card-title">Frequently Asked Questions</h2>
           <Accordion>
             {faqItems.map((item, index) => (

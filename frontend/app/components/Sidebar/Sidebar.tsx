@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, LayoutDashboard, Briefcase, Wallet, BarChart2, MessageSquare, Users } from 'lucide-react';
 
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import SidebarNav, { NavItem } from './SidebarNav';
 import { MegiLanceLogo } from '../MegiLanceLogo/MegiLanceLogo';
@@ -15,9 +15,10 @@ import commonStyles from './Sidebar.common.module.css';
 import lightStyles from './Sidebar.light.module.css';
 import darkStyles from './Sidebar.dark.module.css';
 
-
-
-
+interface SidebarProps {
+  isCollapsed: boolean;
+  toggleSidebar: () => void;
+}
 
 // AI-HINT: Navigation items are defined as a data structure for easy management and role-based filtering in the future.
 const defaultNavItems: NavItem[] = [
@@ -29,13 +30,8 @@ const defaultNavItems: NavItem[] = [
   { href: '/clients', label: 'Clients', icon: Users },
 ];
 
-const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
   const { theme } = useTheme();
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   if (!theme) return null;
 

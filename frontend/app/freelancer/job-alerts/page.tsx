@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
 import './JobAlertsPage.common.css';
@@ -35,7 +34,6 @@ const mockAlerts = [
 ];
 
 const JobAlertsPage: React.FC = () => {
-  const { theme } = useTheme();
   const [alerts, setAlerts] = useState(mockAlerts);
 
   const handleDelete = (id: number) => {
@@ -43,43 +41,43 @@ const JobAlertsPage: React.FC = () => {
   };
 
   return (
-    <div className={`JobAlertsPage-container JobAlertsPage-container--${theme}`}>
+    <div className="JobAlertsPage-container">
       <header className="JobAlertsPage-header">
         <h1 className="JobAlertsPage-title">Job Alerts</h1>
         <p className="JobAlertsPage-subtitle">Never miss an opportunity. Get notified about jobs that match your skills.</p>
       </header>
 
       <main className="JobAlertsPage-main">
-        <div className={`JobAlertsPage-card JobAlertsPage-card--${theme}`}>
+        <div className="JobAlertsPage-card">
           <h2 className="JobAlertsPage-card-title">Create New Alert</h2>
           {/* @AI-HINT: A form would go here in a full implementation */}
           <form className="JobAlertsPage-form">
             <label htmlFor="alert-keywords" className="visually-hidden">Keywords for job alert</label>
-            <input id="alert-keywords" type="text" placeholder="Keywords (e.g., 'rust, defi')" className={`JobAlertsPage-input JobAlertsPage-input--${theme}`} />
+            <input id="alert-keywords" type="text" placeholder="Keywords (e.g., 'rust, defi')" className="JobAlertsPage-input" />
             <label htmlFor="alert-frequency" className="visually-hidden">Job alert frequency</label>
-            <select id="alert-frequency" className={`JobAlertsPage-input JobAlertsPage-input--${theme}`}>
+            <select id="alert-frequency" className="JobAlertsPage-input">
               <option>Daily</option>
               <option>Weekly</option>
             </select>
-            <Button theme={theme} variant="primary">Create Alert</Button>
+            <Button variant="primary">Create Alert</Button>
           </form>
         </div>
 
-        <div className={`JobAlertsPage-card JobAlertsPage-card--${theme}`}>
+        <div className="JobAlertsPage-card">
           <h2 className="JobAlertsPage-card-title">Your Alerts</h2>
           <div className="JobAlertsPage-list">
             {alerts.map(alert => (
-              <div key={alert.id} className={`JobAlertsPage-list-item JobAlertsPage-list-item--${theme}`}>
+              <div key={alert.id} className="JobAlertsPage-list-item">
                 <div className="JobAlertsPage-alert-info">
                   <span className="JobAlertsPage-alert-name">{alert.name}</span>
                   <span className="JobAlertsPage-alert-keywords">{alert.keywords}</span>
                 </div>
                 <div className="JobAlertsPage-alert-details">
-                  {alert.isAiPowered && <Badge theme={theme} variant="info">AI</Badge>}
+                  {alert.isAiPowered && <Badge variant="info">AI</Badge>}
                   <span className="JobAlertsPage-alert-frequency">{alert.frequency}</span>
                   <div className="JobAlertsPage-alert-actions">
-                    <Button theme={theme} variant="secondary" size="small">Edit</Button>
-                    <Button theme={theme} variant="danger" size="small" onClick={() => handleDelete(alert.id)}>Delete</Button>
+                    <Button variant="secondary" size="small">Edit</Button>
+                    <Button variant="danger" size="small" onClick={() => handleDelete(alert.id)}>Delete</Button>
                   </div>
                 </div>
               </div>

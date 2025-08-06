@@ -3,12 +3,9 @@
 
 import React from 'react';
 import ResetPassword from './ResetPassword';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const ResetPasswordPage = () => {
-  const { theme } = useTheme();
-
-  return <ResetPassword theme={theme} />;
+  return <ResetPassword />;
 };
 
 export default ResetPasswordPage;

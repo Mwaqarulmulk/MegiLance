@@ -7,7 +7,7 @@ import Input from '@/app/components/Input/Input';
 import commonStyles from './Settings.common.module.css';
 import lightStyles from './Settings.light.module.css';
 import darkStyles from './Settings.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 interface SettingsProps {
 }
@@ -15,7 +15,6 @@ interface SettingsProps {
 type Tab = 'account' | 'password' | 'notifications';
 
 const Settings: React.FC<SettingsProps> = () => {
-  const theme = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('account');
 
   const renderContent = () => {

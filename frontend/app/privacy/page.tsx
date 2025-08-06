@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Privacy from './Privacy';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const PrivacyPage = () => {
-  const { theme } = useTheme();
-
-  return <Privacy theme={theme} />;
+  return <Privacy />;
 };
 
 export default PrivacyPage;

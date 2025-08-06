@@ -7,15 +7,12 @@ import RankGauge from '@/app/components/RankGauge/RankGauge';
 import commonStyles from './Rank.common.module.css';
 import lightStyles from './Rank.light.module.css';
 import darkStyles from './Rank.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 // @AI-HINT: This is the Freelancer Rank page, showcasing the AI-powered ranking system. All styles are per-component only. Now fully theme-switchable using global theme context.
 
 const RankFactor: React.FC<{ label: string; score: number; description: string }> = ({ label, score, description }) => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   return (
-    <div className={`${commonStyles.rankFactor} ${themeStyles.rankFactor}`}>
+    <div className={commonStyles.rankFactor}>
       <div className={commonStyles.header}>
         <span className={commonStyles.label}>{label}</span>
         <span className={commonStyles.score}>{score}/100</span>
@@ -39,18 +36,15 @@ const Rank: React.FC = () => {
     ],
   };
 
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={`${commonStyles.rank} ${themeStyles.rank}`}>
+    <div className={commonStyles.rank}>
       <div className={commonStyles.container}>
         <header className={commonStyles.header}>
           <h1>My Freelancer Rank</h1>
           <p>Understand your AI-powered rank and how to improve it.</p>
         </header>
 
-        <div className={`${commonStyles.displayCard} ${themeStyles.displayCard}`}>
+        <div className={commonStyles.displayCard}>
           <h2>Your Current Rank is</h2>
           <p className={commonStyles.scoreText}>{rankData.overallRank}</p>
           <RankGauge score={rankData.rankScore} />

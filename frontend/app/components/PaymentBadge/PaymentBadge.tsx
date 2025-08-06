@@ -1,6 +1,6 @@
 // @AI-HINT: This component displays a theme-aware status badge for payments. It uses a modern, CSS-variable-driven approach for styling to ensure it perfectly matches the application's current theme and the specific status (paid, pending, failed).
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './PaymentBadge.common.module.css';
 import lightStyles from './PaymentBadge.light.module.css';

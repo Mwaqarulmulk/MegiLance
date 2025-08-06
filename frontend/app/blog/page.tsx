@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import BlogPostCard, { BlogPostCardProps } from '@/app/components/Public/BlogPostCard/BlogPostCard';
 import './BlogPage.common.css';
 import './BlogPage.light.css';
@@ -36,10 +36,8 @@ const mockPosts: BlogPostCardProps[] = [
 ];
 
 const BlogPage: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className={`BlogPage-container BlogPage-container--${theme}`}>
+    <div className="BlogPage-container">
       <header className="BlogPage-header">
         <h1 className="BlogPage-title">The MegiLance Blog</h1>
         <p className="BlogPage-subtitle">Insights on crypto, freelancing, and the future of work.</p>

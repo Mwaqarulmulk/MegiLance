@@ -18,11 +18,9 @@ const iconMap: { [key: string]: React.ElementType } = {
 };
 
 // @AI-HINT: This component displays a grid of key performance metrics (KPIs). It's designed for high-impact visual data representation, a hallmark of investor-grade SaaS dashboards. It's fully responsive and themed. Now fully theme-switchable.
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const DashboardMetrics: React.FC = () => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   const [metrics, setMetrics] = useState<DashboardMetric[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

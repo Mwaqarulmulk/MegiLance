@@ -1,4 +1,11 @@
 /* Migrated from Signup.light.css to Signup.light.module.css */
 @import './Signup.common.module.css';
 
-/* Place all Signup.light.css content here */
+/* @AI-HINT: This file defines the CSS variables for the light theme of the Signup component. */
+
+:root {
+  --brand-panel-bg: #f8f9fa; /* A very light grey, almost white */
+  --brand-panel-text: #212529; /* Dark grey for high contrast text */
+  --primary-hover-bg: #eef2ff; /* A very light, slightly blueish tint */
+  --primary-contrast-text: #ffffff; /* White text on primary color buttons */
+}

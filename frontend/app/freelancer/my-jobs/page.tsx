@@ -3,12 +3,9 @@
 
 import React from 'react';
 import MyJobs from './MyJobs';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const MyJobsPage = () => {
-  const { theme } = useTheme();
-
-  return <MyJobs theme={theme} />;
+  return <MyJobs />;
 };
 
 export default MyJobsPage;

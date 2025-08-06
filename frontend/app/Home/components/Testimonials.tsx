@@ -34,8 +34,8 @@ const Testimonials: React.FC = () => {
 
   return (
     <section className={cn(commonStyles.testimonials, themeStyles.testimonials)}>
-      <div className="Home-container">
-        <h2 className="Home-section-title">Loved by Freelancers & Clients</h2>
+      <div className={commonStyles.container}>
+        <h2 className={commonStyles.sectionTitle}>Loved by Freelancers & Clients</h2>
         <div className={commonStyles.testimonialsGrid}>
           {testimonials.map((testimonial, index) => (
             <div key={index} className={cn(commonStyles.testimonialCard, themeStyles.testimonialCard)}>

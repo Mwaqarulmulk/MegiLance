@@ -4,7 +4,7 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import './BlogPostPage.common.css';
 import './BlogPostPage.light.css';
 import './BlogPostPage.dark.css';
@@ -57,17 +57,16 @@ const mockPosts: { [key: string]: BlogPost } = {
 };
 
 const BlogPostPage: React.FC = () => {
-  const { theme } = useTheme();
   const params = useParams();
   const slug = params.slug as string;
   const post = mockPosts[slug];
 
   if (!post) {
-    return <div className={`BlogPostPage-container BlogPostPage-container--${theme}`}>Post not found.</div>;
+    return <div className="BlogPostPage-container">Post not found.</div>;
   }
 
   return (
-    <div className={`BlogPostPage-container BlogPostPage-container--${theme}`}>
+    <div className="BlogPostPage-container">
       <article className="BlogPostPage-article">
         <header className="BlogPostPage-header">
           <h1 className="BlogPostPage-title">{post.title}</h1>

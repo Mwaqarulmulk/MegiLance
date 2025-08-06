@@ -1,15 +1,3 @@
-.HowItWorksPage-container--light {
-  background-color: #f9fafb;
-}
+/* AI-HINT: Light theme styles for How It Works page. Add light-specific overrides here. */
 
-.HowItWorksPage-title--light {
-  color: #111827;
-}
-
-.HowItWorksPage-subtitle--light {
-  color: #4b5563;
-}
-
-.HowItWorksPage-section-title--light {
-  color: #111827;
-}
+.HowItWorksPage-container {}

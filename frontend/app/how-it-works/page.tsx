@@ -2,7 +2,6 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import StepCard from '@/app/components/Public/StepCard/StepCard';
 import './HowItWorksPage.common.css';
 import './HowItWorksPage.light.css';
@@ -52,10 +51,8 @@ const freelancerSteps = [
 ];
 
 const HowItWorksPage: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className={`HowItWorksPage-container HowItWorksPage-container--${theme}`}>
+    <div className="HowItWorksPage-container">
       <header className="HowItWorksPage-header">
         <h1 className="HowItWorksPage-title">How MegiLance Works</h1>
         <p className="HowItWorksPage-subtitle">A simple, secure, and decentralized way to get work done.</p>

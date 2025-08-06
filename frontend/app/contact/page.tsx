@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Contact from './Contact';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const ContactPage = () => {
-  const { theme } = useTheme();
-
-  return <Contact theme={theme} />;
+  return <Contact />;
 };
 
 export default ContactPage;

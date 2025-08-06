@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import PortfolioItemCard, { PortfolioItemCardProps } from '@/app/components/Freelancer/PortfolioItemCard/PortfolioItemCard';
 import './PortfolioPage.common.css';
@@ -33,7 +32,6 @@ const mockPortfolioItems: Omit<PortfolioItemCardProps, 'onDelete'>[] = [
 ];
 
 const PortfolioPage: React.FC = () => {
-  const { theme } = useTheme();
   const [items, setItems] = useState(mockPortfolioItems);
 
   const handleDelete = (id: number) => {
@@ -41,13 +39,13 @@ const PortfolioPage: React.FC = () => {
   };
 
   return (
-    <div className={`PortfolioPage-container PortfolioPage-container--${theme}`}>
+    <div className="PortfolioPage-container">
       <header className="PortfolioPage-header">
         <div>
           <h1 className="PortfolioPage-title">Your Portfolio</h1>
           <p className="PortfolioPage-subtitle">Showcase your best work to attract clients.</p>
         </div>
-        <Button theme={theme} variant="primary">Add New Item</Button>
+        <Button variant="primary">Add New Item</Button>
       </header>
 
       <main className="PortfolioPage-main">
@@ -58,7 +56,7 @@ const PortfolioPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className={`PortfolioPage-empty-state PortfolioPage-empty-state--${theme}`}>
+          <div className="PortfolioPage-empty-state">
             <h2 className="PortfolioPage-empty-title">Your portfolio is empty</h2>
             <p>Add your first portfolio item to get started.</p>
           </div>

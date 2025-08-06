@@ -1,18 +1,13 @@
-// @AI-HINT: This is the Contact page root component. All styles are per-component only. See Contact.common.css, Contact.light.css, and Contact.dark.css for theming.
+// @AI-HINT: This is the Contact page root component, refactored to use next-themes and modular CSS.
 'use client';
 
 import React, { useState } from 'react';
+import { useTheme } from 'next-themes';
 import Button from '@/app/components/Button/Button';
 import Input from '@/app/components/Input/Input';
-import './Contact.common.css';
-import './Contact.light.css';
-import './Contact.dark.css';
+import styles from './Contact.module.css';
 
-interface ContactProps {
-  theme?: 'light' | 'dark';
-}
-
-const Contact: React.FC<ContactProps> = ({ theme = 'light' }) => {
+const Contact: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -34,24 +29,23 @@ const Contact: React.FC<ContactProps> = ({ theme = 'light' }) => {
   };
 
   return (
-    <div className={`Contact Contact--${theme}`}>
-      <div className="Contact-container">
-        <header className="Contact-header">
-          <h1>Get in Touch</h1>
-          <p>Have a question or feedback? We&apos;d love to hear from you.</p>
+    <div className={styles.contactPage}>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Get in Touch</h1>
+          <p className={styles.subtitle}>Have a question or feedback? We&apos;d love to hear from you.</p>
         </header>
 
-        <div className="Contact-content-wrapper">
-          <div className="Contact-form-container">
+        <div className={styles.contentWrapper}>
+          <div className={styles.formContainer}>
             {submitted ? (
-              <div className="Contact-success-message">
+              <div className={styles.successMessage}>
                 <h3>Thank You!</h3>
                 <p>Your message has been sent. We&apos;ll get back to you shortly.</p>
               </div>
             ) : (
-              <form className="Contact-form" onSubmit={handleSubmit} noValidate>
+              <form className={styles.form} onSubmit={handleSubmit}>
                 <Input
-                  theme={theme}
                   label="Full Name"
                   type="text"
                   placeholder="Your Name"
@@ -61,7 +55,6 @@ const Contact: React.FC<ContactProps> = ({ theme = 'light' }) => {
                   required
                 />
                 <Input
-                  theme={theme}
                   label="Email Address"
                   type="email"
                   placeholder="you@example.com"
@@ -70,33 +63,30 @@ const Contact: React.FC<ContactProps> = ({ theme = 'light' }) => {
                   onChange={handleChange}
                   required
                 />
-                <div className="Input-group">
+                <div className={styles.textareaGroup}>
                   <label htmlFor="message">Message</label>
                   <textarea
                     id="message"
                     name="message"
+                    className={styles.textarea}
                     placeholder="How can we help?"
                     rows={5}
                     value={formData.message}
                     onChange={handleChange}
                     required
-                  ></textarea>
+                  />
                 </div>
-                <Button theme={theme} variant="primary" fullWidth type="submit" disabled={loading}>
+                <Button variant="primary" fullWidth type="submit" disabled={loading}>
                   {loading ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             )}
           </div>
-          <div className="Contact-info-container">
+          <div className={styles.infoContainer}>
             <h3>Contact Information</h3>
-            <p>For support or general inquiries, please email us.</p>
-            <a href="mailto:support@megilance.com">support@megilance.com</a>
-            <h4>Follow Us</h4>
-            <div className="Contact-social-links">
-              {/* Add social links later */}
-              <p>Twitter, LinkedIn, etc.</p>
-            </div>
+            <p>For support or general inquiries, please email us at your convenience. We aim to respond to all queries within 24 hours.</p>
+            <a href="mailto:support@megilance.com" className={styles.emailLink}>support@megilance.com</a>
+            {/* Social links can be added here later */}
           </div>
         </div>
       </div>

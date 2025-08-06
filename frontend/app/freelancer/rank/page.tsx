@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Rank from './Rank';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const RankPage = () => {
-  const { theme } = useTheme();
-
-  return <Rank theme={theme} />;
+  return <Rank />;
 };
 
 export default RankPage;

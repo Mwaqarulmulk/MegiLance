@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Dashboard from './Dashboard';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const DashboardPage = () => {
-  const { theme } = useTheme();
-
-  return <Dashboard theme={theme} />;
+  return <Dashboard />;
 };
 
 export default DashboardPage;

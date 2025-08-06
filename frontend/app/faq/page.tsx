@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Faq from './Faq';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const FaqPage = () => {
-  const { theme } = useTheme();
-
-  return <Faq theme={theme} />;
+  return <Faq />;
 };
 
 export default FaqPage;

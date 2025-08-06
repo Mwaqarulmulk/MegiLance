@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Projects from './Projects';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const ProjectsPage = () => {
-  const { theme } = useTheme();
-
-  return <Projects theme={theme} />;
+  return <Projects />;
 };
 
 export default ProjectsPage;

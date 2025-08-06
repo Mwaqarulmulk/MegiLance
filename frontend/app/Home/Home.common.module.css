@@ -1,0 +1,114 @@
+/* AI-HINT: Common styles for the Home component, including responsive header and footer. */
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brandLink {
+  text-decoration: none;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color-primary);
+}
+
+.navLinks {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navLink {
+  text-decoration: none;
+  font-size: 1rem;
+  color: var(--text-color-secondary);
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--text-color-primary);
+}
+
+.navLinkPrimary {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.footer {
+  padding: 2rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.footerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footerLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+.footerLinks a {
+  text-decoration: none;
+  color: var(--text-color-secondary);
+}
+
+/* Responsive Styles */
+.mobileMenuButton {
+  display: none; /* Hidden by default */
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color-primary);
+}
+
+.mobileNavMenu {
+  display: none; /* Hidden by default */
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none; /* Hide links on mobile */
+  }
+
+  .mobileMenuButton {
+    display: block; /* Show menu button on mobile */
+  }
+
+  .mobileNavMenu.mobileNavMenuActive {
+    display: flex; /* Show mobile menu when active */
+  }
+}

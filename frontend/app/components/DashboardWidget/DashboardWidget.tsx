@@ -1,6 +1,6 @@
 // @AI-HINT: Enhanced DashboardWidget component for displaying key metrics with trends, icons, and professional styling. Supports enterprise-grade dashboard layouts with comprehensive theming. Uses per-component CSS architecture.
 import React from "react";
-import { useTheme } from "@/app/contexts/ThemeContext";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import commonStyles from './DashboardWidget.common.module.css';
 import lightStyles from './DashboardWidget.light.module.css';

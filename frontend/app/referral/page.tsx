@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import './ReferralPage.common.css';
 import './ReferralPage.light.css';
@@ -16,7 +15,6 @@ const referralData = {
 };
 
 const ReferralPage: React.FC = () => {
-  const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {
@@ -27,25 +25,25 @@ const ReferralPage: React.FC = () => {
   };
 
   return (
-    <div className={`ReferralPage-container ReferralPage-container--${theme}`}>
+    <div className="ReferralPage-container">
       <header className="ReferralPage-header">
         <h1 className="ReferralPage-title">Invite Friends, Earn Crypto</h1>
         <p className="ReferralPage-subtitle">Share your unique link and earn rewards for every new user who joins and completes a job.</p>
       </header>
 
       <main className="ReferralPage-main">
-        <div className={`ReferralPage-card ReferralPage-card--${theme}`}>
+        <div className="ReferralPage-card">
           <h2 className="ReferralPage-card-title">Your Referral Link</h2>
-          <div className={`ReferralPage-link-wrapper ReferralPage-link-wrapper--${theme}`}>
+          <div className="ReferralPage-link-wrapper">
             <label htmlFor="referral-link" className="visually-hidden">Your referral link</label>
             <input id="referral-link" type="text" readOnly value={referralData.referralLink} className="ReferralPage-link-input" />
-            <Button theme={theme} variant="primary" onClick={handleCopyLink}>
+            <Button variant="primary" onClick={handleCopyLink}>
               {copied ? 'Copied!' : 'Copy'}
             </Button>
           </div>
         </div>
 
-        <div className={`ReferralPage-stats-card ReferralPage-stats-card--${theme}`}>
+        <div className="ReferralPage-stats-card">
           <h2 className="ReferralPage-card-title">Your Stats</h2>
           <div className="ReferralPage-stats-grid">
             <div className="ReferralPage-stat-item">

@@ -1,44 +1,10 @@
-.Install {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  padding: 4rem 2rem;
-  text-align: center;
-}
+/* AI-HINT: Common styles for Install page. Add base layout, grid, and card styles. */
 
-.Install-container {
-  max-width: 600px;
-}
-
-.Install-header h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-}
-
-.Install-header p {
-  font-size: 1.125rem;
-  margin-bottom: 3rem;
-}
-
-.Install-features {
-  display: flex;
-  justify-content: space-around;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.Install-feature {
-  flex: 1;
-}
-
-.Install-feature h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.Install-feature p {
-  font-size: 1rem;
-}
+.Install-container {}
+.Install-header {}
+.Install-title {}
+.Install-subtitle {}
+.Install-main {}
+.Install-section {}
+.Install-section-title {}
+.Install-grid {}

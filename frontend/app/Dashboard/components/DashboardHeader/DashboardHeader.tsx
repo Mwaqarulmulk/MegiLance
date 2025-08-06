@@ -35,23 +35,20 @@ const getWelcomeMessage = (role: string) => {
 };
 
 // @AI-HINT: This component renders the header for the main dashboard. It's designed to be a reusable and focused component, following premium SaaS development practices by separating concerns. It includes the welcome title, subtitle, and primary actions like notifications. Now fully theme-switchable.
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userRole, user }) => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-  
   return (
-    <div className="DashboardHeader">
-      <div className="DashboardHeader-welcome">
-        <h1 className="DashboardHeader-title">Welcome back, {user.fullName}!</h1>
-        <p className="DashboardHeader-subtitle">{getWelcomeMessage(userRole)}</p>
+    <div className={commonStyles.DashboardHeader}>
+      <div className={commonStyles.welcome}>
+        <h1 className={commonStyles.title}>Welcome back, {user.fullName}!</h1>
+        <p className={commonStyles.subtitle}>{getWelcomeMessage(userRole)}</p>
       </div>
-      <div className="DashboardHeader-actions">
-        <button className="DashboardHeader-notification-btn" aria-label={`View ${user.notificationCount} notifications`}>
-          <FaBell className="DashboardHeader-notification-icon" />
+      <div className={commonStyles.actions}>
+        <button className={commonStyles.notificationBtn} aria-label={`View ${user.notificationCount} notifications`}>
+          <FaBell className={commonStyles.notificationIcon} />
           {user && user.notificationCount > 0 && (
-            <span className="DashboardHeader-notification-badge">{user.notificationCount}</span>
+            <span className={commonStyles.notificationBadge}>{user.notificationCount}</span>
           )}
         </button>
       </div>

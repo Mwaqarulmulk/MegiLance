@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Terms from './Terms';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const TermsPage = () => {
-  const { theme } = useTheme();
-
-  return <Terms theme={theme} />;
+  return <Terms />;
 };
 
 export default TermsPage;

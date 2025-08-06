@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Install from './Install';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const InstallPage = () => {
-  const { theme } = useTheme();
-
-  return <Install theme={theme} />;
+  return <Install />;
 };
 
 export default InstallPage;

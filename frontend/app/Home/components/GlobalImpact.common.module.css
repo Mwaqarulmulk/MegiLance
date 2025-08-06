@@ -289,6 +289,13 @@
   justify-content: center;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-lg);
+  flex-shrink: 0;
+}
+
+.storyInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .storyName {
@@ -339,28 +346,61 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .mission {
+    gap: var(--spacing-8);
+  }
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+}
+
 @media (max-width: 768px) {
+  .globalImpactContainer {
+    padding: 0 var(--spacing-4);
+  }
+  .title {
+    font-size: clamp(2rem, 6vw, 2.5rem);
+  }
   .stats {
     grid-template-columns: 1fr;
     gap: var(--spacing-4);
   }
-  
+
   .mission {
     grid-template-columns: 1fr;
     gap: var(--spacing-8);
-    padding: var(--spacing-8);
+    padding: var(--spacing-6);
   }
-  
+
   .worldMap {
-    height: 200px;
+    height: 250px;
   }
-  
+
   .storiesGrid {
     grid-template-columns: 1fr;
     gap: var(--spacing-4);
   }
-  
+
   .story {
-    padding: var(--spacing-4);
+    padding: var(--spacing-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .badge {
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: var(--font-size-xs);
+  }
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+  .stat {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .statContent {
+    margin-top: var(--spacing-2);
   }
 }

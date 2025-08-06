@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import { cn } from '@/lib/utils';
 import Button from '@/app/components/Button/Button';
 import commonStyles from './UpdateNotification.common.module.css';
@@ -12,7 +12,6 @@ import darkStyles from './UpdateNotification.dark.module.css';
 
 
 const UpdateNotification: React.FC = () => {
-  const { theme } = useTheme();
   const [isUpdateAvailable, setUpdateAvailable] = useState(false);
   const [serviceWorkerRegistration, setServiceWorkerRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
@@ -48,10 +47,8 @@ const UpdateNotification: React.FC = () => {
     return null;
   }
 
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={cn(commonStyles.updateNotification, themeStyles.updateNotification)}>
+    <div className={commonStyles.updateNotification}>
       <div className={commonStyles.content}>
         <p className={commonStyles.text}>A new version is available!</p>
         <Button variant="secondary" size="small" onClick={handleUpdate}>Refresh</Button>

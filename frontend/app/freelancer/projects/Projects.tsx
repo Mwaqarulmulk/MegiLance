@@ -8,7 +8,6 @@ import Button from '@/app/components/Button/Button';
 import commonStyles from './Projects.common.module.css';
 import lightStyles from './Projects.light.module.css';
 import darkStyles from './Projects.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 // @AI-HINT: This is the Freelancer Projects page. It allows freelancers to browse and search for jobs. All styles are per-component only. Now fully theme-switchable using global theme context.
 
@@ -45,11 +44,8 @@ const Projects: React.FC = () => {
     },
   ];
 
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={`${commonStyles.projects} ${themeStyles.projects}`}>
+    <div className={commonStyles.projects}>
       <div className={commonStyles.container}>
         <header className={commonStyles.header}>
           <h1>Find Your Next Project</h1>

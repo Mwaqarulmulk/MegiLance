@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Chatbot from './Chatbot';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const ChatbotPage = () => {
-  const { theme } = useTheme();
-
-  return <Chatbot theme={theme} />;
+  return <Chatbot />;
 };
 
 export default ChatbotPage;

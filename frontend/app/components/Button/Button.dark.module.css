@@ -59,3 +59,14 @@
   background-color: var(--danger-strong);
   border-color: var(--danger-strong);
 }
+
+/* Outline Button */
+.outline {
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.outline:hover:not(:disabled) {
+  background-color: var(--surface-alt);
+  border-color: var(--border-strong);
+}

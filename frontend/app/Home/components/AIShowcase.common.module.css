@@ -186,7 +186,33 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
+  .aiShowcase {
+    padding: var(--spacing-16) 0;
+  }
+
+  .container {
+    padding: 0 var(--spacing-4);
+  }
+
+  .header {
+    margin-bottom: var(--spacing-12);
+  }
+
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
   .grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-4);
@@ -196,11 +222,15 @@
     padding: var(--spacing-6);
   }
   
+  .techStack {
+    padding: var(--spacing-8);
+  }
+
   .techLogos {
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
   }
   
-  .AIShowcase-tech-logo {
+  .techLogo {
     font-size: var(--font-size-sm);
     padding: var(--spacing-2) var(--spacing-4);
   }

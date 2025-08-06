@@ -4,7 +4,7 @@
 import React, {
   useState, createContext, useContext, useId, Children, isValidElement, cloneElement, useRef, useEffect, KeyboardEvent, FC, ReactNode, ForwardRefExoticComponent, RefAttributes
 } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './Tabs.common.module.css';
 import lightStyles from './Tabs.light.module.css';
@@ -35,13 +35,12 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(({ children, index }, 
   const { selectedIndex, setSelectedIndex, tabsId, themeStyles } = useTabs();
   const isSelected = selectedIndex === index;
   return (
-        // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- False positive. 'aria-selected' is valid on 'tab'.
-    <button
+        <button
       ref={ref}
       role="tab"
       id={`${tabsId}-tab-${index}`}
       aria-controls={`${tabsId}-panel-${index}`}
-      aria-selected={`${isSelected}`}
+      aria-selected={isSelected}
       tabIndex={isSelected ? 0 : -1}
       className={cn(commonStyles.tabsTab, themeStyles.tabsTab, isSelected && [commonStyles.tabsTabSelected, themeStyles.tabsTabSelected])}
       onClick={() => setSelectedIndex(index!)}

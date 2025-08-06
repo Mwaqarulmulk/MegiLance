@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import { cn } from '@/lib/utils';
 import commonStyles from './BlogPostCard.common.module.css';
 import lightStyles from './BlogPostCard.light.module.css';
@@ -44,12 +44,9 @@ export interface BlogPostCardProps {
 }
 
 const BlogPostCard: React.FC<BlogPostCardProps> = ({ slug, title, excerpt, imageUrl, author, date, className }) => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
     <Link href={`/blog/${slug}`} className={cn(commonStyles.blogPostCardLink, className)}>
-      <div className={cn(commonStyles.container, themeStyles.container)}>
+      <div className={commonStyles.container}>
         <div className={commonStyles.imageWrapper}>
           <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" />
         </div>

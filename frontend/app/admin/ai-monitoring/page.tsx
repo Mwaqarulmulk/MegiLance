@@ -3,12 +3,10 @@
 
 import React from 'react';
 import AIMonitoring from './AIMonitoring';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const AIMonitoringPage = () => {
-  const { theme } = useTheme();
-
-  return <AIMonitoring theme={theme} />;
+  return <AIMonitoring />;
 };
 
 export default AIMonitoringPage;

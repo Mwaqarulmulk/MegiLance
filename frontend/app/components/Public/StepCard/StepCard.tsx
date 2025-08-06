@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import { cn } from '@/lib/utils';
 import commonStyles from './StepCard.common.module.css';
 import lightStyles from './StepCard.light.module.css';
@@ -19,11 +19,8 @@ export interface StepCardProps {
 }
 
 const StepCard: React.FC<StepCardProps> = ({ stepNumber, title, description, icon, className }) => {
-  const { theme } = useTheme();
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={cn(commonStyles.stepCardContainer, themeStyles.stepCardContainer, className)}>
+    <div className={cn(commonStyles.stepCardContainer, className)}>
       <div className={commonStyles.header}>
         <div className={commonStyles.iconWrapper}>
           {icon}

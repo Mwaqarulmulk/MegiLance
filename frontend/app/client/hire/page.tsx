@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Hire from './Hire';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const HirePage = () => {
-  const { theme } = useTheme();
-
-  return <Hire theme={theme} />;
+  return <Hire />;
 };
 
 export default HirePage;

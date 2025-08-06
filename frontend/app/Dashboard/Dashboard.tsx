@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+
 import DashboardHeader from './components/DashboardHeader/DashboardHeader';
 import DashboardMetrics from './components/DashboardMetrics/DashboardMetrics';
 import DashboardRecentProjects from './components/DashboardRecentProjects/DashboardRecentProjects';
@@ -18,17 +18,11 @@ import darkStyles from './dashboard.dark.module.css';
 
 
 const Dashboard: React.FC = () => {
-    const { theme } = useTheme();
-    const styles = {
-        ...commonStyles,
-        ...(theme === 'dark' ? darkStyles : lightStyles),
-    };
-
     // This is a placeholder. In a real app, you'd fetch this based on the logged-in user.
     const user = { name: 'Admin User', role: 'Admin' };
 
     return (
-        <div className={styles.dashboardLayout}>
+        <div className={commonStyles.dashboardLayout}>
             <div className={styles.header}>
 
                 <DashboardHeader userName={user.name} userRole={user.role} />

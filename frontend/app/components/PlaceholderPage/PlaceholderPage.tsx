@@ -1,7 +1,7 @@
 // @AI-HINT: This is a reusable, fully theme-aware placeholder component for pages that are under construction. It uses a modern, multi-file CSS module structure with CSS variables to ensure perfect theme alignment.
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './PlaceholderPage.common.module.css';
 import lightStyles from './PlaceholderPage.light.module.css';

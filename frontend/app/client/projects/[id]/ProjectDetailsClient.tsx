@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import Button from '@/app/components/Button/Button';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import './ProjectDetails.common.css';
@@ -32,11 +32,10 @@ const mockProject = {
 };
 
 const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({ projectId }) => {
-  const { theme } = useTheme();
   const project = mockProject; // Using mock data for now
 
   return (
-    <div className={`ProjectDetails ProjectDetails--${theme}`}>
+    <div className="ProjectDetails">
       <div className="ProjectDetails-container">
         <header className="ProjectDetails-header">
           <div>

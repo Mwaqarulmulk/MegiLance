@@ -4,6 +4,7 @@
   background: transparent;
   padding: var(--spacing-20) 0;
   position: relative;
+  overflow: hidden;
 }
 
 .container {
@@ -36,7 +37,7 @@
 
 .title {
   font-family: var(--font-family-headings);
-  font-size: var(--font-size-4xl);
+  font-size: clamp(2.5rem, 5vw, 3rem);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   margin-bottom: var(--spacing-6);
@@ -60,7 +61,7 @@
 
 .content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.2fr;
   gap: var(--spacing-12);
   align-items: center;
   margin-bottom: var(--spacing-16);
@@ -90,25 +91,10 @@
   animation: pulse-glow 2s infinite alternate;
 }
 
-.block--genesis {
-  border-color: var(--success);
-  animation-delay: 0s;
-}
-
-.block--transaction {
-  border-color: var(--primary);
-  animation-delay: 0.5s;
-}
-
-.block--escrow {
-  border-color: var(--accent);
-  animation-delay: 1s;
-}
-
-.block--completion {
-  border-color: var(--warning);
-  animation-delay: 1.5s;
-}
+.block--genesis { border-color: var(--success); animation-delay: 0s; }
+.block--transaction { border-color: var(--primary); animation-delay: 0.5s; }
+.block--escrow { border-color: var(--accent); animation-delay: 1s; }
+.block--completion { border-color: var(--warning); animation-delay: 1.5s; }
 
 .blockHeader {
   font-size: var(--font-size-xs);
@@ -166,9 +152,7 @@
   flex-shrink: 0;
 }
 
-.featureContent {
-  flex: 1;
-}
+.featureContent { flex: 1; }
 
 .featureTitle {
   font-family: var(--font-family-headings);
@@ -197,7 +181,7 @@
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--spacing-6);
   margin-bottom: var(--spacing-16);
   padding: var(--spacing-8);
@@ -206,31 +190,29 @@
   border: 1px solid var(--border);
 }
 
-
-
-.BlockchainShowcase-stat {
+.stat {
   text-align: center;
 }
 
-.BlockchainShowcase-stat-number {
+.statNumber {
   font-family: var(--font-family-headings);
-  font-size: var(--font-size-3xl);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: var(--font-weight-bold);
   color: var(--accent);
   margin-bottom: var(--spacing-1);
 }
 
-.BlockchainShowcase-stat-label {
+.statLabel {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   font-weight: var(--font-weight-medium);
 }
 
-.BlockchainShowcase-supported-chains {
+.supportedChains {
   text-align: center;
 }
 
-.BlockchainShowcase-chains-title {
+.chainsTitle {
   font-family: var(--font-family-headings);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
@@ -238,24 +220,27 @@
   color: var(--text-primary);
 }
 
-.BlockchainShowcase-chains {
+.chains {
   display: flex;
   justify-content: center;
   gap: var(--spacing-4);
   flex-wrap: wrap;
 }
 
-.BlockchainShowcase-chain {
+.chain {
   padding: var(--spacing-3) var(--spacing-6);
   border-radius: var(--border-radius-lg);
   font-weight: var(--font-weight-bold);
-  background: linear-gradient(135deg, var(--accent), var(--warning));
-  color: var(--text-on-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
   transition: all var(--transition-duration-fast) var(--transition-timing-function-ease);
 }
 
-.BlockchainShowcase-chain:hover {
-  transform: translateY(-2px) scale(1.05);
+.chain:hover {
+  transform: translateY(-2px);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 @keyframes pulse-glow {
@@ -264,27 +249,39 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .BlockchainShowcase-content {
+@media (max-width: 1024px) {
+  .content {
     grid-template-columns: 1fr;
-    gap: var(--spacing-8);
+    gap: var(--spacing-12);
   }
-  
-  .BlockchainShowcase-blockchain {
-    transform: scale(0.8);
+  .visual {
+    order: -1; /* Move visual to the top on tablets */
+    margin-bottom: var(--spacing-8);
   }
-  
-  .BlockchainShowcase-stats {
+}
+
+@media (max-width: 768px) {
+  .blockchainShowcase {
+    padding: var(--spacing-16) 0;
+  }
+  .container {
+    padding: 0 var(--spacing-4);
+  }
+  .header, .content, .stats {
+    margin-bottom: var(--spacing-12);
+  }
+  .stats {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-4);
+    gap: var(--spacing-6);
     padding: var(--spacing-6);
   }
-  
-  .BlockchainShowcase-chains {
+  .blockchain {
+    transform: scale(0.9);
+  }
+  .chains {
     gap: var(--spacing-3);
   }
-  
-  .BlockchainShowcase-chain {
+  .chain {
     font-size: var(--font-size-sm);
     padding: var(--spacing-2) var(--spacing-4);
   }

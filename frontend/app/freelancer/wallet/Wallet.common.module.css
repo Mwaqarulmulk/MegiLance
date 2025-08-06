@@ -1,0 +1,11 @@
+/* AI-HINT: Common styles for Freelancer Wallet page. Add base styles for wallet, balance, transactions, and cards. */
+
+.wallet {}
+.container {}
+.header {}
+.overview {}
+.balanceCard {}
+.balanceAmount {}
+.transactions {}
+.transactionListHeader {}
+.transactionList {}

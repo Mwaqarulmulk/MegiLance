@@ -55,3 +55,14 @@
     transform: rotate(360deg);
   }
 }
+
+/* Variants */
+.primary, .secondary, .success, .warning, .danger, .outline {
+  /* Base styles for all variants can go here if needed */
+}
+
+.outline {
+  background-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+}

@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Onboarding from './Onboarding';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const OnboardingPage = () => {
-  const { theme } = useTheme();
-
-  return <Onboarding theme={theme} />;
+  return <Onboarding />;
 };
 
 export default OnboardingPage;

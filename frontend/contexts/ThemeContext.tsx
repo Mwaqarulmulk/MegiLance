@@ -5,8 +5,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 // @AI-HINT: This is the global ThemeContext, providing light/dark mode state to the entire application.
 // It ensures a consistent theme is applied and persists user preference in local storage.
 
+type Theme = 'light' | 'dark';
+
 interface ThemeContextType {
-  theme: string;
+  theme: Theme;
   toggleTheme: () => void;
 }
 
@@ -25,14 +27,15 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState('dark'); // Default to dark theme
+  const [theme, setTheme] = useState<Theme>('dark'); // Default to dark theme
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('megilance-theme');
-    if (storedTheme) {
+    if (storedTheme === 'light' || storedTheme === 'dark') {
       setTheme(storedTheme);
     } else {
-        localStorage.setItem('megilance-theme', 'dark');
+      localStorage.setItem('megilance-theme', 'dark');
+      setTheme('dark');
     }
   }, []);
 

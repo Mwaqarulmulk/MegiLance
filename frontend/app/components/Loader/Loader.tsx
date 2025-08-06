@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './Loader.common.module.css';
 import lightStyles from './Loader.light.module.css';
@@ -26,11 +26,19 @@ const Loader: React.FC<LoaderProps> = ({
   const { theme } = useTheme();
   if (!theme) return null; // Avoid rendering until the theme is loaded
 
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+    const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
+  const sizeClass = {
+    xs: commonStyles.sizeXs,
+    sm: commonStyles.sizeSm,
+    md: commonStyles.sizeMd,
+    lg: commonStyles.sizeLg,
+    xl: commonStyles.sizeXl,
+  }[size];
 
   const loaderContent = (
     <div 
-      className={cn(commonStyles.loader, commonStyles[size], className)}
+      className={cn(commonStyles.loader, sizeClass, className)}
       role="status"
       aria-live="polite"
       aria-label={text || 'Loading'}

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { footerNavItems } from '@/app/config/navigation';
 import { MegiLanceLogo } from '../MegiLanceLogo/MegiLanceLogo';
 import { 

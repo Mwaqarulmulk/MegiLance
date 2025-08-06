@@ -30,15 +30,15 @@
   animation: slideIn 300ms ease-out;
 }
 
-.small {
+.sizeSmall {
   max-width: 400px;
 }
 
-.medium {
+.sizeMedium {
   max-width: 600px;
 }
 
-.large {
+.sizeLarge {
   max-width: 800px;
 }
 

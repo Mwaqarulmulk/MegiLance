@@ -4,7 +4,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IoClose } from 'react-icons/io5';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './Modal.common.module.css';
 import lightStyles from './Modal.light.module.css';
@@ -74,7 +74,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, footer,
     };
   }, [isOpen, onClose]);
 
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+    const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
+  const sizeClass = {
+    small: commonStyles.sizeSmall,
+    medium: commonStyles.sizeMedium,
+    large: commonStyles.sizeLarge,
+  }[size];
 
   const modalContent = (
     <div
@@ -85,7 +91,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, footer,
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       <div
-        className={cn(commonStyles.modalContent, themeStyles.modalContent, commonStyles[size], className)}
+        className={cn(commonStyles.modalContent, themeStyles.modalContent, sizeClass, className)}
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
         tabIndex={-1}

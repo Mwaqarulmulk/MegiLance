@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import Button from '@/app/components/Button/Button';
 import { cn } from '@/lib/utils';
 import commonStyles from './PortfolioItemCard.common.module.css';
@@ -20,13 +20,8 @@ export interface PortfolioItemCardProps {
 }
 
 const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({ id, title, description, imageUrl, projectUrl, onDelete }) => {
-  const { theme } = useTheme();
-
-  if (!theme) return null;
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={cn(commonStyles.container, themeStyles.container)}>
+    <div className={commonStyles.container}>
       <div className={commonStyles.imageWrapper}>
         <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" />
       </div>

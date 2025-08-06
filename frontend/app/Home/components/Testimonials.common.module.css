@@ -1,35 +1,73 @@
 .testimonials {
-  padding: 5rem 1rem;
+  padding: var(--spacing-20) 0;
+  background: var(--surface-alt);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
   text-align: center;
 }
 
+.sectionTitle {
+  font-family: var(--font-family-headings);
+  font-size: clamp(2.5rem, 5vw, 3rem);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-12);
+  color: var(--text-primary);
+}
+
 .testimonialsGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-8);
   text-align: left;
 }
 
 .testimonialCard {
-  padding: 2rem;
-  border-radius: 12px;
+  padding: var(--spacing-8);
+  border-radius: var(--border-radius-xl);
+  background: var(--surface);
+  border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: all var(--transition-duration-normal) ease;
+}
+
+.testimonialCard:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-translucent);
 }
 
 .testimonialQuote {
-  font-size: 1.125rem;
+  font-size: var(--font-size-base);
   font-style: italic;
   line-height: 1.7;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-6);
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: var(--spacing-8);
+}
+
+.testimonialQuote::before {
+  content: '“';
+  position: absolute;
+  left: 0;
+  top: -10px;
+  font-size: 4rem;
+  font-family: Georgia, serif;
+  color: var(--primary);
+  opacity: 0.2;
 }
 
 .testimonialAuthor {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-4);
+  margin-top: auto;
 }
 
 .authorAvatar {
@@ -37,12 +75,29 @@
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--primary);
 }
 
 .authorName {
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
 }
 
 .authorTitle {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-4);
+  }
+  .testimonialsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+  .testimonialCard {
+    padding: var(--spacing-6);
+  }
 }

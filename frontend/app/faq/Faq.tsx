@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import { cn } from '@/lib/utils';
 import commonStyles from './Faq.common.module.css';
 import lightStyles from './Faq.light.module.css';
@@ -50,17 +50,14 @@ const FaqItem = ({ item, isOpen, onClick }: FaqItemProps) => (
 );
 
 const Faq: React.FC = () => {
-  const { theme } = useTheme();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const handleClick = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-
   return (
-    <div className={cn(commonStyles.faq, themeStyles.themeWrapper)}>
+    <div className={commonStyles.faq}>
       <div className={commonStyles.faqContainer}>
         <header className={commonStyles.faqHeader}>
           <h1>Frequently Asked Questions</h1>

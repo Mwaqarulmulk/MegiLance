@@ -1,0 +1,16 @@
+/* AI-HINT: Common styles for Freelancer Reviews page. Add base styles for reviews, summary card, and review items. */
+
+.reviews {}
+.container {}
+.header {}
+.summaryCard {}
+.starRating {}
+.starFilled {}
+.starEmpty {}
+.Reviews-list {}
+.ReviewItem {}
+.ReviewItem-header {}
+.ReviewItem-info {}
+.ReviewItem-rating {}
+.ReviewItem-date {}
+.ReviewItem-comment {}

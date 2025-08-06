@@ -133,17 +133,17 @@
 }
 
 /* Position variants */
-.topRight { top: 1rem; right: 1rem; animation: slideInRight 0.3s ease-out; }
-.topLeft { top: 1rem; left: 1rem; animation: slideInLeft 0.3s ease-out; }
-.bottomRight { bottom: 1rem; right: 1rem; animation: slideInRight 0.3s ease-out; }
-.bottomLeft { bottom: 1rem; left: 1rem; animation: slideInLeft 0.3s ease-out; }
-.topCenter { top: 1rem; left: 50%; transform: translateX(-50%); animation: slideInTop 0.3s ease-out; }
-.bottomCenter { bottom: 1rem; left: 50%; transform: translateX(-50%); animation: slideInBottom 0.3s ease-out; }
+.positionTopRight { top: 1rem; right: 1rem; animation: slideInRight 0.3s ease-out; }
+.positionTopLeft { top: 1rem; left: 1rem; animation: slideInLeft 0.3s ease-out; }
+.positionBottomRight { bottom: 1rem; right: 1rem; animation: slideInRight 0.3s ease-out; }
+.positionBottomLeft { bottom: 1rem; left: 1rem; animation: slideInLeft 0.3s ease-out; }
+.positionTopCenter { top: 1rem; left: 50%; transform: translateX(-50%); animation: slideInTop 0.3s ease-out; }
+.positionBottomCenter { bottom: 1rem; left: 50%; transform: translateX(-50%); animation: slideInBottom 0.3s ease-out; }
 
 /* Visibility */
-.hidden.topRight { animation: slideOutRight 0.3s ease-in forwards; }
-.hidden.topLeft { animation: slideOutLeft 0.3s ease-in forwards; }
-.hidden.bottomRight { animation: slideOutRight 0.3s ease-in forwards; }
-.hidden.bottomLeft { animation: slideOutLeft 0.3s ease-in forwards; }
-.hidden.topCenter { animation: slideOutTop 0.3s ease-in forwards; }
-.hidden.bottomCenter { animation: slideOutBottom 0.3s ease-in forwards; }
+.hidden.positionTopRight { animation: slideOutRight 0.3s ease-in forwards; }
+.hidden.positionTopLeft { animation: slideOutLeft 0.3s ease-in forwards; }
+.hidden.positionBottomRight { animation: slideOutRight 0.3s ease-in forwards; }
+.hidden.positionBottomLeft { animation: slideOutLeft 0.3s ease-in forwards; }
+.hidden.positionTopCenter { animation: slideOutTop 0.3s ease-in forwards; }
+.hidden.positionBottomCenter { animation: slideOutBottom 0.3s ease-in forwards; }

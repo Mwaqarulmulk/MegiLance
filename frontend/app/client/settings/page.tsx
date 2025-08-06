@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Settings from './Settings';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const SettingsPage = () => {
-  const { theme } = useTheme();
-
-  return <Settings theme={theme} />;
+  return <Settings />;
 };
 
 export default SettingsPage;

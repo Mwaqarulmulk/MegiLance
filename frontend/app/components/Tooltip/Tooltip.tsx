@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useRef, cloneElement, useId } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './Tooltip.common.module.css';
 import lightStyles from './Tooltip.light.module.css';

@@ -4,7 +4,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import commonStyles from './ProfileMenu.common.module.css';
@@ -37,8 +37,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   className = '',
   theme: themeProp,
 }) => {
-  const { theme: contextTheme } = useTheme();
-  const theme = themeProp || contextTheme;
+  const { resolvedTheme } = useTheme();
+  const theme = themeProp || resolvedTheme;
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 

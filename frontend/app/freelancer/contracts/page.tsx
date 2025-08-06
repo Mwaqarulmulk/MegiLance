@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 import Badge from '@/app/components/Badge/Badge';
 import './ContractsPage.common.css';
 import './ContractsPage.light.css';
@@ -54,10 +54,8 @@ const getStatusBadgeVariant = (status: string) => {
 };
 
 const ContractsPage: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className={`ContractsPage-container ContractsPage-container--${theme}`}>
+    <div className="ContractsPage-container">
       <header className="ContractsPage-header">
         <h1 className="ContractsPage-title">Your Contracts</h1>
         <p className="ContractsPage-subtitle">View and manage all your smart contracts.</p>

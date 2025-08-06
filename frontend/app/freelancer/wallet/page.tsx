@@ -3,12 +3,9 @@
 
 import React from 'react';
 import Wallet from './Wallet';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 const WalletPage = () => {
-  const { theme } = useTheme();
-
-  return <Wallet theme={theme} />;
+  return <Wallet />;
 };
 
 export default WalletPage;

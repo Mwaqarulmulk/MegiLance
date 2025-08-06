@@ -1,11 +1,7 @@
-.BlogPage-container--dark {
-  background-color: #111827;
-}
-
-.BlogPage-title--dark {
-  color: #ffffff;
-}
-
-.BlogPage-subtitle--dark {
-  color: #d1d5db;
-}
+/* @AI-HINT: Dark theme styles for BlogPage. */
+.BlogPage-container {}
+.BlogPage-header {}
+.BlogPage-title {}
+.BlogPage-subtitle {}
+.BlogPage-main {}
+.BlogPage-grid {}

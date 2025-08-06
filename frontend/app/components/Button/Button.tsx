@@ -12,7 +12,7 @@ import lightStyles from './Button.light.module.css';
 import darkStyles from './Button.dark.module.css';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline';
   size?: 'small' | 'medium' | 'large';
   isLoading?: boolean;
   fullWidth?: boolean;

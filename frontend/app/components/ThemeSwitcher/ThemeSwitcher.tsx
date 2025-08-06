@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,7 @@ import lightStyles from './ThemeSwitcher.light.module.css';
 import darkStyles from './ThemeSwitcher.dark.module.css';
 
 const ThemeSwitcher = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   // To avoid a flash of the wrong theme, we don't render until the theme is determined on the client.
   if (!theme) {
@@ -22,7 +22,7 @@ const ThemeSwitcher = () => {
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       className={cn(commonStyles.themeToggle, themeStyles.themeToggle)}
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       aria-label="Toggle theme"

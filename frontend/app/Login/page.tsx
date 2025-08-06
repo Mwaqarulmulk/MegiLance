@@ -3,12 +3,10 @@
 
 import React from 'react';
 import Login from './Login';
-import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 const LoginPage = () => {
-  const { theme } = useTheme();
-
-  return <Login theme={theme} />;
+  return <Login />;
 };
 
 export default LoginPage;

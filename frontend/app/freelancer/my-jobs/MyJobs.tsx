@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 import commonStyles from './MyJobs.common.module.css';
 import lightStyles from './MyJobs.light.module.css';
 import darkStyles from './MyJobs.dark.module.css';
-import { useTheme } from '@/app/contexts/ThemeContext';
 
 // @AI-HINT: This is the 'My Jobs' page for freelancers to track active and completed projects. All styles are per-component only. Now fully theme-switchable using global theme context.
 
@@ -41,8 +40,7 @@ const MyJobs: React.FC = () => {
     },
   ];
 
-  const { theme } = useTheme();
-
+  
   return (
     <div className={cn(commonStyles.myJobs, theme === 'light' ? lightStyles.light : darkStyles.dark)}>
       {/* AI-HINT: The 'cn' utility is used here to merge the base component styles with the correct theme-specific styles (light or dark) based on the current theme context. */}
