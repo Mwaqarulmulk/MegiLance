@@ -1,0 +1,28 @@
+.policyEditorContainer {
+  background-color: #f7fafc;
+}
+
+.policyEditorTitle {
+  color: #1a202c;
+}
+
+.policyEditorEditor {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.policyEditorSelect {
+  background-color: #ffffff;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.policyEditorTextarea {
+  background-color: #fdfdfe;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.saveConfirmation {
+  color: #2f855a;
+}

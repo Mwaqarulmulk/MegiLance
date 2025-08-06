@@ -1,0 +1,8 @@
+/* @AI-HINT: Dark theme styles for the MegiLanceLogo component. */
+.background {
+  fill: #4573DF; /* MegiLance Blue - can be same or different */
+}
+
+.foreground {
+  fill: #FFFFFF; /* White */
+}

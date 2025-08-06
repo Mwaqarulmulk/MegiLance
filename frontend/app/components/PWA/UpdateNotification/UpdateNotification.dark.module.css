@@ -1,0 +1,7 @@
+/* @AI-HINT: Dark theme variables for the UpdateNotification component. */
+
+.themeWrapper {
+  --notification-bg-color: var(--surface-info-subtle);
+  --notification-border-color: var(--border-info);
+  --notification-text-color: var(--text-info);
+}

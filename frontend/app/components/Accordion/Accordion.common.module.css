@@ -1,0 +1,74 @@
+/* AI-HINT: Common styles for the refactored Accordion component. Includes a CSS-only icon and grid-based animations for a premium feel. */
+
+.accordionRoot {
+  width: 100%;
+  border-radius: 0.5rem; /* 8px */
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.accordionItem:not(:last-child) {
+  border-bottom: 1px solid;
+}
+
+.accordionTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem; /* 16px 20px */
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.accordionTitle {
+  flex-grow: 1;
+}
+
+/* Pure CSS Chevron Icon */
+.accordionIcon {
+  position: relative;
+  width: 0.75rem; /* 12px */
+  height: 0.75rem; /* 12px */
+  margin-left: 1rem; /* 16px */
+  transition: transform 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.accordionIcon::before {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.iconOpen {
+  transform: rotate(225deg);
+}
+
+/* Animated Content Panel */
+.accordionContent {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.contentOpen {
+  grid-template-rows: 1fr;
+}
+
+.accordionContentText {
+  padding: 0.5rem 1.25rem 1.25rem 1.25rem;
+  line-height: 1.6;
+  overflow: hidden;
+}

@@ -3,18 +3,22 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './TypingIndicator.common.css';
-import './TypingIndicator.light.css';
-import './TypingIndicator.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './TypingIndicator.common.module.css';
+import lightStyles from './TypingIndicator.light.module.css';
+import darkStyles from './TypingIndicator.dark.module.css';
 
 const TypingIndicator: React.FC = () => {
   const { theme } = useTheme();
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={`TypingIndicator-container TypingIndicator-container--${theme}`}>
-      <div className="TypingIndicator-dot"></div>
-      <div className="TypingIndicator-dot"></div>
-      <div className="TypingIndicator-dot"></div>
+    <div className={cn(commonStyles.container, themeStyles.themeWrapper)}>
+      <div className={commonStyles.dot}></div>
+      <div className={commonStyles.dot}></div>
+      <div className={commonStyles.dot}></div>
     </div>
   );
 };

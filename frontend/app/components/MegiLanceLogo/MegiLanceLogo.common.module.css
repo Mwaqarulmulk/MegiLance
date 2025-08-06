@@ -1,0 +1,18 @@
+/* @AI-HINT: Common styles for the MegiLanceLogo component. */
+.logo {
+  display: inline-block;
+  vertical-align: middle;
+  transition: transform 0.2s ease-in-out;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.background {
+  transition: fill 0.3s ease;
+}
+
+.foreground {
+  transition: fill 0.3s ease;
+}

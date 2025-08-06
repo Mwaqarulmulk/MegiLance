@@ -1,0 +1,22 @@
+/* @AI-HINT: Dark theme styles for the Tabs component. */
+
+.dark .tabsList {
+  border-color: #4b5563; /* Gray 600 */
+}
+
+.dark .tabsTab {
+  color: #9ca3af; /* Gray 400 */
+}
+
+.dark .tabsTab:hover {
+  color: #f9fafb; /* Gray 50 */
+}
+
+.dark .tabsTab[aria-selected='true'] {
+  color: #818cf8; /* Indigo 400 */
+  border-color: #818cf8; /* Indigo 400 */
+}
+
+.dark .tabsTab:focus-visible {
+  outline-color: #6366f1; /* Indigo 500 */
+}

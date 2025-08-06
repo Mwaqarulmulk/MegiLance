@@ -1,0 +1,22 @@
+/* @AI-HINT: Dark theme styles for the Faq component. */
+
+.themeWrapper {
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+.themeWrapper .faqHeader p {
+  color: var(--text-secondary);
+}
+
+.themeWrapper .faqItem {
+  border-color: var(--border);
+}
+
+.themeWrapper .faqItemQuestion {
+  color: var(--text-primary);
+}
+
+.themeWrapper .faqItemAnswer p {
+  color: var(--text-secondary);
+}

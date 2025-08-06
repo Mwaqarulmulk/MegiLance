@@ -1,0 +1,12 @@
+/* @AI-HINT: Light theme variables for the Pagination component. */
+.themeWrapper {
+  --pagination-button-bg: var(--surface-primary);
+  --pagination-button-border: var(--border-secondary);
+  --pagination-button-text: var(--text-primary);
+  --pagination-button-bg-hover: var(--surface-hover);
+  --pagination-button-bg-disabled: var(--surface-disabled);
+  --pagination-button-text-disabled: var(--text-disabled);
+  --pagination-button-border-disabled: var(--border-secondary);
+  --pagination-info-text: var(--text-secondary);
+  --focus-ring: var(--brand-secondary-light);
+}

@@ -1,0 +1,16 @@
+.themeWrapper {
+  --inbox-bg: #f7fafc;
+  --inbox-border-color: #e2e8f0;
+  --inbox-title-color: #1a202c;
+  --inbox-username-color: #2d3748;
+  --inbox-timestamp-color: #718096;
+  --inbox-last-message-color: #4a5568;
+}
+
+.item:hover {
+  background-color: #edf2f7;
+}
+
+.active {
+  background-color: #e2e8f0;
+}

@@ -10,7 +10,6 @@ This is the frontend for MegiLance, a next-generation freelance platform powered
 These rules are **mandatory** for all developers and AI agents to ensure code quality, maintainability, and scalability.
 
 - **No Global CSS:** All styling is scoped to individual components. The global `globals.css` file is intentionally unused.
-- **Component-Scoped Styles:** Each component has its own set of stylesheets (`.common.css`, `.light.css`, `.dark.css`). This prevents style collisions and makes components self-contained.
 - **TypeScript is Mandatory:** All new code must be written in TypeScript with full type safety.
 - **AI-HINT Comments:** Every file must begin with an `@AI-HINT` comment explaining its purpose. This is crucial for AI-assisted development and automation.
 
@@ -28,6 +27,53 @@ These rules are **mandatory** for all developers and AI agents to ensure code qu
     ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+---
+
+## 🎨 Theming System
+
+The MegiLance frontend features a robust, fully implemented theme-switching capability that supports both light and dark modes. The system is designed for consistency, scalability, and ease of use.
+
+### Architecture
+
+- **`ThemeContext`**: A global context (`app/contexts/ThemeContext.tsx`) provides the current theme (`'light'` or `'dark'`) and a `toggleTheme` function to all components.
+- **Per-Component CSS Modules**: Every component has three dedicated stylesheets:
+  - `Component.common.module.css`: Base styles that are theme-agnostic.
+  - `Component.light.module.css`: Styles specific to the light theme.
+  - `Component.dark.module.css`: Styles specific to the dark theme.
+- **`cn` Utility**: The `cn` utility from `lib/utils` is used to conditionally merge common and theme-specific class names, ensuring a clean and predictable application of styles.
+
+### Applying Themes to Components
+
+When creating or refactoring a component, follow this pattern to ensure it is fully theme-aware:
+
+1.  **Import Dependencies**:
+
+    ```typescript
+    import { useTheme } from '@/app/contexts/ThemeContext';
+    import { cn } from '@/lib/utils';
+    import commonStyles from './Component.common.module.css';
+    import lightStyles from './Component.light.module.css';
+    import darkStyles from './Component.dark.module.css';
+    ```
+
+2.  **Access Theme and Styles**:
+
+    ```typescript
+    const { theme } = useTheme();
+    if (!theme) return null; // Prevents UI flash before theme is resolved
+    const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+    ```
+
+3.  **Apply Classes to Elements**:
+
+    ```jsx
+    <div className={cn(commonStyles.container, themeStyles.container)}>
+      <p className={cn(commonStyles.text, themeStyles.text)}>Hello, world!</p>
+    </div>
+    ```
+
+This pattern has been applied to all major components, creating a pixel-perfect, investor-grade UI that is consistent across the entire application.
 
 ---
 

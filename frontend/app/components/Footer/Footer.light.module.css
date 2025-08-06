@@ -1,0 +1,25 @@
+/* @AI-HINT: Light theme styles for Footer component following MegiLance brand guidelines. Professional light styling with proper contrast and accessibility. */
+
+.themeWrapper {
+  --footer-bg: #ffffff;
+  --footer-border-color: #e5e7eb;
+  --footer-text-color: #111827;
+  --footer-text-muted: #6b7280;
+  --footer-heading-color: #111827;
+  --footer-link-color: #4b5563;
+  --footer-link-color-hover: #2563eb;
+  --footer-icon-color: #6b7280;
+  --footer-focus-color: #2563eb;
+  
+  /* Social media links */
+  --footer-social-bg: #f9fafb;
+  --footer-social-border: #e5e7eb;
+  --footer-social-color: #6b7280;
+  --footer-social-bg-hover: #2563eb;
+  --footer-social-border-hover: #2563eb;
+  --footer-social-color-hover: #ffffff;
+}
+
+.socialLink:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

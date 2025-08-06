@@ -1,0 +1,30 @@
+/* @AI-HINT: Styles for the reusable placeholder page component. Uses camelCase for CSS module compatibility. */
+
+.placeholderPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - var(--size-navbar-height, 64px));
+  padding: var(--spacing-8);
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+}
+
+.content {
+  max-width: 600px;
+}
+
+.title {
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4);
+}
+
+.description {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+}

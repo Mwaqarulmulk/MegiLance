@@ -1,0 +1,10 @@
+/* @AI-HINT: Light theme variables for the PaymentBadge component. */
+
+.themeWrapper {
+  --badge-paid-bg: var(--surface-success-subtle);
+  --badge-paid-text: var(--text-success);
+  --badge-pending-bg: var(--surface-warning-subtle);
+  --badge-pending-text: var(--text-warning);
+  --badge-failed-bg: var(--surface-danger-subtle);
+  --badge-failed-text: var(--text-danger);
+}

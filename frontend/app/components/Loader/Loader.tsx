@@ -2,9 +2,11 @@
 'use client';
 
 import React from 'react';
-import './Loader.common.css';
-import './Loader.light.css';
-import './Loader.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Loader.common.module.css';
+import lightStyles from './Loader.light.module.css';
+import darkStyles from './Loader.dark.module.css';
 
 interface LoaderProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -21,26 +23,39 @@ const Loader: React.FC<LoaderProps> = ({
   variant = 'spinner',
   className = '' 
 }) => {
+  const { theme } = useTheme();
+  if (!theme) return null; // Avoid rendering until the theme is loaded
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
+  const loaderClasses = cn(
+    commonStyles.loader,
+    commonStyles[size],
+    commonStyles[variant],
+    themeStyles.themeWrapper,
+    className
+  );
+
   const loaderContent = (
     <div 
-      className={`Loader Loader--${size} Loader--${variant} ${className}`}
+      className={loaderClasses}
       role="status"
       aria-live="polite"
       aria-label={text || 'Loading'}
     >
-      <div className="Loader-spinner" aria-hidden="true">
+      <div className={commonStyles.spinnerContainer} aria-hidden="true">
         {variant === 'dots' && (
           <>
-            <div className="Loader-dot"></div>
-            <div className="Loader-dot"></div>
-            <div className="Loader-dot"></div>
+            <div className={commonStyles.dot}></div>
+            <div className={commonStyles.dot}></div>
+            <div className={commonStyles.dot}></div>
           </>
         )}
-        {variant === 'pulse' && <div className="Loader-pulse"></div>}
-        {variant === 'spinner' && <div className="Loader-circle"></div>}
+        {variant === 'pulse' && <div />}
+        {variant === 'spinner' && <div />}
       </div>
       {text && (
-        <span className="Loader-text">{text}</span>
+        <span className={commonStyles.text}>{text}</span>
       )}
       <span className="sr-only">{text || 'Loading, please wait...'}</span>
     </div>
@@ -48,7 +63,7 @@ const Loader: React.FC<LoaderProps> = ({
 
   if (overlay) {
     return (
-      <div className={`Loader-overlay`}>
+      <div className={cn(commonStyles.overlay, themeStyles.themeWrapper)}>
         {loaderContent}
       </div>
     );

@@ -1,0 +1,104 @@
+/* @AI-HINT: Common, theme-agnostic styles for the Input component. */
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.inputLabel {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--input-label-text);
+  margin-bottom: var(--spacing-2);
+  display: block;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputField {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  color: var(--input-text);
+  background-color: var(--input-bg);
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius-large);
+  border: var(--border-width-md) solid var(--input-border);
+  transition: border-color var(--transition-duration-fast) ease-in-out, box-shadow var(--transition-duration-fast) ease-in-out;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.inputField::placeholder {
+  color: var(--input-placeholder-text);
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring-primary);
+}
+
+.inputIcon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--input-icon);
+  font-size: var(--font-size-lg);
+}
+
+.inputIconBefore {
+  left: var(--spacing-4);
+}
+
+.inputIconAfter {
+  right: var(--spacing-4);
+}
+
+.inputFieldWithIconBefore {
+  padding-left: var(--spacing-12);
+}
+
+.inputFieldWithIconAfter {
+  padding-right: var(--spacing-12);
+}
+
+.inputWrapperError .inputField {
+  border-color: var(--input-border-error);
+  color: var(--input-text-error);
+}
+
+.inputWrapperError .inputField:focus {
+  border-color: var(--input-border-error-focus);
+  box-shadow: var(--focus-ring-error);
+}
+
+.errorMessage {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-xs);
+  color: var(--input-error-text);
+  margin-top: var(--spacing-2);
+}
+
+.inputWrapperDisabled {
+  cursor: not-allowed;
+}
+
+.inputWrapperDisabled .inputField {
+  background-color: var(--input-bg-disabled);
+  color: var(--input-text-disabled);
+  border-color: var(--input-border-disabled);
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}

@@ -1,0 +1,20 @@
+/* @AI-HINT: Dark theme for DashboardWidget. Brand-compliant metrics card, trend colors, and clickable state. */
+
+.themeWrapper {
+  --widget-bg: var(--surface);
+  --widget-border-color: var(--border);
+  --widget-border-color-hover: var(--primary);
+  --widget-icon-bg: var(--surface-alt);
+  --widget-icon-color: var(--primary-strong);
+  --widget-title-color: var(--text-secondary);
+  --widget-value-color: var(--text-primary);
+  --widget-trend-positive-color: var(--success-strong);
+  --widget-trend-negative-color: var(--error-strong);
+  --widget-trend-neutral-color: var(--text-secondary);
+  --widget-footer-color: var(--text-secondary);
+  --widget-button-bg: var(--surface-alt);
+  --widget-button-text-color: var(--text-primary);
+  --widget-button-border-color: var(--border);
+  --widget-button-bg-hover: var(--surface-alt-hover);
+  --widget-button-border-color-hover: var(--border-hover);
+}

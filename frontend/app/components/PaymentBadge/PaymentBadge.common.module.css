@@ -1,0 +1,26 @@
+/* @AI-HINT: Common styles for the PaymentBadge component. Uses camelCase for CSS module compatibility. */
+
+.paymentBadge {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+.paid {
+  background-color: var(--badge-paid-bg);
+  color: var(--badge-paid-text);
+}
+
+.pending {
+  background-color: var(--badge-pending-bg);
+  color: var(--badge-pending-text);
+}
+
+.failed {
+  background-color: var(--badge-failed-bg);
+  color: var(--badge-failed-text);
+}

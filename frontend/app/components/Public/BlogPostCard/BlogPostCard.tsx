@@ -5,9 +5,12 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './BlogPostCard.common.css';
-import './BlogPostCard.light.css';
-import './BlogPostCard.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './BlogPostCard.common.module.css';
+import lightStyles from './BlogPostCard.light.module.css';
+import darkStyles from './BlogPostCard.dark.module.css';
+
+// @AI-HINT: This component displays a preview card for a single blog post, used on the main blog listing page. It is fully theme-aware and uses CSS modules.
 
 export interface BlogPostCardProps {
   slug: string;
@@ -16,23 +19,25 @@ export interface BlogPostCardProps {
   imageUrl: string;
   author: string;
   date: string;
+  className?: string;
 }
 
-const BlogPostCard: React.FC<BlogPostCardProps> = ({ slug, title, excerpt, imageUrl, author, date }) => {
+const BlogPostCard: React.FC<BlogPostCardProps> = ({ slug, title, excerpt, imageUrl, author, date, className }) => {
   const { theme } = useTheme();
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <Link href={`/blog/${slug}`} className={`BlogPostCard-link BlogPostCard-link--${theme}`}>
-      <div className={`BlogPostCard-container BlogPostCard-container--${theme}`}>
-        <div className="BlogPostCard-image-wrapper">
+    <Link href={`/blog/${slug}`} className={cn(commonStyles.blogPostCardLink, className)}>
+      <div className={cn(commonStyles.container, themeStyles.themeWrapper)}>
+        <div className={commonStyles.imageWrapper}>
           <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" />
         </div>
-        <div className="BlogPostCard-content">
-          <h3 className="BlogPostCard-title">{title}</h3>
-          <p className="BlogPostCard-excerpt">{excerpt}</p>
-          <div className="BlogPostCard-meta">
-            <span className="BlogPostCard-author">By {author}</span>
-            <span className="BlogPostCard-date">{date}</span>
+        <div className={commonStyles.content}>
+          <h3 className={commonStyles.title}>{title}</h3>
+          <p className={commonStyles.excerpt}>{excerpt}</p>
+          <div className={commonStyles.meta}>
+            <span className={commonStyles.author}>By {author}</span>
+            <span className={commonStyles.date}>{date}</span>
           </div>
         </div>
       </div>

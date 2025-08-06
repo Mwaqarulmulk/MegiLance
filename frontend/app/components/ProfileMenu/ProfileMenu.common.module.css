@@ -1,0 +1,110 @@
+/* @AI-HINT: Shared styles for ProfileMenu component. Defines structure, layout, and transitions. Uses camelCase for CSS module compatibility. */
+.profileMenu {
+  position: relative;
+  display: inline-block;
+}
+
+.trigger {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: var(--transition-short);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-sm));
+  right: 0;
+  width: 280px;
+  background-color: var(--menu-bg-color);
+  border: 1px solid var(--menu-border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(-10px);
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0.2s;
+}
+
+.dropdownOpen {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--menu-divider-color);
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary-color);
+  margin: 0;
+}
+
+.userEmail {
+  font-size: 0.8rem;
+  color: var(--text-secondary-color);
+  margin-top: var(--spacing-xs);
+}
+
+.items {
+  list-style: none;
+  padding: var(--spacing-sm) 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.9rem;
+  text-align: left;
+  color: var(--menu-item-text-color);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+.item:hover {
+  background-color: var(--menu-item-hover-bg-color);
+  color: var(--menu-item-hover-text-color);
+}
+
+.item:focus-visible {
+  outline: none;
+  background-color: var(--menu-item-hover-bg-color);
+  color: var(--menu-item-hover-text-color);
+}
+
+.itemIcon {
+  margin-right: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  width: 20px;
+  justify-content: center;
+}
+
+.itemLabel {
+  flex-grow: 1;
+}

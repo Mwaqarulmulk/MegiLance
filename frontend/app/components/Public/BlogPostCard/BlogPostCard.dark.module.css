@@ -1,0 +1,10 @@
+/* @AI-HINT: Dark theme variables for the BlogPostCard component. */
+
+.themeWrapper {
+  --surface-secondary: var(--color-gray-800);
+  --border-subtle: var(--color-gray-700);
+  --text-primary: var(--color-gray-50);
+  --text-secondary: var(--color-gray-300);
+  --text-tertiary: var(--color-gray-400);
+  --card-shadow-hover: var(--shadow-lg-dark);
+}

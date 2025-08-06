@@ -1,0 +1,45 @@
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 0.75rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.table caption {
+  padding: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.tableTh,
+.tableTd {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+}
+
+.tableThead {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.tableTh {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableTbodyTr {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.tableTbodyTrLastChild {
+  border-bottom: none;
+}

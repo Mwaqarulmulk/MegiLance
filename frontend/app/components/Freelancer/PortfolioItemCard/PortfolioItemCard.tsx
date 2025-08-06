@@ -5,9 +5,10 @@ import React from 'react';
 import Image from 'next/image';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
-import './PortfolioItemCard.common.css';
-import './PortfolioItemCard.light.css';
-import './PortfolioItemCard.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './PortfolioItemCard.common.module.css';
+import lightStyles from './PortfolioItemCard.light.module.css';
+import darkStyles from './PortfolioItemCard.dark.module.css';
 
 export interface PortfolioItemCardProps {
   id: number;
@@ -21,24 +22,27 @@ export interface PortfolioItemCardProps {
 const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({ id, title, description, imageUrl, projectUrl, onDelete }) => {
   const { theme } = useTheme();
 
+  if (!theme) return null;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <div className={`PortfolioItemCard-container PortfolioItemCard-container--${theme}`}>
-      <div className="PortfolioItemCard-image-wrapper">
+    <div className={cn(commonStyles.container, themeStyles.themeWrapper)}>
+      <div className={commonStyles.imageWrapper}>
         <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" />
       </div>
-      <div className="PortfolioItemCard-content">
-        <h3 className="PortfolioItemCard-title">{title}</h3>
-        <p className="PortfolioItemCard-description">{description}</p>
+      <div className={commonStyles.content}>
+        <h3 className={commonStyles.title}>{title}</h3>
+        <p className={commonStyles.description}>{description}</p>
       </div>
-      <div className="PortfolioItemCard-footer">
+      <div className={commonStyles.footer}>
         {projectUrl && 
           <a href={projectUrl} target="_blank" rel="noopener noreferrer">
-            <Button theme={theme} variant="secondary">View Project</Button>
+            <Button variant="secondary">View Project</Button>
           </a>
         }
-        <div className="PortfolioItemCard-actions">
-          <Button theme={theme} variant="secondary" size="small">Edit</Button>
-          <Button theme={theme} variant="danger" size="small" onClick={() => onDelete(id)}>Delete</Button>
+        <div className={commonStyles.actions}>
+          <Button variant="secondary" size="small">Edit</Button>
+          <Button variant="danger" size="small" onClick={() => onDelete(id)}>Delete</Button>
         </div>
       </div>
     </div>

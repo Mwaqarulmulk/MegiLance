@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
-import './FlaggedFraudList.common.css';
-import './FlaggedFraudList.light.css';
-import './FlaggedFraudList.dark.css';
+import commonStyles from './FlaggedFraudList.common.module.css';
+import lightStyles from './FlaggedFraudList.light.module.css';
+import darkStyles from './FlaggedFraudList.dark.module.css';
 
 interface FlaggedItem {
   id: string;
@@ -29,6 +29,11 @@ const FlaggedFraudList: React.FC = () => {
   const { theme } = useTheme();
   const [items, setItems] = useState(mockFlaggedItems);
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   const handleAction = (id: string, newStatus: 'Resolved' | 'Dismissed') => {
     setItems(items.map(item => (item.id === id ? { ...item, status: newStatus } : item)));
   };
@@ -36,10 +41,10 @@ const FlaggedFraudList: React.FC = () => {
   const pendingItems = items.filter(item => item.status === 'Pending Review');
 
   return (
-    <div className={`FlaggedFraudList-container FlaggedFraudList-container--${theme}`}>
-      <h2 className="FlaggedFraudList-title">Flagged Fraud & Risk List</h2>
-      <div className="FlaggedFraudList-table-wrapper">
-        <table className={`FlaggedFraudList FlaggedFraudList--${theme}`}>
+    <div className={styles.flaggedFraudListContainer}>
+      <h2 className={styles.flaggedFraudListTitle}>Flagged Fraud & Risk List</h2>
+      <div className={styles.flaggedFraudListTableWrapper}>
+        <table className={styles.flaggedFraudList}>
           <thead>
             <tr>
               <th>Type</th>
@@ -52,19 +57,19 @@ const FlaggedFraudList: React.FC = () => {
           <tbody>
             {pendingItems.map(item => (
               <tr key={item.id}>
-                <td><Badge theme={theme} variant={item.type === 'User' ? 'warning' : 'info'}>{item.type}</Badge></td>
+                <td><Badge variant={item.type === 'User' ? 'warning' : 'info'}>{item.type}</Badge></td>
                 <td>{item.identifier}</td>
                 <td>{item.reason}</td>
                 <td>{item.dateFlagged}</td>
-                <td className="FlaggedFraudList-actions">
-                  <Button theme={theme} variant="success" size="small" onClick={() => handleAction(item.id, 'Resolved')}>Resolve</Button>
-                  <Button theme={theme} variant="secondary" size="small" onClick={() => handleAction(item.id, 'Dismissed')}>Dismiss</Button>
+                <td className={styles.flaggedFraudListActions}>
+                  <Button variant="success" size="small" onClick={() => handleAction(item.id, 'Resolved')}>Resolve</Button>
+                  <Button variant="secondary" size="small" onClick={() => handleAction(item.id, 'Dismissed')}>Dismiss</Button>
                 </td>
               </tr>
             ))}
             {pendingItems.length === 0 && (
               <tr>
-                <td colSpan={5} className="FlaggedFraudList-empty">No items are currently pending review.</td>
+                <td colSpan={5} className={styles.flaggedFraudListEmpty}>No items are currently pending review.</td>
               </tr>
             )}
           </tbody>

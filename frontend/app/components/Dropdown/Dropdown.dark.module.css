@@ -1,0 +1,11 @@
+.themeWrapper {
+  --dropdown-bg: var(--surface);
+  --dropdown-border-color: var(--border);
+  --dropdown-border-color-hover: var(--primary);
+  --dropdown-shadow-focus: 0 0 0 3px var(--primary-focus-shadow);
+  --dropdown-text-color: var(--text-primary);
+  --dropdown-caret-color: var(--text-secondary);
+  --dropdown-option-hover-bg: var(--surface-hover);
+  --dropdown-option-focused-bg: var(--primary-bg-hover);
+  --dropdown-option-focused-text: var(--primary-strong);
+}

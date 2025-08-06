@@ -18,17 +18,19 @@ const ThemeSwitcher = () => {
     return null;
   }
 
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+
   return (
     <button
       onClick={toggleTheme}
-      className={cn(
-        commonStyles.themeToggle,
-        theme === 'light' ? lightStyles.light : darkStyles.dark
-      )}
+      className={cn(commonStyles.themeToggle, themeStyles.themeToggle)}
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       aria-label="Toggle theme"
     >
-      {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+      {theme === 'light' ? 
+        <Moon size={20} className={cn(commonStyles.icon, themeStyles.icon)} /> : 
+        <Sun size={20} className={cn(commonStyles.icon, themeStyles.icon)} />
+      }
     </button>
   );
 };

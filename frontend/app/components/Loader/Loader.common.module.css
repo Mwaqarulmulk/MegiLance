@@ -1,0 +1,114 @@
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loader {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.spinnerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Variants */
+.spinner .spinnerContainer > div {
+  border-radius: 50%;
+  border-style: solid;
+  animation: spin 1s linear infinite;
+  border-color: var(--loader-secondary);
+  border-top-color: var(--loader-primary);
+}
+
+.dots .spinnerContainer {
+  gap: 0.25rem;
+}
+
+.dots .dot {
+  background-color: var(--loader-primary);
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite both;
+}
+
+.dots .dot:nth-child(1) { animation-delay: -0.32s; }
+.dots .dot:nth-child(2) { animation-delay: -0.16s; }
+.dots .dot:nth-child(3) { animation-delay: 0s; }
+
+.pulse .spinnerContainer > div {
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+  background-color: var(--loader-primary);
+}
+
+/* Sizes */
+.xs .spinnerContainer > div {
+  width: 1rem;
+  height: 1rem;
+}
+.xs .spinner .spinnerContainer > div { border-width: 2px; }
+.xs .dots .dot { width: 0.25rem; height: 0.25rem; }
+.xs .text { font-size: 0.75rem; }
+
+.sm .spinnerContainer > div {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.sm .spinner .spinnerContainer > div { border-width: 2px; }
+.sm .dots .dot { width: 0.375rem; height: 0.375rem; }
+.sm .text { font-size: 0.875rem; }
+
+.md .spinnerContainer > div {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.md .spinner .spinnerContainer > div { border-width: 3px; }
+.md .dots .dot { width: 0.5rem; height: 0.5rem; }
+.md .text { font-size: 1rem; }
+
+.lg .spinnerContainer > div {
+  width: 2rem;
+  height: 2rem;
+}
+.lg .spinner .spinnerContainer > div { border-width: 3px; }
+.lg .dots .dot { width: 0.625rem; height: 0.625rem; }
+.lg .text { font-size: 1.125rem; }
+
+.xl .spinnerContainer > div {
+  width: 3rem;
+  height: 3rem;
+}
+.xl .spinner .spinnerContainer > div { border-width: 4px; }
+.xl .dots .dot { width: 0.75rem; height: 0.75rem; }
+.xl .text { font-size: 1.25rem; }
+
+.text {
+  color: var(--loader-text);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background-color: var(--loader-overlay-bg);
+}

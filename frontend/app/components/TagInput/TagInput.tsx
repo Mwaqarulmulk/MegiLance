@@ -18,6 +18,10 @@ const TagInput: React.FC<TagInputProps> = ({ label, tags, setTags }) => {
   const { theme } = useTheme();
   const [inputValue, setInputValue] = useState('');
 
+  if (!theme) return null;
+
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
@@ -34,13 +38,13 @@ const TagInput: React.FC<TagInputProps> = ({ label, tags, setTags }) => {
   };
 
   return (
-    <div className={cn(commonStyles.tagInputContainer, theme === 'light' ? lightStyles.light : darkStyles.dark)}>
-      <label className={commonStyles.tagInputLabel}>{label}</label>
-      <div className={commonStyles.tagInputWrapper}>
+    <div className={cn(commonStyles.tagInputContainer, themeStyles.tagInputContainer)}>
+      <label className={cn(commonStyles.tagInputLabel, themeStyles.tagInputLabel)}>{label}</label>
+      <div className={cn(commonStyles.tagInputWrapper, themeStyles.tagInputWrapper)}>
         {tags.map(tag => (
-          <div key={tag} className={commonStyles.tagInputTag}>
+          <div key={tag} className={cn(commonStyles.tagInputTag, themeStyles.tagInputTag)}>
             {tag}
-            <button onClick={() => removeTag(tag)} className={commonStyles.tagInputRemoveBtn}>
+            <button onClick={() => removeTag(tag)} className={cn(commonStyles.tagInputRemoveBtn, themeStyles.tagInputRemoveBtn)}>
               &times;
             </button>
           </div>
@@ -51,7 +55,7 @@ const TagInput: React.FC<TagInputProps> = ({ label, tags, setTags }) => {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Add a skill..."
-          className={commonStyles.tagInputInput}
+          className={cn(commonStyles.tagInputInput, themeStyles.tagInputInput)}
         />
       </div>
     </div>

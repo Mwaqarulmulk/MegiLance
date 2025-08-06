@@ -1,9 +1,0 @@
-.Card--light {
-  --card-bg: #ffffff;
-  --card-border-color: #e5e7eb; /* Gray 200 */
-  --card-title-color: #111827; /* Gray 900 */
-
-  background-color: var(--card-bg);
-  border: 1.5px solid var(--card-border-color);
-}
-

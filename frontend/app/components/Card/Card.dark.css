@@ -1,8 +1,0 @@
-.Card--dark {
-  --card-bg: #1f2937; /* Gray 800 */
-  --card-border-color: #374151; /* Gray 700 */
-  --card-title-color: #f9fafb; /* Gray 50 */
-
-  background-color: var(--card-bg);
-  border: 1.5px solid var(--card-border-color);
-}

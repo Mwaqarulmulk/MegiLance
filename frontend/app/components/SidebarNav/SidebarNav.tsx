@@ -5,9 +5,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import './SidebarNav.common.css';
-import './SidebarNav.light.css';
-import './SidebarNav.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import styles from './SidebarNav.common.module.css';
 
 // Define the structure for a navigation item
 export interface NavItem {
@@ -19,50 +19,52 @@ export interface NavItem {
 // Define the props for the SidebarNav component
 export interface SidebarNavProps {
   navItems: NavItem[];
-  theme?: 'light' | 'dark';
   isCollapsed?: boolean;
   className?: string;
 }
 
 const SidebarNav: React.FC<SidebarNavProps> = ({
   navItems,
-  theme = 'light',
   isCollapsed = false,
   className = '',
 }) => {
   const pathname = usePathname();
+  const { theme } = useTheme(); // Use hook for theme
 
-  const sidebarClasses = [
-    'SidebarNav',
-    `SidebarNav--${theme}`,
-    isCollapsed ? 'SidebarNav--collapsed' : '',
-    className,
-  ].filter(Boolean).join(' ');
+  const sidebarClasses = cn(
+    styles.sidebarNav,
+    `theme-${theme}`, // Apply global theme class for CSS variables
+    isCollapsed && styles.sidebarNavCollapsed,
+    className
+  );
 
   return (
     <aside className={sidebarClasses}>
-      <div className="SidebarNav-header">
-        <div className="SidebarNav-logo">
+      <div className={styles.sidebarNavHeader}>
+        <div className={styles.sidebarNavLogo}>
           {isCollapsed ? 'M' : 'MegiLance'}
         </div>
       </div>
-      <nav className="SidebarNav-nav">
-        <ul className="SidebarNav-list">
+      <nav className={styles.sidebarNavNav}>
+        <ul className={styles.sidebarNavList}>
           {navItems.map((item) => (
-            <li key={item.href} className="SidebarNav-item">
+            <li key={item.href} className={styles.sidebarNavItem}>
               <Link
                 href={item.href}
-                className={`SidebarNav-link ${pathname === item.href ? 'SidebarNav-link--active' : ''}`}
+                className={cn(
+                  styles.sidebarNavLink,
+                  pathname === item.href && styles.sidebarNavLinkActive
+                )}
                 title={isCollapsed ? item.label : undefined}
               >
-                <span className="SidebarNav-icon">{item.icon}</span>
-                {!isCollapsed && <span className="SidebarNav-label">{item.label}</span>}
+                <span className={styles.sidebarNavIcon}>{item.icon}</span>
+                {!isCollapsed && <span className={styles.sidebarNavLabel}>{item.label}</span>}
               </Link>
             </li>
           ))}
         </ul>
       </nav>
-      <div className="SidebarNav-footer">
+      <div className={styles.sidebarNavFooter}>
         {/* Placeholder for future UserAvatar or ProfileMenu component */}
       </div>
     </aside>

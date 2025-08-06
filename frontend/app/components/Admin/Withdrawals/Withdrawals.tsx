@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
-import './Withdrawals.common.css';
-import './Withdrawals.light.css';
-import './Withdrawals.dark.css';
+import commonStyles from './Withdrawals.common.module.css';
+import lightStyles from './Withdrawals.light.module.css';
+import darkStyles from './Withdrawals.dark.module.css';
 
 interface WithdrawalRequest {
   id: string;
@@ -35,11 +35,16 @@ const Withdrawals: React.FC = () => {
 
   const pendingRequests = requests.filter(req => req.status === 'Pending');
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   return (
-    <div className={`Withdrawals-container Withdrawals-container--${theme}`}>
-      <h2 className="Withdrawals-title">Withdrawal Requests</h2>
-      <div className="Withdrawals-table-wrapper">
-        <table className={`Withdrawals-table Withdrawals-table--${theme}`}>
+    <div className={styles.withdrawalsContainer}>
+      <h2 className={styles.withdrawalsTitle}>Withdrawal Requests</h2>
+      <div className={styles.withdrawalsTableWrapper}>
+        <table className={styles.withdrawalsTable}>
           <thead>
             <tr>
               <th>Freelancer</th>
@@ -53,18 +58,18 @@ const Withdrawals: React.FC = () => {
             {pendingRequests.map(req => (
               <tr key={req.id}>
                 <td>{req.freelancerName}</td>
-                <td>{req.amount} <Badge theme={theme} variant="info">{req.currency}</Badge></td>
-                <td className="Withdrawals-address">{req.destinationAddress}</td>
+                <td>{req.amount} <Badge variant="info">{req.currency}</Badge></td>
+                <td className={styles.withdrawalsAddress}>{req.destinationAddress}</td>
                 <td>{req.dateRequested}</td>
-                <td className="Withdrawals-actions">
-                  <Button theme={theme} variant="success" size="small" onClick={() => handleProcess(req.id, 'Approved')}>Approve</Button>
-                  <Button theme={theme} variant="danger" size="small" onClick={() => handleProcess(req.id, 'Rejected')}>Reject</Button>
+                <td className={styles.withdrawalsActions}>
+                  <Button variant="success" size="small" onClick={() => handleProcess(req.id, 'Approved')}>Approve</Button>
+                  <Button variant="danger" size="small" onClick={() => handleProcess(req.id, 'Rejected')}>Reject</Button>
                 </td>
               </tr>
             ))}
             {pendingRequests.length === 0 && (
               <tr>
-                <td colSpan={5} className="Withdrawals-empty">No pending withdrawal requests.</td>
+                <td colSpan={5} className={styles.withdrawalsEmpty}>No pending withdrawal requests.</td>
               </tr>
             )}
           </tbody>

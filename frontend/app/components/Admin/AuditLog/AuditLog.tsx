@@ -4,9 +4,9 @@
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Badge from '@/app/components/Badge/Badge';
-import './AuditLog.common.css';
-import './AuditLog.light.css';
-import './AuditLog.dark.css';
+import commonStyles from './AuditLog.common.module.css';
+import lightStyles from './AuditLog.light.module.css';
+import darkStyles from './AuditLog.dark.module.css';
 
 interface LogEntry {
   id: string;
@@ -27,11 +27,16 @@ const mockLogs: LogEntry[] = [
 const AuditLog: React.FC = () => {
   const { theme } = useTheme();
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   return (
-    <div className={`AuditLog-container AuditLog-container--${theme}`}>
-      <h2 className="AuditLog-title">System Audit Log</h2>
-      <div className="AuditLog-table-wrapper">
-        <table className={`AuditLog AuditLog--${theme}`}>
+    <div className={styles.auditLogContainer}>
+      <h2 className={styles.auditLogTitle}>System Audit Log</h2>
+      <div className={styles.auditLogTableWrapper}>
+        <table className={styles.auditLog}>
           <thead>
             <tr>
               <th>Timestamp</th>
@@ -46,7 +51,7 @@ const AuditLog: React.FC = () => {
               <tr key={log.id}>
                 <td>{log.timestamp}</td>
                 <td>{log.actor}</td>
-                <td><Badge theme={theme} variant="info">{log.action}</Badge></td>
+                <td><Badge variant="info">{log.action}</Badge></td>
                 <td>{log.target}</td>
                 <td>{log.details}</td>
               </tr>

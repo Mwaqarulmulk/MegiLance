@@ -1,0 +1,33 @@
+.withdrawalsContainer {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+}
+
+.withdrawalsTitle {
+  color: #f7fafc;
+}
+
+.withdrawalsTable th {
+  color: #a0aec0;
+  border-bottom: 2px solid #4a5568;
+}
+
+.withdrawalsTable td {
+  color: #cbd5e0;
+}
+
+.withdrawalsTable tbody tr {
+  border-bottom-color: #4a5568;
+}
+
+.withdrawalsTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.withdrawalsTable tbody tr:hover {
+  background-color: #4a5568;
+}
+
+.withdrawalsEmpty {
+  color: #a0aec0;
+}

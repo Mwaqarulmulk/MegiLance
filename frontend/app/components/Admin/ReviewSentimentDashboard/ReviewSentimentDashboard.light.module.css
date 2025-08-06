@@ -1,0 +1,28 @@
+.reviewSentimentDashboardContainer {
+  background-color: #f7fafc;
+}
+
+.reviewSentimentDashboardTitle {
+  color: #1a202c;
+}
+
+.reviewSentimentDashboardCard {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.cardTitle {
+  color: #4a5568;
+}
+
+.cardDescription {
+  color: #718096;
+}
+
+.barChartBarWrapper {
+  background-color: #e2e8f0;
+}
+
+.barChartLabel, .barChartPercentage {
+  color: #4a5568;
+}

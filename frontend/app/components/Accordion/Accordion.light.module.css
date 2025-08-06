@@ -1,0 +1,33 @@
+/* AI-HINT: Light theme styles for the Accordion. Defines colors for text, borders, and interactions for a clean and modern look. */
+
+.accordionRoot {
+  background-color: #ffffff; /* White */
+  border: 1px solid #e2e8f0; /* Gray 200 */
+}
+
+.accordionItem {
+  border-color: #e2e8f0; /* Gray 200 */
+}
+
+.accordionTrigger {
+  color: #1f2937; /* Gray 800 */
+}
+
+.accordionTrigger:hover {
+  background-color: #f9fafb; /* Gray 50 */
+}
+
+.accordionTrigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #4573df; /* White inner, MegiLance Blue outer */
+  z-index: 1;
+  position: relative;
+}
+
+.accordionIcon::before {
+  border-color: #6b7280; /* Gray 500 */
+}
+
+.accordionContentText {
+  color: #4b5563; /* Gray 600 */
+}

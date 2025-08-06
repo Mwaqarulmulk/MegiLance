@@ -1,0 +1,33 @@
+.jobModerationQueueContainer {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.jobModerationQueueTitle {
+  color: #1a202c;
+}
+
+.jobModerationQueue th {
+  color: #718096;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.jobModerationQueue td {
+  color: #4a5568;
+}
+
+.jobModerationQueue tbody tr {
+  border-bottom-color: #e2e8f0;
+}
+
+.jobModerationQueue tbody tr:last-child {
+  border-bottom: none;
+}
+
+.jobModerationQueue tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+.jobModerationQueueEmpty {
+    color: #718096;
+}

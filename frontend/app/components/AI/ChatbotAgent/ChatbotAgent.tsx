@@ -4,9 +4,10 @@
 import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
-import './ChatbotAgent.common.css';
-import './ChatbotAgent.light.css';
-import './ChatbotAgent.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './ChatbotAgent.common.module.css';
+import lightStyles from './ChatbotAgent.light.module.css';
+import darkStyles from './ChatbotAgent.dark.module.css';
 
 interface Message {
   id: number;
@@ -16,6 +17,11 @@ interface Message {
 
 const ChatbotAgent: React.FC = () => {
   const { theme } = useTheme();
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: 'Hello! How can I help you with your project today?', sender: 'bot' },
     { id: 2, text: 'I need to find a developer skilled in Next.js and Web3.', sender: 'user' },
@@ -47,23 +53,23 @@ const ChatbotAgent: React.FC = () => {
   };
 
   return (
-    <div className={`ChatbotAgent ChatbotAgent--${theme}`}>
-      <div className="ChatbotAgent-messages">
+    <div className={styles.chatbotAgent}>
+      <div className={styles.chatbotAgentMessages}>
         {messages.map(message => (
-          <div key={message.id} className={`Message Message--${message.sender} Message--${theme}`}>
+          <div key={message.id} className={cn(styles.message, message.sender === 'bot' ? styles.messageBot : styles.messageUser)}>
             <p>{message.text}</p>
           </div>
         ))}
       </div>
-      <form className="ChatbotAgent-input-form" onSubmit={handleSendMessage}>
+      <form className={styles.chatbotAgentInputForm} onSubmit={handleSendMessage}>
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Ask me anything..."
-          className={`ChatbotAgent-input ChatbotAgent-input--${theme}`}
+          className={styles.chatbotAgentInput}
         />
-        <Button theme={theme} type="submit" variant="primary">Send</Button>
+        <Button type="submit" variant="primary">Send</Button>
       </form>
     </div>
   );

@@ -4,10 +4,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IoClose } from 'react-icons/io5';
-
-import './Modal.common.css';
-import './Modal.light.css';
-import './Modal.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Modal.common.module.css';
+import lightStyles from './Modal.light.module.css';
+import darkStyles from './Modal.dark.module.css';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, footer, size = 'medium', className = '' }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -72,31 +74,33 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, footer,
     };
   }, [isOpen, onClose]);
 
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   const modalContent = (
     <div
-      className="Modal-overlay"
+      className={cn(commonStyles.modalOverlay, themeStyles.modalOverlay)}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       <div
-        className={`Modal-content Modal-content--${size} ${className}`}
+        className={cn(commonStyles.modalContent, themeStyles.modalContent, commonStyles[size], className)}
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
         tabIndex={-1}
       >
-        <div className="Modal-header">
-          {title && <h2 id="modal-title" className="Modal-title">{title}</h2>}
-          <button onClick={onClose} className="Modal-close-button" aria-label="Close modal">
+        <div className={cn(commonStyles.modalHeader, themeStyles.modalHeader)}>
+          {title && <h2 id="modal-title" className={cn(commonStyles.modalTitle, themeStyles.modalTitle)}>{title}</h2>}
+          <button onClick={onClose} className={cn(commonStyles.closeButton, themeStyles.closeButton)} aria-label="Close modal">
             <IoClose />
           </button>
         </div>
-        <div className="Modal-body">
+        <div className={cn(commonStyles.modalBody, themeStyles.modalBody)}>
           {children}
         </div>
         {footer && (
-          <div className="Modal-footer">
+          <div className={cn(commonStyles.modalFooter, themeStyles.modalFooter)}>
             {footer}
           </div>
         )}

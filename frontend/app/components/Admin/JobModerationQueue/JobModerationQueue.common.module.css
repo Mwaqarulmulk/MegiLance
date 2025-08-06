@@ -1,0 +1,49 @@
+.jobModerationQueueContainer {
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.jobModerationQueueTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 1.5rem;
+}
+
+.jobModerationQueueTableWrapper {
+  overflow-x: auto;
+}
+
+.jobModerationQueue {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.jobModerationQueue th, .jobModerationQueue td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.jobModerationQueue th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.jobModerationQueue tbody tr {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.jobModerationQueueActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.jobModerationQueueEmpty {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+}

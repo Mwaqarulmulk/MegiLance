@@ -1,0 +1,11 @@
+.themeWrapper {
+  --modal-overlay-bg: var(--overlay-dark);
+  --modal-bg: var(--surface);
+  --modal-border: var(--border);
+  --modal-shadow: var(--shadow-modal-dark);
+  --modal-title-text: var(--text-primary);
+  --modal-body-text: var(--text-secondary);
+  --modal-close-icon: var(--text-secondary);
+  --modal-close-icon-hover: var(--text-primary);
+  --modal-close-bg-hover: var(--surface-hover);
+}

@@ -4,10 +4,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
-import './ProfileMenu.common.css';
-import './ProfileMenu.light.css';
-import './ProfileMenu.dark.css';
+import commonStyles from './ProfileMenu.common.module.css';
+import lightStyles from './ProfileMenu.light.module.css';
+import darkStyles from './ProfileMenu.dark.module.css';
 
 // Define the structure for a menu item
 export interface ProfileMenuItem {
@@ -19,24 +21,30 @@ export interface ProfileMenuItem {
 
 // Define the props for the ProfileMenu component
 export interface ProfileMenuProps {
-  theme?: 'light' | 'dark';
   userName: string;
   userEmail?: string;
   userImageUrl?: string;
   menuItems: ProfileMenuItem[];
   className?: string;
+  theme?: 'light' | 'dark';
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({
-  theme = 'light',
   userName,
   userEmail,
   userImageUrl,
   menuItems,
   className = '',
+  theme: themeProp,
 }) => {
+  const { theme: contextTheme } = useTheme();
+  const theme = themeProp || contextTheme;
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const toggleMenu = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -59,17 +67,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
     };
   }, [isOpen]);
 
-  const menuClasses = [
-    'ProfileMenu',
-    `ProfileMenu--${theme}`,
-    className,
-  ].filter(Boolean).join(' ');
-
-  const dropdownClasses = [
-    'ProfileMenu-dropdown',
-    isOpen ? 'ProfileMenu-dropdown--open' : '',
-  ].filter(Boolean).join(' ');
-
   const handleItemClick = (onClick?: () => void) => {
     if (onClick) {
       onClick();
@@ -77,52 +74,56 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
     setIsOpen(false);
   };
 
+  const renderContent = (item: ProfileMenuItem) => (
+    <>
+      <span className={cn(commonStyles.itemIcon, themeStyles.itemIcon)}>{item.icon}</span>
+      <span className={cn(commonStyles.itemLabel, themeStyles.itemLabel)}>{item.label}</span>
+    </>
+  );
+
   return (
-    <div className={menuClasses} ref={menuRef}>
+    <div className={cn(commonStyles.profileMenu, themeStyles.profileMenu, className)} ref={menuRef}>
       <button
         type="button"
-        className="ProfileMenu-trigger"
+        className={cn(commonStyles.trigger, themeStyles.trigger)}
         onClick={toggleMenu}
         aria-haspopup="true"
-        aria-expanded={`${isOpen}`}
+        aria-expanded={isOpen}
         aria-label={`Open user menu for ${userName}`}
       >
-        <UserAvatar theme={theme} name={userName} src={userImageUrl} size="medium" />
+        <UserAvatar name={userName} src={userImageUrl} size="medium" />
       </button>
 
-      <div className={dropdownClasses}>
-        <div className="ProfileMenu-header">
-          <div className="ProfileMenu-userDetails">
-            <p className="ProfileMenu-userName">{userName}</p>
-            {userEmail && <p className="ProfileMenu-userEmail">{userEmail}</p>}
+      <div className={cn(commonStyles.dropdown, themeStyles.dropdown, isOpen && commonStyles.dropdownOpen)}>
+        <div className={cn(commonStyles.header, themeStyles.header)}>
+          <div className={cn(commonStyles.userDetails, themeStyles.userDetails)}>
+            <p className={cn(commonStyles.userName, themeStyles.userName)}>{userName}</p>
+            {userEmail && <p className={cn(commonStyles.userEmail, themeStyles.userEmail)}>{userEmail}</p>}
           </div>
         </div>
-        <ul className="ProfileMenu-items" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
-          {menuItems.map((item) => {
-            const commonProps = {
-              className: 'ProfileMenu-item',
-              onClick: () => handleItemClick(item.onClick),
-            };
-
-            const content = (
-              <>
-                <span className="ProfileMenu-itemIcon">{item.icon}</span>
-                <span className="ProfileMenu-itemLabel">{item.label}</span>
-              </>
-            );
-
-            return (
-              <li key={item.label} role="menuitem" tabIndex={-1} {...commonProps}>
-                {item.href ? (
-                  <Link href={item.href} tabIndex={-1} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    {content}
-                  </Link>
-                ) : (
-                  content
-                )}
-              </li>
-            );
-          })}
+        <ul className={cn(commonStyles.items, themeStyles.items)} role="menu" aria-orientation="vertical">
+          {menuItems.map((item) => (
+            <li key={item.label} role="none">
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  role="menuitem"
+                  className={cn(commonStyles.item, themeStyles.item)}
+                  onClick={() => handleItemClick(item.onClick)}
+                >
+                  {renderContent(item)}
+                </Link>
+              ) : (
+                <button
+                  role="menuitem"
+                  className={cn(commonStyles.item, themeStyles.item)}
+                  onClick={() => handleItemClick(item.onClick)}
+                >
+                  {renderContent(item)}
+                </button>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     </div>

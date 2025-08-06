@@ -1,0 +1,30 @@
+.themeWrapper {
+  --notification-title-color: var(--text-primary);
+  --notification-message-color: var(--text-secondary);
+  --notification-close-bg-hover: var(--surface-hover);
+  --notification-focus-ring: var(--brand-secondary-light);
+}
+
+.success {
+  --notification-bg: var(--green-50);
+  --notification-border: var(--green-200);
+  --notification-icon-color: var(--green-600);
+}
+
+.error {
+  --notification-bg: var(--red-50);
+  --notification-border: var(--red-200);
+  --notification-icon-color: var(--red-600);
+}
+
+.warning {
+  --notification-bg: var(--amber-50);
+  --notification-border: var(--amber-200);
+  --notification-icon-color: var(--amber-600);
+}
+
+.info {
+  --notification-bg: var(--blue-50);
+  --notification-border: var(--blue-200);
+  --notification-icon-color: var(--blue-600);
+}

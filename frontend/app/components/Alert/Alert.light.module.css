@@ -1,0 +1,56 @@
+/* AI-HINT: Light theme styles for the Alert component. Uses the official brand color palette for a cohesive and premium look. */
+
+.alert {
+  background-color: #f8f9fa; /* Default light background */
+  color: #495057; /* Default text color */
+}
+
+.alertDescription {
+  color: #6c757d; /* Lighter text for description */
+}
+
+.alertCloseButton {
+  color: #6c757d;
+}
+
+.alertCloseButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Variants --- */
+
+.info {
+  background-color: rgba(69, 115, 223, 0.1);
+  border-color: rgba(69, 115, 223, 0.2);
+  color: #4573df;
+}
+.info .alertTitle { color: #2c52a0; }
+.info .alertDescription { color: #4573df; opacity: 0.9; }
+.info .alertCloseButton:hover { background-color: rgba(69, 115, 223, 0.2); }
+
+.success {
+  background-color: rgba(39, 174, 96, 0.1);
+  border-color: rgba(39, 174, 96, 0.2);
+  color: #27ae60;
+}
+.success .alertTitle { color: #1e8449; }
+.success .alertDescription { color: #27ae60; opacity: 0.9; }
+.success .alertCloseButton:hover { background-color: rgba(39, 174, 96, 0.2); }
+
+.warning {
+  background-color: rgba(242, 201, 76, 0.15);
+  border-color: rgba(242, 201, 76, 0.3);
+  color: #c79a2a;
+}
+.warning .alertTitle { color: #a16207; }
+.warning .alertDescription { color: #c79a2a; opacity: 0.9; }
+.warning .alertCloseButton:hover { background-color: rgba(242, 201, 76, 0.3); }
+
+.danger {
+  background-color: rgba(232, 17, 35, 0.08);
+  border-color: rgba(232, 17, 35, 0.2);
+  color: #e81123;
+}
+.danger .alertTitle { color: #b91c1c; }
+.danger .alertDescription { color: #e81123; opacity: 0.9; }
+.danger .alertCloseButton:hover { background-color: rgba(232, 17, 35, 0.2); }

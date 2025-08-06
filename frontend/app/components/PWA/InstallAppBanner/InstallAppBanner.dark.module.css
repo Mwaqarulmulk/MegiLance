@@ -1,0 +1,7 @@
+/* @AI-HINT: Dark theme variables for the InstallAppBanner component. */
+
+.themeWrapper {
+  --banner-bg-color: var(--surface-raised);
+  --banner-border-color: var(--border-default);
+  --banner-text-color: var(--text-primary);
+}

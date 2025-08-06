@@ -3,35 +3,35 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './RankGauge.common.css';
-import './RankGauge.light.css';
-import './RankGauge.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './RankGauge.common.module.css';
+import lightStyles from './RankGauge.light.module.css';
+import darkStyles from './RankGauge.dark.module.css';
+
+// @AI-HINT: This component displays a dynamic semi-circle gauge using CSS modules and custom properties.
 
 interface RankGaugeProps {
   score: number; // A score from 0 to 100
+  className?: string;
 }
 
-const RankGauge: React.FC<RankGaugeProps> = ({ score }) => {
+const RankGauge: React.FC<RankGaugeProps> = ({ score, className }) => {
   const { theme } = useTheme();
-  const gaugeId = React.useId();
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   const safeScore = Math.min(100, Math.max(0, score || 0));
   const rotation = (safeScore / 100) * 180;
 
+  const gaugeStyle = {
+    '--gauge-rotation': `${rotation}deg`,
+  } as React.CSSProperties;
+
   return (
-    <>
-      <style>
-        {`
-          [data-gauge-id="${gaugeId}"] .RankGauge-fill {
-            transform: rotate(${rotation}deg);
-          }
-        `}
-      </style>
-      <div className={`RankGauge RankGauge--${theme}`} data-gauge-id={gaugeId}>
-        <div className="RankGauge-fill"></div>
-        <div className="RankGauge-cover"></div>
-        <span className="RankGauge-score">{safeScore}</span>
-      </div>
-    </>
+    <div className={cn(commonStyles.rankGauge, themeStyles.themeWrapper, className)}>
+      <div className={commonStyles.fill} style={gaugeStyle}></div>
+      <div className={commonStyles.cover}></div>
+      <span className={commonStyles.score}>{safeScore}</span>
+    </div>
   );
 };
 

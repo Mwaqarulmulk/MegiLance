@@ -4,9 +4,9 @@
 import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
-import './AISettings.common.css';
-import './AISettings.light.css';
-import './AISettings.dark.css';
+import commonStyles from './AISettings.common.module.css';
+import lightStyles from './AISettings.light.module.css';
+import darkStyles from './AISettings.dark.module.css';
 
 interface AISettingsState {
   fraudDetectionThreshold: number;
@@ -25,6 +25,11 @@ const AISettings: React.FC = () => {
   const [settings, setSettings] = useState(initialSettings);
   const [isSaved, setIsSaved] = useState(false);
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setSettings(prev => ({ ...prev, [name]: name.includes('Weight') || name.includes('Threshold') ? parseFloat(value) : value }));
@@ -38,10 +43,10 @@ const AISettings: React.FC = () => {
   };
 
   return (
-    <div className={`AISettings-container AISettings-container--${theme}`}>
-      <h2 className="AISettings-title">AI & Machine Learning Settings</h2>
-      <div className={`AISettings-form AISettings-form--${theme}`}>
-        <div className="Form-group">
+    <div className={styles.aiSettingsContainer}>
+      <h2 className={styles.aiSettingsTitle}>AI & Machine Learning Settings</h2>
+      <div className={styles.aiSettingsForm}>
+        <div className={styles.formGroup}>
           <label htmlFor="fraudDetectionThreshold">Fraud Detection Sensitivity</label>
           <input
             type="range"
@@ -57,7 +62,7 @@ const AISettings: React.FC = () => {
           <small>Higher values will flag more activity as potentially fraudulent.</small>
         </div>
 
-        <div className="Form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="matchmakingRankWeight">Matchmaking Rank Weight</label>
           <input
             type="range"
@@ -73,23 +78,23 @@ const AISettings: React.FC = () => {
           <small>Determines the importance of freelancer rank in job matching.</small>
         </div>
 
-        <div className="Form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="sentimentAnalysisModel">Sentiment Analysis Model</label>
           <select
             id="sentimentAnalysisModel"
             name="sentimentAnalysisModel"
             value={settings.sentimentAnalysisModel}
             onChange={handleChange}
-            className={`AISettings-select AISettings-select--${theme}`}>
+            className={styles.aiSettingsSelect}>
             <option value="BERT-base">BERT (Higher Accuracy)</option>
             <option value="DistilBERT">DistilBERT (Faster Performance)</option>
           </select>
           <small>Select the model for analyzing review sentiment.</small>
         </div>
 
-        <div className="Form-actions">
-          <Button theme={theme} variant="primary" onClick={handleSave}>Save Changes</Button>
-          {isSaved && <span className="Save-confirmation">Settings saved!</span>}
+        <div className={styles.formActions}>
+          <Button variant="primary" onClick={handleSave}>Save Changes</Button>
+          {isSaved && <span className={styles.saveConfirmation}>Settings saved!</span>}
         </div>
       </div>
     </div>

@@ -1,0 +1,12 @@
+/* @AI-HINT: Light theme variables for the StepCard component. */
+
+.themeWrapper {
+  --surface-secondary: var(--color-white);
+  --border-subtle: var(--color-gray-200);
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-600);
+  --icon-color: var(--color-primary);
+  --number-bg: var(--color-primary);
+  --number-text: var(--color-white);
+  --card-shadow-hover: var(--shadow-lg);
+}

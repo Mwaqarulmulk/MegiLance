@@ -3,18 +3,26 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './Pagination.common.css';
-import './Pagination.light.css';
-import './Pagination.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './Pagination.common.module.css';
+import lightStyles from './Pagination.light.module.css';
+import darkStyles from './Pagination.dark.module.css';
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  className?: string;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange, className }) => {
   const { theme } = useTheme();
+
+  if (!theme || totalPages <= 1) {
+    return null;
+  }
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -28,19 +36,15 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     }
   };
 
-  if (totalPages <= 1) {
-    return null;
-  }
-
   return (
-    <nav className={`Pagination Pagination--${theme}`} aria-label="Pagination">
-      <button onClick={handlePrevious} disabled={currentPage === 1} className="Pagination-button">
+    <nav className={cn(commonStyles.pagination, themeStyles.pagination, className)} aria-label="Pagination">
+      <button onClick={handlePrevious} disabled={currentPage === 1} className={cn(commonStyles.paginationButton, themeStyles.paginationButton)}>
         Previous
       </button>
-      <span className="Pagination-info">
+      <span className={cn(commonStyles.paginationInfo, themeStyles.paginationInfo)}>
         Page {currentPage} of {totalPages}
       </span>
-      <button onClick={handleNext} disabled={currentPage === totalPages} className="Pagination-button">
+      <button onClick={handleNext} disabled={currentPage === totalPages} className={cn(commonStyles.paginationButton, themeStyles.paginationButton)}>
         Next
       </button>
     </nav>

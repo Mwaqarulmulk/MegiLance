@@ -6,7 +6,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { footerNavItems } from '@/app/config/navigation';
-import { MegiLanceLogo } from '../Public/MegiLanceLogo';
+import { MegiLanceLogo } from '../MegiLanceLogo/MegiLanceLogo';
 import { 
   FaTwitter, 
   FaLinkedin, 
@@ -16,10 +16,10 @@ import {
   FaPhone,
   FaMapMarkerAlt
 } from 'react-icons/fa';
-
-import './Footer.common.css';
-import './Footer.light.css';
-import './Footer.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './Footer.common.module.css';
+import lightStyles from './Footer.light.module.css';
+import darkStyles from './Footer.dark.module.css';
 
 export interface FooterProps {
   className?: string;
@@ -29,26 +29,29 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const { theme } = useTheme();
   const currentYear = new Date().getFullYear();
 
+  if (!theme) return null;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <footer className={`Footer ${className}`} role="contentinfo">
-      <div className="Footer-container">
+    <footer className={cn(commonStyles.footer, themeStyles.footer, className)} role="contentinfo">
+      <div className={cn(commonStyles.container, themeStyles.container)}>
         {/* Main Footer Content */}
-        <div className="Footer-main">
+        <div className={cn(commonStyles.main, themeStyles.main)}>
           {/* Company Info */}
-          <div className="Footer-section Footer-brand">
-            <Link href="/" className="Footer-logo-link" aria-label="MegiLance Home">
+          <div className={cn(commonStyles.section, themeStyles.section, commonStyles.brand, themeStyles.brand)}>
+            <Link href="/" className={cn(commonStyles.logoLink, themeStyles.logoLink)} aria-label="MegiLance Home">
               <MegiLanceLogo />
             </Link>
-            <p className="Footer-description">
+            <p className={cn(commonStyles.description, themeStyles.description)}>
               Empowering freelancers with AI-powered tools and secure USDC payments. 
               Connect with global clients and grow your freelance business.
             </p>
-            <div className="Footer-social">
+            <div className={cn(commonStyles.social, themeStyles.social)}>
               <a 
                 href="https://twitter.com/megilance" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="Footer-social-link"
+                className={cn(commonStyles.socialLink, themeStyles.socialLink)}
                 aria-label="Follow us on Twitter"
               >
                 <FaTwitter />
@@ -57,7 +60,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                 href="https://linkedin.com/company/megilance" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="Footer-social-link"
+                className={cn(commonStyles.socialLink, themeStyles.socialLink)}
                 aria-label="Connect with us on LinkedIn"
               >
                 <FaLinkedin />
@@ -66,7 +69,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                 href="https://github.com/megilance" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="Footer-social-link"
+                className={cn(commonStyles.socialLink, themeStyles.socialLink)}
                 aria-label="View our GitHub"
               >
                 <FaGithub />
@@ -75,7 +78,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                 href="https://discord.gg/megilance" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="Footer-social-link"
+                className={cn(commonStyles.socialLink, themeStyles.socialLink)}
                 aria-label="Join our Discord community"
               >
                 <FaDiscord />
@@ -84,12 +87,12 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           </div>
 
           {/* Company Links */}
-          <div className="Footer-section">
-            <h3 className="Footer-section-title">Company</h3>
-            <ul className="Footer-links">
+          <div className={cn(commonStyles.section, themeStyles.section)}>
+            <h3 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Company</h3>
+            <ul className={cn(commonStyles.links, themeStyles.links)}>
               {footerNavItems.company.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="Footer-link">
+                  <Link href={item.href} className={cn(commonStyles.link, themeStyles.link)}>
                     {item.label}
                   </Link>
                 </li>
@@ -98,12 +101,12 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           </div>
 
           {/* Services Links */}
-          <div className="Footer-section">
-            <h3 className="Footer-section-title">Services</h3>
-            <ul className="Footer-links">
+          <div className={cn(commonStyles.section, themeStyles.section)}>
+            <h3 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Services</h3>
+            <ul className={cn(commonStyles.links, themeStyles.links)}>
               {footerNavItems.services.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="Footer-link">
+                  <Link href={item.href} className={cn(commonStyles.link, themeStyles.link)}>
                     {item.label}
                   </Link>
                 </li>
@@ -112,12 +115,12 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           </div>
 
           {/* Support Links */}
-          <div className="Footer-section">
-            <h3 className="Footer-section-title">Support</h3>
-            <ul className="Footer-links">
+          <div className={cn(commonStyles.section, themeStyles.section)}>
+            <h3 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Support</h3>
+            <ul className={cn(commonStyles.links, themeStyles.links)}>
               {footerNavItems.support.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="Footer-link">
+                  <Link href={item.href} className={cn(commonStyles.link, themeStyles.link)}>
                     {item.label}
                   </Link>
                 </li>
@@ -126,24 +129,24 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           </div>
 
           {/* Contact Info */}
-          <div className="Footer-section">
-            <h3 className="Footer-section-title">Contact</h3>
-            <div className="Footer-contact">
-              <div className="Footer-contact-item">
-                <FaEnvelope className="Footer-contact-icon" />
-                <a href="mailto:hello@megilance.com" className="Footer-contact-link">
+          <div className={cn(commonStyles.section, themeStyles.section)}>
+            <h3 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Contact</h3>
+            <div className={cn(commonStyles.contact, themeStyles.contact)}>
+              <div className={cn(commonStyles.contactItem, themeStyles.contactItem)}>
+                <FaEnvelope className={cn(commonStyles.contactIcon, themeStyles.contactIcon)} />
+                <a href="mailto:hello@megilance.com" className={cn(commonStyles.contactLink, themeStyles.contactLink)}>
                   hello@megilance.com
                 </a>
               </div>
-              <div className="Footer-contact-item">
-                <FaPhone className="Footer-contact-icon" />
-                <a href="tel:+92-300-1234567" className="Footer-contact-link">
+              <div className={cn(commonStyles.contactItem, themeStyles.contactItem)}>
+                <FaPhone className={cn(commonStyles.contactIcon, themeStyles.contactIcon)} />
+                <a href="tel:+92-300-1234567" className={cn(commonStyles.contactLink, themeStyles.contactLink)}>
                   +92 300 1234567
                 </a>
               </div>
-              <div className="Footer-contact-item">
-                <FaMapMarkerAlt className="Footer-contact-icon" />
-                <span className="Footer-contact-text">
+              <div className={cn(commonStyles.contactItem, themeStyles.contactItem)}>
+                <FaMapMarkerAlt className={cn(commonStyles.contactIcon, themeStyles.contactIcon)} />
+                <span className={cn(commonStyles.contactText, themeStyles.contactText)}>
                   Karachi, Pakistan
                 </span>
               </div>
@@ -152,17 +155,17 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         </div>
 
         {/* Footer Bottom */}
-        <div className="Footer-bottom">
-          <div className="Footer-bottom-left">
-            <p className="Footer-copyright">
+        <div className={cn(commonStyles.bottom, themeStyles.bottom)}>
+          <div className={cn(commonStyles.bottomLeft, themeStyles.bottomLeft)}>
+            <p className={cn(commonStyles.copyright, themeStyles.copyright)}>
               © {currentYear} MegiLance. All rights reserved.
             </p>
           </div>
-          <div className="Footer-bottom-right">
-            <ul className="Footer-legal-links">
+          <div className={cn(commonStyles.bottomRight, themeStyles.bottomRight)}>
+            <ul className={cn(commonStyles.legalLinks, themeStyles.legalLinks)}>
               {footerNavItems.legal.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="Footer-legal-link">
+                  <Link href={item.href} className={cn(commonStyles.legalLink, themeStyles.legalLink)}>
                     {item.label}
                   </Link>
                 </li>

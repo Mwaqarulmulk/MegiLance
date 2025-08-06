@@ -1,0 +1,147 @@
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInTop {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInBottom {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes slideOutTop {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-100%); opacity: 0; }
+}
+
+@keyframes slideOutBottom {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes progressBar {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.notification {
+  position: fixed;
+  z-index: 9999;
+  max-width: 24rem;
+  min-width: 20rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  font-family: var(--font-body);
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  background-color: var(--notification-bg);
+  border: 1px solid var(--notification-border);
+}
+
+.notification:focus {
+  outline: 2px solid var(--notification-focus-ring);
+  outline-offset: 2px;
+}
+
+.notificationContent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+}
+
+.notificationIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--notification-icon-color);
+}
+
+.notificationBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  margin-bottom: var(--spacing-1);
+  color: var(--notification-title-color);
+}
+
+.notificationMessage {
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  word-wrap: break-word;
+  color: var(--notification-message-color);
+}
+
+.notificationClose {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-1);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease-in-out;
+  margin-top: -2px;
+  margin-right: -4px;
+  color: var(--notification-message-color);
+}
+
+.notificationClose:hover {
+  background-color: var(--notification-close-bg-hover);
+}
+
+.notificationClose:focus {
+  outline: 2px solid var(--notification-focus-ring);
+  outline-offset: 1px;
+}
+
+.notificationProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: var(--notification-icon-color);
+  animation-name: progressBar;
+  animation-timing-function: linear;
+  animation-duration: var(--notification-duration);
+  animation-play-state: var(--notification-play-state);
+  opacity: 0.7;
+}
+
+/* Position variants */
+.topRight { top: 1rem; right: 1rem; animation: slideInRight 0.3s ease-out; }
+.topLeft { top: 1rem; left: 1rem; animation: slideInLeft 0.3s ease-out; }
+.bottomRight { bottom: 1rem; right: 1rem; animation: slideInRight 0.3s ease-out; }
+.bottomLeft { bottom: 1rem; left: 1rem; animation: slideInLeft 0.3s ease-out; }
+.topCenter { top: 1rem; left: 50%; transform: translateX(-50%); animation: slideInTop 0.3s ease-out; }
+.bottomCenter { bottom: 1rem; left: 50%; transform: translateX(-50%); animation: slideInBottom 0.3s ease-out; }
+
+/* Visibility */
+.hidden.topRight { animation: slideOutRight 0.3s ease-in forwards; }
+.hidden.topLeft { animation: slideOutLeft 0.3s ease-in forwards; }
+.hidden.bottomRight { animation: slideOutRight 0.3s ease-in forwards; }
+.hidden.bottomLeft { animation: slideOutLeft 0.3s ease-in forwards; }
+.hidden.topCenter { animation: slideOutTop 0.3s ease-in forwards; }
+.hidden.bottomCenter { animation: slideOutBottom 0.3s ease-in forwards; }

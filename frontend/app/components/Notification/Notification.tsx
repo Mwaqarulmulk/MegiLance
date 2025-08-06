@@ -4,9 +4,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { FiCheckCircle, FiAlertCircle, FiInfo, FiX, FiAlertTriangle } from 'react-icons/fi';
-import './Notification.common.css';
-import './Notification.light.css';
-import './Notification.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './Notification.common.module.css';
+import lightStyles from './Notification.light.module.css';
+import darkStyles from './Notification.dark.module.css';
 
 export interface NotificationProps {
   message: string;
@@ -24,6 +25,15 @@ const iconMap = {
   error: FiAlertCircle,
   warning: FiAlertTriangle,
   info: FiInfo,
+};
+
+const positionMap = {
+  'top-right': commonStyles.topRight,
+  'top-left': commonStyles.topLeft,
+  'bottom-right': commonStyles.bottomRight,
+  'bottom-left': commonStyles.bottomLeft,
+  'top-center': commonStyles.topCenter,
+  'bottom-center': commonStyles.bottomCenter,
 };
 
 const Notification: React.FC<NotificationProps> = ({ 
@@ -44,6 +54,7 @@ const Notification: React.FC<NotificationProps> = ({
   const remainingTimeRef = useRef<number>(duration);
 
   const IconComponent = iconMap[type];
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const handleClose = () => {
     setIsVisible(false);
@@ -98,9 +109,19 @@ const Notification: React.FC<NotificationProps> = ({
     }
   };
 
+  if (!theme) return null;
+
   return (
     <div 
-      className={`Notification Notification--${type} Notification--${position} ${isVisible ? 'Notification--visible' : 'Notification--hidden'} ${className}`}
+      className={cn(
+        commonStyles.notification,
+        themeStyles.notification,
+        commonStyles[type],
+        themeStyles[type],
+        positionMap[position],
+        !isVisible && commonStyles.hidden,
+        className
+      )}
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
@@ -109,19 +130,19 @@ const Notification: React.FC<NotificationProps> = ({
       onKeyDown={handleKeyDown}
       tabIndex={onClose ? 0 : -1}
     >
-      <div className="Notification-content">
-        <div className="Notification-icon" aria-hidden="true">
+      <div className={cn(commonStyles.notificationContent, themeStyles.notificationContent)}>
+        <div className={cn(commonStyles.notificationIcon, themeStyles.notificationIcon)}>
           <IconComponent size={20} />
         </div>
-        <div className="Notification-body">
+        <div className={cn(commonStyles.notificationBody, themeStyles.notificationBody)}>
           {title && (
-            <div className="Notification-title">{title}</div>
+            <div className={cn(commonStyles.notificationTitle, themeStyles.notificationTitle)}>{title}</div>
           )}
-          <div className="Notification-message">{message}</div>
+          <div className={cn(commonStyles.notificationMessage, themeStyles.notificationMessage)}>{message}</div>
         </div>
         {onClose && (
           <button 
-            className="Notification-close" 
+            className={cn(commonStyles.notificationClose, themeStyles.notificationClose)} 
             onClick={handleClose}
             aria-label="Close notification"
             type="button"
@@ -132,7 +153,7 @@ const Notification: React.FC<NotificationProps> = ({
       </div>
       {duration > 0 && !persistent && (
         <div 
-          className="Notification-progress" 
+          className={cn(commonStyles.notificationProgress, themeStyles.notificationProgress)} 
           style={{
             '--notification-duration': `${duration}ms`,
             '--notification-play-state': isPaused ? 'paused' : 'running'

@@ -2,10 +2,12 @@
 'use client';
 
 import React from 'react';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
 
-import './Badge.common.css';
-import './Badge.light.css';
-import './Badge.dark.css';
+import commonStyles from './Badge.common.module.css';
+import lightStyles from './Badge.light.module.css';
+import darkStyles from './Badge.dark.module.css';
 
 export interface BadgeProps {
   children: React.ReactNode;
@@ -24,18 +26,24 @@ const Badge: React.FC<BadgeProps> = ({
   iconAfter,
   className = '',
 }) => {
-  const badgeClasses = [
-    'Badge',
-    `Badge--${variant}`,
-    `Badge--${size}`,
-    className,
-  ].filter(Boolean).join(' ');
+    const { theme } = useTheme();
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <span className={badgeClasses}>
-      {iconBefore && <span className="Badge-icon Badge-icon--before">{iconBefore}</span>}
+    <span
+      className={cn(
+        commonStyles.badge,
+        themeStyles.badge,
+        commonStyles[variant],
+        themeStyles[variant],
+        commonStyles[size],
+        themeStyles[size],
+        className
+      )}
+    >
+      {iconBefore && <span className={cn(commonStyles.badgeIcon, commonStyles.badgeIconBefore)}>{iconBefore}</span>}
       {children}
-      {iconAfter && <span className="Badge-icon Badge-icon--after">{iconAfter}</span>}
+      {iconAfter && <span className={cn(commonStyles.badgeIcon, commonStyles.badgeIconAfter)}>{iconAfter}</span>}
     </span>
   );
 };

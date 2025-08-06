@@ -1,0 +1,7 @@
+.themeWrapper {
+  --container-bg: #f9f9f9;
+  --container-border: #e0e0e0;
+  --text-primary: #333333;
+  --text-secondary: #555555;
+  --progress-bar-bg: #e0e0e0;
+}

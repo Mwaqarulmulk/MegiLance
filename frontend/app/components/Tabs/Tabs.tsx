@@ -4,15 +4,18 @@
 import React, {
   useState, createContext, useContext, useId, Children, isValidElement, cloneElement, useRef, useEffect, KeyboardEvent, FC, ReactNode, ForwardRefExoticComponent, RefAttributes
 } from 'react';
-import './Tabs.common.css';
-import './Tabs.light.css';
-import './Tabs.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Tabs.common.module.css';
+import lightStyles from './Tabs.light.module.css';
+import darkStyles from './Tabs.dark.module.css';
 
 // 1. CONTEXT
 interface TabsContextProps {
   selectedIndex: number;
   setSelectedIndex: (index: number) => void;
   tabsId: string;
+  themeStyles: Record<string, string>;
 }
 const TabsContext = createContext<TabsContextProps | null>(null);
 const useTabs = () => {
@@ -29,7 +32,7 @@ interface TabsPanelsProps { children: ReactNode; }
 
 // 3. SUB-COMPONENTS
 const Tab = React.forwardRef<HTMLButtonElement, TabProps>(({ children, index }, ref) => {
-  const { selectedIndex, setSelectedIndex, tabsId } = useTabs();
+  const { selectedIndex, setSelectedIndex, tabsId, themeStyles } = useTabs();
   const isSelected = selectedIndex === index;
   return (
         // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- False positive. 'aria-selected' is valid on 'tab'.
@@ -40,7 +43,7 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(({ children, index }, 
       aria-controls={`${tabsId}-panel-${index}`}
       aria-selected={`${isSelected}`}
       tabIndex={isSelected ? 0 : -1}
-      className={`Tabs-tab ${isSelected ? 'Tabs-tab--selected' : ''}`}
+      className={cn(commonStyles.tabsTab, themeStyles.tabsTab, isSelected && [commonStyles.tabsTabSelected, themeStyles.tabsTabSelected])}
       onClick={() => setSelectedIndex(index!)}
     >
       {children}
@@ -50,7 +53,7 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(({ children, index }, 
 Tab.displayName = 'Tab';
 
 const TabsList: FC<TabsListProps> = ({ children }) => {
-  const { selectedIndex, setSelectedIndex } = useTabs();
+  const { selectedIndex, setSelectedIndex, themeStyles } = useTabs();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   useEffect(() => { tabRefs.current[selectedIndex]?.focus(); }, [selectedIndex]);
 
@@ -67,7 +70,7 @@ const TabsList: FC<TabsListProps> = ({ children }) => {
   };
 
   return (
-    <div role="tablist" aria-orientation="horizontal" className="Tabs-list" onKeyDown={handleKeyDown}>
+    <div role="tablist" aria-orientation="horizontal" className={cn(commonStyles.tabsList, themeStyles.tabsList)} onKeyDown={handleKeyDown}>
       {Children.map(children, (child, index) => {
         if (isValidElement(child) && (child.type === Tab || (child.type as any).displayName === 'Tab')) {
           // This is a safe cast because we are checking the type of the child.
@@ -85,7 +88,7 @@ const TabsList: FC<TabsListProps> = ({ children }) => {
 TabsList.displayName = 'TabsList';
 
 const TabPanel: FC<TabPanelProps> = ({ children, index }) => {
-  const { selectedIndex, tabsId } = useTabs();
+  const { selectedIndex, tabsId, themeStyles } = useTabs();
   const isSelected = selectedIndex === index;
   return (
     <div
@@ -93,7 +96,7 @@ const TabPanel: FC<TabPanelProps> = ({ children, index }) => {
       id={`${tabsId}-panel-${index}`}
       aria-labelledby={`${tabsId}-tab-${index}`}
       hidden={!isSelected}
-      className="Tabs-panel"
+      className={cn(commonStyles.tabsPanel, themeStyles.tabsPanel)}
     >
       {isSelected && children}
     </div>
@@ -101,16 +104,19 @@ const TabPanel: FC<TabPanelProps> = ({ children, index }) => {
 };
 TabPanel.displayName = 'TabPanel';
 
-const TabsPanels: FC<TabsPanelsProps> = ({ children }) => (
-  <div className="Tabs-panels">
-    {Children.map(children, (child, index) => {
-      if (isValidElement(child) && child.type === TabPanel) {
-        return cloneElement(child as React.ReactElement<TabPanelProps>, { index });
-      }
-      return child;
-    })}
-  </div>
-);
+const TabsPanels: FC<TabsPanelsProps> = ({ children }) => {
+  const { themeStyles } = useTabs();
+  return (
+    <div className={cn(commonStyles.tabsPanels, themeStyles.tabsPanels)}>
+      {Children.map(children, (child, index) => {
+        if (isValidElement(child) && child.type === TabPanel) {
+          return cloneElement(child as React.ReactElement<TabPanelProps>, { index });
+        }
+        return child;
+      })}
+    </div>
+  );
+};
 TabsPanels.displayName = 'TabsPanels';
 
 // 4. MAIN COMPONENT
@@ -124,9 +130,21 @@ interface TabsComposition {
 const Tabs: FC<{ children: ReactNode; defaultIndex?: number; className?: string }> & TabsComposition = ({ children, defaultIndex = 0, className = '' }) => {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const tabsId = useId();
+  const { theme } = useTheme();
+
+  if (!theme) return null;
+
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+
   return (
-    <TabsContext.Provider value={{ selectedIndex, setSelectedIndex, tabsId }}>
-      <div className={`Tabs ${className}`}>{children}</div>
+    <TabsContext.Provider value={{ selectedIndex, setSelectedIndex, tabsId, themeStyles }}>
+      <div className={cn(
+        commonStyles.tabs,
+        themeStyles.tabs,
+        className
+      )}>
+        {children}
+      </div>
     </TabsContext.Provider>
   );
 };

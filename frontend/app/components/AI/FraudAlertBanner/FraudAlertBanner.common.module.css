@@ -1,0 +1,28 @@
+.fraudAlertBanner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.fraudAlertBannerIcon svg {
+  display: block;
+}
+
+.fraudAlertBannerContent {
+  flex-grow: 1;
+}
+
+.fraudAlertBannerContent strong {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.fraudAlertBannerContent p {
+  margin: 0;
+  font-size: 0.9rem;
+}

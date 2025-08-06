@@ -1,0 +1,41 @@
+/* Default Variant */
+.badgeDefault {
+  --badge-bg: var(--surface-alt);
+  --badge-text: var(--text-secondary);
+}
+
+/* Primary Variant */
+.badgePrimary {
+  --badge-bg: var(--primary-soft);
+  --badge-text: var(--primary-stronger);
+}
+
+/* Secondary Variant */
+.badgeSecondary {
+  --badge-bg: var(--surface-alt);
+  --badge-text: var(--text-secondary);
+}
+
+/* Success Variant */
+.badgeSuccess {
+  --badge-bg: var(--success-soft);
+  --badge-text: var(--success-stronger);
+}
+
+/* Warning Variant */
+.badgeWarning {
+  --badge-bg: var(--warning-soft);
+  --badge-text: var(--warning-stronger);
+}
+
+/* Danger Variant */
+.badgeDanger {
+  --badge-bg: var(--error-soft);
+  --badge-text: var(--error-stronger);
+}
+
+/* Info Variant */
+.badgeInfo {
+  --badge-bg: var(--info-soft);
+  --badge-text: var(--info-stronger);
+}

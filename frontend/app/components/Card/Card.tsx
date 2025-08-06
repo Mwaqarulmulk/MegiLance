@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
 
 import commonStyles from './Card.common.module.css';
 import lightStyles from './Card.light.module.css';
@@ -26,14 +27,14 @@ const Card: React.FC<CardProps> = ({ title, icon: Icon, children, className = ''
   const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
   return (
-    <div className={`${commonStyles.card} ${themeStyles.card} ${className}`}>
+    <div className={cn(commonStyles.card, themeStyles.card, className)}>
       {title && (
-        <div className={commonStyles.cardHeader}>
-          {Icon && <Icon className={commonStyles.cardIcon} size={22} />}
-          <h3 className={commonStyles.cardTitle}>{title}</h3>
+        <div className={cn(commonStyles.cardHeader, themeStyles.cardHeader)}>
+          {Icon && <Icon className={cn(commonStyles.cardIcon, themeStyles.cardIcon)} size={22} />}
+          <h3 className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>{title}</h3>
         </div>
       )}
-      <div className={commonStyles.cardContent}>
+      <div className={cn(commonStyles.cardContent, themeStyles.cardContent)}>
         {children}
       </div>
     </div>

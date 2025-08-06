@@ -1,8 +1,10 @@
 // @AI-HINT: Enhanced DashboardWidget component for displaying key metrics with trends, icons, and professional styling. Supports enterprise-grade dashboard layouts with comprehensive theming. Uses per-component CSS architecture.
 import React from "react";
-import "./DashboardWidget.common.css";
-import "./DashboardWidget.light.css";
-import "./DashboardWidget.dark.css";
+import { useTheme } from "@/app/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
+import commonStyles from './DashboardWidget.common.module.css';
+import lightStyles from './DashboardWidget.light.module.css';
+import darkStyles from './DashboardWidget.dark.module.css';
 
 export interface DashboardWidgetProps {
   title: string;
@@ -30,33 +32,46 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
   children,
   actionButton
 }) => {
+  const { theme } = useTheme();
+
+  if (!theme) {
+    return null; // Or a loading skeleton
+  }
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
     <div 
-      className={`DashboardWidget ${onClick ? 'DashboardWidget--clickable' : ''}`}
+      className={cn(
+        commonStyles.dashboardWidget,
+        themeStyles.dashboardWidget,
+        onClick && commonStyles.clickable,
+        onClick && themeStyles.clickable
+      )}
       onClick={onClick}
     >
-      <div className="DashboardWidget-header">
-        {icon && <span className="DashboardWidget-icon">{icon}</span>}
-        <span className="DashboardWidget-title">{title}</span>
+      <div className={cn(commonStyles.header, themeStyles.header)}>
+        {icon && <span className={cn(commonStyles.icon, themeStyles.icon)}>{icon}</span>}
+        <span className={cn(commonStyles.title, themeStyles.title)}>{title}</span>
         {actionButton && (
-          <button onClick={actionButton.onClick} className="DashboardWidget-action-btn">
+          <button onClick={actionButton.onClick} className={cn(commonStyles.actionBtn, themeStyles.actionBtn)}>
             {actionButton.label}
           </button>
         )}
       </div>
       {children ? (
-        <div className="DashboardWidget-content">{children}</div>
+        <div className={cn(commonStyles.content, themeStyles.content)}>{children}</div>
       ) : (
         <>
-          <div className="DashboardWidget-value">{value}</div>
+          <div className={cn(commonStyles.value, themeStyles.value)}>{value}</div>
           {trend && (
-            <div className={`DashboardWidget-trend DashboardWidget-trend--${trendType}`}>
-              <span className="DashboardWidget-trend-text">{trend}</span>
+            <div className={cn(commonStyles.trend, themeStyles.trend, commonStyles[trendType], themeStyles[trendType])}>
+              <span className={cn(commonStyles.trendText, themeStyles.trendText)}>{trend}</span>
             </div>
           )}
         </>
       )}
-      {footer && <div className="DashboardWidget-footer">{footer}</div>}
+      {footer && <div className={cn(commonStyles.footer, themeStyles.footer)}>{footer}</div>}
     </div>
   );
 };

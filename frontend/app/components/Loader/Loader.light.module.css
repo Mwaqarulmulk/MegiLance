@@ -1,0 +1,6 @@
+.themeWrapper {
+  --loader-primary: #4f46e5; /* Indigo 600 */
+  --loader-secondary: #e5e7eb; /* Gray 200 */
+  --loader-text: #374151; /* Gray 700 */
+  --loader-overlay-bg: rgba(255, 255, 255, 0.8);
+}

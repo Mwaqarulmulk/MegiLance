@@ -1,0 +1,33 @@
+.flaggedFraudListContainer {
+  background-color: #422c2c;
+  border: 1px solid #784a4a;
+}
+
+.flaggedFraudListTitle {
+  color: #fbb6b6;
+}
+
+.flaggedFraudList th {
+  color: #fbb6b6;
+  border-bottom: 2px solid #784a4a;
+}
+
+.flaggedFraudList td {
+  color: #cbd5e0;
+}
+
+.flaggedFraudList tbody tr {
+  border-bottom-color: #784a4a;
+}
+
+.flaggedFraudList tbody tr:last-child {
+  border-bottom: none;
+}
+
+.flaggedFraudList tbody tr:hover {
+  background-color: #5f3f3f;
+}
+
+.flaggedFraudListEmpty {
+    color: #a0aec0;
+}

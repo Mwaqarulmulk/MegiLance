@@ -1,0 +1,9 @@
+/* @AI-HINT: Dark theme variables for the ProjectCard component. */
+.themeWrapper {
+  --card-title-color: var(--text-primary);
+  --card-subtitle-color: var(--text-secondary);
+  --card-text-color: var(--text-secondary);
+  --card-highlight-color: var(--brand-primary);
+  --tag-bg-color: var(--surface-secondary);
+  --tag-text-color: var(--text-secondary);
+}

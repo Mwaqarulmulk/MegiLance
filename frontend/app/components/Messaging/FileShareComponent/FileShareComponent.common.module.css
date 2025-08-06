@@ -1,0 +1,39 @@
+.container {
+  padding: 1rem;
+  background-color: var(--file-share-bg);
+}
+
+.preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--file-share-preview-border-color);
+  background-color: var(--file-share-preview-bg);
+}
+
+.fileName {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--file-share-filename-color);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

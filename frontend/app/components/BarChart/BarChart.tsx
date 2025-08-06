@@ -2,9 +2,11 @@
 'use client';
 
 import React from 'react';
-import './BarChart.common.css';
-import './BarChart.light.css';
-import './BarChart.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './BarChart.common.module.css';
+import lightStyles from './BarChart.light.module.css';
+import darkStyles from './BarChart.dark.module.css';
 
 export interface BarChartDataItem {
   label: string;
@@ -14,39 +16,42 @@ export interface BarChartDataItem {
 
 interface BarChartProps {
   data: BarChartDataItem[];
+  className?: string;
 }
 
-const Bar: React.FC<{ item: BarChartDataItem }> = ({ item }) => {
-  const barId = React.useId();
-  const safeValue = Math.min(100, Math.max(0, item.value || 0));
+const BarChart: React.FC<BarChartProps> = ({ data, className }) => {
+  const { theme } = useTheme();
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <>
-      <style>
-        {`
-          [data-bar-id="${barId}"] .BarChart-bar {
-            width: ${safeValue}%;
-            ${item.color ? `background-color: ${item.color};` : ''}
-          }
-        `}
-      </style>
-      <div className="BarChart-bar-container" data-bar-id={barId}>
-        <span className="BarChart-label">{item.label}</span>
-        <div className="BarChart-bar-wrapper">
-          <div className={`BarChart-bar BarChart-bar--${item.label.toLowerCase()}`}></div>
-        </div>
-        <span className="BarChart-percentage">{item.value}%</span>
-      </div>
-    </>
-  );
-};
+    <div className={cn(commonStyles.barChart, themeStyles.barChart, className)}>
+      {data.map(item => {
+        const safeValue = Math.min(100, Math.max(0, item.value || 0));
+        const barStyle = {
+          width: `${safeValue}%`,
+          ...(item.color && { '--bar-color': item.color }),
+        } as React.CSSProperties;
 
-const BarChart: React.FC<BarChartProps> = ({ data }) => {
-  return (
-    <div className={`BarChart`}>
-      {data.map(item => (
-        <Bar key={item.label} item={item} />
-      ))}
+        return (
+          <div key={item.label} className={cn(commonStyles.container, themeStyles.container)}>
+            <span className={cn(commonStyles.label, themeStyles.label)}>{item.label}</span>
+            <div className={cn(commonStyles.wrapper, themeStyles.wrapper)}>
+              <div
+                className={cn(commonStyles.bar, themeStyles.bar)}
+                style={barStyle}
+                role="progressbar"
+                aria-valuenow={safeValue}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${item.label}: ${item.value}%`}
+              ></div>
+            </div>
+            <span className={cn(commonStyles.percentage, themeStyles.percentage)}>{item.value}%</span>
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -1,8 +1,0 @@
-.BarChart--dark .BarChart-bar-wrapper {
-  background-color: #374151; /* Dark gray background */
-}
-
-.BarChart--dark .BarChart-label,
-.BarChart--dark .BarChart-percentage {
-  color: #a5b4fc; /* Lighter indigo text */
-}

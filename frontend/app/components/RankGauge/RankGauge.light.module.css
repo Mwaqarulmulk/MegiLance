@@ -1,0 +1,7 @@
+/* @AI-HINT: Light theme variables for the RankGauge component. */
+
+.themeWrapper {
+  --fill-color: var(--color-primary);
+  --cover-color: var(--color-primary-subtle);
+  --score-color: var(--color-primary-dark);
+}

@@ -4,9 +4,9 @@
 import React from 'react';
 import BarChart from '@/app/components/BarChart/BarChart';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './ReviewSentimentDashboard.common.css';
-import './ReviewSentimentDashboard.light.css';
-import './ReviewSentimentDashboard.dark.css';
+import commonStyles from './ReviewSentimentDashboard.common.module.css';
+import lightStyles from './ReviewSentimentDashboard.light.module.css';
+import darkStyles from './ReviewSentimentDashboard.dark.module.css';
 
 // Mock data for the dashboard
 const sentimentData = {
@@ -29,17 +29,22 @@ const ReviewSentimentDashboard: React.FC = () => {
     value: item.percentage,
   }));
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   return (
-    <div className={`Dashboard-container Dashboard-container--${theme}`}>
-      <h2 className="Dashboard-title">Review Sentiment Dashboard</h2>
-      <div className="Dashboard-grid">
-        <div className={`Dashboard-card Dashboard-card--${theme}`}>
-          <h3 className="Card-title">Overall Sentiment Score</h3>
-          <p className={`Card-metric Card-metric--positive`}>{sentimentData.overall}%</p>
-          <p className="Card-description">Based on {sentimentData.positive + sentimentData.neutral + sentimentData.negative} reviews</p>
+    <div className={styles.reviewSentimentDashboardContainer}>
+      <h2 className={styles.reviewSentimentDashboardTitle}>Review Sentiment Dashboard</h2>
+      <div className={styles.reviewSentimentDashboardGrid}>
+        <div className={styles.reviewSentimentDashboardCard}>
+          <h3 className={styles.cardTitle}>Overall Sentiment Score</h3>
+          <p className={`${styles.cardMetric} ${styles.cardMetricPositive}`}>{sentimentData.overall}%</p>
+          <p className={styles.cardDescription}>Based on {sentimentData.positive + sentimentData.neutral + sentimentData.negative} reviews</p>
         </div>
-        <div className={`Dashboard-card Dashboard-card--${theme}`}>
-          <h3 className="Card-title">Sentiment Breakdown</h3>
+        <div className={styles.reviewSentimentDashboardCard}>
+          <h3 className={styles.cardTitle}>Sentiment Breakdown</h3>
           <BarChart data={chartData} />
         </div>
       </div>

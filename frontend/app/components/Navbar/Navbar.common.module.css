@@ -1,0 +1,177 @@
+/* @AI-HINT: Shared styles for Navbar component. Uses CSS variables for theming. */
+
+.navbar {
+  background-color: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+  padding: 0 var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: background-color var(--transition-std), border-color var(--transition-std);
+  height: var(--size-18); /* 72px */
+}
+
+.navbarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.navbarLogo {
+  flex-shrink: 0;
+}
+
+.navbarLogo a {
+  display: flex;
+  align-items: center;
+  color: var(--navbar-logo-text);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-2xl);
+  text-decoration: none;
+}
+
+.desktopNav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  color: var(--navbar-link-text);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.navLink:hover {
+  color: var(--navbar-link-text-hover);
+  background-color: var(--navbar-link-bg-hover);
+}
+
+.navbarSearch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--navbar-icon);
+  font-size: var(--font-size-sm);
+}
+
+.searchInput :global(.Input-field) {
+  padding-left: var(--space-9);
+  background-color: var(--navbar-search-bg);
+  border-color: var(--navbar-search-border);
+  height: var(--size-9); /* 36px */
+}
+
+.navbarActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mobileToggle {
+  display: none; /* Hidden on desktop */
+  margin-left: var(--space-4);
+}
+
+.mobileToggle button {
+  background: none;
+  border: none;
+  color: var(--navbar-icon);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: var(--space-1);
+}
+
+.mobileMenu {
+  position: fixed;
+  top: var(--size-18); /* 72px - must match navbar height */
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--size-18));
+  background-color: var(--navbar-bg);
+  transform: translateX(-100%);
+  transition: transform var(--transition-std);
+  padding: var(--space-6);
+  overflow-y: auto;
+  z-index: 40; /* Below navbar */
+}
+
+.navbarMobileOpen .mobileMenu {
+  transform: translateX(0);
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.mobileLink {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--navbar-link-text);
+  text-decoration: none;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.mobileLink:hover {
+  color: var(--navbar-link-text-hover);
+  background-color: var(--navbar-link-bg-hover);
+}
+
+@media (max-width: 1024px) {
+  .navbarCenter {
+    display: none; /* Hide search on tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  .desktopNav {
+    display: none; /* Hide desktop nav on mobile */
+  }
+
+  .navbarCenter {
+    flex: 2; /* Give search more space on mobile if shown */
+    display: block;
+    margin: 0 var(--space-4);
+  }
+
+  .mobileToggle {
+    display: block; /* Show mobile toggle */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbarContainer {
+    padding: 0 var(--space-4);
+  }
+  .navbarLeft {
+    flex: 0;
+  }
+  .navbarLogo {
+    margin-right: 0;
+  }
+  .navbarCenter {
+    flex: 1;
+    margin: 0 var(--space-3);
+  }
+}

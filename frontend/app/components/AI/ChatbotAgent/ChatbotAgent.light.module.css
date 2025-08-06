@@ -1,0 +1,33 @@
+.chatbotAgent {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
+.chatbotAgentMessages {
+  background-color: #f9f9f9;
+}
+
+.messageBot {
+  background-color: #e9e9eb;
+  color: #333333;
+}
+
+.messageUser {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.chatbotAgentInputForm {
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+}
+
+.chatbotAgentInput {
+  background-color: #ffffff;
+  border-color: #cccccc;
+  color: #333333;
+}
+
+.chatbotAgentInput::placeholder {
+  color: #999999;
+}

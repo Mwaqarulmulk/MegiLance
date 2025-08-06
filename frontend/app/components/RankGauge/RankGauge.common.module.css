@@ -1,0 +1,44 @@
+/* @AI-HINT: Common styles for the RankGauge component. Uses camelCase for CSS module compatibility. */
+
+.rankGauge {
+  width: 200px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+}
+
+.fill,
+.cover {
+  width: 200px;
+  height: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+}
+
+.fill {
+  transform-origin: center bottom;
+  transition: transform 0.5s ease-in-out;
+  background-color: var(--fill-color);
+  transform: rotate(var(--gauge-rotation, 0deg));
+}
+
+.cover {
+  z-index: 1;
+  background-color: var(--cover-color);
+}
+
+.score {
+  position: relative;
+  z-index: 2;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: -1rem;
+  color: var(--score-color);
+}

@@ -1,0 +1,4 @@
+.themeWrapper {
+  --card-bg: var(--surface);
+  --card-border-color: var(--border);
+}

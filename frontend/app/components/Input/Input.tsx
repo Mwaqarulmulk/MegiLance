@@ -1,9 +1,13 @@
-// @AI-HINT: This is a versatile, enterprise-grade Input component. It supports labels, icons, validation states (error), and is fully themed. All styles are per-component only. See Input.common.css, Input.light.css, and Input.dark.css for theming.
+// @AI-HINT: This is a versatile, enterprise-grade Input component. It supports labels, icons, validation states (error), and is fully themed. All styles are per-component only. See Input.common.module.css, Input.light.module.css, and Input.dark.module.css for theming.
+
+'use client';
 
 import React, { useId } from 'react';
-import './Input.common.css';
-import './Input.light.css';
-import './Input.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Input.common.module.css';
+import lightStyles from './Input.light.module.css';
+import darkStyles from './Input.dark.module.css';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -23,31 +27,42 @@ const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const id = useId();
+  const { theme } = useTheme();
+  
+  if (!theme) {
+    return null; // Don't render until theme is resolved
+  }
+  
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
   const hasError = !!error;
 
-  const wrapperClasses = [
-    'Input-wrapper',
-    hasError ? 'Input-wrapper--error' : '',
-    props.disabled ? 'Input-wrapper--disabled' : '',
-    wrapperClassName,
-  ].filter(Boolean).join(' ');
-
-  const inputClasses = [
-    'Input-field',
-    iconBefore ? 'Input-field--with-icon-before' : '',
-    iconAfter ? 'Input-field--with-icon-after' : '',
-    className,
-  ].filter(Boolean).join(' ');
-
   return (
-    <div className={wrapperClasses}>
-      {label && <label htmlFor={id} className="Input-label">{label}</label>}
-      <div className="Input-container">
-        {iconBefore && <span className="Input-icon Input-icon--before">{iconBefore}</span>}
-        <input id={id} className={inputClasses} {...props} />
-        {iconAfter && <span className="Input-icon Input-icon--after">{iconAfter}</span>}
+    <div
+      className={cn(
+        commonStyles.inputWrapper,
+        themeStyles.inputWrapper,
+        { [commonStyles.inputWrapperError]: hasError, [themeStyles.inputWrapperError]: hasError },
+        { [commonStyles.inputWrapperDisabled]: props.disabled, [themeStyles.inputWrapperDisabled]: props.disabled },
+        wrapperClassName
+      )}
+    >
+      {label && <label htmlFor={id} className={cn(commonStyles.inputLabel, themeStyles.inputLabel)}>{label}</label>}
+      <div className={cn(commonStyles.inputContainer, themeStyles.inputContainer)}>
+        {iconBefore && <span className={cn(commonStyles.inputIcon, themeStyles.inputIcon, commonStyles.inputIconBefore, themeStyles.inputIconBefore)}>{iconBefore}</span>}
+        <input
+          id={id}
+          className={cn(
+            commonStyles.inputField,
+            themeStyles.inputField,
+            { [commonStyles.inputFieldWithIconBefore]: iconBefore, [themeStyles.inputFieldWithIconBefore]: iconBefore },
+            { [commonStyles.inputFieldWithIconAfter]: iconAfter, [themeStyles.inputFieldWithIconAfter]: iconAfter },
+            className
+          )}
+          {...props}
+        />
+        {iconAfter && <span className={cn(commonStyles.inputIcon, themeStyles.inputIcon, commonStyles.inputIconAfter, themeStyles.inputIconAfter)}>{iconAfter}</span>}
       </div>
-      {hasError && typeof error === 'string' && <p className="Input-error-message">{error}</p>}
+      {hasError && typeof error === 'string' && <p className={cn(commonStyles.errorMessage, themeStyles.errorMessage)}>{error}</p>}
     </div>
   );
 };

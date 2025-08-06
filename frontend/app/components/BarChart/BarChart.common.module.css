@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.label {
+  width: 80px;
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  color: var(--bar-text-color);
+}
+
+.wrapper {
+  flex-grow: 1;
+  height: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--bar-wrapper-bg);
+}
+
+.bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+  background-color: var(--bar-color);
+}
+
+.percentage {
+  width: 40px;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--bar-text-color);
+}

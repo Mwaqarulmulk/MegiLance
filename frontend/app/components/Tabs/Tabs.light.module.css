@@ -1,0 +1,22 @@
+/* @AI-HINT: Light theme styles for the Tabs component. */
+
+.light .tabsList {
+  border-color: #d1d5db; /* Gray 300 */
+}
+
+.light .tabsTab {
+  color: #6b7280; /* Gray 500 */
+}
+
+.light .tabsTab:hover {
+  color: #111827; /* Gray 900 */
+}
+
+.light .tabsTab[aria-selected='true'] {
+  color: #4f46e5; /* Indigo 600 */
+  border-color: #4f46e5; /* Indigo 600 */
+}
+
+.light .tabsTab:focus-visible {
+  outline-color: #a5b4fc; /* Indigo 300 */
+}

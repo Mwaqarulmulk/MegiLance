@@ -1,0 +1,136 @@
+/* @AI-HINT: Shared styles for SidebarNav component. Do not use or import any global or theme CSS. */
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-width, 260px);
+  height: 100vh;
+  background-color: var(--sidebar-bg-color);
+  border-right: 1px solid var(--sidebar-border-color);
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebarNavCollapsed {
+  width: var(--sidebar-collapsed-width, 80px);
+}
+
+.sidebarNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  height: var(--header-height, 80px);
+  box-sizing: border-box;
+}
+
+.sidebarNavLogo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--sidebar-logo-color);
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.sidebarNavCollapsed .sidebarNavLogo {
+  font-size: 1.5rem; /* Smaller logo when collapsed */
+}
+
+.sidebarNavNav {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.sidebarNavList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarNavItem {
+  padding: 0 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sidebarNavCollapsed .sidebarNavItem {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebarNavLink {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  border-radius: var(--border-radius-medium, 8px);
+  text-decoration: none;
+  color: var(--sidebar-link-color);
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebarNavCollapsed .sidebarNavLink {
+  padding: 0.875rem;
+  justify-content: center;
+}
+
+.sidebarNavLink:hover {
+  background-color: var(--sidebar-link-hover-bg-color);
+  color: var(--sidebar-link-hover-color);
+}
+
+.sidebarNavLinkActive {
+  background-color: var(--sidebar-link-active-bg-color);
+  color: var(--sidebar-link-active-color);
+  font-weight: 600;
+}
+
+.sidebarNavIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  min-width: 24px;
+  transition: margin 0.3s ease;
+}
+
+.sidebarNavCollapsed .sidebarNavIcon {
+  margin-right: 0;
+}
+
+.sidebarNavLabel {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.sidebarNavCollapsed .sidebarNavLabel {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.sidebarNavFooter {
+  padding: 1.5rem;
+  margin-top: auto;
+  border-top: 1px solid var(--sidebar-border-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebarNav {
+    /* On mobile, collapse the sidebar by default */
+    width: var(--sidebar-collapsed-width, 80px);
+  }
+
+  .sidebarNav:not(.sidebarNavCollapsed) {
+    /* Allow it to expand if needed, e.g., via a toggle button */
+    width: var(--sidebar-width, 260px);
+  }
+}

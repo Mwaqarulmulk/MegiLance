@@ -1,0 +1,32 @@
+/* @AI-HINT: Light theme styles for the Table component. */
+
+.light {
+  border: 1px solid #e5e7eb;
+}
+
+.light .table caption {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.light .tableThead {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+.light .tableTh {
+  color: #6b7280;
+}
+
+.light .tableTbodyTr {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+}
+
+.light .tableTbodyTr:hover {
+  background-color: #f9fafb;
+}
+
+.light .tableTd {
+  color: #374151;
+}

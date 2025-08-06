@@ -3,9 +3,10 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './ChatMessageBubble.common.css';
-import './ChatMessageBubble.light.css';
-import './ChatMessageBubble.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './ChatMessageBubble.common.module.css';
+import lightStyles from './ChatMessageBubble.light.module.css';
+import darkStyles from './ChatMessageBubble.dark.module.css';
 
 interface ChatMessageBubbleProps {
   text: string;
@@ -15,13 +16,24 @@ interface ChatMessageBubbleProps {
 
 const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({ text, timestamp, isSender }) => {
   const { theme } = useTheme();
-  const bubbleClass = isSender ? 'sender' : 'receiver';
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={`ChatMessageBubble-container ChatMessageBubble-container--${bubbleClass}`}>
-      <div className={`ChatMessageBubble ChatMessageBubble--${bubbleClass} ChatMessageBubble--${theme}`}>
-        <p className="ChatMessageBubble-text">{text}</p>
-        <span className="ChatMessageBubble-timestamp">{timestamp}</span>
+    <div className={cn(
+      commonStyles.container,
+      isSender ? commonStyles.senderContainer : commonStyles.receiverContainer
+    )}>
+      <div className={cn(
+        commonStyles.bubble,
+        isSender ? themeStyles.sender : themeStyles.receiver
+      )}>
+        <p className={commonStyles.text}>{text}</p>
+        <span className={cn(
+          commonStyles.timestamp,
+          isSender ? themeStyles.senderTimestamp : themeStyles.receiverTimestamp
+        )}>{timestamp}</span>
       </div>
     </div>
   );

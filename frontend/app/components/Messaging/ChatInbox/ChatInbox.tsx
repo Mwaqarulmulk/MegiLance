@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import Badge from '@/app/components/Badge/Badge';
-import './ChatInbox.common.css';
-import './ChatInbox.light.css';
-import './ChatInbox.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './ChatInbox.common.module.css';
+import lightStyles from './ChatInbox.light.module.css';
+import darkStyles from './ChatInbox.dark.module.css';
 
 interface Conversation {
   id: string;
@@ -29,31 +30,39 @@ const ChatInbox: React.FC = () => {
   const { theme } = useTheme();
   const [activeConversation, setActiveConversation] = useState('convo_001');
 
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <div className={`ChatInbox-container ChatInbox-container--${theme}`}>
-      <div className="ChatInbox-header">
-        <h2 className="ChatInbox-title">Inbox</h2>
+    <div className={cn(commonStyles.container, themeStyles.themeWrapper)}>
+      <div className={commonStyles.header}>
+        <h2 className={commonStyles.title}>Inbox</h2>
       </div>
-      <div className="ChatInbox-list">
+      <div className={commonStyles.list}>
         {mockConversations.map(convo => (
           <div 
             key={convo.id} 
-            className={`ChatInbox-item ${activeConversation === convo.id ? 'active' : ''} ChatInbox-item--${theme}`}
+            className={cn(
+              commonStyles.item, 
+              themeStyles.item, 
+              activeConversation === convo.id && themeStyles.active
+            )}
             onClick={() => setActiveConversation(convo.id)}
             role="button"
             tabIndex={0}
             aria-current={activeConversation === convo.id}
           >
-            <UserAvatar src={convo.avatarUrl} alt={convo.userName} size="medium" />
-            <div className="ChatInbox-item-details">
-              <div className="ChatInbox-item-row">
-                <span className="ChatInbox-userName">{convo.userName}</span>
-                <span className="ChatInbox-timestamp">{convo.timestamp}</span>
+            <UserAvatar src={convo.avatarUrl} name={convo.userName} size="medium" />
+            <div className={commonStyles.itemDetails}>
+              <div className={commonStyles.itemRow}>
+                <span className={commonStyles.userName}>{convo.userName}</span>
+                <span className={commonStyles.timestamp}>{convo.timestamp}</span>
               </div>
-              <div className="ChatInbox-item-row">
-                <p className="ChatInbox-lastMessage">{convo.lastMessage}</p>
+              <div className={commonStyles.itemRow}>
+                <p className={commonStyles.lastMessage}>{convo.lastMessage}</p>
                 {convo.unreadCount > 0 && (
-                  <Badge theme={theme} variant="primary">{convo.unreadCount}</Badge>
+                  <Badge variant="primary">{convo.unreadCount}</Badge>
                 )}
               </div>
             </div>

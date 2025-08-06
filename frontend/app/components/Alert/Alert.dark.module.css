@@ -1,0 +1,56 @@
+/* AI-HINT: Dark theme styles for the Alert component. Provides high-contrast, brand-aligned colors for a premium dark mode experience. */
+
+.alert {
+  background-color: #1f2937; /* Gray 800 as base */
+  color: #e5e7eb; /* Gray 200 for default text */
+}
+
+.alertDescription {
+  color: #9ca3af; /* Gray 400 for description */
+}
+
+.alertCloseButton {
+  color: #9ca3af;
+}
+
+.alertCloseButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Variants --- */
+
+.info {
+  background-color: rgba(69, 115, 223, 0.15);
+  border-color: rgba(69, 115, 223, 0.3);
+  color: #a5b4fc; /* Lighter blue for icon */
+}
+.info .alertTitle { color: #dbeafe; }
+.info .alertDescription { color: #a5b4fc; opacity: 0.9; }
+.info .alertCloseButton:hover { background-color: rgba(69, 115, 223, 0.25); }
+
+.success {
+  background-color: rgba(39, 174, 96, 0.15);
+  border-color: rgba(39, 174, 96, 0.3);
+  color: #6ee7b7; /* Lighter green for icon */
+}
+.success .alertTitle { color: #d1fae5; }
+.success .alertDescription { color: #6ee7b7; opacity: 0.9; }
+.success .alertCloseButton:hover { background-color: rgba(39, 174, 96, 0.25); }
+
+.warning {
+  background-color: rgba(242, 201, 76, 0.15);
+  border-color: rgba(242, 201, 76, 0.3);
+  color: #fde047; /* Lighter yellow for icon */
+}
+.warning .alertTitle { color: #fef9c3; }
+.warning .alertDescription { color: #fde047; opacity: 0.9; }
+.warning .alertCloseButton:hover { background-color: rgba(242, 201, 76, 0.25); }
+
+.danger {
+  background-color: rgba(232, 17, 35, 0.15);
+  border-color: rgba(232, 17, 35, 0.3);
+  color: #fca5a5; /* Lighter red for icon */
+}
+.danger .alertTitle { color: #fee2e2; }
+.danger .alertDescription { color: #fca5a5; opacity: 0.9; }
+.danger .alertCloseButton:hover { background-color: rgba(232, 17, 35, 0.25); }

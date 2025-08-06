@@ -1,0 +1,33 @@
+.flaggedReviewsContainer {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+}
+
+.flaggedReviewsTitle {
+  color: #f7fafc;
+}
+
+.flaggedReviewsItem {
+  background-color: #1a202c;
+  border-color: #4a5568;
+}
+
+.flaggedReviewsItemHeader strong {
+  color: #e2e8f0;
+}
+
+.flaggedReviewsRating {
+  color: #f6e05e; /* yellow-400 */
+}
+
+.flaggedReviewsContent {
+  color: #cbd5e0;
+}
+
+.flaggedReviewsActions small {
+  color: #a0aec0;
+}
+
+.flaggedReviewsEmpty {
+  color: #a0aec0;
+}

@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 import commonStyles from './Button.common.module.css';
@@ -11,7 +12,7 @@ import lightStyles from './Button.light.module.css';
 import darkStyles from './Button.dark.module.css';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   size?: 'small' | 'medium' | 'large';
   isLoading?: boolean;
   fullWidth?: boolean;
@@ -37,24 +38,27 @@ const Button: React.FC<ButtonProps> = ({
 
   const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
-  const buttonClasses = `
-    ${commonStyles.button}
-    ${commonStyles[variant]}
-    ${commonStyles[size]}
-    ${fullWidth ? commonStyles.fullWidth : ''}
-    ${themeStyles.button}
-    ${themeStyles[variant]}
-    ${className}
-  `;
-
   return (
-    <button className={buttonClasses} disabled={isLoading || props.disabled} {...props}>
+    <button
+      className={cn(
+        commonStyles.button,
+        themeStyles.button,
+        commonStyles[variant],
+        themeStyles[variant],
+        commonStyles[size],
+        themeStyles[size],
+        { [commonStyles.fullWidth]: fullWidth, [themeStyles.fullWidth]: fullWidth },
+        className
+      )}
+      disabled={isLoading || props.disabled}
+      {...props}
+    >
       {isLoading ? (
-        <Loader2 className={`${commonStyles.icon} ${commonStyles.loadingIcon}`} size={20} />
+        <Loader2 className={cn(commonStyles.icon, themeStyles.icon, commonStyles.loadingIcon, themeStyles.loadingIcon)} size={20} />
       ) : (
         <>
-          {Icon && <Icon className={commonStyles.icon} size={20} />}
-          <span>{children}</span>
+          {Icon && <Icon className={cn(commonStyles.icon, themeStyles.icon)} size={20} />}
+          <span className={cn(commonStyles.buttonText, themeStyles.buttonText)}>{children}</span>
         </>
       )}
     </button>

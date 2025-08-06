@@ -3,50 +3,50 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './FreelancerRankVisualizer.common.css';
-import './FreelancerRankVisualizer.light.css';
-import './FreelancerRankVisualizer.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './FreelancerRankVisualizer.common.module.css';
+import lightStyles from './FreelancerRankVisualizer.light.module.css';
+import darkStyles from './FreelancerRankVisualizer.dark.module.css';
 
 interface FreelancerRankVisualizerProps {
   rank: 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
   score: number; // A score from 0 to 1000
+  className?: string;
 }
 
 const rankTiers = {
-  Bronze: { min: 0, color: '#cd7f32' },
-  Silver: { min: 200, color: '#c0c0c0' },
-  Gold: { min: 400, color: '#ffd700' },
-  Platinum: { min: 600, color: '#e5e4e2' },
-  Diamond: { min: 800, color: '#b9f2ff' },
+  Bronze: { color: '#cd7f32' },
+  Silver: { color: '#c0c0c0' },
+  Gold: { color: '#ffd700' },
+  Platinum: { color: '#e5e4e2' },
+  Diamond: { color: '#b9f2ff' },
 };
 
-const FreelancerRankVisualizer: React.FC<FreelancerRankVisualizerProps> = ({ rank, score }) => {
+const FreelancerRankVisualizer: React.FC<FreelancerRankVisualizerProps> = ({ rank, score, className }) => {
   const { theme } = useTheme();
-  const visualizerId = React.useId();
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   const normalizedScore = Math.min(Math.max(score, 0), 1000);
   const progressPercentage = (normalizedScore / 1000) * 100;
   const rankColor = rankTiers[rank]?.color || '#c0c0c0';
 
+  const progressBarStyle = {
+    '--progress-width': `${progressPercentage}%`,
+    '--progress-color': rankColor,
+  } as React.CSSProperties;
+
   return (
-    <>
-      <style>
-        {`
-          [data-visualizer-id="${visualizerId}"] .RankVisualizer-progress-bar {
-            width: ${progressPercentage}%;
-            background-color: ${rankColor};
-          }
-        `}
-      </style>
-      <div className={`RankVisualizer RankVisualizer--${theme}`} data-visualizer-id={visualizerId}>
-        <div className="RankVisualizer-header">
-          <h3 className="RankVisualizer-rank-name">{rank} Tier</h3>
-          <p className="RankVisualizer-score">Score: {score}</p>
-        </div>
-        <div className="RankVisualizer-progress-bar-container">
-          <div className="RankVisualizer-progress-bar"></div>
-        </div>
+    <div className={cn(commonStyles.container, themeStyles.themeWrapper, className)}>
+      <div className={commonStyles.header}>
+        <h3 className={commonStyles.rankName}>{rank} Tier</h3>
+        <p className={commonStyles.score}>Score: {score}</p>
       </div>
-    </>
+      <div className={commonStyles.progressBarContainer}>
+        <div className={commonStyles.progressBar} style={progressBarStyle}></div>
+      </div>
+    </div>
   );
 };
 

@@ -2,13 +2,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import './Faq.common.css';
-import './Faq.light.css';
-import './Faq.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Faq.common.module.css';
+import lightStyles from './Faq.light.module.css';
+import darkStyles from './Faq.dark.module.css';
 
-interface FaqProps {
-  theme?: 'light' | 'dark';
-}
+// @AI-HINT: This is the FAQ page root component. It uses an accordion for questions and is styled with CSS modules.
 
 const faqData = [
   {
@@ -40,30 +40,33 @@ interface FaqItemProps {
 }
 
 const FaqItem = ({ item, isOpen, onClick }: FaqItemProps) => (
-  <div className="FaqItem">
-    <button className="FaqItem-question" onClick={onClick}>
+  <div className={commonStyles.faqItem}>
+    <button className={commonStyles.faqItemQuestion} onClick={onClick}>
       <span>{item.question}</span>
-      <span className={`FaqItem-icon ${isOpen ? 'open' : ''}`}>{isOpen ? '−' : '+'}</span>
+      <span className={cn(commonStyles.faqItemIcon, isOpen && commonStyles.faqItemIconOpen)}>{isOpen ? '−' : '+'}</span >
     </button>
-    {isOpen && <div className="FaqItem-answer"><p>{item.answer}</p></div>}
+    {isOpen && <div className={commonStyles.faqItemAnswer}><p>{item.answer}</p></div>}
   </div>
 );
 
-const Faq: React.FC<FaqProps> = ({ theme = 'light' }) => {
+const Faq: React.FC = () => {
+  const { theme } = useTheme();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const handleClick = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <div className={`Faq Faq--${theme}`}>
-      <div className="Faq-container">
-        <header className="Faq-header">
+    <div className={cn(commonStyles.faq, themeStyles.themeWrapper)}>
+      <div className={commonStyles.faqContainer}>
+        <header className={commonStyles.faqHeader}>
           <h1>Frequently Asked Questions</h1>
           <p>Find answers to common questions about MegiLance.</p>
         </header>
-        <div className="Faq-list">
+        <div className={commonStyles.faqList}>
           {faqData.map((item, index) => (
             <FaqItem
               key={index}

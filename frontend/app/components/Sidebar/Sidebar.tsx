@@ -2,19 +2,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { ChevronLeft, ChevronRight, LayoutDashboard, Briefcase, Wallet, BarChart2, MessageSquare, Users } from 'lucide-react';
 
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
 import SidebarNav, { NavItem } from './SidebarNav';
+import { MegiLanceLogo } from '../MegiLanceLogo/MegiLanceLogo';
+import UserAvatar from '../UserAvatar/UserAvatar';
 
 // AI-HINT: Import all necessary CSS modules. The theme-specific ones are passed as props to child components.
 import commonStyles from './Sidebar.common.module.css';
 import lightStyles from './Sidebar.light.module.css';
 import darkStyles from './Sidebar.dark.module.css';
 
-import navLightStyles from './SidebarNav.light.module.css';
-import navDarkStyles from './SidebarNav.dark.module.css';
+
 
 
 
@@ -30,51 +31,65 @@ const defaultNavItems: NavItem[] = [
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { theme: currentTheme } = useTheme();
+  const { theme } = useTheme();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-    const theme = currentTheme === 'light' ? lightStyles : darkStyles;
+  if (!theme) return null;
 
-  const sidebarClasses = `
-    ${commonStyles.sidebar}
-    ${theme.sidebar}
-    ${isCollapsed ? commonStyles.sidebarCollapsed : commonStyles.sidebarExpanded}
-  `;
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
   return (
-    <aside className={sidebarClasses}>
-      <header className={commonStyles.sidebarHeader}>
-        <div className={commonStyles.logoContainer}>
-          {/* AI-HINT: Using Next.js Image component for optimized logo loading */}
-          <Image src="/logo-icon.svg" alt="MegiLance Logo" width={32} height={32} className={commonStyles.logoIcon} />
-          <span className={`${commonStyles.logoText} ${theme.logoText} ${isCollapsed ? commonStyles.logoTextCollapsed : ''}`}>
+    <aside
+      className={cn(
+        commonStyles.sidebar,
+        themeStyles.sidebar,
+        isCollapsed ? commonStyles.sidebarCollapsed : commonStyles.sidebarExpanded
+      )}
+    >
+      <header className={cn(commonStyles.sidebarHeader, themeStyles.sidebarHeader)}>
+        <div className={cn(commonStyles.logoContainer, themeStyles.logoContainer)}>
+          <MegiLanceLogo className={commonStyles.logoIcon} />
+          <span
+            className={cn(
+              commonStyles.logoText,
+              themeStyles.logoText,
+              isCollapsed && commonStyles.logoTextCollapsed
+            )}
+          >
             MegiLance
           </span>
         </div>
-        <button onClick={toggleSidebar} className={`${commonStyles.toggleButton} ${theme.toggleButton}`} title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}>
+        <button
+          onClick={toggleSidebar}
+          className={cn(commonStyles.toggleButton, themeStyles.toggleButton)}
+          title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+        >
           {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
         </button>
       </header>
 
-      <div className={commonStyles.sidebarNavContainer}>
+      <div className={cn(commonStyles.sidebarNavContainer, themeStyles.sidebarNavContainer)}>
         <SidebarNav 
           isCollapsed={isCollapsed} 
           navItems={defaultNavItems}
-          lightStyles={navLightStyles}
-          darkStyles={navDarkStyles}
-          currentTheme={currentTheme}
         />
       </div>
 
-      <footer className={`${commonStyles.sidebarFooter} ${theme.sidebarFooter}`}>
-        <div className={commonStyles.userInfo}>
-          <Image src="/mock-avatar.png" alt="User Avatar" width={40} height={40} className={commonStyles.avatar} />
-          <div className={`${commonStyles.userDetails} ${isCollapsed ? commonStyles.userDetailsCollapsed : ''}`}>
-            <span className={`${commonStyles.userName} ${theme.userName}`}>John Doe</span>
-            <span className={`${commonStyles.userRole} ${theme.userRole}`}>Client</span>
+      <footer className={cn(commonStyles.sidebarFooter, themeStyles.sidebarFooter)}>
+        <div className={cn(commonStyles.userInfo, themeStyles.userInfo)}>
+          <UserAvatar src="/mock-avatar.png" name="John Doe" size="large" />
+          <div
+            className={cn(
+              commonStyles.userDetails,
+              themeStyles.userDetails,
+              isCollapsed && commonStyles.userDetailsCollapsed
+            )}
+          >
+            <span className={cn(commonStyles.userName, themeStyles.userName)}>John Doe</span>
+            <span className={cn(commonStyles.userRole, themeStyles.userRole)}>Client</span>
           </div>
         </div>
       </footer>

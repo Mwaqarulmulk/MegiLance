@@ -23,3 +23,39 @@
   background-color: var(--surface-alt-hover);
   border-color: var(--border-strong);
 }
+
+/* Success Button */
+.success {
+  background-color: var(--success);
+  color: var(--text-on-color);
+  border-color: var(--success);
+}
+
+.success:hover:not(:disabled) {
+  background-color: var(--success-strong);
+  border-color: var(--success-strong);
+}
+
+/* Warning Button */
+.warning {
+  background-color: var(--warning);
+  color: var(--text-primary);
+  border-color: var(--warning);
+}
+
+.warning:hover:not(:disabled) {
+  background-color: var(--warning-strong);
+  border-color: var(--warning-strong);
+}
+
+/* Danger Button */
+.danger {
+  background-color: var(--danger);
+  color: var(--text-on-color);
+  border-color: var(--danger);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--danger-strong);
+  border-color: var(--danger-strong);
+}

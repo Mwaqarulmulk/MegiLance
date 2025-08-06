@@ -1,0 +1,17 @@
+.sender {
+  background-color: #3b82f6; /* blue-500 */
+  color: #ffffff;
+}
+
+.receiver {
+  background-color: #e5e7eb; /* gray-200 */
+  color: #1f2937; /* gray-800 */
+}
+
+.senderTimestamp {
+  color: #eff6ff;
+}
+
+.receiverTimestamp {
+  color: #4b5563;
+}

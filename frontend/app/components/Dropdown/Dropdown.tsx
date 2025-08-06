@@ -1,12 +1,13 @@
 // @AI-HINT: This is a Dropdown component, a molecular element for selecting an option from a list.
 'use client';
 
-import React, { useState, useRef, useEffect, useId } from 'react';
+import React, { useState, useRef, useEffect, useId, useCallback } from 'react';
 import { IoChevronDown } from 'react-icons/io5';
-
-import './Dropdown.common.css';
-import './Dropdown.light.css';
-import './Dropdown.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Dropdown.common.module.css';
+import lightStyles from './Dropdown.light.module.css';
+import darkStyles from './Dropdown.dark.module.css';
 
 export interface DropdownOption {
   value: string;
@@ -22,6 +23,7 @@ export interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeholder = 'Select...', className = '' }) => {
+  const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,11 +31,11 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeh
   const listId = useId();
   const labelId = useId();
 
-  const handleSelect = (option: DropdownOption) => {
+  const handleSelect = useCallback((option: DropdownOption) => {
     onSelect(option);
     setIsOpen(false);
     triggerRef.current?.focus();
-  };
+  }, [onSelect]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -91,25 +93,28 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeh
     }
   }, [isOpen, focusedIndex, listId]);
 
+  if (!theme) return null;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <div className={`Dropdown ${className}`} ref={dropdownRef}>
+    <div className={cn(commonStyles.dropdown, themeStyles.dropdown, className)} ref={dropdownRef}>
       <button
         ref={triggerRef}
         type="button"
-        className="Dropdown-trigger"
+        className={cn(commonStyles.trigger, themeStyles.trigger)}
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
-        aria-expanded={`${isOpen}`}
+        aria-expanded={isOpen}
         aria-controls={listId}
         aria-labelledby={`${labelId} ${triggerRef.current?.id}`}
       >
-        <span id={labelId}>{selected ? selected.label : placeholder}</span>
-        <IoChevronDown className={`Dropdown-caret ${isOpen ? 'open' : ''}`} />
+        <span id={labelId} className={cn(commonStyles.label, themeStyles.label)}>{selected ? selected.label : placeholder}</span>
+        <IoChevronDown className={cn(commonStyles.caret, themeStyles.caret, isOpen && commonStyles.caretOpen, isOpen && themeStyles.caretOpen)} />
       </button>
       {isOpen && (
         <ul
           id={listId}
-          className="Dropdown-options"
+          className={cn(commonStyles.options, themeStyles.options)}
           role="listbox"
           aria-labelledby={labelId}
           aria-activedescendant={focusedIndex >= 0 ? `${listId}-option-${focusedIndex}` : undefined}
@@ -118,11 +123,16 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect, placeh
             <li
               id={`${listId}-option-${index}`}
               key={option.value}
-              className={`Dropdown-option ${focusedIndex === index ? 'focused' : ''}`}
+              className={cn(
+                commonStyles.option,
+                themeStyles.option,
+                focusedIndex === index && commonStyles.optionFocused,
+                focusedIndex === index && themeStyles.optionFocused
+              )}
               onClick={() => handleSelect(option)}
               onMouseEnter={() => setFocusedIndex(index)}
               role="option"
-              aria-selected={`${selected?.value === option.value}`}
+              aria-selected={selected?.value === option.value}
             >
               {option.label}
             </li>

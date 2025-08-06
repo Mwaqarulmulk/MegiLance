@@ -1,8 +1,0 @@
-.UpdateNotification--light .UpdateNotification-content {
-  background-color: #f0f8ff; /* AliceBlue, a soft light color */
-  border: 1px solid #b0c4de; /* LightSteelBlue */
-}
-
-.UpdateNotification--light p {
-  color: #0056b3; /* A darker blue for text */
-}

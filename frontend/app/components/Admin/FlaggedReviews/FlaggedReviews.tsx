@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
-import './FlaggedReviews.common.css';
-import './FlaggedReviews.light.css';
-import './FlaggedReviews.dark.css';
+import commonStyles from './FlaggedReviews.common.module.css';
+import lightStyles from './FlaggedReviews.light.module.css';
+import darkStyles from './FlaggedReviews.dark.module.css';
 
 interface FlaggedReview {
   id: string;
@@ -30,6 +30,11 @@ const FlaggedReviews: React.FC = () => {
   const { theme } = useTheme();
   const [reviews, setReviews] = useState(mockFlaggedReviews);
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   const handleAction = (id: string, newStatus: 'Kept' | 'Removed') => {
     setReviews(reviews.map(review => (review.id === id ? { ...review, status: newStatus } : review)));
   };
@@ -37,29 +42,29 @@ const FlaggedReviews: React.FC = () => {
   const pendingReviews = reviews.filter(review => review.status === 'Pending');
 
   return (
-    <div className={`FlaggedReviews-container FlaggedReviews-container--${theme}`}>
-      <h2 className="FlaggedReviews-title">Flagged Review Queue</h2>
-      <div className="FlaggedReviews-list">
+    <div className={styles.flaggedReviewsContainer}>
+      <h2 className={styles.flaggedReviewsTitle}>Flagged Review Queue</h2>
+      <div className={styles.flaggedReviewsList}>
         {pendingReviews.length > 0 ? pendingReviews.map(review => (
-          <div key={review.id} className={`FlaggedReviews-item FlaggedReviews-item--${theme}`}>
-            <div className="FlaggedReviews-item-header">
+          <div key={review.id} className={styles.flaggedReviewsItem}>
+            <div className={styles.flaggedReviewsItemHeader}>
               <div>
                 <strong>{review.reviewer}</strong> reviewed <strong>{review.reviewee}</strong>
-                <span className="FlaggedReviews-rating">{' ★'.repeat(review.rating)}{' ☆'.repeat(5 - review.rating)}</span>
+                <span className={styles.flaggedReviewsRating}>{' ★'.repeat(review.rating)}{' ☆'.repeat(5 - review.rating)}</span>
               </div>
-              <Badge theme={theme} variant="warning">{review.reason}</Badge>
+              <Badge variant="warning">{review.reason}</Badge>
             </div>
-            <p className="FlaggedReviews-content">&ldquo;{review.content}&rdquo;</p>
-            <div className="FlaggedReviews-actions">
+            <p className={styles.flaggedReviewsContent}>&ldquo;{review.content}&rdquo;</p>
+            <div className={styles.flaggedReviewsActions}>
               <small>Flagged on: {review.dateFlagged}</small>
               <div>
-                <Button theme={theme} variant="secondary" size="small" onClick={() => handleAction(review.id, 'Kept')}>Keep Review</Button>
-                <Button theme={theme} variant="danger" size="small" onClick={() => handleAction(review.id, 'Removed')}>Remove Review</Button>
+                <Button variant="secondary" size="small" onClick={() => handleAction(review.id, 'Kept')}>Keep Review</Button>
+                <Button variant="danger" size="small" onClick={() => handleAction(review.id, 'Removed')}>Remove Review</Button>
               </div>
             </div>
           </div>
         )) : (
-          <p className={`FlaggedReviews-empty FlaggedReviews-empty--${theme}`}>No reviews are currently pending moderation.</p>
+          <p className={styles.flaggedReviewsEmpty}>No reviews are currently pending moderation.</p>
         )}
       </div>
     </div>

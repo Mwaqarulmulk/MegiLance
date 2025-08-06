@@ -3,9 +3,11 @@
 
 import React from 'react';
 import { FiInfo, FiCheckCircle, FiAlertTriangle, FiXCircle, FiX } from 'react-icons/fi';
-import './Alert.common.css';
-import './Alert.light.css';
-import './Alert.dark.css';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+import commonStyles from './Alert.common.module.css';
+import lightStyles from './Alert.light.module.css';
+import darkStyles from './Alert.dark.module.css';
 
 export interface AlertProps {
   title: string;
@@ -29,21 +31,34 @@ const Alert: React.FC<AlertProps> = ({
   onClose,
   className = '',
 }) => {
-  const alertClasses = [
-    'Alert',
-    `Alert--${variant}`,
-    className,
-  ].filter(Boolean).join(' ');
+  const { theme } = useTheme();
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
+  // Return null or a skeleton if the theme isn't loaded yet
+  if (!theme) return null;
 
   return (
-    <div className={alertClasses} role="alert">
-      <div className="Alert-icon">{ICONS[variant]}</div>
-      <div className="Alert-content">
-        <h3 className="Alert-title">{title}</h3>
-        <div className="Alert-description">{children}</div>
+    <div 
+      className={cn(
+        commonStyles.alert,
+        themeStyles.alert,
+        commonStyles[variant],
+        themeStyles[variant],
+        className
+      )} 
+      role="alert"
+    >
+      <div className={commonStyles.alertIcon}>{ICONS[variant]}</div>
+      <div className={commonStyles.alertContent}>
+        <h3 className={commonStyles.alertTitle}>{title}</h3>
+        <div className={commonStyles.alertDescription}>{children}</div>
       </div>
       {onClose && (
-        <button onClick={onClose} className="Alert-close-button" aria-label="Close alert">
+        <button 
+          onClick={onClose} 
+          className={commonStyles.alertCloseButton} 
+          aria-label="Close alert"
+        >
           <FiX />
         </button>
       )}

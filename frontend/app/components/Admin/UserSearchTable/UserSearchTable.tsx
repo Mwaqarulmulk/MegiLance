@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Badge from '@/app/components/Badge/Badge';
 import Button from '@/app/components/Button/Button';
-import './UserSearchTable.common.css';
-import './UserSearchTable.light.css';
-import './UserSearchTable.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './UserSearchTable.common.module.css';
+import lightStyles from './UserSearchTable.light.module.css';
+import darkStyles from './UserSearchTable.dark.module.css';
 
 // Mock data for demonstration
 const mockUsers = [
@@ -27,20 +28,24 @@ const UserSearchTable: React.FC = () => {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <div className={`UserSearchTable-container UserSearchTable-container--${theme}`}>
-      <div className="UserSearchTable-header">
-        <h2 className="UserSearchTable-title">User Management</h2>
+    <div className={cn(commonStyles.container, themeStyles.themeWrapper)}>
+      <div className={commonStyles.header}>
+        <h2 className={commonStyles.title}>User Management</h2>
         <input
           type="text"
           placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`UserSearchTable-search-input UserSearchTable-search-input--${theme}`}
+          className={commonStyles.searchInput}
         />
       </div>
-      <div className="UserSearchTable-table-wrapper">
-        <table className={`UserSearchTable UserSearchTable--${theme}`}>
+      <div className={commonStyles.tableWrapper}>
+        <table className={commonStyles.table}>
           <thead>
             <tr>
               <th>User ID</th>
@@ -57,11 +62,11 @@ const UserSearchTable: React.FC = () => {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td><Badge theme={theme} variant={user.role === 'Admin' ? 'primary' : 'secondary'}>{user.role}</Badge></td>
-                <td><Badge theme={theme} variant={user.status === 'Active' ? 'success' : 'danger'}>{user.status}</Badge></td>
-                <td className="UserSearchTable-actions">
-                  <Button theme={theme} variant="secondary" size="small">View</Button>
-                  <Button theme={theme} variant="primary" size="small">Edit</Button>
+                <td><Badge variant={user.role === 'Admin' ? 'primary' : 'secondary'}>{user.role}</Badge></td>
+                <td><Badge variant={user.status === 'Active' ? 'success' : 'danger'}>{user.status}</Badge></td>
+                <td className={commonStyles.actions}>
+                  <Button variant="secondary" size="small">View</Button>
+                  <Button variant="primary" size="small">Edit</Button>
                 </td>
               </tr>
             ))}

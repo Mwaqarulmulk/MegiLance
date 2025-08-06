@@ -58,7 +58,7 @@
 .progressBarFill {
   width: var(--progress-width, 0%);
   height: 100%;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   border-radius: inherit;
   position: relative;
 }
@@ -82,6 +82,11 @@
 
 .progressBarXl {
   height: 1rem; /* 16px */
+}
+
+/* Animated striped pattern */
+.progressStripeAnimation .progressBarFill {
+  animation: progressStripe 1s linear infinite;
 }
 
 /* Striped pattern */

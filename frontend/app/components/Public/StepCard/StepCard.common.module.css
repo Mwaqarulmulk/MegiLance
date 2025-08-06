@@ -1,0 +1,57 @@
+/* @AI-HINT: Common styles for the StepCard component. Uses camelCase for CSS module compatibility. */
+
+.stepCardContainer {
+  text-align: center;
+  padding: var(--spacing-8);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-secondary);
+  transition: all 0.3s ease;
+}
+
+.stepCardContainer:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.header {
+  position: relative;
+  margin-bottom: var(--spacing-6);
+  display: inline-block;
+}
+
+.iconWrapper {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: var(--spacing-4);
+  color: var(--icon-color);
+}
+
+.number {
+  position: absolute;
+  top: -10px;
+  right: -15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--number-bg);
+  color: var(--number-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.description {
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}

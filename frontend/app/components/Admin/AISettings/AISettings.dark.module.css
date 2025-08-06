@@ -1,0 +1,30 @@
+.aiSettingsContainer {
+  background-color: #1a202c;
+}
+
+.aiSettingsTitle {
+  color: #f7fafc;
+}
+
+.aiSettingsForm {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.formGroup label {
+  color: #e2e8f0;
+}
+
+.formGroup small {
+  color: #a0aec0;
+}
+
+.aiSettingsSelect {
+  background-color: #4a5568;
+  border-color: #718096;
+  color: #e2e8f0;
+}
+
+.saveConfirmation {
+  color: #9ae6b4;
+}

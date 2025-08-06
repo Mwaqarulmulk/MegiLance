@@ -2,11 +2,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Button from '@/app/components/Button/Button';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './UpdateNotification.common.css';
-import './UpdateNotification.light.css';
-import './UpdateNotification.dark.css';
+import { cn } from '@/lib/utils';
+import Button from '@/app/components/Button/Button';
+import commonStyles from './UpdateNotification.common.module.css';
+import lightStyles from './UpdateNotification.light.module.css';
+import darkStyles from './UpdateNotification.dark.module.css';
+
+// @AI-HINT: This component notifies the user when a new version of the PWA is available. It is fully theme-aware and uses CSS modules.
 
 const UpdateNotification: React.FC = () => {
   const { theme } = useTheme();
@@ -45,11 +48,13 @@ const UpdateNotification: React.FC = () => {
     return null;
   }
 
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+
   return (
-    <div className={`UpdateNotification UpdateNotification--${theme}`}>
-      <div className="UpdateNotification-content">
-        <p>A new version is available!</p>
-        <Button theme={theme} variant="secondary" onClick={handleUpdate}>Refresh</Button>
+    <div className={cn(commonStyles.updateNotification, themeStyles.themeWrapper)}>
+      <div className={commonStyles.content}>
+        <p className={commonStyles.text}>A new version is available!</p>
+        <Button variant="secondary" size="small" onClick={handleUpdate}>Refresh</Button>
       </div>
     </div>
   );

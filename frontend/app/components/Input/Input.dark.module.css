@@ -1,0 +1,21 @@
+/* @AI-HINT: Dark theme for Input. */
+
+.inputWrapper {
+  --input-label-text: var(--text-primary);
+  --input-text: var(--text-primary);
+  --input-placeholder-text: var(--text-placeholder);
+  --input-bg: var(--surface);
+  --input-border: var(--border);
+  --input-border-focus: var(--primary);
+  --input-icon: var(--text-secondary);
+
+  /* States */
+  --input-border-error: var(--error);
+  --input-border-error-focus: var(--error-strong);
+  --input-error-text: var(--error-strong);
+  --input-text-error: var(--error-strongest);
+
+  --input-bg-disabled: var(--surface-disabled);
+  --input-text-disabled: var(--text-disabled);
+  --input-border-disabled: var(--border-disabled);
+}

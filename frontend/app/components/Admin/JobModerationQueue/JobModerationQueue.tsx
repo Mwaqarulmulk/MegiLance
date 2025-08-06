@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
-import './JobModerationQueue.common.css';
-import './JobModerationQueue.light.css';
-import './JobModerationQueue.dark.css';
+import commonStyles from './JobModerationQueue.common.module.css';
+import lightStyles from './JobModerationQueue.light.module.css';
+import darkStyles from './JobModerationQueue.dark.module.css';
 
 interface Job {
   id: string;
@@ -29,6 +29,11 @@ const JobModerationQueue: React.FC = () => {
   const { theme } = useTheme();
   const [jobs, setJobs] = useState(mockJobs);
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   const handleModerate = (id: string, newStatus: 'Approved' | 'Rejected') => {
     setJobs(jobs.map(job => (job.id === id ? { ...job, status: newStatus } : job)));
   };
@@ -36,10 +41,10 @@ const JobModerationQueue: React.FC = () => {
   const pendingJobs = jobs.filter(job => job.status === 'Pending');
 
   return (
-    <div className={`JobModerationQueue-container JobModerationQueue-container--${theme}`}>
-      <h2 className="JobModerationQueue-title">Job Moderation Queue</h2>
-      <div className="JobModerationQueue-table-wrapper">
-        <table className={`JobModerationQueue JobModerationQueue--${theme}`}>
+    <div className={styles.jobModerationQueueContainer}>
+      <h2 className={styles.jobModerationQueueTitle}>Job Moderation Queue</h2>
+      <div className={styles.jobModerationQueueTableWrapper}>
+        <table className={styles.jobModerationQueue}>
           <thead>
             <tr>
               <th>Job Title</th>
@@ -57,21 +62,20 @@ const JobModerationQueue: React.FC = () => {
                 <td>{job.dateSubmitted}</td>
                 <td>
                   <Badge 
-                    theme={theme} 
                     variant={job.riskLevel === 'High' ? 'danger' : job.riskLevel === 'Medium' ? 'warning' : 'success'}
                   >
                     {job.riskLevel}
                   </Badge>
                 </td>
-                <td className="JobModerationQueue-actions">
-                  <Button theme={theme} variant="success" size="small" onClick={() => handleModerate(job.id, 'Approved')}>Approve</Button>
-                  <Button theme={theme} variant="danger" size="small" onClick={() => handleModerate(job.id, 'Rejected')}>Reject</Button>
+                <td className={styles.jobModerationQueueActions}>
+                  <Button variant="success" size="small" onClick={() => handleModerate(job.id, 'Approved')}>Approve</Button>
+                  <Button variant="danger" size="small" onClick={() => handleModerate(job.id, 'Rejected')}>Reject</Button>
                 </td>
               </tr>
             ))}
             {pendingJobs.length === 0 && (
               <tr>
-                <td colSpan={5} className="JobModerationQueue-empty">The queue is empty.</td>
+                <td colSpan={5} className={styles.jobModerationQueueEmpty}>The queue is empty.</td>
               </tr>
             )}
           </tbody>

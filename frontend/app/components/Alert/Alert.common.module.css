@@ -1,0 +1,57 @@
+/* AI-HINT: Common styles for the Alert component. Defines layout, typography, and structure. Theme-specific files handle the colors. */
+.alert {
+  display: flex;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem; /* 12px */
+  border-width: 1px;
+  border-style: solid;
+  font-family: 'Inter', sans-serif;
+  align-items: flex-start;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  margin-right: 0.75rem; /* 12px */
+  font-size: 1.25rem; /* 20px */
+  margin-top: 0.125rem; /* 2px - for alignment */
+}
+
+.alertContent {
+  flex-grow: 1;
+  padding-right: 1rem;
+}
+
+.alertTitle {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.alertDescription {
+  margin-top: 0.25rem;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.6;
+}
+
+.alertCloseButton {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.alertCloseButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Variant colors are defined in theme-specific files */

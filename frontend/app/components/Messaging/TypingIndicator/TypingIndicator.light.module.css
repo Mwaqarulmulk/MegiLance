@@ -1,0 +1,4 @@
+.themeWrapper {
+  --typing-indicator-bg: #e5e7eb; /* gray-200 */
+  --typing-indicator-dot-color: #6b7280; /* gray-500 */
+}

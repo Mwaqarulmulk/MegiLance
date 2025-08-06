@@ -1,0 +1,13 @@
+/* @AI-HINT: Dark theme for Checkbox. */
+
+.checkboxWrapper {
+  --checkbox-text-color: #cbd5e1;
+  --checkbox-bg: #334155;
+  --checkbox-border-color: #475569;
+  --checkbox-checked-bg: #60a5fa;
+  --checkbox-checked-border-color: #60a5fa;
+  --checkbox-checkmark-color: #0f172a;
+  --checkbox-focus-ring-color: #93c5fd;
+  --checkbox-link-color: #93c5fd;
+  --checkbox-error-color: #f87171;
+}

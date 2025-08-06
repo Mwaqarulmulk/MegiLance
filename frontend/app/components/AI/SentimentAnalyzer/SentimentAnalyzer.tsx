@@ -3,48 +3,46 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './SentimentAnalyzer.common.css';
-import './SentimentAnalyzer.light.css';
-import './SentimentAnalyzer.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './SentimentAnalyzer.common.module.css';
+import lightStyles from './SentimentAnalyzer.light.module.css';
+import darkStyles from './SentimentAnalyzer.dark.module.css';
 
 interface SentimentAnalyzerProps {
   // A score from -1 (very negative) to 1 (very positive)
   score: number;
+  className?: string;
 }
 
 const getSentimentDetails = (score: number) => {
   if (score > 0.2) {
-    return { label: 'Positive', color: '#2ecc71' }; // Emerald green
+    return { label: 'Positive', bgColor: '#2ecc71', textColor: '#ffffff' }; // Emerald green
   }
   if (score < -0.2) {
-    return { label: 'Negative', color: '#e74c3c' }; // Alizarin red
+    return { label: 'Negative', bgColor: '#e74c3c', textColor: '#ffffff' }; // Alizarin red
   }
-  return { label: 'Neutral', color: '#95a5a6' }; // Asbestos gray
+  return { label: 'Neutral', bgColor: '#95a5a6', textColor: '#ffffff' }; // Asbestos gray
 };
 
-const SentimentAnalyzer: React.FC<SentimentAnalyzerProps> = ({ score }) => {
+const SentimentAnalyzer: React.FC<SentimentAnalyzerProps> = ({ score, className }) => {
   const { theme } = useTheme();
-  const analyzerId = React.useId();
-  const { label, color } = getSentimentDetails(score);
+  if (!theme) return null;
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+  const { label, bgColor, textColor } = getSentimentDetails(score);
+
+  const indicatorStyle = {
+    '--indicator-bg-color': bgColor,
+    '--indicator-text-color': textColor,
+  } as React.CSSProperties;
 
   return (
-    <>
-      <style>
-        {`
-          [data-analyzer-id="${analyzerId}"] .SentimentAnalyzer-indicator {
-            background-color: ${color};
-            /* A simple heuristic for text color contrast */
-            color: ${color === '#ffd700' || color === '#2ecc71' ? '#1f2937' : '#ffffff'};
-          }
-        `}
-      </style>
-      <div className={`SentimentAnalyzer SentimentAnalyzer--${theme}`} data-analyzer-id={analyzerId}>
-        <span className="SentimentAnalyzer-label">Sentiment:</span>
-        <span className="SentimentAnalyzer-indicator">
-          {label}
-        </span>
-      </div>
-    </>
+    <div className={cn(commonStyles.container, themeStyles.themeWrapper, className)}>
+      <span className={commonStyles.label}>Sentiment:</span>
+      <span className={commonStyles.indicator} style={indicatorStyle}>
+        {label}
+      </span>
+    </div>
   );
 };
 

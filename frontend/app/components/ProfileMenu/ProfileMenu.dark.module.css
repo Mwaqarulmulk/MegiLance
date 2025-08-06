@@ -1,0 +1,12 @@
+/* @AI-HINT: Dark theme variables for the ProfileMenu component. */
+.themeWrapper {
+  --menu-bg-color: var(--color-gray-800);
+  --menu-border-color: var(--color-gray-700);
+  --menu-divider-color: var(--color-gray-700);
+  --text-primary-color: var(--color-white);
+  --text-secondary-color: var(--color-gray-400);
+  --menu-item-text-color: var(--color-gray-300);
+  --menu-item-hover-bg-color: var(--color-gray-700);
+  --menu-item-hover-text-color: var(--color-white);
+  --focus-ring-color: var(--brand-primary-dark);
+}

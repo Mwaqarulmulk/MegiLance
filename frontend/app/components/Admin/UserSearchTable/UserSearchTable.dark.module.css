@@ -1,0 +1,18 @@
+.themeWrapper {
+  --table-bg: #1a202c;
+  --table-border-color: #4a5568;
+  --table-title-color: #f7fafc;
+  --input-bg: #2d3748;
+  --input-border-color: #4a5568;
+  --input-text-color: #e2e8f0;
+  --table-header-color: #a0aec0;
+  --table-header-border-color: #4a5568;
+  --table-cell-text-color: #cbd5e0;
+  --table-row-border-color: #4a5568;
+  --accent-color: #4573df;
+  --accent-color-faded: rgba(69, 115, 223, 0.3);
+}
+
+.table tbody tr:hover {
+  background-color: #2d3748;
+}

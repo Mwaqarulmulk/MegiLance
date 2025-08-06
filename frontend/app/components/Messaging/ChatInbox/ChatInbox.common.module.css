@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-right: 1px solid var(--inbox-border-color);
+  background-color: var(--inbox-bg);
+}
+
+.header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--inbox-border-color);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--inbox-title-color);
+}
+
+.list {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--inbox-border-color);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemDetails {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userName {
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--inbox-username-color);
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: var(--inbox-timestamp-color);
+}
+
+.lastMessage {
+  margin: 0;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--inbox-last-message-color);
+}

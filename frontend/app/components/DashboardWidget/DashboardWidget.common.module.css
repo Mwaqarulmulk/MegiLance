@@ -1,0 +1,120 @@
+/* @AI-HINT: Shared styles for DashboardWidget component. Enterprise-grade metrics card for dashboard analytics. Supports trends, clickable state, and responsive design. */
+
+.dashboardWidget {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-xl);
+  padding: var(--spacing-6) var(--spacing-5);
+  box-shadow: var(--shadow-card);
+  min-width: 180px;
+  min-height: 120px;
+  margin: var(--spacing-2) 0;
+  font-family: var(--font-family-body);
+  background: var(--widget-bg);
+  border: var(--border-width-sm) solid var(--widget-border-color);
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.clickable {
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.clickable:hover {
+  border-color: var(--widget-border-color-hover);
+  box-shadow: var(--shadow-card-hover);
+  transform: var(--transform-card-hover);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.icon {
+  font-size: 1.7em;
+  width: 2.2em;
+  height: 2.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--widget-icon-bg);
+  border-radius: var(--border-radius-lg);
+  color: var(--widget-icon-color);
+  margin-right: var(--spacing-2);
+}
+
+.title {
+  font-size: 1.08em;
+  font-weight: var(--font-weight-semibold);
+  color: var(--widget-title-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.value {
+  font-size: 2.2em;
+  font-weight: var(--font-weight-bold);
+  color: var(--widget-value-color);
+  margin-bottom: var(--spacing-1);
+  margin-top: var(--spacing-0);
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-0);
+  margin-top: calc(-1 * var(--spacing-1));
+  gap: var(--spacing-1);
+}
+
+.trendPositive {
+  color: var(--widget-trend-positive-color);
+}
+
+.trendNegative {
+  color: var(--widget-trend-negative-color);
+}
+
+.trendNeutral {
+  color: var(--widget-trend-neutral-color);
+}
+
+.trendText {
+  font-size: 0.97em;
+  font-weight: var(--font-weight-medium);
+}
+
+.footer {
+  font-size: 0.98em;
+  color: var(--widget-footer-color);
+  margin-top: auto;
+  margin-bottom: calc(-1 * var(--spacing-1));
+}
+
+.content {
+  margin-top: var(--spacing-2);
+  flex-grow: 1;
+}
+
+.actionBtn {
+  background-color: var(--widget-button-bg);
+  color: var(--widget-button-text-color);
+  border: 1px solid var(--widget-button-border-color);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  font-size: 0.9em;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.actionBtn:hover {
+  background-color: var(--widget-button-bg-hover);
+  border-color: var(--widget-button-border-color-hover);
+}

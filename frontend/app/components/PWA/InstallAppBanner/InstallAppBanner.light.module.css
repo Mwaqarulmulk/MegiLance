@@ -1,0 +1,7 @@
+/* @AI-HINT: Light theme variables for the InstallAppBanner component. */
+
+.themeWrapper {
+  --banner-bg-color: var(--surface-primary);
+  --banner-border-color: var(--border-subtle);
+  --banner-text-color: var(--text-primary);
+}

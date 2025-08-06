@@ -4,8 +4,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// AI-HINT: We will dynamically import the light/dark modules in a parent component based on theme context.
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
+
 import commonStyles from './SidebarNav.common.module.css';
+import lightStyles from './SidebarNav.light.module.css';
+import darkStyles from './SidebarNav.dark.module.css';
 
 // Define the structure for a navigation item
 export interface NavItem {
@@ -18,40 +22,35 @@ export interface NavItem {
 export interface SidebarNavProps {
   isCollapsed: boolean;
   navItems: NavItem[];
-  // AI-HINT: theme styles are passed as props to allow dynamic theme switching.
-  lightStyles: { [key: string]: string };
-  darkStyles: { [key: string]: string };
-  currentTheme: 'light' | 'dark';
 }
 
-const SidebarNav: React.FC<SidebarNavProps> = ({ 
-  isCollapsed, 
-  navItems, 
-  lightStyles, 
-  darkStyles, 
-  currentTheme 
-}) => {
+const SidebarNav: React.FC<SidebarNavProps> = ({ isCollapsed, navItems }) => {
   const pathname = usePathname();
-  const themeStyles = currentTheme === 'light' ? lightStyles : darkStyles;
+  const { theme } = useTheme();
+
+  if (!theme) return null;
+
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
   return (
-    <nav className={commonStyles.sidebarNav}>
-      <ul className={commonStyles.navList}>
+    <nav className={cn(commonStyles.sidebarNav, themeStyles.sidebarNav)}>
+      <ul className={cn(commonStyles.navList, themeStyles.navList)}>
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           const Icon = item.icon;
 
-          const linkClasses = `
-            ${commonStyles.navLink}
-            ${isActive ? themeStyles.navLinkActive : themeStyles.navLinkInactive}
-            ${isCollapsed ? commonStyles.navLinkCollapsed : ''}
-          `;
+          const linkClasses = cn(
+            commonStyles.navLink,
+            themeStyles.navLink,
+            isActive ? cn(commonStyles.navLinkActive, themeStyles.navLinkActive) : cn(commonStyles.navLinkInactive, themeStyles.navLinkInactive),
+            isCollapsed && commonStyles.navLinkCollapsed
+          );
 
           return (
-            <li key={item.href} className={commonStyles.navItem}>
+            <li key={item.href} className={cn(commonStyles.navItem, themeStyles.navItem)}>
               <Link href={item.href} title={isCollapsed ? item.label : ''} className={linkClasses}>
-                <Icon className={commonStyles.navIcon} />
-                {!isCollapsed && <span className={commonStyles.navLabel}>{item.label}</span>}
+                <Icon className={cn(commonStyles.navIcon, themeStyles.navIcon)} />
+                {!isCollapsed && <span className={cn(commonStyles.navLabel, themeStyles.navLabel)}>{item.label}</span>}
               </Link>
             </li>
           );

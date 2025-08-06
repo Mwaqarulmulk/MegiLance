@@ -1,0 +1,13 @@
+/* @AI-HINT: Light theme for Navbar. */
+
+.themeWrapper {
+  --navbar-bg: var(--surface);
+  --navbar-border: var(--border);
+  --navbar-logo-text: var(--text-primary);
+  --navbar-link-text: var(--text-secondary);
+  --navbar-link-text-hover: var(--text-primary);
+  --navbar-link-bg-hover: var(--surface-hover);
+  --navbar-icon: var(--text-secondary);
+  --navbar-search-bg: var(--surface-alt);
+  --navbar-search-border: var(--border);
+}

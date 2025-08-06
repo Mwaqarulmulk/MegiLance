@@ -4,9 +4,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import Button from '@/app/components/Button/Button';
-import './AdminPolicyEditor.common.css';
-import './AdminPolicyEditor.light.css';
-import './AdminPolicyEditor.dark.css';
+import commonStyles from './AdminPolicyEditor.common.module.css';
+import lightStyles from './AdminPolicyEditor.light.module.css';
+import darkStyles from './AdminPolicyEditor.dark.module.css';
 
 // Mock policy content
 const mockPolicies = {
@@ -23,6 +23,11 @@ const AdminPolicyEditor: React.FC = () => {
   const [content, setContent] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
+  const styles = {
+    ...commonStyles,
+    ...(theme === 'dark' ? darkStyles : lightStyles),
+  };
+
   useEffect(() => {
     setContent(mockPolicies[selectedPolicy]);
   }, [selectedPolicy]);
@@ -35,33 +40,33 @@ const AdminPolicyEditor: React.FC = () => {
   };
 
   return (
-    <div className={`PolicyEditor-container PolicyEditor-container--${theme}`}>
-      <h2 className="PolicyEditor-title">Admin Policy Editor</h2>
-      <div className={`PolicyEditor-editor PolicyEditor-editor--${theme}`}>
-        <div className="PolicyEditor-controls">
-            <label htmlFor="policy-select" className="sr-only">Select a policy to edit</label>
+    <div className={styles.policyEditorContainer}>
+      <h2 className={styles.policyEditorTitle}>Admin Policy Editor</h2>
+      <div className={styles.policyEditorEditor}>
+        <div className={styles.policyEditorControls}>
+            <label htmlFor="policy-select" className={styles.srOnly}>Select a policy to edit</label>
             <select
               id="policy-select"
               value={selectedPolicy}
               onChange={(e) => setSelectedPolicy(e.target.value as PolicyType)}
-              className={`PolicyEditor-select PolicyEditor-select--${theme}`}
+              className={styles.policyEditorSelect}
             >
               <option value="terms">Terms of Service</option>
               <option value="privacy">Privacy Policy</option>
               <option value="kyc">KYC Policy</option>
             </select>
           </div>
-        <label htmlFor="policy-content" className="sr-only">Policy content</label>
+        <label htmlFor="policy-content" className={styles.srOnly}>Policy content</label>
         <textarea
           id="policy-content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className={`PolicyEditor-textarea PolicyEditor-textarea--${theme}`}
+          className={styles.policyEditorTextarea}
           rows={20}
         />
-        <div className="PolicyEditor-actions">
-          <Button theme={theme} variant="primary" onClick={handleSave}>Save Policy</Button>
-          {isSaved && <span className="Save-confirmation">Policy saved!</span>}
+        <div className={styles.policyEditorActions}>
+          <Button variant="primary" onClick={handleSave}>Save Policy</Button>
+          {isSaved && <span className={styles.saveConfirmation}>Policy saved!</span>}
         </div>
       </div>
     </div>

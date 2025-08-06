@@ -1,0 +1,57 @@
+/* @AI-HINT: Common styles for the ProjectCard component. Uses camelCase for CSS module compatibility. */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-3);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--card-title-color);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.postedTime {
+  font-size: var(--font-size-xs);
+  color: var(--card-subtitle-color);
+  white-space: nowrap;
+  margin-left: var(--spacing-4);
+  flex-shrink: 0;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--card-text-color);
+}
+
+.client {
+  font-weight: var(--font-weight-medium);
+}
+
+.budget {
+  font-weight: var(--font-weight-bold);
+  color: var(--card-highlight-color);
+}
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-5);
+}
+
+.tag {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-full);
+  background-color: var(--tag-bg-color);
+  color: var(--tag-text-color);
+  font-weight: var(--font-weight-medium);
+}

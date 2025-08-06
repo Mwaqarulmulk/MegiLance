@@ -1,0 +1,33 @@
+/* AI-HINT: Dark theme styles for the Accordion. Provides high-contrast colors and refined interaction states for a premium dark mode experience. */
+
+.accordionRoot {
+  background-color: #1a202c; /* Charcoal */
+  border: 1px solid #2d3748; /* Dark Gray 800 */
+}
+
+.accordionItem {
+  border-color: #2d3748; /* Dark Gray 800 */
+}
+
+.accordionTrigger {
+  color: #e2e8f0; /* Gray 200 */
+}
+
+.accordionTrigger:hover {
+  background-color: #2d3748; /* Dark Gray 800 */
+}
+
+.accordionTrigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #1a202c, 0 0 0 4px #4573df; /* Charcoal inner, MegiLance Blue outer */
+  z-index: 1;
+  position: relative;
+}
+
+.accordionIcon::before {
+  border-color: #9ca3af; /* Gray 400 */
+}
+
+.accordionContentText {
+  color: #a0aec0; /* Gray 400 */
+}

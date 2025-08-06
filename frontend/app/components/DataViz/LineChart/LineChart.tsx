@@ -3,9 +3,10 @@
 
 import React from 'react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import './LineChart.common.css';
-import './LineChart.light.css';
-import './LineChart.dark.css';
+import { cn } from '@/lib/utils';
+import commonStyles from './LineChart.common.module.css';
+import lightStyles from './LineChart.light.module.css';
+import darkStyles from './LineChart.dark.module.css';
 
 export interface LineChartProps {
   data: number[];
@@ -17,6 +18,12 @@ const LineChart: React.FC<LineChartProps> = ({ data, labels }) => {
   const width = 500;
   const height = 200;
   const padding = 20;
+
+  if (!theme) {
+    return null; // Or a loading skeleton
+  }
+
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const maxX = width - padding * 2;
   const maxY = height - padding * 2;
@@ -30,20 +37,19 @@ const LineChart: React.FC<LineChartProps> = ({ data, labels }) => {
   }).join(' ');
 
   return (
-    <div className={`LineChart-container LineChart-container--${theme}`}>
-      <svg viewBox={`0 0 ${width} ${height}`} className="LineChart-svg">
+    <div className={cn(commonStyles.lineChartContainer, themeStyles.lineChartContainer)}>
+      <svg viewBox={`0 0 ${width} ${height}`} className={cn(commonStyles.lineChartSvg, themeStyles.lineChartSvg)}>
         <polyline
-          className={`LineChart-line LineChart-line--${theme}`}
-          fill="none"
+          className={cn(commonStyles.line, themeStyles.line)}
           points={points}
         />
-        <g className="LineChart-labels">
+        <g className={cn(commonStyles.labels, themeStyles.labels)}>
           {labels.map((label, i) => (
             <text 
               key={i} 
               x={i * stepX + padding} 
               y={height - 5}
-              className={`LineChart-label-text LineChart-label-text--${theme}`}
+              className={cn(commonStyles.labelText, themeStyles.labelText)}
             >
               {label}
             </text>

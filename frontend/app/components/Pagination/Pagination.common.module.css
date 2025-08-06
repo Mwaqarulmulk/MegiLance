@@ -1,0 +1,43 @@
+/* @AI-HINT: Common styles for the Pagination component. Uses camelCase for CSS module compatibility. */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+}
+
+.paginationButton {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  background-color: var(--pagination-button-bg);
+  border-color: var(--pagination-button-border);
+  color: var(--pagination-button-text);
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: var(--pagination-button-bg-hover);
+}
+
+.paginationButton:disabled {
+  cursor: not-allowed;
+  background-color: var(--pagination-button-bg-disabled);
+  color: var(--pagination-button-text-disabled);
+  border-color: var(--pagination-button-border-disabled);
+}
+
+.paginationButton:focus {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
+.paginationInfo {
+  margin: 0 1rem;
+  color: var(--pagination-info-text);
+}

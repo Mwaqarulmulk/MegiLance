@@ -1,0 +1,32 @@
+/* @AI-HINT: Dark theme styles for the Table component. */
+
+.dark {
+  border: 1px solid #374151;
+}
+
+.dark .table caption {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark .tableThead {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.dark .tableTh {
+  color: #9ca3af;
+}
+
+.dark .tableTbodyTr {
+  background-color: #111827;
+  border-color: #374151;
+}
+
+.dark .tableTbodyTr:hover {
+  background-color: #1f2937;
+}
+
+.dark .tableTd {
+  color: #d1d5db;
+}
