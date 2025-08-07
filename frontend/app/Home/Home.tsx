@@ -8,7 +8,8 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero';
-import ThemeToggleButton from './components/ThemeToggleButton';
+
+
 import Features from './components/Features';
 import AIShowcase from './components/AIShowcase';
 import BlockchainShowcase from './components/BlockchainShowcase';
@@ -29,7 +30,8 @@ const Home: React.FC = () => {
 
   return (
   <div style={{ width: '100vw', overflowX: 'hidden' }}>
-    <ThemeToggleButton />
+ 
+ 
     <header className={commonStyles.header}>
       <nav className={commonStyles.nav}>
         <Link href="/" className={commonStyles.brandLink}>

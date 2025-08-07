@@ -5,7 +5,6 @@ import '../styles/themes/dark.css';
 import './styles/theme.css';
 
 import { ThemeProvider } from 'next-themes';
-import ThemeSwitcher from './components/ThemeSwitcher/ThemeSwitcher';
 import ThemeToggleButton from './components/ThemeToggleButton';
 import InstallAppBanner from './components/PWA/InstallAppBanner/InstallAppBanner';
 import UpdateNotification from './components/PWA/UpdateNotification/UpdateNotification';

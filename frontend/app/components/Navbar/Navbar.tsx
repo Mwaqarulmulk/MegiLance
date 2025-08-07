@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import ProfileMenu from '@/app/components/ProfileMenu/ProfileMenu';
 import type { ProfileMenuItem } from '@/app/components/ProfileMenu/ProfileMenu';
-import ThemeSwitcher from '@/app/components/ThemeSwitcher/ThemeSwitcher';
+
 import Input from '@/app/components/Input/Input';
 import { FaBars, FaTimes, FaSearch } from 'react-icons/fa';
 import MegiLanceLogo from '../MegiLanceLogo/MegiLanceLogo';
@@ -91,7 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({ navItems, profileMenuItems, user }) => 
 
         <div className={cn(commonStyles.navbarRight)}>
           <div className={cn(commonStyles.navbarActions)}>
-            <ThemeSwitcher />
+            
             <ProfileMenu
               userName={user.fullName}
               userEmail={user.email}
