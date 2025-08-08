@@ -1,0 +1,43 @@
+/* AI-HINT: Dark theme styles for Contact page. */
+
+.title {
+  color: var(--text-dark-primary);
+}
+
+.subtitle {
+  color: var(--text-dark-secondary);
+}
+
+.formContainer,
+.infoContainer,
+.successMessage {
+  background: var(--surface-dark);
+  border-color: var(--border-dark);
+}
+
+.textarea {
+  background: var(--background-dark);
+  color: var(--text-dark-primary);
+  border-color: var(--border-dark);
+}
+
+.textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.emailLink {
+  color: var(--primary);
+}
+
+.emailLink:hover {
+  color: var(--primary-light);
+}
+
+.infoContainer h3 {
+  color: var(--text-dark-primary);
+}
+
+.infoContainer p {
+  color: var(--text-dark-secondary);
+}

@@ -1,0 +1,18 @@
+/* AI-HINT: Dark theme overrides for Security page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+
+.card { background: var(--surface-elev); border-color: var(--border); }
+.card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.22); }
+.cardTitle { color: var(--text-primary); }
+.cardDesc { color: var(--text-secondary); }
+
+.badge { background: var(--surface); border-color: var(--border); color: var(--text-secondary); }
+
+.itemIcon { background: var(--primary-ghost); color: var(--primary); }
+
+.button { background: var(--primary); color: var(--text-on-primary); }
+.button:hover { filter: brightness(1.06); }
+.buttonSecondary { color: var(--text-primary); border-color: var(--border); }
+.buttonSecondary:hover { background: var(--surface); }

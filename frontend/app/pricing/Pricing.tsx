@@ -1,4 +1,4 @@
-// @AI-HINT: This is the Pricing page component, refactored to use next-themes and modular CSS.
+// @AI-HINT: Pricing page component. Theme-aware (light/dark) via next-themes, modular CSS modules, animated via Intersection Observer, and fully accessible (ARIA-compliant FAQ and controls).
 'use client';
 
 import React, { useState } from 'react';
@@ -6,7 +6,12 @@ import Link from 'next/link';
 import Button from '@/app/components/Button/Button';
 import { FaCheckCircle, FaChevronDown, FaUser, FaBuilding, FaRocket } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
-import styles from './Pricing.module.css';
+import { useTheme } from 'next-themes';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+
+import commonStyles from './Pricing.common.module.css';
+import lightStyles from './Pricing.light.module.css';
+import darkStyles from './Pricing.dark.module.css';
 
 
 
@@ -77,16 +82,70 @@ const faqItems = [
 ];
 
 // --- FAQ Item Sub-component --- //
-const FaqItem = ({ item, isOpen, onClick }: { item: { question: string; answer: string }, isOpen: boolean, onClick: () => void }) => {
+const FaqItem = ({
+  item,
+  isOpen,
+  onClick,
+  index,
+  themeStyles,
+}: {
+  item: { question: string; answer: string };
+  isOpen: boolean;
+  onClick: () => void;
+  index: number;
+  themeStyles: { [k: string]: string };
+}) => {
+  const contentId = `faq-panel-${index}`;
+  const buttonId = `faq-button-${index}`;
   return (
-    <div className={styles.faqItem}>
-      <button className={styles.faqQuestion} onClick={onClick}>
+    <div className={cn(commonStyles.faqItem, themeStyles.faqItem)}>
+      <button
+        id={buttonId}
+        className={cn(commonStyles.faqQuestion, themeStyles.faqQuestion)}
+        onClick={onClick}
+        aria-expanded={isOpen ? 'true' : 'false'}
+        aria-controls={contentId}
+      >
         <span>{item.question}</span>
-        <FaChevronDown className={cn(styles.faqChevron, { [styles.open]: isOpen })} />
+        <FaChevronDown
+          aria-hidden="true"
+          className={cn(
+            commonStyles.faqChevron,
+            themeStyles.faqChevron,
+            { [commonStyles.faqChevronOpen]: isOpen }
+          )}
+        />
       </button>
-      <div className={cn(styles.faqAnswer, { [styles.open]: isOpen })}>
-        <p>{item.answer}</p>
+      <div
+        id={contentId}
+        role="region"
+        aria-labelledby={buttonId}
+        className={cn(
+          commonStyles.faqAnswer,
+          themeStyles.faqAnswer,
+          { [commonStyles.faqAnswerOpen]: isOpen }
+        )}
+      >
+        <p className={themeStyles.faqAnswerP}>{item.answer}</p>
       </div>
+    </div>
+  );
+};
+
+// Animated section wrapper
+const AnimatedSection: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const isVisible = useIntersectionObserver(ref, { threshold: 0.1 });
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        className,
+        commonStyles.isNotVisible,
+        { [commonStyles.isVisible]: isVisible }
+      )}
+    >
+      {children}
     </div>
   );
 };
@@ -95,89 +154,140 @@ const FaqItem = ({ item, isOpen, onClick }: { item: { question: string; answer: 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const { theme } = useTheme();
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const handleFaqToggle = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
   return (
-    <div className={styles.pricingPage}>
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <span className={styles.headerEyebrow}>Pricing Plans</span>
-          <h1>Find the Perfect Plan for Your Needs</h1>
-          <p className={styles.headerDescription}>From individual freelancers to large enterprises, MegiLance offers a tailored solution to achieve your goals with the power of AI and secure payments.</p>
-        </header>
+    <div className={cn(commonStyles.pricingPage, themeStyles.root)}>
+      <div className={commonStyles.container}>
+        <AnimatedSection className={commonStyles.header}>
+          <header className={commonStyles.header}>
+            <span className={cn(commonStyles.headerEyebrow, themeStyles.headerEyebrow)}>Pricing Plans</span>
+            <h1 className={cn(themeStyles.headerTitle)}>Find the Perfect Plan for Your Needs</h1>
+            <p className={cn(commonStyles.headerDescription, themeStyles.headerDescription)}>
+              From individual freelancers to large enterprises, MegiLance offers a tailored solution to achieve your goals with the power of AI and secure payments.
+            </p>
+          </header>
+        </AnimatedSection>
 
-        <div className={styles.toggleWrapper}>
-          <span className={cn(styles.toggleLabel, { [styles.active]: billingCycle === 'monthly' })}>Monthly</span>
-          <label className={styles.toggle} htmlFor="billing-toggle">
-            <input
-              type="checkbox"
-              id="billing-toggle"
-              className={styles.toggleCheckbox}
-              checked={billingCycle === 'yearly'}
-              onChange={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              aria-label="Billing cycle toggle"
-            />
-            <span className={styles.toggleSlider}></span>
-          </label>
-          <span className={cn(styles.toggleLabel, { [styles.active]: billingCycle === 'yearly' })}>Yearly</span>
-          <span className={styles.toggleDiscount}>Save 20%</span>
-        </div>
-
-        <div className={styles.pricingGrid}>
-          {pricingTiers.map(tier => (
-            <div key={tier.name} className={cn(styles.pricingCard, { [styles.popular]: tier.isPopular })}>
-              {tier.isPopular && <div className={styles.popularBadge}>Most Popular</div>}
-              <div className={styles.cardHeader}>
-                <div className={styles.cardIcon}>{tier.icon}</div>
-                <h2 className={styles.cardTier}>{tier.name}</h2>
-              </div>
-              <div className={styles.priceSection}>
-                {typeof tier.price === 'string' ? (
-                  <div className={cn(styles.price, styles.custom)}>{tier.price}</div>
-                ) : (
-                  <div className={styles.price}>
-                    <span className={styles.priceAmount}>${billingCycle === 'monthly' ? tier.price.monthly : tier.price.yearly}</span>
-                    <span className={styles.pricePeriod}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
-                  </div>
-                )}
-                <p className={styles.cardDescription}>{tier.description}</p>
-              </div>
-              <ul className={styles.features}>
-                {tier.features.map(feature => (
-                  <li key={feature} className={styles.featureItem}>
-                    <FaCheckCircle className={styles.featureIcon} />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className={styles.cardCta}>
-                <Link href={tier.button.href} passHref>
-                  <Button variant={tier.button.variant} fullWidth>{tier.button.text}</Button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <section className={styles.faq}>
-          <div className={styles.faqHeader}>
-            <h2>Frequently Asked Questions</h2>
-            <p>Have questions? We&apos;ve got answers. If you can&apos;t find what you&apos;re looking for, feel free to contact us.</p>
-          </div>
-          <div className={styles.faqList}>
-            {faqItems.map((item, index) => (
-              <FaqItem 
-                key={item.question} 
-                item={item} 
-                isOpen={openFaq === index}
-                onClick={() => handleFaqToggle(index)}
+        <AnimatedSection className={commonStyles.toggleWrapper}>
+          <div className={commonStyles.toggleWrapper}>
+            <span
+              className={cn(
+                commonStyles.toggleLabel,
+                themeStyles.toggleLabel,
+                { [themeStyles.toggleLabelActive]: billingCycle === 'monthly' }
+              )}
+            >
+              Monthly
+            </span>
+            <label className={commonStyles.toggle} htmlFor="billing-toggle">
+              <input
+                type="checkbox"
+                id="billing-toggle"
+                className={cn(commonStyles.toggleCheckbox, themeStyles.toggleCheckbox)}
+                checked={billingCycle === 'yearly'}
+                onChange={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+                aria-label="Toggle billing cycle"
+                role="switch"
+                aria-checked={billingCycle === 'yearly' ? 'true' : 'false'}
               />
+              <span className={cn(commonStyles.toggleSlider, themeStyles.toggleSlider)}></span>
+            </label>
+            <span
+              className={cn(
+                commonStyles.toggleLabel,
+                themeStyles.toggleLabel,
+                { [themeStyles.toggleLabelActive]: billingCycle === 'yearly' }
+              )}
+            >
+              Yearly
+            </span>
+            <span className={cn(commonStyles.toggleDiscount, themeStyles.toggleDiscount)}>Save 20%</span>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <div className={commonStyles.pricingGrid}>
+            {pricingTiers.map((tier) => (
+              <div
+                key={tier.name}
+                className={cn(
+                  commonStyles.pricingCard,
+                  themeStyles.pricingCard,
+                  { [commonStyles.popular]: tier.isPopular, [themeStyles.popular]: tier.isPopular }
+                )}
+              >
+                {tier.isPopular && (
+                  <div className={cn(commonStyles.popularBadge, themeStyles.popularBadge)}>Most Popular</div>
+                )}
+                <div className={commonStyles.cardHeader}>
+                  <div className={cn(commonStyles.cardIcon, themeStyles.cardIcon)}>{tier.icon}</div>
+                  <h2 className={cn(commonStyles.cardTier, themeStyles.cardTier)}>{tier.name}</h2>
+                </div>
+                <div className={commonStyles.priceSection}>
+                  {typeof tier.price === 'string' ? (
+                    <div className={cn(commonStyles.price, commonStyles.priceCustom, themeStyles.priceCustom)}>
+                      {tier.price}
+                    </div>
+                  ) : (
+                    <div className={commonStyles.price}>
+                      <span className={cn(commonStyles.priceAmount, themeStyles.priceAmount)}>
+                        ${billingCycle === 'monthly' ? tier.price.monthly : tier.price.yearly}
+                      </span>
+                      <span className={cn(commonStyles.pricePeriod, themeStyles.pricePeriod)}>
+                        /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                      </span>
+                    </div>
+                  )}
+                  <p className={cn(commonStyles.cardDescription, themeStyles.cardDescription)}>{tier.description}</p>
+                </div>
+                <ul className={commonStyles.features}>
+                  {tier.features.map((feature) => (
+                    <li key={feature} className={cn(commonStyles.featureItem, themeStyles.featureItem)}>
+                      <FaCheckCircle aria-hidden="true" className={cn(commonStyles.featureIcon, themeStyles.featureIcon)} />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className={commonStyles.cardCta}>
+                  <Link href={tier.button.href} passHref>
+                    <Button variant={tier.button.variant} fullWidth>
+                      {tier.button.text}
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
-        </section>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <section className={commonStyles.faq} aria-labelledby="pricing-faq-heading">
+            <div className={commonStyles.faqHeader}>
+              <h2 id="pricing-faq-heading" className={cn(themeStyles.faqHeaderTitle)}>Frequently Asked Questions</h2>
+              <p className={cn(themeStyles.faqHeaderText)}>
+                Have questions? We&apos;ve got answers. If you can&apos;t find what you&apos;re looking for, feel free to contact us.
+              </p>
+            </div>
+            <div className={cn(commonStyles.faqList, themeStyles.faqList)}>
+              {faqItems.map((item, index) => (
+                <FaqItem
+                  key={item.question}
+                  item={item}
+                  isOpen={openFaq === index}
+                  onClick={() => handleFaqToggle(index)}
+                  index={index}
+                  themeStyles={themeStyles}
+                />
+              ))}
+            </div>
+          </section>
+        </AnimatedSection>
       </div>
     </div>
   );

@@ -1,0 +1,25 @@
+/* AI-HINT: Common styles for Privacy Policy page. Structured content, TOC, sections, animations. */
+
+.page { padding: var(--spacing-16) 0; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 var(--spacing-6); }
+.header { text-align: center; margin-bottom: var(--spacing-10); }
+.title { font-family: var(--font-family-headings); font-size: clamp(2rem,4vw,3rem); font-weight: var(--font-weight-bold); }
+.subtitle { font-size: var(--font-size-lg); margin-top: var(--spacing-2); }
+.meta { margin-top: var(--spacing-2); font-size: var(--font-size-sm); }
+
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: var(--spacing-8); }
+@media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+.toc { position: sticky; top: 96px; align-self: start; border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); }
+.tocTitle { font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-2); }
+.tocList { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.tocLink { display: inline-block; padding: 6px 10px; border-radius: var(--border-radius-sm); text-decoration: none; transition: background .2s ease, color .2s ease; }
+
+.content { display: grid; gap: var(--spacing-8); }
+.section { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-6); }
+.section h2 { font-size: clamp(1.25rem,2.6vw,1.8rem); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-3); }
+.section p, .section li { line-height: 1.75; }
+.section ul { margin-left: 1.25rem; display: grid; gap: 8px; }
+
+.isNotVisible { opacity: 0; transform: translateY(16px); }
+.isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }

@@ -1,0 +1,43 @@
+/* AI-HINT: Light theme styles for Contact page. */
+
+.title {
+  color: var(--text-light-primary);
+}
+
+.subtitle {
+  color: var(--text-light-secondary);
+}
+
+.formContainer,
+.infoContainer,
+.successMessage {
+  background: var(--surface-light);
+  border-color: var(--border-light);
+}
+
+.textarea {
+  background: var(--background-light);
+  color: var(--text-light-primary);
+  border-color: var(--border-light);
+}
+
+.textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.emailLink {
+  color: var(--primary);
+}
+
+.emailLink:hover {
+  color: var(--primary-dark);
+}
+
+.infoContainer h3 {
+  color: var(--text-light-primary);
+}
+
+.infoContainer p {
+  color: var(--text-light-secondary);
+}

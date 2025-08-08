@@ -1,0 +1,14 @@
+/* AI-HINT: Dark theme overrides for Terms page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+.meta { color: var(--text-tertiary); }
+
+.toc { background: var(--surface-elev); border-color: var(--border); }
+.tocTitle { color: var(--text-primary); }
+.tocLink { color: var(--text-secondary); }
+.tocLink:hover { background: var(--surface); color: var(--text-primary); }
+
+.section { background: var(--surface-elev); border-color: var(--border); }
+.section h2 { color: var(--text-primary); }
+.section p, .section li { color: var(--text-secondary); }

@@ -1,9 +1,104 @@
-.faq {}
-.faqContainer {}
-.faqHeader {}
-.faqList {}
-.faqItem {}
-.faqItemQuestion {}
-.faqItemIcon {}
-.faqItemIconOpen {}
-.faqItemAnswer {}
+/* AI-HINT: Common styles for FAQ page. Structure, spacing, accordion behavior, and animations. */
+
+.faq {
+  padding: var(--spacing-16) 0;
+}
+
+.faqContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+.faqHeader {
+  text-align: center;
+  margin-bottom: var(--spacing-10);
+}
+
+.faqHeader h1 {
+  font-family: var(--font-family-headings);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-3);
+}
+
+.faqHeader p {
+  font-size: var(--font-size-lg);
+}
+
+.faqList {
+  border-top: 1px solid transparent; /* themed */
+}
+
+.faqItem {
+  border-bottom: 1px solid transparent; /* themed */
+}
+
+.faqItemQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: var(--spacing-5) 0;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.faqItemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--border-radius-sm);
+  transition: transform var(--transition-duration-normal);
+}
+
+.faqItemIconOpen {
+  transform: rotate(180deg);
+}
+
+.faqItemAnswer {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
+}
+
+.faqItemAnswerOpen {
+  max-height: 1000px; /* large */
+  transition: max-height 1s ease-in-out;
+}
+
+.faqItemAnswer p {
+  padding: 0 0 var(--spacing-6) 0;
+  line-height: 1.7;
+}
+
+/* Animations */
+.isNotVisible {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.isVisible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* A11y utilities */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 1px, 1px);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,25 @@
+/* AI-HINT: Light theme overrides for Jobs page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+
+.headerText { color: var(--text-secondary); }
+
+.input, .select { background: var(--surface-elev); border-color: var(--border); color: var(--text-primary); }
+.input::placeholder { color: var(--text-tertiary); }
+
+.searchButton { background: var(--primary); color: var(--text-on-primary); box-shadow: 0 4px 16px rgba(69,115,223,0.25); }
+.searchButton:hover { box-shadow: 0 6px 20px rgba(69,115,223,0.35); }
+
+.card { background: var(--surface-elev); border-color: var(--border); }
+.card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+.cardTitle { color: var(--text-primary); }
+.cardMeta { color: var(--text-tertiary); }
+.cardDesc { color: var(--text-secondary); }
+.cardBadge { background: var(--primary-ghost); color: var(--primary); }
+
+.cardButton { background: var(--primary); color: var(--text-on-primary); }
+.cardButton:hover { filter: brightness(1.05); }
+.cardButtonSecondary { color: var(--text-primary); border: 1px solid var(--border); }
+.cardButtonSecondary:hover { background: var(--surface); }
+
+.label { color: var(--text-secondary); }

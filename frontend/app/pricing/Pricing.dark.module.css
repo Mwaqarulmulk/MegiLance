@@ -1,0 +1,137 @@
+/* AI-HINT: Dark theme styles for Pricing page. Sets colors, borders, and themed variants. */
+
+.root {
+  background: var(--surface);
+}
+
+.headerEyebrow {
+  color: var(--primary);
+  background-color: var(--primary-translucent);
+}
+
+.header h1 {
+  color: var(--text-primary);
+}
+
+.headerDescription {
+  color: var(--text-secondary);
+}
+
+.toggleLabel {
+  color: var(--text-secondary);
+}
+
+.toggleLabelActive {
+  color: var(--text-primary);
+}
+
+.toggleSlider {
+  background-color: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+
+.toggleSlider:before {
+  background-color: var(--text-secondary);
+}
+
+.toggleCheckbox:checked + .toggleSlider {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.toggleCheckbox:checked + .toggleSlider:before {
+  background-color: #111827; /* dark knob contrast */
+}
+
+.toggleDiscount {
+  color: var(--success);
+  background-color: var(--success-translucent);
+}
+
+.pricingCard {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+
+.popular {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.cardIcon {
+  color: var(--primary);
+}
+
+.cardTier {
+  color: var(--text-primary);
+}
+
+.priceCustom {
+  color: var(--text-primary);
+}
+
+.priceAmount {
+  color: var(--text-primary);
+}
+
+.pricePeriod {
+  color: var(--text-secondary);
+}
+
+.cardDescription {
+  color: var(--text-secondary);
+}
+
+.featureItem {
+  color: var(--text-secondary);
+}
+
+.featureIcon {
+  color: var(--success);
+}
+
+.faqHeader h2 {
+  color: var(--text-primary);
+}
+
+.faqHeader p {
+  color: var(--text-secondary);
+}
+
+.faqList {
+  border-top-color: var(--border);
+}
+
+.faqItem {
+  border-bottom-color: var(--border);
+}
+
+.faqChevron {
+  color: var(--text-secondary);
+}
+
+/* Additional theme hooks used by the component */
+.headerTitle {
+  color: var(--text-primary);
+}
+
+.faqHeaderTitle {
+  color: var(--text-primary);
+}
+
+.faqHeaderText {
+  color: var(--text-secondary);
+}
+
+.faqQuestion {
+  color: var(--text-primary);
+}
+
+.faqAnswerP {
+  color: var(--text-secondary);
+}
+
+.popularBadge {
+  background: var(--primary);
+  color: var(--text-on-primary);
+}

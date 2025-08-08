@@ -1,1 +1,41 @@
-.themeWrapper {}
+/* AI-HINT: Light theme overrides for FAQ page. Colors and borders only. */
+
+.themeWrapper {
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+.faqHeader h1 {
+  color: var(--text-primary);
+}
+
+.faqHeader p {
+  color: var(--text-secondary);
+}
+
+.faqList {
+  border-top-color: var(--border);
+}
+
+.faqItem {
+  border-bottom-color: var(--border);
+}
+
+.faqItemQuestion {
+  color: var(--text-primary);
+}
+
+.faqItemIcon {
+  color: var(--text-secondary);
+}
+
+.faqItemAnswer p {
+  color: var(--text-secondary);
+}
+
+/* Focus styles */
+.faqItemQuestion:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: var(--border-radius-sm);
+}

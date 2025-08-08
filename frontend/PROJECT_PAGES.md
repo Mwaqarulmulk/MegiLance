@@ -41,13 +41,13 @@ These pages are for marketing, information, and user acquisition. They do not re
 -   `[x]` `/about` - About Us Page
 -   `[x]` `/blog` - Blog Posts List
 -   `[x]` `/blog/[slug]` - Individual Blog Post
--   `[ ]` `/contact` - Contact Us Page
--   `[ ]` `/faq` - Frequently Asked Questions
--   `[ ]` `/jobs` - Public Job Listings Page
--   `[ ]` `/pricing` - Pricing Plans Page
--   `[ ]` `/legal/privacy` - Privacy Policy
--   `[ ]` `/legal/terms` - Terms of Service
--   `[ ]` `/security` - Security Information Page
+-   `[x]` `/contact` - Contact Us Page
+-   `[x]` `/faq` - Frequently Asked Questions
+-   `[x]` `/jobs` - Public Job Listings Page
+-   `[x]` `/pricing` - Pricing Plans Page
+-   `[x]` `/legal/privacy` - Privacy Policy
+-   `[x]` `/legal/terms` - Terms of Service
+-   `[x]` `/security` - Security Information Page
 -   `[ ]` `/support` - Support Page
 -   `[ ]` `/teams` - Teams Page
 -   `[ ]` `/testimonials` - Testimonials Page
