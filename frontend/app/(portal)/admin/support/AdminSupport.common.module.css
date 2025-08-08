@@ -1,0 +1,34 @@
+/* AI-HINT: Common styles for Admin Support page: filters, tickets list, details panel. */
+
+.page { padding: var(--spacing-8); }
+.container { max-width: 1200px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
+
+.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
+.title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
+.subtitle { font-size: var(--font-size-sm); opacity: .9; }
+
+.controls { display: flex; gap: var(--spacing-2); flex-wrap: wrap; }
+.input, .select, .button { padding: 8px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; }
+.button { cursor: pointer; font-weight: var(--font-weight-medium); }
+
+.layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--spacing-5); }
+@media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+
+.listCard, .detailsCard { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); display: grid; gap: var(--spacing-3); }
+.cardTitle { font-weight: var(--font-weight-semibold); }
+
+.list { display: grid; gap: 8px; }
+.item { display: grid; gap: 4px; padding: 10px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; cursor: pointer; }
+.item:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.itemHeader { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.meta { font-size: 12px; opacity: .9; display: flex; gap: 8px; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; }
+
+.detailsGrid { display: grid; gap: 8px; }
+.kv { display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: baseline; }
+.actions { display: flex; gap: 8px; margin-top: 8px; }
+
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.isNotVisible { opacity: 0; transform: translateY(16px); }
+.isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }

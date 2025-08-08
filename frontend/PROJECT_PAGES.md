@@ -82,23 +82,23 @@ These pages are accessible to any logged-in user, regardless of their specific r
 
 -   `[x]` `/admin/dashboard` - Admin Dashboard Overview
 -   `[x]` `/admin/users` - User Management
--   `[ ]` `/admin/projects` - Platform-wide Project Management
--   `[ ]` `/admin/payments` - Platform-wide Payment Management
--   `[ ]` `/admin/support` - Admin Support Interface
--   `[ ]` `/admin/ai-monitoring` - AI Monitoring Tools
--   `[ ]` `/admin/settings` - Admin Settings
+-   `[x]` `/admin/projects` - Platform-wide Project Management
+-   `[x]` `/admin/payments` - Platform-wide Payment Management
+-   `[x]` `/admin/support` - Admin Support Interface
+-   `[x]` `/admin/ai-monitoring` - AI Monitoring Tools
+-   `[x]` `/admin/settings` - Admin Settings
 
 #### 3.3.3. Client Portal
 
 -   `[x]` `/client/dashboard` - Client Dashboard Overview
--   `[ ]` `/client/post-job` - Post a New Job Form
--   `[ ]` `/client/projects` - Client's Projects List
--   `[ ]` `/client/projects/[id]` - Individual Project View
--   `[ ]` `/client/freelancers` - Browse/Search Freelancers
--   `[ ]` `/client/hire` - Hire a Freelancer Process
--   `[ ]` `/client/reviews` - Client's Reviews Management
--   `[ ]` `/client/payments` - Client's Payment History
--   `[ ]` `/client/settings` - Client Account Settings
+-   `[x]` `/client/post-job` - Post a New Job Form
+-   `[x]` `/client/projects` - Client's Projects List
+-   `[x]` `/client/projects/[id]` - Individual Project View
+-   `[x]` `/client/freelancers` - Browse/Search Freelancers
+-   `[x]` `/client/hire` - Hire a Freelancer Process
+-   `[x]` `/client/reviews` - Client's Reviews Management
+-   `[x]` `/client/payments` - Client's Payment History
+-   `[x]` `/client/settings` - Client Account Settings
 
 #### 3.3.3. Freelancer Portal
 

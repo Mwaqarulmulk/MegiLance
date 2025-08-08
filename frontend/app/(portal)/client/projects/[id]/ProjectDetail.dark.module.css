@@ -1,0 +1,14 @@
+/* AI-HINT: Dark theme overrides for Client Project Detail page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+.meta { color: var(--text-secondary); }
+.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+
+.section { background: var(--surface-elev); border: 1px solid var(--border); }
+.sectionTitle { color: var(--text-primary); }
+
+.item { background: var(--surface); border: 1px solid var(--border); }
+
+.button.primary { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
+.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }

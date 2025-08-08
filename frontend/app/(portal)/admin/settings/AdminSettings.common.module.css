@@ -1,0 +1,30 @@
+/* AI-HINT: Common styles for Admin Settings page: sections, forms, toggles, and save bar. */
+
+.page { padding: var(--spacing-8); }
+.container { max-width: 960px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
+
+.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
+.title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
+.subtitle { font-size: var(--font-size-sm); opacity: .9; }
+
+.section { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); display: grid; gap: var(--spacing-4); }
+.sectionTitle { font-weight: var(--font-weight-semibold); }
+
+.field { display: grid; gap: 6px; }
+.label { font-weight: var(--font-weight-medium); }
+.input, .select, .textarea { padding: 10px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; resize: vertical; }
+.help { font-size: 12px; opacity: .9; }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); }
+@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+
+.toggle { display: inline-flex; align-items: center; gap: 10px; }
+.toggle input { width: 40px; height: 22px; }
+
+.saveBar { position: sticky; bottom: 16px; display: flex; gap: var(--spacing-2); justify-content: flex-end; margin-top: var(--spacing-2); }
+.button { padding: 10px 14px; border-radius: var(--border-radius-md); border: 1px solid transparent; cursor: pointer; font-weight: var(--font-weight-medium); }
+
+.isNotVisible { opacity: 0; transform: translateY(16px); }
+.isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }
+
+.input:focus-visible, .select:focus-visible, .textarea:focus-visible, .button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }

@@ -1,0 +1,18 @@
+/* AI-HINT: Light theme overrides for Admin Payments page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+
+.input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
+.button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.12); }
+.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+
+.card { background: var(--surface-elev); border: 1px solid var(--border); }
+.cardTitle { color: var(--text-primary); }
+.metric { color: var(--text-primary); }
+
+.table { background: var(--surface-elev); }
+.th { color: var(--text-secondary); border-bottom-color: var(--border); }
+.td { color: var(--text-primary); border-bottom-color: var(--border); }
+
+.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }

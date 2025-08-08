@@ -7,16 +7,16 @@ import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
 // Reuse existing dashboard components and types
-import DashboardHeader from '@/app/(auth)/dashboard/components/DashboardHeader/DashboardHeader';
-import DashboardMetrics from '@/app/(auth)/dashboard/components/DashboardMetrics/DashboardMetrics';
-import DashboardRecentProjects from '@/app/(auth)/dashboard/components/DashboardRecentProjects/DashboardRecentProjects';
-import DashboardActivityFeed from '@/app/(auth)/dashboard/components/DashboardActivityFeed/DashboardActivityFeed';
-import type { User } from '@/app/(auth)/dashboard/types';
+import DashboardHeader from '@/app/(auth)/auth-dashboard/components/DashboardHeader/DashboardHeader';
+import DashboardMetrics from '@/app/(auth)/auth-dashboard/components/DashboardMetrics/DashboardMetrics';
+import DashboardRecentProjects from '@/app/(auth)/auth-dashboard/components/DashboardRecentProjects/DashboardRecentProjects';
+import DashboardActivityFeed from '@/app/(auth)/auth-dashboard/components/DashboardActivityFeed/DashboardActivityFeed';
+import type { User } from '@/app/(auth)/auth-dashboard/types';
 
 // Use (auth) dashboard style tokens for the header component which expects a merged styles object
-import authCommon from '@/app/(auth)/dashboard/dashboard.common.module.css';
-import authLight from '@/app/(auth)/dashboard/dashboard.light.module.css';
-import authDark from '@/app/(auth)/dashboard/dashboard.dark.module.css';
+import authCommon from '@/app/(auth)/auth-dashboard/dashboard.common.module.css';
+import authLight from '@/app/(auth)/auth-dashboard/dashboard.light.module.css';
+import authDark from '@/app/(auth)/auth-dashboard/dashboard.dark.module.css';
 
 // Page-level styles for layout
 import common from './Dashboard.common.module.css';

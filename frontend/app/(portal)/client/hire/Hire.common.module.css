@@ -1,0 +1,30 @@
+/* AI-HINT: Common styles for Client Hire flow: steps, forms, summary, and actions. */
+
+.page { padding: var(--spacing-8); }
+.container { max-width: 900px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
+
+.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
+.title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
+.subtitle { font-size: var(--font-size-sm); opacity: .9; }
+
+.steps { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.step { padding: 6px 10px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; }
+.stepActive { font-weight: var(--font-weight-semibold); }
+
+.section { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); display: grid; gap: var(--spacing-3); }
+.sectionTitle { font-weight: var(--font-weight-semibold); }
+
+.input, .select, .textarea { padding: 10px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; }
+.textarea { min-height: 110px; resize: vertical; }
+.row { display: grid; gap: var(--spacing-3); grid-template-columns: 1fr 1fr; }
+@media (max-width: 700px) { .row { grid-template-columns: 1fr; } }
+
+.actions { display: flex; gap: var(--spacing-2); justify-content: flex-end; }
+.button { padding: 10px 14px; border-radius: var(--border-radius-md); border: 1px solid transparent; cursor: pointer; font-weight: var(--font-weight-medium); }
+
+.isNotVisible { opacity: 0; transform: translateY(16px); }
+.isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }
+
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.input:focus-visible, .select:focus-visible, .textarea:focus-visible, .button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }

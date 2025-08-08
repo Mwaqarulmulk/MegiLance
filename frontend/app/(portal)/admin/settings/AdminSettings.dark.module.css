@@ -1,0 +1,13 @@
+/* AI-HINT: Dark theme overrides for Admin Settings page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+
+.section { background: var(--surface-elev); border: 1px solid var(--border); }
+.sectionTitle { color: var(--text-primary); }
+
+.input, .select, .textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
+.help { color: var(--text-secondary); }
+
+.button.primary { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
+.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }

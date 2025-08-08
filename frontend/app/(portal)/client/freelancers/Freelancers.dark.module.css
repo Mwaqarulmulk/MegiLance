@@ -1,0 +1,13 @@
+/* AI-HINT: Dark theme overrides for Client Freelancers page. */
+
+.themeWrapper { background: var(--surface); color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+
+.input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
+.button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
+.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+
+.card { background: var(--surface-elev); border: 1px solid var(--border); }
+.cardTitle { color: var(--text-primary); }
+.meta { color: var(--text-secondary); }
+.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
