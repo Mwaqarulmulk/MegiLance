@@ -23,11 +23,11 @@ interface SidebarProps {
 // AI-HINT: Navigation items are defined as a data structure for easy management and role-based filtering in the future.
 const defaultNavItems: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/projects', label: 'Projects', icon: Briefcase },
-  { href: '/wallet', label: 'Wallet', icon: Wallet },
-  { href: '/analytics', label: 'Analytics', icon: BarChart2 },
+  { href: '/dashboard/projects', label: 'Projects', icon: Briefcase },
+  { href: '/dashboard/wallet', label: 'Wallet', icon: Wallet },
+  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
   { href: '/messages', label: 'Messages', icon: MessageSquare },
-  { href: '/clients', label: 'Clients', icon: Users },
+  { href: '/dashboard/community', label: 'Community', icon: Users },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {

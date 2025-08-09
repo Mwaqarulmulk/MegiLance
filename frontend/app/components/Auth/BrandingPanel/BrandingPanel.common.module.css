@@ -6,16 +6,16 @@
 }
 
 .brandingPanel {
-  width: 50%;
   padding: 4rem;
   display: none; /* Hidden on mobile */
   flex-direction: column;
   justify-content: center; /* Vertically center the content */
   position: relative;
   transition: background-color 0.3s ease;
+  height: 100%; /* fill grid cell height */
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .brandingPanel {
     display: flex;
   }
