@@ -8,6 +8,7 @@ import Footer from '@/app/components/Footer/Footer';
 import ThemeToggleButton from '@/app/components/ThemeToggleButton';
 import InstallAppBanner from '@/app/components/PWA/InstallAppBanner/InstallAppBanner';
 import UpdateNotification from '@/app/components/PWA/UpdateNotification/UpdateNotification';
+import DevRibbon from '@/app/components/DevRibbon/DevRibbon';
 
 function isChromeLessRoute(pathname: string | null | undefined) {
   if (!pathname) return true; // default to hiding chrome pre-mount to avoid overlay on auth screens
@@ -43,7 +44,12 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
 
   // Until mounted, render a minimal shell. For auth, keep a consistent main wrapper.
   if (!mounted || hideChrome) {
-    return <main className="min-h-screen">{children}</main>;
+    return (
+      <>
+        <DevRibbon />
+        <main className="min-h-screen">{children}</main>
+      </>
+    );
   }
 
   // On marketing routes, do not render AppChrome header/footer because
@@ -54,6 +60,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <DevRibbon />
       <Header />
       <main className="flex-grow">{children}</main>
       <Footer />

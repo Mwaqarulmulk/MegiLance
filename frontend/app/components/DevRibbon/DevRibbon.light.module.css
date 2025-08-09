@@ -1,0 +1,22 @@
+/* @AI-HINT: Light theme styles for DevRibbon */
+.root {
+  background: rgba(69, 115, 223, 0.95); /* MegiLance Blue */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.select {
+  background: white;
+  color: #111;
+  border-color: rgba(0,0,0,0.08);
+}
+
+.link {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border-color: rgba(255,255,255,0.25);
+}
+.link:hover {
+  background: rgba(255,255,255,0.22);
+}

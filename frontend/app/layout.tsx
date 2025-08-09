@@ -7,6 +7,7 @@ import './styles/theme.css';
 
 import { ThemeProvider } from 'next-themes';
 import AppChrome from './components/AppChrome/AppChrome';
+import { DevAuthProvider } from './providers/DevAuthProvider';
 
 export const metadata: Metadata = {
   title: 'MegiLance - Next-Gen Freelance Platform',
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           enableSystem={true}
           disableTransitionOnChange={false}
         >
-          <AppChrome>
-            {children}
-          </AppChrome>
+          <DevAuthProvider>
+            <AppChrome>
+              {children}
+            </AppChrome>
+          </DevAuthProvider>
         </ThemeProvider>
       </body>
     </html>

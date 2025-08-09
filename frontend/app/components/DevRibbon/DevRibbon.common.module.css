@@ -1,0 +1,49 @@
+/* @AI-HINT: Common styles for DevRibbon. Avoid global CSS; use component-scoped modules. */
+.root {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 8px 10px;
+  border-radius: 10px;
+  backdrop-filter: saturate(180%) blur(10px);
+}
+
+.title {
+  font-weight: 700;
+}
+
+.label {
+  opacity: 0.85;
+}
+
+.select {
+  appearance: none;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  outline: none;
+}
+.select:focus {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 2px rgba(69, 115, 223, 0.35);
+}
+
+.link {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 120ms ease, opacity 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+.link:hover {
+  transform: translateY(-1px);
+}
+.link:active {
+  transform: translateY(0);
+}
