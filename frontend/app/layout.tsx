@@ -5,11 +5,7 @@ import '../styles/themes/dark.css';
 import './styles/theme.css';
 
 import { ThemeProvider } from 'next-themes';
-import ThemeToggleButton from './components/ThemeToggleButton';
-import InstallAppBanner from './components/PWA/InstallAppBanner/InstallAppBanner';
-import UpdateNotification from './components/PWA/UpdateNotification/UpdateNotification';
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
+import AppChrome from './components/AppChrome/AppChrome';
 
 export const metadata: Metadata = {
   title: 'MegiLance - Next-Gen Freelance Platform',
@@ -27,14 +23,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           enableSystem={true}
           disableTransitionOnChange={false}
         >
-          <Header />
-          <main className="flex-grow">
+          <AppChrome>
             {children}
-          </main>
-          <Footer />
-          <ThemeToggleButton />
-          <InstallAppBanner />
-          <UpdateNotification />
+          </AppChrome>
         </ThemeProvider>
       </body>
     </html>

@@ -34,7 +34,7 @@ const Header: React.FC = () => {
             <Link href="/about" className={cn(commonStyles.navLink, themeStyles.navLink)}>About</Link>
             <Link href="/blog" className={cn(commonStyles.navLink, themeStyles.navLink)}>Blog</Link>
             <Link href="/contact" className={cn(commonStyles.navLink, themeStyles.navLink)}>Contact</Link>
-            <Link href="/Login" className={cn(commonStyles.navLink, commonStyles.signIn, themeStyles.signIn)}>Sign In</Link>
+            <Link href="/login" className={cn(commonStyles.navLink, commonStyles.signIn, themeStyles.signIn)}>Sign In</Link>
           </div>
           <button onClick={toggleMenu} className={cn(commonStyles.mobileMenuButton, themeStyles.mobileMenuButton)} aria-label="Toggle menu">
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
         <Link href="/about" className={cn(commonStyles.navLink, themeStyles.navLink)}>About</Link>
         <Link href="/blog" className={cn(commonStyles.navLink, themeStyles.navLink)}>Blog</Link>
         <Link href="/contact" className={cn(commonStyles.navLink, themeStyles.navLink)}>Contact</Link>
-        <Link href="/Login" className={cn(commonStyles.navLink, commonStyles.signIn, themeStyles.signIn)}>Sign In</Link>
+        <Link href="/login" className={cn(commonStyles.navLink, commonStyles.signIn, themeStyles.signIn)}>Sign In</Link>
       </div>
     </>
   );

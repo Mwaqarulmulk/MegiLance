@@ -24,12 +24,13 @@ export interface AuthBrandingPanelProps {
 const AuthBrandingPanel: React.FC<AuthBrandingPanelProps> = ({ roleConfig }) => {
   const { theme } = useTheme();
   const styles = React.useMemo(() => {
-    const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+    const effectiveTheme = theme ?? 'light';
+    const themeStyles = effectiveTheme === 'dark' ? darkStyles : lightStyles;
     return { ...commonStyles, ...themeStyles };
   }, [theme]);
   const { brandIcon: BrandIcon, brandTitle, brandText } = roleConfig;
 
-  if (!theme) return null;
+  // Always render to avoid initial layout shift; theme styles will hydrate on mount.
 
   return (
     <div className={styles.brandingPanel}>

@@ -30,7 +30,7 @@ const CTA: React.FC = () => {
       <div className={commonStyles.homeCtaContent}>
         <h2 className={cn(commonStyles.homeCtaTitle, themeStyles.homeCtaTitle)}>Ready to Join the Future of Freelancing?</h2>
         <p className={cn(commonStyles.homeCtaSubtitle, themeStyles.homeCtaSubtitle)}>Sign up today and get access to AI-powered tools, global projects, and secure crypto payments.</p>
-        <Link href="/Signup" passHref>
+        <Link href="/signup" passHref>
           <Button as="a" variant="primary" size="large">
             <FaRocket aria-hidden="true" /> Get Started for Free
           </Button>

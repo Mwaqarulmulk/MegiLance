@@ -14,6 +14,7 @@ This document summarizes the current project structure, identifies duplication a
     - `client/` (projects, payments, reviews, settings, etc.)
     - `admin/` (dashboard, users, projects, payments, support, ai-monitoring, settings)
     - `audit-logs/`, `notifications/`, `search/`, `help/`
+
   - Public routes and pages per `PROJECT_PAGES.md` (home, blog, pricing, faq, etc.)
   - `Messages/` (feature component library for the Messages experience)
   - `components/` (shared UI)
@@ -34,13 +35,13 @@ This document summarizes the current project structure, identifies duplication a
 - Messages global CSS in component file:
   - Moved global CSS imports to `app/(portal)/messages/page.tsx` per App Router rules.
 
-## Known Remaining Build Issues (as of this audit)
+## Build Status (Aug 9, 2025)
 
-- Messages build error persists referencing `ConversationList` even after fixing relative types imports and relocating global CSS.
-  - Hypotheses:
-    - Residual module resolution due to cache; or another import path typo.
-    - A separate module-not-found elsewhere halting the build with a misleading trace.
-- Many files import `@/lib/utils` and the file exists (`lib/utils.ts`) with `cn`. This should be resolved with `jsconfig.json`.
+- Production build is green. Recent fixes included:
+  - Migrating legacy admin/client layouts to shared `app/layouts/AdminLayout` and `app/layouts/DashboardLayout` with `SidebarNav`.
+  - Removing deprecated `ThemeContext` usage; standardized on `next-themes`.
+  - Aligning `Button`, `UserAvatar`, and `ProjectCard` props across pages.
+  - Cleaning up legacy route collisions by keeping older routes under `legacy/`.
 
 ## Single Source of Truth (SSOT) Plan
 
@@ -59,13 +60,10 @@ This document summarizes the current project structure, identifies duplication a
 
 ## Consolidation and Fix Plan (Batch Execution)
 
-1) Build Stabilization
-   - Ensure `@/lib/utils` resolves everywhere (already present and aliased).
-   - Re-run `npm run build` and fix the first missing module or path error reported.
-   - Verify Messages feature:
-     - Confirm `app/(portal)/messages/page.tsx` imports `@/app/Messages/Messages` and its CSS at route-level.
-     - Confirm all Messages subcomponents import `../types` (done for `ConversationList` and `ChatWindow`).
-     - Confirm `app/api/messages` routes read/write JSON from `db/messages.json` without path errors.
+1) Build Stabilization (Completed)
+   - Ensured `@/lib/utils` path alias works via `jsconfig.json`.
+   - Fixed missing/incorrect imports in legacy admin/client layouts and pages.
+   - Standardized theme usage and component props to remove type errors.
 
 2) Route Hygiene
    - Enforce no pages outside `(auth)` and `(portal)` that overlap those segments.
@@ -76,6 +74,14 @@ This document summarizes the current project structure, identifies duplication a
 
 4) Documentation
    - Keep this file updated; add a ROUTES_MAP.md indexing each user-facing page to its component.
+
+## Redundancy Cleanup (Summary)
+
+- `legacy/admin/layout.tsx` now imports `app/layouts/AdminLayout` (shared) instead of removed deep paths.
+- `legacy/admin/layouts/AdminLayout/AdminLayout.tsx` uses shared `SidebarNav`.
+- `legacy/client/layout.tsx` now uses `app/layouts/DashboardLayout` with `userType="client"`.
+- `legacy/client/layouts/ClientLayout/ClientLayout.tsx` uses shared `SidebarNav`.
+- Deprecated `ThemeContext` imports removed where components already use `next-themes`.
 
 ## Immediate Next Actions
 
