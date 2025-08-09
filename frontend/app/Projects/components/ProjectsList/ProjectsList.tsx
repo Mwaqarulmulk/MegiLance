@@ -4,40 +4,54 @@
 import React, { useState, useEffect } from 'react';
 import { ProjectType } from '../../types';
 import ProjectCard from '../../../components/ProjectCard/ProjectCard';
+import EmptyState from '@/app/components/EmptyState/EmptyState';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
+import { mockProjects } from '../../mock-data';
 import commonStyles from './ProjectsList.common.module.css';
 import lightStyles from './ProjectsList.light.module.css';
 import darkStyles from './ProjectsList.dark.module.css';
 
 const ProjectsList: React.FC = () => {
+  const { notify } = useToaster();
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const timer = setTimeout(() => {
       try {
-        const response = await fetch('/api/projects');
-        if (!response.ok) {
-          throw new Error('Failed to fetch projects');
-        }
-        const data: ProjectType[] = await response.json();
-        setProjects(data);
+        // Demo: use mock data while backend is paused
+        setProjects(mockProjects);
       } catch (err: any) {
-        setError(err.message);
+        const message = err?.message || 'Unexpected error';
+        setError(message);
+        notify({ title: 'Error loading projects', description: message, variant: 'danger', duration: 3500 });
       } finally {
         setLoading(false);
       }
-    };
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [notify]);
 
-    fetchProjects();
-  }, []);
+  if (loading) return <div className="ProjectsList-loading">Loading projects...</div>;
 
-  if (loading) {
-    return <div className="ProjectsList-loading">Loading projects...</div>;
-  }
+  if (error) return <div className="ProjectsList-error" role="alert">Error: {error}</div>;
 
-  if (error) {
-    return <div className="ProjectsList-error">Error: {error}</div>;
+  if (projects.length === 0) {
+    return (
+      <EmptyState
+        title="No projects found"
+        description="Create a new project to start tracking milestones and budgets."
+        action={
+          <button
+            type="button"
+            onClick={() => notify({ title: 'New project', description: 'Project creation flow coming soon.', variant: 'info', duration: 3000 })}
+          >
+            New Project
+          </button>
+        }
+      />
+    );
   }
 
   return (

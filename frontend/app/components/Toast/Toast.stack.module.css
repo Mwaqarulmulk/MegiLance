@@ -1,0 +1,25 @@
+/* @AI-HINT: Toast stack container. Fixed, responsive, non-blocking pointer behavior. */
+
+.stack {
+  position: fixed;
+  right: clamp(12px, 4vw, 28px);
+  top: clamp(12px, 3vh, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+  pointer-events: none; /* allow clicks to pass through gaps */
+}
+
+.stack > * {
+  pointer-events: auto; /* individual toasts are interactive */
+}
+
+@media (max-width: 640px) {
+  .stack {
+    right: 12px;
+    left: 12px;
+    top: auto;
+    bottom: 12px;
+  }
+}

@@ -52,6 +52,27 @@
 .main {
   padding: 2rem 1rem;
 }
+
+/* Max-width container for consistent rhythm */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Section rhythm helpers */
+.section {
+  padding-block: 3rem;
+}
+
+.sectionTight { padding-block: 1.5rem; }
+.sectionLoose { padding-block: 4rem; }
+
+/* Divider utility for public pages */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border, rgba(0,0,0,0.08));
+}
 .footer {
   padding: 1.5rem 1rem;
   border-top: 1px solid var(--border-color, rgba(0,0,0,0.08));

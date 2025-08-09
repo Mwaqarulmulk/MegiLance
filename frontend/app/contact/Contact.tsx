@@ -61,7 +61,12 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} className={cn(commonStyles.contactPage, commonStyles.isNotVisible, { [commonStyles.isVisible]: isVisible })}>
+    <main
+      id="main-content"
+      role="main"
+      ref={containerRef}
+      className={cn(commonStyles.contactPage, commonStyles.isNotVisible, { [commonStyles.isVisible]: isVisible })}
+    >
       <div className={cn(commonStyles.container, themeStyles.container)}>
         <header className={cn(commonStyles.header, themeStyles.header)}>
           <h1 className={cn(commonStyles.title, themeStyles.title)}>Get in Touch</h1>
@@ -69,7 +74,7 @@ const Contact: React.FC = () => {
         </header>
 
         <div className={cn(commonStyles.contentWrapper)}>
-          <div className={cn(commonStyles.formContainer, themeStyles.formContainer)}>
+          <section className={cn(commonStyles.formContainer, themeStyles.formContainer)} aria-label="Contact form">
             {submitted ? (
               <div className={cn(commonStyles.successMessage, themeStyles.successMessage)} role="status" aria-live="polite">
                 <h3>Thank You!</h3>
@@ -85,7 +90,7 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  aria-invalid={Boolean(errors.name)}
+                  aria-invalid={!!errors.name}
                   aria-describedby={errors.name ? 'name-error' : undefined}
                 />
                 {errors.name && (
@@ -101,7 +106,7 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  aria-invalid={Boolean(errors.email)}
+                  aria-invalid={!!errors.email}
                   aria-describedby={errors.email ? 'email-error' : undefined}
                 />
                 {errors.email && (
@@ -120,7 +125,7 @@ const Contact: React.FC = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    aria-invalid={Boolean(errors.message)}
+                    aria-invalid={!!errors.message}
                     aria-describedby={errors.message ? 'message-error' : undefined}
                   />
                 </div>
@@ -134,16 +139,16 @@ const Contact: React.FC = () => {
                 </Button>
               </form>
             )}
-          </div>
-          <div className={cn(commonStyles.infoContainer, themeStyles.infoContainer)}>
-            <h3>Contact Information</h3>
+          </section>
+          <section className={cn(commonStyles.infoContainer, themeStyles.infoContainer)} aria-labelledby="contact-info">
+            <h3 id="contact-info">Contact Information</h3>
             <p>For support or general inquiries, please email us at your convenience. We aim to respond to all queries within 24 hours.</p>
             <a href="mailto:support@megilance.com" className={cn(commonStyles.emailLink, themeStyles.emailLink)}>support@megilance.com</a>
             {/* Social links can be added here later */}
-          </div>
+          </section>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

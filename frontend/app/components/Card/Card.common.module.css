@@ -3,9 +3,11 @@
 .card {
   border-radius: 12px;
   padding: 24px;
-  transition: all 0.3s ease;
+  transition: var(--transition-all, all 0.3s ease);
   display: flex;
   flex-direction: column;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.06));
+  will-change: transform, box-shadow;
 }
 
 .cardHeader {
@@ -26,4 +28,28 @@
 
 .cardContent {
   flex-grow: 1;
+}
+
+/* Elevation and motion */
+.card:hover {
+  box-shadow: var(--shadow-md, 0 6px 18px rgba(0,0,0,0.10));
+  transform: translateY(-2px);
+}
+
+.card:active {
+  transform: translateY(-1px) scale(0.998);
+}
+
+/* Accessible focus ring for interactive cards or focusable content within */
+.card:focus-visible,
+.card:focus-within {
+  outline: none;
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.25), var(--shadow-md, 0 6px 18px rgba(0,0,0,0.10));
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .card:focus-visible,
+  .card:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent), var(--shadow-md, 0 6px 18px rgba(0,0,0,0.10));
+  }
 }

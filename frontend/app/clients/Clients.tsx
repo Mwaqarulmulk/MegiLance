@@ -5,6 +5,8 @@ import React, { useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import EmptyState from '@/app/components/EmptyState/EmptyState';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import common from './Clients.common.module.css';
 import light from './Clients.light.module.css';
@@ -45,6 +47,7 @@ const cases = [
 const Clients: React.FC = () => {
   const { theme } = useTheme();
   const themed = theme === 'dark' ? dark : light;
+  const { notify } = useToaster();
 
   const [selected, setSelected] = useState<string>(ALL);
   const filtered = useMemo(
@@ -87,7 +90,15 @@ const Clients: React.FC = () => {
               type="button"
               className={common.chip}
               aria-pressed={selected === c}
-              onClick={() => setSelected(c)}
+              onClick={() => {
+                setSelected(c);
+                notify({
+                  title: 'Filter applied',
+                  description: c === ALL ? 'Showing all industries' : `Showing ${c} clients`,
+                  variant: 'info',
+                  duration: 2000,
+                });
+              }}
             >
               {c}
             </button>
@@ -99,11 +110,25 @@ const Clients: React.FC = () => {
             ref={gridRef}
             className={cn(common.grid, gridVisible ? common.isVisible : common.isNotVisible)}
           >
-            {filtered.map((l) => (
-              <div key={l.name} className={common.logoCard} role="img" aria-label={`${l.name} logo`}>
-                <Image src={l.src} alt="" width={140} height={100} className={common.logo} />
+            {filtered.length === 0 ? (
+              <div className={common.gridSpanAll}>
+                <EmptyState
+                  title="No clients in this category"
+                  description="Try a different industry or contact our team for a tailored walkthrough."
+                  action={
+                    <a href="/contact" className={common.button} aria-label="Contact sales">
+                      Contact Sales
+                    </a>
+                  }
+                />
               </div>
-            ))}
+            ) : (
+              filtered.map((l) => (
+                <div key={l.name} className={common.logoCard} role="img" aria-label={`${l.name} logo`}>
+                  <Image src={l.src} alt="" width={140} height={100} className={common.logo} />
+                </div>
+              ))
+            )}
           </div>
         </section>
 
@@ -129,8 +154,26 @@ const Clients: React.FC = () => {
 
         <section className={common.section} aria-label="Call to action">
           <div ref={ctaRef} className={cn(common.cta, ctaVisible ? common.isVisible : common.isNotVisible)}>
-            <a href="/contact" className={common.button} aria-label="Contact sales">Contact Sales</a>
-            <a href="/jobs" className={cn(common.button, common.buttonSecondary)} aria-label="Find talent">Find Talent</a>
+            <a
+              href="/contact"
+              className={common.button}
+              aria-label="Contact sales"
+              onClick={() =>
+                notify({ title: 'Opening contact', description: 'We’ll help you get started.', variant: 'success', duration: 2500 })
+              }
+            >
+              Contact Sales
+            </a>
+            <a
+              href="/jobs"
+              className={cn(common.button, common.buttonSecondary)}
+              aria-label="Find talent"
+              onClick={() =>
+                notify({ title: 'Explore talent', description: 'Curated experts across domains.', variant: 'info', duration: 2500 })
+              }
+            >
+              Find Talent
+            </a>
           </div>
         </section>
       </div>

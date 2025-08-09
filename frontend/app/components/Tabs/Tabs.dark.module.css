@@ -1,22 +1,35 @@
-/* @AI-HINT: Dark theme styles for the Tabs component. */
+/* @AI-HINT: Dark theme styles for the Tabs component using brand tokens. */
 
 .tabsList {
-  border-bottom: 1px solid #4b5563; /* Gray 600 */
+  border-bottom: 1px solid var(--border);
 }
 
 .tabsTab {
-  color: #9ca3af; /* Gray 400 */
+  color: var(--text-secondary);
 }
 
 .tabsTab:hover {
-  color: #f9fafb; /* Gray 50 */
+  color: var(--text-primary);
+  background-color: var(--surface-alt);
 }
 
 .tabsTabSelected {
-  color: #818cf8; /* Indigo 400 */
-  border-color: #818cf8; /* Indigo 400 */
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .tabsTab:focus-visible {
-  outline: 2px solid #6366f1; /* Indigo 500 */
+  outline: none;
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.30);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .tabsTab:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+}
+
+/* Animated indicator color */
+.tabsIndicator {
+  background-color: var(--primary);
 }

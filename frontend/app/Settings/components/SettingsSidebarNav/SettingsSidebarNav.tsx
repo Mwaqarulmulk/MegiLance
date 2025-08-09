@@ -54,7 +54,7 @@ const SettingsSidebarNav: React.FC<SettingsSidebarNavProps> = ({ activeSection, 
             <li key={item.id} role="presentation">
               <button
                 role="tab"
-                aria-selected={isActive ? 'true' : 'false'}
+                aria-selected={isActive}
                 aria-controls={`settings-panel-${item.id}`}
                 id={`settings-tab-${item.id}`}
                 className={cn(styles.itemButton, isActive && styles.active)}

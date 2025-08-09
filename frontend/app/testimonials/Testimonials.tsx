@@ -85,13 +85,13 @@ const Testimonials: React.FC = () => {
   const ctaVisible = useIntersectionObserver(ctaRef, { threshold: 0.1 });
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
+    <main id="main-content" role="main" aria-labelledby="testimonials-title" className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
         <header
           ref={headerRef as any}
           className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}
         >
-          <h1 className={common.title}>What Our Users Say</h1>
+          <h1 id="testimonials-title" className={common.title}>What Our Users Say</h1>
           <p className={common.subtitle}>Real stories from clients, freelancers, and enterprise partners.</p>
         </header>
 
@@ -106,7 +106,7 @@ const Testimonials: React.FC = () => {
               key={c}
               type="button"
               className={common.chip}
-              aria-pressed={selected === c}
+              aria-pressed={!!(selected === c)}
               onClick={() => setSelected(c)}
             >
               {c}

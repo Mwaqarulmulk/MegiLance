@@ -38,7 +38,9 @@ const Table: React.FC<TableProps> = ({ columns, data, caption }) => {
         <thead className={cn(commonStyles.tableThead, themeStyles.tableThead)}>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} className={cn(commonStyles.tableTh, themeStyles.tableTh)}>{col.header}</th>
+              <th key={col.key} scope="col" className={cn(commonStyles.tableTh, themeStyles.tableTh)}>
+                {col.header}
+              </th>
             ))}
           </tr>
         </thead>

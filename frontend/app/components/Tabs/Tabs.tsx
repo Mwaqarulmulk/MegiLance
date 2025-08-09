@@ -38,7 +38,7 @@ const Tab = forwardRef<HTMLButtonElement, TabProps>(({ children, icon, disabled,
   const { selectedIndex, setSelectedIndex, tabsId, themeStyles } = useTabs();
   const isSelected = selectedIndex === index;
   return (
-    <button ref={ref} role="tab" type="button" id={`${tabsId}-tab-${index}`} aria-controls={`${tabsId}-panel-${index}`} aria-selected={Boolean(isSelected)} tabIndex={isSelected ? 0 : -1} onClick={() => !disabled && index !== undefined && setSelectedIndex(index)} disabled={disabled} className={cn(commonStyles.tabsTab, themeStyles.tabsTab, isSelected && [commonStyles.tabsTabSelected, themeStyles.tabsTabSelected], disabled && [commonStyles.tabsTabDisabled, themeStyles.tabsTabDisabled])}>
+    <button ref={ref} role="tab" type="button" id={`${tabsId}-tab-${index}`} aria-controls={`${tabsId}-panel-${index}`} aria-selected={!!isSelected} tabIndex={isSelected ? 0 : -1} onClick={() => !disabled && index !== undefined && setSelectedIndex(index)} disabled={disabled} className={cn(commonStyles.tabsTab, themeStyles.tabsTab, isSelected && [commonStyles.tabsTabSelected, themeStyles.tabsTabSelected], disabled && [commonStyles.tabsTabDisabled, themeStyles.tabsTabDisabled])}>
       {icon && <span className={commonStyles.tabIcon}>{icon}</span>}
       <span className={commonStyles.tabLabel}>{children}</span>
     </button>
@@ -49,7 +49,41 @@ Tab.displayName = 'Tab';
 const TabsList: FC<TabsListProps> = ({ children, className }) => {
   const { selectedIndex, setSelectedIndex, themeStyles } = useTabs();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [indicator, setIndicator] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+
   useEffect(() => { tabRefs.current[selectedIndex]?.focus(); }, [selectedIndex]);
+
+  // Measure active tab to position the animated indicator
+  useEffect(() => {
+    const el = tabRefs.current[selectedIndex];
+    if (el && listRef.current) {
+      const listRect = listRef.current.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
+      setIndicator({ left: rect.left - listRect.left, width: rect.width });
+    }
+  }, [selectedIndex, children]);
+
+  useEffect(() => {
+    const onResize = () => {
+      const el = tabRefs.current[selectedIndex];
+      if (el && listRef.current) {
+        const listRect = listRef.current.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+        setIndicator({ left: rect.left - listRect.left, width: rect.width });
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [selectedIndex]);
+
+  // Apply CSS variables without JSX inline style to satisfy linters
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.style.setProperty('--indicator-left', `${indicator.left}px`);
+      listRef.current.style.setProperty('--indicator-width', `${indicator.width}px`);
+    }
+  }, [indicator.left, indicator.width]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const tabs = Children.toArray(children).filter(child => isValidElement(child) && !(child.props as TabProps).disabled);
@@ -64,7 +98,13 @@ const TabsList: FC<TabsListProps> = ({ children, className }) => {
   };
 
   return (
-    <div role="tablist" aria-orientation="horizontal" onKeyDown={handleKeyDown} className={cn(commonStyles.tabsList, themeStyles.tabsList, className)}>
+    <div
+      ref={listRef}
+      role="tablist"
+      aria-orientation="horizontal"
+      onKeyDown={handleKeyDown}
+      className={cn(commonStyles.tabsList, themeStyles.tabsList, className)}
+    >
       {Children.map(children, (child, index) => {
         if (isValidElement(child) && child.type === Tab) {
           const childWithRef = child as React.ReactElement<any>;
@@ -79,6 +119,7 @@ const TabsList: FC<TabsListProps> = ({ children, className }) => {
         }
         return child;
       })}
+      <div className={cn(commonStyles.tabsIndicator, themeStyles.tabsIndicator)} aria-hidden="true" role="presentation" />
     </div>
   );
 };
@@ -88,7 +129,13 @@ const TabPanel: FC<TabPanelProps> = ({ children, index }) => {
   const { selectedIndex, tabsId, themeStyles } = useTabs();
   const isSelected = selectedIndex === index;
   return (
-    <div role="tabpanel" id={`${tabsId}-panel-${index}`} aria-labelledby={`${tabsId}-tab-${index}`} hidden={!isSelected} className={cn(commonStyles.tabsPanel, themeStyles.tabsPanel)}>
+    <div
+      role="tabpanel"
+      id={`${tabsId}-panel-${index}`}
+      aria-labelledby={`${tabsId}-tab-${index}`}
+      hidden={!isSelected}
+      className={cn(commonStyles.tabsPanel, themeStyles.tabsPanel)}
+    >
       {isSelected && children}
     </div>
   );

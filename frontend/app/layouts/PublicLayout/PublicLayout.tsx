@@ -18,12 +18,18 @@ const PublicLayout: React.FC<Props> = ({ children }) => {
     root: cn(commonStyles.root, themeStyles.root),
     skipLink: cn(commonStyles.skipLink, themeStyles.skipLink),
     main: cn(commonStyles.main, themeStyles.main),
-  }), [theme]);
+  }), [themeStyles]);
 
   return (
     <div className={styles.root}>
-      <a href="#main" className={styles.skipLink}>Skip to content</a>
-      <main id="main" className={styles.main}>{children}</main>
+      {/* @AI-HINT: Accessibility - Align global skip link target across the app. */}
+      <a href="#main-content" className={styles.skipLink}>Skip to content</a>
+      <main id="main-content" role="main" className={styles.main}>
+        {/* @AI-HINT: Layout - Constrain content to a readable width for improved rhythm. */}
+        <div className={commonStyles.container}>
+          {children}
+        </div>
+      </main>
     </div>
   );
 };

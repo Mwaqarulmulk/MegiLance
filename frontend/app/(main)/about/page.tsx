@@ -1,6 +1,7 @@
-// @AI-HINT: Public About page. Establishes trust with mission, team, timeline. Uses PublicLayout via (main)/layout.tsx.
+// @AI-HINT: Public About page. Uses premium About component with semantic main landmark and theme-aware styles.
 import type { Metadata } from 'next';
 import { buildMeta } from '@/lib/seo';
+import About from './About';
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMeta({
@@ -11,10 +12,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function AboutPage() {
-  return (
-    <section aria-labelledby="about-title">
-      <h1 id="about-title">About MegiLance</h1>
-      <p>We are building an investor-grade, AI-powered freelancing platform with secure blockchain payments.</p>
-    </section>
-  );
+  return <About />;
 }

@@ -1,56 +1,85 @@
-/* AI-HINT: Dark theme styles for the Alert component. Provides high-contrast, brand-aligned colors for a premium dark mode experience. */
+/* AI-HINT: Dark theme styles for the Alert component. Uses brand tokens via CSS variables for cohesive theming in dark mode. */
 
 .alert {
-  background-color: #1f2937; /* Gray 800 as base */
-  color: #e5e7eb; /* Gray 200 for default text */
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  border-color: var(--border);
 }
 
 .alertDescription {
-  color: #9ca3af; /* Gray 400 for description */
+  color: var(--text-secondary);
 }
 
 .alertCloseButton {
-  color: #9ca3af;
+  color: var(--text-secondary);
 }
 
 .alertCloseButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--surface-alt);
 }
 
 /* --- Variants --- */
 
 .info {
-  background-color: rgba(69, 115, 223, 0.15);
-  border-color: rgba(69, 115, 223, 0.3);
-  color: #a5b4fc; /* Lighter blue for icon */
+  /* Fallbacks */
+  background-color: rgba(69, 115, 223, 0.12);
+  border-color: var(--primary);
+  color: var(--primary);
 }
-.info .alertTitle { color: #dbeafe; }
-.info .alertDescription { color: #a5b4fc; opacity: 0.9; }
-.info .alertCloseButton:hover { background-color: rgba(69, 115, 223, 0.25); }
+@supports (color: color-mix(in oklab, white, black)) {
+  .info {
+    background-color: color-mix(in oklab, var(--primary) 12%, var(--surface));
+    border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+  }
+}
+.info .alertTitle { color: var(--text-primary); }
+.info .alertDescription { color: var(--primary); opacity: 0.9; }
+.info .alertCloseButton:hover { background-color: var(--surface-alt); }
 
 .success {
-  background-color: rgba(39, 174, 96, 0.15);
-  border-color: rgba(39, 174, 96, 0.3);
-  color: #6ee7b7; /* Lighter green for icon */
+  /* Fallbacks */
+  background-color: rgba(39, 174, 96, 0.12);
+  border-color: var(--success);
+  color: var(--success);
 }
-.success .alertTitle { color: #d1fae5; }
-.success .alertDescription { color: #6ee7b7; opacity: 0.9; }
-.success .alertCloseButton:hover { background-color: rgba(39, 174, 96, 0.25); }
+@supports (color: color-mix(in oklab, white, black)) {
+  .success {
+    background-color: color-mix(in oklab, var(--success) 12%, var(--surface));
+    border-color: color-mix(in oklab, var(--success) 45%, var(--border));
+  }
+}
+.success .alertTitle { color: var(--text-primary); }
+.success .alertDescription { color: var(--success); opacity: 0.9; }
+.success .alertCloseButton:hover { background-color: var(--surface-alt); }
 
 .warning {
-  background-color: rgba(242, 201, 76, 0.15);
-  border-color: rgba(242, 201, 76, 0.3);
-  color: #fde047; /* Lighter yellow for icon */
+  /* Fallbacks */
+  background-color: rgba(242, 201, 76, 0.12);
+  border-color: var(--warning);
+  color: var(--warning);
 }
-.warning .alertTitle { color: #fef9c3; }
-.warning .alertDescription { color: #fde047; opacity: 0.9; }
-.warning .alertCloseButton:hover { background-color: rgba(242, 201, 76, 0.25); }
+@supports (color: color-mix(in oklab, white, black)) {
+  .warning {
+    background-color: color-mix(in oklab, var(--warning) 12%, var(--surface));
+    border-color: color-mix(in oklab, var(--warning) 45%, var(--border));
+  }
+}
+.warning .alertTitle { color: var(--text-primary); }
+.warning .alertDescription { color: var(--warning); opacity: 0.9; }
+.warning .alertCloseButton:hover { background-color: var(--surface-alt); }
 
 .danger {
-  background-color: rgba(232, 17, 35, 0.15);
-  border-color: rgba(232, 17, 35, 0.3);
-  color: #fca5a5; /* Lighter red for icon */
+  /* Fallbacks */
+  background-color: rgba(232, 17, 35, 0.12);
+  border-color: var(--danger);
+  color: var(--danger);
 }
-.danger .alertTitle { color: #fee2e2; }
-.danger .alertDescription { color: #fca5a5; opacity: 0.9; }
-.danger .alertCloseButton:hover { background-color: rgba(232, 17, 35, 0.25); }
+@supports (color: color-mix(in oklab, white, black)) {
+  .danger {
+    background-color: color-mix(in oklab, var(--danger) 12%, var(--surface));
+    border-color: color-mix(in oklab, var(--danger) 45%, var(--border));
+  }
+}
+.danger .alertTitle { color: var(--text-primary); }
+.danger .alertDescription { color: var(--danger); opacity: 0.9; }
+.danger .alertCloseButton:hover { background-color: var(--surface-alt); }

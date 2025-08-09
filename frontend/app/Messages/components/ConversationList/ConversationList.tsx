@@ -6,6 +6,8 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Conversation } from '../types';
+import EmptyState from '@/app/components/EmptyState/EmptyState';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
 import commonStyles from './ConversationList.common.module.css';
 import lightStyles from './ConversationList.light.module.css';
 import darkStyles from './ConversationList.dark.module.css';
@@ -21,6 +23,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
   onSelectConversation, 
   refreshKey 
 }) => {
+  const { notify } = useToaster();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +59,21 @@ const ConversationList: React.FC<ConversationListProps> = ({
       <div className={commonStyles.items}>
         {loading && <div className={commonStyles.loading}>Loading...</div>}
         {error && <div className={commonStyles.error}>Error: {error}</div>}
+        {!loading && !error && conversations.length === 0 && (
+          <EmptyState
+            title="No conversations yet"
+            description="Start a new chat to collaborate with your clients and teammates."
+            action={
+              <button
+                type="button"
+                className={commonStyles.emptyCta}
+                onClick={() => notify({ title: 'Coming soon', description: 'New conversation flow will be available shortly.', variant: 'info', duration: 2800 })}
+              >
+                Start a conversation
+              </button>
+            }
+          />
+        )}
         {!loading && !error && conversations.map(convo => (
           <div 
             key={convo.id} 

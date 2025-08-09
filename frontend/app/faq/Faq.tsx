@@ -48,7 +48,7 @@ const FaqItem = ({ item, isOpen, onClick, index }: FaqItemProps & { index: numbe
         id={buttonId}
         className={commonStyles.faqItemQuestion}
         onClick={onClick}
-        aria-expanded={isOpen ? 'true' : 'false'}
+        aria-expanded={!!isOpen}
         aria-controls={contentId}
       >
         <span>{item.question}</span>
@@ -95,13 +95,13 @@ const Faq: React.FC = () => {
         headerVisible ? commonStyles.isVisible : commonStyles.isNotVisible
       )}
     >
-      <h1>Frequently Asked Questions</h1>
+      <h1 id="faq-title">Frequently Asked Questions</h1>
       <p>Find answers to common questions about MegiLance.</p>
     </header>
   ), [headerVisible]);
 
   return (
-    <div className={cn(commonStyles.faq, themed.themeWrapper)}>
+    <main id="main-content" role="main" aria-labelledby="faq-title" className={cn(commonStyles.faq, themed.themeWrapper)}>
       <div className={commonStyles.faqContainer}>
         {Header}
         <div
@@ -122,7 +122,7 @@ const Faq: React.FC = () => {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

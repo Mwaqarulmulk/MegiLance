@@ -29,10 +29,10 @@ const BlogPage: React.FC = () => {
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={commonStyles.container}>
+    <main id="main-content" role="main" aria-labelledby="blog-title" className={commonStyles.container}>
       <AnimatedSection>
         <header className={commonStyles.header}>
-          <h1 className={cn(commonStyles.title, themeStyles.title)}>The MegiLance Blog</h1>
+          <h1 id="blog-title" className={cn(commonStyles.title, themeStyles.title)}>The MegiLance Blog</h1>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
             Insights on crypto, freelancing, and the future of work.
           </p>
@@ -40,13 +40,13 @@ const BlogPage: React.FC = () => {
       </AnimatedSection>
 
       <AnimatedSection>
-        <main className={commonStyles.grid}>
+        <section className={commonStyles.grid} aria-label="Recent posts">
           {mockPosts.map((post) => (
             <BlogPostCard key={post.slug} {...post} />
           ))}
-        </main>
+        </section>
       </AnimatedSection>
-    </div>
+    </main>
   );
 };
 

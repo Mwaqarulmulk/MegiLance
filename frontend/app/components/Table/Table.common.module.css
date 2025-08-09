@@ -37,3 +37,19 @@
 .tableTbodyTrLastChild {
   border-bottom: none;
 }
+
+/* Interactions */
+.tableTbodyTr {
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+/* Accessible focus ring for keyboard nav on row (when any cell inside is focused) */
+.tableTbodyTr:focus-within {
+  /* Fallback */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.18) inset;
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .tableTbodyTr:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent) inset;
+  }
+}

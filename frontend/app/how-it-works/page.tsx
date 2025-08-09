@@ -52,28 +52,28 @@ const freelancerSteps = [
 
 const HowItWorksPage: React.FC = () => {
   return (
-    <div className="HowItWorksPage-container">
+    <main id="main-content" role="main" className="HowItWorksPage-container">
       <header className="HowItWorksPage-header">
         <h1 className="HowItWorksPage-title">How MegiLance Works</h1>
         <p className="HowItWorksPage-subtitle">A simple, secure, and decentralized way to get work done.</p>
       </header>
 
-      <main className="HowItWorksPage-main">
-        <section className="HowItWorksPage-section">
-          <h2 className="HowItWorksPage-section-title">For Clients</h2>
+      <section className="HowItWorksPage-main" aria-label="Process overview">
+        <section className="HowItWorksPage-section" aria-labelledby="howitworks-clients">
+          <h2 id="howitworks-clients" className="HowItWorksPage-section-title">For Clients</h2>
           <div className="HowItWorksPage-grid">
             {clientSteps.map(step => <StepCard key={step.stepNumber} {...step} />)}
           </div>
         </section>
 
-        <section className="HowItWorksPage-section">
-          <h2 className="HowItWorksPage-section-title">For Freelancers</h2>
+        <section className="HowItWorksPage-section" aria-labelledby="howitworks-freelancers">
+          <h2 id="howitworks-freelancers" className="HowItWorksPage-section-title">For Freelancers</h2>
           <div className="HowItWorksPage-grid">
             {freelancerSteps.map(step => <StepCard key={step.stepNumber} {...step} />)}
           </div>
         </section>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 };
 

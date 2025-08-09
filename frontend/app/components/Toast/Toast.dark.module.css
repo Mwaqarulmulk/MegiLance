@@ -1,0 +1,37 @@
+/* @AI-HINT: Dark theme styles for Toast using brand tokens and safe fallbacks. */
+
+.toast {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.toastBody { color: var(--text-secondary); }
+.toastTitle { color: var(--text-primary); }
+.toastDescription { color: var(--text-secondary); }
+
+/* Close button */
+.toastClose { color: var(--text-secondary); }
+.toastClose:hover {
+  color: var(--text-primary);
+  background: var(--surface-alt);
+}
+
+/* Variants */
+.info { border-color: var(--primary); }
+.success { border-color: var(--success, #27AE60); }
+.warning { border-color: var(--warning, #F2C94C); }
+.danger { border-color: var(--error, #e81123); }
+
+/* Subtle tinted backgrounds suitable for dark */
+.info { background: rgba(69,115,223,0.10); }
+.success { background: rgba(39,174,96,0.12); }
+.warning { background: rgba(242,201,76,0.14); }
+.danger { background: rgba(232,17,35,0.12); }
+
+@supports (color: color-mix(in oklab, white, black)) {
+  .info { background: color-mix(in oklab, var(--primary) 16%, var(--surface)); }
+  .success { background: color-mix(in oklab, var(--success, #27AE60) 18%, var(--surface)); }
+  .warning { background: color-mix(in oklab, var(--warning, #F2C94C) 20%, var(--surface)); }
+  .danger { background: color-mix(in oklab, var(--error, #e81123) 18%, var(--surface)); }
+}

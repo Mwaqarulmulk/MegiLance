@@ -59,7 +59,7 @@ const About: React.FC = () => {
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={cn(commonStyles.aboutPage, themeStyles.aboutPage)}>
+    <main id="main-content" role="main" className={cn(commonStyles.aboutPage, themeStyles.aboutPage)}>
       <div className={commonStyles.container}>
         <header className={commonStyles.header}>
           <h1 className={commonStyles.title}>About MegiLance</h1>
@@ -87,7 +87,7 @@ const About: React.FC = () => {
           </div>
         </AnimatedSection>
       </div>
-    </div>
+    </main>
   );
 };
 

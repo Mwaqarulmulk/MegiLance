@@ -33,7 +33,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <footer className={cn(commonStyles.footer, themeStyles.footer, className)} role="contentinfo">
+    <footer className={cn(themeStyles.themeWrapper, commonStyles.footer, themeStyles.footer, className)} role="contentinfo">
       <div className={cn(commonStyles.container, themeStyles.container)}>
         {/* Main Footer Content */}
         <div className={cn(commonStyles.main, themeStyles.main)}>

@@ -1,35 +1,53 @@
 .modalOverlay {
+  /* Fallback */
   background-color: rgba(255, 255, 255, 0.8);
+  /* Enhanced */
+  @supports (background-color: color-mix(in oklab, white 70%, transparent)) {
+    background-color: color-mix(in oklab, var(--surface) 70%, transparent);
+  }
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
 .modalContent {
-  background-color: #ffffff;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl, 0 20px 40px rgba(0,0,0,0.12));
 }
 
 .modalHeader {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .modalTitle {
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .closeButton {
-  color: #6b7280;
+  color: var(--text-secondary);
+  transition: var(--transition-all-fast, all 160ms ease);
 }
 
 .closeButton:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+.closeButton:focus-visible {
+  outline: none;
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.3);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .closeButton:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 30%, transparent);
+  }
 }
 
 .modalBody {
-  color: #374151;
+  color: var(--text-secondary);
 }
 
 .modalFooter {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border);
 }

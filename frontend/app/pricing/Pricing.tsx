@@ -103,7 +103,7 @@ const FaqItem = ({
         id={buttonId}
         className={cn(commonStyles.faqQuestion, themeStyles.faqQuestion)}
         onClick={onClick}
-        aria-expanded={isOpen ? 'true' : 'false'}
+        aria-expanded={isOpen}
         aria-controls={contentId}
       >
         <span>{item.question}</span>
@@ -162,12 +162,12 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <div className={cn(commonStyles.pricingPage, themeStyles.root)}>
+    <main id="main-content" role="main" aria-labelledby="pricing-title" className={cn(commonStyles.pricingPage, themeStyles.root)}>
       <div className={commonStyles.container}>
         <AnimatedSection className={commonStyles.header}>
           <header className={commonStyles.header}>
             <span className={cn(commonStyles.headerEyebrow, themeStyles.headerEyebrow)}>Pricing Plans</span>
-            <h1 className={cn(themeStyles.headerTitle)}>Find the Perfect Plan for Your Needs</h1>
+            <h1 id="pricing-title" className={cn(themeStyles.headerTitle)}>Find the Perfect Plan for Your Needs</h1>
             <p className={cn(commonStyles.headerDescription, themeStyles.headerDescription)}>
               From individual freelancers to large enterprises, MegiLance offers a tailored solution to achieve your goals with the power of AI and secure payments.
             </p>
@@ -194,7 +194,7 @@ const Pricing: React.FC = () => {
                 onChange={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
                 aria-label="Toggle billing cycle"
                 role="switch"
-                aria-checked={billingCycle === 'yearly' ? 'true' : 'false'}
+                aria-checked={!!(billingCycle === 'yearly')}
               />
               <span className={cn(commonStyles.toggleSlider, themeStyles.toggleSlider)}></span>
             </label>
@@ -289,7 +289,7 @@ const Pricing: React.FC = () => {
           </section>
         </AnimatedSection>
       </div>
-    </div>
+    </main>
   );
 };
 

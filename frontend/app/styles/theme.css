@@ -104,3 +104,43 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
+/* ------------------------- */
+/*   Global UX Enhancements  */
+/* ------------------------- */
+::selection {
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: var(--text-on-dark);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Subtle link styling that aligns to brand */
+a {
+  color: var(--primary);
+  /* Fallback for older browsers */
+  text-decoration-color: var(--primary);
+  /* Enhanced underline color on capable browsers */
+  text-decoration-color: color-mix(in oklab, var(--primary) 30%, transparent);
+  text-underline-offset: 2px;
+  transition: var(--transition-all-fast);
+}
+
+a:hover, a:focus-visible {
+  text-decoration-color: var(--primary);
+  text-underline-offset: 3px;
+}
+
+/* Utility: brand focus ring */
+.focus-ring {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring-primary);
+}
+

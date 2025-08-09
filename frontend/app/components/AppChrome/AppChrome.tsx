@@ -43,7 +43,11 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
 
   // Until mounted, render a minimal shell. For auth, keep a consistent main wrapper.
   if (!mounted || hideChrome) {
-    return <main className="min-h-screen">{children}</main>;
+    return (
+      <main id="main-content" role="main" className="min-h-screen">
+        {children}
+      </main>
+    );
   }
 
   // On marketing routes, do not render AppChrome header/footer because
@@ -55,7 +59,9 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main id="main-content" role="main" className="flex-grow">
+        {children}
+      </main>
       <Footer />
       <ThemeToggleButton />
       <InstallAppBanner />

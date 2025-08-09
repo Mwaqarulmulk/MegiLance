@@ -20,7 +20,7 @@ function useInView<T extends HTMLElement>(opts: IntersectionObserverInit = { thr
     }, opts);
     ob.observe(ref.current);
     return () => ob.disconnect();
-  }, [opts.root, opts.rootMargin, opts.threshold]);
+  }, [opts]);
   return { ref, visible } as const;
 }
 
@@ -82,17 +82,17 @@ const Contact: React.FC = () => {
         <form className={styles.card} aria-describedby="contact-note" noValidate onSubmit={handleSubmit}>
           <div>
             <label className={styles.label} htmlFor="name">Name</label>
-            <input className={styles.input} id="name" name="name" type="text" autoComplete="name" aria-invalid={errors.name ? 'true' : 'false'} aria-describedby={errors.name ? 'error-name' : undefined} />
+            <input className={styles.input} id="name" name="name" type="text" autoComplete="name" aria-invalid={!!errors.name} aria-describedby={errors.name ? 'error-name' : undefined} />
             {errors.name && <div id="error-name" className={styles.error} role="alert">{errors.name}</div>}
           </div>
           <div>
             <label className={styles.label} htmlFor="email">Email</label>
-            <input className={styles.input} id="email" name="email" type="email" autoComplete="email" aria-invalid={errors.email ? 'true' : 'false'} aria-describedby={errors.email ? 'error-email' : undefined} />
+            <input className={styles.input} id="email" name="email" type="email" autoComplete="email" aria-invalid={!!errors.email} aria-describedby={errors.email ? 'error-email' : undefined} />
             {errors.email && <div id="error-email" className={styles.error} role="alert">{errors.email}</div>}
           </div>
           <div>
             <label className={styles.label} htmlFor="topic">Topic</label>
-            <select className={styles.select} id="topic" name="topic" defaultValue="" aria-invalid={errors.topic ? 'true' : 'false'} aria-describedby={errors.topic ? 'error-topic' : undefined}>
+            <select className={styles.select} id="topic" name="topic" defaultValue="" aria-invalid={!!errors.topic} aria-describedby={errors.topic ? 'error-topic' : undefined}>
               <option value="" disabled>Choose a topic</option>
               <option value="support">Support</option>
               <option value="sales">Sales</option>
@@ -102,7 +102,7 @@ const Contact: React.FC = () => {
           </div>
           <div>
             <label className={styles.label} htmlFor="message">Message</label>
-            <textarea className={styles.textarea} id="message" name="message" rows={5} aria-invalid={errors.message ? 'true' : 'false'} aria-describedby={errors.message ? 'error-message' : undefined} />
+            <textarea className={styles.textarea} id="message" name="message" rows={5} aria-invalid={!!errors.message} aria-describedby={errors.message ? 'error-message' : undefined} />
             {errors.message && <div id="error-message" className={styles.error} role="alert">{errors.message}</div>}
           </div>
           <button className={styles.submit} type="submit">Send</button>

@@ -1,0 +1,15 @@
+/* @AI-HINT: Dark theme styles for EmptyState using brand tokens. */
+
+.wrapper {
+  background: var(--surface);
+  border-color: var(--border);
+}
+.iconWrap {
+  background: rgba(69,115,223,0.18);
+  color: var(--primary);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .iconWrap { background: color-mix(in oklab, var(--primary) 22%, var(--surface)); }
+}
+.title { color: var(--text-primary); }
+.description { color: var(--text-secondary); }

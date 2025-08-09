@@ -31,7 +31,7 @@
   right: 0;
   bottom: 0;
   border-radius: 34px;
-  transition: .4s;
+  transition: var(--transition-all-fast, all 200ms ease);
 }
 
 .slider:before {
@@ -42,9 +42,33 @@
   left: 2px;
   bottom: 2px;
   border-radius: 50%;
-  transition: .4s;
+  transition: var(--transition-all-fast, all 200ms ease);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.15));
 }
 
 .input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+/* Micro-interactions */
+.slider:hover {
+  filter: saturate(1.02);
+}
+
+.input:active + .slider:before {
+  transform: translateX(1px) scale(0.98);
+}
+
+/* Accessible focus ring */
+.input:focus-visible + .slider,
+.input:focus + .slider {
+  outline: none;
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.25);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .input:focus-visible + .slider,
+  .input:focus + .slider {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent);
+  }
 }

@@ -9,7 +9,7 @@
   border-radius: var(--border-radius-full);
   background-color: var(--badge-bg);
   color: var(--badge-text);
-  transition: var(--transition-all-fast);
+  transition: var(--transition-all-fast, all 160ms ease);
 }
 
 .small {
@@ -34,4 +34,33 @@
 
 .badgeIconAfter {
   margin-left: var(--spacing-1);
+}
+
+/* Variant aliases (theme files set variables). These are defined
+   here to match class lookups in Badge.tsx. */
+.default { --_alias: 1; }
+.primary { --_alias: 1; }
+.secondary { --_alias: 1; }
+.success { --_alias: 1; }
+.warning { --_alias: 1; }
+.danger { --_alias: 1; }
+.info { --_alias: 1; }
+
+/* Micro-interactions */
+.badge:hover {
+  filter: saturate(1.02);
+}
+
+.badge:active {
+  transform: translateY(0.5px);
+}
+
+.badge:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(69, 115, 223, 0.3);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .badge:focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 30%, transparent);
+  }
 }

@@ -1,21 +1,45 @@
-.label { color: var(--text-primary-dark); }
+.label { color: var(--text-primary); }
 
 .slider {
-  background-color: var(--bg-tertiary-dark);
+  background-color: var(--surface-alt);
+  border: 1px solid var(--border);
 }
 
 .slider:before {
-  background-color: var(--slate-400); /* A slightly off-white for dark mode */
+  background-color: var(--surface);
+  border: 1px solid var(--border);
 }
 
 .input:checked + .slider {
-  background-color: var(--brand-primary);
+  background-color: var(--primary);
+  /* Fallback */
+  border-color: var(--primary);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .input:checked + .slider {
+    border-color: color-mix(in oklab, var(--primary) 60%, var(--border));
+  }
 }
 
 .input:checked + .slider:before {
-  background-color: white;
+  background-color: var(--surface);
 }
 
 .input:focus + .slider {
-  box-shadow: 0 0 1px var(--brand-primary);
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.30);
+}
+
+@supports (color: color-mix(in oklab, white, black)) {
+  .input:focus + .slider {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+}
+
+/* Hover/active polish */
+.slider:hover {
+  filter: brightness(1.02);
+}
+.input:active + .slider:before {
+  transform: translateX(1px) scale(0.98);
 }

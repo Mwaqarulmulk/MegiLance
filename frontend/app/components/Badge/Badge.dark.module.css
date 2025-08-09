@@ -1,41 +1,53 @@
 /* Default Variant */
-.badgeDefault {
+.badgeDefault,
+.default {
   --badge-bg: var(--surface-alt);
   --badge-text: var(--text-secondary);
 }
 
 /* Primary Variant */
-.badgePrimary {
+.badgePrimary,
+.primary {
   --badge-bg: var(--primary-soft);
   --badge-text: var(--primary-stronger);
 }
 
 /* Secondary Variant */
-.badgeSecondary {
+.badgeSecondary,
+.secondary {
   --badge-bg: var(--surface-alt);
   --badge-text: var(--text-secondary);
 }
 
 /* Success Variant */
-.badgeSuccess {
+.badgeSuccess,
+.success {
   --badge-bg: var(--success-soft);
   --badge-text: var(--success-stronger);
 }
 
 /* Warning Variant */
-.badgeWarning {
+.badgeWarning,
+.warning {
   --badge-bg: var(--warning-soft);
   --badge-text: var(--warning-stronger);
 }
 
 /* Danger Variant */
-.badgeDanger {
+.badgeDanger,
+.danger {
   --badge-bg: var(--error-soft);
   --badge-text: var(--error-stronger);
 }
 
 /* Info Variant */
-.badgeInfo {
+.badgeInfo,
+.info {
   --badge-bg: var(--info-soft);
   --badge-text: var(--info-stronger);
+}
+
+/* Subtle hover polish when inside interactive contexts */
+.badge:hover {
+  filter: brightness(1.02);
 }

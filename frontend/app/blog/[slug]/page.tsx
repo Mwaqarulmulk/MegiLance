@@ -35,35 +35,38 @@ const BlogPostPage: React.FC = () => {
 
   if (!post) {
     return (
-      <div className={commonStyles.container}>
-        <p>Post not found.</p>
-      </div>
+      <main id="main-content" role="main" className={commonStyles.container}>
+        <p role="status" aria-live="polite">Post not found.</p>
+      </main>
     );
   }
 
   return (
-    <AnimatedSection>
+    <main id="main-content" role="main" aria-labelledby="post-title">
       <div className={commonStyles.container}>
-        <article className={commonStyles.article}>
-          <header className={commonStyles.header}>
-            <h1 className={cn(commonStyles.title, themeStyles.title)}>{post.title}</h1>
-            <div className={cn(commonStyles.meta, themeStyles.meta)}>
-              <span className={commonStyles.author}>By {post.author}</span>
-              <span>{post.date}</span>
-            </div>
-          </header>
+        <AnimatedSection>
+          <article className={commonStyles.article}>
+            <header className={commonStyles.header}>
+              <h1 id="post-title" className={cn(commonStyles.title, themeStyles.title)}>{post.title}</h1>
+              <div className={cn(commonStyles.meta, themeStyles.meta)}>
+                <span className={commonStyles.author}>By {post.author}</span>
+                <span>{post.date}</span>
+              </div>
+            </header>
 
-          <div className={commonStyles.imageWrapper}>
-            <Image src={post.imageUrl} alt={post.title} layout="fill" objectFit="cover" />
-          </div>
+            <figure className={commonStyles.imageWrapper}>
+              <Image src={post.imageUrl} alt={post.title} layout="fill" objectFit="cover" />
+            </figure>
 
-          <div
-            className={cn(commonStyles.content, themeStyles.content)}
-            dangerouslySetInnerHTML={{ __html: post.content || '' }}
-          />
-        </article>
+            <section
+              aria-label="Post content"
+              className={cn(commonStyles.content, themeStyles.content)}
+              dangerouslySetInnerHTML={{ __html: post.content || '' }}
+            />
+          </article>
+        </AnimatedSection>
       </div>
-    </AnimatedSection>
+    </main>
   );
 };
 

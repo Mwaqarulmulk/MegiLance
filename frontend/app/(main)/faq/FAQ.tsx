@@ -21,7 +21,7 @@ function useInView<T extends HTMLElement>(opts: IntersectionObserverInit = { thr
     }, opts);
     ob.observe(ref.current);
     return () => ob.disconnect();
-  }, [opts.root, opts.rootMargin, opts.threshold]);
+  }, [opts]);
   return { ref, visible } as const;
 }
 
@@ -89,7 +89,7 @@ const FAQ: React.FC = () => {
   };
 
   return (
-    <section className={styles.root} aria-labelledby="faq-title">
+    <main id="main-content" role="main" aria-labelledby="faq-title" className={styles.root}>
       <Script id="faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <div ref={headerRef} className={cn(styles.header, styles.fadeIn, headerVisible && styles.visible)}>
         <span className={styles.badge}>Answers you need</span>
@@ -110,7 +110,7 @@ const FAQ: React.FC = () => {
                   ref={(el) => { buttonRefs.current[i] = el; }}
                   className={styles.q}
                   aria-controls={panelId}
-                  aria-expanded={isOpen ? 'true' : 'false'}
+                  aria-expanded={!!isOpen}
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                 >
                   {qa.question}
@@ -129,7 +129,7 @@ const FAQ: React.FC = () => {
           );
         })}
       </div>
-    </section>
+    </main>
   );
 };
 

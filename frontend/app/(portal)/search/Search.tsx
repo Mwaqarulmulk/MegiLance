@@ -5,6 +5,8 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import EmptyState from '@/app/components/EmptyState/EmptyState';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
 import common from './Search.common.module.css';
 import light from './Search.light.module.css';
 import dark from './Search.dark.module.css';
@@ -30,6 +32,7 @@ const DATES = ['Any time', 'Past week', 'Past month', 'Past year'] as const;
 const Search: React.FC = () => {
   const { theme } = useTheme();
   const themed = theme === 'dark' ? dark : light;
+  const { notify } = useToaster();
 
   const [query, setQuery] = useState('');
   const [type, setType] = useState<(typeof TYPES)[number]>('All');
@@ -111,9 +114,19 @@ const Search: React.FC = () => {
         </div>
 
         {results.length === 0 && (
-          <div aria-live="polite" role="status" className={common.card}>
-            No results. Try adjusting filters.
-          </div>
+          <EmptyState
+            title="No results found"
+            description="Try a different query or adjust filters to broaden your search."
+            action={
+              <button
+                type="button"
+                className={common.select}
+                onClick={() => notify({ title: 'Tip', description: 'Use broader keywords or select All types.', variant: 'info', duration: 2500 })}
+              >
+                Get Search Tips
+              </button>
+            }
+          />
         )}
       </div>
     </main>

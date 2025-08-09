@@ -28,42 +28,42 @@ const Home: React.FC = () => {
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={cn(commonStyles.homePage, themeStyles.homePage)}>
+    <main id="main-content" role="main" className={cn(commonStyles.homePage, themeStyles.homePage)}>
 
         {/* Enhanced Hero Section with Animated Stats */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="Hero">
           <Hero />
         </section>
         {/* Core Platform Features */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="Core platform features">
           <Features />
         </section>
         {/* AI-Powered Capabilities Showcase */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="AI capabilities">
           <AIShowcase />
         </section>
         {/* Blockchain & Crypto Payment Features */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="Blockchain and crypto payments">
           <BlockchainShowcase />
         </section>
         {/* How the Platform Works */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="How it works">
           <HowItWorks />
         </section>
         {/* Global Impact & Pakistani Focus */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="Global impact">
           <GlobalImpact />
         </section>
         {/* User Testimonials */}
-        <section className={commonStyles.homeSection}>
+        <section className={commonStyles.homeSection} aria-label="Testimonials">
           <Testimonials />
         </section>
         {/* Final Call-to-Action */}
-        <section>
+        <section aria-label="Call to action">
           <CTA />
         </section>
 
-    </div>
+    </main>
   );
 };
 

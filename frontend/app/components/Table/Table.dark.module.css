@@ -1,32 +1,48 @@
-/* @AI-HINT: Dark theme styles for the Table component. */
+/* @AI-HINT: Dark theme styles for the Table component using brand tokens. */
 
 .tableContainer {
-  border: 1px solid #374151;
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .caption {
-  background-color: #1f2937;
-  color: #f9fafb;
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
 }
 
 .tableThead {
-  background-color: #1f2937;
-  border-bottom: 1px solid #374151;
+  background-color: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
 }
 
 .tableTh {
-  color: #9ca3af;
+  color: var(--text-secondary);
 }
 
 .tableTbodyTr {
-  background-color: #111827;
-  border-bottom: 1px solid #374151;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .tableTbodyTr:hover {
-  background-color: #1f2937;
+  background-color: var(--surface-alt);
+}
+
+/* Zebra striping */
+.tableTbodyTr:nth-child(odd) {
+  background-color: var(--surface);
+}
+.tableTbodyTr:nth-child(even) {
+  background-color: var(--surface-alt);
 }
 
 .tableTd {
-  color: #d1d5db;
+  color: var(--text-secondary);
+}
+
+/* Sticky header option */
+.tableThead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }

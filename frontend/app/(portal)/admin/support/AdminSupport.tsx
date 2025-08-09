@@ -91,7 +91,7 @@ const AdminSupport: React.FC = () => {
                   <div
                     key={t.id}
                     role="option"
-                    aria-selected={isSelected ? 'true' : 'false'}
+                    aria-selected={isSelected}
                     tabIndex={0}
                     className={cn(common.item)}
                     onClick={() => setSelectedId(t.id)}

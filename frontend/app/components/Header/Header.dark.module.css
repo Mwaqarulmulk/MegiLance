@@ -1,34 +1,40 @@
 .header {
-  background-color: rgba(18, 18, 18, 0.8);
-  border-color: var(--border-dark);
+  /* Fallback */
+  background-color: var(--surface);
+  /* Subtle translucency on supported browsers */
+  background-color: color-mix(in oklab, var(--surface) 90%, transparent);
+  border-color: var(--border);
 }
 
 .brandName {
-  color: var(--text-primary-dark);
+  color: var(--text-primary);
 }
 
 .navLink {
-  color: var(--text-secondary-dark);
+  color: var(--text-secondary);
 }
 
 .navLink:hover {
-  color: var(--primary-dark);
+  color: var(--primary);
 }
 
 .signIn {
-  background-color: var(--primary-dark);
-  color: var(--text-primary-dark);
+  background-color: var(--primary);
+  color: var(--text-on-primary);
 }
 
 .signIn:hover {
-  background-color: var(--primary-lighter-dark);
+  /* Fallback */
+  background-color: var(--primary);
+  /* Slightly darker on capable browsers */
+  background-color: color-mix(in oklab, var(--primary) 90%, black);
 }
 
 .mobileMenuButton {
-  color: var(--text-primary-dark);
+  color: var(--text-primary);
 }
 
 .mobileNavMenu {
-  background-color: #121212;
-  border-color: var(--border-dark);
+  background-color: var(--surface);
+  border-color: var(--border);
 }

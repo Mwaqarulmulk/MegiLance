@@ -10,7 +10,7 @@
   grid-template-columns: 1fr; /* Mobile single column */
   grid-template-areas:
     'form';
-  width: 100vw;
+  width: 100%;
   min-height: 100dvh;
   font-family: 'Inter', sans-serif;
   align-items: stretch;

@@ -11,6 +11,8 @@
 .tabsList {
   display: flex;
   /* Border is handled by theme-specific styles */
+  gap: 0.25rem;
+  position: relative;
 }
 
 .tabsTab {
@@ -22,8 +24,9 @@
   border-bottom: 2px solid transparent;
   cursor: pointer;
   margin-bottom: -1px;
-  transition: color 0.2s, border-color 0.2s;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s, transform 0.12s ease;
   white-space: nowrap;
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .tabsTab:focus-visible {
@@ -39,4 +42,17 @@
 
 .tabsPanel[hidden] {
   display: none;
+}
+
+/* Animated selection indicator (color set in theme files) */
+.tabsIndicator {
+  position: absolute;
+  bottom: -1px; /* sit on top of border-bottom line */
+  height: 2px;
+  left: 0;
+  width: var(--indicator-width, 0px);
+  border-radius: 2px;
+  transform: translateX(var(--indicator-left, 0px));
+  transition: transform 200ms ease, width 200ms ease;
+  will-change: transform, width;
 }

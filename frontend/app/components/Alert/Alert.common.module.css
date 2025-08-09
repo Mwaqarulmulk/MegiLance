@@ -7,6 +7,11 @@
   border-style: solid;
   font-family: 'Inter', sans-serif;
   align-items: flex-start;
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.06));
+  transition: var(--transition-all-fast, all 180ms ease);
 }
 
 .alertIcon {
@@ -27,12 +32,14 @@
   font-size: 1rem; /* 16px */
   font-weight: 600;
   line-height: 1.5;
+  color: var(--text-primary);
 }
 
 .alertDescription {
   margin-top: 0.25rem;
   font-size: 0.875rem; /* 14px */
   line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 .alertCloseButton {
@@ -46,12 +53,45 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease-in-out;
+  color: var(--text-secondary);
+  transition: var(--transition-all-fast, all 160ms ease);
 }
 
 .alertCloseButton svg {
   width: 1.25rem;
   height: 1.25rem;
+}
+
+/* Micro-interactions */
+.alert:hover {
+  box-shadow: var(--shadow, 0 4px 12px rgba(0,0,0,0.08));
+}
+
+.alertCloseButton:hover {
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+/* Accessible focus rings */
+.alert:focus-within {
+  /* Fallback */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.18), var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.06));
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .alert:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent), var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.06));
+  }
+}
+
+.alertCloseButton:focus-visible {
+  outline: none;
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.28);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .alertCloseButton:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
 }
 
 /* Variant colors are defined in theme-specific files */

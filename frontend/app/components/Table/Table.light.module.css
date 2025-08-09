@@ -1,32 +1,48 @@
-/* @AI-HINT: Light theme styles for the Table component. */
+/* @AI-HINT: Light theme styles for the Table component using brand tokens. */
 
 .tableContainer {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .caption {
-  background-color: #f9fafb;
-  color: #111827;
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
 }
 
 .tableThead {
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
 }
 
 .tableTh {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .tableTbodyTr {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .tableTbodyTr:hover {
-  background-color: #f9fafb;
+  background-color: var(--surface-alt);
+}
+
+/* Zebra striping */
+.tableTbodyTr:nth-child(odd) {
+  background-color: var(--surface);
+}
+.tableTbodyTr:nth-child(even) {
+  background-color: var(--surface-alt);
 }
 
 .tableTd {
-  color: #374151;
+  color: var(--text-secondary);
+}
+
+/* Sticky header option (if container is scrollable) */
+.tableThead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }

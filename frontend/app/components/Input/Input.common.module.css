@@ -31,7 +31,7 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--border-radius-large);
   border: var(--border-width-md) solid var(--input-border);
-  transition: border-color var(--transition-duration-fast) ease-in-out, box-shadow var(--transition-duration-fast) ease-in-out;
+  transition: border-color var(--transition-duration-fast) ease-in-out, box-shadow var(--transition-duration-fast) ease-in-out, background-color var(--transition-duration-fast) ease-in-out;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -41,10 +41,22 @@
   color: var(--input-placeholder-text);
 }
 
+.inputField:hover:not(:disabled) {
+  border-color: var(--input-border-hover, var(--input-border));
+  background-color: var(--input-bg-hover, var(--input-bg));
+}
+
 .inputField:focus {
   outline: none;
   border-color: var(--input-border-focus);
-  box-shadow: var(--focus-ring-primary);
+  /* Fallback ring */
+  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.25);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .inputField:focus {
+    /* Enhanced ring using brand primary via color-mix */
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent);
+  }
 }
 
 .inputIcon {
@@ -101,6 +113,10 @@
   border-color: var(--input-border-disabled);
   cursor: not-allowed;
   opacity: var(--opacity-disabled);
+}
+
+.inputWrapperDisabled .inputIcon {
+  opacity: var(--opacity-disabled, 0.5);
 }
 
 .inputWrapperFullWidth {

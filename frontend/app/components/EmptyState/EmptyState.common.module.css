@@ -1,0 +1,48 @@
+/* @AI-HINT: Common styles for EmptyState layout and interactions; colors in theme files. */
+
+.wrapper {
+  width: 100%;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.iconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  margin: 0 auto 0.75rem auto;
+  display: grid;
+  place-items: center;
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+.description {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.action { margin-top: 1rem; }
+
+/* Focus ring when interactive children are focused */
+.wrapper:focus-within {
+  /* Fallback */
+  box-shadow: 0 0 0 3px rgba(69,115,223,0.18) inset;
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .wrapper:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent) inset;
+  }
+}

@@ -22,7 +22,7 @@ const Security: React.FC = () => {
   const sectionVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
+    <main id="main-content" role="main" className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
         <header
           ref={headerRef as any}

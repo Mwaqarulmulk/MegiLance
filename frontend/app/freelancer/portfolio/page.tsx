@@ -7,6 +7,8 @@ import { FiPlusCircle, FiLayout } from 'react-icons/fi';
 
 import Button from '@/app/components/Button/Button';
 import PortfolioItemCard, { PortfolioItemCardProps } from '@/app/components/Freelancer/PortfolioItemCard/PortfolioItemCard';
+import EmptyState from '@/app/components/EmptyState/EmptyState';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
 import { cn } from '@/lib/utils';
 import commonStyles from './PortfolioPage.common.module.css';
 import lightStyles from './PortfolioPage.light.module.css';
@@ -38,6 +40,7 @@ const mockPortfolioItems: Omit<PortfolioItemCardProps, 'onDelete'>[] = [
 const PortfolioPage: React.FC = () => {
   const [items, setItems] = useState(mockPortfolioItems);
   const { theme } = useTheme();
+  const { notify } = useToaster();
 
   const styles = useMemo(() => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
@@ -46,6 +49,21 @@ const PortfolioPage: React.FC = () => {
 
   const handleDelete = (id: number) => {
     setItems(items.filter(item => item.id !== id));
+    notify({ title: 'Project removed', description: 'The item was removed from your portfolio.', variant: 'info', duration: 2000 });
+  };
+
+  const handleAdd = () => {
+    // Demo add: push a mock item
+    const nextId = (items[0]?.id ?? 0) + Math.floor(Math.random() * 1000) + 1;
+    const newItem: Omit<PortfolioItemCardProps, 'onDelete'> = {
+      id: nextId,
+      title: 'New Showcase Project',
+      description: 'Describe your achievement, outcomes, and impact. Upload images and links.',
+      imageUrl: '/images/stock/portfolio-1.jpg',
+      projectUrl: '#',
+    };
+    setItems([newItem, ...items]);
+    notify({ title: 'Project added', description: 'Draft project created. Customize its details.', variant: 'success', duration: 2200 });
   };
 
   return (
@@ -55,7 +73,7 @@ const PortfolioPage: React.FC = () => {
           <h1 className={cn(styles.title)}>My Portfolio</h1>
           <p className={cn(styles.subtitle)}>Showcase your best work and accomplishments to attract top clients.</p>
         </div>
-        <Button variant="primary" size="large"><FiPlusCircle /> Add New Project</Button>
+        <Button variant="primary" size="large" onClick={handleAdd} aria-label="Add new project"><FiPlusCircle /> Add New Project</Button>
       </header>
 
       <main className={cn(styles.main)}>
@@ -67,9 +85,16 @@ const PortfolioPage: React.FC = () => {
           </div>
         ) : (
           <div className={cn(styles.emptyState)}>
-            <FiLayout size={48} />
-            <h2 className={cn(styles.emptyTitle)}>Your Portfolio is Ready for a Masterpiece</h2>
-            <p className={cn(styles.emptyText)}>Click &apos;Add New Project&apos; to upload your first item and start building your reputation.</p>
+            <EmptyState
+              title="Showcase your best work"
+              description="Add a project to start building your reputation and attract top clients."
+              icon={<FiLayout aria-hidden="true" />}
+              action={
+                <Button variant="primary" size="large" onClick={handleAdd} aria-label="Add your first project">
+                  <FiPlusCircle /> Add Your First Project
+                </Button>
+              }
+            />
           </div>
         )}
       </main>

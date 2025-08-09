@@ -1,0 +1,81 @@
+/* AI-HINT: Common styles for the Toast component. Layout, animation, and interaction primitives. Theme files provide colors. */
+
+@keyframes toast-enter {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes toast-exit {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(8px); opacity: 0; }
+}
+
+.toast {
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow, 0 10px 20px rgba(0,0,0,0.12));
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+  max-width: min(560px, 92vw);
+}
+
+.enter { animation: toast-enter 240ms ease forwards; }
+.exit { animation: toast-exit 200ms ease forwards; }
+
+.toastBody { flex: 1; min-width: 0; }
+.toastTitle {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.toastDescription {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.toastClose {
+  margin-left: auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+/* Accessible rings */
+.toast:focus-within {
+  /* Fallback */
+  box-shadow: 0 0 0 3px rgba(69,115,223,0.18), var(--shadow, 0 10px 20px rgba(0,0,0,0.12));
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .toast:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent), var(--shadow, 0 10px 20px rgba(0,0,0,0.12));
+  }
+}
+
+.toastClose:focus-visible {
+  outline: none;
+  /* Fallback */
+  box-shadow: 0 0 0 3px rgba(69,115,223,0.28);
+}
+@supports (color: color-mix(in oklab, white, black)) {
+  .toastClose:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+}
+
+/* Variants handled by theme files but we define hooks here */
+.info {}
+.success {}
+.warning {}
+.danger {}

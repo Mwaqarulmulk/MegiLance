@@ -21,7 +21,7 @@ function useInView<T extends HTMLElement>(opts: IntersectionObserverInit = { thr
     }, opts);
     ob.observe(ref.current);
     return () => ob.disconnect();
-  }, [opts.root, opts.rootMargin, opts.threshold]);
+  }, [opts]);
   return { ref, visible } as const;
 }
 
@@ -53,7 +53,7 @@ const Pricing: React.FC = () => {
   const { ref: gridRef, visible: gridVisible } = useInView<HTMLDivElement>({ threshold: 0.2 });
 
   return (
-    <section className={styles.root} aria-labelledby="pricing-title">
+    <main id="main-content" role="main" aria-labelledby="pricing-title" className={styles.root}>
       <div ref={headerRef} className={cn(styles.header, styles.fadeIn, headerVisible && styles.visible)}>
         <span className={styles.badge}>Transparent pricing</span>
         <h1 id="pricing-title">Pricing</h1>
@@ -74,7 +74,7 @@ const Pricing: React.FC = () => {
       </div>
 
       <p className={styles.note}>Prices in USD. Taxes may apply. Contact sales for enterprise and custom SLAs.</p>
-    </section>
+    </main>
   );
 };
 

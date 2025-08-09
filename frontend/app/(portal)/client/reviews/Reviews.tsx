@@ -103,7 +103,7 @@ const Reviews: React.FC = () => {
                 key={n}
                 type="button"
                 className={common.starBtn}
-                aria-pressed={newRating === n ? 'true' : 'false'}
+                aria-pressed={newRating === n}
                 onClick={() => setStar(n)}
                 aria-label={`${n} star${n>1?'s':''}`}
               >
@@ -112,10 +112,10 @@ const Reviews: React.FC = () => {
             ))}
           </div>
           <label htmlFor="text" className={common.srOnly}>Review text</label>
-          <textarea id="text" className={cn(common.textarea, themed.textarea)} placeholder="Share your experience and outcomes…" value={newText} onChange={(e) => setNewText(e.target.value)} aria-invalid={newText.trim().length > 10 ? 'false' : 'true'} />
+          <textarea id="text" className={cn(common.textarea, themed.textarea)} placeholder="Share your experience and outcomes…" value={newText} onChange={(e) => setNewText(e.target.value)} aria-invalid={!(newText.trim().length > 10)} />
           <div className={common.controls}>
             <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={() => { setNewText(''); setNewRating(0); }}>Clear</button>
-            <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={() => alert('Review submitted')} disabled={!canSubmit} aria-disabled={!canSubmit ? 'true' : 'false'}>Submit Review</button>
+            <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={() => alert('Review submitted')} disabled={!canSubmit} aria-disabled={!canSubmit}>Submit Review</button>
           </div>
         </section>
       </div>
