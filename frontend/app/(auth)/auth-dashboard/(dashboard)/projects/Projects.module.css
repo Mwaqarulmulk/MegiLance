@@ -94,6 +94,43 @@
   background-color: var(--color-background-tertiary);
 }
 
+/* Active/selected filter state */
+.filterButtonActive {
+  /* Use widely supported fallback tint */
+  background-color: rgba(69, 115, 223, 0.08); /* MegiLance Blue @ 8% */
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.select {
+  appearance: none;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 0.6rem 2rem 0.6rem 0.75rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-inter);
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-text-secondary) 50%),
+    linear-gradient(135deg, var(--color-text-secondary) 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(1.05em), calc(100% - 11px) calc(1.05em);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+}
+
 /* Project List Table */
 .projectList {
   background-color: var(--color-background-secondary);

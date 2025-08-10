@@ -1,6 +1,6 @@
-// @AI-HINT: This is the Projects page, designed for comprehensive project management. It features filtering, searching, and a detailed list of project cards, each showing key information like status, budget, and team members.
+// @AI-HINT: Premium Projects page: interactive search, filtering, and sorting with responsive table layout.
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Plus, Search, Filter, ChevronDown, MoreHorizontal } from 'lucide-react';
 import styles from './Projects.module.css';
@@ -65,6 +65,34 @@ const getStatusClass = (status: string) => {
 };
 
 const ProjectsPage = () => {
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState<'All' | 'In Progress' | 'Completed' | 'On Hold' | 'Canceled'>('All');
+  const [sortBy, setSortBy] = useState<'deadline' | 'budget' | 'status'>('deadline');
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = projects.filter(p =>
+      (status === 'All' || p.status === status) &&
+      (
+        p.id.toLowerCase().includes(q) ||
+        p.title.toLowerCase().includes(q) ||
+        p.client.toLowerCase().includes(q)
+      )
+    );
+    list = [...list].sort((a, b) => {
+      if (sortBy === 'deadline') {
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      }
+      if (sortBy === 'budget') {
+        return b.budget - a.budget; // high to low
+      }
+      // status ordering
+      const order = ['In Progress', 'Completed', 'On Hold', 'Canceled'] as const;
+      return order.indexOf(a.status as any) - order.indexOf(b.status as any);
+    });
+    return list;
+  }, [query, status, sortBy]);
+
   return (
     <div className={styles.projectsContainer}>
       <div className={styles.pageHeader}>
@@ -78,17 +106,44 @@ const ProjectsPage = () => {
       <div className={styles.controlsBar}>
         <div className={styles.searchBox}>
           <Search size={18} className={styles.searchIcon} />
-          <input type="text" placeholder="Search projects..." />
+          <input
+            type="text"
+            placeholder="Search projects..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search projects"
+          />
         </div>
         <div className={styles.filters}>
-          <button className={styles.filterButton}>
+          <button className={`${styles.filterButton} ${status !== 'All' ? styles.filterButtonActive : ''}`} aria-haspopup="listbox">
             <Filter size={16} />
             <span>Filter</span>
           </button>
-          <button className={styles.filterButton}>
-            <span>Status: All</span>
-            <ChevronDown size={16} />
-          </button>
+          <select
+            className={`${styles.select}`}
+            value={status}
+            onChange={(e) => setStatus(e.target.value as any)}
+            aria-label="Filter by status"
+          >
+            {['All','In Progress','Completed','On Hold','Canceled'].map(s => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <div className={styles.filterButton} role="group" aria-label="Sort by">
+            <span>Sort:</span>
+            <button
+              className={`${styles.filterButton} ${sortBy === 'deadline' ? styles.filterButtonActive : ''}`}
+              onClick={() => setSortBy('deadline')}
+            >Deadline</button>
+            <button
+              className={`${styles.filterButton} ${sortBy === 'budget' ? styles.filterButtonActive : ''}`}
+              onClick={() => setSortBy('budget')}
+            >Budget</button>
+            <button
+              className={`${styles.filterButton} ${sortBy === 'status' ? styles.filterButtonActive : ''}`}
+              onClick={() => setSortBy('status')}
+            >Status</button>
+          </div>
         </div>
       </div>
 
@@ -101,7 +156,7 @@ const ProjectsPage = () => {
           <span className={styles.headerItem}>Deadline</span>
           <span className={styles.headerItem}></span>
         </div>
-        {projects.map(project => (
+        {filtered.map(project => (
           <div key={project.id} className={styles.projectRow}>
             <div className={styles.projectInfo}>
               <span className={styles.projectId}>{project.id}</span>
