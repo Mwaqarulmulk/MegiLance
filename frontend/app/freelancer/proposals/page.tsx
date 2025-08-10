@@ -14,6 +14,7 @@ import ColumnVisibilityMenu from '@/app/components/DataTableExtras/ColumnVisibil
 import DensityToggle, { Density } from '@/app/components/DataTableExtras/DensityToggle';
 import SelectionBar from '@/app/components/DataTableExtras/SelectionBar';
 import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
+import SavedViewsMenu from '@/app/components/DataTableExtras/SavedViewsMenu';
 import commonStyles from './Proposals.common.module.css';
 import lightStyles from './Proposals.light.module.css';
 import darkStyles from './Proposals.dark.module.css';
@@ -49,6 +50,12 @@ const ProposalsPage: React.FC = () => {
   const [pageSize, setPageSize] = usePersistedState<number>('freelancer:proposals:pageSize', 10);
   const [density, setDensity] = usePersistedState<Density>('freelancer:proposals:density', 'comfortable');
   const [loading, setLoading] = useState(false);
+
+  // Strongly-typed helper to satisfy aria-sort lints with literal values only
+  const ariaSortFor = (col: typeof sortKey): 'ascending' | 'descending' | 'none' => {
+    if (sortKey === col) return sortDir === 'asc' ? 'ascending' : 'descending';
+    return 'none';
+  };
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -181,6 +188,26 @@ const ProposalsPage: React.FC = () => {
           aria-label="Toggle table columns"
         />
         <DensityToggle value={density} onChange={setDensity} />
+        <SavedViewsMenu
+          storageKey="freelancer:proposals:savedViews"
+          buildPayload={() => ({
+            q,
+            sortKey,
+            sortDir,
+            pageSize,
+            density,
+            visible,
+          })}
+          onApply={(p: { q: string; sortKey: typeof sortKey; sortDir: typeof sortDir; pageSize: number; density: typeof density; visible: string[]; }) => {
+            setQ(p.q ?? '');
+            setSortKey(p.sortKey ?? 'dateSubmitted');
+            setSortDir(p.sortDir ?? 'desc');
+            setPageSize(p.pageSize ?? 10);
+            setDensity(p.density ?? 'comfortable');
+            setAllCols((p.visible ?? allColumns) as unknown as string[]);
+            setPage(1);
+          }}
+        />
       </div>
 
       <SelectionBar count={count} onClear={clear} onExportCSV={count > 0 ? onExportSelected : undefined} />
@@ -199,19 +226,19 @@ const ProposalsPage: React.FC = () => {
                 />
               </th>
               {show('jobTitle') && (
-                <th scope="col" aria-sort={sortKey==='jobTitle' ? (sortDir==='asc'?'ascending':'descending') : 'none'}>Job Title</th>
+                <th scope="col" aria-sort={ariaSortFor('jobTitle')}>Job Title</th>
               )}
               {show('clientName') && (
-                <th scope="col" aria-sort={sortKey==='clientName' ? (sortDir==='asc'?'ascending':'descending') : 'none'}>Client</th>
+                <th scope="col" aria-sort={ariaSortFor('clientName')}>Client</th>
               )}
               {show('status') && (
-                <th scope="col" aria-sort={sortKey==='status' ? (sortDir==='asc'?'ascending':'descending') : 'none'}>Status</th>
+                <th scope="col" aria-sort={ariaSortFor('status')}>Status</th>
               )}
               {show('dateSubmitted') && (
-                <th scope="col" aria-sort={sortKey==='dateSubmitted' ? (sortDir==='asc'?'ascending':'descending') : 'none'}>Submitted</th>
+                <th scope="col" aria-sort={ariaSortFor('dateSubmitted')}>Submitted</th>
               )}
               {show('bidAmount') && (
-                <th scope="col" aria-sort={sortKey==='bidAmount' ? (sortDir==='asc'?'ascending':'descending') : 'none'}>Bid (USD)</th>
+                <th scope="col" aria-sort={ariaSortFor('bidAmount')}>Bid (USD)</th>
               )}
             </tr>
           </thead>

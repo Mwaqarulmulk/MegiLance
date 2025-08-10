@@ -9,6 +9,9 @@ import lightStyles from './MyJobs.light.module.css';
 import darkStyles from './MyJobs.dark.module.css';
 import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
 import { exportCSV } from '@/app/lib/csv';
+import DataToolbar, { SortOption } from '@/app/components/DataToolbar/DataToolbar';
+import PaginationBar from '@/app/components/PaginationBar/PaginationBar';
+import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
 
 const activeJobs = [
   {
@@ -62,6 +65,7 @@ const MyJobs: React.FC = () => {
   const [pageActive, setPageActive] = usePersistedState<number>('freelancer:my-jobs:active:page', 1);
   const [pageActiveSize, setPageActiveSize] = usePersistedState<number>('freelancer:my-jobs:active:pageSize', 6);
   const [loadingActive, setLoadingActive] = useState(false);
+  const [uiLoadingActive, setUiLoadingActive] = useState(false);
 
   const filteredActive = useMemo(() => {
     const q = qActive.trim().toLowerCase();
@@ -100,6 +104,12 @@ const MyJobs: React.FC = () => {
     exportCSV(header, rows, 'my-jobs-active');
   };
 
+  useEffect(() => {
+    setUiLoadingActive(true);
+    const t = setTimeout(() => setUiLoadingActive(false), 120);
+    return () => clearTimeout(t);
+  }, [qActive, sortActiveKey, sortActiveDir, pageActive, pageActiveSize]);
+
   // Completed section controls
   const [qCompleted, setQCompleted] = usePersistedState<string>('freelancer:my-jobs:completed:q', '');
   const [sortCompletedKey, setSortCompletedKey] = usePersistedState<'title' | 'client' | 'completionDate'>('freelancer:my-jobs:completed:sortKey', 'completionDate');
@@ -107,6 +117,7 @@ const MyJobs: React.FC = () => {
   const [pageCompleted, setPageCompleted] = usePersistedState<number>('freelancer:my-jobs:completed:page', 1);
   const [pageCompletedSize, setPageCompletedSize] = usePersistedState<number>('freelancer:my-jobs:completed:pageSize', 6);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
+  const [uiLoadingCompleted, setUiLoadingCompleted] = useState(false);
 
   const filteredCompleted = useMemo(() => {
     const q = qCompleted.trim().toLowerCase();
@@ -142,10 +153,16 @@ const MyJobs: React.FC = () => {
   }, [sortedCompleted, pageCompletedSafe, pageCompletedSize]);
 
   const exportCompletedCSV = () => {
-    const header = ['Title', 'Client', 'Completed On'];
-    const rows = sortedCompleted.map(j => [j.title, j.client, j.completionDate ?? '—']);
+    const header = ['Title', 'Client', 'Status', 'Completed On'];
+    const rows = sortedCompleted.map(j => [j.title, j.client, j.status, j.completionDate ?? '']);
     exportCSV(header, rows, 'my-jobs-completed');
   };
+
+  useEffect(() => {
+    setUiLoadingCompleted(true);
+    const t = setTimeout(() => setUiLoadingCompleted(false), 120);
+    return () => clearTimeout(t);
+  }, [qCompleted, sortCompletedKey, sortCompletedDir, pageCompleted, pageCompletedSize]);
 
   useEffect(() => {
     setLoadingActive(true);
@@ -170,157 +187,103 @@ const MyJobs: React.FC = () => {
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Active Jobs</h2>
-        <div className={styles.toolbar} role="group" aria-label="Active filters and actions">
-          <label htmlFor="q-active" className={styles.srOnly}>Search active jobs</label>
-          <input
-            id="q-active"
-            className={styles.input}
-            type="search"
-            placeholder="Search by title, client, or status"
-            value={qActive}
-            onChange={(e) => { setQActive(e.target.value); setPageActive(1); }}
-          />
-          <label htmlFor="sort-active" className={styles.srOnly}>Sort active</label>
-          <select
-            id="sort-active"
-            className={styles.select}
-            value={`${sortActiveKey}:${sortActiveDir}`}
-            onChange={(e) => {
-              const [k, d] = e.target.value.split(':') as [typeof sortActiveKey, typeof sortActiveDir];
-              setSortActiveKey(k);
-              setSortActiveDir(d);
-              setPageActive(1);
-            }}
-            aria-label="Sort active jobs"
-          >
-            <option value="title:asc">Title A–Z</option>
-            <option value="title:desc">Title Z–A</option>
-            <option value="client:asc">Client A–Z</option>
-            <option value="client:desc">Client Z–A</option>
-            <option value="status:asc">Status A–Z</option>
-            <option value="status:desc">Status Z–A</option>
-            <option value="progress:asc">Progress Low–High</option>
-            <option value="progress:desc">Progress High–Low</option>
-          </select>
-          <button type="button" className={styles.button} onClick={exportActiveCSV} aria-label="Export active jobs to CSV">Export CSV</button>
-          <label htmlFor="active-page-size" className={styles.srOnly}>Active per page</label>
-          <select
-            id="active-page-size"
-            className={styles.select}
-            value={pageActiveSize}
-            onChange={(e) => { setPageActiveSize(Number(e.target.value)); setPageActive(1); }}
-            aria-label="Active results per page"
-          >
-            {[6, 12, 24].map(sz => <option key={sz} value={sz}>{sz}/page</option>)}
-          </select>
-        </div>
+        <DataToolbar
+          query={qActive}
+          onQueryChange={(val) => { setQActive(val); setPageActive(1); }}
+          sortValue={`${sortActiveKey}:${sortActiveDir}`}
+          onSortChange={(val) => {
+            const [k, d] = val.split(':') as [typeof sortActiveKey, typeof sortActiveDir];
+            setSortActiveKey(k); setSortActiveDir(d); setPageActive(1);
+          }}
+          pageSize={pageActiveSize}
+          onPageSizeChange={(sz) => { setPageActiveSize(sz); setPageActive(1); }}
+          sortOptions={([
+            { value: 'title:asc', label: 'Title A–Z' },
+            { value: 'title:desc', label: 'Title Z–A' },
+            { value: 'client:asc', label: 'Client A–Z' },
+            { value: 'client:desc', label: 'Client Z–A' },
+            { value: 'status:asc', label: 'Status A–Z' },
+            { value: 'status:desc', label: 'Status Z–A' },
+            { value: 'progress:asc', label: 'Progress Low–High' },
+            { value: 'progress:desc', label: 'Progress High–Low' },
+          ]) as SortOption[]}
+          onExportCSV={exportActiveCSV}
+          exportLabel="Export CSV"
+          aria-label="Active filters and actions"
+        />
+
         <div className={styles.jobGrid}>
-          {pagedActive.map((job, index) => (
-            <JobStatusCard key={`active-${index}`} {...job} />
-          ))}
-          {sortedActive.length === 0 && (
-            <div role="status" aria-live="polite" className={styles.emptyState}>No active jobs found.</div>
+          {uiLoadingActive ? (
+            <TableSkeleton rows={Math.min(pageActiveSize, 6)} cols={3} />
+          ) : (
+            <>
+              {pagedActive.map((job, index) => (
+                <JobStatusCard key={`active-${index}`} {...job} />
+              ))}
+              {sortedActive.length === 0 && (
+                <div role="status" aria-live="polite" className={styles.emptyState}>No active jobs found.</div>
+              )}
+            </>
           )}
         </div>
+
         {sortedActive.length > 0 && (
-          <div className={styles.paginationBar} role="navigation" aria-label="Active pagination">
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => setPageActive(p => Math.max(1, p - 1))}
-              disabled={pageActiveSafe === 1}
-              aria-label="Previous page"
-            >
-              Prev
-            </button>
-            <span className={styles.paginationInfo} aria-live="polite">Page {pageActiveSafe} of {totalActivePages} · {sortedActive.length} result(s)</span>
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => setPageActive(p => Math.min(totalActivePages, p + 1))}
-              disabled={pageActiveSafe === totalActivePages}
-              aria-label="Next page"
-            >
-              Next
-            </button>
-          </div>
+          <PaginationBar
+            currentPage={pageActiveSafe}
+            totalPages={totalActivePages}
+            totalResults={sortedActive.length}
+            onPrev={() => setPageActive(p => Math.max(1, p - 1))}
+            onNext={() => setPageActive(p => Math.min(totalActivePages, p + 1))}
+          />
         )}
       </section>
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Completed Jobs</h2>
-        <div className={styles.toolbar} role="group" aria-label="Completed filters and actions">
-          <label htmlFor="q-completed" className={styles.srOnly}>Search completed jobs</label>
-          <input
-            id="q-completed"
-            className={styles.input}
-            type="search"
-            placeholder="Search by title or client"
-            value={qCompleted}
-            onChange={(e) => { setQCompleted(e.target.value); setPageCompleted(1); }}
-          />
-          <label htmlFor="sort-completed" className={styles.srOnly}>Sort completed</label>
-          <select
-            id="sort-completed"
-            className={styles.select}
-            value={`${sortCompletedKey}:${sortCompletedDir}`}
-            onChange={(e) => {
-              const [k, d] = e.target.value.split(':') as [typeof sortCompletedKey, typeof sortCompletedDir];
-              setSortCompletedKey(k);
-              setSortCompletedDir(d);
-              setPageCompleted(1);
-            }}
-            aria-label="Sort completed jobs"
-          >
-            <option value="completionDate:desc">Newest</option>
-            <option value="completionDate:asc">Oldest</option>
-            <option value="title:asc">Title A–Z</option>
-            <option value="title:desc">Title Z–A</option>
-            <option value="client:asc">Client A–Z</option>
-            <option value="client:desc">Client Z–A</option>
-          </select>
-          <button type="button" className={styles.button} onClick={exportCompletedCSV} aria-label="Export completed jobs to CSV">Export CSV</button>
-          <label htmlFor="completed-page-size" className={styles.srOnly}>Completed per page</label>
-          <select
-            id="completed-page-size"
-            className={styles.select}
-            value={pageCompletedSize}
-            onChange={(e) => { setPageCompletedSize(Number(e.target.value)); setPageCompleted(1); }}
-            aria-label="Completed results per page"
-          >
-            {[6, 12, 24].map(sz => <option key={sz} value={sz}>{sz}/page</option>)}
-          </select>
-        </div>
+        <DataToolbar
+          query={qCompleted}
+          onQueryChange={(val) => { setQCompleted(val); setPageCompleted(1); }}
+          sortValue={`${sortCompletedKey}:${sortCompletedDir}`}
+          onSortChange={(val) => {
+            const [k, d] = val.split(':') as [typeof sortCompletedKey, typeof sortCompletedDir];
+            setSortCompletedKey(k); setSortCompletedDir(d); setPageCompleted(1);
+          }}
+          pageSize={pageCompletedSize}
+          onPageSizeChange={(sz) => { setPageCompletedSize(sz); setPageCompleted(1); }}
+          sortOptions={([
+            { value: 'completionDate:desc', label: 'Newest' },
+            { value: 'completionDate:asc', label: 'Oldest' },
+            { value: 'title:asc', label: 'Title A–Z' },
+            { value: 'title:desc', label: 'Title Z–A' },
+            { value: 'client:asc', label: 'Client A–Z' },
+            { value: 'client:desc', label: 'Client Z–A' },
+          ]) as SortOption[]}
+          onExportCSV={exportCompletedCSV}
+          exportLabel="Export CSV"
+          aria-label="Completed filters and actions"
+        />
         <div className={styles.jobGrid}>
-          {pagedCompleted.map((job, index) => (
-            <JobStatusCard key={`completed-${index}`} {...job} />
-          ))}
-          {sortedCompleted.length === 0 && (
-            <div role="status" aria-live="polite" className={styles.emptyState}>No completed jobs found.</div>
+          {uiLoadingCompleted ? (
+            <TableSkeleton rows={Math.min(pageCompletedSize, 6)} cols={3} />
+          ) : (
+            <>
+              {pagedCompleted.map((job, index) => (
+                <JobStatusCard key={`completed-${index}`} {...job} />
+              ))}
+              {sortedCompleted.length === 0 && (
+                <div role="status" aria-live="polite" className={styles.emptyState}>No completed jobs found.</div>
+              )}
+            </>
           )}
         </div>
         {sortedCompleted.length > 0 && (
-          <div className={styles.paginationBar} role="navigation" aria-label="Completed pagination">
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => setPageCompleted(p => Math.max(1, p - 1))}
-              disabled={pageCompletedSafe === 1}
-              aria-label="Previous page"
-            >
-              Prev
-            </button>
-            <span className={styles.paginationInfo} aria-live="polite">Page {pageCompletedSafe} of {totalCompletedPages} · {sortedCompleted.length} result(s)</span>
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => setPageCompleted(p => Math.min(totalCompletedPages, p + 1))}
-              disabled={pageCompletedSafe === totalCompletedPages}
-              aria-label="Next page"
-            >
-              Next
-            </button>
-          </div>
+          <PaginationBar
+            currentPage={pageCompletedSafe}
+            totalPages={totalCompletedPages}
+            totalResults={sortedCompleted.length}
+            onPrev={() => setPageCompleted(p => Math.max(1, p - 1))}
+            onNext={() => setPageCompleted(p => Math.min(totalCompletedPages, p + 1))}
+          />
         )}
       </section>
     </div>

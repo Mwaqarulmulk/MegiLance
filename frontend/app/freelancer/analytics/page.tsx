@@ -1,10 +1,13 @@
 // @AI-HINT: This page displays performance analytics for the freelancer. It's now fully theme-aware and built with a premium, responsive grid layout.
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
 import LineChart from '@/app/components/DataViz/LineChart/LineChart';
 import { useFreelancerData } from '@/hooks/useFreelancer';
+import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
+import { exportCSV } from '@/app/lib/csv';
+import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
 import commonStyles from './Analytics.common.module.css';
 import lightStyles from './Analytics.light.module.css';
 import darkStyles from './Analytics.dark.module.css';
@@ -12,7 +15,8 @@ import darkStyles from './Analytics.dark.module.css';
 const AnalyticsPage: React.FC = () => {
   const { theme } = useTheme();
   const { analytics, loading, error } = useFreelancerData();
-  const [range, setRange] = useState<'7d' | '30d' | '90d'>('30d');
+  const [range, setRange] = usePersistedState<'7d' | '30d' | '90d'>('freelancer:analytics:range', '30d');
+  const [uiLoading, setUiLoading] = useState(false);
   
   const styles = useMemo(() => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
@@ -53,24 +57,22 @@ const AnalyticsPage: React.FC = () => {
     };
   }, [analytics, range]);
 
-  const exportCSV = () => {
+  // Smooth UI transition on control changes
+  useEffect(() => {
+    setUiLoading(true);
+    const t = setTimeout(() => setUiLoading(false), 120);
+    return () => clearTimeout(t);
+  }, [range]);
+
+  const onExportCSV = () => {
     if (!analyticsData) return;
-    const header = ['Label','Views','Earnings'];
+    const header = ['Label', 'Views', 'Earnings'];
     const rows = analyticsData.viewsOverTime.labels.map((label, idx) => [
       label,
       String(analyticsData.viewsOverTime.data[idx] ?? ''),
       String(analyticsData.earningsOverTime.data[idx] ?? ''),
     ]);
-    const csv = [header, ...rows]
-      .map(cols => cols.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
-      .join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `analytics-${range}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    exportCSV(header, rows, `analytics-${range}`);
   };
 
   return (
@@ -98,7 +100,7 @@ const AnalyticsPage: React.FC = () => {
               <option value="30d">Last 30 days</option>
               <option value="90d">Last 90 days</option>
             </select>
-            <button type="button" onClick={exportCSV} className={styles.button} aria-label="Export analytics CSV">Export CSV</button>
+            <button type="button" onClick={onExportCSV} className={styles.button} aria-label="Export analytics CSV">Export CSV</button>
             <span className={styles.toolbarInfo} role="status" aria-live="polite">Showing {range === '7d' ? '7' : range === '30d' ? '30' : '90'}-day trend</span>
           </div>
           <div className={styles.kpiGrid}>
@@ -123,12 +125,20 @@ const AnalyticsPage: React.FC = () => {
           <div className={styles.chartGrid}>
             <div className={styles.chartCard}>
               <h2 className={styles.cardTitle}>Profile Views Over Time</h2>
-              <LineChart data={analyticsData.viewsOverTime.data} labels={analyticsData.viewsOverTime.labels} />
+              {uiLoading ? (
+                <TableSkeleton rows={6} cols={6} />
+              ) : (
+                <LineChart data={analyticsData.viewsOverTime.data} labels={analyticsData.viewsOverTime.labels} />
+              )}
             </div>
 
             <div className={styles.chartCard}>
               <h2 className={styles.cardTitle}>Earnings Over Time</h2>
-              <LineChart data={analyticsData.earningsOverTime.data} labels={analyticsData.earningsOverTime.labels} />
+              {uiLoading ? (
+                <TableSkeleton rows={6} cols={6} />
+              ) : (
+                <LineChart data={analyticsData.earningsOverTime.data} labels={analyticsData.earningsOverTime.labels} />
+              )}
             </div>
           </div>
         </main>

@@ -1,11 +1,17 @@
 // @AI-HINT: This is the Wallet page for freelancers to manage their earnings and transactions. It is now fully theme-aware and features a premium, investor-grade design.
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
 import TransactionRow from '@/app/components/TransactionRow/TransactionRow';
 import Button from '@/app/components/Button/Button';
 import { useFreelancerData } from '@/hooks/useFreelancer';
+import DataToolbar, { SortOption } from '@/app/components/DataToolbar/DataToolbar';
+import PaginationBar from '@/app/components/PaginationBar/PaginationBar';
+import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
+import { exportCSV } from '@/app/lib/csv';
+import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
+import DensityToggle, { Density } from '@/app/components/DataTableExtras/DensityToggle';
 import commonStyles from './Wallet.common.module.css';
 import lightStyles from './Wallet.light.module.css';
 import darkStyles from './Wallet.dark.module.css';
@@ -25,11 +31,13 @@ const Wallet: React.FC = () => {
     return parseFloat(balanceStr) ?? 0;
   }, [analytics?.walletBalance]);
 
-  const [q, setQ] = useState('');
-  const [sortKey, setSortKey] = useState<'date' | 'amount' | 'type'>('date');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
-  const [pageSize, setPageSize] = useState(10);
-  const [page, setPage] = useState(1);
+  const [q, setQ] = usePersistedState<string>('freelancer:wallet:q', '');
+  const [sortKey, setSortKey] = usePersistedState<'date' | 'amount' | 'type'>('freelancer:wallet:sortKey', 'date');
+  const [sortDir, setSortDir] = usePersistedState<'asc' | 'desc'>('freelancer:wallet:sortDir', 'desc');
+  const [pageSize, setPageSize] = usePersistedState<number>('freelancer:wallet:pageSize', 10);
+  const [page, setPage] = usePersistedState<number>('freelancer:wallet:page', 1);
+  const [uiLoading, setUiLoading] = useState(false);
+  const [density, setDensity] = usePersistedState<Density>('freelancer:wallet:density', 'comfortable');
 
   interface TxRow {
     id: string;
@@ -91,16 +99,27 @@ const Wallet: React.FC = () => {
     return Math.min(Math.max(1, page), totalPages);
   }, [page, totalPages]);
 
-  const exportCSV = () => {
-    const csvContent = sorted.map((tx) => {
-      return `${tx.type},${tx.amount},${tx.date},${tx.description}`;
-    }).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'transactions.csv';
-    link.click();
+  // Lightweight UI loading to avoid layout jank on control changes
+  useEffect(() => {
+    setUiLoading(true);
+    const t = setTimeout(() => setUiLoading(false), 120);
+    return () => clearTimeout(t);
+  }, [q, sortKey, sortDir, page, pageSize]);
+
+  const onExportCSV = () => {
+    const header = ['Type', 'Amount', 'Date', 'Description'];
+    const rows = sorted.map(tx => [tx.type, tx.amount, tx.date, tx.description]);
+    exportCSV(header, rows, 'transactions');
   };
+
+  const sortOptions: SortOption[] = [
+    { value: 'date:desc', label: 'Newest' },
+    { value: 'date:asc', label: 'Oldest' },
+    { value: 'amount:desc', label: 'Amount High–Low' },
+    { value: 'amount:asc', label: 'Amount Low–High' },
+    { value: 'type:asc', label: 'Type A–Z' },
+    { value: 'type:desc', label: 'Type Z–A' },
+  ];
 
   return (
     <div className={styles.container}>
@@ -121,84 +140,49 @@ const Wallet: React.FC = () => {
 
         <section className={styles.transactionsCard}>
           <h2 className={styles.cardTitle}>Transaction History</h2>
-          {/* Toolbar: search, sort, CSV, page size */}
-          <div className={styles.toolbar} role="group" aria-label="Transactions filters and actions">
-            <label htmlFor="txn-search" className={styles.srOnly}>Search transactions</label>
-            <input
-              id="txn-search"
-              className={styles.input}
-              type="search"
-              placeholder="Search by type or description"
-              value={q}
-              onChange={(e) => { setQ(e.target.value); setPage(1); }}
-            />
+          <DataToolbar
+            query={q}
+            onQueryChange={(val) => { setQ(val); setPage(1); }}
+            sortValue={`${sortKey}:${sortDir}`}
+            onSortChange={(val) => {
+              const [k, d] = val.split(':') as [typeof sortKey, typeof sortDir];
+              setSortKey(k); setSortDir(d); setPage(1);
+            }}
+            pageSize={pageSize}
+            onPageSizeChange={(sz) => { setPageSize(sz); setPage(1); }}
+            sortOptions={sortOptions}
+            onExportCSV={onExportCSV}
+            exportLabel="Export CSV"
+            aria-label="Transactions filters and actions"
+          />
 
-            <label htmlFor="txn-sort" className={styles.srOnly}>Sort transactions</label>
-            <select
-              id="txn-sort"
-              className={styles.select}
-              value={`${sortKey}:${sortDir}`}
-              onChange={(e) => {
-                const [k, d] = e.target.value.split(':') as [typeof sortKey, typeof sortDir];
-                setSortKey(k);
-                setSortDir(d);
-                setPage(1);
-              }}
-              aria-label="Sort transactions"
-            >
-              <option value="date:desc">Newest</option>
-              <option value="date:asc">Oldest</option>
-              <option value="amount:desc">Amount High–Low</option>
-              <option value="amount:asc">Amount Low–High</option>
-              <option value="type:asc">Type A–Z</option>
-              <option value="type:desc">Type Z–A</option>
-            </select>
-
-            <button type="button" className={styles.button} onClick={exportCSV} aria-label="Export transactions to CSV">Export CSV</button>
-
-            <label htmlFor="txn-page-size" className={styles.srOnly}>Transactions per page</label>
-            <select
-              id="txn-page-size"
-              className={styles.select}
-              value={pageSize}
-              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-              aria-label="Results per page"
-            >
-              {[10, 20, 50].map(sz => <option key={sz} value={sz}>{sz}/page</option>)}
-            </select>
+          <div className={styles.extrasRow} role="group" aria-label="View options">
+            <DensityToggle value={density} onChange={setDensity} />
           </div>
 
-          <div className={styles.transactionList}>
-            {paged.map((tx) => (
-              <TransactionRow key={tx.id} {...tx} />
-            ))}
-            {sorted.length === 0 && !loading && (
-              <div className={styles.emptyState} role="status" aria-live="polite">No transactions found.</div>
+          <div className={styles.transactionList} data-density={density}>
+            {uiLoading ? (
+              <TableSkeleton rows={Math.min(pageSize, 6)} cols={3} dense={density==='compact'} />
+            ) : (
+              <>
+                {paged.map((tx) => (
+                  <TransactionRow key={tx.id} {...tx} />
+                ))}
+                {sorted.length === 0 && !loading && (
+                  <div className={styles.emptyState} role="status" aria-live="polite">No transactions found.</div>
+                )}
+              </>
             )}
           </div>
 
           {sorted.length > 0 && (
-            <div className={styles.paginationBar} role="navigation" aria-label="Transactions pagination">
-              <button
-                type="button"
-                className={styles.button}
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={pageSafe === 1}
-                aria-label="Previous page"
-              >
-                Prev
-              </button>
-              <span className={styles.paginationInfo} aria-live="polite">Page {pageSafe} of {totalPages} · {sorted.length} result(s)</span>
-              <button
-                type="button"
-                className={styles.button}
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={pageSafe === totalPages}
-                aria-label="Next page"
-              >
-                Next
-              </button>
-            </div>
+            <PaginationBar
+              currentPage={pageSafe}
+              totalPages={totalPages}
+              totalResults={sorted.length}
+              onPrev={() => setPage(p => Math.max(1, p - 1))}
+              onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+            />
           )}
         </section>
       </div>

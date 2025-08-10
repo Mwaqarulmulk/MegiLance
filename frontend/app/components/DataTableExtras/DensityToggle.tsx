@@ -22,13 +22,13 @@ const DensityToggle: React.FC<DensityToggleProps> = ({ value, onChange }) => {
       <button
         type="button"
         className={styles.button}
-        aria-pressed={(value === 'comfortable') ? 'true' : 'false'}
+        aria-pressed={value === 'comfortable'}
         onClick={() => onChange('comfortable')}
       >Comfortable</button>
       <button
         type="button"
         className={styles.button}
-        aria-pressed={(value === 'compact') ? 'true' : 'false'}
+        aria-pressed={value === 'compact'}
         onClick={() => onChange('compact')}
       >Compact</button>
     </div>

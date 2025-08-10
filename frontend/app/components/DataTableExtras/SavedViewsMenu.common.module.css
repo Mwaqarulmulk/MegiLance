@@ -1,0 +1,64 @@
+/* AI-HINT: Common styles for SavedViewsMenu component. */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.input {
+  min-width: 10rem;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid;
+}
+.button {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+}
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+}
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid;
+  border-radius: var(--border-radius-sm);
+}
+.viewName {
+  font-weight: 500;
+}
+.itemActions {
+  display: flex;
+  gap: var(--space-1);
+}
+.smallButton,
+.smallDanger {
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.smallDanger {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+.empty {
+  opacity: 0.8;
+}
