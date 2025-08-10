@@ -34,6 +34,11 @@ const AdminUsers: React.FC = () => {
   const [rows, setRows] = useState<UserRow[]>([]);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [modal, setModal] = useState<{ kind: 'suspend' | 'restore'; count: number } | null>(null);
+  // Sorting & pagination
+  const [sortKey, setSortKey] = useState<keyof UserRow>('name');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   React.useEffect(() => {
     if (users) setRows(users as unknown as UserRow[]);
@@ -54,17 +59,36 @@ const AdminUsers: React.FC = () => {
     );
   }, [rows, query, role, status]);
 
-  const allSelected = filtered.length > 0 && filtered.every(r => selected[r.id]);
+  const sorted = useMemo(() => {
+    const copy = [...filtered];
+    copy.sort((a, b) => {
+      const av = String(a[sortKey] ?? '').toLowerCase();
+      const bv = String(b[sortKey] ?? '').toLowerCase();
+      if (av < bv) return sortDir === 'asc' ? -1 : 1;
+      if (av > bv) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return copy;
+  }, [filtered, sortKey, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
+  const pageSafe = Math.min(page, totalPages);
+  const paged = useMemo(() => {
+    const start = (pageSafe - 1) * pageSize;
+    return sorted.slice(start, start + pageSize);
+  }, [sorted, pageSafe, pageSize]);
+
+  const allSelected = paged.length > 0 && paged.every(r => selected[r.id]);
   const selectedIds = Object.keys(selected).filter(id => selected[id]);
 
   const toggleAll = () => {
     if (allSelected) {
       const copy = { ...selected };
-      filtered.forEach(r => { copy[r.id] = false; });
+      paged.forEach(r => { copy[r.id] = false; });
       setSelected(copy);
     } else {
       const copy = { ...selected };
-      filtered.forEach(r => { copy[r.id] = true; });
+      paged.forEach(r => { copy[r.id] = true; });
       setSelected(copy);
     }
   };
@@ -81,6 +105,31 @@ const AdminUsers: React.FC = () => {
     setRows(prev => prev.map(r => selected[r.id] ? { ...r, status: kind === 'suspend' ? 'Suspended' : 'Active' } : r));
     setSelected({});
     setModal(null);
+  };
+
+  const onSort = (key: keyof UserRow) => {
+    if (sortKey === key) {
+      setSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+    setPage(1);
+  };
+
+  const exportCSV = () => {
+    const header = ['Name', 'Email', 'Role', 'Status', 'Joined'];
+    const rowsCsv = sorted.map(r => [r.name, r.email, r.role, r.status, r.joined]);
+    const csv = [header, ...rowsCsv]
+      .map(cols => cols.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'users.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -104,6 +153,17 @@ const AdminUsers: React.FC = () => {
             </select>
             <button type="button" className={cn(common.button, themed.button)} onClick={() => openModal('suspend')} disabled={selectedIds.length === 0}>Suspend</button>
             <button type="button" className={cn(common.button, themed.button, 'secondary')} onClick={() => openModal('restore')} disabled={selectedIds.length === 0}>Restore</button>
+            <button type="button" className={cn(common.button, themed.button, 'secondary')} onClick={exportCSV} disabled={sorted.length === 0}>Export CSV</button>
+            <label className={common.srOnly} htmlFor="pageSize">Rows per page</label>
+            <select
+              id="pageSize"
+              className={cn(common.select, themed.select)}
+              value={pageSize}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+              aria-label="Rows per page"
+            >
+              {[10, 20, 50].map(sz => <option key={sz} value={sz}>{sz}/page</option>)}
+            </select>
           </div>
         </div>
 
@@ -122,15 +182,25 @@ const AdminUsers: React.FC = () => {
                 <th scope="col" className={themed.th + ' ' + common.th}>
                   <input type="checkbox" aria-label="Select all" checked={allSelected} onChange={toggleAll} />
                 </th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Name</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Email</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Role</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Status</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Joined</th>
+                <th scope="col" className={themed.th + ' ' + common.th} aria-sort={sortKey==='name' ? (sortDir==='asc'?'ascending':'descending') : undefined}>
+                  <button type="button" className={common.sortBtn} onClick={() => onSort('name')} aria-label="Sort by name">Name</button>
+                </th>
+                <th scope="col" className={themed.th + ' ' + common.th} aria-sort={sortKey==='email' ? (sortDir==='asc'?'ascending':'descending') : undefined}>
+                  <button type="button" className={common.sortBtn} onClick={() => onSort('email')} aria-label="Sort by email">Email</button>
+                </th>
+                <th scope="col" className={themed.th + ' ' + common.th} aria-sort={sortKey==='role' ? (sortDir==='asc'?'ascending':'descending') : undefined}>
+                  <button type="button" className={common.sortBtn} onClick={() => onSort('role')} aria-label="Sort by role">Role</button>
+                </th>
+                <th scope="col" className={themed.th + ' ' + common.th} aria-sort={sortKey==='status' ? (sortDir==='asc'?'ascending':'descending') : undefined}>
+                  <button type="button" className={common.sortBtn} onClick={() => onSort('status')} aria-label="Sort by status">Status</button>
+                </th>
+                <th scope="col" className={themed.th + ' ' + common.th} aria-sort={sortKey==='joined' ? (sortDir==='asc'?'ascending':'descending') : undefined}>
+                  <button type="button" className={common.sortBtn} onClick={() => onSort('joined')} aria-label="Sort by joined">Joined</button>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(u => (
+              {paged.map(u => (
                 <tr key={u.id} className={common.row}>
                   <td className={themed.td + ' ' + common.td}>
                     <input
@@ -149,9 +219,35 @@ const AdminUsers: React.FC = () => {
               ))}
             </tbody>
           </table>
-          {filtered.length === 0 && !loading && (
+          {sorted.length === 0 && !loading && (
             <div role="status" aria-live="polite" className={cn(common.bulkBar, themed.bulkBar)}>
               No users match your filters.
+            </div>
+          )}
+          {/* Pagination controls */}
+          {sorted.length > 0 && (
+            <div className={common.paginationBar} role="navigation" aria-label="Pagination">
+              <button
+                type="button"
+                className={cn(common.button, themed.button, 'secondary')}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={pageSafe === 1}
+                aria-label="Previous page"
+              >
+                Prev
+              </button>
+              <span className={common.paginationInfo} aria-live="polite">
+                Page {pageSafe} of {totalPages} · {sorted.length} result(s)
+              </span>
+              <button
+                type="button"
+                className={cn(common.button, themed.button)}
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={pageSafe === totalPages}
+                aria-label="Next page"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>

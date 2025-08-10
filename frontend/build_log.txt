@@ -1,0 +1,138 @@
+
+> frontend@0.1.0 build
+> next build
+
+  Ôû▓ Next.js 14.2.31
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ôùï (pwa) PWA support is disabled.
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/107) ...
+   Generating static pages (26/107) 
+   Generating static pages (53/107) 
+   Generating static pages (80/107) 
+ Ô£ô Generating static pages (107/107)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Ôöî Ôùï /                                    15.3 kB         138 kB
+Ôö£ Ôùï /_not-found                          153 B            88 kB
+Ôö£ Ôùï /about                               3.73 kB        99.4 kB
+Ôö£ Ôùï /admin/ai-monitoring                 4.66 kB         100 kB
+Ôö£ Ôùï /admin/dashboard                     4.57 kB         100 kB
+Ôö£ Ôùï /admin/payments                      4.54 kB         100 kB
+Ôö£ Ôùï /admin/projects                      4.72 kB         100 kB
+Ôö£ Ôùï /admin/settings                      4.16 kB        99.9 kB
+Ôö£ Ôùï /admin/support                       7.38 kB         103 kB
+Ôö£ Ôùï /admin/users                         5.31 kB         101 kB
+Ôö£ Ôùï /ai/chatbot                          3.68 kB         105 kB
+Ôö£ Ôùï /ai/fraud-check                      1.99 kB        97.7 kB
+Ôö£ Ôùï /ai/price-estimator                  2.17 kB        97.9 kB
+Ôö£ Ôùï /analytics                           3.65 kB        99.4 kB
+Ôö£ Ôùï /api/admin/ai-monitoring             0 B                0 B
+Ôö£ Ôùï /api/admin/dashboard                 0 B                0 B
+Ôö£ Ôùï /api/admin/payments                  0 B                0 B
+Ôö£ Ôùï /api/admin/projects                  0 B                0 B
+Ôö£ Ôùï /api/admin/settings                  0 B                0 B
+Ôö£ Ôùï /api/admin/support                   0 B                0 B
+Ôö£ Ôùï /api/admin/users                     0 B                0 B
+Ôö£ Ôùï /api/dashboard                       0 B                0 B
+Ôö£ Ôùï /api/messages                        0 B                0 B
+Ôö£ ãÆ /api/messages/[id]                   0 B                0 B
+Ôö£ Ôùï /api/projects                        0 B                0 B
+Ôö£ Ôùï /api/user                            0 B                0 B
+Ôö£ Ôùï /audit-logs                          4.1 kB         99.8 kB
+Ôö£ Ôùï /auth-dashboard                      1.76 kB         129 kB
+Ôö£ Ôùï /auth-dashboard/analytics            4.25 kB         100 kB
+Ôö£ Ôùï /auth-dashboard/community            4.28 kB        97.5 kB
+Ôö£ Ôùï /auth-dashboard/dashboard            3.83 kB        91.7 kB
+Ôö£ Ôùï /auth-dashboard/messages             4.31 kB        97.5 kB
+Ôö£ Ôùï /auth-dashboard/projects             3.67 kB        96.9 kB
+Ôö£ Ôùï /auth-dashboard/wallet               5.52 kB        93.4 kB
+Ôö£ Ôùï /blog                                4.36 kB         115 kB
+Ôö£ ãÆ /blog/[slug]                         5.49 kB         107 kB
+Ôö£ Ôùï /careers                             2.92 kB        98.6 kB
+Ôö£ Ôùï /client/dashboard                    2.78 kB         103 kB
+Ôö£ Ôùï /client/freelancers                  2.77 kB         108 kB
+Ôö£ Ôùï /client/hire                         3.98 kB        99.7 kB
+Ôö£ Ôùï /client/payments                     4.29 kB         100 kB
+Ôö£ Ôùï /client/post-job                     4.13 kB        99.8 kB
+Ôö£ Ôùï /client/projects                     2.63 kB         108 kB
+Ôö£ ãÆ /client/projects/[id]                2.26 kB         108 kB
+Ôö£ Ôùï /client/reviews                      4.82 kB         101 kB
+Ôö£ Ôùï /client/settings                     4.02 kB        99.7 kB
+Ôö£ Ôùï /client/wallet                       4.43 kB         100 kB
+Ôö£ Ôùï /clients                             5.59 kB         107 kB
+Ôö£ Ôùï /community                           1.44 kB         107 kB
+Ôö£ Ôùï /contact                             3.42 kB        99.1 kB
+Ôö£ Ôùï /cookies                             3 kB           98.7 kB
+Ôö£ Ôùï /dashboard                           1.59 kB         124 kB
+Ôö£ Ôùï /dashboard/analytics                 4.1 kB         99.8 kB
+Ôö£ Ôùï /dashboard/community                 3.8 kB         99.5 kB
+Ôö£ Ôùï /dashboard/projects                  3.75 kB        99.5 kB
+Ôö£ Ôùï /dashboard/wallet                    3.98 kB        99.7 kB
+Ôö£ Ôùï /enterprise                          153 B            88 kB
+Ôö£ Ôùï /faq                                 5.53 kB         101 kB
+Ôö£ Ôùï /forgot-password                     1.83 kB         123 kB
+Ôö£ Ôùï /freelancer/analytics                3.49 kB        91.4 kB
+Ôö£ Ôùï /freelancer/contracts                3.59 kB        99.3 kB
+Ôö£ Ôùï /freelancer/dashboard                1.89 kB         102 kB
+Ôö£ Ôùï /freelancer/job-alerts               5.7 kB          101 kB
+Ôö£ Ôùï /freelancer/my-jobs                  3.28 kB          99 kB
+Ôö£ Ôùï /freelancer/portfolio                7.65 kB         109 kB
+Ôö£ Ôùï /freelancer/profile                  1.9 kB          107 kB
+Ôö£ Ôùï /freelancer/projects                 5.6 kB          101 kB
+Ôö£ ãÆ /freelancer/projects/[id]            4.9 kB          106 kB
+Ôö£ Ôùï /freelancer/rank                     4.11 kB        99.8 kB
+Ôö£ Ôùï /freelancer/reviews                  3.74 kB         105 kB
+Ôö£ Ôùï /freelancer/settings                 3.99 kB        99.7 kB
+Ôö£ Ôùï /freelancer/settings/notifications   3.81 kB        99.5 kB
+Ôö£ Ôùï /freelancer/settings/password        3.99 kB        99.7 kB
+Ôö£ Ôùï /freelancer/support                  2.24 kB         102 kB
+Ôö£ Ôùï /freelancer/wallet                   4.76 kB         100 kB
+Ôö£ Ôùï /freelancer/withdraw                 5.22 kB         101 kB
+Ôö£ Ôùï /freelancers                         4.06 kB         105 kB
+Ôö£ Ôùï /help                                1.93 kB         108 kB
+Ôö£ Ôùï /how-it-works                        1.44 kB        97.2 kB
+Ôö£ Ôùï /install                             1.66 kB        97.4 kB
+Ôö£ Ôùï /jobs                                4.26 kB         100 kB
+Ôö£ Ôùï /legal/privacy                       3.81 kB        99.5 kB
+Ôö£ Ôùï /legal/terms                         4.19 kB        99.9 kB
+Ôö£ Ôùï /login                               5.03 kB         126 kB
+Ôö£ Ôùï /messages                            264 B           107 kB
+Ôö£ Ôùï /Messages                            264 B           107 kB
+Ôö£ Ôùï /notifications                       5.11 kB         101 kB
+Ôö£ Ôùï /onboarding                          3.54 kB        99.3 kB
+Ôö£ Ôùï /Payments                            3.61 kB        99.3 kB
+Ôö£ Ôùï /press                               3 kB           98.7 kB
+Ôö£ Ôùï /pricing                             1.79 kB         107 kB
+Ôö£ Ôùï /privacy                             1.05 kB        88.9 kB
+Ôö£ Ôùï /Profile                             4.59 kB         106 kB
+Ôö£ Ôùï /Projects                            3.62 kB        99.3 kB
+Ôö£ Ôùï /referral                            3.48 kB        99.2 kB
+Ôö£ Ôùï /reset-password                      1.77 kB         123 kB
+Ôö£ Ôùï /search                              5.09 kB         101 kB
+Ôö£ Ôùï /security                            3.5 kB         99.2 kB
+Ôö£ Ôùï /Settings                            3.42 kB         103 kB
+Ôö£ Ôùï /signup                              4.68 kB         126 kB
+Ôö£ Ôùï /status                              2.8 kB         98.5 kB
+Ôö£ Ôùï /support                             3.44 kB        99.2 kB
+Ôö£ Ôùï /teams                               3.74 kB         105 kB
+Ôö£ Ôùï /terms                               1.03 kB        88.9 kB
+Ôö£ ãÆ /test/loading                        265 B          88.2 kB
+Ôö£ Ôùï /testimonials                        3.9 kB          105 kB
+Ôö£ Ôùï /user-management                     3.62 kB        99.3 kB
+Ôöö Ôùï /wallet                              3.63 kB        99.3 kB
++ First Load JS shared by all            87.9 kB
+  Ôö£ chunks/2117-2794c4f530989ff4.js      31.8 kB
+  Ôö£ chunks/fd9d1056-f4c0ecfdbe042be1.js  53.6 kB
+  Ôöö other shared chunks (total)          2.5 kB
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+

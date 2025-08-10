@@ -16,6 +16,16 @@
 .th, .td { text-align: left; padding: 10px 12px; border-bottom: 1px solid transparent; white-space: nowrap; }
 .row:hover { filter: brightness(1.02); }
 
+/* Sortable header button */
+.sortBtn { 
+  all: unset; 
+  cursor: pointer; 
+  font: inherit; 
+  color: inherit; 
+  padding: 2px 0; 
+}
+.sortBtn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+
 .bulkBar { display: flex; gap: var(--spacing-2); align-items: center; }
 
 .modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: grid; place-items: center; }
@@ -29,3 +39,13 @@
 
 .isNotVisible { opacity: 0; transform: translateY(16px); }
 .isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }
+
+/* Pagination */
+.paginationBar { 
+  display: flex; 
+  align-items: center; 
+  justify-content: flex-end; 
+  gap: var(--spacing-2); 
+  margin-top: 12px; 
+}
+.paginationInfo { opacity: .8; }
