@@ -74,7 +74,7 @@ const AnalyticsPage = () => {
           {loading ? (
             <>
               <Skeleton height={28} width={'60%'} />
-              <div style={{ marginTop: 8 }}>
+              <div className={styles.skeletonSpacerSm}>
                 <Skeleton height={14} width={'40%'} />
               </div>
             </>
@@ -89,7 +89,7 @@ const AnalyticsPage = () => {
           {loading ? (
             <>
               <Skeleton height={28} width={'40%'} />
-              <div style={{ marginTop: 8 }}>
+              <div className={styles.skeletonSpacerSm}>
                 <Skeleton height={14} width={'30%'} />
               </div>
             </>
@@ -104,7 +104,7 @@ const AnalyticsPage = () => {
           {loading ? (
             <>
               <Skeleton height={28} width={'50%'} />
-              <div style={{ marginTop: 8 }}>
+              <div className={styles.skeletonSpacerSm}>
                 <Skeleton height={14} width={'60%'} />
               </div>
             </>
@@ -119,7 +119,7 @@ const AnalyticsPage = () => {
           {loading ? (
             <>
               <Skeleton height={28} width={'35%'} />
-              <div style={{ marginTop: 8 }}>
+              <div className={styles.skeletonSpacerSm}>
                 <Skeleton height={14} width={'50%'} />
               </div>
             </>
@@ -168,7 +168,7 @@ const AnalyticsPage = () => {
             </div>
             <div className={styles.chartSurface}>
               {loading ? (
-                <div style={{ width: '100%' }}>
+                <div className={styles.fullWidth}>
                   <Skeleton height={220} width={'100%'} radius={12} />
                 </div>
               ) : (

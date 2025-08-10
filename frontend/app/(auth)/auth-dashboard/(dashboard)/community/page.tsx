@@ -161,15 +161,15 @@ const CommunityPage = () => {
                   <Skeleton width={40} height={40} radius={'50%'} />
                   <div>
                     <Skeleton height={14} width={140} />
-                    <div style={{ marginTop: 6 }}>
+                    <div className={styles.skeletonSpacerXs}>
                       <Skeleton height={12} width={120} />
                     </div>
                   </div>
                 </div>
-                <div style={{ marginTop: 8 }}>
+                <div className={styles.skeletonSpacerSm}>
                   <Skeleton height={20} width={'70%'} />
                 </div>
-                <div style={{ marginTop: 8 }}>
+                <div className={styles.skeletonSpacerSm}>
                   <Skeleton height={14} width={'95%'} />
                 </div>
                 <div className={styles.postTags}>
@@ -237,19 +237,19 @@ const CommunityPage = () => {
             <div className={styles.statsGrid}>
               <div>
                 <Skeleton height={18} width={60} />
-                <div style={{ marginTop: 6 }}>
+                <div className={styles.skeletonSpacerXs}>
                   <Skeleton height={12} width={70} />
                 </div>
               </div>
               <div>
                 <Skeleton height={18} width={60} />
-                <div style={{ marginTop: 6 }}>
+                <div className={styles.skeletonSpacerXs}>
                   <Skeleton height={12} width={90} />
                 </div>
               </div>
               <div>
                 <Skeleton height={18} width={60} />
-                <div style={{ marginTop: 6 }}>
+                <div className={styles.skeletonSpacerXs}>
                   <Skeleton height={12} width={60} />
                 </div>
               </div>

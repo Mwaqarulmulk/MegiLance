@@ -179,3 +179,12 @@
   border-radius: 2px;
   background: var(--color-accent, #ff9800);
 }
+
+/* --- Utilities (inline-style replacements) --- */
+.skeletonSpacerSm {
+  margin-top: 8px;
+}
+
+.fullWidth {
+  width: 100%;
+}
