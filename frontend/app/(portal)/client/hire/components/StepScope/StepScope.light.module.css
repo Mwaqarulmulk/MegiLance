@@ -1,0 +1,33 @@
+/* AI-HINT: Light theme styles for the StepScope component. */
+
+.section {
+  background-color: var(--surface-elev);
+  border: 1px solid var(--border);
+}
+
+.title {
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
+
+.label {
+  color: var(--text-primary);
+}
+
+.textarea {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.textarea:hover {
+  border-color: var(--border-hover);
+}
+
+.textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-focus);
+}

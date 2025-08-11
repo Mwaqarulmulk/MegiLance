@@ -1,0 +1,7 @@
+.star.filled {
+  color: #F2C94C; /* MegiLance Warning Yellow */
+}
+
+.star.empty {
+  color: #E0E0E0; /* Light grey for empty stars */
+}

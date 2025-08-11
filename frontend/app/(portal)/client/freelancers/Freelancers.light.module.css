@@ -1,13 +1,42 @@
 /* AI-HINT: Light theme overrides for Client Freelancers page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+/* AI-HINT: Light theme styles for the Freelancers page. */
 
-.input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
-.button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.12); }
-.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+.page {
+  background-color: var(--background);
+}
 
-.card { background: var(--surface-elev); border: 1px solid var(--border); }
-.cardTitle { color: var(--text-primary); }
-.meta { color: var(--text-secondary); }
-.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+.title {
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
+
+.controlsSection {
+  background-color: var(--surface-translucent);
+  border: 1px solid var(--border);
+}
+
+.emptyState {
+  background-color: var(--surface-elev);
+  border: 1px dashed var(--border);
+}
+
+.emptyState h3 {
+  color: var(--text-primary);
+}
+
+.emptyState p {
+  color: var(--text-secondary);
+}
+
+.paginationInfo {
+  color: var(--text-secondary);
+}
+
+.skeletonCard {
+  background-color: var(--surface-elev);
+  border: 1px solid var(--border);
+}

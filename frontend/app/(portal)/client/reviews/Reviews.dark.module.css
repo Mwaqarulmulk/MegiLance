@@ -1,17 +1,72 @@
-/* AI-HINT: Dark theme overrides for Client Reviews page. */
+/* AI-HINT: Dark theme styles for the modernized Client Reviews page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+.page {
+  background-color: var(--surface);
+}
 
-.input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
-.button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
-.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+.title {
+  color: var(--text-primary-dark);
+}
 
-.card { background: var(--surface-elev); border: 1px solid var(--border); }
-.cardTitle { color: var(--text-primary); }
-.meta { color: var(--text-secondary); }
-.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+.subtitle {
+  color: var(--text-secondary-dark);
+}
 
-.editor { background: var(--surface-elev); border: 1px solid var(--border); }
-.textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
-.stars { color: var(--warning, #F2C94C); }
+.controlsSection {
+  background-color: var(--surface-elev-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.card {
+  background-color: var(--surface-elev-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-sm-dark);
+}
+
+.card:hover {
+  border-color: var(--border-hover-dark);
+  box-shadow: var(--shadow-md-dark);
+}
+
+.freelancerName {
+  color: var(--text-primary-dark);
+}
+
+.projectName {
+  color: var(--text-secondary-dark);
+}
+
+.reviewText {
+  color: var(--text-primary-dark);
+}
+
+.cardFooter {
+  color: var(--text-tertiary-dark);
+  border-top-color: var(--border-dark);
+}
+
+.emptyState {
+  background-color: var(--surface-elev-dark);
+  border: 1px dashed var(--border-dark);
+}
+
+.emptyState h3 {
+  color: var(--text-primary-dark);
+}
+
+.emptyState p {
+  color: var(--text-secondary-dark);
+}
+
+.paginationInfo {
+  color: var(--text-secondary-dark);
+}
+
+.editor {
+  background-color: var(--surface-elev-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.sectionTitle {
+  color: var(--text-primary-dark);
+}

@@ -1,28 +1,49 @@
-.policyEditorContainer {
-  background-color: #1a202c;
+/* AI-HINT: Dark theme styles for the AdminPolicyEditor. */
+
+.editorLayout {
+  background-color: var(--color-background-dark);
+  border: 1px solid var(--color-border-dark);
 }
 
-.policyEditorTitle {
-  color: #f7fafc;
+.sidebar {
+  background-color: var(--color-background-secondary-dark);
+  border-right: 1px solid var(--color-border-dark);
 }
 
-.policyEditorEditor {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
+.sidebarTitle {
+  color: var(--color-text-primary-dark);
 }
 
-.policyEditorSelect {
-  background-color: #4a5568;
-  border: 1px solid #718096;
-  color: #e2e8f0;
+.navItem {
+  color: var(--color-text-secondary-dark);
 }
 
-.policyEditorTextarea {
-  background-color: #1a202c;
-  border: 1px solid #718096;
-  color: #e2e8f0;
+.navItem:hover {
+  background-color: var(--color-background-tertiary-dark);
+  color: var(--color-text-primary-dark);
+}
+
+.navItemActive {
+  background-color: var(--color-primary-muted-dark);
+  color: var(--color-primary);
+}
+
+.mainContent {
+  background-color: var(--color-background-dark);
+}
+
+.editorHeader {
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.editorTitle {
+  color: var(--color-text-primary-dark);
 }
 
 .saveConfirmation {
-  color: #9ae6b4;
+  color: var(--color-success);
+}
+
+.editorTextarea {
+  color: var(--color-text-secondary-dark);
 }

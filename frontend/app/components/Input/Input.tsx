@@ -15,6 +15,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   iconBefore?: React.ReactNode;
   iconAfter?: React.ReactNode;
   error?: string | boolean;
+  helpText?: string;
   wrapperClassName?: string;
   fullWidth?: boolean;
 }
@@ -24,6 +25,7 @@ const Input: React.FC<InputProps> = ({
   iconBefore,
   iconAfter,
   error,
+  helpText,
   className = '',
   wrapperClassName = '',
   fullWidth = false,
@@ -72,6 +74,7 @@ const Input: React.FC<InputProps> = ({
         {iconAfter && <span className={cn(commonStyles.inputIcon, themeStyles.inputIcon, commonStyles.inputIconAfter, themeStyles.inputIconAfter)}>{iconAfter}</span>}
       </div>
       {hasError && typeof error === 'string' && <p className={cn(commonStyles.errorMessage, themeStyles.errorMessage)}>{error}</p>}
+      {!hasError && helpText && <p className={cn(commonStyles.helpText, themeStyles.helpText)}>{helpText}</p>}
     </div>
   );
 };

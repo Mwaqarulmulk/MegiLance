@@ -1,0 +1,32 @@
+/* AI-HINT: Dark theme styles for the RadioGroup component. */
+
+.legend {
+  color: var(--text-secondary-dark);
+}
+
+.options_container {
+  background-color: var(--surface-dark);
+}
+
+.label {
+  background-color: var(--background-dark);
+  border-color: var(--border-dark);
+}
+
+.label:hover {
+  border-color: var(--border-hover-dark);
+}
+
+.label_selected {
+  background-color: var(--primary-dark-bg);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.text {
+  color: var(--text-secondary-dark);
+}
+
+.label_selected .text {
+  color: var(--primary-light-text);
+}

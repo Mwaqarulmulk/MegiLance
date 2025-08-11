@@ -48,11 +48,24 @@
   border-color: var(--warning-strong);
 }
 
+.variant-warning {
+  background-color: var(--color-warning);
+  color: var(--color-text-on-primary-dark);
+}
+
+.variant-warning:hover {
+  background-color: var(--color-warning-hover-dark);
+}
+
 /* Danger Button */
 .danger {
   background-color: var(--danger);
   color: var(--text-on-color);
   border-color: var(--danger);
+}
+
+.variant-danger:hover {
+  background-color: var(--color-danger-hover-dark);
 }
 
 .danger:hover:not(:disabled) {
@@ -69,4 +82,18 @@
 .outline:hover:not(:disabled) {
   background-color: var(--surface-alt);
   border-color: var(--border-strong);
+}
+
+/* Ghost Button */
+.ghost {
+  color: var(--text-secondary);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--surface-alt-hover);
+  color: var(--text-primary);
+}
+
+.ghost:active:not(:disabled) {
+  background-color: var(--surface-alt);
 }

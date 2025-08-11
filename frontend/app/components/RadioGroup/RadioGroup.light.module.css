@@ -1,0 +1,32 @@
+/* AI-HINT: Light theme styles for the RadioGroup component. */
+
+.legend {
+  color: var(--text-secondary);
+}
+
+.options_container {
+  background-color: var(--surface);
+}
+
+.label {
+  background-color: var(--background);
+  border-color: var(--border);
+}
+
+.label:hover {
+  border-color: var(--border-hover);
+}
+
+.label_selected {
+  background-color: var(--primary-light-bg);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.text {
+  color: var(--text-secondary);
+}
+
+.label_selected .text {
+  color: var(--primary);
+}

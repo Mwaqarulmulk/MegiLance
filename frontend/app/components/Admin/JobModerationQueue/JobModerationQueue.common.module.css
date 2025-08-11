@@ -1,46 +1,143 @@
-.jobModerationQueueContainer {
-  padding: 1.5rem;
-  border-radius: 8px;
-}
+/* AI-HINT: Common styles for the JobModerationQueue component. Defines layout, typography, and structure for the container, header, toolbar, grid, cards, and empty state. */
 
-.jobModerationQueueTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  margin-bottom: 1.5rem;
-}
-
-.jobModerationQueueTableWrapper {
-  overflow-x: auto;
-}
-
-.jobModerationQueue {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.jobModerationQueue th, .jobModerationQueue td {
-  padding: 1rem;
-  vertical-align: middle;
-}
-
-.jobModerationQueue th {
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-
-
-.jobModerationQueueActions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.jobModerationQueueEmpty {
-  text-align: center;
+.container {
   padding: 2rem;
-  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: var(--font-inter);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  font-family: var(--font-poppins);
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.jobGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.jobCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.jobTitle {
+  font-family: var(--font-poppins);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.metaItem svg {
+  flex-shrink: 0;
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-height: 4.8rem; /* 3 lines */
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.description.expanded {
+  max-height: 20rem; /* Allow for more content */
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  align-self: flex-start;
+}
+
+.expandButton svg {
+  transition: transform 0.2s ease;
+}
+
+.cardActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto; /* Pushes actions to the bottom */
+  padding-top: 1rem;
+  border-top: 1px solid;
+}
+
+.cardActions button {
+  flex-grow: 1;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  border-radius: var(--border-radius-lg);
+  text-align: center;
+}
+
+.emptyState h3 {
+  font-family: var(--font-poppins);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+
+.emptyState p {
+  margin-top: 0.5rem;
+  max-width: 300px;
 }

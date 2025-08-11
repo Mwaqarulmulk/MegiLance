@@ -1,8 +1,12 @@
 .label { color: var(--text-primary); }
 
 .slider {
-  background-color: var(--surface-alt);
+  background-color: var(--color-background-secondary-light);
   border: 1px solid var(--border);
+}
+
+.helpText {
+  color: var(--color-text-secondary-light);
 }
 
 .slider:before {

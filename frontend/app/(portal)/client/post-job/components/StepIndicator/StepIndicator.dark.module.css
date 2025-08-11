@@ -1,0 +1,43 @@
+/* AI-HINT: Dark theme styles for the StepIndicator component. */
+
+.indicator {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+}
+
+.indicator.completed {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.indicator.active {
+  border-color: var(--primary);
+}
+
+.icon {
+  color: var(--primary-contrast);
+}
+
+.stepNumber {
+  color: var(--text-tertiary-dark);
+}
+
+.active .stepNumber {
+  color: var(--primary);
+}
+
+.stepName {
+  color: var(--text-secondary-dark);
+}
+
+.stepNameActive {
+  color: var(--text-primary-dark);
+}
+
+.progressBarContainer {
+  background-color: var(--border-dark);
+}
+
+.progressBar {
+  background-color: var(--primary);
+}

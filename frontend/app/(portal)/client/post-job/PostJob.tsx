@@ -1,318 +1,206 @@
-// @AI-HINT: Client Post Job page. Theme-aware, accessible multi-section form with validation and entry animations.
+// @AI-HINT: Orchestrator for the multi-step job posting flow. Manages state, validation, and navigation between steps.
 'use client';
 
-import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
+
+import { PostJobData, PostJobErrors } from './PostJob.types';
+import { loadDraft, saveDraft, submitJob, clearDraft } from '@/app/mocks/jobs';
+
+import Button from '@/app/components/Button/Button';
+import StepIndicator from './components/StepIndicator/StepIndicator';
+import StepDetails from './components/StepDetails/StepDetails';
+import StepScope from './components/StepScope/StepScope';
+import StepBudget from './components/StepBudget/StepBudget';
+import StepReview from './components/StepReview/StepReview';
+
 import common from './PostJob.common.module.css';
 import light from './PostJob.light.module.css';
 import dark from './PostJob.dark.module.css';
-import { loadDraft, saveDraft, submitJob, clearDraft } from '@/app/mocks/jobs';
 
-const CATEGORIES = ['Web Development', 'Mobile Apps', 'UI/UX Design', 'Data Science', 'AI/ML', 'DevOps'] as const;
-const BUDGET_TYPES = ['Fixed', 'Hourly'] as const;
+const STEPS = ['Details', 'Scope', 'Budget', 'Review'] as const;
+type Step = typeof STEPS[number];
 
 const PostJob: React.FC = () => {
   const { theme } = useTheme();
   const themed = theme === 'dark' ? dark : light;
 
-  const headerRef = useRef<HTMLDivElement | null>(null);
-  const jobRef = useRef<HTMLDivElement | null>(null);
-  const detailsRef = useRef<HTMLDivElement | null>(null);
-
-  const headerVisible = useIntersectionObserver(headerRef, { threshold: 0.1 });
-  const jobVisible = useIntersectionObserver(jobRef, { threshold: 0.1 });
-  const detailsVisible = useIntersectionObserver(detailsRef, { threshold: 0.1 });
-
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<(typeof CATEGORIES)[number] | ''>('');
-  const [budgetType, setBudgetType] = useState<(typeof BUDGET_TYPES)[number]>('Fixed');
-  const [budget, setBudget] = useState('');
-  const [description, setDescription] = useState('');
-  const [skills, setSkills] = useState('React, TypeScript');
-  const [timeline, setTimeline] = useState('2-4 weeks');
-
-  // Wizard state
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [data, setData] = useState<PostJobData>({
+    title: '',
+    category: '',
+    description: '',
+    skills: [],
+    budgetType: 'Fixed',
+    budgetAmount: null,
+    timeline: '1-2 weeks',
+  });
+  const [errors, setErrors] = useState<PostJobErrors>({});
+  const [currentStep, setCurrentStep] = useState<Step>('Details');
   const [submitting, setSubmitting] = useState(false);
-  const [liveMessage, setLiveMessage] = useState<string | null>(null);
+  const [submissionState, setSubmissionState] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const hasErrors = useMemo(() => Object.keys(errors).length > 0, [errors]);
-
-  const validate = () => {
-    const next: Record<string, string> = {};
-    if (!title.trim()) next.title = 'Title is required';
-    if (!category) next.category = 'Select a category';
-    if (!budget.trim() || Number.isNaN(Number(budget))) next.budget = 'Enter a valid budget';
-    if (!description.trim() || description.trim().length < 20) next.description = 'Description should be at least 20 characters';
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  // Load existing draft on mount
   useEffect(() => {
-    const d = loadDraft();
-    if (d) {
-      setTitle(d.title ?? '');
-      setCategory((d.category as any) ?? '');
-      setBudgetType((d.budgetType as any) ?? 'Fixed');
-      setBudget(d.budget != null ? String(d.budget) : '');
-      setDescription(d.description ?? '');
-      setSkills(d.skills?.join(', ') ?? '');
-      setTimeline(d.timeline ?? '');
-      setLiveMessage('Loaded your saved draft.');
+    const draft = loadDraft();
+    if (draft) {
+      setData(prev => ({ ...prev, ...draft }));
     }
   }, []);
 
-  const persistDraft = () => {
-    saveDraft({
-      title,
-      category,
-      budgetType,
-      budget: budget ? Number(budget) : null,
-      description,
-      skills: skills
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
-      timeline,
-      status: 'draft',
+  const updateData = useCallback((update: Partial<PostJobData>) => {
+    setData(prev => {
+      const newData = { ...prev, ...update };
+      saveDraft(newData);
+      return newData;
     });
-    setLiveMessage('Draft saved.');
-  };
+  }, []);
 
-  const discardDraft = () => {
-    clearDraft();
-    setLiveMessage('Draft discarded.');
+  const validateStep = (step: Step): boolean => {
+    const newErrors: PostJobErrors = {};
+    switch (step) {
+      case 'Details':
+        if (!data.title.trim()) newErrors.title = 'Job title is required.';
+        if (!data.category) newErrors.category = 'Please select a category.';
+        break;
+      case 'Scope':
+        if (data.description.trim().length < 50) newErrors.description = 'Description must be at least 50 characters.';
+        if (data.skills.length === 0) newErrors.skills = 'Please add at least one skill.';
+        break;
+      case 'Budget':
+        if (!data.budgetAmount || data.budgetAmount <= 0) newErrors.budgetAmount = 'Please enter a valid budget amount.';
+        if (!data.timeline) newErrors.timeline = 'Please select a timeline.';
+        break;
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const nextStep = () => {
-    if (step === 1) {
-      // Partial validation for basics
-      const next: Record<string, string> = {};
-      if (!title.trim()) next.title = 'Title is required';
-      if (!category) next.category = 'Select a category';
-      setErrors(next);
-      if (Object.keys(next).length > 0) return;
-      persistDraft();
-      setStep(2);
-      return;
-    }
-    if (step === 2) {
-      if (!validate()) return;
-      persistDraft();
-      setStep(3);
-      return;
+    if (validateStep(currentStep)) {
+      const currentIndex = STEPS.indexOf(currentStep);
+      if (currentIndex < STEPS.length - 1) {
+        setCurrentStep(STEPS[currentIndex + 1]);
+      }
     }
   };
 
   const prevStep = () => {
-    setStep((s) => (s === 3 ? 2 : 1));
+    const currentIndex = STEPS.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(STEPS[currentIndex - 1]);
+    }
   };
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!validate()) {
-      setStep(2);
-      return;
+  const goToStep = (step: Step) => {
+    const currentIndex = STEPS.indexOf(currentStep);
+    const targetIndex = STEPS.indexOf(step);
+    if (targetIndex < currentIndex) {
+      setCurrentStep(step);
+    }
+  };
+
+  const onSubmit = async () => {
+    for (const step of STEPS) {
+      if (!validateStep(step)) {
+        setCurrentStep(step);
+        return;
+      }
     }
     setSubmitting(true);
-    setLiveMessage('Submitting your job…');
     try {
-      const result = await submitJob({
-        title,
-        category,
-        budgetType,
-        budget: Number(budget),
-        description,
-        skills: skills
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        timeline,
-      });
-      setLiveMessage(`Success: ${result.message} (id: ${result.id})`);
-      // Reset local state to fresh form
-      setTitle('');
-      setCategory('');
-      setBudgetType('Fixed');
-      setBudget('');
-      setDescription('');
-      setSkills('');
-      setTimeline('');
-      setErrors({});
-      setStep(1);
+      await submitJob(data);
+      setSubmissionState('success');
+      clearDraft();
     } catch (err) {
-      setLiveMessage('Error submitting job. Please try again.');
+      setSubmissionState('error');
     } finally {
       setSubmitting(false);
     }
   };
 
+  const renderStep = () => {
+    switch (currentStep) {
+      case 'Details': return <StepDetails data={data} updateData={updateData} errors={errors} />;
+      case 'Scope': return <StepScope data={data} updateData={updateData} errors={errors} />;
+      case 'Budget': return <StepBudget data={data} updateData={updateData} errors={errors} />;
+      case 'Review': return <StepReview data={data} />;
+      default: return null;
+    }
+  };
+
+  if (submissionState === 'success') {
+    return (
+      <div className={cn(common.centered_container, themed.centered_container)}>
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={common.result_card}>
+          <CheckCircle className={cn(common.result_icon, common.success_icon, themed.success_icon)} size={48} />
+          <h2 className={cn(common.result_title, themed.result_title)}>Job Posted Successfully!</h2>
+          <p className={cn(common.result_message, themed.result_message)}>Your job is now live. You will be notified when freelancers start applying.</p>
+          <Button onClick={() => window.location.reload()}>Post Another Job</Button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (submissionState === 'error') {
+    return (
+      <div className={cn(common.centered_container, themed.centered_container)}>
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={common.result_card}>
+          <AlertTriangle className={cn(common.result_icon, common.error_icon, themed.error_icon)} size={48} />
+          <h2 className={cn(common.result_title, themed.result_title)}>Submission Failed</h2>
+          <p className={cn(common.result_message, themed.result_message)}>Something went wrong. Please try submitting again.</p>
+          <Button onClick={() => setSubmissionState('idle')}>Try Again</Button>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
+    <main className={cn(common.main, themed.main)}>
       <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
-            <h1 className={common.title}>Post a Job</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Create a new job with clear requirements so the best freelancers can apply.</p>
-          </div>
+        <header className={common.header}>
+          <h1 className={cn(common.title, themed.title)}>Post a Job</h1>
+          <p className={cn(common.subtitle, themed.subtitle)}>Follow the steps to get your job posted and find the right talent.</p>
+        </header>
+
+        <div className={common.step_indicator_container}>
+          <StepIndicator steps={STEPS} currentStep={currentStep} />
         </div>
 
-        <form className={common.form} onSubmit={onSubmit} noValidate>
-          {/* Step indicator */}
-          <div className={common.progress} aria-live="polite">
-            Step {step} of 3
-          </div>
+        <div className={common.content_container}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-          {step === 1 && (
-          <section ref={jobRef} className={cn(common.section, themed.section, jobVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="job-basics">
-            <h2 id="job-basics" className={cn(common.sectionTitle, themed.sectionTitle)}>Job Basics</h2>
-            <div className={common.field}>
-              <label htmlFor="title" className={common.label}>Title</label>
-              <input
-                id="title"
-                className={cn(common.input, themed.input)}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                aria-invalid={Boolean(errors.title) || undefined}
-                aria-describedby={errors.title ? 'error-title' : undefined}
-                placeholder="e.g., Build a Next.js marketing site"
-              />
-              {errors.title && (
-                <div id="error-title" className={common.error} role="status" aria-live="polite">{errors.title}</div>
-              )}
-            </div>
-            <div className={common.row}>
-              <div className={common.field}>
-                <label htmlFor="category" className={common.label}>Category</label>
-                <select
-                  id="category"
-                  className={cn(common.select, themed.select)}
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as any)}
-                  required
-                  aria-invalid={Boolean(errors.category) || undefined}
-                  aria-describedby={errors.category ? 'error-category' : undefined}
-                >
-                  <option value="">Select…</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                {errors.category && (
-                  <div id="error-category" className={common.error} role="status" aria-live="polite">{errors.category}</div>
-                )}
-              </div>
-              <div className={common.field}>
-                <label htmlFor="budgetType" className={common.label}>Budget Type</label>
-                <select id="budgetType" className={cn(common.select, themed.select)} value={budgetType} onChange={(e) => setBudgetType(e.target.value as any)}>
-                  {BUDGET_TYPES.map(bt => <option key={bt} value={bt}>{bt}</option>)}
-                </select>
-              </div>
-            </div>
-            <div className={common.row}>
-              <div className={common.field}>
-                <label htmlFor="budget" className={common.label}>{budgetType === 'Fixed' ? 'Budget (USD)' : 'Hourly Rate (USD)'}</label>
-                <input
-                  id="budget"
-                  className={cn(common.input, themed.input)}
-                  inputMode="decimal"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  required
-                  aria-invalid={Boolean(errors.budget) || undefined}
-                  aria-describedby={errors.budget ? 'error-budget' : undefined}
-                  placeholder={budgetType === 'Fixed' ? 'e.g., 1500' : 'e.g., 45'}
-                />
-                {errors.budget && (
-                  <div id="error-budget" className={common.error} role="status" aria-live="polite">{errors.budget}</div>
-                )}
-              </div>
-              <div className={common.field}>
-                <label htmlFor="timeline" className={common.label}>Timeline</label>
-                <input id="timeline" className={cn(common.input, themed.input)} value={timeline} onChange={(e) => setTimeline(e.target.value)} placeholder="e.g., 2-4 weeks" />
-                <div className={cn(common.help, themed.help)}>Provide a rough timeframe.</div>
-              </div>
-            </div>
-            <div className={common.stickyBar}>
-              <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={persistDraft}>Save Draft</button>
-              <div>
-                <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={discardDraft}>Discard</button>
-                <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={nextStep}>Next</button>
-              </div>
-            </div>
-          </section>
+        <footer className={cn(common.footer, themed.footer)}>
+          <Button
+            variant="secondary"
+            onClick={prevStep}
+            disabled={currentStep === 'Details'}
+            className={cn(currentStep === 'Details' && common.hidden)}
+          >
+            Back
+          </Button>
+          {currentStep !== 'Review' ? (
+            <Button onClick={nextStep}>
+              {currentStep === 'Budget' ? 'Preview' : 'Next'}
+            </Button>
+          ) : (
+            <Button onClick={onSubmit} disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Submit Job'}
+            </Button>
           )}
-
-          {step === 2 && (
-          <section ref={detailsRef} className={cn(common.section, themed.section, detailsVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="job-details">
-            <h2 id="job-details" className={cn(common.sectionTitle, themed.sectionTitle)}>Details</h2>
-            <div className={common.field}>
-              <label htmlFor="description" className={common.label}>Description</label>
-              <textarea
-                id="description"
-                className={cn(common.textarea, themed.textarea)}
-                rows={6}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                aria-invalid={Boolean(errors.description) || undefined}
-                aria-describedby={errors.description ? 'error-description' : undefined}
-                placeholder="Describe the scope, deliverables, and any constraints."
-              />
-              {errors.description && (
-                <div id="error-description" className={common.error} role="status" aria-live="polite">{errors.description}</div>
-              )}
-            </div>
-            <div className={common.field}>
-              <label htmlFor="skills" className={common.label}>Skills</label>
-              <input id="skills" className={cn(common.input, themed.input)} value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Comma-separated skills (e.g., React, Tailwind)" />
-              <div className={cn(common.help, themed.help)}>We’ll suggest top freelancers based on these skills.</div>
-            </div>
-            <div className={common.stickyBar}>
-              <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={prevStep}>Back</button>
-              <div>
-                <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={persistDraft}>Save Draft</button>
-                <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={nextStep}>Preview</button>
-              </div>
-            </div>
-          </section>
-          )}
-
-          {step === 3 && (
-            <section className={cn(common.section, themed.section)} aria-labelledby="job-preview">
-              <h2 id="job-preview" className={cn(common.sectionTitle, themed.sectionTitle)}>Preview</h2>
-              <div className={common.card}>
-                <h3 className={common.cardTitle}>{title || 'Untitled job'}</h3>
-                <p className={common.meta}><strong>Category:</strong> {category || '—'}</p>
-                <p className={common.meta}><strong>Budget:</strong> {budgetType} {budget ? `$${budget}` : '—'}</p>
-                <p className={common.meta}><strong>Timeline:</strong> {timeline || '—'}</p>
-                <p className={common.meta}><strong>Skills:</strong> {skills || '—'}</p>
-                <p className={common.description}>{description || 'No description provided.'}</p>
-              </div>
-              <div className={common.stickyBar}>
-                <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={prevStep}>Back</button>
-                <div>
-                  <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={persistDraft}>Save Draft</button>
-                  <button type="submit" disabled={submitting} className={cn(common.button, 'primary', themed.button)}>{submitting ? 'Submitting…' : 'Submit Job'}</button>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {hasErrors && (
-            <div role="status" aria-live="polite" className={common.error}>
-              Please fix the highlighted fields.
-            </div>
-          )}
-          {liveMessage && (
-            <div role="status" aria-live="polite" className={common.help}>
-              {liveMessage}
-            </div>
-          )}
-        </form>
+        </footer>
       </div>
     </main>
   );

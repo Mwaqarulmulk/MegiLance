@@ -7,11 +7,18 @@ import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useClientData } from '@/hooks/useClient';
 import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
+import Input from '@/app/components/Forms/Input';
+import Select from '@/app/components/Forms/Select';
+import Button from '@/app/components/Forms/Button';
+import StarRating from '@/app/components/StarRating/StarRating';
+import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
+import Textarea from '@/app/components/Forms/Textarea';
 import common from './Reviews.common.module.css';
 import light from './Reviews.light.module.css';
 import dark from './Reviews.dark.module.css';
 
 interface Review {
+  avatarUrl?: string;
   id: string;
   project: string;
   freelancer: string;
@@ -31,6 +38,7 @@ const Reviews: React.FC = () => {
       id: String(r.id ?? idx),
       project: r.projectTitle ?? r.project ?? 'Unknown Project',
       freelancer: r.freelancerName ?? r.freelancer ?? 'Unknown',
+      avatarUrl: r.avatarUrl ?? '', // Mocked for now
       created: r.date ?? r.createdAt ?? r.created ?? '',
       rating: Number(r.rating) || 0,
       text: r.comment ?? r.text ?? '',
@@ -106,114 +114,94 @@ const Reviews: React.FC = () => {
             <h1 className={common.title}>Reviews</h1>
             <p className={common.subtitle}>Manage and respond to client feedback.</p>
           </div>
-          <div className={common.controls}>
-            <input type="search" placeholder="Search..." value={query} onChange={e => setQuery(e.target.value)} className={cn(common.input, themed.input)} title="Search by project, freelancer, or text" />
-            <select value={rating} onChange={e => setRating(e.target.value === 'All' ? 'All' : Number(e.target.value))} className={cn(common.select, themed.select)} title="Filter by rating">
-              <option value="All">All Ratings</option>
-              {[5,4,3,2,1].map(s => <option key={s} value={s}>{`${s} star${s > 1 ? 's' : ''}`}</option>)}
-            </select>
-            <select value={sortKey} onChange={e => setSortKey(e.target.value as SortKey)} className={cn(common.select, themed.select)} title="Sort by">
-              <option value="created">Date</option>
-              <option value="rating">Rating</option>
-              <option value="project">Project</option>
-              <option value="freelancer">Freelancer</option>
-            </select>
-            <button type="button" onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')} className={cn(common.button, themed.button)} title={`Sort ${sortDir === 'asc' ? 'descending' : 'ascending'}`}>
-              {sortDir === 'asc' ? '↑' : '↓'}
-            </button>
-          </div>
         </section>
 
-
-
-        <section
-          ref={listRef}
-          className={cn(common.list, listVisible ? common.isVisible : common.isNotVisible)}
-          aria-labelledby="reviews-list-title"
-          aria-busy={loading}
-        >
-          <h2 id="reviews-list-title" className={common.srOnly}>Reviews List</h2>
-          <div className={common.srOnly} role="status" aria-live="polite">
-            {paged.length > 0 ? `Showing ${paged.length} of ${sorted.length} reviews.` : 'No reviews match your criteria.'}
-          </div>
+        <section ref={listRef} className={cn(common.list, listVisible ? common.isVisible : common.isNotVisible)} aria-live="polite">
+          <h2 className={common.srOnly}>Review List</h2>
           {loading && (
-            <>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <article key={i} className={cn(common.card)}>
-                  <div className={cn(common.cardTitle, themed.cardTitle)}>
-                    <Skeleton height={16} width={'50%'} />
+            <div className={common.grid}>
+              {[...Array(6)].map((_, i) => (
+                <article key={i} className={cn(common.card, themed.card, common.skeleton)}>
+                  <div className={common.cardHeader}>
+                    <Skeleton height={40} width={40} className={common.avatarSkeleton} />
+                    <div className={common.headerText}>
+                      <Skeleton height={16} width={'60%'} />
+                      <Skeleton height={12} width={'40%'} />
+                    </div>
                   </div>
-                  <div className={cn(common.meta, themed.meta)}>
-                    <Skeleton height={12} width={120} />
-                    <Skeleton height={12} width={60} />
-                    <Skeleton height={12} width={90} />
-                  </div>
-                  <Skeleton height={12} width={'80%'} />
-                  <Skeleton height={12} width={'60%'} />
+                  <Skeleton height={20} width={'80%'} className={common.ratingSkeleton} />
+                  <Skeleton height={12} width={'90%'} />
+                  <Skeleton height={12} width={'70%'} />
                 </article>
               ))}
-            </>
+            </div>
           )}
           {error && <div className={common.error}>Failed to load reviews.</div>}
-          {!loading && paged.map(r => (
-            <article key={r.id} className={cn(common.card)}>
-              <div className={cn(common.cardTitle, themed.cardTitle)}>{r.project}</div>
-              <div className={cn(common.meta, themed.meta)}>
-                <span>By {r.freelancer}</span>
-                <span>•</span>
-                <span role="img" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
-                <span>•</span>
-                <span>{r.created}</span>
-              </div>
-              <p>{r.text}</p>
-            </article>
-          ))}
+          {!loading && sorted.length > 0 && (
+            <div className={common.grid}>
+              {paged.map(r => (
+                <article key={r.id} className={cn(common.card, themed.card)}>
+                  <header className={common.cardHeader}>
+                    <UserAvatar src={r.avatarUrl} alt={r.freelancer} size={40} />
+                    <div className={common.headerText}>
+                      <h3 className={common.freelancerName}>{r.freelancer}</h3>
+                      <p className={common.projectName}>{r.project}</p>
+                    </div>
+                  </header>
+                  <div className={common.cardBody}>
+                    <StarRating rating={r.rating} />
+                    <p className={common.reviewText}>{r.text}</p>
+                  </div>
+                  <footer className={common.cardFooter}>
+                    <time dateTime={r.created}>{r.created}</time>
+                  </footer>
+                </article>
+              ))}
+            </div>
+          )}
           {sorted.length === 0 && !loading && (
-            <div role="status" aria-live="polite">No reviews found.</div>
+            <div className={common.emptyState} role="status" aria-live="polite">
+              <h3>No reviews found</h3>
+              <p>Try adjusting your search or filter criteria.</p>
+            </div>
           )}
         </section>
-        {sorted.length > 0 && (
+
+        {sorted.length > 0 && !loading && (
           <div className={common.paginationBar} role="navigation" aria-label="Pagination">
-            <button
-              type="button"
-              className={cn(common.button, themed.button, 'secondary')}
+            <Button
+              variant='secondary'
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={pageSafe === 1}
               aria-label="Previous page"
-            >Prev</button>
-            <span className={common.paginationInfo} aria-live="polite">Page {pageSafe} of {totalPages} · {sorted.length} result(s)</span>
-            <button
-              type="button"
-              className={cn(common.button, themed.button)}
+            >Prev</Button>
+            <span className={common.paginationInfo} aria-live="polite">Page {pageSafe} of {totalPages}</span>
+            <Button
+              variant='secondary'
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={pageSafe === totalPages}
               aria-label="Next page"
-            >Next</button>
+            >Next</Button>
           </div>
         )}
 
         <section ref={editorRef} className={cn(common.editor, themed.editor, editorVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="new-title">
-          <h2 id="new-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Add a Review</h2>
-          <div className={common.stars} role="radiogroup" aria-label="Rating">
-            {[1,2,3,4,5].map(n => (
-              <button
-                key={n}
-                type="button"
-                className={common.starBtn}
-                aria-pressed={newRating === n}
-                onClick={() => setStar(n)}
-                aria-label={`${n} star${n > 1 ? 's' : ''}`}
-                title={`${n} star${n > 1 ? 's' : ''}`}
-              >
-                {n <= newRating ? '★' : '☆'}
-              </button>
-            ))}
-          </div>
-          <label htmlFor="text" className={common.srOnly}>Review text</label>
-          <textarea id="text" className={cn(common.textarea, themed.textarea)} placeholder="Share your experience and outcomes…" value={newText} onChange={(e) => setNewText(e.target.value)} aria-invalid={newText.trim().length > 0 && newText.trim().length <= 10} title="Review text (minimum 10 characters)" />
-          <div className={common.controls}>
-            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={() => { setNewText(''); setNewRating(0); }} title="Clear review form">Clear</button>
-            <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={() => alert('Review submitted')} disabled={!canSubmit} aria-disabled={!canSubmit} title="Submit your review">Submit Review</button>
+          <h2 id="new-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Leave a Review</h2>
+          <div className={common.editorForm}>
+            <StarRating rating={newRating} onRatingChange={setStar} isEditable={true} />
+            <Textarea 
+              id="review-text"
+              placeholder="Share your experience and the outcomes of the project..."
+              value={newText}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewText(e.target.value)}
+              minChars={10}
+              maxChars={1000}
+              helpText="Describe the quality, communication, and overall satisfaction."
+            />
+            <div className={common.editorActions}>
+              <Button variant="secondary" onClick={() => { setNewText(''); setNewRating(0); }} title="Clear review form">Clear</Button>
+              <Button variant="primary" onClick={() => alert('Review submitted')} disabled={!canSubmit} aria-disabled={!canSubmit} title="Submit your review">Submit Review</Button>
+            </div>
           </div>
         </section>
       </div>

@@ -1,35 +1,188 @@
-/* AI-HINT: Common styles for Client Reviews page: filters, list, cards, editor, and actions. */
+/* AI-HINT: Common styles for the modernized Client Reviews page. Defines the main layout, header, controls, card grid, and editor form. */
 
-.page { padding: var(--spacing-8); }
-.container { max-width: 1000px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
+.page {
+  padding: var(--spacing-6) var(--spacing-8);
+}
 
-.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
-.title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
-.subtitle { font-size: var(--font-size-sm); opacity: .9; }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--spacing-6);
+}
 
-.controls { display: flex; gap: var(--spacing-2); flex-wrap: wrap; }
-.input, .select, .button { padding: 8px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; }
-.button { cursor: pointer; font-weight: var(--font-weight-medium); }
+.header {
+  margin-bottom: var(--spacing-2);
+}
 
-.list { display: grid; gap: var(--spacing-3); }
-.card { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); display: grid; gap: 8px; }
-.cardTitle { font-weight: var(--font-weight-semibold); }
-.meta { font-size: 12px; opacity: .9; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; }
-.toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-3); flex-wrap: wrap; }
+.title {
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+}
 
-.editor { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); display: grid; gap: var(--spacing-3); }
-.textarea { min-height: 120px; resize: vertical; padding: 10px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; }
-.stars { display: inline-flex; gap: 6px; align-items: center; }
-.starBtn { background: none; border: none; cursor: pointer; font-size: 20px; line-height: 1; }
+.subtitle {
+  font-size: var(--font-size-md);
+  margin-top: var(--spacing-1);
+}
 
-.isNotVisible { opacity: 0; transform: translateY(16px); }
-.isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }
+.controlsSection {
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius-lg);
+}
 
-.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.filters {
+  display: flex;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+}
 
-.input:focus-visible, .select:focus-visible, .button:focus-visible, .textarea:focus-visible, .starBtn:focus-visible, .card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.searchInput {
+  flex-grow: 1;
+  min-width: 250px;
+}
 
-/* Pagination */
-.paginationBar { display: flex; align-items: center; justify-content: flex-end; gap: var(--spacing-2); margin-top: 8px; }
-.paginationInfo { opacity: .8; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-5);
+}
+
+.card {
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+}
+
+.freelancerName {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-md);
+}
+
+.projectName {
+  font-size: var(--font-size-sm);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.reviewText {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: var(--spacing-3);
+  font-size: var(--font-size-xs);
+  border-top: 1px solid transparent;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--spacing-10) var(--spacing-5);
+  border-radius: var(--border-radius-lg);
+}
+
+.emptyState h3 {
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.emptyState p {
+  margin-top: var(--spacing-2);
+  font-size: var(--font-size-md);
+}
+
+.paginationBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+}
+
+.paginationInfo {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.editor {
+  padding: var(--spacing-6);
+  border-radius: var(--border-radius-xl);
+}
+
+.sectionTitle {
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-5);
+}
+
+.editorForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+.editorActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-2);
+}
+
+.skeleton.card {
+  gap: var(--spacing-4);
+}
+
+.ratingSkeleton {
+  margin-top: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.isNotVisible { opacity: 0; transform: translateY(20px); }
+.isVisible { opacity: 1; transform: translateY(0); transition: opacity .5s ease-out, transform .5s ease-out; }
+
+@media (max-width: 768px) {
+  .page {
+    padding: var(--spacing-4);
+  }
+}
+

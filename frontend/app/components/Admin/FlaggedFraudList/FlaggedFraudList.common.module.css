@@ -1,46 +1,123 @@
-.flaggedFraudListContainer {
-  padding: 1.5rem;
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.header {
+  padding: 0 0.5rem;
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.description {
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.filterToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
   border-radius: 8px;
 }
 
-.flaggedFraudListTitle {
-  font-size: 1.5rem;
+.selectFilters {
+  display: flex;
+  gap: 1rem;
+}
+
+.itemList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.itemCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.itemCard:hover {
+  transform: translateY(-4px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.identifier {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   font-weight: 600;
-  margin: 0;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
 }
 
-.flaggedFraudListTableWrapper {
-  overflow-x: auto;
+.reason {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  flex-grow: 1;
 }
 
-.flaggedFraudList {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
-.flaggedFraudList th, .flaggedFraudList td {
-  padding: 1rem;
-  vertical-align: middle;
+.date {
+  font-size: 0.8rem;
+  font-style: italic;
 }
 
-.flaggedFraudList th {
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-
-
-.flaggedFraudListActions {
+.actions {
   display: flex;
   gap: 0.5rem;
 }
 
-.flaggedFraudListEmpty {
+.actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
   text-align: center;
-  padding: 2rem;
-  font-style: italic;
+  border-radius: 8px;
+  min-height: 300px;
+}
+
+.emptyState h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  max-width: 300px;
+  margin: 0;
 }

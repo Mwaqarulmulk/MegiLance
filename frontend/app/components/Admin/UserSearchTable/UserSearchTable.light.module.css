@@ -1,18 +1,55 @@
 .container {
-  --table-bg: #ffffff;
-  --table-border-color: #e2e8f0;
-  --table-title-color: #1a202c;
-  --input-bg: #ffffff;
-  --input-border-color: #cbd5e0;
-  --input-text-color: #2d3748;
-  --table-header-color: #718096;
-  --table-header-border-color: #e2e8f0;
-  --table-cell-text-color: #4a5568;
-  --table-row-border-color: #e2e8f0;
-  --accent-color: #4573df;
-  --accent-color-faded: rgba(69, 115, 223, 0.2);
+  background-color: var(--color-background-primary-light);
 }
 
-.table tbody tr:hover {
-  background-color: #f7fafc;
+.title {
+  color: var(--color-text-primary-light);
+}
+
+.subtitle {
+  color: var(--color-text-secondary-light);
+}
+
+.userCard {
+  background-color: var(--color-background-secondary-light);
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.userCard:hover {
+  border-color: var(--color-border-hover-light);
+  box-shadow: var(--shadow-md);
+}
+
+.userName {
+  color: var(--color-text-primary-light);
+}
+
+.userEmail {
+  color: var(--color-text-tertiary-light);
+}
+
+.infoRow {
+  color: var(--color-text-secondary-light);
+}
+
+.infoIcon {
+  color: var(--color-icon-secondary-light);
+}
+
+.emptyState {
+  background-color: var(--color-background-secondary-light);
+  border-color: var(--color-border-light);
+}
+
+.emptyIcon {
+  color: var(--color-icon-secondary-light);
+}
+
+.emptyTitle {
+  color: var(--color-text-primary-light);
+}
+
+.emptyText {
+  color: var(--color-text-secondary-light);
 }

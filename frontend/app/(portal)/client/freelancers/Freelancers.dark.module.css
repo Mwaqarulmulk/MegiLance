@@ -1,13 +1,42 @@
 /* AI-HINT: Dark theme overrides for Client Freelancers page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+/* AI-HINT: Dark theme styles for the Freelancers page. */
 
-.input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
-.button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
-.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+.page {
+  background-color: var(--background-dark);
+}
 
-.card { background: var(--surface-elev); border: 1px solid var(--border); }
-.cardTitle { color: var(--text-primary); }
-.meta { color: var(--text-secondary); }
-.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.controlsSection {
+  background-color: var(--surface-translucent-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.emptyState {
+  background-color: var(--surface-elev-dark);
+  border: 1px dashed var(--border-dark);
+}
+
+.emptyState h3 {
+  color: var(--text-primary-dark);
+}
+
+.emptyState p {
+  color: var(--text-secondary-dark);
+}
+
+.paginationInfo {
+  color: var(--text-secondary-dark);
+}
+
+.skeletonCard {
+  background-color: var(--surface-elev-dark);
+  border: 1px solid var(--border-dark);
+}

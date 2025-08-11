@@ -1,0 +1,15 @@
+/* AI-HINT: Common styles for the Trend component. */
+
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--border-radius-full);
+}
+
+.icon {
+  flex-shrink: 0;
+}

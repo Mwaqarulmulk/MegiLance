@@ -1,33 +1,63 @@
-.flaggedFraudListContainer {
-  background-color: #422c2c;
-  border: 1px solid #784a4a;
+.container {
+  background-color: #111827;
 }
 
-.flaggedFraudListTitle {
-  color: #fbb6b6;
+.title {
+  color: #f9fafb;
 }
 
-.flaggedFraudList th {
-  color: #fbb6b6;
-  border-bottom: 2px solid #784a4a;
+.description {
+  color: #9ca3af;
 }
 
-.flaggedFraudList td {
-  color: #cbd5e0;
+.filterToolbar {
+  background-color: #1f2937;
+  border: 1px solid #374151;
 }
 
-.flaggedFraudList tbody tr {
-  border-bottom: 1px solid #784a4a;
+.itemCard {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
-.flaggedFraudList tbody tr:last-child {
-  border-bottom: none;
+.itemCard:hover {
+  border-color: #4b5563;
 }
 
-.flaggedFraudList tbody tr:hover {
-  background-color: #5f3f3f;
+.identifier {
+  color: #f9fafb;
 }
 
-.flaggedFraudListEmpty {
-    color: #a0aec0;
+.identifier svg {
+  color: #4573df;
+}
+
+.reason {
+  color: #d1d5db;
+}
+
+.cardFooter {
+  border-top: 1px solid #374151;
+}
+
+.date {
+  color: #9ca3af;
+}
+
+.emptyState {
+  background-color: #1f2937;
+  border: 1px dashed #4b5563;
+}
+
+.emptyState svg {
+  color: #6b7280;
+}
+
+.emptyState h3 {
+  color: #f9fafb;
+}
+
+.emptyState p {
+  color: #9ca3af;
 }

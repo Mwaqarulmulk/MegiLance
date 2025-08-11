@@ -10,7 +10,8 @@ import darkStyles from './DashboardWidget.dark.module.css';
 export interface DashboardWidgetProps {
   title: string;
   value?: string | number;
-  footer?: React.ReactNode;
+  icon?: React.ElementType;
+  trend?: React.ReactNode;
   onClick?: () => void;
   children?: React.ReactNode;
 }
@@ -18,7 +19,8 @@ export interface DashboardWidgetProps {
 const DashboardWidget: React.FC<DashboardWidgetProps> = ({ 
   title, 
   value, 
-  footer, 
+  icon: Icon, 
+  trend,
   onClick,
   children
 }) => {
@@ -52,16 +54,18 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       {...interactiveProps}
     >
       <div className={styles.header}>
+        {Icon && <div className={styles.iconWrapper}><Icon size={22} /></div>}
         <h3 id={titleId} className={styles.title}>{title}</h3>
       </div>
 
-      {children ? (
-        <div className={styles.content}>{children}</div>
-      ) : (
-        <p className={styles.value}>{value}</p>
-      )}
-
-      {footer && <div className={styles.footer}>{footer}</div>}
+      <div className={styles.body}>
+        {children ? (
+          <div className={styles.content}>{children}</div>
+        ) : (
+          <p className={styles.value}>{value}</p>
+        )}
+        {trend && <div className={styles.trend}>{trend}</div>}
+      </div>
     </section>
   );
 };

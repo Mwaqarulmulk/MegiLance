@@ -1,7 +1,20 @@
-/* AI-HINT: Light theme overrides for Client Payments page. */
+/* AI-HINT: Light theme styles for the modernized Payments page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+.theme {
+  background-color: var(--color-background-light);
+}
+
+.title {
+  color: var(--color-text-primary-light);
+}
+
+.subtitle {
+  color: var(--color-text-secondary-light);
+}
+
+.skeletonCard {
+  background-color: var(--color-skeleton-light);
+}
 
 .input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
 .button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.12); }

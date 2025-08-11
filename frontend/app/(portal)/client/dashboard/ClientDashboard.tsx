@@ -6,13 +6,45 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useClientData } from '@/hooks/useClient';
-import DashboardWidget from '@/app/components/DashboardWidget/DashboardWidget';
+import KeyMetrics from './components/KeyMetrics/KeyMetrics';
+import { Briefcase, CheckCircle, Clock, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import ProjectCard from '@/app/components/ProjectCard/ProjectCard';
 import TransactionRow from '@/app/components/TransactionRow/TransactionRow';
+import ProjectStatusChart from './components/ProjectStatusChart/ProjectStatusChart';
+import SpendingChart from './components/SpendingChart/SpendingChart';
 import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 import common from './ClientDashboard.common.module.css';
 import light from './ClientDashboard.light.module.css';
 import dark from './ClientDashboard.dark.module.css';
+
+const Trend: React.FC<{ value: number }> = ({ value }) => {
+  const Icon = value > 0 ? TrendingUp : value < 0 ? TrendingDown : Minus;
+  const color = value > 0 ? 'text-green-500' : value < 0 ? 'text-red-500' : 'text-gray-500';
+  const sign = value > 0 ? '+' : '';
+
+  return (
+    <span className={`flex items-center text-sm ${color}`}>
+      <Icon className="mr-1 h-4 w-4" />
+      {sign}{value.toFixed(1)}%
+    </span>
+  );
+};
+
+const projectStatusData = [
+  { name: 'In Progress', value: 4 },
+  { name: 'Completed', value: 8 },
+  { name: 'Pending', value: 2 },
+  { name: 'Cancelled', value: 1 },
+];
+
+const spendingData = [
+  { name: 'Jan', spending: 4000 },
+  { name: 'Feb', spending: 3000 },
+  { name: 'Mar', spending: 5000 },
+  { name: 'Apr', spending: 4500 },
+  { name: 'May', spending: 6000 },
+  { name: 'Jun', spending: 5500 },
+];
 
 const ClientDashboard: React.FC = () => {
   const { theme } = useTheme();
@@ -22,6 +54,13 @@ const ClientDashboard: React.FC = () => {
   const headerRef = useRef<HTMLDivElement | null>(null);
   const widgetsRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+
+  const metricCards = [
+    { title: 'Total Projects', icon: Briefcase, trend: <Trend value={5.2} /> },
+    { title: 'Active Projects', icon: CheckCircle, trend: <Trend value={-1.8} /> },
+    { title: 'Total Spent', icon: Clock, trend: <Trend value={12.5} /> },
+    { title: 'Pending Payments', icon: Clock, trend: <Trend value={0} /> },
+  ];
 
   const headerVisible = useIntersectionObserver(headerRef, { threshold: 0.1 });
   const widgetsVisible = useIntersectionObserver(widgetsRef, { threshold: 0.1 });
@@ -94,34 +133,16 @@ const ClientDashboard: React.FC = () => {
         {loading && <div className={common.loading} aria-busy={true}>Loading dashboard...</div>}
         {error && <div className={common.error}>Failed to load dashboard data.</div>}
 
-        <section
-          ref={widgetsRef}
-          className={cn(common.widgetsGrid, widgetsVisible ? common.isVisible : common.isNotVisible)}
-          aria-labelledby="key-metrics-title"
-          aria-busy={loading}
-        >
-          <h2 id="key-metrics-title" className={common.srOnly}>Key Metrics</h2>
-          {loading ? (
-            <>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className={common.widgetSkeleton}>
-                  <Skeleton height={18} width={120} />
-                  <Skeleton height={28} width={90} />
-                </div>
-              ))}
-            </>
-          ) : (
-            <>
-              <DashboardWidget title="Total Projects" value={String(metrics.totalProjects)} />
-              <DashboardWidget title="Active Projects" value={String(metrics.activeProjects)} />
-              <DashboardWidget title="Total Spent" value={metrics.totalSpent} />
-              <DashboardWidget title="Pending Payments" value={String(metrics.pendingPayments)} />
-            </>
-          )}
-        </section>
+        <div ref={widgetsRef} className={cn(widgetsVisible ? common.isVisible : common.isNotVisible)}>
+          <KeyMetrics metrics={metrics} loading={loading} metricCards={metricCards} />
+        </div>
 
-        <div ref={contentRef} className={cn(common.mainContent, contentVisible ? common.isVisible : common.isNotVisible)}>
-          <section className={common.section} aria-labelledby="recent-projects-title" aria-busy={loading}>
+        <div ref={contentRef} className={cn(common.dashboardGrid, contentVisible ? common.isVisible : common.isNotVisible)}>
+          <div className={common.gridSpan2}>
+            <SpendingChart data={spendingData} />
+          </div>
+          <ProjectStatusChart data={projectStatusData} />
+          <section className={cn(common.section, common.gridSpan2)} aria-labelledby="recent-projects-title" aria-busy={loading}>
             <h2 id="recent-projects-title" className={common.sectionTitle}>Recent Projects</h2>
             <div className={common.projectList}>
               {loading ? (
@@ -152,7 +173,7 @@ const ClientDashboard: React.FC = () => {
             </div>
           </section>
 
-          <section className={common.section} aria-labelledby="recent-transactions-title" aria-busy={loading}>
+          <section className={cn(common.section, common.gridSpanFull)} aria-labelledby="recent-transactions-title" aria-busy={loading}>
             <h2 id="recent-transactions-title" className={common.sectionTitle}>Recent Transactions</h2>
             <div className={common.transactionList}>
               {loading ? (

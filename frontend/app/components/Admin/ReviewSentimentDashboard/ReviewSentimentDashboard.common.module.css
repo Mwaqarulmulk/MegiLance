@@ -1,44 +1,127 @@
-.reviewSentimentDashboardContainer {
-  padding: 1.5rem;
-  border-radius: 8px;
+/* AI-HINT: Common styles for the premium ReviewSentimentDashboard. Defines layout, spacing, and typography using a CSS grid for a responsive, modern structure. All color and background properties are handled in theme-specific files. */
+
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: 'Inter', sans-serif;
 }
 
-.reviewSentimentDashboardTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboardTitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
   margin: 0;
-  margin-bottom: 1.5rem;
 }
 
-.reviewSentimentDashboardGrid {
+.timeRangeTrigger {
+  width: 180px;
+}
+
+.metricsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
 }
 
-.reviewSentimentDashboardCard {
+.metricCard {
   padding: 1.5rem;
-  border-radius: 8px;
-  /* border is handled by theme-specific styles */
 }
 
 .cardTitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
   margin: 0 0 0.5rem 0;
 }
 
 .cardMetric {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
   margin: 0;
+  line-height: 1.1;
 }
-
-/* cardMetricPositive color is handled by theme-specific styles */
 
 .cardDescription {
   font-size: 0.875rem;
-  margin: 0.25rem 0 0 0;
+  margin: 0.5rem 0 0 0;
 }
 
-/* BarChart styles are now self-contained within the BarChart component */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.chartCard {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartPlaceholder {
+  flex-grow: 1;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reviewsCard {
+  padding: 1.5rem;
+}
+
+.reviewsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reviewItem {
+  display: grid;
+  grid-template-areas:
+    "author sentiment"
+    "text text";
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.reviewAuthor {
+  grid-area: author;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.reviewUser {
+  font-weight: 500;
+}
+
+.reviewText {
+  grid-area: text;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.reviewSentiment {
+  grid-area: sentiment;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

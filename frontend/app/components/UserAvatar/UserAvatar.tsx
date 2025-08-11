@@ -12,7 +12,7 @@ import darkStyles from './UserAvatar.dark.module.css';
 export interface UserAvatarProps {
   name: string; // Always required for initials fallback and alt text
   src?: string; // Optional image source
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | number;
   className?: string;
 }
 
@@ -29,12 +29,26 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }
   const themeStyles = theme === 'light' ? lightStyles : darkStyles;
 
-  const sizeMap = {
-    small: { class: commonStyles.userAvatarSmall, size: 32 },
-    medium: { class: commonStyles.userAvatarMedium, size: 40 },
-    large: { class: commonStyles.userAvatarLarge, size: 56 },
-  };
-  const { class: sizeClass, size: imageSize } = sizeMap[size];
+  let sizeClass = '';
+  let imageSize: number;
+  let inlineStyles: React.CSSProperties = {};
+
+  if (typeof size === 'number') {
+    imageSize = size;
+    inlineStyles = {
+      width: `${size}px`,
+      height: `${size}px`,
+      fontSize: `${Math.max(12, size * 0.4)}px`, // Ensure font size is not too small
+    };
+  } else {
+    const sizeMap = {
+      small: { class: commonStyles.userAvatarSmall, size: 32 },
+      medium: { class: commonStyles.userAvatarMedium, size: 40 },
+      large: { class: commonStyles.userAvatarLarge, size: 56 },
+    };
+    sizeClass = sizeMap[size].class;
+    imageSize = sizeMap[size].size;
+  }
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -53,7 +67,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
 
   if (src) {
     return (
-      <div className={avatarClasses}>
+      <div className={avatarClasses} style={inlineStyles}>
         <Image
           src={src}
           alt={name}
@@ -66,7 +80,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }
 
   return (
-    <div className={avatarClasses}>
+    <div className={avatarClasses} style={inlineStyles}>
       <span>{getInitials(name)}</span>
     </div>
   );

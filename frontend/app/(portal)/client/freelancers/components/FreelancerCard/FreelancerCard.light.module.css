@@ -1,0 +1,40 @@
+/* AI-HINT: Light theme styles for the FreelancerCard. */
+
+.card {
+  background-color: var(--surface-elev);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.name {
+  color: var(--text-primary);
+}
+
+.title {
+  color: var(--text-secondary);
+}
+
+.ratingValue {
+  color: var(--text-secondary);
+}
+
+.infoIcon {
+  color: var(--text-tertiary);
+}
+
+.infoText {
+  color: var(--text-secondary);
+}
+
+.skillsTitle {
+  color: var(--text-tertiary);
+}
+
+.cardFooter {
+  border-top-color: var(--border);
+}

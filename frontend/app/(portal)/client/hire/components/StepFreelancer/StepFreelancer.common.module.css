@@ -1,0 +1,30 @@
+/* AI-HINT: Common styles for the StepFreelancer component. */
+
+.section {
+  padding: 2rem;
+  border-radius: var(--rounded-lg);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.title {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  margin-bottom: 0.25rem; /* 4px */
+  transition: color 0.3s ease;
+}
+
+.subtitle {
+  font-size: 1rem; /* 16px */
+  margin-bottom: 1.5rem; /* 24px */
+  transition: color 0.3s ease;
+}
+
+.inputWrapper {
+  max-width: 28rem; /* 448px */
+}
+
+.helpText {
+  font-size: 0.875rem; /* 14px */
+  margin-top: 0.5rem; /* 8px */
+  transition: color 0.3s ease;
+}

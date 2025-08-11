@@ -1,24 +1,26 @@
-/* @AI-HINT: Dark theme styles for the DashboardWidget component. */
-
 .widget {
-  background-color: var(--bg-secondary-dark);
-  border-color: var(--border-dark);
+  background-color: var(--color-background-secondary-dark);
+  border: 1px solid var(--color-border-dark);
 }
 
 .clickable:hover {
-  border-color: var(--color-primary);
-  background-color: var(--bg-tertiary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md-dark);
+}
+
+.iconWrapper {
+  background-color: var(--color-primary-dark-transparent);
+  color: var(--color-primary-dark);
 }
 
 .title {
-  color: var(--text-secondary-dark);
+  color: var(--color-text-secondary-dark);
 }
 
 .value {
-  color: var(--text-primary-dark);
+  color: var(--color-text-primary-dark);
 }
 
-.footer {
-  color: var(--text-tertiary-dark);
+.trend {
+  color: var(--color-success-dark);
 }
-

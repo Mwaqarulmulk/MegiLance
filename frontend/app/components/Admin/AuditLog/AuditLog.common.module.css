@@ -1,38 +1,101 @@
-.auditLogContainer {
-  padding: 1.5rem;
-  border-radius: 8px;
+.auditLogCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Consistent spacing between sections */
 }
 
-.auditLogTitle {
-  font-size: 1.5rem;
+.cardHeader {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+.cardTitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.75rem;
   font-weight: 600;
   margin: 0;
-  margin-bottom: 1.5rem;
 }
 
-.auditLogTableWrapper {
+.cardDescription {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.filterToolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0 1.5rem;
+}
+
+.searchInput {
+  flex-grow: 1;
+}
+
+.tableWrapper {
+  width: 100%;
   overflow-x: auto;
 }
 
-.auditLog {
+.auditLogTable {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  font-size: 0.875rem;
 }
 
-.auditLog th, .auditLog td {
-  padding: 1rem;
+.auditLogTable th,
+.auditLogTable td {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
   vertical-align: middle;
   white-space: nowrap;
 }
 
-.auditLog th {
-  font-weight: 600;
-  font-size: 0.875rem;
+.auditLogTable th {
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.auditLog tbody tr {
-  /* border-bottom is handled by theme-specific styles */
+.headerCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.headerCell svg {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.headerCell:hover svg {
+  opacity: 1;
+}
+
+.detailsCell {
+  white-space: normal;
+  max-width: 300px;
+}
+
+.timestampCell {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.paginationFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid;
+}
+
+.paginationInfo {
+  font-size: 0.875rem;
+}
+
+.paginationControls {
+  display: flex;
+  gap: 0.5rem;
 }

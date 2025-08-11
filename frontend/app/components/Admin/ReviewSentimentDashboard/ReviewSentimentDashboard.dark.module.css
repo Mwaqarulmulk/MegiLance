@@ -1,24 +1,70 @@
-.reviewSentimentDashboardContainer {
-  background-color: #1a202c;
+/* AI-HINT: Dark theme styles for the ReviewSentimentDashboard. Creates a sleek, modern, and focused experience with a dark palette, vibrant brand colors, and carefully managed contrast for readability. */
+
+.dashboardContainer {
+  background-color: #111827; /* Deep blue-gray background */
 }
 
-.reviewSentimentDashboardTitle {
-  color: #f7fafc;
+.dashboardTitle {
+  color: #f9fafb; /* Off-white for main title */
 }
 
-.reviewSentimentDashboardCard {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
+.timeRangeTrigger {
+  background-color: #1f2937;
+  border-color: #4b5567;
+  color: #d1d5db;
+}
+
+.metricCard,
+.chartCard,
+.reviewsCard {
+  background-color: #1f2937; /* Slightly lighter card background */
+  border: 1px solid #374151;
 }
 
 .cardTitle {
-  color: #e2e8f0;
+  color: #9ca3af; /* Lighter gray for titles */
+}
+
+.cardMetric {
+  color: #f9fafb;
 }
 
 .cardMetricPositive {
-  color: #27AE60; /* MegiLance Success Green */
+  color: var(--megilance-success, #27AE60);
 }
 
 .cardDescription {
-  color: #a0aec0;
+  color: #9ca3af;
+}
+
+.reviewItem {
+  background-color: #374151;
+  border: 1px solid #4b5567;
+}
+
+.reviewItem:hover {
+  background-color: #4b5567;
+}
+
+.reviewUser {
+  color: #f3f4f6;
+}
+
+.reviewText {
+  color: #d1d5db;
+}
+
+.sentimentPositive {
+  color: #6ee7b7;
+  background-color: #064e3b;
+}
+
+.sentimentNegative {
+  color: #fca5a5;
+  background-color: #7f1d1d;
+}
+
+.sentimentNeutral {
+  color: #fdba74;
+  background-color: #7c2d12;
 }

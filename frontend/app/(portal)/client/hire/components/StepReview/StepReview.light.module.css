@@ -1,0 +1,31 @@
+/* AI-HINT: Light theme styles for the StepReview component. */
+
+.section {
+  background-color: var(--surface-elev);
+  border: 1px solid var(--border);
+}
+
+.title {
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
+
+.reviewList {
+  /* No specific theme styles needed for the list container itself */
+}
+
+.reviewItem {
+  background-color: var(--surface);
+  border-color: var(--border);
+}
+
+.itemTitle {
+  color: var(--text-secondary);
+}
+
+.itemValue {
+  color: var(--text-primary);
+}

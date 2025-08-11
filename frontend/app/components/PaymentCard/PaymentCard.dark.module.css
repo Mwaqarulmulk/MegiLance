@@ -1,0 +1,32 @@
+/* AI-HINT: Dark theme styles for PaymentCard. */
+
+.theme {
+  background-color: var(--color-background-alt-dark);
+  border-color: var(--color-border-dark);
+  box-shadow: var(--shadow-sm-dark);
+}
+
+.theme:hover {
+  border-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md-dark);
+}
+
+.freelancerName {
+  color: var(--color-text-primary-dark);
+}
+
+.projectLink {
+  color: var(--color-text-secondary-dark);
+}
+
+.projectLink:hover {
+  color: var(--color-primary-dark);
+}
+
+.amount {
+  color: var(--color-text-primary-dark);
+}
+
+.date {
+  color: var(--color-text-secondary-dark);
+}

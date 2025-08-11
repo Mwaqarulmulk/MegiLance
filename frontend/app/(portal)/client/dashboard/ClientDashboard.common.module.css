@@ -66,32 +66,37 @@
 }
 
 .widgetsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
 }
 
 .widgetsGrid.isVisible {
   opacity: 1;
   transform: translateY(0);
+  transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
 }
 
-.mainContent {
+.dashboardGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
 }
 
-.mainContent.isVisible {
+.dashboardGrid.isVisible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.gridSpan2 {
+  grid-column: span 2;
+}
+
+.gridSpanFull {
+  grid-column: span 3;
 }
 
 .section {
@@ -99,7 +104,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid var(--card-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .sectionTitle {
@@ -109,14 +114,10 @@
   color: var(--text-primary);
 }
 
-.projectList {
-  display: grid;
-  gap: 1rem;
-}
-
+.projectList,
 .transactionList {
   display: grid;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .emptyState {
@@ -126,9 +127,12 @@
   font-style: italic;
 }
 
-@media (min-width: 768px) {
-  .mainContent {
-    grid-template-columns: 1fr 1fr;
+@media (max-width: 1024px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+  .gridSpan2, .gridSpanFull {
+    grid-column: span 1;
   }
 }
 
@@ -144,9 +148,4 @@
   .title {
     font-size: 2rem;
   }
-  
-  .widgetsGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-} 
+}

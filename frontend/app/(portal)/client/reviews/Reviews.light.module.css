@@ -1,17 +1,72 @@
-/* AI-HINT: Light theme overrides for Client Reviews page. */
+/* AI-HINT: Light theme styles for the modernized Client Reviews page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+.page {
+  background-color: var(--surface);
+}
 
-.input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
-.button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.12); }
-.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+.title {
+  color: var(--text-primary);
+}
 
-.card { background: var(--surface-elev); border: 1px solid var(--border); }
-.cardTitle { color: var(--text-primary); }
-.meta { color: var(--text-secondary); }
-.badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+.subtitle {
+  color: var(--text-secondary);
+}
 
-.editor { background: var(--surface-elev); border: 1px solid var(--border); }
-.textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
-.stars { color: var(--warning, #F2C94C); }
+.controlsSection {
+  background-color: var(--surface-elev);
+  border: 1px solid var(--border);
+}
+
+.card {
+  background-color: var(--surface-elev);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.freelancerName {
+  color: var(--text-primary);
+}
+
+.projectName {
+  color: var(--text-secondary);
+}
+
+.reviewText {
+  color: var(--text-primary);
+}
+
+.cardFooter {
+  color: var(--text-tertiary);
+  border-top-color: var(--border);
+}
+
+.emptyState {
+  background-color: var(--surface-elev);
+  border: 1px dashed var(--border);
+}
+
+.emptyState h3 {
+  color: var(--text-primary);
+}
+
+.emptyState p {
+  color: var(--text-secondary);
+}
+
+.paginationInfo {
+  color: var(--text-secondary);
+}
+
+.editor {
+  background-color: var(--surface-elev);
+  border: 1px solid var(--border);
+}
+
+.sectionTitle {
+  color: var(--text-primary);
+}

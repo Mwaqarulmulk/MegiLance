@@ -6,6 +6,11 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
+import Card from '@/app/components/Card/Card';
+import Input from '@/app/components/Input/Input';
+import Select from '@/app/components/Select/Select';
+import { User, CreditCard, ShieldCheck, ShieldOff, Search, ListFilter } from 'lucide-react';
+
 import commonStyles from './FlaggedFraudList.common.module.css';
 import lightStyles from './FlaggedFraudList.light.module.css';
 import darkStyles from './FlaggedFraudList.dark.module.css';
@@ -13,22 +18,27 @@ import darkStyles from './FlaggedFraudList.dark.module.css';
 interface FlaggedItem {
   id: string;
   type: 'User' | 'Transaction';
-  identifier: string; // User email or Transaction ID
+  identifier: string;
   reason: string;
   dateFlagged: string;
   status: 'Pending Review' | 'Resolved' | 'Dismissed';
+  riskScore: number;
 }
 
 const mockFlaggedItems: FlaggedItem[] = [
-  { id: 'fraud_001', type: 'User', identifier: 'suspicious_user@example.com', reason: 'Multiple failed login attempts from different IPs.', dateFlagged: '2025-08-08', status: 'Pending Review' },
-  { id: 'fraud_002', type: 'Transaction', identifier: 'txn_a1b2c3d4', reason: 'Unusually large payment amount.', dateFlagged: '2025-08-07', status: 'Pending Review' },
-  { id: 'fraud_003', type: 'User', identifier: 'another_user@example.com', reason: 'AI detected unusual messaging patterns.', dateFlagged: '2025-08-06', status: 'Resolved' },
-  { id: 'fraud_004', type: 'User', identifier: 'scammer@example.com', reason: 'Reported by another user for phishing.', dateFlagged: '2025-08-05', status: 'Pending Review' },
+  { id: 'fraud_001', type: 'User', identifier: 'suspicious_user@example.com', reason: 'Multiple failed login attempts from different IPs.', dateFlagged: '2025-08-08', status: 'Pending Review', riskScore: 92 },
+  { id: 'fraud_002', type: 'Transaction', identifier: 'txn_a1b2c3d4', reason: 'Unusually large payment amount from a new account.', dateFlagged: '2025-08-07', status: 'Pending Review', riskScore: 78 },
+  { id: 'fraud_003', type: 'User', identifier: 'another_user@example.com', reason: 'AI detected unusual messaging patterns.', dateFlagged: '2025-08-06', status: 'Resolved', riskScore: 65 },
+  { id: 'fraud_004', type: 'User', identifier: 'scammer@example.com', reason: 'Reported by another user for phishing.', dateFlagged: '2025-08-05', status: 'Pending Review', riskScore: 88 },
+  { id: 'fraud_005', type: 'Transaction', identifier: 'txn_e5f6g7h8', reason: 'Chargeback initiated by customer.', dateFlagged: '2025-08-04', status: 'Dismissed', riskScore: 40 },
 ];
 
 const FlaggedFraudList: React.FC = () => {
   const { theme } = useTheme();
   const [items, setItems] = useState(mockFlaggedItems);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Pending Review');
+  const [typeFilter, setTypeFilter] = useState('All');
 
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
@@ -36,42 +46,94 @@ const FlaggedFraudList: React.FC = () => {
     setItems(items.map(item => (item.id === id ? { ...item, status: newStatus } : item)));
   };
 
-  const pendingItems = items.filter(item => item.status === 'Pending Review');
+  const filteredItems = items
+    .filter(item => statusFilter === 'All' || item.status === statusFilter)
+    .filter(item => typeFilter === 'All' || item.type === typeFilter)
+    .filter(item => item.identifier.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  const getRiskBadgeVariant = (score: number) => {
+    if (score > 85) return 'danger';
+    if (score > 60) return 'warning';
+    return 'success';
+  };
 
   return (
-    <div className={cn(commonStyles.flaggedFraudListContainer, themeStyles.flaggedFraudListContainer)}>
-      <h2 className={cn(commonStyles.flaggedFraudListTitle, themeStyles.flaggedFraudListTitle)}>Flagged Fraud & Risk List</h2>
-      <div className={cn(commonStyles.flaggedFraudListTableWrapper, themeStyles.flaggedFraudListTableWrapper)}>
-        <table className={cn(commonStyles.flaggedFraudList, themeStyles.flaggedFraudList)}>
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Identifier</th>
-              <th>Reason for Flag</th>
-              <th>Date Flagged</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pendingItems.map(item => (
-              <tr key={item.id}>
-                <td><Badge variant={item.type === 'User' ? 'warning' : 'info'}>{item.type}</Badge></td>
-                <td>{item.identifier}</td>
-                <td>{item.reason}</td>
-                <td>{item.dateFlagged}</td>
-                <td className={cn(commonStyles.flaggedFraudListActions, themeStyles.flaggedFraudListActions)}>
-                  <Button variant="success" size="small" onClick={() => handleAction(item.id, 'Resolved')}>Resolve</Button>
-                  <Button variant="secondary" size="small" onClick={() => handleAction(item.id, 'Dismissed')}>Dismiss</Button>
-                </td>
-              </tr>
-            ))}
-            {pendingItems.length === 0 && (
-              <tr>
-                <td colSpan={5} className={cn(commonStyles.flaggedFraudListEmpty, themeStyles.flaggedFraudListEmpty)}>No items are currently pending review.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+    <div className={cn(commonStyles.container, themeStyles.container)}>
+      <header className={commonStyles.header}>
+        <h2 className={cn(commonStyles.title, themeStyles.title)}>Flagged Fraud & Risk List</h2>
+        <p className={cn(commonStyles.description, themeStyles.description)}>
+          Showing {filteredItems.length} of {items.length} flagged items.
+        </p>
+      </header>
+
+      <div className={cn(commonStyles.filterToolbar, themeStyles.filterToolbar)}>
+        <Input
+          id="search-filter"
+          placeholder="Search by identifier..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          iconBefore={<Search size={16} />}
+        />
+        <div className={commonStyles.selectFilters}>
+          <Select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            options={[
+              { value: 'All', label: 'All Statuses' },
+              { value: 'Pending Review', label: 'Pending Review' },
+              { value: 'Resolved', label: 'Resolved' },
+              { value: 'Dismissed', label: 'Dismissed' },
+            ]}
+          />
+          <Select
+            id="type-filter"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            options={[
+              { value: 'All', label: 'All Types' },
+              { value: 'User', label: 'Users' },
+              { value: 'Transaction', label: 'Transactions' },
+            ]}
+          />
+        </div>
+      </div>
+
+      <div className={commonStyles.itemList}>
+        {filteredItems.map(item => (
+          <Card key={item.id} className={cn(commonStyles.itemCard, themeStyles.itemCard)}>
+            <div className={commonStyles.cardHeader}>
+              <div className={commonStyles.identifier}>
+                {item.type === 'User' ? <User size={18} /> : <CreditCard size={18} />}
+                <span>{item.identifier}</span>
+              </div>
+              <Badge variant={getRiskBadgeVariant(item.riskScore)}>Risk: {item.riskScore}</Badge>
+            </div>
+            <p className={commonStyles.reason}>{item.reason}</p>
+            <footer className={commonStyles.cardFooter}>
+              <span className={commonStyles.date}>Flagged: {item.dateFlagged}</span>
+              {item.status === 'Pending Review' ? (
+                <div className={commonStyles.actions}>
+                  <Button variant="success" size="small" onClick={() => handleAction(item.id, 'Resolved')}>
+                    <ShieldCheck size={14} /> Resolve
+                  </Button>
+                  <Button variant="secondary" size="small" onClick={() => handleAction(item.id, 'Dismissed')}>
+                    <ShieldOff size={14} /> Dismiss
+                  </Button>
+                </div>
+              ) : (
+                <Badge variant={item.status === 'Resolved' ? 'success' : 'secondary'}>{item.status}</Badge>
+              )}
+            </footer>
+          </Card>
+        ))}
+        {filteredItems.length === 0 && (
+          <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
+            <ListFilter size={48} />
+            <h3>No Matching Items</h3>
+            <p>Adjust your filters or clear the search to see more items.</p>
+          </div>
+        )}
       </div>
     </div>
   );

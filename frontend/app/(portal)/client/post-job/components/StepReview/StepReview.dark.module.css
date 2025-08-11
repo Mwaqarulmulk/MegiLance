@@ -1,0 +1,38 @@
+/* AI-HINT: Dark theme styles for the StepReview component. */
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.card {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+}
+
+.card_title {
+  color: var(--text-primary-dark);
+}
+
+.item_label {
+  color: var(--text-secondary-dark);
+}
+
+.item_value {
+  color: var(--text-primary-dark);
+}
+
+.section_divider {
+  background-color: var(--border-dark);
+}
+
+.section_title {
+  color: var(--text-secondary-dark);
+}
+
+.description {
+  color: var(--text-primary-dark);
+}

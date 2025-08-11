@@ -1,0 +1,31 @@
+/* AI-HINT: Dark theme styles for the StepReview component. */
+
+.section {
+  background-color: var(--surface-elev-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.reviewList {
+  /* No specific theme styles needed for the list container itself */
+}
+
+.reviewItem {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+}
+
+.itemTitle {
+  color: var(--text-secondary-dark);
+}
+
+.itemValue {
+  color: var(--text-primary-dark);
+}

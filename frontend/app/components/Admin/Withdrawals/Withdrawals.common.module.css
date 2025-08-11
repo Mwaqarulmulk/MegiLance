@@ -1,54 +1,158 @@
-.withdrawalsContainer {
-  padding: 1.5rem;
-  border-radius: 8px;
+/* AI-HINT: Common, theme-agnostic styles for the Withdrawals component. */
+
+.pageContainer {
+  padding: var(--space-6);
 }
 
-.withdrawalsTitle {
-  font-size: 1.5rem;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.headerTitle {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-2xl);
   font-weight: 600;
-  margin: 0;
-  margin-bottom: 1.5rem;
 }
 
-.withdrawalsTableWrapper {
-  overflow-x: auto;
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
 }
 
-.withdrawalsTable {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.withdrawalsTable th, .withdrawalsTable td {
-  padding: 1rem;
-  vertical-align: middle;
-}
-
-.withdrawalsTable th {
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.withdrawalsTable tbody tr {
+.filterTabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
   border-bottom-width: 1px;
   border-bottom-style: solid;
 }
 
-.withdrawalsAddress {
-  font-family: monospace;
-  font-size: 0.9rem;
-}
-
-.withdrawalsActions {
+.filterTab {
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-inter);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px; /* Overlap with container border */
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.withdrawalsEmpty {
+.requestsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: var(--space-5);
+}
+
+.requestCard {
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.requestCard:hover {
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.cardHeaderText {
+  flex-grow: 1;
+}
+
+.freelancerName {
+  font-family: var(--font-inter);
+  font-weight: 600;
+  font-size: var(--font-size-md);
+  display: block;
+}
+
+.requestDate {
+  font-family: var(--font-inter);
+  font-size: var(--font-size-xs);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.amount {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.addressWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.addressLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.address {
+  font-family: var(--font-jetbrains-mono);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-6);
+  border-radius: var(--border-radius-xl);
   text-align: center;
-  padding: 2rem;
-  font-style: italic;
+}
+
+.emptyStateIcon {
+  margin-bottom: var(--space-4);
+}
+
+.emptyStateTitle {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.emptyStateText {
+  max-width: 300px;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
 }

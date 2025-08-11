@@ -1,0 +1,18 @@
+/* AI-HINT: Dark theme styles for the StepScope component. */
+
+.container {
+  background-color: var(--background-dark);
+  border-color: var(--border-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.help {
+    color: var(--text-tertiary-dark);
+}

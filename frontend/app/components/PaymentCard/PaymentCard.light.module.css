@@ -1,0 +1,32 @@
+/* AI-HINT: Light theme styles for PaymentCard. */
+
+.theme {
+  background-color: var(--color-background-light);
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+}
+
+.freelancerName {
+  color: var(--color-text-primary-light);
+}
+
+.projectLink {
+  color: var(--color-text-secondary-light);
+}
+
+.projectLink:hover {
+  color: var(--color-primary-light);
+}
+
+.amount {
+  color: var(--color-text-primary-light);
+}
+
+.date {
+  color: var(--color-text-secondary-light);
+}

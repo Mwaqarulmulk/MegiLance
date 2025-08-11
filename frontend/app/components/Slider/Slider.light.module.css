@@ -1,0 +1,16 @@
+.sliderTrack {
+  background-color: #e9eef2;
+}
+
+.sliderRange {
+  background-color: #4573df; /* MegiLance Blue */
+}
+
+.sliderThumb {
+  background-color: #ffffff;
+  border: 2px solid #4573df; /* MegiLance Blue */
+}
+
+.sliderThumb:focus {
+  border-color: #4573df;
+}

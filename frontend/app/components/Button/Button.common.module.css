@@ -74,8 +74,36 @@
 }
 
 .large {
-  padding: 0.75rem 1.25rem; /* 12px 20px */
-  font-size: 1rem; /* 16px */
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.icon {
+  height: 2.5rem; /* 40px */
+  width: 2.5rem; /* 40px */
+  padding: 0.5rem;
+}
+
+.button.size-icon .buttonText {
+  display: none; /* Hide text for icon-only buttons */
+}
+
+.iconBefore {
+  margin-right: var(--space-2);
+  display: flex;
+  align-items: center;
+}
+
+.iconAfter {
+  margin-left: var(--space-2);
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure icon-only buttons with iconBefore/After are sized correctly */
+.button.size-icon .iconBefore,
+.button.size-icon .iconAfter {
+  margin: 0;
 }
 
 .fullWidth {
@@ -122,4 +150,10 @@
   background-color: transparent;
   border-width: 1px;
   border-style: solid;
+}
+
+.ghost {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }

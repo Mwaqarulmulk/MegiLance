@@ -1,0 +1,7 @@
+.star.filled {
+  color: #FFD60A; /* A brighter yellow for dark mode */
+}
+
+.star.empty {
+  color: #4F4F4F; /* Dark grey for empty stars */
+}

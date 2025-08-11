@@ -11,70 +11,64 @@ import commonStyles from './Button.common.module.css';
 import lightStyles from './Button.light.module.css';
 import darkStyles from './Button.dark.module.css';
 
-// Define own props for the button, separating them from the underlying element's props.
-// This is the first step in creating a polymorphic component.
-type ButtonOwnProps<C extends React.ElementType> = {
-  as?: C;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline';
-  size?: 'small' | 'medium' | 'large';
+// Base props for the button, independent of the element type
+export interface ButtonOwnProps<E extends React.ElementType = React.ElementType> {
+  as?: E;
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'link' | 'success' | 'warning';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
   isLoading?: boolean;
   fullWidth?: boolean;
-  icon?: React.ElementType;
+  iconBefore?: React.ReactNode;
+  iconAfter?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
-};
+}
 
-// Combine our own props with the props of the component specified in `as`.
-// This creates the final, flexible props type.
-export type ButtonProps<C extends React.ElementType> = ButtonOwnProps<C> & 
-  Omit<React.ComponentPropsWithoutRef<C>, keyof ButtonOwnProps<C>>;
+// Combined props including standard HTML attributes
+export type ButtonProps<C extends React.ElementType = 'button'> = ButtonOwnProps<C> & Omit<React.ComponentProps<C>, keyof ButtonOwnProps<C>>;
 
-const Button = <C extends React.ElementType = 'button'> ({
+const Button = <C extends React.ElementType = 'button'>({
   children,
   as,
   variant = 'primary',
-  size = 'medium',
+  size = 'md',
   isLoading = false,
   fullWidth = false,
-  icon: Icon,
+  iconBefore,
+  iconAfter,
   className = '',
   ...props
 }: ButtonProps<C>) => {
   const { theme } = useTheme();
-
-  // The component to render will be what's passed to `as`, or a 'button' by default.
   const Component = as || 'button';
 
-  if (!theme) {
-    return null; // Don't render until theme is resolved
-  }
+  if (!theme) return null; // Or a loading skeleton
 
-  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
     <Component
       className={cn(
         commonStyles.button,
+        commonStyles[`variant-${variant}`],
+        commonStyles[`size-${size}`],
         themeStyles.button,
-        commonStyles[variant],
-        themeStyles[variant],
-        commonStyles[size],
-        themeStyles[size],
+        themeStyles[`variant-${variant}`],
+        themeStyles[`size-${size}`],
+        isLoading && commonStyles.loading,
+        isLoading && themeStyles.loading,
         fullWidth && commonStyles.fullWidth,
-        fullWidth && themeStyles.fullWidth,
         className
       )}
-      disabled={isLoading || (props as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled}
+      disabled={isLoading || props.disabled}
       {...props}
     >
-      {isLoading ? (
-        <Loader2 className={cn(commonStyles.icon, themeStyles.icon, commonStyles.loadingIcon, themeStyles.loadingIcon)} size={20} />
-      ) : (
-        <>
-          {Icon && <Icon className={cn(commonStyles.icon, themeStyles.icon)} size={20} />}
-          <span className={cn(commonStyles.buttonText, themeStyles.buttonText)}>{children}</span>
-        </>
-      )}
+      {isLoading && <Loader2 className={cn(commonStyles.spinner, themeStyles.spinner)} />}
+      {iconBefore && !isLoading && <span className={commonStyles.iconBefore}>{iconBefore}</span>}
+      <span className={cn(commonStyles.buttonText, themeStyles.buttonText, isLoading && commonStyles.loadingText)}>
+        {children}
+      </span>
+      {iconAfter && !isLoading && <span className={commonStyles.iconAfter}>{iconAfter}</span>}
     </Component>
   );
 };

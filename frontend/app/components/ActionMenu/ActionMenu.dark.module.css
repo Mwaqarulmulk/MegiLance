@@ -1,0 +1,22 @@
+/* AI-HINT: Dark theme styles for the ActionMenu component. */
+
+.menu {
+  background-color: var(--color-background-secondary-dark);
+  border-color: var(--color-border-dark);
+}
+
+.menuItem {
+  color: var(--color-text-primary-dark);
+}
+
+.menuItem:hover:not(:disabled) {
+  background-color: var(--color-background-tertiary-dark);
+}
+
+.itemIcon {
+  color: var(--color-icon-secondary-dark);
+}
+
+.separator {
+  background-color: var(--color-border-dark);
+}

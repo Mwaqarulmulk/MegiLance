@@ -1,57 +1,139 @@
-.flaggedReviewsContainer {
-  padding: 1.5rem;
-  border-radius: 8px;
+/* AI-HINT: Common styles for the modernized FlaggedReviews component. Handles layout, cards, filtering, and typography. */
+
+.container {
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
 }
 
-.flaggedReviewsTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
+.header {
   margin-bottom: 1.5rem;
 }
 
-.flaggedReviewsList {
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+}
+
+.description {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.filterToolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.filterToolbar > :first-child {
+  flex-grow: 1;
+}
+
+.reviewList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.reviewCard {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.flaggedReviewsItem {
-  padding: 1rem;
-  border-radius: 6px;
-  /* border is handled by theme-specific styles */
-}
-
-.flaggedReviewsItemHeader {
+.cardHeader {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 600;
+}
+
+.userRole {
+  font-size: 0.8rem;
+}
+
+.reviewContent {
+  display: flex;
+  gap: 0.75rem;
   align-items: flex-start;
-  margin-bottom: 0.75rem;
-}
-
-.flaggedReviewsRating {
-  margin-left: 0.5rem;
-  font-size: 1.1rem;
-}
-
-.flaggedReviewsContent {
-  margin: 0 0 1rem 0;
   font-style: italic;
 }
 
-.flaggedReviewsActions {
+.quoteIcon {
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.reviewDetails {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.flaggedReviewsActions div {
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto; /* Pushes footer to the bottom */
+  padding-top: 1rem;
+  border-top: 1px solid;
+}
+
+.date {
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.actions {
   display: flex;
   gap: 0.5rem;
 }
 
-.flaggedReviewsEmpty {
+.actions > button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.emptyState {
+  grid-column: 1 / -1; /* Span all columns */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
   text-align: center;
-  padding: 2rem;
+  border-radius: 12px;
+}
+
+.emptyState h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.emptyState p {
+  margin-top: 0.5rem;
+  max-width: 300px;
   font-style: italic;
 }

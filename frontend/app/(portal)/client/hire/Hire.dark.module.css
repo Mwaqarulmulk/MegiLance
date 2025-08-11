@@ -1,15 +1,28 @@
-/* AI-HINT: Dark theme overrides for Client Hire flow. */
+/* AI-HINT: Dark theme styles for the Hire page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+.page {
+  background-color: var(--background-dark);
+}
 
-.step { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
-.stepActive { background: var(--primary); color: white; border-color: transparent; }
+.title {
+  color: var(--text-primary-dark);
+}
 
-.section { background: var(--surface-elev); border: 1px solid var(--border); }
-.sectionTitle { color: var(--text-primary); }
+.subtitle {
+  color: var(--text-secondary-dark);
+}
 
-.input, .select, .textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
+.form {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+}
 
-.button.primary { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
-.button.secondary { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); }
+.liveRegion {
+  background-color: var(--surface-elev-dark);
+  color: var(--text-secondary-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.actions {
+  border-top-color: var(--border-dark);
+}

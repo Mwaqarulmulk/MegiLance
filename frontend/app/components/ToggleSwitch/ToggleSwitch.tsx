@@ -15,9 +15,10 @@ interface ToggleSwitchProps {
   defaultChecked?: boolean;
   checked?: boolean;
   onChange?: (val: boolean) => void;
+  helpText?: string;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked, checked, onChange }) => {
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked, checked, onChange, helpText }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
@@ -25,21 +26,24 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked, 
   }, [theme]);
 
   return (
-    <div className={cn(styles.toggleWrapper)}>
-      <label htmlFor={id} className={cn(styles.label)}>
-        {label}
-      </label>
-      <div className={cn(styles.switchContainer)}>
-        <input
-          type="checkbox"
-          id={id}
-          className={cn(styles.input)}
-          {...(checked !== undefined
-            ? { checked, onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked), 'aria-checked': checked, role: 'switch' }
-            : { defaultChecked, onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked) })}
-        />
-        <div className={cn(styles.slider)}></div>
+    <div className={cn(styles.wrapper)}>
+      <div className={cn(styles.toggleWrapper)}>
+        <label htmlFor={id} className={cn(styles.label)}>
+          {label}
+        </label>
+        <div className={cn(styles.switchContainer)}>
+          <input
+            type="checkbox"
+            id={id}
+            className={cn(styles.input)}
+            {...(checked !== undefined
+              ? { checked, onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked), 'aria-checked': checked, role: 'switch' }
+              : { defaultChecked, onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked) })}
+          />
+          <div className={cn(styles.slider)}></div>
+        </div>
       </div>
+      {helpText && <p className={cn(styles.helpText)}>{helpText}</p>}
     </div>
   );
 };

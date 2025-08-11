@@ -1,30 +1,37 @@
-.aiSettingsContainer {
+.settingsCard {
   background-color: #1a202c;
+  border: 1px solid #2d3748;
 }
 
-.aiSettingsTitle {
+.cardHeader {
+  border-bottom-color: #2d3748;
+}
+
+.cardTitle {
   color: #f7fafc;
 }
 
-.aiSettingsForm {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
-}
-
-.formGroup label {
-  color: #e2e8f0;
-}
-
-.formGroup small {
+.cardDescription {
   color: #a0aec0;
 }
 
-.aiSettingsSelect {
-  background-color: #4a5568;
-  border: 1px solid #718096;
+.settingRow {
+  border-bottom-color: #2d3748;
+}
+
+.settingInfo label {
   color: #e2e8f0;
 }
 
-.saveConfirmation {
-  color: #9ae6b4;
+.settingInfo p {
+  color: #a0aec0;
+}
+
+.settingControl span {
+  color: #6a93e8;
+}
+
+.cardFooter {
+  background-color: #161b25; /* Slightly different dark for footer */
+  border-top-color: #2d3748;
 }

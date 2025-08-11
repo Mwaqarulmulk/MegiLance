@@ -1,78 +1,161 @@
+/* AI-HINT: Common, theme-agnostic styles for the UserSearchTable component. Defines layout, typography, and structure for the card-based user grid. */
+
 .container {
   padding: 1.5rem;
-  border-radius: 8px;
-  background-color: var(--table-bg);
-  border: 1px solid var(--table-border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-inter);
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 1.5rem;
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  color: var(--table-title-color);
+  font-size: 1.75rem; /* 28px */
+  font-weight: 700;
+  font-family: var(--font-poppins);
 }
 
-.searchInput {
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--input-border-color);
-  background-color: var(--input-bg);
-  color: var(--input-text-color);
-  min-width: 300px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.subtitle {
+  font-size: 0.875rem; /* 14px */
+  margin-top: 0.25rem;
 }
 
-.searchInput:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px var(--accent-color-faded);
-}
-
-.tableWrapper {
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.table th, .table td {
-  padding: 1rem;
-  vertical-align: middle;
-}
-
-.table th {
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--table-header-color);
-  border-bottom: 2px solid var(--table-header-border-color);
-}
-
-.table tbody tr {
-  border-bottom: 1px solid var(--table-row-border-color);
-  transition: background-color 0.2s ease-in-out;
-}
-
-.table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.table td {
-    color: var(--table-cell-text-color);
-}
-
-.actions {
+.toolbar {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
+
+.searchInputWrapper {
+  flex-grow: 1;
+  min-width: 250px;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.userGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  overflow-y: auto;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  flex-grow: 1;
+}
+
+.userCard {
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  border: 1px solid;
+}
+
+.userCard:hover {
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatarContainer {
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 1.125rem; /* 18px */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userEmail {
+  font-size: 0.875rem; /* 14px */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.infoIcon {
+  flex-shrink: 0;
+}
+
+.infoText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardFooter {
+  margin-top: auto; /* Pushes footer to the bottom */
+  padding-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem;
+  border-radius: 12px;
+  height: 100%;
+  flex-grow: 1;
+  border: 1px dashed;
+}
+
+.emptyIcon {
+  margin-bottom: 1.5rem;
+}
+
+.emptyTitle {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-poppins);
+}
+
+.emptyText {
+  max-width: 400px;
+  font-size: 0.875rem;
+}
+

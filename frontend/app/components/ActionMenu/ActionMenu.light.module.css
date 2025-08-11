@@ -1,0 +1,22 @@
+/* AI-HINT: Light theme styles for the ActionMenu component. */
+
+.menu {
+  background-color: var(--color-background-secondary-light);
+  border-color: var(--color-border-light);
+}
+
+.menuItem {
+  color: var(--color-text-primary-light);
+}
+
+.menuItem:hover:not(:disabled) {
+  background-color: var(--color-background-tertiary-light);
+}
+
+.itemIcon {
+  color: var(--color-icon-secondary-light);
+}
+
+.separator {
+  background-color: var(--color-border-light);
+}

@@ -1,33 +1,83 @@
+/* AI-HINT: Dark theme styles for the Withdrawals component. */
+
 .withdrawalsContainer {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
+  background-color: var(--color-background-primary-dark);
+  border: 1px solid var(--color-border-dark);
 }
 
 .withdrawalsTitle {
-  color: #f7fafc;
+  color: var(--color-text-primary-dark);
 }
 
-.withdrawalsTable th {
-  color: #a0aec0;
-  border-bottom: 2px solid #4a5568;
+.headerTitle { 
+  color: var(--color-text-primary-dark); 
 }
 
-.withdrawalsTable td {
-  color: #cbd5e0;
+.filterTabs { 
+  border-color: var(--color-border-dark); 
 }
 
-.withdrawalsTable tbody tr {
-  border-bottom-color: #4a5568;
+.filterTab {
+  color: var(--color-text-secondary-dark);
 }
 
-.withdrawalsTable tbody tr:last-child {
-  border-bottom: none;
+.filterTab:hover {
+  color: var(--color-text-primary-dark);
 }
 
-.withdrawalsTable tbody tr:hover {
-  background-color: #4a5568;
+.activeTab {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
-.withdrawalsEmpty {
-  color: #a0aec0;
+.requestCard {
+  background-color: var(--color-background-secondary-dark);
+  border: 1px solid var(--color-border-dark);
+  box-shadow: var(--shadow-sm-dark);
+}
+
+.requestCard:hover {
+  box-shadow: var(--shadow-md-dark);
+  border-color: var(--color-border-hover-dark);
+}
+
+.freelancerName { 
+  color: var(--color-text-primary-dark); 
+}
+
+.requestDate { 
+  color: var(--color-text-tertiary-dark); 
+}
+
+.amount { 
+  color: var(--color-text-primary-dark); 
+}
+
+.addressLabel { 
+  color: var(--color-text-secondary-dark); 
+}
+
+.address { 
+  color: var(--color-text-secondary-dark); 
+}
+
+.cardFooter { 
+  border-color: var(--color-border-dark); 
+}
+
+.emptyState {
+  background-color: var(--color-background-secondary-dark);
+  border: 1px dashed var(--color-border-dark);
+}
+
+.emptyStateIcon { 
+  color: var(--color-icon-secondary-dark); 
+}
+
+.emptyStateTitle { 
+  color: var(--color-text-primary-dark); 
+}
+
+.emptyStateText { 
+  color: var(--color-text-secondary-dark); 
 }

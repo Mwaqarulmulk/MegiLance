@@ -31,3 +31,48 @@
 .withdrawalsEmpty {
   color: #718096;
 }
+
+/* AI-HINT: Light theme styles for the Withdrawals component. */
+
+.headerTitle { color: var(--color-text-primary-light); }
+.filterTabs { border-color: var(--color-border-light); }
+
+.filterTab {
+  color: var(--color-text-secondary-light);
+}
+
+.filterTab:hover {
+  color: var(--color-text-primary-light);
+}
+
+.activeTab {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.requestCard {
+  background-color: var(--color-background-secondary-light);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.requestCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-hover-light);
+}
+
+.freelancerName { color: var(--color-text-primary-light); }
+.requestDate { color: var(--color-text-tertiary-light); }
+.amount { color: var(--color-text-primary-light); }
+.addressLabel { color: var(--color-text-secondary-light); }
+.address { color: var(--color-text-secondary-light); }
+.cardFooter { border-color: var(--color-border-light); }
+
+.emptyState {
+  background-color: var(--color-background-secondary-light);
+  border: 1px dashed var(--color-border-light);
+}
+
+.emptyStateIcon { color: var(--color-icon-secondary-light); }
+.emptyStateTitle { color: var(--color-text-primary-light); }
+.emptyStateText { color: var(--color-text-secondary-light); }

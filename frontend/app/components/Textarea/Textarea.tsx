@@ -14,6 +14,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   label?: string;
   hideLabel?: boolean;
   error?: string | boolean;
+  helpText?: string;
   wrapperClassName?: string;
 }
 
@@ -21,6 +22,7 @@ const Textarea: React.FC<TextareaProps> = ({
   label,
   hideLabel,
   error,
+  helpText,
   className = '',
   wrapperClassName = '',
   ...props
@@ -58,6 +60,7 @@ const Textarea: React.FC<TextareaProps> = ({
         {...props}
       />
       {hasError && typeof error === 'string' && <p className={cn(commonStyles.errorMessage, themeStyles.errorMessage)}>{error}</p>}
+      {!hasError && helpText && <p className={cn(commonStyles.helpText, themeStyles.helpText)}>{helpText}</p>}
     </div>
   );
 };

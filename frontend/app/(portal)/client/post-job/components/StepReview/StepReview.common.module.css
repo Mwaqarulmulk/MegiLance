@@ -1,0 +1,82 @@
+/* AI-HINT: Common styles for the StepReview component. */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 24px */
+}
+
+.title {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  margin-top: -1rem; /* -16px */
+  font-size: 1rem; /* 16px */
+}
+
+.card {
+  padding: 2rem; /* 32px */
+  border-radius: var(--rounded-lg);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.card_title {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem; /* 24px */
+}
+
+.grid_item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* 4px */
+}
+
+.item_label {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+}
+
+.item_value {
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+}
+
+.section_divider {
+  height: 1px;
+  width: 100%;
+  margin: 2rem 0; /* 32px */
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* 12px */
+}
+
+.section_title {
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+}
+
+.description {
+  font-size: 0.9375rem; /* 15px */
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.skills_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* 8px */
+}

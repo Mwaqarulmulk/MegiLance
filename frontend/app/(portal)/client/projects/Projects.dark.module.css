@@ -1,7 +1,10 @@
 /* AI-HINT: Dark theme overrides for Client Projects page. */
 
+.theme .subtitle {
+  color: var(--color-text-secondary-dark);
+}
+
 .themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
 
 .input, .select { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
 .button { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.2); }
@@ -11,3 +14,11 @@
 .cardTitle { color: var(--text-primary); }
 .meta { color: var(--text-secondary); }
 .badge { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+
+.skeletonCard {
+  background-color: var(--color-background-secondary-dark);
+}
+
+.footer {
+  border-color: var(--color-border-dark);
+}

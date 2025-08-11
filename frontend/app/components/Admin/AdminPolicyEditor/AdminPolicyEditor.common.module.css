@@ -1,63 +1,107 @@
-.policyEditorContainer {
-  padding: 1.5rem;
-  border-radius: 8px;
+/* AI-HINT: Common styles for the AdminPolicyEditor's two-panel layout. */
+
+.editorLayout {
+  display: flex;
+  height: calc(100vh - 200px); /* Example height, adjust as needed */
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
 }
 
-.policyEditorTitle {
-  font-size: 1.5rem;
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarTitle {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-lg);
   font-weight: 600;
-  margin: 0;
-  margin-bottom: 1.5rem;
+  padding: 0 var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
-.policyEditorEditor {
-  padding: 1.5rem;
-  border-radius: 6px;
-  /* border is handled by theme-specific styles */
+.policyNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
-.policyEditorControls {
-  margin-bottom: 1rem;
-}
-
-.policyEditorSelect {
-  padding: 0.75rem;
-  border-radius: 6px;
-  /* border is handled by theme-specific styles */
-  min-width: 250px;
-}
-
-.policyEditorTextarea {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 6px;
-  /* border is handled by theme-specific styles */
-  font-family: monospace;
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.policyEditorActions {
-  margin-top: 1rem;
+.navItem {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  padding: var(--space-2-5) var(--space-3);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-inter);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  width: 100%;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
-.policyEditorActions button {
-  margin-right: 1rem;
+.navIcon {
+  margin-right: var(--space-3);
 }
 
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+.mainContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
+}
+
+.editorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.editorTitle {
+  font-family: var(--font-poppins);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+.editorActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.saveConfirmation {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-inter);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.editorTextareaWrapper {
+  flex-grow: 1;
+}
+
+.editorTextarea {
+  height: 100%;
+  width: 100%;
+  resize: none;
+  font-family: var(--font-inter);
+  font-size: var(--font-size-md);
+  line-height: 1.7;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .saveConfirmation {

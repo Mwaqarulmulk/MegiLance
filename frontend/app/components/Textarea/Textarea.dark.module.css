@@ -30,5 +30,9 @@
 }
 
 .errorMessage {
-  color: var(--color-error);
+  color: var(--color-danger-dark);
+}
+
+.helpText {
+  color: var(--color-text-secondary-dark);
 }

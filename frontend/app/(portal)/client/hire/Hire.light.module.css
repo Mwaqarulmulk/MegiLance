@@ -1,15 +1,28 @@
-/* AI-HINT: Light theme overrides for Client Hire flow. */
+/* AI-HINT: Light theme styles for the Hire page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+.page {
+  background-color: var(--background);
+}
 
-.step { background: var(--surface-elev); border: 1px solid var(--border); color: var(--text-primary); }
-.stepActive { background: var(--primary); color: white; border-color: transparent; }
+.title {
+  color: var(--text-primary);
+}
 
-.section { background: var(--surface-elev); border: 1px solid var(--border); }
-.sectionTitle { color: var(--text-primary); }
+.subtitle {
+  color: var(--text-secondary);
+}
 
-.input, .select, .textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
+.form {
+  background-color: var(--surface);
+  border-color: var(--border);
+}
 
-.button.primary { background: var(--primary); color: white; border: 1px solid rgba(0,0,0,0.12); }
-.button.secondary { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); }
+.liveRegion {
+  background-color: var(--surface-elev);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.actions {
+  border-top-color: var(--border);
+}

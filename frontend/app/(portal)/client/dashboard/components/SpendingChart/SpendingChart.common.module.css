@@ -1,0 +1,17 @@
+.chartContainer {
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.chartTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.customTooltip {
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+}

@@ -97,10 +97,14 @@
 }
 
 .errorMessage {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-xs);
-  color: var(--input-error-text);
-  margin-top: var(--spacing-2);
+  color: var(--color-danger-default);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.helpText {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }
 
 .inputWrapperDisabled {

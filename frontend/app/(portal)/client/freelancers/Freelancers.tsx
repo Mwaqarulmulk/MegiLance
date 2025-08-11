@@ -1,63 +1,24 @@
 // @AI-HINT: Client Freelancers page. Theme-aware, accessible filters and animated freelancers grid.
 'use client';
 
-import React, { useMemo, useRef, useState, useId } from 'react';
-import Link from 'next/link';
+import React, { useId, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useClientData } from '@/hooks/useClient';
+import FreelancerCard, { Freelancer } from './components/FreelancerCard/FreelancerCard';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
+import Input from '@/app/components/Input/Input';
+import Select from '@/app/components/Select/Select';
+import Button from '@/app/components/Button/Button';
+import { Search, Download } from 'lucide-react';
+
 import common from './Freelancers.common.module.css';
 import light from './Freelancers.light.module.css';
 import dark from './Freelancers.dark.module.css';
 
-interface Freelancer {
-  id: string;
-  name: string;
-  title: string;
-  rate: string; // e.g., "$65/hr"
-  location: string;
-  skills: string[];
-  availability: 'Full-time' | 'Part-time' | 'Contract';
-}
-
 const AVAILABILITIES = ['All', 'Full-time', 'Part-time', 'Contract'] as const;
-
-interface FreelancerCardProps {
-  freelancer: Freelancer;
-  themed: { [key: string]: string };
-}
-
-const FreelancerCard: React.FC<FreelancerCardProps> = ({ freelancer: f, themed }) => {
-  const nameId = useId();
-  return (
-    <article className={cn(common.card)} aria-labelledby={nameId}>
-      <h2 id={nameId} className={cn(common.cardTitle, themed.cardTitle)}>{f.name}</h2>
-      <div className={cn(common.meta, themed.meta)}>
-        <span>{f.title}</span>
-        <span aria-hidden="true">•</span>
-        <span>{f.rate}</span>
-        <span aria-hidden="true">•</span>
-        <span>{f.location}</span>
-      </div>
-      <div className={cn(common.tags)}>
-        <h3 className={common.srOnly}>Skills</h3>
-        <ul aria-label={`Skills for ${f.name}`}>
-          {f.skills.map(s => (
-            <li key={s} className={cn(common.badge, themed.badge)}>{s}</li>
-          ))}
-        </ul>
-      </div>
-      <div className={cn(common.meta, themed.meta)}>
-        <h3 className={common.srOnly}>Availability</h3>
-        <p className={cn(common.badge, themed.badge)}>{f.availability}</p>
-      </div>
-      <div>
-        <Link className={cn(common.button, themed.button)} href={`/client/hire?freelancer=${f.id}`} title={`Hire ${f.name}`}>Hire {f.name.split(' ')[0]}</Link>
-      </div>
-    </article>
-  );
-};
+type Availability = (typeof AVAILABILITIES)[number];
 
 const Freelancers: React.FC = () => {
   const { theme } = useTheme();
@@ -74,16 +35,20 @@ const Freelancers: React.FC = () => {
     return (freelancers as any[]).map((f, idx) => ({
       id: String(f.id ?? idx),
       name: f.name ?? 'Unknown',
+      avatarUrl: f.avatarUrl ?? '', // Mocked for now
       title: f.title ?? f.role ?? 'Freelancer',
       rate: f.hourlyRate ?? f.rate ?? '$0/hr',
       location: f.location ?? 'Remote',
-      skills: Array.isArray(f.skills) ? f.skills : [],
+      skills: Array.isArray(f.skills) ? f.skills : ['UI/UX', 'Web Design', 'Prototyping'],
+      rating: f.rating ?? (4.5 + Math.random() * 0.5),
       availability: (f.availability as Freelancer['availability']) ?? 'Contract',
     }));
   }, [freelancers]);
 
   const [query, setQuery] = useState('');
-  const [availability, setAvailability] = useState<(typeof AVAILABILITIES)[number]>('All');
+  const [availability, setAvailability] = useState<Availability>('All');
+  type SortKey = 'name' | 'title' | 'rate' | 'location' | 'availability' | 'rating';
+  const [sortKey, setSortKey] = useState<SortKey>('name');
 
   const headerRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -140,115 +105,117 @@ const Freelancers: React.FC = () => {
   React.useEffect(() => { setPage(1); }, [sortKey, sortDir, query, availability, pageSize]);
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
-      <div className={common.container}>
-        <section ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)} aria-labelledby={headerId}>
-          <h2 id={headerId} className={common.srOnly}>Freelancer Filters and Controls</h2>
-          <div className={common.titleBar}>
-            <h1 className={common.title}>My Freelancers</h1>
-            <div id={resultsId} role="status" aria-live="polite" className={common.srOnly}>
-              {loading ? 'Loading freelancers...' : `${sorted.length} freelancer${sorted.length === 1 ? '' : 's'} found.`}
-            </div>
-          </div>
-          <p className={common.subtitle}>Search, filter, and manage your network of freelancers.</p>
-          <div className={common.controls}>
-            <div className={common.filterGroup}>
-              <label className={common.srOnly} htmlFor="search-freelancers">Search by name, title, or skill</label>
-              <input
-                id="search-freelancers"
-                type="search"
-                placeholder="Search by name, title, or skill..."
-                className={cn(common.input, themed.input)}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                title="Search by name, title, or skill"
-              />
-              <label className={common.srOnly} htmlFor="availability-filter">Filter by availability</label>
-              <select
-                id="availability-filter"
-                className={cn(common.select, themed.select)}
-                value={availability}
-                onChange={(e) => setAvailability(e.target.value as any)}
-                title="Filter by availability"
-              >
-                {AVAILABILITIES.map(a => <option key={a} value={a}>{a}</option>)}
-              </select>
-            </div>
-            <div className={common.filterGroup}>
-              <label className={common.srOnly} htmlFor="sort-key">Sort by</label>
-              <select id="sort-key" className={cn(common.select, themed.select)} value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)} title="Sort by">
-                <option value="name">Name</option>
-                <option value="title">Title</option>
-                <option value="rate">Rate</option>
-                <option value="location">Location</option>
-                <option value="availability">Availability</option>
-              </select>
-              <label className={common.srOnly} htmlFor="sort-dir">Sort direction</label>
-              <select id="sort-dir" className={cn(common.select, themed.select)} value={sortDir} onChange={(e) => setSortDir(e.target.value as 'asc' | 'desc')} title="Sort direction">
-                <option value="asc">Asc</option>
-                <option value="desc">Desc</option>
-              </select>
-              <label className={common.srOnly} htmlFor="page-size">Cards per page</label>
-              <select id="page-size" className={cn(common.select, themed.select)} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))} title="Cards per page">
-                <option value={12}>12</option>
-                <option value={24}>24</option>
-                <option value={48}>48</option>
-              </select>
-            </div>
-            <div>
-              <button
-                type="button"
-                className={cn(common.button, themed.button, 'secondary')}
-                onClick={() => {
-                  const header = ['ID','Name','Title','Rate','Location','Availability','Skills'];
-                  const data = sorted.map(f => [f.id, f.name, f.title, f.rate, f.location, f.availability, f.skills.join(' | ')]);
-                  const csv = [header, ...data]
-                    .map(r => r.map(val => '"' + String(val).replace(/"/g, '""') + '"').join(','))
-                    .join('\n');
-                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `client_freelancers_${new Date().toISOString().slice(0,10)}.csv`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-                title="Export the filtered and sorted list of freelancers to a CSV file"
-              >Export CSV</button>
-            </div>
+    <main className={cn(common.page, themed.page)}>
+      <div className={cn(common.container)}>
+        <header ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
+          <h1 className={cn(common.title, themed.title)}>Find Freelancers</h1>
+          <p className={cn(common.subtitle, themed.subtitle)}>Search, filter, and connect with the perfect talent for your project.</p>
+        </header>
+
+        <section className={cn(common.controlsSection, themed.controlsSection)}>
+          <div className={cn(common.filters)}>
+            <Input
+              id="search-query"
+              type="search"
+              placeholder="Search by name, title, or skills..."
+              value={query}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+              iconBefore={<Search size={18} />}
+              className={common.searchInput}
+            />
+            <Select
+              id="availability-filter"
+              value={availability}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAvailability(e.target.value as Availability)}
+              options={AVAILABILITIES.map(a => ({ value: a, label: a }))}
+              aria-label="Filter by availability"
+            />
+            <Select
+              id="sort-key"
+              value={sortKey}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortKey(e.target.value as SortKey)}
+              options={[
+                { value: 'name', label: 'Sort by Name' },
+                { value: 'rate', label: 'Sort by Rate' },
+                { value: 'rating', label: 'Sort by Rating' },
+              ]}
+              aria-label="Sort by field"
+            />
+            <Select
+              id="sort-dir"
+              value={sortDir}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortDir(e.target.value as 'asc' | 'desc')}
+              options={[
+                { value: 'asc', label: 'Ascending' },
+                { value: 'desc', label: 'Descending' },
+              ]}
+              aria-label="Sort direction"
+            />
+            <Button
+              variant="secondary"
+              onClick={() => {
+                const header = ['ID','Name','Title','Rate','Location','Availability','Skills', 'Rating'];
+                const data = sorted.map(f => [f.id, f.name, f.title, f.rate, f.location, f.availability, f.skills.join(' | '), f.rating.toFixed(1)]);
+                const csv = [header, ...data]
+                  .map(r => r.map(val => '"' + String(val).replace(/"/g, '""') + '"').join(','))
+                  .join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `client_freelancers_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              iconBefore={<Download size={16} />}
+            >
+              Export CSV
+            </Button>
           </div>
         </section>
 
-        <section ref={gridRef} className={cn(common.grid, gridVisible ? common.isVisible : common.isNotVisible)} aria-labelledby={gridId}>
-          <h2 id={gridId} className={common.srOnly}>Freelancers List</h2>
-          {loading && <div className={common.skeletonRow} aria-busy={loading} />}
-          {error && <div className={common.error}>Failed to load freelancers.</div>}
-          {paged.map(f => (
-            <FreelancerCard key={f.id} freelancer={f} themed={themed} />
+        <section ref={gridRef} className={cn(common.grid, gridVisible ? common.isVisible : common.isNotVisible)} aria-live="polite">
+          {loading && (
+            [...Array(12)].map((_, i) => (
+              <div key={i} className={common.skeletonCard}>
+                <div className={common.skeletonHeader}>
+                  <Skeleton height={64} width={64} shape="circle" />
+                  <div className={common.skeletonHeaderText}>
+                    <Skeleton height={24} width="70%" />
+                    <Skeleton height={18} width="50%" />
+                  </div>
+                </div>
+                <Skeleton height={20} width="90%" />
+                <Skeleton height={40} width="100%" />
+                <Skeleton height={40} width="100%" />
+              </div>
+            ))
+          )}
+          {!loading && error && <div className={common.error}>Failed to load freelancers.</div>}
+          {!loading && !error && paged.map(f => (
+            <FreelancerCard key={f.id} freelancer={f} />
           ))}
-          {sorted.length === 0 && !loading && (
-            <div role="status" aria-live="polite">No freelancers match your filters.</div>
+          {!loading && sorted.length === 0 && (
+            <div className={cn(common.emptyState, themed.emptyState)}>
+              <h3>No Freelancers Found</h3>
+              <p>Try adjusting your search or filter criteria.</p>
+            </div>
           )}
         </section>
-        {sorted.length > 0 && (
-          <div className={common.paginationBar} role="navigation" aria-label="Pagination">
-            <button
-              type="button"
-              className={cn(common.button, themed.button, 'secondary')}
+
+        {totalPages > 1 && (
+          <div className={common.paginationBar}>
+            <Button
+              variant='secondary'
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={pageSafe === 1}
-              aria-label="Previous page"
-              title="Go to the previous page"
-            >Prev</button>
-            <span className={common.paginationInfo} aria-live="polite" aria-atomic="true">Page {pageSafe} of {totalPages}</span>
-            <button
-              type="button"
-              className={cn(common.button, themed.button)}
+            >Previous</Button>
+            <span className={cn(common.paginationInfo, themed.paginationInfo)}>Page {pageSafe} of {totalPages}</span>
+            <Button
+              variant='secondary'
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={pageSafe === totalPages}
-              aria-label="Next page"
-              title="Go to the next page"
-            >Next</button>
+            >Next</Button>
           </div>
         )}
       </div>

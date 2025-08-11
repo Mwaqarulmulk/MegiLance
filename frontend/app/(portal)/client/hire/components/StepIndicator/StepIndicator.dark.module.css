@@ -1,0 +1,49 @@
+/* AI-HINT: Dark theme styles for the StepIndicator component. */
+
+.nav {
+  background-color: var(--surface-translucent-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.stepLink {
+  color: var(--text-secondary-dark);
+}
+
+.indicator {
+  background-color: var(--surface-elev-dark);
+  border-color: var(--border-dark);
+  color: var(--text-secondary-dark);
+}
+
+.stepName {
+  color: var(--text-secondary-dark);
+}
+
+.separator {
+  background-color: var(--border-dark);
+}
+
+/* State styles */
+.completed .indicator {
+  background-color: var(--primary-success-dark);
+  border-color: var(--primary-success-dark);
+  color: var(--black);
+}
+
+.completed .stepName {
+  color: var(--text-primary-dark);
+}
+
+.completed + .separator {
+  background-color: var(--primary-success-dark);
+}
+
+.current .indicator {
+  border-color: var(--primary-dark);
+  background-color: var(--primary-focus-dark);
+  color: var(--primary-dark);
+}
+
+.current .stepName {
+  color: var(--primary-dark);
+}

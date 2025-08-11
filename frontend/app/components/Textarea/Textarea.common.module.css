@@ -36,4 +36,12 @@
   font-family: var(--font-inter);
   font-size: var(--font-size-sm);
   margin-top: var(--space-2);
+  color: var(--color-danger-default);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.helpText {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }

@@ -1,33 +1,69 @@
-.jobModerationQueueContainer {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+/* AI-HINT: Light theme styles for JobModerationQueue. Sets colors for text, backgrounds, borders, and interactive elements. */
+
+.container {
+  background-color: var(--color-background-secondary-light);
 }
 
-.jobModerationQueueTitle {
-  color: #1a202c;
+.title {
+  color: var(--color-text-primary-light);
 }
 
-.jobModerationQueue th {
-  color: #718096;
-  border-bottom: 2px solid #e2e8f0;
+.description {
+  color: var(--color-text-secondary-light);
 }
 
-.jobModerationQueue td {
-  color: #4a5568;
+.toolbar {
+  background-color: var(--color-background-light);
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border-light);
 }
 
-.jobModerationQueue tbody tr {
-  border-bottom: 1px solid #e2e8f0;
+.jobCard {
+  border-color: var(--color-border-light);
 }
 
-.jobModerationQueue tbody tr:last-child {
-  border-bottom: none;
+.jobTitle {
+  color: var(--color-text-primary-light);
 }
 
-.jobModerationQueue tbody tr:hover {
-  background-color: #f7fafc;
+.metaItem {
+  color: var(--color-text-secondary-light);
 }
 
-.jobModerationQueueEmpty {
-    color: #718096;
+.metaItem svg {
+  color: var(--color-text-tertiary-light);
+}
+
+.description p {
+  color: var(--color-text-secondary-light);
+}
+
+.expandButton {
+  color: var(--color-primary);
+}
+
+.expandButton:hover {
+  color: var(--color-primary-hover);
+}
+
+.cardActions {
+  border-color: var(--color-border-light);
+}
+
+.emptyState {
+  background-color: var(--color-background-light);
+  border: 1px dashed var(--color-border-light);
+}
+
+.emptyState svg {
+  color: var(--color-text-tertiary-light);
+}
+
+.emptyState h3 {
+  color: var(--color-text-primary-light);
+}
+
+.emptyState p {
+  color: var(--color-text-secondary-light);
 }

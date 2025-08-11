@@ -1,0 +1,40 @@
+/* AI-HINT: Dark theme styles for the FreelancerCard. */
+
+.card {
+  background-color: var(--surface-elev-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-sm-dark);
+}
+
+.card:hover {
+  border-color: var(--border-hover-dark);
+  box-shadow: var(--shadow-md-dark);
+}
+
+.name {
+  color: var(--text-primary-dark);
+}
+
+.title {
+  color: var(--text-secondary-dark);
+}
+
+.ratingValue {
+  color: var(--text-secondary-dark);
+}
+
+.infoIcon {
+  color: var(--text-tertiary-dark);
+}
+
+.infoText {
+  color: var(--text-secondary-dark);
+}
+
+.skillsTitle {
+  color: var(--text-tertiary-dark);
+}
+
+.cardFooter {
+  border-top-color: var(--border-dark);
+}

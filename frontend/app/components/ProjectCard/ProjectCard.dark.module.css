@@ -1,22 +1,36 @@
 /* @AI-HINT: Dark theme styles for the ProjectCard component, using CSS variables for consistency. */
-.title {
-  color: var(--text-primary-dark);
+.theme {
+  background-color: var(--color-background-secondary-dark);
+  border: 1px solid var(--color-border-dark);
 }
 
-.postedTime {
-  color: var(--text-tertiary-dark);
+.theme:hover {
+  box-shadow: var(--shadow-md-dark);
+  border-color: var(--color-primary-dark-hover);
 }
 
-.infoRow {
-  color: var(--text-secondary-dark);
+.titleLink {
+  color: var(--color-text-primary-dark);
+}
+
+.financials {
+  color: var(--color-text-primary-dark);
 }
 
 .budget {
-  color: var(--color-primary);
+  color: var(--color-text-secondary-dark);
 }
 
-.tag {
-  background-color: var(--bg-tertiary-dark);
-  color: var(--text-secondary-dark);
-  border: 1px solid var(--border-dark);
+.avatarStack > * {
+  border-color: var(--color-background-secondary-dark) !important;
+}
+
+.moreAvatars {
+  background-color: var(--color-background-alt-dark);
+  color: var(--color-text-secondary-dark);
+  border-color: var(--color-border-dark) !important;
+}
+
+.updatedAt {
+  color: var(--color-text-secondary-dark);
 }

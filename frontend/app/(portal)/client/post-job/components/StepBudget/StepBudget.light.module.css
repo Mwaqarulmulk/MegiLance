@@ -1,0 +1,14 @@
+/* AI-HINT: Light theme styles for the StepBudget component. */
+
+.container {
+  background-color: var(--background);
+  border-color: var(--border);
+}
+
+.title {
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}

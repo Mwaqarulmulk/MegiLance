@@ -1,0 +1,38 @@
+/* AI-HINT: Light theme styles for the StepReview component. */
+
+.title {
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
+
+.card {
+  background-color: var(--surface);
+  border-color: var(--border);
+}
+
+.card_title {
+  color: var(--text-primary);
+}
+
+.item_label {
+  color: var(--text-secondary);
+}
+
+.item_value {
+  color: var(--text-primary);
+}
+
+.section_divider {
+  background-color: var(--border);
+}
+
+.section_title {
+  color: var(--text-secondary);
+}
+
+.description {
+  color: var(--text-primary);
+}

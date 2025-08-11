@@ -1,17 +1,45 @@
-/* AI-HINT: Light theme overrides for Client Settings page. */
+/* AI-HINT: Light theme styles for the Client Settings page. */
 
-.themeWrapper { background: var(--surface); color: var(--text-primary); }
-.subtitle { color: var(--text-secondary); }
+.title {
+    color: var(--color-text-primary-light);
+}
 
-.section { background: var(--surface-elev); border: 1px solid var(--border); }
-.sectionTitle { color: var(--text-primary); }
+.subtitle {
+  color: var(--color-text-secondary-light);
+}
 
-.label { color: var(--text-secondary); }
-.input, .select, .textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
-.button.primary { background: var(--primary); color: #fff; border: 1px solid rgba(0,0,0,0.12); }
-.button.secondary { background: var(--surface-elev); color: var(--text-primary); border: 1px solid var(--border); }
+.navButton {
+  color: var(--color-text-secondary-light);
+}
 
-.switchTrack { background: var(--surface); border-color: var(--border); }
-.switchThumb { background: var(--text-secondary); }
-.switchOn .switchTrack { background: var(--primary-weak, rgba(69,115,223,0.15)); }
-.switchOn .switchThumb { background: var(--primary); }
+.navButton:hover {
+  background-color: var(--color-background-secondary-light);
+  color: var(--color-text-primary-light);
+}
+
+.navButtonActive {
+  background-color: var(--color-primary-light-accent);
+  color: var(--color-primary-deep);
+  font-weight: var(--font-weight-semibold);
+}
+
+.navButtonActive .navIcon {
+    color: var(--color-primary-deep);
+}
+
+.actionRow {
+    background-color: var(--color-background-secondary-light);
+    border: 1px solid var(--color-border-light);
+}
+
+.actionDescription {
+    color: var(--color-text-secondary-light);
+}
+
+.link {
+    color: var(--color-primary-light);
+}
+
+.link:hover {
+    color: var(--color-primary-deep);
+}

@@ -1,70 +1,144 @@
-/* AI-HINT: Common styles for Client Settings page: sections, forms, and actions. */
+/* AI-HINT: Common styles for the two-panel Client Settings page. This defines the main layout, header, navigation, and content areas. It is fully responsive. */
 
-.page { padding: var(--spacing-8); }
-.container { max-width: 900px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
-
-.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
-.title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
-.subtitle { font-size: var(--font-size-sm); opacity: .9; }
-
-.section { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-5); display: grid; gap: var(--spacing-4); }
-.sectionTitle { font-weight: var(--font-weight-semibold); font-size: 1.05rem; }
-.row { display: grid; gap: var(--spacing-3); grid-template-columns: 1fr; }
-
-.label { font-size: 12px; opacity: .9; }
-.input, .select, .textarea, .button, .switchTrack {
-  transition: all 0.2s ease-in-out;
+.page {
+  padding: var(--spacing-6) var(--spacing-8);
 }
 
-.input, .select, .textarea, .button {
-  padding: 8px 12px;
-  border-radius: var(--border-radius-md);
-  border: 1px solid transparent;
+.header {
+  margin-bottom: var(--spacing-6);
 }
 
-.button:not(:disabled):hover, 
-.input:not(:disabled):hover, 
-.select:not(:disabled):hover, 
-.textarea:not(:disabled):hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
+.title {
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
 }
-.textarea { min-height: 100px; resize: vertical; }
-.button { cursor: pointer; font-weight: var(--font-weight-medium); }
-.help { font-size: 12px; opacity: .85; }
-.counters { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
-.count { font-size: 12px; opacity: .7; }
-.status { min-width: 140px; font-size: 12px; opacity: .85; }
 
-.switch {
-  display: inline-flex;
+.subtitle {
+  font-size: var(--font-size-md);
+  margin-top: var(--spacing-1);
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: var(--spacing-8);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.navButton {
+  display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
-.switch:hover .switchTrack {
-  filter: brightness(1.1);
+.navIcon {
+  transition: color 150ms ease;
 }
-.switchTrack { width: 44px; height: 24px; border-radius: 999px; display: inline-flex; align-items: center; padding: 2px; border: 1px solid transparent; }
-.switchThumb { width: 18px; height: 18px; border-radius: 999px; transition: transform .2s ease; }
-.switchOn .switchThumb { transform: translateX(20px); }
 
-.actions { display: flex; gap: var(--spacing-2); flex-wrap: wrap; }
+.content {
+  min-width: 0; /* Prevents grid blowout */
+}
 
-.isNotVisible { opacity: 0; transform: translateY(16px); }
-.isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }
+/* Form & Action Styles */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-4);
+}
 
-.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.fullSpan {
+  grid-column: 1 / -1;
+}
 
-.input:focus-visible, 
-.select:focus-visible, 
-.button:focus-visible, 
-.textarea:focus-visible,
-.srOnly:focus + .switchTrack {
-  outline: 2px solid var(--color-primary-accent);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(var(--color-primary-accent-rgb), 0.2);
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius-lg);
+  margin-top: var(--spacing-5);
+}
+
+.actionDescription {
+  font-size: var(--font-size-sm);
+  max-width: 60%;
+}
+
+.supportContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.supportContent h4 {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-md);
+}
+
+.supportContent p {
+    font-size: var(--font-size-sm);
+}
+
+.link {
+    font-weight: var(--font-weight-medium);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 150ms ease;
+}
+
+.supportButton {
+    align-self: flex-start;
+    margin-top: var(--spacing-2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--spacing-4);
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+
+  .nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: var(--spacing-3);
+    margin-bottom: var(--spacing-2);
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  .navButton {
+    white-space: nowrap;
+  }
+
+  .actionRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+
+  .actionDescription {
+    max-width: 100%;
+  }
 }

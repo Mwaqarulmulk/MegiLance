@@ -1,103 +1,85 @@
-/* AI-HINT: Common styles for Client Hire flow: steps, forms, summary, and actions. */
+/* AI-HINT: Common styles for the modernized Hire page. */
 
-.page { padding: var(--spacing-8); }
-.container { max-width: 900px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
-
-.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
-.title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
-.subtitle { font-size: var(--font-size-sm); opacity: .9; }
-
-/* Progress */
-.progressBar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.page {
   width: 100%;
-  height: 8px;
-  background-color: var(--card-border);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progressIndicator {
-  width: var(--progress-width, 0%);
-  height: 100%;
-  transition: width 0.3s ease-in-out;
-}
-.progressTrack { position: relative; flex: 1; height: 8px; border-radius: 999px; background: var(--card-border); overflow: hidden; }
-.progressFill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--primary); border-radius: inherit; transition: width .3s ease; }
-.progressText { font-size: 12px; opacity: .85; }
-
-.steps { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.step { padding: 6px 10px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; }
-.stepActive { font-weight: var(--font-weight-semibold); }
-
-.section { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-4); display: grid; gap: var(--spacing-3); }
-.sectionTitle { font-weight: var(--font-weight-semibold); }
-
-.input, .select, .textarea {
-  padding: 10px 12px;
-  border-radius: var(--border-radius-md);
-  border: 1px solid transparent;
-  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-.help {
-  font-size: 12px;
-  opacity: .85;
-  margin-top: 6px;
-}
-
-.counters {
+  min-height: 100vh;
+  padding: 2rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 6px;
+  justify-content: center;
+  align-items: flex-start;
+  transition: background-color 0.3s ease;
 }
 
-.count {
-  font-size: 12px;
-  opacity: .7;
+.container {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 24px */
 }
 
-.row {
-  display: grid;
-  gap: var(--spacing-3);
-  grid-template-columns: 1fr 1fr;
+.header {
+  text-align: center;
 }
-@media (max-width: 700px) { .row { grid-template-columns: 1fr; } }
+
+.title {
+  font-size: 2rem; /* 32px */
+  font-weight: 700;
+  margin-bottom: 0.25rem; /* 4px */
+  transition: color 0.3s ease;
+}
+
+.subtitle {
+  font-size: 1.125rem; /* 18px */
+  transition: color 0.3s ease;
+}
+
+.stepIndicatorContainer {
+  margin-bottom: 1rem; /* 16px */
+}
+
+.form {
+  padding: 2rem;
+  border-radius: var(--rounded-lg);
+  border-width: 1px;
+  border-style: solid;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 24px */
+}
+
+.liveRegion {
+  padding: 0.75rem 1rem;
+  border-radius: var(--rounded-md);
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
 .actions {
+  margin-top: 1rem; /* 16px */
+  padding-top: 1.5rem; /* 24px */
+  border-top-width: 1px;
+  border-top-style: solid;
   display: flex;
-  gap: var(--spacing-2);
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-.button {
-  padding: 10px 14px;
-  border-radius: var(--border-radius-md);
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-weight: var(--font-weight-medium);
-  -webkit-user-select: none;
-  user-select: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
-}
-
-.button:hover {
-  transform: translateY(-1px);
+.leftActions, .rightActions {
+  display: flex;
+  gap: 0.75rem; /* 12px */
+  align-items: center;
 }
 
 .button:active {
   transform: translateY(0);
 }
-
 .isNotVisible { opacity: 0; transform: translateY(16px); }
 .isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }
 

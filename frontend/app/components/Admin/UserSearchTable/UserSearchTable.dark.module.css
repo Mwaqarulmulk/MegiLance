@@ -1,18 +1,57 @@
+/* AI-HINT: Dark theme styles for the UserSearchTable component. */
+
 .container {
-  --table-bg: #1a202c;
-  --table-border-color: #4a5568;
-  --table-title-color: #f7fafc;
-  --input-bg: #2d3748;
-  --input-border-color: #4a5568;
-  --input-text-color: #e2e8f0;
-  --table-header-color: #a0aec0;
-  --table-header-border-color: #4a5568;
-  --table-cell-text-color: #cbd5e0;
-  --table-row-border-color: #4a5568;
-  --accent-color: #4573df;
-  --accent-color-faded: rgba(69, 115, 223, 0.3);
+  background-color: var(--color-background-primary-dark);
 }
 
-.table tbody tr:hover {
-  background-color: #2d3748;
+.title {
+  color: var(--color-text-primary-dark);
+}
+
+.subtitle {
+  color: var(--color-text-secondary-dark);
+}
+
+.userCard {
+  background-color: var(--color-background-secondary-dark);
+  border-color: var(--color-border-dark);
+  box-shadow: var(--shadow-sm-dark);
+}
+
+.userCard:hover {
+  border-color: var(--color-border-hover-dark);
+  box-shadow: var(--shadow-md-dark);
+}
+
+.userName {
+  color: var(--color-text-primary-dark);
+}
+
+.userEmail {
+  color: var(--color-text-tertiary-dark);
+}
+
+.infoRow {
+  color: var(--color-text-secondary-dark);
+}
+
+.infoIcon {
+  color: var(--color-icon-secondary-dark);
+}
+
+.emptyState {
+  background-color: var(--color-background-secondary-dark);
+  border-color: var(--color-border-dark);
+}
+
+.emptyIcon {
+  color: var(--color-icon-secondary-dark);
+}
+
+.emptyTitle {
+  color: var(--color-text-primary-dark);
+}
+
+.emptyText {
+  color: var(--color-text-secondary-dark);
 }
