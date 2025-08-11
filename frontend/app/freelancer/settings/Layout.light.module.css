@@ -1,0 +1,28 @@
+/* @AI-HINT: Light theme styles for the main settings layout. */
+
+.container {
+  background-color: var(--bg-secondary-light);
+}
+
+.header {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.title {
+  color: var(--text-primary-light);
+}
+
+.subtitle {
+  color: var(--text-secondary-light);
+}
+
+.sidebar {
+  /* Sidebar styles are handled by the nav component */
+}
+
+.content {
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-primary-light);
+  box-shadow: var(--shadow-sm-light);
+}

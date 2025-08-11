@@ -1,0 +1,28 @@
+/* @AI-HINT: Dark theme styles for the main settings layout. */
+
+.container {
+  background-color: var(--bg-secondary-dark);
+}
+
+.header {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.sidebar {
+  /* Sidebar styles are handled by the nav component */
+}
+
+.content {
+  border-radius: 12px;
+  border: 1px solid var(--border-dark);
+  background-color: var(--bg-primary-dark);
+  box-shadow: var(--shadow-sm-dark);
+}
