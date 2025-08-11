@@ -8,6 +8,7 @@ import './styles/theme.css';
 import { ThemeProvider } from 'next-themes';
 import AppChrome from './components/AppChrome/AppChrome';
 import { ToasterProvider } from './components/Toast/ToasterProvider';
+import ChatbotAgent from './components/AI/ChatbotAgent/ChatbotAgent';
 
 export const metadata: Metadata = {
   title: 'MegiLance - Next-Gen Freelance Platform',
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <AppChrome>
               {children}
             </AppChrome>
+            <ChatbotAgent />
           </ToasterProvider>
         </ThemeProvider>
       </body>

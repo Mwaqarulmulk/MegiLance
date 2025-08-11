@@ -11,6 +11,16 @@ import { useFreelancerData } from '@/hooks/useFreelancer';
 import commonStyles from './Dashboard.common.module.css';
 import lightStyles from './Dashboard.light.module.css';
 import darkStyles from './Dashboard.dark.module.css';
+import FreelancerRankVisualizer from '@/app/components/AI/FreelancerRankVisualizer/FreelancerRankVisualizer';
+
+const rankToScore: { [key: string]: number } = {
+  'Bronze': 250,
+  'Silver': 450,
+  'Gold': 650,
+  'Platinum': 850,
+  'Diamond': 950,
+  'N/A': 0,
+};
 
 const Dashboard: React.FC = () => {
   const { theme } = useTheme();
@@ -57,7 +67,7 @@ const Dashboard: React.FC = () => {
         <DashboardWidget title="Active Projects" value={String(analytics?.activeProjects ?? 0)} />
         <DashboardWidget title="Pending Proposals" value={String(analytics?.pendingProposals ?? 0)} />
         <DashboardWidget title="Wallet Balance" value={analytics?.walletBalance ?? '$0.00'} />
-        <DashboardWidget title="Freelancer Rank" value={analytics?.rank ?? 'N/A'} />
+        <FreelancerRankVisualizer rank={analytics?.rank as any ?? 'N/A'} score={rankToScore[analytics?.rank ?? 'N/A']} />
       </div>
 
       <div className={styles.mainContent}>

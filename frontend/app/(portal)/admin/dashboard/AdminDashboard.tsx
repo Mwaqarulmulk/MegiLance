@@ -64,7 +64,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <main className={cn(common.page, themed.themeWrapper)}>
-      <FraudAlertBanner />
+      <FraudAlertBanner message="Multiple high-risk activities have been detected. Please review the flagged items immediately."/>
       <div className={common.container}>
         <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
           <div>

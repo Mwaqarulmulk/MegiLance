@@ -20,7 +20,7 @@ const ReviewSentimentDashboard: React.FC = () => {
   return (
     <div className={cn(commonStyles.reviewSentimentDashboardContainer, themeStyles.reviewSentimentDashboardContainer)}>
       <h2 className={cn(commonStyles.reviewSentimentDashboardTitle, themeStyles.reviewSentimentDashboardTitle)}>Review Sentiment Analysis</h2>
-      <SentimentAnalyzer />
+      <SentimentAnalyzer score={0.75} />
     </div>
   );
 };
