@@ -21,19 +21,24 @@ interface ColumnVisibilityMenuProps {
 const ColumnVisibilityMenu: React.FC<ColumnVisibilityMenuProps> = ({ columns, visibleKeys, onToggle, onShowAll, onHideAll, 'aria-label': ariaLabel = 'Columns' }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => (theme === 'dark' ? { ...commonStyles, ...darkStyles } : { ...commonStyles, ...lightStyles }), [theme]);
+  const descId = 'column-visibility-help';
   return (
-    <div className={styles.menu} role="group" aria-label={ariaLabel}>
+    <div className={styles.menu} role="group" aria-label={ariaLabel} title={ariaLabel} aria-describedby={descId}>
       <div className={styles.menuHeader}>
         <span className={styles.menuTitle}>Columns</span>
         <div className={styles.menuActions}>
-          {onShowAll && <button type="button" className={styles.linkButton} onClick={onShowAll}>Show all</button>}
-          {onHideAll && <button type="button" className={styles.linkButton} onClick={onHideAll}>Hide all</button>}
+          {onShowAll && <button type="button" className={styles.linkButton} onClick={onShowAll} title="Show all columns">Show all</button>}
+          {onHideAll && <button type="button" className={styles.linkButton} onClick={onHideAll} title="Hide all columns">Hide all</button>}
         </div>
       </div>
+      <span className={styles.srOnly} aria-live="polite">
+        {visibleKeys.length} column{visibleKeys.length === 1 ? '' : 's'} visible
+      </span>
+      <p id={descId} className={styles.srOnly}>Use the checkboxes to show or hide table columns.</p>
       <ul className={styles.menuList} aria-label="Toggle columns">
         {columns.map(col => (
           <li key={col.key} className={styles.menuItem}>
-            <label className={styles.checkboxLabel}>
+            <label className={styles.checkboxLabel} title={`Toggle ${col.label}`}>
               <input
                 type="checkbox"
                 className={styles.checkbox}

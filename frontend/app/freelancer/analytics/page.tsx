@@ -6,8 +6,9 @@ import { useTheme } from 'next-themes';
 import LineChart from '@/app/components/DataViz/LineChart/LineChart';
 import { useFreelancerData } from '@/hooks/useFreelancer';
 import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
-import { exportCSV } from '@/app/lib/csv';
+import { exportCSV, exportData } from '@/app/lib/csv';
 import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
+import SavedViewsMenu from '@/app/components/DataTableExtras/SavedViewsMenu';
 import commonStyles from './Analytics.common.module.css';
 import lightStyles from './Analytics.light.module.css';
 import darkStyles from './Analytics.dark.module.css';
@@ -17,6 +18,7 @@ const AnalyticsPage: React.FC = () => {
   const { analytics, loading, error } = useFreelancerData();
   const [range, setRange] = usePersistedState<'7d' | '30d' | '90d'>('freelancer:analytics:range', '30d');
   const [uiLoading, setUiLoading] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'csv' | 'xlsx' | 'pdf'>('csv');
   
   const styles = useMemo(() => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
@@ -75,6 +77,17 @@ const AnalyticsPage: React.FC = () => {
     exportCSV(header, rows, `analytics-${range}`);
   };
 
+  const onExport = () => {
+    if (!analyticsData) return;
+    const header = ['Label', 'Views', 'Earnings'];
+    const rows = analyticsData.viewsOverTime.labels.map((label, idx) => [
+      label,
+      String(analyticsData.viewsOverTime.data[idx] ?? ''),
+      String(analyticsData.earningsOverTime.data[idx] ?? ''),
+    ]);
+    exportData(exportFormat, header, rows, `analytics-${range}`);
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -95,13 +108,37 @@ const AnalyticsPage: React.FC = () => {
               value={range}
               onChange={(e) => setRange(e.target.value as typeof range)}
               aria-label="Select date range"
+              title="Select date range"
             >
               <option value="7d">Last 7 days</option>
               <option value="30d">Last 30 days</option>
               <option value="90d">Last 90 days</option>
             </select>
-            <button type="button" onClick={onExportCSV} className={styles.button} aria-label="Export analytics CSV">Export CSV</button>
+            <label htmlFor="analytics-export-format" className={styles.srOnly}>Export format</label>
+            <select
+              id="analytics-export-format"
+              className={styles.select}
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value as typeof exportFormat)}
+              aria-label="Select export format"
+              title="Select export format"
+            >
+              <option value="csv">CSV</option>
+              <option value="xlsx">XLSX</option>
+              <option value="pdf">PDF</option>
+            </select>
+            <button type="button" onClick={onExport} className={styles.button} aria-label={`Export analytics ${exportFormat.toUpperCase()}`} title={`Export analytics as ${exportFormat.toUpperCase()}`}>Export</button>
             <span className={styles.toolbarInfo} role="status" aria-live="polite">Showing {range === '7d' ? '7' : range === '30d' ? '30' : '90'}-day trend</span>
+
+            <div aria-label="Saved views" role="group" className={styles.savedViewsSlot}>
+              <SavedViewsMenu
+                storageKey="freelancer:analytics:savedViews"
+                buildPayload={() => ({ range })}
+                onApply={(p: { range: typeof range }) => {
+                  if (p?.range) setRange(p.range);
+                }}
+              />
+            </div>
           </div>
           <div className={styles.kpiGrid}>
             <div className={styles.kpiCard}>

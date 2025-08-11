@@ -37,11 +37,17 @@ const reviewsData = [
 
 const StarRating: React.FC<{ rating: number; styles: any }> = ({ rating, styles }) => {
   return (
-    <div className={cn(styles.starRating)}>
+    <div
+      className={cn(styles.starRating)}
+      role="img"
+      aria-label={`${rating} out of 5 stars`}
+      title={`${rating} out of 5 stars`}
+    >
       {[...Array(5)].map((_, index) => (
         <span
           key={index}
           className={cn(styles.star, index < rating ? '' : styles.empty)}
+          aria-hidden="true"
         >
           ★
         </span>
@@ -67,8 +73,11 @@ const ReviewsPage: React.FC = () => {
       </header>
 
       <main className={cn(styles.mainGrid)}>
+        <span className={cn(styles.srOnly)} aria-live="polite">
+          {`Average rating ${averageRating} out of 5 based on ${reviewsData.length} review${reviewsData.length === 1 ? '' : 's'}.`}
+        </span>
         <aside>
-          <div className={cn(styles.summaryCard)}>
+          <div className={cn(styles.summaryCard)} role="region" aria-label="Rating summary" title="Rating summary">
             <h2>Overall Rating</h2>
             <div className={cn(styles.summaryRating)}>
               <span className={cn(styles.summaryRatingScore)}>{averageRating}</span>
@@ -78,7 +87,7 @@ const ReviewsPage: React.FC = () => {
           </div>
         </aside>
 
-        <section className={cn(styles.reviewsList)}>
+        <section className={cn(styles.reviewsList)} role="region" aria-label="Client reviews" title="Client reviews">
           {reviewsData.map((review, index) => (
             <div key={index} className={cn(styles.reviewItem)}>
               <div className={cn(styles.reviewItemHeader)}>

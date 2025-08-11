@@ -50,10 +50,10 @@ const Dashboard: React.FC = () => {
         <p className={styles.subtitle}>Here&apos;s what&apos;s happening with your projects today.</p>
       </header>
 
-      {loading && <div className={styles.loading} aria-busy={loading || undefined}>Loading dashboard...</div>}
+      {loading && <div className={styles.loading} aria-busy="true">Loading dashboard...</div>}
       {error && <div className={styles.error}>Failed to load dashboard data.</div>}
 
-      <div className={styles.widgetsGrid}>
+      <div className={styles.widgetsGrid} role="region" aria-label="Key metrics" title="Key metrics">
         <DashboardWidget title="Active Projects" value={String(analytics?.activeProjects ?? 0)} />
         <DashboardWidget title="Pending Proposals" value={String(analytics?.pendingProposals ?? 0)} />
         <DashboardWidget title="Wallet Balance" value={analytics?.walletBalance ?? '$0.00'} />
@@ -61,9 +61,13 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className={styles.mainContent}>
+        <span className={styles.srOnly} aria-live="polite">
+          {`Active projects ${String(analytics?.activeProjects ?? 0)}. Pending proposals ${String(analytics?.pendingProposals ?? 0)}. `}
+          {`Wallet balance ${String(analytics?.walletBalance ?? '$0.00')}. Rank ${String(analytics?.rank ?? 'N/A')}.`}
+        </span>
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Recent Job Postings</h2>
-          <div className={styles.projectList}>
+          <div className={styles.projectList} role="region" aria-label="Recent job postings" title="Recent job postings">
             {recentJobs.map(job => (
               <ProjectCard
                 key={job.id}
@@ -82,7 +86,7 @@ const Dashboard: React.FC = () => {
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Recent Transactions</h2>
-          <div className={styles.transactionList}>
+          <div className={styles.transactionList} role="region" aria-label="Recent transactions" title="Recent transactions">
             {recentTransactions.map(txn => (
               <TransactionRow
                 key={txn.id}

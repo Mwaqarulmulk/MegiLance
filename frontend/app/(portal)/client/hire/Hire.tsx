@@ -34,7 +34,7 @@ const Hire: React.FC = () => {
   }, [params]);
 
   const headerRef = useRef<HTMLDivElement | null>(null);
-  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef = useRef<HTMLFormElement | null>(null);
   const headerVisible = useIntersectionObserver(headerRef, { threshold: 0.1 });
   const sectionVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
 
@@ -44,7 +44,7 @@ const Hire: React.FC = () => {
   const canNext = useMemo(() => {
     switch (step) {
       case 'Freelancer':
-        return Boolean(freelancerId);
+        return Boolean(freelancerId.trim());
       case 'Scope':
         return title.trim().length > 2 && description.trim().length > 10;
       case 'Terms':
@@ -108,100 +108,121 @@ const Hire: React.FC = () => {
   return (
     <main className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
-        <header ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
+        <header ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)} role="region" aria-labelledby="hire-page-title">
           <div>
-            <h1 className={common.title}>Hire a Freelancer</h1>
+            <h1 id="hire-page-title" className={common.title}>Hire a Freelancer</h1>
             <p className={cn(common.subtitle, themed.subtitle)}>Complete the steps to send a hiring request.</p>
           </div>
-          <div className={common.progressBar} role="progressbar" aria-label="Hire progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
-            <div className={common.progressTrack}>
-              <div className={common.progressFill} style={{ width: `${progress}%` }} />
-            </div>
-            <span className={common.progressText}>{progress}%</span>
+          <div
+            className={common.progressBar}
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Step ${currentIndex + 1} of ${STEPS.length}: ${step}`}
+            title={`Step ${currentIndex + 1} of ${STEPS.length}: ${step}`}
+            style={{ '--progress-width': `${progress}%` } as React.CSSProperties}
+          >
+            <div className={cn(common.progressIndicator, themed.progressIndicator)} />
           </div>
-          <nav className={common.steps} aria-label="Progress">
-            {STEPS.map((s) => (
-              <span
+          <nav className={common.stepIndicator} aria-label="Form Steps">
+            {STEPS.map((s, i) => (
+              <button
                 key={s}
-                className={cn(common.step, themed.step, s === step && cn(common.stepActive, themed.stepActive))}
+                type="button"
+                className={cn(common.step, themed.step, s === step && themed.stepActive, s === step && common.stepActive)}
+                onClick={() => setStep(s)}
+                disabled={i > currentIndex && !canNext}
                 aria-current={s === step ? 'step' : undefined}
+                title={`Go to ${s} step`}
               >
                 {s}
-              </span>
+              </button>
             ))}
           </nav>
         </header>
 
-        {liveMessage && (
-          <div role="status" aria-live="polite" aria-atomic="true" className={cn(common.subtitle, themed.subtitle)}>
+        <form
+          ref={sectionRef}
+          className={cn(common.form, sectionVisible ? common.isVisible : common.isNotVisible)}
+          aria-labelledby="hire-page-title"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="srOnly" aria-live="polite" role="status">
             {liveMessage}
           </div>
-        )}
 
-        <section ref={sectionRef} className={cn(common.section, themed.section, sectionVisible ? common.isVisible : common.isNotVisible)}>
           {step === 'Freelancer' && (
-            <div role="group" aria-labelledby="freelancer-title">
+            <section aria-labelledby="freelancer-title">
               <h2 id="freelancer-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Select Freelancer</h2>
-              <label htmlFor="freelancer" className={common.srOnly}>Freelancer ID</label>
-              <input
-                id="freelancer"
-                className={cn(common.input, themed.input)}
-                placeholder="Enter Freelancer ID or paste from profiles"
-                value={freelancerId}
-                onChange={(e) => setFreelancerId(e.target.value)}
-                aria-describedby="freelancer-help"
-                aria-invalid={!freelancerId || undefined}
-              />
-              <div id="freelancer-help" className={common.help}>Paste from a profile or type the known ID.</div>
-            </div>
+              <div className={common.row}>
+                <div className={common.field}>
+                  <label htmlFor="freelancerId" className={common.srOnly}>Freelancer ID</label>
+                  <input
+                    id="freelancerId"
+                    className={cn(common.input, themed.input)}
+                    placeholder="Enter Freelancer ID (e.g., from profile URL)"
+                    value={freelancerId}
+                    onChange={(e) => setFreelancerId(e.target.value)}
+                    aria-invalid={!freelancerId.trim()}
+                    title="Enter the ID of the freelancer you want to hire"
+                  />
+                </div>
+              </div>
+            </section>
           )}
 
           {step === 'Scope' && (
-            <div role="group" aria-labelledby="scope-title">
-              <h2 id="scope-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Define Scope</h2>
-              <label htmlFor="title" className={common.srOnly}>Title</label>
-              <input
-                id="title"
-                className={cn(common.input, themed.input)}
-                placeholder="e.g., Build a mobile app MVP"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                aria-describedby="title-help title-count"
-                aria-invalid={!(title.trim().length > 2) || undefined}
-              />
-              <div className={common.counters}>
-                <span id="title-help" className={common.help}>Add a clear, descriptive summary.</span>
-                <span id="title-count" className={common.count}>{title.trim().length} chars</span>
+            <section aria-labelledby="scope-title">
+              <h2 id="scope-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Project Scope</h2>
+              <div className={common.row}>
+                <div className={common.field}>
+                  <label htmlFor="title" className={common.srOnly}>Project Title</label>
+                  <input
+                    id="title"
+                    className={cn(common.input, themed.input)}
+                    placeholder="Project Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    aria-invalid={title.trim().length < 3}
+                    aria-describedby="title-help"
+                    title="Enter a short, descriptive project title"
+                  />
+                  <div id="title-help" className={common.help}>At least 3 characters</div>
+                </div>
               </div>
-              <label htmlFor="desc" className={common.srOnly}>Description</label>
-              <textarea
-                id="desc"
-                className={cn(common.textarea, themed.textarea)}
-                placeholder="Describe scope, deliverables, timelines, and constraints."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                aria-describedby="desc-help desc-count"
-                aria-invalid={!(description.trim().length > 10) || undefined}
-              />
-              <div className={common.counters}>
-                <span id="desc-help" className={common.help}>Minimum 10 characters. Add milestones for clarity.</span>
-                <span id="desc-count" className={common.count}>{description.trim().length} chars</span>
+              <div className={common.row}>
+                <div className={common.field}>
+                  <label htmlFor="description" className={common.srOnly}>Project Description</label>
+                  <textarea
+                    id="description"
+                    className={cn(common.textarea, themed.textarea)}
+                    placeholder="Project Description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    maxLength={500}
+                    aria-invalid={description.trim().length < 11}
+                    aria-describedby="desc-help"
+                    title="Describe the project deliverables, requirements, and timeline"
+                  />
+                  <div id="desc-help" className={common.help}>At least 10 characters. You have {500 - description.length} characters remaining.</div>
+                </div>
               </div>
-            </div>
+            </section>
           )}
 
           {step === 'Terms' && (
-            <div role="group" aria-labelledby="terms-title">
-              <h2 id="terms-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Terms</h2>
+            <section aria-labelledby="terms-title">
+              <h2 id="terms-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Payment Terms</h2>
               <div className={common.row}>
-                <div>
+                <div className={common.field}>
                   <label htmlFor="rateType" className={common.srOnly}>Rate Type</label>
-                  <select id="rateType" className={cn(common.select, themed.select)} value={rateType} onChange={(e) => setRateType(e.target.value as any)}>
+                  <select id="rateType" className={cn(common.select, themed.select)} value={rateType} onChange={(e) => setRateType(e.target.value as 'Hourly' | 'Fixed')} title="Select the payment rate type">
                     <option>Hourly</option>
                     <option>Fixed</option>
                   </select>
                 </div>
-                <div>
+                <div className={common.field}>
                   <label htmlFor="rate" className={common.srOnly}>Rate</label>
                   <input
                     id="rate"
@@ -210,47 +231,43 @@ const Hire: React.FC = () => {
                     value={rate}
                     onChange={(e) => setRate(e.target.value)}
                     aria-describedby="rate-help"
-                    aria-invalid={!(Number(rate) > 0) || undefined}
+                    aria-invalid={!rate.trim() || Number(rate) <= 0}
                     inputMode="decimal"
+                    title={rateType === 'Hourly' ? 'Enter the hourly rate' : 'Enter the total fixed price'}
                   />
                   <div id="rate-help" className={common.help}>Enter a positive number. Example: 45 or 1500</div>
                 </div>
               </div>
               <div className={common.row}>
-                <div>
+                <div className={common.field}>
                   <label htmlFor="start" className={common.srOnly}>Start Date</label>
-                  <input id="start" className={cn(common.input, themed.input)} type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} aria-invalid={!startDate || undefined} />
+                  <input id="start" className={cn(common.input, themed.input)} type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} aria-invalid={!startDate} title="Select the project start date" />
                 </div>
-                <div aria-hidden="true" />
               </div>
-            </div>
+            </section>
           )}
 
           {step === 'Review' && (
-            <div role="group" aria-labelledby="review-title">
+            <section aria-labelledby="review-title">
               <h2 id="review-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Review & Confirm</h2>
-              <ul role="list">
-                <li role="listitem">Freelancer ID: {freelancerId || '—'}</li>
-                <li role="listitem">Title: {title || '—'}</li>
-                <li role="listitem">Rate: {rateType} {rate || '—'}</li>
-                <li role="listitem">Start: {startDate || '—'}</li>
+              <ul role="list" className={common.reviewList}>
+                <li role="listitem"><span>Freelancer ID:</span> <span>{freelancerId || '—'}</span></li>
+                <li role="listitem"><span>Title:</span> <span>{title || '—'}</span></li>
+                <li role="listitem"><span>Rate:</span> <span>{rateType} {rate || '—'}</span></li>
+                <li role="listitem"><span>Start:</span> <span>{startDate || '—'}</span></li>
               </ul>
-            </div>
+            </section>
           )}
 
           <div className={common.actions}>
-            <button type="button" className={cn(common.button, themed.button)} onClick={saveDraft}>Save Draft</button>
-            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={resetForm}>Reset</button>
-            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={goBack} disabled={currentIndex === 0} aria-disabled={currentIndex === 0 || undefined}>
-              Back
-            </button>
+            <button type="button" className={cn(common.button, themed.button)} onClick={saveDraft} title="Save your progress as a draft">Save Draft</button>
+            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={resetForm} title="Clear the form and start over">Reset</button>
+            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={goBack} disabled={currentIndex === 0} title="Go to the previous step">Back</button>
             {step !== 'Review' ? (
-              <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={goNext} disabled={!canNext} aria-disabled={!canNext || undefined}>
-                Continue
-              </button>
+              <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={goNext} disabled={!canNext} title="Continue to the next step">Continue</button>
             ) : (
               <button
-                type="button"
+                type="submit"
                 className={cn(common.button, 'primary', themed.button)}
                 onClick={async () => {
                   if (!canNext) return;
@@ -274,15 +291,21 @@ const Hire: React.FC = () => {
                   }
                 }}
                 disabled={submitting}
+                aria-busy={submitting}
+                title="Submit your hiring request to the freelancer"
               >
                 {submitting ? 'Sending…' : 'Send Request'}
               </button>
             )}
           </div>
-        </section>
+        </form>
       </div>
     </main>
   );
 };
 
+
 export default Hire;
+
+
+

@@ -18,19 +18,24 @@ const DensityToggle: React.FC<DensityToggleProps> = ({ value, onChange }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => (theme === 'dark' ? { ...commonStyles, ...darkStyles } : { ...commonStyles, ...lightStyles }), [theme]);
   return (
-    <div className={styles.group} role="group" aria-label="Row density">
+    <div className={styles.group} role="group" aria-label="Row density" title="Row density">
       <button
         type="button"
         className={styles.button}
-        aria-pressed={value === 'comfortable'}
+        {...(value === 'comfortable' ? { 'aria-pressed': 'true' } : {})}
+        aria-label="Set comfortable density"
+        title="Comfortable row density"
         onClick={() => onChange('comfortable')}
       >Comfortable</button>
       <button
         type="button"
         className={styles.button}
-        aria-pressed={value === 'compact'}
+        {...(value === 'compact' ? { 'aria-pressed': 'true' } : {})}
+        aria-label="Set compact density"
+        title="Compact row density"
         onClick={() => onChange('compact')}
       >Compact</button>
+      <span aria-live="polite" className={styles.srOnly}>Row density {value}</span>
     </div>
   );
 };

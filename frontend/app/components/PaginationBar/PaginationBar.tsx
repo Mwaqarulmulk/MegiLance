@@ -24,13 +24,14 @@ const PaginationBar: React.FC<PaginationBarProps> = ({ currentPage, totalPages, 
   }, [theme]);
 
   return (
-    <div className={styles.paginationBar} role="navigation" aria-label="Pagination">
+    <div className={styles.paginationBar} role="navigation" aria-label="Pagination" title="Pagination">
       <button
         type="button"
         className={styles.button}
         onClick={onPrev}
         disabled={currentPage <= 1}
         aria-label="Previous page"
+        title="Previous page"
       >
         Prev
       </button>
@@ -43,6 +44,7 @@ const PaginationBar: React.FC<PaginationBarProps> = ({ currentPage, totalPages, 
         onClick={onNext}
         disabled={currentPage >= totalPages}
         aria-label="Next page"
+        title="Next page"
       >
         Next
       </button>

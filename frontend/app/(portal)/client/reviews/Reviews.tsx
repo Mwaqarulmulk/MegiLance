@@ -100,75 +100,42 @@ const Reviews: React.FC = () => {
   return (
     <main className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
+        <section ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="review-controls-title">
+          <h2 id="review-controls-title" className={common.srOnly}>Review Controls</h2>
           <div>
             <h1 className={common.title}>Reviews</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Manage your reviews for completed work. Filter and add new feedback.</p>
+            <p className={common.subtitle}>Manage and respond to client feedback.</p>
           </div>
-          <div className={common.controls} aria-label="Review filters">
-            <label className={common.srOnly} htmlFor="q">Search</label>
-            <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search by project, freelancer, or text…" value={query} onChange={(e) => setQuery(e.target.value)} />
-            <label className={common.srOnly} htmlFor="rating">Rating</label>
-            <select id="rating" className={cn(common.select, themed.select)} value={rating as any} onChange={(e) => setRating((e.target.value === 'All' ? 'All' : Number(e.target.value)) as any)}>
-              <option>All</option>
-              <option>5</option>
-              <option>4</option>
-              <option>3</option>
-              <option>2</option>
-              <option>1</option>
-            </select>
-          </div>
-        </div>
-
-        <div className={cn(common.toolbar)}>
           <div className={common.controls}>
-            <label className={common.srOnly} htmlFor="sort-key">Sort by</label>
-            <select id="sort-key" className={cn(common.select, themed.select)} value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)}>
+            <input type="search" placeholder="Search..." value={query} onChange={e => setQuery(e.target.value)} className={cn(common.input, themed.input)} title="Search by project, freelancer, or text" />
+            <select value={rating} onChange={e => setRating(e.target.value === 'All' ? 'All' : Number(e.target.value))} className={cn(common.select, themed.select)} title="Filter by rating">
+              <option value="All">All Ratings</option>
+              {[5,4,3,2,1].map(s => <option key={s} value={s}>{`${s} star${s > 1 ? 's' : ''}`}</option>)}
+            </select>
+            <select value={sortKey} onChange={e => setSortKey(e.target.value as SortKey)} className={cn(common.select, themed.select)} title="Sort by">
               <option value="created">Date</option>
               <option value="rating">Rating</option>
               <option value="project">Project</option>
               <option value="freelancer">Freelancer</option>
             </select>
-            <label className={common.srOnly} htmlFor="sort-dir">Sort direction</label>
-            <select id="sort-dir" className={cn(common.select, themed.select)} value={sortDir} onChange={(e) => setSortDir(e.target.value as 'asc'|'desc')}>
-              <option value="asc">Asc</option>
-              <option value="desc">Desc</option>
-            </select>
-            <label className={common.srOnly} htmlFor="page-size">Reviews per page</label>
-            <select id="page-size" className={cn(common.select, themed.select)} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
+            <button type="button" onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')} className={cn(common.button, themed.button)} title={`Sort ${sortDir === 'asc' ? 'descending' : 'ascending'}`}>
+              {sortDir === 'asc' ? '↑' : '↓'}
+            </button>
           </div>
-          <div>
-            <button
-              type="button"
-              className={cn(common.button, themed.button)}
-              onClick={() => {
-                const header = ['ID','Project','Freelancer','Date','Rating','Text'];
-                const data = sorted.map(r => [r.id, r.project, r.freelancer, r.created, r.rating, r.text]);
-                const csv = [header, ...data]
-                  .map(row => row.map(val => '"' + String(val).replace(/"/g, '""') + '"').join(','))
-                  .join('\n');
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `client_reviews_${new Date().toISOString().slice(0,10)}.csv`;
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-            >Export CSV</button>
-          </div>
-        </div>
+        </section>
+
+
 
         <section
           ref={listRef}
           className={cn(common.list, listVisible ? common.isVisible : common.isNotVisible)}
-          aria-label="Reviews list"
-          aria-busy={loading || undefined}
+          aria-labelledby="reviews-list-title"
+          aria-busy={loading}
         >
+          <h2 id="reviews-list-title" className={common.srOnly}>Reviews List</h2>
+          <div className={common.srOnly} role="status" aria-live="polite">
+            {paged.length > 0 ? `Showing ${paged.length} of ${sorted.length} reviews.` : 'No reviews match your criteria.'}
+          </div>
           {loading && (
             <>
               {Array.from({ length: 5 }).map((_, i) => (
@@ -194,7 +161,7 @@ const Reviews: React.FC = () => {
               <div className={cn(common.meta, themed.meta)}>
                 <span>By {r.freelancer}</span>
                 <span>•</span>
-                <span>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                <span role="img" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
                 <span>•</span>
                 <span>{r.created}</span>
               </div>
@@ -233,19 +200,20 @@ const Reviews: React.FC = () => {
                 key={n}
                 type="button"
                 className={common.starBtn}
-                aria-pressed={newRating === n || undefined}
+                aria-pressed={newRating === n}
                 onClick={() => setStar(n)}
-                aria-label={`${n} star${n>1?'s':''}`}
+                aria-label={`${n} star${n > 1 ? 's' : ''}`}
+                title={`${n} star${n > 1 ? 's' : ''}`}
               >
                 {n <= newRating ? '★' : '☆'}
               </button>
             ))}
           </div>
           <label htmlFor="text" className={common.srOnly}>Review text</label>
-          <textarea id="text" className={cn(common.textarea, themed.textarea)} placeholder="Share your experience and outcomes…" value={newText} onChange={(e) => setNewText(e.target.value)} aria-invalid={!(newText.trim().length > 10) || undefined} />
+          <textarea id="text" className={cn(common.textarea, themed.textarea)} placeholder="Share your experience and outcomes…" value={newText} onChange={(e) => setNewText(e.target.value)} aria-invalid={newText.trim().length > 0 && newText.trim().length <= 10} title="Review text (minimum 10 characters)" />
           <div className={common.controls}>
-            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={() => { setNewText(''); setNewRating(0); }}>Clear</button>
-            <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={() => alert('Review submitted')} disabled={!canSubmit} aria-disabled={!canSubmit || undefined}>Submit Review</button>
+            <button type="button" className={cn(common.button, 'secondary', themed.button)} onClick={() => { setNewText(''); setNewRating(0); }} title="Clear review form">Clear</button>
+            <button type="button" className={cn(common.button, 'primary', themed.button)} onClick={() => alert('Review submitted')} disabled={!canSubmit} aria-disabled={!canSubmit} title="Submit your review">Submit Review</button>
           </div>
         </section>
       </div>

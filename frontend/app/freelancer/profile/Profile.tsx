@@ -124,24 +124,26 @@ const Profile: React.FC = () => {
           <span className={styles.rank}>Freelancer Rank: {userProfile.rank}</span>
         </div>
         <div className={styles.headerActions}>
-          <Button variant="secondary" type="button" onClick={saveDraft}>Save Draft</Button>
+          <Button variant="secondary" type="button" onClick={saveDraft} title="Save profile draft">Save Draft</Button>
         </div>
       </header>
 
       <form className={styles.form} onSubmit={onSubmit} noValidate>
-        {status && <div className={styles.status} role="status">{status}</div>}
+        {status && <div className={styles.status} role="status" aria-live="polite">{status}</div>}
 
         <div className={styles.inlineSection}>
           <Input
             label="Full Name"
             type="text"
             defaultValue={name}
+            title="Enter your full name"
             onChange={(e) => setName(e.target.value)}
           />
           <Input
             label="Professional Title"
             type="text"
             defaultValue={title}
+            title="Enter your professional headline (publicly visible)"
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
@@ -154,6 +156,7 @@ const Profile: React.FC = () => {
             rows={6}
             label="Profile Bio"
             hideLabel
+            title="Write a short bio (publicly visible)"
             onChange={(e) => setBio(e.target.value)}
           />
         </div>
@@ -165,9 +168,11 @@ const Profile: React.FC = () => {
             type="text"
             defaultValue={skills}
             hideLabel
+            title="Enter comma-separated skills"
+            aria-describedby="skills-help"
             onChange={(e) => setSkills(e.target.value)}
           />
-          <small className={styles.skillsInfo}>Separate skills with a comma.</small>
+          <small id="skills-help" className={styles.skillsInfo}>Separate skills with a comma.</small>
         </div>
 
         <div className={styles.inlineSection}>
@@ -177,6 +182,7 @@ const Profile: React.FC = () => {
             defaultValue={hourlyRate}
             aria-invalid={errors.hourlyRate ? 'true' : undefined}
             aria-describedby={errors.hourlyRate ? 'hourlyRate-error' : undefined}
+            title="Enter your hourly rate in USD"
             onChange={(e) => setHourlyRate(e.target.value)}
           />
           <Input
@@ -185,6 +191,7 @@ const Profile: React.FC = () => {
             defaultValue={portfolioUrl}
             aria-invalid={errors.portfolioUrl ? 'true' : undefined}
             aria-describedby={errors.portfolioUrl ? 'portfolioUrl-error' : undefined}
+            title="Link to your portfolio or website"
             onChange={(e) => setPortfolioUrl(e.target.value)}
           />
         </div>
@@ -197,8 +204,8 @@ const Profile: React.FC = () => {
         )}
 
         <div className={styles.actions}>
-          <Button variant="secondary" type="button" onClick={resetForm}>Reset</Button>
-          <Button variant="primary" type="submit">Save Changes</Button>
+          <Button variant="secondary" type="button" onClick={resetForm} title="Reset to defaults">Reset</Button>
+          <Button variant="primary" type="submit" title="Save profile changes">Save Changes</Button>
         </div>
       </form>
     </div>

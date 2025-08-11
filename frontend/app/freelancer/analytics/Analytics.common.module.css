@@ -114,3 +114,9 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* Slot for Saved Views on toolbar */
+.savedViewsSlot {
+  margin-left: auto;
+  min-width: 240px;
+}

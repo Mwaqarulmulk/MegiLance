@@ -12,7 +12,23 @@
 .row { display: grid; gap: var(--spacing-3); grid-template-columns: 1fr; }
 
 .label { font-size: 12px; opacity: .9; }
-.input, .select, .textarea, .button { padding: 8px 12px; border-radius: var(--border-radius-md); border: 1px solid transparent; }
+.input, .select, .textarea, .button, .switchTrack {
+  transition: all 0.2s ease-in-out;
+}
+
+.input, .select, .textarea, .button {
+  padding: 8px 12px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid transparent;
+}
+
+.button:not(:disabled):hover, 
+.input:not(:disabled):hover, 
+.select:not(:disabled):hover, 
+.textarea:not(:disabled):hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
 .textarea { min-height: 100px; resize: vertical; }
 .button { cursor: pointer; font-weight: var(--font-weight-medium); }
 .help { font-size: 12px; opacity: .85; }
@@ -20,7 +36,18 @@
 .count { font-size: 12px; opacity: .7; }
 .status { min-width: 140px; font-size: 12px; opacity: .85; }
 
-.switch { display: inline-flex; align-items: center; gap: 10px; }
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.switch:hover .switchTrack {
+  filter: brightness(1.1);
+}
 .switchTrack { width: 44px; height: 24px; border-radius: 999px; display: inline-flex; align-items: center; padding: 2px; border: 1px solid transparent; }
 .switchThumb { width: 18px; height: 18px; border-radius: 999px; transition: transform .2s ease; }
 .switchOn .switchThumb { transform: translateX(20px); }
@@ -32,4 +59,12 @@
 
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-.input:focus-visible, .select:focus-visible, .button:focus-visible, .textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.input:focus-visible, 
+.select:focus-visible, 
+.button:focus-visible, 
+.textarea:focus-visible,
+.srOnly:focus + .switchTrack {
+  outline: 2px solid var(--color-primary-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-accent-rgb), 0.2);
+}

@@ -114,7 +114,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
                     isActive && styles.sidebarNavLinkActive
                   )}
                   aria-current={isActive ? 'page' : undefined}
-                  title={isCollapsed ? item.label : undefined}
+                  title={item.label}
                   data-testid={`sidebar-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   <span className={styles.sidebarNavIcon} aria-hidden>

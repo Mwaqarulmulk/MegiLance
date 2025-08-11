@@ -8,10 +8,11 @@ import commonStyles from './MyJobs.common.module.css';
 import lightStyles from './MyJobs.light.module.css';
 import darkStyles from './MyJobs.dark.module.css';
 import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
-import { exportCSV } from '@/app/lib/csv';
+import { exportCSV, exportData } from '@/app/lib/csv';
 import DataToolbar, { SortOption } from '@/app/components/DataToolbar/DataToolbar';
 import PaginationBar from '@/app/components/PaginationBar/PaginationBar';
 import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
+import SavedViewsMenu from '@/app/components/DataTableExtras/SavedViewsMenu';
 
 const activeJobs = [
   {
@@ -104,6 +105,12 @@ const MyJobs: React.FC = () => {
     exportCSV(header, rows, 'my-jobs-active');
   };
 
+  const exportActive = (format: 'csv' | 'xlsx' | 'pdf') => {
+    const header = ['Title', 'Client', 'Status', 'Progress'];
+    const rows = sortedActive.map(j => [j.title, j.client, j.status, String(j.progress)]);
+    exportData(format, header, rows, 'my-jobs-active');
+  };
+
   useEffect(() => {
     setUiLoadingActive(true);
     const t = setTimeout(() => setUiLoadingActive(false), 120);
@@ -158,6 +165,12 @@ const MyJobs: React.FC = () => {
     exportCSV(header, rows, 'my-jobs-completed');
   };
 
+  const exportCompleted = (format: 'csv' | 'xlsx' | 'pdf') => {
+    const header = ['Title', 'Client', 'Status', 'Completed On'];
+    const rows = sortedCompleted.map(j => [j.title, j.client, j.status, j.completionDate ?? '']);
+    exportData(format, header, rows, 'my-jobs-completed');
+  };
+
   useEffect(() => {
     setUiLoadingCompleted(true);
     const t = setTimeout(() => setUiLoadingCompleted(false), 120);
@@ -207,10 +220,32 @@ const MyJobs: React.FC = () => {
             { value: 'progress:asc', label: 'Progress Low–High' },
             { value: 'progress:desc', label: 'Progress High–Low' },
           ]) as SortOption[]}
-          onExportCSV={exportActiveCSV}
-          exportLabel="Export CSV"
+          onExport={exportActive}
+          exportLabel="Export"
           aria-label="Active filters and actions"
+          searchPlaceholder="Search active jobs"
+          searchTitle="Search active jobs"
+          sortTitle="Sort active jobs by"
+          pageSizeTitle="Active jobs per page"
+          exportFormatTitle="Export active jobs as"
         />
+        <span className={styles.srOnly} aria-live="polite">
+          Active filters updated. {qActive ? `Query: ${qActive}. ` : ''}Sort: {sortActiveKey} {sortActiveDir}. Page size: {pageActiveSize}.
+        </span>
+        <div className={styles.extrasRow} role="group" aria-label="Active saved views">
+          <SavedViewsMenu
+            storageKey="freelancer:my-jobs:active:savedViews"
+            buildPayload={() => ({ q: qActive, sortKey: sortActiveKey, sortDir: sortActiveDir, pageSize: pageActiveSize })}
+            onApply={(p: { q: string; sortKey: typeof sortActiveKey; sortDir: typeof sortActiveDir; pageSize: number; }) => {
+              setQActive(p.q ?? '');
+              setSortActiveKey(p.sortKey ?? 'title');
+              setSortActiveDir(p.sortDir ?? 'asc');
+              setPageActiveSize(p.pageSize ?? 6);
+              setPageActive(1);
+            }}
+            aria-label="My Jobs active saved views"
+          />
+        </div>
 
         <div className={styles.jobGrid}>
           {uiLoadingActive ? (
@@ -236,6 +271,11 @@ const MyJobs: React.FC = () => {
             onNext={() => setPageActive(p => Math.min(totalActivePages, p + 1))}
           />
         )}
+        {sortedActive.length > 0 && (
+          <span className={styles.srOnly} aria-live="polite">
+            Page {pageActiveSafe} of {totalActivePages}. {sortedActive.length} active job{sortedActive.length === 1 ? '' : 's'}.
+          </span>
+        )}
       </section>
 
       <section className={styles.section}>
@@ -258,10 +298,32 @@ const MyJobs: React.FC = () => {
             { value: 'client:asc', label: 'Client A–Z' },
             { value: 'client:desc', label: 'Client Z–A' },
           ]) as SortOption[]}
-          onExportCSV={exportCompletedCSV}
-          exportLabel="Export CSV"
+          onExport={exportCompleted}
+          exportLabel="Export"
           aria-label="Completed filters and actions"
+          searchPlaceholder="Search completed jobs"
+          searchTitle="Search completed jobs"
+          sortTitle="Sort completed jobs by"
+          pageSizeTitle="Completed jobs per page"
+          exportFormatTitle="Export completed jobs as"
         />
+        <span className={styles.srOnly} aria-live="polite">
+          Completed filters updated. {qCompleted ? `Query: ${qCompleted}. ` : ''}Sort: {sortCompletedKey} {sortCompletedDir}. Page size: {pageCompletedSize}.
+        </span>
+        <div className={styles.extrasRow} role="group" aria-label="Completed saved views">
+          <SavedViewsMenu
+            storageKey="freelancer:my-jobs:completed:savedViews"
+            buildPayload={() => ({ q: qCompleted, sortKey: sortCompletedKey, sortDir: sortCompletedDir, pageSize: pageCompletedSize })}
+            onApply={(p: { q: string; sortKey: typeof sortCompletedKey; sortDir: typeof sortCompletedDir; pageSize: number; }) => {
+              setQCompleted(p.q ?? '');
+              setSortCompletedKey(p.sortKey ?? 'completionDate');
+              setSortCompletedDir(p.sortDir ?? 'desc');
+              setPageCompletedSize(p.pageSize ?? 6);
+              setPageCompleted(1);
+            }}
+            aria-label="Manage saved views for completed jobs"
+          />
+        </div>
         <div className={styles.jobGrid}>
           {uiLoadingCompleted ? (
             <TableSkeleton rows={Math.min(pageCompletedSize, 6)} cols={3} />
@@ -284,6 +346,11 @@ const MyJobs: React.FC = () => {
             onPrev={() => setPageCompleted(p => Math.max(1, p - 1))}
             onNext={() => setPageCompleted(p => Math.min(totalCompletedPages, p + 1))}
           />
+        )}
+        {sortedCompleted.length > 0 && (
+          <span className={styles.srOnly} aria-live="polite">
+            Page {pageCompletedSafe} of {totalCompletedPages}. {sortedCompleted.length} completed job{sortedCompleted.length === 1 ? '' : 's'}.
+          </span>
         )}
       </section>
     </div>

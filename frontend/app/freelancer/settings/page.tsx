@@ -31,7 +31,7 @@ const AccountSettingsPage = () => {
     >
       <form onSubmit={onSubmit} noValidate>
         {status && (
-          <div role="status" className="pb-4 text-sm text-muted-foreground">{status}</div>
+          <div role="status" aria-live="polite" className="pb-4 text-sm text-muted-foreground">{status}</div>
         )}
         <div className="space-y-4">
           <Input
@@ -57,7 +57,7 @@ const AccountSettingsPage = () => {
           />
         </div>
         <div className="pt-6">
-          <Button variant="primary" type="submit">Save Changes</Button>
+          <Button variant="primary" type="submit" title="Save account changes">Save Changes</Button>
         </div>
       </form>
     </SettingsSection>

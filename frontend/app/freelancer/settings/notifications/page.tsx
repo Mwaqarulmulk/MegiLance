@@ -39,7 +39,7 @@ const NotificationSettingsPage = () => {
       description="Manage how you receive notifications from MegiLance."
     >
       {status && (
-        <div role="status" className="pb-4 text-sm text-muted-foreground">{status}</div>
+        <div role="status" aria-live="polite" className="pb-4 text-sm text-muted-foreground">{status}</div>
       )}
       <div className="space-y-6 max-w-md">
         <ToggleSwitch
@@ -62,8 +62,8 @@ const NotificationSettingsPage = () => {
         />
       </div>
       <div className="pt-6 flex gap-3">
-        <Button variant="secondary" type="button" onClick={() => { setProjectNotifications(true); setAccountActivity(true); setMessageNotifications(false); setStatus('Preferences reset to defaults'); }}>Reset</Button>
-        <Button variant="primary" type="button" onClick={save}>Save Preferences</Button>
+        <Button variant="secondary" type="button" title="Reset notification preferences" onClick={() => { setProjectNotifications(true); setAccountActivity(true); setMessageNotifications(false); setStatus('Preferences reset to defaults'); }}>Reset</Button>
+        <Button variant="primary" type="button" title="Save notification preferences" onClick={save}>Save Preferences</Button>
       </div>
     </SettingsSection>
   );

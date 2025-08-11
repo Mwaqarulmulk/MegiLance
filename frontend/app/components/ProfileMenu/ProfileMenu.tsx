@@ -88,6 +88,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label={`Open user menu for ${userName}`}
+        title={`Open user menu for ${userName}`}
       >
         <UserAvatar name={userName} src={userImageUrl} size="medium" />
       </button>
@@ -108,6 +109,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                   role="menuitem"
                   className={cn(commonStyles.item, themeStyles.item)}
                   onClick={() => handleItemClick(item.onClick)}
+                  title={item.label}
                 >
                   {renderContent(item)}
                 </Link>
@@ -117,6 +119,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                   role="menuitem"
                   className={cn(commonStyles.item, themeStyles.item)}
                   onClick={() => handleItemClick(item.onClick)}
+                  title={item.label}
                 >
                   {renderContent(item)}
                 </button>

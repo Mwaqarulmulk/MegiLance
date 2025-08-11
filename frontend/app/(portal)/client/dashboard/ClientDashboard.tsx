@@ -1,7 +1,7 @@
 // @AI-HINT: Client Dashboard component. Theme-aware, accessible dashboard with KPIs, recent projects, and activity feed.
 'use client';
 
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
@@ -44,6 +44,18 @@ const ClientDashboard: React.FC = () => {
     };
   }, [projects, payments]);
 
+  const [liveRegionMessage, setLiveRegionMessage] = useState('Loading dashboard data.');
+
+  useEffect(() => {
+    if (loading) {
+      setLiveRegionMessage('Loading dashboard data.');
+    } else if (error) {
+      setLiveRegionMessage('Failed to load dashboard data. Please try again later.');
+    } else {
+      setLiveRegionMessage(`Dashboard loaded. You have ${metrics.totalProjects} total projects and ${metrics.pendingPayments} pending payments.`);
+    }
+  }, [loading, error, metrics.totalProjects, metrics.pendingPayments]);
+
   const recentProjects = useMemo(() => {
     if (!Array.isArray(projects)) return [];
     return projects.slice(0, 3).map((p, idx) => ({
@@ -68,22 +80,27 @@ const ClientDashboard: React.FC = () => {
 
   return (
     <main className={cn(common.page, themed.themeWrapper)}>
+      <div className={common.srOnly} aria-live="polite" role="status">
+        {liveRegionMessage}
+      </div>
       <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
+        <header ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)} role="region" aria-label="Dashboard Header">
           <div>
             <h1 className={common.title}>Client Dashboard</h1>
             <p className={cn(common.subtitle, themed.subtitle)}>Manage your projects, track spending, and monitor freelancer performance.</p>
           </div>
-        </div>
+        </header>
 
-        {loading && <div className={common.loading} aria-busy={loading || undefined}>Loading dashboard...</div>}
+        {loading && <div className={common.loading} aria-busy={true}>Loading dashboard...</div>}
         {error && <div className={common.error}>Failed to load dashboard data.</div>}
 
-        <div
+        <section
           ref={widgetsRef}
           className={cn(common.widgetsGrid, widgetsVisible ? common.isVisible : common.isNotVisible)}
-          aria-busy={loading || undefined}
+          aria-labelledby="key-metrics-title"
+          aria-busy={loading}
         >
+          <h2 id="key-metrics-title" className={common.srOnly}>Key Metrics</h2>
           {loading ? (
             <>
               {Array.from({ length: 4 }).map((_, i) => (
@@ -101,11 +118,11 @@ const ClientDashboard: React.FC = () => {
               <DashboardWidget title="Pending Payments" value={String(metrics.pendingPayments)} />
             </>
           )}
-        </div>
+        </section>
 
         <div ref={contentRef} className={cn(common.mainContent, contentVisible ? common.isVisible : common.isNotVisible)}>
-          <section className={common.section} aria-busy={loading || undefined}>
-            <h2 className={common.sectionTitle}>Recent Projects</h2>
+          <section className={common.section} aria-labelledby="recent-projects-title" aria-busy={loading}>
+            <h2 id="recent-projects-title" className={common.sectionTitle}>Recent Projects</h2>
             <div className={common.projectList}>
               {loading ? (
                 Array.from({ length: 3 }).map((_, i) => (
@@ -135,8 +152,8 @@ const ClientDashboard: React.FC = () => {
             </div>
           </section>
 
-          <section className={common.section} aria-busy={loading || undefined}>
-            <h2 className={common.sectionTitle}>Recent Transactions</h2>
+          <section className={common.section} aria-labelledby="recent-transactions-title" aria-busy={loading}>
+            <h2 id="recent-transactions-title" className={common.sectionTitle}>Recent Transactions</h2>
             <div className={common.transactionList}>
               {loading ? (
                 Array.from({ length: 3 }).map((_, i) => (

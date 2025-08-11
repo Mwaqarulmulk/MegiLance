@@ -48,7 +48,7 @@ const SupportPage: React.FC = () => {
       </header>
 
       <main className={cn(styles.mainGrid)}>
-        <div className={cn(styles.card)}>
+        <div className={cn(styles.card)} role="region" aria-label="Contact support" title="Contact support">
           <h2 className={cn(styles.cardTitle)}>Contact Support</h2>
           <form className={cn(styles.form)}>
             <Input
@@ -62,12 +62,13 @@ const SupportPage: React.FC = () => {
               placeholder="Describe your issue in detail..."
               rows={6}
             />
-            <Button variant="primary">Submit Ticket</Button>
+            <Button variant="primary" title="Submit support ticket" aria-label="Submit support ticket">Submit Ticket</Button>
           </form>
         </div>
 
-        <div className={cn(styles.card)}>
+        <div className={cn(styles.card)} role="region" aria-label="Frequently asked questions" title="Frequently asked questions">
           <h2 className={cn(styles.cardTitle)}>Frequently Asked Questions</h2>
+          <span className={cn(styles.srOnly)} aria-live="polite">{faqItems.length} FAQ item{faqItems.length === 1 ? '' : 's'}</span>
           <Accordion>
             {faqItems.map((item, index) => (
               <AccordionItem key={index} value={`faq-${index}`} title={item.question}>

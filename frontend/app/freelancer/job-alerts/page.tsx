@@ -68,13 +68,17 @@ const JobAlertsPage: React.FC = () => {
             <Input
               id="alert-keywords"
               placeholder="Keywords (e.g., 'rust, defi')"
+              aria-label="Alert keywords"
+              title="Alert keywords"
               fullWidth
             />
             <Select
               id="alert-frequency"
               options={frequencyOptions}
+              aria-label="Alert frequency"
+              title="Alert frequency"
             />
-            <Button variant="primary">Create Alert</Button>
+            <Button variant="primary" title="Create alert">Create Alert</Button>
           </form>
         </div>
 
@@ -91,13 +95,14 @@ const JobAlertsPage: React.FC = () => {
                   {alert.isAiPowered && <Badge variant="info">AI</Badge>}
                   <span className={styles.alertFrequency}>{alert.frequency}</span>
                   <div className={styles.alertActions}>
-                    <Button variant="secondary" size="small">Edit</Button>
-                    <Button variant="danger" size="small" onClick={() => handleDelete(alert.id)}>Delete</Button>
+                    <Button variant="secondary" size="small" aria-label={`Edit ${alert.name}`} title={`Edit ${alert.name}`}>Edit</Button>
+                    <Button variant="danger" size="small" onClick={() => handleDelete(alert.id)} aria-label={`Delete ${alert.name}`} title={`Delete ${alert.name}`}>Delete</Button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          <span className={styles.srOnly} aria-live="polite">You have {alerts.length} job alert{alerts.length === 1 ? '' : 's'}.</span>
         </div>
       </main>
     </div>

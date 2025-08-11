@@ -1,12 +1,6 @@
 /* AI-HINT: Light theme styles for SavedViewsMenu */
-.wrap {}
-.actions {}
 .input { background: #fff; color: var(--color-text); border-color: var(--color-border); }
 .button { color: var(--color-text); border-color: var(--color-border); }
-.list {}
 .item { background: #fff; border-color: var(--color-border); }
-.viewName {}
-.itemActions {}
 .smallButton { color: var(--color-text); border-color: var(--color-border); }
 .smallDanger { background: #fff; }
-.empty {}

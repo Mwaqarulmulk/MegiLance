@@ -1,7 +1,7 @@
 // @AI-HINT: This is the Wallet page for freelancers to manage their earnings and transactions. It is now fully theme-aware and features a premium, investor-grade design.
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import TransactionRow from '@/app/components/TransactionRow/TransactionRow';
 import Button from '@/app/components/Button/Button';
@@ -9,9 +9,13 @@ import { useFreelancerData } from '@/hooks/useFreelancer';
 import DataToolbar, { SortOption } from '@/app/components/DataToolbar/DataToolbar';
 import PaginationBar from '@/app/components/PaginationBar/PaginationBar';
 import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
-import { exportCSV } from '@/app/lib/csv';
+import { exportCSV, exportData } from '@/app/lib/csv';
 import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
 import DensityToggle, { Density } from '@/app/components/DataTableExtras/DensityToggle';
+import SavedViewsMenu from '@/app/components/DataTableExtras/SavedViewsMenu';
+import VirtualList from '@/app/components/DataTableExtras/VirtualList';
+import Modal from '@/app/components/Modal/Modal';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
 import commonStyles from './Wallet.common.module.css';
 import lightStyles from './Wallet.light.module.css';
 import darkStyles from './Wallet.dark.module.css';
@@ -19,6 +23,7 @@ import darkStyles from './Wallet.dark.module.css';
 const Wallet: React.FC = () => {
   const { theme } = useTheme();
   const { analytics, transactions, loading, error } = useFreelancerData();
+  const toaster = useToaster();
   
   const styles = useMemo(() => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
@@ -38,6 +43,11 @@ const Wallet: React.FC = () => {
   const [page, setPage] = usePersistedState<number>('freelancer:wallet:page', 1);
   const [uiLoading, setUiLoading] = useState(false);
   const [density, setDensity] = usePersistedState<Density>('freelancer:wallet:density', 'comfortable');
+  const listRef = useRef<HTMLDivElement>(null);
+  const itemHeight = density === 'compact' ? 48 : 56;
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState<string>('');
+  const [withdrawError, setWithdrawError] = useState<string>('');
 
   interface TxRow {
     id: string;
@@ -112,6 +122,52 @@ const Wallet: React.FC = () => {
     exportCSV(header, rows, 'transactions');
   };
 
+  const onExport = (format: 'csv' | 'xlsx' | 'pdf') => {
+    const header = ['Type', 'Amount', 'Date', 'Description'];
+    const rows = sorted.map(tx => [tx.type, tx.amount, tx.date, tx.description]);
+    exportData(format, header, rows, 'transactions');
+  };
+
+  const openWithdraw = () => {
+    setWithdrawAmount('');
+    setWithdrawError('');
+    setWithdrawOpen(true);
+  };
+
+  const onWithdrawSubmit = async () => {
+    const amt = parseFloat(withdrawAmount);
+    if (Number.isNaN(amt) || amt <= 0) {
+      setWithdrawError('Enter a valid amount greater than 0.');
+      return;
+    }
+    if (amt > balance) {
+      setWithdrawError('Amount exceeds available balance.');
+      return;
+    }
+    setWithdrawError('');
+    setUiLoading(true);
+    try {
+      // Simulate processing delay for UI feedback
+      await new Promise(r => setTimeout(r, 900));
+      toaster.notify({
+        title: 'Withdrawal requested',
+        description: `Withdrawal of $${amt.toLocaleString()} requested successfully.`,
+        variant: 'success',
+        duration: 4000,
+      });
+      setWithdrawOpen(false);
+    } catch (e) {
+      toaster.notify({
+        title: 'Withdrawal failed',
+        description: 'Failed to submit withdrawal. Please try again.',
+        variant: 'danger',
+        duration: 5000,
+      });
+    } finally {
+      setUiLoading(false);
+    }
+  };
+
   const sortOptions: SortOption[] = [
     { value: 'date:desc', label: 'Newest' },
     { value: 'date:asc', label: 'Oldest' },
@@ -135,7 +191,16 @@ const Wallet: React.FC = () => {
         <div className={styles.balanceCard}>
           <h2 className={styles.cardTitle}>Available Balance</h2>
           <p className={styles.balanceAmount}>${balance.toLocaleString()}</p>
-          <Button variant="primary" size="large" disabled={balance <= 0} aria-disabled={balance <= 0}>Withdraw Funds</Button>
+          <Button
+            variant="primary"
+            size="large"
+            disabled={balance <= 0}
+            aria-disabled={balance <= 0}
+            title={balance <= 0 ? 'No available balance to withdraw' : 'Withdraw funds to your account'}
+            onClick={openWithdraw}
+          >
+            Withdraw Funds
+          </Button>
         </div>
 
         <section className={styles.transactionsCard}>
@@ -151,27 +216,52 @@ const Wallet: React.FC = () => {
             pageSize={pageSize}
             onPageSizeChange={(sz) => { setPageSize(sz); setPage(1); }}
             sortOptions={sortOptions}
-            onExportCSV={onExportCSV}
-            exportLabel="Export CSV"
+            onExport={onExport}
+            exportLabel="Export"
             aria-label="Transactions filters and actions"
+            searchPlaceholder="Search transactions"
+            searchTitle="Search transactions"
+            sortTitle="Sort transactions by"
+            pageSizeTitle="Transactions per page"
+            exportFormatTitle="Export transactions as"
           />
+          <span className={styles.srOnly} aria-live="polite">
+            Filters updated. {q ? `Query: ${q}. ` : ''}Sort: {sortKey} {sortDir}. Page size: {pageSize}.
+          </span>
 
           <div className={styles.extrasRow} role="group" aria-label="View options">
             <DensityToggle value={density} onChange={setDensity} />
+            <SavedViewsMenu
+              storageKey="freelancer:wallet:savedViews"
+              buildPayload={() => ({ q, sortKey, sortDir, pageSize, density })}
+              onApply={(p: { q: string; sortKey: typeof sortKey; sortDir: typeof sortDir; pageSize: number; density: typeof density; }) => {
+                setQ(p.q ?? '');
+                setSortKey(p.sortKey ?? 'date');
+                setSortDir(p.sortDir ?? 'desc');
+                setPageSize(p.pageSize ?? 10);
+                setDensity(p.density ?? 'comfortable');
+                setPage(1);
+              }}
+              aria-label="Wallet saved views"
+            />
+            <span className={styles.srOnly} aria-live="polite">Showing {sorted.length} transactions</span>
           </div>
 
-          <div className={styles.transactionList} data-density={density}>
+          <div className={styles.transactionList} data-density={density} ref={listRef}>
             {uiLoading ? (
               <TableSkeleton rows={Math.min(pageSize, 6)} cols={3} dense={density==='compact'} />
+            ) : sorted.length === 0 && !loading ? (
+              <div className={styles.emptyState} role="status" aria-live="polite">No transactions found.</div>
             ) : (
-              <>
-                {paged.map((tx) => (
+              <VirtualList
+                items={paged}
+                itemHeight={itemHeight}
+                overscan={6}
+                containerRef={listRef}
+                renderItem={(tx) => (
                   <TransactionRow key={tx.id} {...tx} />
-                ))}
-                {sorted.length === 0 && !loading && (
-                  <div className={styles.emptyState} role="status" aria-live="polite">No transactions found.</div>
                 )}
-              </>
+              />
             )}
           </div>
 
@@ -184,8 +274,53 @@ const Wallet: React.FC = () => {
               onNext={() => setPage(p => Math.min(totalPages, p + 1))}
             />
           )}
+          {sorted.length > 0 && (
+            <span className={styles.srOnly} aria-live="polite">
+              Page {pageSafe} of {totalPages}. {sorted.length} transaction{sorted.length === 1 ? '' : 's'}.
+            </span>
+          )}
         </section>
       </div>
+
+      <Modal
+        isOpen={withdrawOpen}
+        onClose={() => setWithdrawOpen(false)}
+        title="Withdraw Funds"
+        size="small"
+      >
+        <form
+          onSubmit={(e) => { e.preventDefault(); onWithdrawSubmit(); }}
+          aria-label="Withdraw funds form"
+        >
+          <div className={styles.modalGrid}>
+            <label htmlFor="withdraw-amount" className={styles.formLabel}>
+              Amount (USD)
+            </label>
+            <input
+              id="withdraw-amount"
+              name="amount"
+              type="number"
+              min={0}
+              step="0.01"
+              inputMode="decimal"
+              placeholder="e.g. 250.00"
+              className={styles.input}
+              value={withdrawAmount}
+              onChange={(e) => setWithdrawAmount(e.target.value)}
+              aria-describedby={withdrawError ? 'withdraw-error' : undefined}
+            />
+            {withdrawError && (
+              <div id="withdraw-error" role="alert" className={styles.error}>
+                {withdrawError}
+              </div>
+            )}
+            <div className={styles.modalActions}>
+              <Button type="button" variant="secondary" onClick={() => setWithdrawOpen(false)}>Cancel</Button>
+              <Button type="submit" variant="primary" isLoading={uiLoading} aria-busy={uiLoading}>Confirm Withdraw</Button>
+            </div>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

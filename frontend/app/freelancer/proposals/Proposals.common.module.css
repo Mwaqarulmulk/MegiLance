@@ -14,10 +14,19 @@
 /* Extras row for column visibility and density toggle */
 .extrasRow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 
-.tableWrap { overflow-x: auto; border-radius: 12px; }
+/* Status chip filters */
+.statusFilters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-right: auto; }
+
+.tableWrap { overflow: auto; border-radius: 12px; max-height: 520px; }
 .table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 .table th, .table td { padding: 12px 14px; text-align: left; white-space: nowrap; }
-.table thead th { font-weight: 600; font-size: 0.9rem; }
+.table tbody tr { transition: background-color 140ms ease; }
+.table tbody tr:hover { background-color: var(--muted); }
+.table tbody tr:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.table thead th { font-weight: 600; font-size: 0.9rem; position: sticky; top: 0; z-index: 1; }
+/* Provide a solid surface for sticky headers; actual colors come from themed files */
+.table thead tr { background: inherit; }
+.table thead th { background: inherit; border-bottom: 1px solid; transition: border-color 140ms ease, background-color 140ms ease; }
 
 /* Density support */
 .table[data-density="compact"] th,
@@ -31,3 +40,10 @@
 .paginationInfo { color: var(--muted-foreground); font-size: 0.875rem; }
 
 .status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+
+/* Row actions */
+.rowActions { display: flex; align-items: center; gap: 8px; }
+
+/* Modal copy and actions */
+.modalBodyCopy { padding: 8px 0 12px; }
+.modalActions { display: flex; justify-content: flex-end; gap: 8px; }

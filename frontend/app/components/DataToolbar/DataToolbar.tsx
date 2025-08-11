@@ -1,12 +1,13 @@
 // @AI-HINT: Reusable, theme-aware toolbar for data pages (search, sort, page size, export). Avoid global styles; use per-component CSS modules.
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useId } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import commonStyles from './DataToolbar.common.module.css';
 import lightStyles from './DataToolbar.light.module.css';
 import darkStyles from './DataToolbar.dark.module.css';
+import type { ExportFormat } from '@/app/lib/csv';
 
 export interface SortOption {
   value: string; // e.g. 'date:desc'
@@ -22,9 +23,18 @@ interface DataToolbarProps {
   onPageSizeChange: (val: number) => void;
   sortOptions: SortOption[];
   pageSizeOptions?: number[]; // default [10,20,50]
-  onExportCSV?: () => void;
-  exportLabel?: string;
+  onExportCSV?: () => void; // backward-compatible single CSV export
+  exportLabel?: string; // label for CSV button OR generic export button
+  // New multi-format export API (optional)
+  onExport?: (format: ExportFormat) => void;
+  exportFormats?: ExportFormat[]; // defaults to ['csv','xlsx','pdf'] when onExport is provided
+  exportDefaultFormat?: ExportFormat; // default 'csv'
   'aria-label'?: string;
+  searchPlaceholder?: string;
+  searchTitle?: string;
+  sortTitle?: string;
+  pageSizeTitle?: string;
+  exportFormatTitle?: string;
 }
 
 const DataToolbar: React.FC<DataToolbarProps> = ({
@@ -37,8 +47,16 @@ const DataToolbar: React.FC<DataToolbarProps> = ({
   sortOptions,
   pageSizeOptions = [10, 20, 50],
   onExportCSV,
-  exportLabel = 'Export CSV',
+  exportLabel = 'Export',
+  onExport,
+  exportFormats,
+  exportDefaultFormat = 'csv',
   'aria-label': ariaLabel = 'Data filters and actions',
+  searchPlaceholder = 'Search',
+  searchTitle = 'Search',
+  sortTitle = 'Sort by',
+  pageSizeTitle = 'Results per page',
+  exportFormatTitle = 'Export format',
 }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => {
@@ -46,42 +64,76 @@ const DataToolbar: React.FC<DataToolbarProps> = ({
     return { ...commonStyles, ...themeStyles };
   }, [theme]);
 
+  const [fmt, setFmt] = useState<ExportFormat>(exportDefaultFormat);
+  const uid = useId();
+  const idQ = `${uid}-q`;
+  const idSort = `${uid}-sort`;
+  const idExportFmt = `${uid}-export-format`;
+  const idPageSize = `${uid}-page-size`;
+
   return (
-    <div className={styles.toolbar} role="group" aria-label={ariaLabel}>
-      <label htmlFor="data-toolbar-q" className={styles.srOnly}>Search</label>
+    <div className={styles.toolbar} role="group" aria-label={ariaLabel} title={ariaLabel}>
+      <label htmlFor={idQ} className={styles.srOnly}>Search</label>
       <input
-        id="data-toolbar-q"
+        id={idQ}
         className={styles.input}
         type="search"
-        placeholder="Search"
+        placeholder={searchPlaceholder}
+        title={searchTitle}
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
       />
 
-      <label htmlFor="data-toolbar-sort" className={styles.srOnly}>Sort</label>
+      <label htmlFor={idSort} className={styles.srOnly}>Sort</label>
       <select
-        id="data-toolbar-sort"
+        id={idSort}
         className={styles.select}
         value={sortValue}
         onChange={(e) => onSortChange(e.target.value)}
         aria-label="Sort"
+        title={sortTitle}
       >
         {sortOptions.map(opt => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
 
-      {onExportCSV && (
+      {onExport && (
+        <>
+          <label htmlFor={idExportFmt} className={styles.srOnly}>Export format</label>
+          <select
+            id={idExportFmt}
+            className={styles.select}
+            value={fmt}
+            onChange={(e) => setFmt(e.target.value as ExportFormat)}
+            aria-label="Export format"
+            title={exportFormatTitle}
+          >
+            {(exportFormats ?? ['csv','xlsx','pdf']).map(f => (
+              <option key={f} value={f}>{f.toUpperCase()}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={() => onExport(fmt)}
+            aria-label={`${exportLabel} ${fmt.toUpperCase()}`}
+            title={`${exportLabel} as ${fmt.toUpperCase()}`}
+          >{exportLabel}</button>
+        </>
+      )}
+      {!onExport && onExportCSV && (
         <button type="button" className={styles.button} onClick={onExportCSV} aria-label={exportLabel}>{exportLabel}</button>
       )}
 
-      <label htmlFor="data-toolbar-page-size" className={styles.srOnly}>Results per page</label>
+      <label htmlFor={idPageSize} className={styles.srOnly}>Results per page</label>
       <select
-        id="data-toolbar-page-size"
+        id={idPageSize}
         className={styles.select}
         value={pageSize}
         onChange={(e) => onPageSizeChange(Number(e.target.value))}
         aria-label="Results per page"
+        title={pageSizeTitle}
       >
         {pageSizeOptions.map(sz => <option key={sz} value={sz}>{sz}/page</option>)}
       </select>

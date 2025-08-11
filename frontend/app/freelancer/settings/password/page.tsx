@@ -49,7 +49,7 @@ const PasswordSettingsPage = () => {
     >
       <form onSubmit={onSubmit} noValidate>
         {status && (
-          <div role="status" className="pb-4 text-sm text-muted-foreground">{status}</div>
+          <div role="status" aria-live="polite" className="pb-4 text-sm text-muted-foreground">{status}</div>
         )}
         <div className="space-y-4">
           <Input
@@ -99,7 +99,7 @@ const PasswordSettingsPage = () => {
           )}
         </div>
         <div className="pt-6">
-          <Button variant="primary" type="submit">Change Password</Button>
+          <Button variant="primary" type="submit" title="Change password">Change Password</Button>
         </div>
       </form>
     </SettingsSection>

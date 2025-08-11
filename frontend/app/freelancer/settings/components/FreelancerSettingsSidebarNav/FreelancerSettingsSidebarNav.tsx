@@ -35,7 +35,7 @@ const FreelancerSettingsSidebarNav: React.FC<FreelancerSettingsSidebarNavProps> 
   };
 
   return (
-    <nav className={cn(styles.nav)}>
+    <nav className={cn(styles.nav)} aria-label="Settings navigation">
       {items.map((item) => (
         <Link
           key={item.href}
@@ -44,6 +44,8 @@ const FreelancerSettingsSidebarNav: React.FC<FreelancerSettingsSidebarNavProps> 
             styles.link,
             getIsActive(item.href) ? styles.active : ''
           )}
+          title={item.title}
+          aria-current={getIsActive(item.href) ? 'page' : undefined}
         >
           {item.title}
         </Link>

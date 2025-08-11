@@ -80,9 +80,9 @@ const Settings: React.FC = () => {
             <p className={cn(common.subtitle, themed.subtitle)}>Manage your account details, security, notifications, and billing.</p>
           </div>
           <div className={common.actions}>
-            <div role="status" aria-live="polite" className={common.status}>{status}</div>
-            <button className={cn(common.button, 'secondary', themed.button, 'secondary')} type="button" onClick={resetDraft}>Discard</button>
-            <button className={cn(common.button, 'primary', themed.button, 'primary')} type="button" onClick={saveDraft}>Save Changes</button>
+            <div role="status" aria-live="assertive" className={common.status}>{status}</div>
+            <button title="Discard all unsaved changes" className={cn(common.button, 'secondary', themed.button, 'secondary')} type="button" onClick={resetDraft}>Discard</button>
+            <button title="Save all changes" className={cn(common.button, 'primary', themed.button, 'primary')} type="button" onClick={saveDraft}>Save Changes</button>
           </div>
         </div>
 
@@ -92,7 +92,7 @@ const Settings: React.FC = () => {
           <div className={common.row}>
             <div>
               <label htmlFor="name" className={cn(common.label, themed.label)}>Organization Name</label>
-              <input id="name" className={cn(common.input, themed.input)} value={name} onChange={(e) => setName(e.target.value)} aria-invalid={!name.trim() || undefined} aria-describedby="name-help name-count" placeholder="e.g., Acme Corp" />
+              <input id="name" className={cn(common.input, themed.input)} value={name} onChange={(e) => setName(e.target.value)} title="Your company or display name" aria-invalid={!name.trim()} aria-describedby="name-help name-count" placeholder="e.g., Acme Corp" />
               <div className={common.counters}>
                 <div id="name-help" className={cn(common.help)}>Displayed on proposals and invoices.</div>
                 <div id="name-count" className={common.count}>{name.trim().length} chars</div>
@@ -100,15 +100,15 @@ const Settings: React.FC = () => {
             </div>
             <div>
               <label htmlFor="email" className={cn(common.label, themed.label)}>Contact Email</label>
-              <input id="email" type="email" className={cn(common.input, themed.input)} value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || undefined} aria-describedby="email-help" placeholder="name@company.com" />
+              <input id="email" type="email" className={cn(common.input, themed.input)} value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)} title="Primary contact email for your account" aria-describedby="email-help" placeholder="name@company.com" />
               <div id="email-help" className={cn(common.help)}>Used for notifications and billing receipts.</div>
             </div>
             <div>
               <label htmlFor="bio" className={cn(common.label, themed.label)}>About / Notes</label>
-              <textarea id="bio" className={cn(common.textarea, themed.textarea)} value={bio} onChange={(e) => setBio(e.target.value)} aria-describedby="bio-count" placeholder="Describe your team, goals, preferences…" />
+              <textarea id="bio" className={cn(common.textarea, themed.textarea)} value={bio} onChange={(e) => setBio(e.target.value)} maxLength={200} aria-describedby="bio-help" />
               <div className={common.counters}>
-                <div className={common.help}>Markdown supported in future.</div>
-                <div id="bio-count" className={common.count}>{bio.trim().length} chars</div>
+                <div id="bio-help" className={cn(common.help)}>A brief description of your company.</div>
+                <div className={common.count} aria-live="polite">{bio.length} / 200</div>
               </div>
             </div>
           </div>
@@ -118,21 +118,15 @@ const Settings: React.FC = () => {
         <section ref={securityRef} className={cn(common.section, themed.section, securityVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="security-title">
           <h2 id="security-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Security</h2>
           <div className={common.row}>
-            <div className={common.switch}>
-              <span className={cn(common.label, themed.label)}>Two-Factor Authentication</span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={twoFA || undefined}
-                className={cn(common.switchTrack, twoFA && common.switchOn, themed.switchTrack, twoFA && themed.switchOn)}
-                onClick={() => setTwoFA((v) => !v)}
-              >
-                <span aria-hidden="true" className={cn(common.switchThumb, themed.switchThumb)} />
-                <span className={common.srOnly}>Toggle two-factor authentication</span>
-              </button>
-            </div>
+            <label className={cn(common.switch)} title="Enhance account security with two-factor authentication">
+              <input type="checkbox" className={common.srOnly} checked={twoFA} onChange={(e) => setTwoFA(e.target.checked)} />
+              <span className={cn(common.switchTrack, themed.switchTrack, twoFA && common.switchOn, twoFA && themed.switchOn)} aria-hidden="true">
+                <span className={cn(common.switchThumb, themed.switchThumb)} />
+              </span>
+              <span>Enable Two-Factor Authentication</span>
+            </label>
             <div className={common.actions}>
-              <button className={cn(common.button, 'secondary', themed.button, 'secondary')} type="button" onClick={() => alert('Password reset link sent')}>Send Password Reset</button>
+              <button title="Send a password reset link to your email" className={cn(common.button, 'secondary', themed.button, 'secondary')} type="button" onClick={() => alert('Password reset link sent')}>Send Password Reset</button>
             </div>
           </div>
         </section>
@@ -141,16 +135,16 @@ const Settings: React.FC = () => {
         <section ref={notifRef} className={cn(common.section, themed.section, notifVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="notif-title">
           <h2 id="notif-title" className={cn(common.sectionTitle, themed.sectionTitle)}>Notifications</h2>
           <div className={common.row}>
-            <label className={cn(common.switch)}>
-              <input type="checkbox" className={common.srOnly} checked={notifyEmail} onChange={(e) => setNotifyEmail(e.target.checked)} aria-checked={notifyEmail || undefined} />
+            <label className={cn(common.switch)} title="Receive general email updates and newsletters">
+              <input type="checkbox" className={common.srOnly} checked={notifyEmail} onChange={(e) => setNotifyEmail(e.target.checked)} />
               <span className={cn(common.switchTrack, themed.switchTrack, notifyEmail && common.switchOn, notifyEmail && themed.switchOn)} aria-hidden="true">
                 <span className={cn(common.switchThumb, themed.switchThumb)} />
               </span>
               <span>Email Updates</span>
             </label>
 
-            <label className={cn(common.switch)}>
-              <input type="checkbox" className={common.srOnly} checked={notifyProduct} onChange={(e) => setNotifyProduct(e.target.checked)} aria-checked={notifyProduct || undefined} />
+            <label className={cn(common.switch)} title="Receive important announcements about new product features">
+              <input type="checkbox" className={common.srOnly} checked={notifyProduct} onChange={(e) => setNotifyProduct(e.target.checked)} />
               <span className={cn(common.switchTrack, themed.switchTrack, notifyProduct && common.switchOn, notifyProduct && themed.switchOn)} aria-hidden="true">
                 <span className={cn(common.switchThumb, themed.switchThumb)} />
               </span>
@@ -165,7 +159,7 @@ const Settings: React.FC = () => {
           <div className={common.row}>
             <div>
               <label htmlFor="country" className={cn(common.label, themed.label)}>Country</label>
-              <select id="country" className={cn(common.select, themed.select)} defaultValue="US">
+              <select id="country" className={cn(common.select, themed.select)} defaultValue="US" title="Select your billing country">
                 <option value="US">United States</option>
                 <option value="GB">United Kingdom</option>
                 <option value="CA">Canada</option>
@@ -174,12 +168,12 @@ const Settings: React.FC = () => {
             </div>
             <div>
               <label htmlFor="taxId" className={cn(common.label, themed.label)}>Tax ID (optional)</label>
-              <input id="taxId" className={cn(common.input, themed.input)} placeholder="VAT / GST / EIN" />
-              <div className={cn(common.help)}>Appears on invoices and receipts.</div>
+              <input id="taxId" className={cn(common.input, themed.input)} placeholder="VAT / GST / EIN" aria-describedby="tax-help" title="Enter your Tax ID (e.g., VAT, GST, EIN)" />
+              <div id="tax-help" className={cn(common.help)}>Appears on invoices and receipts.</div>
             </div>
             <div className={common.actions}>
-              <button className={cn(common.button, 'secondary', themed.button, 'secondary')} type="button" onClick={() => alert('Invoice emailed')}>Email Last Invoice</button>
-              <button className={cn(common.button, 'primary', themed.button, 'primary')} type="button" onClick={() => alert('Payment method updated')}>Update Payment Method</button>
+              <button title="Have your last invoice sent to your primary email" className={cn(common.button, 'secondary', themed.button, 'secondary')} type="button" onClick={() => alert('Invoice emailed')}>Email Last Invoice</button>
+              <button title="Update your credit card or other payment method" className={cn(common.button, 'primary', themed.button, 'primary')} type="button" onClick={() => alert('Payment method updated')}>Update Payment Method</button>
             </div>
           </div>
         </section>

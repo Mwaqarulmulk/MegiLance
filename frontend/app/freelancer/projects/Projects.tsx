@@ -81,14 +81,14 @@ const Projects: React.FC = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <header className={styles.header}>
+      <header className={styles.header} role="region" aria-label="Projects header" title="Projects header">
         <h1 className={styles.title}>Find Your Next Project</h1>
         <p className={styles.subtitle}>
           Browse thousands of jobs and find the perfect match for your skills.
         </p>
       </header>
 
-      {loading && <div className={styles.loading} aria-busy={loading || undefined}>Loading projects...</div>}
+      {loading && <div className={styles.loading} aria-busy="true">Loading projects...</div>}
       {error && <div className={styles.error}>Failed to load projects.</div>}
 
       <div className={styles.searchFilterBar}>
@@ -98,11 +98,12 @@ const Projects: React.FC = () => {
             id="proj-search"
             type="text"
             placeholder="Search by keyword, skill, or company..."
+            title="Search projects"
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
           />
         </div>
-        <div className={styles.toolbar} role="group" aria-label="Sorting and actions">
+        <div className={styles.toolbar} role="group" aria-label="Sorting and actions" title="Sorting and actions">
           <label htmlFor="sort" className={styles.srOnly}>Sort by</label>
           <select
             id="sort"
@@ -115,6 +116,7 @@ const Projects: React.FC = () => {
               setPage(1);
             }}
             aria-label="Sort projects"
+            title="Sort projects"
           >
             <option value="postedTime:desc">Newest</option>
             <option value="postedTime:asc">Oldest</option>
@@ -123,7 +125,7 @@ const Projects: React.FC = () => {
             <option value="clientName:asc">Client A–Z</option>
             <option value="clientName:desc">Client Z–A</option>
           </select>
-          <Button variant="secondary" onClick={onExportCSV} aria-label="Export current results to CSV">Export CSV</Button>
+          <Button variant="secondary" onClick={onExportCSV} aria-label="Export current results to CSV" title="Export current results to CSV">Export CSV</Button>
           <label htmlFor="pageSize" className={styles.srOnly}>Results per page</label>
           <select
             id="pageSize"
@@ -131,13 +133,19 @@ const Projects: React.FC = () => {
             value={pageSize}
             onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
             aria-label="Results per page"
+            title="Results per page"
           >
             {[12, 24, 48].map(sz => <option key={sz} value={sz}>{sz}/page</option>)}
           </select>
         </div>
+        <span className={styles.srOnly} aria-live="polite">
+          {`${sortedProjects.length} result${sortedProjects.length === 1 ? '' : 's'}. `}
+          {searchQuery ? `Filter: "${searchQuery}". ` : ''}
+          {`Sort: ${sortKey} ${sortDir}. Page size: ${pageSize}.`}
+        </span>
       </div>
 
-      <div className={styles.projectGrid}>
+      <div className={styles.projectGrid} role="region" aria-label="Project results" title="Project results">
         {pagedProjects.map((project) => (
           <ProjectCard key={project.id} {...project} />
         ))}
@@ -149,11 +157,12 @@ const Projects: React.FC = () => {
       </div>
 
       {sortedProjects.length > 0 && (
-        <div className={styles.paginationBar} role="navigation" aria-label="Pagination">
+        <div className={styles.paginationBar} role="navigation" aria-label="Pagination" title="Pagination">
           <Button
             variant="secondary"
             onClick={() => setPage(p => Math.max(1, p - 1))}
             aria-label="Previous page"
+            title="Previous page"
             disabled={pageSafe === 1}
           >
             Prev
@@ -163,6 +172,7 @@ const Projects: React.FC = () => {
             variant="primary"
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             aria-label="Next page"
+            title="Next page"
             disabled={pageSafe === totalPages}
           >
             Next

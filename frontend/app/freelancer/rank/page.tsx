@@ -53,15 +53,18 @@ const RankPage: React.FC = () => {
       </header>
 
       <main className={cn(styles.mainGrid)}>
+        <span className={cn(styles.srOnly)} aria-live="polite">
+          {`Overall rank ${rankData.overallRank}. Rank score ${rankData.rankScore} out of 100.`}
+        </span>
         <aside>
-          <div className={cn(styles.rankDisplayCard)}>
+          <div className={cn(styles.rankDisplayCard)} role="region" aria-label="Your current rank" title="Your current rank">
             <h2>Your Current Rank</h2>
             <p className={cn(styles.scoreText)}>{rankData.overallRank}</p>
             <RankGauge score={rankData.rankScore} />
           </div>
         </aside>
 
-        <section className={cn(styles.factorsContainer)}>
+        <section className={cn(styles.factorsContainer)} role="region" aria-label="Rank factors" title="Rank factors">
           <h2>How Your Rank is Calculated</h2>
           <div className={cn(styles.factorsGrid)}>
             {rankData.factors.map((factor, index) => (

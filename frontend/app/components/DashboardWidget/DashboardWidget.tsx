@@ -1,5 +1,5 @@
 // @AI-HINT: This is the refactored DashboardWidget, a premium, theme-aware component for displaying key metrics. It uses CSS modules and a useMemo hook for efficient styling.
-import React, { useMemo } from 'react';
+import React, { useMemo, useId } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
@@ -23,19 +23,36 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
   children
 }) => {
   const { theme } = useTheme();
+  const titleId = useId();
 
   const styles = useMemo(() => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
     return { ...commonStyles, ...themeStyles };
   }, [theme]);
 
+  const isClickable = !!onClick;
+
+  const interactiveProps = isClickable ? {
+    role: 'button',
+    tabIndex: 0,
+    onClick: onClick,
+    onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onClick();
+      }
+    },
+    title: `View details for ${title}`,
+  } : {};
+
   return (
-    <div 
-      className={cn(styles.widget, onClick && styles.clickable)}
-      onClick={onClick}
+    <section 
+      className={cn(styles.widget, isClickable && styles.clickable)}
+      aria-labelledby={titleId}
+      {...interactiveProps}
     >
       <div className={styles.header}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 id={titleId} className={styles.title}>{title}</h3>
       </div>
 
       {children ? (
@@ -45,7 +62,7 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       )}
 
       {footer && <div className={styles.footer}>{footer}</div>}
-    </div>
+    </section>
   );
 };
 

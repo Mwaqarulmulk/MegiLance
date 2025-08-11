@@ -28,23 +28,27 @@ const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({ id, title, descri
   }, [theme]);
 
   return (
-    <div className={cn(styles.container)}>
+    <div
+      className={cn(styles.container)}
+      role="region"
+      aria-labelledby={`portfolio-item-title-${id}`}
+    >
       <div className={styles.imageWrapper}>
         <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" className={styles.image} />
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 id={`portfolio-item-title-${id}`} className={styles.title}>{title}</h3>
         <p className={styles.description}>{description}</p>
       </div>
       <div className={styles.footer}>
         {projectUrl ? (
-          <a href={projectUrl} target="_blank" rel="noopener noreferrer">
+          <a href={projectUrl} target="_blank" rel="noopener noreferrer" aria-label={`View project ${title} (opens in a new tab)`} title={`View project ${title} (opens in a new tab)`}>
             <Button variant="secondary">View Project</Button>
           </a>
         ) : <div />} 
         <div className={styles.actions}>
-          <Button variant="secondary" size="small">Edit</Button>
-          <Button variant="danger" size="small" onClick={() => onDelete(id)}>Delete</Button>
+          <Button variant="secondary" size="small" aria-label={`Edit ${title}`} title={`Edit ${title}`}>Edit</Button>
+          <Button variant="danger" size="small" onClick={() => onDelete(id)} aria-label={`Delete ${title}`} title={`Delete ${title}`}>Delete</Button>
         </div>
       </div>
     </div>
@@ -52,3 +56,5 @@ const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({ id, title, descri
 };
 
 export default PortfolioItemCard;
+
+

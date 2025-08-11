@@ -9,6 +9,11 @@ import { useAdminData } from '@/hooks/useAdmin';
 import common from './AdminDashboard.common.module.css';
 import light from './AdminDashboard.light.module.css';
 import dark from './AdminDashboard.dark.module.css';
+import UserSearchTable from '@/app/components/Admin/UserSearchTable/UserSearchTable';
+import ReviewSentimentDashboard from '@/app/components/Admin/ReviewSentimentDashboard/ReviewSentimentDashboard';
+import JobModerationQueue from '@/app/components/Admin/JobModerationQueue/JobModerationQueue';
+import FlaggedReviews from '@/app/components/Admin/FlaggedReviews/FlaggedReviews';
+import FlaggedFraudList from '@/app/components/Admin/FlaggedFraudList/FlaggedFraudList';
 
 interface KPI { id: string; label: string; value: string; trend: string; }
 interface UserRow { id: string; name: string; email: string; role: 'Admin' | 'Client' | 'Freelancer'; status: 'Active' | 'Suspended'; joined: string; }
@@ -65,16 +70,17 @@ const AdminDashboard: React.FC = () => {
             <p className={cn(common.subtitle, themed.subtitle)}>Global overview of platform metrics, users, and operations.</p>
           </div>
           <div className={common.controls} aria-label="Admin dashboard controls">
-            <label className={common.srOnly} htmlFor="role">Filter by role</label>
-            <select id="role" className={cn(common.select, themed.select)} value={role} onChange={(e) => setRole(e.target.value as any)}>
+            <label className={common.srOnly} htmlFor="role-filter">Filter by role</label>
+            <select id="role-filter" className={cn(common.select, themed.select)} value={role} onChange={(e) => setRole(e.target.value as any)} title="Filter users by role">
               {['All','Admin','Client','Freelancer'].map(r => <option key={r} value={r}>{r}</option>)}
             </select>
-            <button type="button" className={cn(common.button, themed.button)}>Create Announcement</button>
-            <button type="button" className={cn(common.button, themed.button, 'secondary')}>Run Maintenance</button>
+            <button type="button" className={cn(common.button, themed.button)} title="Create a new platform-wide announcement">Create Announcement</button>
+            <button type="button" className={cn(common.button, themed.button, 'secondary')} title="Run system maintenance tasks">Run Maintenance</button>
           </div>
         </div>
 
-        <section ref={kpiRef} className={cn(common.kpis, kpisVisible ? common.isVisible : common.isNotVisible)} aria-label="Key performance indicators">
+        <section ref={kpiRef} className={cn(common.kpis, kpisVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="kpi-section-title">
+          <h2 id="kpi-section-title" className={common.srOnly}>Key Performance Indicators</h2>
           {loading && (
             <div className={common.skeletonRow} aria-busy="true" />
           )}
@@ -87,36 +93,19 @@ const AdminDashboard: React.FC = () => {
           ))}
         </section>
 
-        <section ref={gridRef} className={cn(common.grid, gridVisible ? common.isVisible : common.isNotVisible)}>
-          <div className={cn(common.card, themed.card)} aria-label="Users table">
-            <div className={cn(common.cardTitle, themed.cardTitle)}>Recent Users</div>
-            {error && <div className={common.error}>Failed to load users.</div>}
-            <table className={common.table}>
-              <thead>
-                <tr>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Name</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Email</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Role</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Status</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Joined</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map(u => (
-                  <tr key={u.id}>
-                    <td className={themed.td + ' ' + common.td}>{u.name}</td>
-                    <td className={themed.td + ' ' + common.td}>{u.email}</td>
-                    <td className={themed.td + ' ' + common.td}>{u.role}</td>
-                    <td className={themed.td + ' ' + common.td}>{u.status}</td>
-                    <td className={themed.td + ' ' + common.td}>{u.joined}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div aria-live="polite" className={common.srOnly}>
+          {role !== 'All' && `Showing ${filteredUsers.length} ${role} users.`}
+        </div>
+        <section ref={gridRef} className={cn(common.grid, gridVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="main-content-title">
+          <h2 id="main-content-title" className={common.srOnly}>Main Content</h2>
+          <UserSearchTable />
+          <ReviewSentimentDashboard />
+          <JobModerationQueue />
+          <FlaggedReviews />
+          <FlaggedFraudList />
 
-          <div className={cn(common.card, themed.card)} aria-label="Activity chart">
-            <div className={cn(common.cardTitle, themed.cardTitle)}>Activity</div>
+          <div className={cn(common.card, themed.card)} aria-labelledby="activity-chart-title">
+            <div id="activity-chart-title" className={cn(common.cardTitle, themed.cardTitle)}>Activity</div>
             {/* SVG bar chart to avoid inline styles */}
             <svg width="100%" height="140" viewBox="0 0 200 140" preserveAspectRatio="none" role="img" aria-label="Weekly activity bars">
               <desc>Bar chart of weekly activity counts</desc>

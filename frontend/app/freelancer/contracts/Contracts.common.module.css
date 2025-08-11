@@ -26,8 +26,9 @@
 
 .tableContainer {
   border-radius: var(--border-radius-lg);
-  overflow: hidden;
+  overflow: auto;
   border: 1px solid;
+  max-height: 520px;
 }
 
 .table {
@@ -48,6 +49,15 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* Sticky header */
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.table thead tr { background: inherit; }
+.table thead th { background: inherit; border-bottom: 1px solid; }
 
 .table tbody tr {
   border-top: 1px solid;
@@ -159,6 +169,32 @@
   align-items: center;
   gap: var(--space-3);
   margin: 0 0 var(--space-3);
+}
+
+/* Status chip filters */
+.statusFilters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-right: auto;
+}
+
+/* Row actions */
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Modal body and actions */
+.modalBodyCopy {
+  padding: 8px 0 12px;
+}
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 /* Selection checkbox cell */

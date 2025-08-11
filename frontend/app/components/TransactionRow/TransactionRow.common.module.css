@@ -7,9 +7,12 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--border-radius-md);
   border: 1px solid;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
   font-family: var(--font-inter);
 }
+
+.row:hover { background: var(--color-bg-muted); }
+.row:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 
 .date {
   font-size: var(--font-size-sm);

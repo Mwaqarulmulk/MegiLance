@@ -3,7 +3,8 @@
 .page { padding: var(--spacing-8); }
 .container { max-width: 1100px; margin: 0 auto; display: grid; gap: var(--spacing-6); }
 
-.header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
+.header { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-2); }
+.controlsWrapper { display: grid; gap: var(--spacing-3); }
 .title { font-family: var(--font-family-headings); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: var(--font-weight-bold); }
 .subtitle { font-size: var(--font-size-sm); opacity: .9; }
 
@@ -21,7 +22,7 @@
 .th, .td { text-align: left; padding: 12px 14px; border-bottom: 1px solid transparent; white-space: nowrap; }
 .tr:hover { filter: brightness(1.02); }
 .status { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; }
-.toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-3); flex-wrap: wrap; margin-top: 8px; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-3); flex-wrap: wrap; }
 
 .isNotVisible { opacity: 0; transform: translateY(16px); }
 .isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }

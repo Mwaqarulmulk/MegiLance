@@ -1,10 +1,13 @@
 /* @AI-HINT: Common styles for ColumnVisibilityMenu */
-.menu { display: inline-flex; flex-direction: column; gap: 8px; padding: 8px; border-radius: 10px; border: 1px solid transparent; }
+.menu { display: inline-flex; flex-direction: column; gap: 8px; padding: 8px; border-radius: 10px; border: 1px solid transparent; transition: box-shadow 120ms ease, border-color 120ms ease; }
 .menuHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .menuTitle { font-weight: 600; }
 .menuActions { display: flex; gap: 8px; }
-.linkButton { background: transparent; border: none; padding: 0; text-decoration: underline; cursor: pointer; font: inherit; }
+.linkButton { background: transparent; border: none; padding: 0; text-decoration: underline; cursor: pointer; font: inherit; color: inherit; transition: opacity 120ms ease, text-decoration-color 120ms ease; }
+.linkButton:hover { opacity: 0.9; text-decoration-color: var(--primary); }
+.linkButton:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
 .menuList { display: grid; grid-template-columns: repeat(2, minmax(140px, 1fr)); gap: 6px 12px; list-style: none; margin: 0; padding: 0; }
 .menuItem { display: flex; align-items: center; }
-.checkboxLabel { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.checkboxLabel { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 6px; transition: background-color 120ms ease; }
+.checkboxLabel:hover { background-color: var(--muted); }
 .checkbox { width: 16px; height: 16px; }

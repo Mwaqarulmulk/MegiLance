@@ -41,9 +41,9 @@ const Payments: React.FC = () => {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('All');
 
-  const headerRef = useRef<HTMLDivElement | null>(null);
-  const summaryRef = useRef<HTMLDivElement | null>(null);
-  const tableRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const summaryRef = useRef<HTMLElement | null>(null);
+  const tableRef = useRef<HTMLElement | null>(null);
 
   const headerVisible = useIntersectionObserver(headerRef, { threshold: 0.1 });
   const summaryVisible = useIntersectionObserver(summaryRef, { threshold: 0.1 });
@@ -97,71 +97,90 @@ const Payments: React.FC = () => {
     return sorted.slice(start, start + pageSize);
   }, [sorted, pageSafe, pageSize]);
 
+  const getSortAria = (key: SortKey): 'ascending' | 'descending' | 'none' => {
+    if (key !== sortKey) return 'none';
+    return sortDir === 'asc' ? 'ascending' : 'descending';
+  };
+
+  const handleSort = (key: SortKey) => {
+    if (key === sortKey) {
+      setSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('desc'); // Default to descending for new columns
+    }
+    setPage(1); // Reset to first page on sort
+  };
+
   React.useEffect(() => { setPage(1); }, [sortKey, sortDir, query, status, pageSize]);
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
+    <main className={cn(common.page, themed.themeWrapper)} role="application">
       <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
+        <section ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="payments-title" role="banner">
+          <div id="payments-title">
             <h1 className={common.title}>Payments</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Review your payment history, filter transactions, and export records.</p>
+            <p className={common.subtitle}>Review your transaction history.</p>
           </div>
-          <div className={common.controls} aria-label="Payment filters">
-            <label className={common.srOnly} htmlFor="q">Search</label>
-            <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search by project, freelancer, or ID…" value={query} onChange={(e) => setQuery(e.target.value)} />
-            <label className={common.srOnly} htmlFor="status">Status</label>
-            <select id="status" className={cn(common.select, themed.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
-              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-          <div className={cn(common.toolbar)}>
+        </section>
+
+        <div className={common.controlsWrapper}>
+          <section aria-labelledby="payments-controls-title" role="form">
+            <h2 id="payments-controls-title" className={common.srOnly}>Payment Controls</h2>
             <div className={common.controls}>
-              <label className={common.srOnly} htmlFor="sort-key">Sort by</label>
-              <select id="sort-key" className={cn(common.select, themed.select)} value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)}>
-                <option value="date">Date</option>
-                <option value="amount">Amount</option>
-                <option value="status">Status</option>
-                <option value="project">Project</option>
-                <option value="freelancer">Freelancer</option>
-                <option value="id">ID</option>
-              </select>
-              <label className={common.srOnly} htmlFor="sort-dir">Sort direction</label>
-              <select id="sort-dir" className={cn(common.select, themed.select)} value={sortDir} onChange={(e) => setSortDir(e.target.value as 'asc'|'desc')}>
-                <option value="asc">Asc</option>
-                <option value="desc">Desc</option>
-              </select>
-              <label className={common.srOnly} htmlFor="page-size">Rows per page</label>
-              <select id="page-size" className={cn(common.select, themed.select)} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+              <input type="search" placeholder="Search..." value={query} onChange={e => setQuery(e.target.value)} className={cn(common.input, themed.input)} title="Search by project, freelancer, or ID" aria-label="Search payments" />
+              <select value={status} onChange={e => setStatus(e.target.value as any)} className={cn(common.select, themed.select)} title="Filter by status" aria-label="Filter by status">
+                {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
-            <div>
-              <button
-                type="button"
-                className={cn(common.button, themed.button)}
-                onClick={() => {
-                  const header = ['ID','Date','Project','Freelancer','Amount','Status'];
-                  const data = sorted.map(p => [p.id, p.date, p.project, p.freelancer, p.amount, p.status]);
-                  const csv = [header, ...data]
-                    .map(r => r.map(val => '"' + String(val).replace(/"/g, '""') + '"').join(','))
-                    .join('\n');
-                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `client_payments_${new Date().toISOString().slice(0,10)}.csv`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >Export CSV</button>
+            <div className={cn(common.toolbar)}>
+              <div className={common.controls}>
+                <label className={common.srOnly} htmlFor="sort-key">Sort by</label>
+                <select id="sort-key" className={cn(common.select, themed.select)} value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)} title="Sort by" aria-label="Sort by">
+                  <option value="date">Date</option>
+                  <option value="project">Project</option>
+                  <option value="freelancer">Freelancer</option>
+                  <option value="amount">Amount</option>
+                  <option value="status">Status</option>
+                </select>
+                <button type="button" onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')} className={cn(common.button, themed.button)} title={`Sort ${sortDir === 'asc' ? 'descending' : 'ascending'}`} aria-label={`Sort ${sortDir === 'asc' ? 'descending' : 'ascending'}`}>
+                  {sortDir === 'asc' ? '↑' : '↓'}
+                </button>
+                <label className={common.srOnly} htmlFor="page-size">Payments per page</label>
+                <select id="page-size" className={cn(common.select, themed.select)} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))} title="Results per page" aria-label="Results per page">
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  className={cn(common.button, themed.button)}
+                  onClick={() => {
+                    const header = ['ID','Date','Project','Freelancer','Amount','Status'];
+                    const data = sorted.map(p => [p.id, p.date, p.project, p.freelancer, p.amount, p.status]);
+                    const csv = [header, ...data]
+                      .map(row => row.map(val => '"' + String(val).replace(/"/g, '""') + '"').join(','))
+                      .join('\n');
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `client_payments_${new Date().toISOString().slice(0,10)}.csv`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  title="Export all filtered transactions to a CSV file"
+                  aria-label="Export all filtered transactions to a CSV file"
+                >Export CSV</button>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
 
-        <div ref={summaryRef} className={cn(common.summary, summaryVisible ? common.isVisible : common.isNotVisible)} aria-label="Payment summary">
+        <section ref={summaryRef} className={cn(common.summary, summaryVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="summary-title" role="region">
+          <h2 id="summary-title" className={common.srOnly}>Payments Summary</h2>
           <div className={cn(common.card, themed.card)}>
             <div className={cn(common.cardTitle, themed.cardTitle)}>Total</div>
             <div className={cn(common.cardValue, themed.cardValue)}>{fmt(kpiTotal)}</div>
@@ -174,20 +193,24 @@ const Payments: React.FC = () => {
             <div className={cn(common.cardTitle, themed.cardTitle)}>Pending</div>
             <div className={cn(common.cardValue, themed.cardValue)}>{fmt(kpiPending)}</div>
           </div>
-        </div>
+        </section>
 
-        <div ref={tableRef} className={cn(common.tableWrap, tableVisible ? common.isVisible : common.isNotVisible)}>
-          {loading && <div className={common.skeletonRow} aria-busy="true" />}
+        <section ref={tableRef} className={cn(common.tableWrap, tableVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="payments-table-title">
+          <h2 id="payments-table-title" className={common.srOnly}>Payments Table</h2>
+          <div className={common.srOnly} role="status" aria-live="polite">
+            {paged.length > 0 ? `Showing ${paged.length} of ${sorted.length} payments.` : 'No payments match your criteria.'}
+          </div>
+          {loading && <div className={common.skeletonRow} aria-busy={loading} />} 
           {error && <div className={common.error}>Failed to load payments.</div>}
-          <table className={cn(common.table)} role="table" aria-label="Payments table">
+          <table className={cn(common.table)} aria-busy={loading}>
             <thead>
               <tr className={common.tr}>
-                <th scope="col" className={common.th}>ID</th>
-                <th scope="col" className={common.th}>Date</th>
-                <th scope="col" className={common.th}>Project</th>
-                <th scope="col" className={common.th}>Freelancer</th>
-                <th scope="col" className={common.th}>Amount</th>
-                <th scope="col" className={common.th}>Status</th>
+                <th scope="col" className={common.th} aria-sort={getSortAria('id')} onClick={() => handleSort('id')} title="Sort by ID">ID</th>
+                <th scope="col" className={common.th} aria-sort={getSortAria('date')} onClick={() => handleSort('date')} title="Sort by Date">Date</th>
+                <th scope="col" className={common.th} aria-sort={getSortAria('project')} onClick={() => handleSort('project')} title="Sort by Project">Project</th>
+                <th scope="col" className={common.th} aria-sort={getSortAria('freelancer')} onClick={() => handleSort('freelancer')} title="Sort by Freelancer">Freelancer</th>
+                <th scope="col" className={common.th} aria-sort={getSortAria('amount')} onClick={() => handleSort('amount')} title="Sort by Amount">Amount</th>
+                <th scope="col" className={common.th} aria-sort={getSortAria('status')} onClick={() => handleSort('status')} title="Sort by Status">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -199,7 +222,7 @@ const Payments: React.FC = () => {
                   <td className={common.td}>{p.freelancer}</td>
                   <td className={common.td}>{fmt(p.amount)}</td>
                   <td className={common.td}>
-                    <span className={cn(common.status, themed.status)}>{p.status}</span>
+                    <span className={cn(common.status, themed.status)}><span className={common.srOnly}>Status: </span>{p.status}</span>
                   </td>
                 </tr>
               ))}
@@ -208,7 +231,7 @@ const Payments: React.FC = () => {
           {sorted.length === 0 && !loading && (
             <div role="status" aria-live="polite" className={common.emptyState}>No transactions match your filters.</div>
           )}
-        </div>
+        </section>
         {sorted.length > 0 && (
           <div className={common.paginationBar} role="navigation" aria-label="Pagination">
             <button
@@ -217,6 +240,7 @@ const Payments: React.FC = () => {
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={pageSafe === 1}
               aria-label="Previous page"
+              title="Go to previous page"
             >Prev</button>
             <span className={common.paginationInfo} aria-live="polite">Page {pageSafe} of {totalPages} · {sorted.length} result(s)</span>
             <button
@@ -225,6 +249,7 @@ const Payments: React.FC = () => {
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={pageSafe === totalPages}
               aria-label="Next page"
+              title="Go to next page"
             >Next</button>
           </div>
         )}

@@ -1,6 +1,10 @@
 /* @AI-HINT: Common styles for DataToolbar. */
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-.input { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; min-width: 240px; }
-.select { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; }
-.button { height: 36px; padding: 0 12px; border-radius: 8px; font-weight: 500; border: 1px solid transparent; }
+.input { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; min-width: 240px; transition: box-shadow 120ms ease; }
+.input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.select { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; transition: box-shadow 120ms ease; }
+.select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.button { height: 36px; padding: 0 12px; border-radius: 8px; font-weight: 500; border: 1px solid transparent; transition: opacity 120ms ease, box-shadow 120ms ease; }
+.button:hover { opacity: 0.92; }
+.button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }

@@ -72,6 +72,11 @@
   font: inherit;
 }
 
+.select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* Pagination */
 .paginationBar {
   margin-top: var(--space-6);
@@ -79,6 +84,23 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
+}
+
+/* Toolbar button micro-interactions */
+.toolbar :global(button) {
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+.toolbar :global(button:hover) {
+  opacity: 0.95;
+}
+.toolbar :global(button:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .toolbar :global(button) {
+    transition: none;
+  }
 }
 
 .paginationInfo {

@@ -68,17 +68,23 @@ const PortfolioPage: React.FC = () => {
 
   return (
     <div className={cn(styles.container)}>
-      <header className={cn(styles.header)}>
+      <header
+        className={cn(styles.header)}
+        role="region"
+        aria-label="Portfolio Management"
+        title="Portfolio Management"
+      >
         <div className={cn(styles.titleGroup)}>
           <h1 className={cn(styles.title)}>My Portfolio</h1>
           <p className={cn(styles.subtitle)}>Showcase your best work and accomplishments to attract top clients.</p>
         </div>
-        <Button variant="primary" size="large" onClick={handleAdd} aria-label="Add new project"><FiPlusCircle /> Add New Project</Button>
+        <Button variant="primary" size="large" onClick={handleAdd} aria-label="Add new project" title="Add new project"><FiPlusCircle /> Add New Project</Button>
       </header>
 
       <main className={cn(styles.main)}>
+        <span className={styles.srOnly} aria-live="polite">{items.length} portfolio item{items.length === 1 ? '' : 's'}</span>
         {items.length > 0 ? (
-          <div className={cn(styles.grid)}>
+          <div className={cn(styles.grid)} role="region" aria-label="Portfolio items" title="Portfolio items">
             {items.map(item => (
               <PortfolioItemCard key={item.id} {...item} onDelete={handleDelete} />
             ))}
@@ -90,7 +96,7 @@ const PortfolioPage: React.FC = () => {
               description="Add a project to start building your reputation and attract top clients."
               icon={<FiLayout aria-hidden="true" />}
               action={
-                <Button variant="primary" size="large" onClick={handleAdd} aria-label="Add your first project">
+                <Button variant="primary" size="large" onClick={handleAdd} aria-label="Add your first project" title="Add your first project">
                   <FiPlusCircle /> Add Your First Project
                 </Button>
               }

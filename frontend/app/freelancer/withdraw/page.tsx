@@ -44,7 +44,7 @@ const WithdrawPage: React.FC = () => {
       </header>
 
       <main className={styles.mainContent}>
-        <div className={styles.card}>
+        <div className={styles.card} role="region" aria-label="Withdraw form" title="Withdraw form">
           <div className={styles.balanceInfo}>
             <span className={styles.balanceLabel}>Available Balance</span>
             <span className={styles.balanceValue}>{withdrawData.availableBalance.toFixed(2)} USDC</span>
@@ -62,13 +62,13 @@ const WithdrawPage: React.FC = () => {
               type="text"
               placeholder="0x..."
             />
-            <Button variant="primary" fullWidth size="large">Request Withdrawal</Button>
+            <Button variant="primary" fullWidth size="large" aria-label="Request withdrawal" title="Request withdrawal">Request Withdrawal</Button>
           </form>
         </div>
 
-        <div className={styles.card}>
+        <div className={styles.card} role="region" aria-label="Withdrawal history" title="Withdrawal history">
           <h2 className={styles.cardTitle}>Withdrawal History</h2>
-          <table className={styles.table}>
+          <table className={styles.table} aria-label="Withdrawal history table" title="Withdrawal history table">
             <thead>
               <tr>
                 <th>Date</th>

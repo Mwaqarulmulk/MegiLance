@@ -15,6 +15,7 @@
   border-radius: var(--border-radius-sm);
   border: 1px solid;
 }
+.input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .button {
   padding: var(--space-1) var(--space-2);
   border-radius: var(--border-radius-sm);
@@ -22,6 +23,7 @@
   background: transparent;
   cursor: pointer;
 }
+.button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .list {
   list-style: none;
   display: flex;
@@ -55,10 +57,25 @@
   cursor: pointer;
   font-size: 0.85rem;
 }
+.smallButton:focus-visible,
+.smallDanger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .smallDanger {
   color: var(--color-error);
   border-color: var(--color-error);
 }
 .empty {
   opacity: 0.8;
+}
+
+/* Visually-hidden but accessible text */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 1px, 1px);
+  white-space: nowrap;
+  border: 0;
 }

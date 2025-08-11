@@ -1,10 +1,10 @@
 // @AI-HINT: This is the Freelancer Proposals page. It provides search, sorting, pagination, CSV export, and accessible empty states. Styling is per-component via .common/.light/.dark CSS modules.
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Button from '@/app/components/Button/Button';
-import { exportCSV } from '@/app/lib/csv';
+import { exportCSV, exportData } from '@/app/lib/csv';
 import DataToolbar, { SortOption } from '@/app/components/DataToolbar/DataToolbar';
 import PaginationBar from '@/app/components/PaginationBar/PaginationBar';
 import { usePersistedState } from '@/app/lib/hooks/usePersistedState';
@@ -15,6 +15,9 @@ import DensityToggle, { Density } from '@/app/components/DataTableExtras/Density
 import SelectionBar from '@/app/components/DataTableExtras/SelectionBar';
 import TableSkeleton from '@/app/components/DataTableExtras/TableSkeleton';
 import SavedViewsMenu from '@/app/components/DataTableExtras/SavedViewsMenu';
+import VirtualTableBody from '@/app/components/DataTableExtras/VirtualTableBody';
+import Modal from '@/app/components/Modal/Modal';
+import { useToaster } from '@/app/components/Toast/ToasterProvider';
 import commonStyles from './Proposals.common.module.css';
 import lightStyles from './Proposals.light.module.css';
 import darkStyles from './Proposals.dark.module.css';
@@ -42,6 +45,7 @@ const ProposalsPage: React.FC = () => {
     const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
     return { ...commonStyles, ...themeStyles };
   }, [theme]);
+  const toaster = useToaster();
 
   const [q, setQ] = usePersistedState<string>('freelancer:proposals:q', '');
   const [sortKey, setSortKey] = usePersistedState<'jobTitle' | 'clientName' | 'status' | 'dateSubmitted' | 'bidAmount'>('freelancer:proposals:sortKey', 'dateSubmitted');
@@ -50,6 +54,11 @@ const ProposalsPage: React.FC = () => {
   const [pageSize, setPageSize] = usePersistedState<number>('freelancer:proposals:pageSize', 10);
   const [density, setDensity] = usePersistedState<Density>('freelancer:proposals:density', 'comfortable');
   const [loading, setLoading] = useState(false);
+  const [statusFilters, setStatusFilters] = usePersistedState<Proposal['status'][]>('freelancer:proposals:statusFilters', []);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [pendingWithdrawId, setPendingWithdrawId] = useState<string | null>(null);
+  const tableWrapRef = useRef<HTMLDivElement>(null);
+  const rowHeight = density === 'compact' ? 40 : 48;
 
   // Strongly-typed helper to satisfy aria-sort lints with literal values only
   const ariaSortFor = (col: typeof sortKey): 'ascending' | 'descending' | 'none' => {
@@ -59,13 +68,15 @@ const ProposalsPage: React.FC = () => {
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
-    return mockProposals.filter(p =>
+    const byQuery = (p: Proposal) => (
       !query ||
       p.jobTitle.toLowerCase().includes(query) ||
       p.clientName.toLowerCase().includes(query) ||
       p.status.toLowerCase().includes(query)
     );
-  }, [q]);
+    const byStatus = (p: Proposal) => (statusFilters.length === 0 || statusFilters.includes(p.status));
+    return mockProposals.filter(p => byQuery(p) && byStatus(p));
+  }, [q, statusFilters]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -102,13 +113,13 @@ const ProposalsPage: React.FC = () => {
   }, [q, sortKey, sortDir, pageSafe, pageSize]);
 
   // Column visibility
-  const allColumns = ['jobTitle', 'clientName', 'status', 'dateSubmitted', 'bidAmount'] as const;
+  const allColumns = ['jobTitle', 'clientName', 'status', 'dateSubmitted', 'bidAmount', 'actions'] as const;
   const { visible, toggle: toggleCol, setAll: setAllCols } = useColumnVisibility('freelancer:proposals', allColumns as unknown as string[]);
   const show = (key: typeof allColumns[number]) => visible.includes(key);
 
   // Selection across filtered set
   const allFilteredIds = useMemo(() => filtered.map(p => p.id), [filtered]);
-  const { selected, isSelected, toggle: toggleRow, clear, selectMany, deselectMany, count } = useSelection<string>(allFilteredIds);
+  const { selected, isSelected, toggle: toggleRow, clear, selectMany, deselectMany, count } = useSelection<string>(allFilteredIds, { storageKey: 'freelancer:proposals:selected' });
   const pageIds = paged.map(p => p.id);
   const headerCheckboxChecked = pageIds.length > 0 && pageIds.every(id => isSelected(id));
   const headerCheckboxIndeterminate = !headerCheckboxChecked && pageIds.some(id => isSelected(id));
@@ -126,12 +137,34 @@ const ProposalsPage: React.FC = () => {
     exportCSV(header, rows, 'proposals');
   };
 
+  const onExport = (format: 'csv' | 'xlsx' | 'pdf') => {
+    const header = ['Job Title', 'Client', 'Status', 'Date Submitted', 'Bid (USD)'];
+    const cols: (typeof allColumns[number])[] = ['jobTitle', 'clientName', 'status', 'dateSubmitted', 'bidAmount'];
+    const rows = sorted.map(p => [p.jobTitle, p.clientName, p.status, p.dateSubmitted, p.bidAmount]);
+    const visibleIndices = cols
+      .map((key, idx) => (visible.includes(key) ? idx : -1))
+      .filter(i => i >= 0);
+    exportData(format, header, rows, 'proposals', { visibleIndices });
+  };
+
   const onExportSelected = () => {
     const selectedSet = new Set(selected);
     const selectedRows = filtered.filter(p => selectedSet.has(p.id));
     const header = ['Job Title', 'Client', 'Status', 'Date Submitted', 'Bid (USD)'];
     const rows = selectedRows.map(p => [p.jobTitle, p.clientName, p.status, p.dateSubmitted, p.bidAmount]);
     exportCSV(header, rows, 'proposals-selected');
+  };
+
+  const onExportSelectedFormat = (format: 'csv' | 'xlsx' | 'pdf') => {
+    const selectedSet = new Set(selected);
+    const selectedRows = filtered.filter(p => selectedSet.has(p.id));
+    const header = ['Job Title', 'Client', 'Status', 'Date Submitted', 'Bid (USD)'];
+    const cols: (typeof allColumns[number])[] = ['jobTitle', 'clientName', 'status', 'dateSubmitted', 'bidAmount'];
+    const rows = selectedRows.map(p => [p.jobTitle, p.clientName, p.status, p.dateSubmitted, p.bidAmount]);
+    const visibleIndices = cols
+      .map((key, idx) => (visible.includes(key) ? idx : -1))
+      .filter(i => i >= 0);
+    exportData(format, header, rows, 'proposals-selected', { visibleIndices });
   };
 
   const sortOptions: SortOption[] = [
@@ -147,6 +180,31 @@ const ProposalsPage: React.FC = () => {
     { value: 'bidAmount:desc', label: 'Bid High–Low' },
   ];
 
+  // Actions
+  const openWithdraw = (id: string) => {
+    setPendingWithdrawId(id);
+    setWithdrawOpen(true);
+  };
+  const onConfirmWithdraw = async () => {
+    if (!pendingWithdrawId) return;
+    setWithdrawOpen(false);
+    // Simulate async op
+    await new Promise(r => setTimeout(r, 700));
+    toaster.notify({
+      title: 'Proposal withdrawn',
+      description: 'The proposal was withdrawn successfully.',
+      variant: 'warning',
+      duration: 3500,
+    });
+    setPendingWithdrawId(null);
+  };
+  const viewProposal = (p: Proposal) => {
+    toaster.notify({ title: 'Open proposal', description: `Viewing: ${p.jobTitle}`, variant: 'info' });
+  };
+  const editProposal = (p: Proposal) => {
+    toaster.notify({ title: 'Edit proposal', description: `Editing: ${p.jobTitle}`, variant: 'info' });
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -156,23 +214,52 @@ const ProposalsPage: React.FC = () => {
 
       <DataToolbar
         query={q}
-        onQueryChange={(v) => { setQ(v); setPage(1); }}
+        onQueryChange={(val) => { setQ(val); setPage(1); }}
         sortValue={`${sortKey}:${sortDir}`}
         onSortChange={(val) => {
           const [k, d] = val.split(':') as [typeof sortKey, typeof sortDir];
-          setSortKey(k);
-          setSortDir(d);
-          setPage(1);
+          setSortKey(k); setSortDir(d); setPage(1);
         }}
         pageSize={pageSize}
         onPageSizeChange={(sz) => { setPageSize(sz); setPage(1); }}
         sortOptions={sortOptions}
-        onExportCSV={onExportCSV}
-        exportLabel="Export CSV"
+        onExport={onExport}
+        exportLabel="Export"
         aria-label="Proposals filters and actions"
+        searchPlaceholder="Search proposals"
+        searchTitle="Search proposals"
+        sortTitle="Sort proposals by"
+        pageSizeTitle="Proposals per page"
+        exportFormatTitle="Export proposals as"
       />
+      <span className={styles.srOnly} aria-live="polite">
+        Filters updated. {q ? `Query: ${q}. ` : ''}Sort: {sortKey} {sortDir}. Page size: {pageSize}.
+      </span>
 
       <div className={styles.extrasRow} role="group" aria-label="Table view options">
+        <div className={styles.statusFilters} role="group" aria-label="Status filters">
+          {(['Draft','Submitted','Interview','Rejected'] as Proposal['status'][]).map(st => {
+            const active = statusFilters.includes(st);
+            return (
+              <Button
+                key={st}
+                variant={active ? 'primary' : 'outline'}
+                size="small"
+                aria-pressed={active}
+                title={`${active ? 'Remove' : 'Add'} filter: ${st}`}
+                onClick={() => setStatusFilters(active ? statusFilters.filter(s => s !== st) : [...statusFilters, st])}
+              >
+                {st}
+              </Button>
+            );
+          })}
+          {statusFilters.length > 0 && (
+            <Button variant="secondary" size="small" onClick={() => setStatusFilters([])} aria-label="Clear status filters" title="Clear status filters">Clear</Button>
+          )}
+          <span className={styles.srOnly} aria-live="polite">
+            {statusFilters.length === 0 ? 'No status filters active' : `Active filters: ${statusFilters.join(', ')}`}
+          </span>
+        </div>
         <ColumnVisibilityMenu
           columns={[
             { key: 'jobTitle', label: 'Job Title' },
@@ -180,12 +267,13 @@ const ProposalsPage: React.FC = () => {
             { key: 'status', label: 'Status' },
             { key: 'dateSubmitted', label: 'Submitted' },
             { key: 'bidAmount', label: 'Bid (USD)' },
+            { key: 'actions', label: 'Actions' },
           ]}
           visibleKeys={visible}
           onToggle={toggleCol}
           onShowAll={() => setAllCols(allColumns as unknown as string[])}
           onHideAll={() => setAllCols([])}
-          aria-label="Toggle table columns"
+          aria-label="Proposals columns"
         />
         <DensityToggle value={density} onChange={setDensity} />
         <SavedViewsMenu
@@ -197,22 +285,25 @@ const ProposalsPage: React.FC = () => {
             pageSize,
             density,
             visible,
+            statusFilters,
           })}
-          onApply={(p: { q: string; sortKey: typeof sortKey; sortDir: typeof sortDir; pageSize: number; density: typeof density; visible: string[]; }) => {
-            setQ(p.q ?? '');
-            setSortKey(p.sortKey ?? 'dateSubmitted');
-            setSortDir(p.sortDir ?? 'desc');
-            setPageSize(p.pageSize ?? 10);
-            setDensity(p.density ?? 'comfortable');
-            setAllCols((p.visible ?? allColumns) as unknown as string[]);
+          onApply={(p: any) => {
+            if (!p) return;
+            setQ(typeof p.q === 'string' ? p.q : '');
+            if (p.sortKey && p.sortDir) { setSortKey(p.sortKey); setSortDir(p.sortDir); }
+            if (typeof p.pageSize === 'number') setPageSize(p.pageSize);
+            if (p.density) setDensity(p.density);
+            if (Array.isArray(p.visible)) setAllCols(p.visible as unknown as string[]);
+            if (Array.isArray(p.statusFilters)) setStatusFilters(p.statusFilters);
             setPage(1);
           }}
+          aria-label="Proposals saved views"
         />
       </div>
 
-      <SelectionBar count={count} onClear={clear} onExportCSV={count > 0 ? onExportSelected : undefined} />
+      <SelectionBar count={count} onClear={clear} onExport={onExportSelectedFormat} onExportCSV={onExportSelected} />
 
-      <div className={styles.tableWrap}>
+      <div className={styles.tableWrap} ref={tableWrapRef}>
         <table className={styles.table} role="table" data-density={density}>
           <thead>
             <tr>
@@ -222,46 +313,94 @@ const ProposalsPage: React.FC = () => {
                   aria-label="Select page rows"
                   checked={headerCheckboxChecked}
                   ref={el => { if (el) el.indeterminate = headerCheckboxIndeterminate; }}
+                  {...(headerCheckboxIndeterminate ? { 'aria-checked': 'mixed' } : {})}
                   onChange={togglePageSelection}
                 />
               </th>
               {show('jobTitle') && (
-                <th scope="col" aria-sort={ariaSortFor('jobTitle')}>Job Title</th>
+                <th
+                  scope="col"
+                  {...(sortKey === 'jobTitle' ? { 'aria-sort': (sortDir === 'asc' ? 'ascending' : 'descending') } : {})}
+                >Job Title</th>
               )}
               {show('clientName') && (
-                <th scope="col" aria-sort={ariaSortFor('clientName')}>Client</th>
+                <th
+                  scope="col"
+                  {...(sortKey === 'clientName' ? { 'aria-sort': (sortDir === 'asc' ? 'ascending' : 'descending') } : {})}
+                >Client</th>
               )}
               {show('status') && (
-                <th scope="col" aria-sort={ariaSortFor('status')}>Status</th>
+                <th
+                  scope="col"
+                  {...(sortKey === 'status' ? { 'aria-sort': (sortDir === 'asc' ? 'ascending' : 'descending') } : {})}
+                >Status</th>
               )}
               {show('dateSubmitted') && (
-                <th scope="col" aria-sort={ariaSortFor('dateSubmitted')}>Submitted</th>
+                <th
+                  scope="col"
+                  {...(sortKey === 'dateSubmitted' ? { 'aria-sort': (sortDir === 'asc' ? 'ascending' : 'descending') } : {})}
+                >Submitted</th>
               )}
               {show('bidAmount') && (
-                <th scope="col" aria-sort={ariaSortFor('bidAmount')}>Bid (USD)</th>
+                <th
+                  scope="col"
+                  {...(sortKey === 'bidAmount' ? { 'aria-sort': (sortDir === 'asc' ? 'ascending' : 'descending') } : {})}
+                >Bid (USD)</th>
+              )}
+              {show('actions') && (
+                <th scope="col">Actions</th>
               )}
             </tr>
           </thead>
-          <tbody>
-            {loading ? (
+          {loading ? (
+            <tbody>
               <tr>
                 <td colSpan={1 + allColumns.length}>
                   <TableSkeleton rows={6} cols={6} dense={density==='compact'} />
                 </td>
               </tr>
-            ) : paged.map(p => (
-              <tr key={p.id}>
-                <td className={styles.checkboxCell}>
-                  <input type="checkbox" aria-label={`Select ${p.jobTitle}`} checked={isSelected(p.id)} onChange={() => toggleRow(p.id)} />
-                </td>
-                {show('jobTitle') && <td>{p.jobTitle}</td>}
-                {show('clientName') && <td>{p.clientName}</td>}
-                {show('status') && <td><span className={styles.status}>{p.status}</span></td>}
-                {show('dateSubmitted') && <td>{new Date(p.dateSubmitted).toLocaleDateString()}</td>}
-                {show('bidAmount') && <td>${p.bidAmount.toLocaleString()}</td>}
-              </tr>
-            ))}
-          </tbody>
+            </tbody>
+          ) : (
+            <VirtualTableBody
+              items={paged}
+              rowHeight={rowHeight}
+              overscan={6}
+              containerRef={tableWrapRef}
+              renderRow={(p) => (
+                <tr
+                  key={p.id}
+                  tabIndex={0}
+                  {...(isSelected(p.id) ? { 'aria-selected': 'true' } : {})}
+                  onKeyDown={(e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      toggleRow(p.id);
+                    }
+                  }}
+                >
+                  <td className={styles.checkboxCell}>
+                    <input type="checkbox" aria-label={`Select ${p.jobTitle}`} checked={isSelected(p.id)} onChange={() => toggleRow(p.id)} />
+                  </td>
+                  {show('jobTitle') && <td>{p.jobTitle}</td>}
+                  {show('clientName') && <td>{p.clientName}</td>}
+                  {show('status') && <td><span className={styles.status}>{p.status}</span></td>}
+                  {show('dateSubmitted') && <td>{new Date(p.dateSubmitted).toLocaleDateString()}</td>}
+                  {show('bidAmount') && <td>${p.bidAmount.toLocaleString()}</td>}
+                  {show('actions') && (
+                    <td>
+                      <div className={styles.rowActions} role="group" aria-label={`Actions for ${p.jobTitle}`}>
+                        <Button size="small" variant="outline" onClick={() => viewProposal(p)} aria-label={`View ${p.jobTitle}`} title={`View ${p.jobTitle}`}>View</Button>
+                        <Button size="small" variant="secondary" onClick={() => editProposal(p)} aria-label={`Edit ${p.jobTitle}`} title={`Edit ${p.jobTitle}`}>Edit</Button>
+                        {(p.status === 'Submitted' || p.status === 'Draft') && (
+                          <Button size="small" variant="danger" onClick={() => openWithdraw(p.id)} aria-label={`Withdraw ${p.jobTitle}`} title={`Withdraw ${p.jobTitle}`}>Withdraw</Button>
+                        )}
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              )}
+            />
+          )}
         </table>
         {sorted.length === 0 && (
           <div className={styles.emptyState} role="status" aria-live="polite">No proposals found.</div>
@@ -277,6 +416,26 @@ const ProposalsPage: React.FC = () => {
           onNext={() => setPage(p => Math.min(totalPages, p + 1))}
         />
       )}
+      {sorted.length > 0 && (
+        <span className={styles.srOnly} aria-live="polite">
+          Page {pageSafe} of {totalPages}. {sorted.length} result{sorted.length === 1 ? '' : 's'}.
+        </span>
+      )}
+
+      <Modal
+        isOpen={withdrawOpen}
+        onClose={() => setWithdrawOpen(false)}
+        title="Withdraw Proposal"
+        size="small"
+      >
+        <div className={styles.modalBodyCopy}>
+          Are you sure you want to withdraw this proposal? This action cannot be undone.
+        </div>
+        <div className={styles.modalActions}>
+          <Button variant="secondary" onClick={() => setWithdrawOpen(false)}>Cancel</Button>
+          <Button variant="danger" onClick={onConfirmWithdraw}>Confirm Withdraw</Button>
+        </div>
+      </Modal>
     </div>
   );
 };
