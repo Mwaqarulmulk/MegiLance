@@ -1,0 +1,8 @@
+/* @AI-HINT: Light theme styles for Reports page. */
+.wrapper {}
+.header {}
+.title { color: #111827; }
+.subtitle { color: #64748b; }
+.grid {}
+.card { background: #ffffff; border-color: #e5e7eb; }
+.cardTitle { color: #111827; }

@@ -1,18 +1,18 @@
-// @AI-HINT: This is the Profile page root component. All styles are per-component only. See Profile.common.css, Profile.light.css, and Profile.dark.css for theming.
+// @AI-HINT: Profile page uses per-component CSS modules with theme variants and accessible landmarks.
 'use client';
 
 import React from 'react';
+import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 import UserAvatar from '../components/UserAvatar/UserAvatar';
 import ProjectCard, { ProjectCardProps } from '../components/ProjectCard/ProjectCard';
 import commonStyles from './Profile.common.module.css';
 import lightStyles from './Profile.light.module.css';
 import darkStyles from './Profile.dark.module.css';
 
-interface ProfileProps {
-  theme?: 'light' | 'dark';
-}
-
-const Profile: React.FC<ProfileProps> = ({ theme = 'light' }) => {
+const Profile: React.FC = () => {
+  const { theme } = useTheme();
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   const mockUser = {
     name: 'Jane Doe',
     bio: 'Freelance UI/UX Designer specializing in modern web applications. Passionate about creating intuitive and beautiful user experiences.',
@@ -49,20 +49,17 @@ const Profile: React.FC<ProfileProps> = ({ theme = 'light' }) => {
   ];
 
   return (
-    <div className={`Profile Profile--${theme}`}>
-      <header className="Profile-header">
+    <div className={cn(commonStyles.container, themeStyles.container)}>
+      <header className={cn(commonStyles.header, themeStyles.header)}>
         <UserAvatar name={mockUser.name} src={mockUser.avatarUrl} size="large" />
-        <h1 className="Profile-name">{mockUser.name}</h1>
-        <p className="Profile-bio">{mockUser.bio}</p>
+        <h1 className={cn(commonStyles.name, themeStyles.name)}>{mockUser.name}</h1>
+        <p className={cn(commonStyles.bio, themeStyles.bio)}>{mockUser.bio}</p>
       </header>
-      <main className="Profile-content">
-        <h2>Active Projects</h2>
-        <div className="Profile-projects-list">
+      <main className={cn(commonStyles.content, themeStyles.content)} role="main" aria-labelledby="section-projects">
+        <h2 id="section-projects" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Active Projects</h2>
+        <div className={cn(commonStyles.projectsList, themeStyles.projectsList)}>
           {mockProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              {...project}
-            />
+            <ProjectCard key={project.id} {...project} />
           ))}
         </div>
       </main>

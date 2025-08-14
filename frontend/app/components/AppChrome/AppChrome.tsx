@@ -35,6 +35,19 @@ function isPortalOrAuthRoute(pathname: string | null | undefined): boolean {
     '/admin',
     '/client',
     '/freelancer',
+    // Unified portal section roots (dashboard app pages)
+    '/dashboard',
+    '/projects', '/Projects',
+    '/messages', '/Messages',
+    '/notifications', '/Notifications',
+    '/settings', '/Settings',
+    '/profile', '/Profile',
+    '/payments', '/Payments',
+    '/calendar', '/Calendar',
+    '/reports', '/Reports',
+    '/audit-logs',
+    '/help',
+    '/search',
   ];
 
   return portalOrAuthRoots.some(root => normalizedPath === root || normalizedPath.startsWith(`${root}/`));

@@ -1,0 +1,43 @@
+.root {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+.container {
+  margin: 0 auto;
+  max-width: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 16px;
+}
+.message {
+  font-size: 14px;
+  line-height: 1.4;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cta {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  outline: none;
+}
+.close {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+.close:focus-visible,
+.cta:focus-visible {
+  outline: 2px solid var(--brand-blue, #4573df);
+  outline-offset: 2px;
+}

@@ -102,16 +102,20 @@ const Pricing: React.FC = () => {
         <p className={styles.subtitle}>Start for free, then upgrade or downgrade anytime. No hidden fees.</p>
       </div>
 
-      <div className={styles.toggleContainer}>
-        <span className={cn(styles.toggleLabel, billingCycle === 'monthly' && styles.activeLabel)}>Monthly</span>
+      <div className={styles.toggleContainer} role="group" aria-label="Billing cycle">
+        <span className={cn(styles.toggleLabel, billingCycle === 'monthly' && styles.activeLabel)} id="billing-monthly-label">Monthly</span>
         <button
           onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annually' : 'monthly')}
           className={styles.toggleSwitch}
-          aria-label={`Switch to ${billingCycle === 'monthly' ? 'annual' : 'monthly'} billing`}
+          role="switch"
+          aria-checked={billingCycle === 'annually' ? true : false}
+          aria-label="Toggle billing cycle"
+          aria-labelledby={billingCycle === 'annually' ? 'billing-annually-label' : 'billing-monthly-label'}
+          type="button"
         >
           <motion.div className={styles.toggleHandle} layout transition={{ type: 'spring', stiffness: 700, damping: 30 }} />
         </button>
-        <span className={cn(styles.toggleLabel, billingCycle === 'annually' && styles.activeLabel)}>
+        <span className={cn(styles.toggleLabel, billingCycle === 'annually' && styles.activeLabel)} id="billing-annually-label">
           Annually <span className={styles.discountBadge}>Save 15%</span>
         </span>
       </div>

@@ -34,16 +34,24 @@ export const PricingCard: React.FC<PricingCardProps> = ({
 }) => {
   const { theme } = useTheme();
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+  const headingId = React.useId();
+  const descId = React.useId();
+  const badgeId = React.useId();
 
   return (
-    <div className={cn(styles.card, themeStyles.card, isPopular && styles.popular, isPopular && themeStyles.popular)}>
-      {isPopular && <div className={styles.popularBadge}>Most Popular</div>}
+    <div
+      className={cn(styles.card, themeStyles.card, isPopular && styles.popular, isPopular && themeStyles.popular)}
+      role="article"
+      aria-labelledby={headingId}
+      aria-describedby={cn(descId, isPopular && badgeId)}
+    >
+      {isPopular && <div id={badgeId} className={styles.popularBadge}>Most Popular</div>}
       
       <div className={styles.cardHeader}>
-        <h3 className={styles.cardTier}>{tier}</h3>
+        <h3 id={headingId} className={styles.cardTier}>{tier}</h3>
       </div>
 
-      <p className={styles.cardDescription}>{description}</p>
+      <p id={descId} className={styles.cardDescription}>{description}</p>
 
       <div className={styles.priceSection}>
         <div className={styles.price}>

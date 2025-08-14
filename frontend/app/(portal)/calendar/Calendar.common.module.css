@@ -1,0 +1,11 @@
+/* @AI-HINT: Common styles for Calendar page. Theme-agnostic structure helpers. */
+.container { max-width: 1200px; margin: 0 auto; }
+.header { min-height: 44px; }
+.grid { gap: 0.25rem; }
+.cell { border-width: 1px; border-style: solid; border-radius: 0.5rem; padding: 0.75rem 0.5rem; text-align: left; }
+.day { font-size: 0.875rem; }
+.meta { margin-top: 0.25rem; font-size: 0.6875rem; }
+.btn { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border-width: 1px; border-style: solid; border-radius: 0.5rem; font-size: 0.875rem; }
+.week { font-size: 0.75rem; }
+.title { font-size: 1.25rem; font-weight: 600; }
+.accentRing { outline-offset: 2px; }

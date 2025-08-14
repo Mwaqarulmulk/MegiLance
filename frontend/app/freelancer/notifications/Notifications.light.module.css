@@ -1,0 +1,18 @@
+/* @AI-HINT: Light theme styles for Notifications page. */
+.container { background: transparent; }
+.title { color: #111827; }
+.subtitle { color: #374151; }
+.primaryBtn { background: #4573df; color: #ffffff; }
+.secondaryBtn { background: #ffffff; color: #111827; border-color: #e5e7eb; }
+.secondaryBtn:hover { background: #f9fafb; }
+.search { background: #ffffff; color: #111827; border-color: #e5e7eb; }
+.radio { background: #ffffff; color: #374151; border-color: #e5e7eb; }
+.radio:hover { background: #f9fafb; }
+.radioActive { background: #eef2ff; color: #1f2937; border-color: #4573df; }
+.card { background: #ffffff; border-color: #e5e7eb; }
+.meta { color: #6b7280; }
+.badge { background: #f3f4f6; color: #111827; border-color: #e5e7eb; }
+.iconBtn { background: #ffffff; color: #111827; border-color: #e5e7eb; }
+.list { display: grid; gap: .5rem; }
+.input { background: #ffffff; color: #111827; border-color: #e5e7eb; }
+.footer { border-top: 1px solid #f3f4f6; }

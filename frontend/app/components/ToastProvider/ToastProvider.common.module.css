@@ -1,0 +1,43 @@
+/* @AI-HINT: Common styles shared for ToastProvider across themes. Motion-safe transitions, a11y focus, and variants. */
+.viewport {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 10px;
+  z-index: 1000;
+  pointer-events: none; /* only toasts handle interactions */
+}
+.toast {
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 360px;
+  border-radius: 12px;
+  padding: 10px 12px 10px 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 10px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toast { transition: transform 180ms ease, opacity 180ms ease; }
+}
+.title { font-weight: 700; }
+.desc { font-size: 0.925rem; opacity: 0.9; }
+.closeBtn {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 8px;
+  align-self: start;
+}
+.closeBtn:focus-visible { outline: 2px solid var(--brand-blue, #4573df); outline-offset: 2px; }
+
+/* Variants use a subtle background with stronger border-left accents */
+.v_default { border-left: 4px solid var(--brand-blue, #4573df); }
+.v_success { border-left: 4px solid var(--success, #27AE60); }
+.v_warning { border-left: 4px solid var(--warning, #F2C94C); }
+.v_error   { border-left: 4px solid var(--error, #e81123); }

@@ -1,0 +1,12 @@
+/* @AI-HINT: Light theme tokens for Calendar page. */
+.container { min-height: 0; }
+.header { min-height: 0; }
+.grid { gap: 0.25rem; }
+.btn { border-color: #e5e7eb; color: #111827; background: #ffffff; }
+.week { color: #64748b; }
+.cell { border-color: #e5e7eb; background: #ffffff; }
+.muted { opacity: 0.55; }
+.today { outline: 2px solid #4573df; }
+.day { color: #111827; }
+.meta { color: #64748b; }
+.title { color: #111827; }

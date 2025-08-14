@@ -23,6 +23,7 @@ import authDark from '@/app/(auth)/auth-dashboard/dashboard.dark.module.css';
 import common from './Dashboard.common.module.css';
 import light from './Dashboard.light.module.css';
 import dark from './Dashboard.dark.module.css';
+import RevenueChart from './components/RevenueChart';
 
 const Dashboard: React.FC = () => {
   const { theme } = useTheme();
@@ -60,6 +61,9 @@ const Dashboard: React.FC = () => {
           <DashboardMetrics />
         </div>
         <div ref={contentRef} className={cn(common.contentGrid, contentVisible ? common.isVisible : common.isNotVisible)}>
+          <div className={common.revenueChart}>
+            <RevenueChart height={280} />
+          </div>
           <div className={common.recentProjects}>
             <DashboardRecentProjects />
           </div>

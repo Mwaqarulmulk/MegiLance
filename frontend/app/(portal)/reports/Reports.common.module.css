@@ -1,0 +1,10 @@
+/* @AI-HINT: Common styles for Reports page. */
+.wrapper { max-width: 1200px; margin: 0 auto; }
+.header { margin-bottom: var(--spacing-4); display: flex; align-items: flex-end; justify-content: space-between; }
+.title { font-size: 1.25rem; font-weight: 600; }
+.subtitle { font-size: 0.875rem; opacity: 0.9; }
+.grid { display: grid; grid-template-columns: 1fr; gap: var(--spacing-5); }
+@media (min-width: 980px) { .grid { grid-template-columns: 1fr 1fr; } }
+.card { border-radius: 0.75rem; border-width: 1px; border-style: solid; padding: var(--spacing-4); }
+.cardTitle { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-3); }
+.chartWrap { width: 100%; height: 300px; }

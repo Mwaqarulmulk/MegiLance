@@ -1,0 +1,15 @@
+.root {
+  --border-color: #374151;
+  --muted-color: #9ca3af;
+}
+.input {
+  background: #111827;
+  color: #f9fafb;
+  border-color: #374151;
+}
+.itemBtn:hover {
+  background: #1f2937;
+}
+.item {
+  background: #111827;
+}

@@ -1,0 +1,10 @@
+/* @AI-HINT: Light theme styles for ToastProvider. Avoid empty rulesets to satisfy lints. */
+.viewport { contain: layout paint; }
+.toast {
+  background: #ffffff;
+  color: #0f172a; /* slate-900 */
+  border: 1px solid #e5e7eb; /* gray-200 */
+}
+.title { color: inherit; }
+.desc { color: inherit; }
+.closeBtn { color: #0f172a; }

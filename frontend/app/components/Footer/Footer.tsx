@@ -62,33 +62,36 @@ const Footer = () => {
             </p>
           </div>
           <div className={commonStyles.linksGrid}>
-            {Object.entries(footerSections).map(([title, links]) => (
-              <div key={title} className={commonStyles.linksColumn}>
-                <h3 className={cn(commonStyles.linksTitle, styles.linksTitle)}>{title}</h3>
-                <ul className={commonStyles.linksList}>
-                  {links.map((link) => (
-                    <li key={link.name}>
-                      <Link href={link.href} className={cn(commonStyles.linkItem, styles.linkItem)}>
-                        {link.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {Object.entries(footerSections).map(([title, links]) => {
+              const sectionId = `footer-${title.replace(/\s+/g, '-').toLowerCase()}`;
+              return (
+                <nav key={title} className={commonStyles.linksColumn} aria-labelledby={sectionId}>
+                  <h3 id={sectionId} className={cn(commonStyles.linksTitle, styles.linksTitle)}>{title}</h3>
+                  <ul className={commonStyles.linksList}>
+                    {links.map((link) => (
+                      <li key={link.name}>
+                        <Link href={link.href} className={cn(commonStyles.linkItem, styles.linkItem)}>
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              );
+            })}
           </div>
         </div>
         <div className={cn(commonStyles.bottomBar, styles.bottomBar)}>
           <p className={cn(commonStyles.copyright, styles.copyright)}>
             &copy; {new Date().getFullYear()} MegiLance, Inc. All rights reserved.
           </p>
-          <div className={commonStyles.socialLinks}>
+          <nav className={commonStyles.socialLinks} aria-label="Social links">
             {socialLinks.map((link) => (
               <a key={link.name} href={link.href} aria-label={link.name} className={cn(commonStyles.socialLink, styles.socialLink)}>
                 <link.icon size={18} />
               </a>
             ))}
-          </div>
+          </nav>
         </div>
       </div>
     </footer>

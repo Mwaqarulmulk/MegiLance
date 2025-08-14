@@ -38,17 +38,26 @@ const ImpactStatCard: React.FC<ImpactStatCardProps> = ({ stat }) => {
   const decimals = (match[2] || '').includes('.') ? (match[2] || '').split('.')[1].length : 0;
   const animatedValue = useAnimatedCounter(targetValue, 2500, decimals, ref);
 
+  const titleId = `${label.replace(/\s+/g, '-').toLowerCase()}-label`;
+  const descId = `${label.replace(/\s+/g, '-').toLowerCase()}-desc`;
+
   return (
-    <div ref={ref} className={cn(commonStyles.statCard, themeStyles.statCard)}>
+    <div
+      ref={ref}
+      className={cn(commonStyles.statCard, themeStyles.statCard)}
+      role="article"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
+    >
       <div className={cn(commonStyles.iconWrapper, themeStyles.iconWrapper)}>
-        <Icon className={commonStyles.icon} />
+        <Icon className={commonStyles.icon} aria-hidden="true" focusable="false" />
       </div>
       <div className={commonStyles.content}>
         <p className={cn(commonStyles.number, themeStyles.number)}>
           {prefix}{animatedValue}{suffix}
         </p>
-        <h4 className={cn(commonStyles.label, themeStyles.label)}>{label}</h4>
-        <p className={cn(commonStyles.description, themeStyles.description)}>{description}</p>
+        <h4 id={titleId} className={cn(commonStyles.label, themeStyles.label)}>{label}</h4>
+        <p id={descId} className={cn(commonStyles.description, themeStyles.description)}>{description}</p>
       </div>
     </div>
   );

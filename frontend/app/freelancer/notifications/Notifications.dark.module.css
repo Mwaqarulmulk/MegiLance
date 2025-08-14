@@ -1,0 +1,18 @@
+/* @AI-HINT: Dark theme styles for Notifications page. */
+.container { background: transparent; }
+.title { color: #e5e7eb; }
+.subtitle { color: #9ca3af; }
+.primaryBtn { background: #4573df; color: #ffffff; }
+.secondaryBtn { background: #111827; color: #e5e7eb; border-color: #374151; }
+.secondaryBtn:hover { background: #1f2937; }
+.search { background: #111827; color: #e5e7eb; border-color: #374151; }
+.radio { background: #111827; color: #d1d5db; border-color: #374151; }
+.radio:hover { background: #1f2937; }
+.radioActive { background: #1f2937; color: #ffffff; border-color: #4573df; }
+.card { background: #0b1220; border-color: #1f2937; }
+.meta { color: #9ca3af; }
+.badge { background: #1f2937; color: #e5e7eb; border-color: #374151; }
+.iconBtn { background: #111827; color: #e5e7eb; border-color: #374151; }
+.list { display: grid; gap: .5rem; }
+.input { background: #111827; color: #e5e7eb; border-color: #374151; }
+.footer { border-top: 1px solid #1f2937; }

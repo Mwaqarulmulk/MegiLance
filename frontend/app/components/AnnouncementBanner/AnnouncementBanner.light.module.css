@@ -1,0 +1,15 @@
+.root {
+  background: rgba(69, 115, 223, 0.08);
+  color: #1f2937;
+  border-bottom: 1px solid rgba(69, 115, 223, 0.25);
+}
+.cta {
+  background: #4573df;
+  color: white;
+}
+.cta:hover {
+  background: #3e68c9;
+}
+.close {
+  color: #374151;
+}

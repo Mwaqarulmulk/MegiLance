@@ -20,6 +20,7 @@ import {
   LineChart,
   ShieldAlert,
   Briefcase,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
 
 // Define the structure for a navigation item
@@ -57,6 +58,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
           case 'admin':
             return [
               { href: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
+              { href: '/calendar', label: 'Calendar', icon: <CalendarIcon size={18} /> },
+              { href: '/reports', label: 'Reports', icon: <LineChart size={18} /> },
               { href: '/admin/users', label: 'Users', icon: <Users size={18} /> },
               { href: '/admin/projects', label: 'Projects', icon: <FolderGit2 size={18} /> },
               { href: '/admin/payments', label: 'Payments', icon: <CreditCard size={18} /> },
@@ -67,6 +70,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
           case 'client':
             return [
               { href: '/client/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
+              { href: '/calendar', label: 'Calendar', icon: <CalendarIcon size={18} /> },
+              { href: '/reports', label: 'Reports', icon: <LineChart size={18} /> },
               { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
               { href: '/client/projects', label: 'Projects', icon: <Briefcase size={18} /> },
               { href: '/client/payments', label: 'Payments', icon: <CreditCard size={18} /> },
@@ -76,6 +81,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
           case 'freelancer':
             return [
               { href: '/freelancer/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
+              { href: '/calendar', label: 'Calendar', icon: <CalendarIcon size={18} /> },
+              { href: '/reports', label: 'Reports', icon: <LineChart size={18} /> },
               { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
               { href: '/freelancer/projects', label: 'Projects', icon: <Briefcase size={18} /> },
               { href: '/freelancer/wallet', label: 'Wallet', icon: <Wallet size={18} /> },

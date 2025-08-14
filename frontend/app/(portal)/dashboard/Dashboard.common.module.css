@@ -6,6 +6,7 @@
 .header { margin-bottom: var(--spacing-2); }
 .metrics { margin-top: var(--spacing-2); }
 .contentGrid { display: grid; grid-template-columns: 2fr 1.2fr; gap: var(--spacing-5); }
+.revenueChart { min-height: 260px; }
 .recentProjects { min-height: 200px; }
 .activityFeed { min-height: 200px; }
 

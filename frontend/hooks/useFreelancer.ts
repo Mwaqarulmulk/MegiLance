@@ -45,6 +45,18 @@ export type FreelancerAnalytics = {
   completedProjects: number;
   profileViews?: number;
   applicationsSent?: number;
+  // Optional performance metrics used by Dashboard visualizations
+  winRate?: number;
+  onTime?: number;
+  quality?: number;
+  response?: number;
+  // Optional workload composition percentages
+  activeProjectsPct?: number;
+  inReviewPct?: number;
+  blockedPct?: number;
+  completedPct?: number;
+  // Optional rank score used by RankGauge
+  rankScore?: number;
 };
 
 export function useFreelancerData() {

@@ -13,6 +13,20 @@
 
 .card:hover {
   transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Keyboard focus-visible support */
+.card:focus-visible,
+.ctaButton:focus-visible {
+  outline: 2px solid var(--brand, #4573df);
+  outline-offset: 3px;
+}
+
+/* Reduce motion when user prefers it */
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+  .card:hover { transform: none; box-shadow: none; }
 }
 
 .popularBadge {

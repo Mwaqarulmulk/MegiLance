@@ -1,0 +1,16 @@
+/* @AI-HINT: Dark theme styles for Freelancer Invoices page. */
+.container { background: transparent; }
+.title { color: #e5e7eb; }
+.subtitle { color: #9ca3af; }
+.primaryBtn { background: #4573df; color: #ffffff; }
+.secondaryBtn { background: #111827; color: #e5e7eb; border-color: #374151; }
+.secondaryBtn:hover { background: #1f2937; }
+.search { background: #111827; color: #e5e7eb; border-color: #374151; }
+.radio { background: #111827; color: #d1d5db; border-color: #374151; }
+.radio:hover { background: #1f2937; }
+.radioActive { background: #1f2937; color: #ffffff; border-color: #4573df; }
+.input { background: #111827; color: #e5e7eb; border-color: #374151; }
+.footer { border-top: 1px solid #1f2937; }
+.success { color: #27AE60; }
+.warning { color: #F2C94C; }
+.error { color: #f87171; }

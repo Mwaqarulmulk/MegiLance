@@ -1,0 +1,10 @@
+/* @AI-HINT: Dark theme styles for ToastProvider. */
+.viewport {}
+.toast {
+  background: #0b1220; /* dark surface */
+  color: #e5e7eb; /* gray-200 */
+  border: 1px solid #1f2937; /* gray-800 */
+}
+.title {}
+.desc {}
+.closeBtn { color: #e5e7eb; }

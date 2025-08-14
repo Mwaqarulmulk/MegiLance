@@ -17,3 +17,18 @@
   color: #991b1b;
   border: 1px solid #fecaca;
 }
+
+/* New light theme styles */
+.tabsRow { gap: 0.5rem; }
+.tabBtn { background: #ffffff; color: #111827; border-color: #e5e7eb; }
+.tabBtn:hover { background: #f9fafb; }
+.tabActive { background: #eef2ff; border-color: #4573df; color: #1f2937; }
+
+.rangeBtn { background: #ffffff; color: #374151; border-color: #e5e7eb; }
+.rangeActive { background: #eef2ff; color: #1f2937; border-color: #4573df; }
+
+.quickActions { align-items: center; }
+
+.card { background: #ffffff; border-color: #e5e7eb; }
+.cardHeader { border-bottom: 1px solid #f3f4f6; padding-bottom: 0.25rem; }
+.cardSub { color: #6b7280; }
