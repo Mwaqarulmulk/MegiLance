@@ -1,0 +1,4 @@
+.card { background: var(--surface); border-color: var(--border); }
+.title { color: var(--text-secondary); }
+.value { color: var(--text-primary); }
+.delta { color: var(--success); }

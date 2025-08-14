@@ -1,0 +1,53 @@
+.container {
+  background: transparent;
+}
+
+.leftPane {
+  background: var(--surface);
+  border: var(--border-width-sm) solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.rightPane {
+  background: var(--background);
+  border: var(--border-width-sm) solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.header {
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+.title { color: var(--text-primary); }
+
+.conversationArea { background: var(--background); }
+
+.footer {
+  background: var(--surface);
+  border-top-color: var(--border);
+}
+
+.input {
+  background: var(--background);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.input:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring-primary);
+  border-color: var(--primary);
+}
+
+.sendButton {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  transition: var(--transition-all-fast);
+}
+
+.sendButton:hover, .sendButton:focus-visible {
+  filter: brightness(0.95);
+}

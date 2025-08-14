@@ -24,6 +24,8 @@ import common from './Dashboard.common.module.css';
 import light from './Dashboard.light.module.css';
 import dark from './Dashboard.dark.module.css';
 import RevenueChart from './components/RevenueChart';
+import KPITiles from './components/KPITiles/KPITiles';
+import QuickActions from './components/QuickActions/QuickActions';
 
 const Dashboard: React.FC = () => {
   const { theme } = useTheme();
@@ -57,6 +59,10 @@ const Dashboard: React.FC = () => {
         <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
           <DashboardHeader userRole="client" user={displayUser} styles={headerStyles} />
         </div>
+        {/* KPI tiles just below the header for instant insights */}
+        <div className={cn(common.metrics, metricsVisible ? common.isVisible : common.isNotVisible)}>
+          <KPITiles />
+        </div>
         <div ref={metricsRef} className={cn(common.metrics, metricsVisible ? common.isVisible : common.isNotVisible)}>
           <DashboardMetrics />
         </div>
@@ -66,6 +72,9 @@ const Dashboard: React.FC = () => {
           </div>
           <div className={common.recentProjects}>
             <DashboardRecentProjects />
+          </div>
+          <div className={common.activityFeed}>
+            <QuickActions />
           </div>
           <div className={common.activityFeed}>
             <DashboardActivityFeed />

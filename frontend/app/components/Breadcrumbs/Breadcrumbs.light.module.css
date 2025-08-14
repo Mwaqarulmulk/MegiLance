@@ -1,0 +1,3 @@
+.wrap { background: var(--surface-muted); border-bottom: var(--border-width-sm) solid var(--border); }
+.crumb { color: var(--text-secondary); }
+.sep { color: var(--text-tertiary); }

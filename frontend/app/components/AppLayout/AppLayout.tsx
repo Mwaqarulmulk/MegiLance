@@ -3,6 +3,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
+import Breadcrumbs from '@/app/components/Breadcrumbs/Breadcrumbs';
 
 import ErrorBoundary from '@/app/components/ErrorBoundary/ErrorBoundary';
 
@@ -97,8 +98,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className={cn(commonStyles.appLayout, themeStyles.appLayout)}>
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} userType={area === 'general' ? undefined : area} />
       <div className={cn(commonStyles.mainContent)}>
-
-
+        <Breadcrumbs />
         <ErrorBoundary>
           <main id="main-content" className={cn(commonStyles.pageContent, themeStyles.pageContent)}>
             {children}

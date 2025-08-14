@@ -10,6 +10,9 @@ import { useAdminData } from '@/hooks/useAdmin';
 import common from './AdminProjects.common.module.css';
 import light from './AdminProjects.light.module.css';
 import dark from './AdminProjects.dark.module.css';
+import DensityToggle, { type Density } from '@/app/components/DataTableExtras/DensityToggle';
+import ColumnVisibilityMenu, { type ColumnDef } from '@/app/components/DataTableExtras/ColumnVisibilityMenu';
+import AdminTopbar from '@/app/components/Admin/Layout/AdminTopbar';
 
 interface ProjectRow {
   id: string;
@@ -92,6 +95,20 @@ const AdminProjects: React.FC = () => {
   // Pagination
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  // Density & column visibility (non-persistent)
+  const [density, setDensity] = useState<Density>('comfortable');
+  const allColumns: ColumnDef[] = useMemo(() => ([
+    { key: 'name', label: 'Name' },
+    { key: 'client', label: 'Client' },
+    { key: 'budget', label: 'Budget' },
+    { key: 'status', label: 'Status' },
+    { key: 'updated', label: 'Updated' },
+  ]), []);
+  const [visibleKeys, setVisibleKeys] = useState<string[]>(allColumns.map(c => c.key));
+  const toggleColumn = (key: string) => setVisibleKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  const showAll = () => setVisibleKeys(allColumns.map(c => c.key));
+  const hideAll = () => setVisibleKeys([]);
+  const isVisible = (key: keyof ProjectRow) => visibleKeys.includes(key);
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const pageSafe = Math.min(Math.max(1, page), totalPages);
   const paged = useMemo(() => {
@@ -104,20 +121,26 @@ const AdminProjects: React.FC = () => {
   return (
     <main className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
-            <h1 className={common.title}>Projects</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Platform-wide projects overview. Filter by status and search by name/client.</p>
-          </div>
-          <div className={common.controls} aria-label="Project filters">
-            <label className={common.srOnly} htmlFor="q">Search</label>
-            <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search projects…" value={query} onChange={(e) => setQuery(e.target.value)} />
-            <label className={common.srOnly} htmlFor="status">Status</label>
-            <select id="status" className={cn(common.select, themed.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
-              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <button type="button" className={cn(common.button, themed.button)}>Create Project</button>
-          </div>
+        <div ref={headerRef} className={cn(headerVisible ? common.isVisible : common.isNotVisible)}>
+          <AdminTopbar
+            title="Projects"
+            subtitle="Platform-wide projects overview. Filter by status and search by name/client."
+            breadcrumbs={[
+              { label: 'Admin', href: '/admin' },
+              { label: 'Projects' },
+            ]}
+            right={(
+              <div className={common.controls} aria-label="Project filters">
+                <label className={common.srOnly} htmlFor="q">Search</label>
+                <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search projects…" value={query} onChange={(e) => setQuery(e.target.value)} />
+                <label className={common.srOnly} htmlFor="status">Status</label>
+                <select id="status" className={cn(common.select, themed.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
+                  {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button type="button" className={cn(common.button, themed.button)}>Create Project</button>
+              </div>
+            )}
+          />
         </div>
 
         <div ref={tableRef} className={cn(common.tableWrap, tableVisible ? common.isVisible : common.isNotVisible)} aria-busy={loading || undefined}>
@@ -143,6 +166,21 @@ const AdminProjects: React.FC = () => {
                 <option value={20}>20</option>
                 <option value={50}>50</option>
               </select>
+              <DensityToggle value={density} onChange={setDensity} />
+              <ColumnVisibilityMenu
+                columns={allColumns}
+                visibleKeys={visibleKeys}
+                onToggle={toggleColumn}
+                onShowAll={showAll}
+                onHideAll={hideAll}
+                aria-label="Column visibility"
+              />
+              <button
+                type="button"
+                className={cn(common.button, themed.button, 'secondary')}
+                onClick={() => { setDensity('comfortable'); showAll(); }}
+                aria-label="Reset table settings"
+              >Reset</button>
             </div>
             <div>
               <button
@@ -168,11 +206,11 @@ const AdminProjects: React.FC = () => {
           <table className={cn(common.table, themed.table)}>
             <thead>
               <tr>
-                <th scope="col" className={themed.th + ' ' + common.th}>Name</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Client</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Budget</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Status</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Updated</th>
+                {isVisible('name') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Name</th>)}
+                {isVisible('client') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Client</th>)}
+                {isVisible('budget') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Budget</th>)}
+                {isVisible('status') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Status</th>)}
+                {isVisible('updated') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Updated</th>)}
                 <th scope="col" className={themed.th + ' ' + common.th} aria-label="Actions">Actions</th>
               </tr>
             </thead>
@@ -193,17 +231,17 @@ const AdminProjects: React.FC = () => {
               <tbody>
                 {paged.map(p => (
                   <tr key={p.id} className={common.row}>
-                    <td className={themed.td + ' ' + common.td}>{p.name}</td>
-                    <td className={themed.td + ' ' + common.td}>{p.client}</td>
-                    <td className={themed.td + ' ' + common.td}>{p.budget}</td>
-                    <td className={themed.td + ' ' + common.td}>
+                    {isVisible('name') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{p.name}</td>)}
+                    {isVisible('client') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{p.client}</td>)}
+                    {isVisible('budget') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{p.budget}</td>)}
+                    {isVisible('status') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>
                       <span className={cn(common.badge, themed.badge)}>
                         <span className={cn(common.badgeDot, statusDotClass(p.status))} aria-hidden="true" />
                         {p.status}
                       </span>
-                    </td>
-                    <td className={themed.td + ' ' + common.td}>{p.updated}</td>
-                    <td className={themed.td + ' ' + common.td}>
+                    </td>)}
+                    {isVisible('updated') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{p.updated}</td>)}
+                    <td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>
                       <div className={common.rowActions}>
                         <button type="button" className={cn(common.button, themed.button, 'secondary')}>Open</button>
                         <button type="button" className={cn(common.button, themed.button)}>Assign</button>

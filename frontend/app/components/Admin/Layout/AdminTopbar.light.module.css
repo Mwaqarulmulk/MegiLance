@@ -1,0 +1,8 @@
+.topbar {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.title { color: var(--text-primary); }
+.subtitle { color: var(--text-secondary); }
+.button { color: var(--text-primary); }

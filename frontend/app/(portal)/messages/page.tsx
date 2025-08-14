@@ -4,7 +4,7 @@
 // Styles are imported in this route's layout.tsx to comply with Next.js global CSS rules.
 
 import React from 'react';
-import Messages from '@/app/Messages/Messages';
+import Messages from './Messages';
 
 const PortalMessagesPage = () => {
   return <Messages />;

@@ -8,6 +8,8 @@ import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import common from './Analytics.common.module.css';
 import light from './Analytics.light.module.css';
 import dark from './Analytics.dark.module.css';
+import DensityToggle, { type Density } from '@/app/components/DataTableExtras/DensityToggle';
+import ColumnVisibilityMenu, { type ColumnDef } from '@/app/components/DataTableExtras/ColumnVisibilityMenu';
 
 const RANGES = ['Last 7 days', 'Last 30 days', 'Last 90 days'] as const;
 const SEGMENTS = ['All', 'Clients', 'Freelancers'] as const;
@@ -18,6 +20,17 @@ const Analytics: React.FC = () => {
 
   const [range, setRange] = useState<(typeof RANGES)[number]>('Last 30 days');
   const [segment, setSegment] = useState<(typeof SEGMENTS)[number]>('All');
+  // Density & column visibility  // Breakdown table: density & columns (non-persistent)
+  const [density, setDensity] = useState<Density>('comfortable');
+  const breakdownColumns: ColumnDef[] = React.useMemo(() => ([
+    { key: 'metric', label: 'Metric' },
+    { key: 'value', label: 'Value' },
+  ]), []);
+  const [visibleKeys, setVisibleKeys] = useState<string[]>(breakdownColumns.map(c => c.key));
+  const toggleColumn = (key: string) => setVisibleKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  const showAll = () => setVisibleKeys(breakdownColumns.map(c => c.key));
+  const hideAll = () => setVisibleKeys([]);
+  const isVisible = (key: 'metric' | 'value') => visibleKeys.includes(key);
 
   const headerRef = useRef<HTMLDivElement | null>(null);
   const kpisRef = useRef<HTMLDivElement | null>(null);
@@ -68,6 +81,21 @@ const Analytics: React.FC = () => {
             <select id="segment" className={themed.select + ' ' + common.select} value={segment} onChange={(e) => setSegment(e.target.value as (typeof SEGMENTS)[number])}>
               {SEGMENTS.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
+            <DensityToggle value={density} onChange={setDensity} />
+            <ColumnVisibilityMenu
+              columns={breakdownColumns}
+              visibleKeys={visibleKeys}
+              onToggle={toggleColumn}
+              onShowAll={showAll}
+              onHideAll={hideAll}
+              aria-label="Column visibility"
+            />
+            <button
+              type="button"
+              className={cn(common.button, themed.button, 'secondary')}
+              onClick={() => { setDensity('comfortable'); showAll(); }}
+              aria-label="Reset table settings"
+            >Reset</button>
           </div>
         </div>
 
@@ -162,15 +190,15 @@ const Analytics: React.FC = () => {
             <table className={common.table}>
               <thead>
                 <tr>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Metric</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Value</th>
+                  {isVisible('metric') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Metric</th>)}
+                  {isVisible('value') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Value</th>)}
                 </tr>
               </thead>
               <tbody>
                 {data.table.map((row) => (
                   <tr key={row.metric}>
-                    <td className={themed.td + ' ' + common.td}>{row.metric}</td>
-                    <td className={themed.td + ' ' + common.td}>{row.value}</td>
+                    {isVisible('metric') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{row.metric}</td>)}
+                    {isVisible('value') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{row.value}</td>)}
                   </tr>
                 ))}
               </tbody>

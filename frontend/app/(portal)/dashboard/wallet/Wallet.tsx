@@ -8,6 +8,8 @@ import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import common from './Wallet.common.module.css';
 import light from './Wallet.light.module.css';
 import dark from './Wallet.dark.module.css';
+import DensityToggle, { type Density } from '@/app/components/DataTableExtras/DensityToggle';
+import ColumnVisibilityMenu, { type ColumnDef } from '@/app/components/DataTableExtras/ColumnVisibilityMenu';
 
 interface Txn {
   id: string;
@@ -35,6 +37,19 @@ const Wallet: React.FC = () => {
   const [type, setType] = useState<(typeof TYPES)[number]>('All');
   const [range, setRange] = useState<(typeof RANGES)[number]>('Past month');
   const [toast, setToast] = useState<{ kind: 'success' | 'error'; msg: string } | null>(null);
+  // Density & column visibility (non-persistent)
+  const [density, setDensity] = useState<Density>('comfortable');
+  const allColumns: ColumnDef[] = React.useMemo(() => ([
+    { key: 'date', label: 'Date' },
+    { key: 'description', label: 'Description' },
+    { key: 'type', label: 'Type' },
+    { key: 'amount', label: 'Amount' },
+  ]), []);
+  const [visibleKeys, setVisibleKeys] = useState<string[]>(allColumns.map(c => c.key));
+  const toggleColumn = (key: string) => setVisibleKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  const showAll = () => setVisibleKeys(allColumns.map(c => c.key));
+  const hideAll = () => setVisibleKeys([]);
+  const isVisible = (key: keyof Txn) => visibleKeys.includes(key);
 
   const headerRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -100,6 +115,21 @@ const Wallet: React.FC = () => {
             </select>
 
             <button type="button" className={cn(common.button, themed.button)} onClick={exportCSV}>Export CSV</button>
+            <DensityToggle value={density} onChange={setDensity} />
+            <ColumnVisibilityMenu
+              columns={allColumns}
+              visibleKeys={visibleKeys}
+              onToggle={toggleColumn}
+              onShowAll={showAll}
+              onHideAll={hideAll}
+              aria-label="Column visibility"
+            />
+            <button
+              type="button"
+              className={cn(common.button, themed.button, 'secondary')}
+              onClick={() => { setDensity('comfortable'); showAll(); }}
+              aria-label="Reset table settings"
+            >Reset</button>
           </div>
         </div>
 
@@ -116,21 +146,21 @@ const Wallet: React.FC = () => {
             <table className={common.table}>
               <thead>
                 <tr>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Date</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Description</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Type</th>
-                  <th scope="col" className={themed.th + ' ' + common.th}>Amount</th>
+                  {isVisible('date') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Date</th>)}
+                  {isVisible('description') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Description</th>)}
+                  {isVisible('type') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Type</th>)}
+                  {isVisible('amount') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Amount</th>)}
                 </tr>
               </thead>
               <tbody>
                 {txns.map((t) => (
                   <tr key={t.id}>
-                    <td className={themed.td + ' ' + common.td}>{t.date}</td>
-                    <td className={themed.td + ' ' + common.td}>{t.description}</td>
-                    <td className={themed.td + ' ' + common.td}>{t.type}</td>
-                    <td className={themed.td + ' ' + common.td} aria-label={`Amount ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString()}`}>
+                    {isVisible('date') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.date}</td>)}
+                    {isVisible('description') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.description}</td>)}
+                    {isVisible('type') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.type}</td>)}
+                    {isVisible('amount') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }} aria-label={`Amount ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString()}`}>
                       {(t.amount >= 0 ? '+' : '') + '$' + Math.abs(t.amount).toLocaleString()}
-                    </td>
+                    </td>)}
                   </tr>
                 ))}
               </tbody>

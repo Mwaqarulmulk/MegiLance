@@ -8,6 +8,8 @@ import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import common from './AuditLogs.common.module.css';
 import light from './AuditLogs.light.module.css';
 import dark from './AuditLogs.dark.module.css';
+import DensityToggle, { type Density } from '@/app/components/DataTableExtras/DensityToggle';
+import ColumnVisibilityMenu, { type ColumnDef } from '@/app/components/DataTableExtras/ColumnVisibilityMenu';
 
 interface LogItem {
   id: string;
@@ -38,6 +40,20 @@ const AuditLogs: React.FC = () => {
   const [range, setRange] = useState<(typeof RANGES)[number]>('Past month');
   const [actor, setActor] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Density & column visibility (non-persistent)
+  const [density, setDensity] = useState<Density>('comfortable');
+  const allColumns: ColumnDef[] = useMemo(() => ([
+    { key: 'time', label: 'Time' },
+    { key: 'actor', label: 'Actor' },
+    { key: 'action', label: 'Action' },
+    { key: 'resource', label: 'Resource' },
+    { key: 'ip', label: 'IP' },
+  ]), []);
+  const [visibleKeys, setVisibleKeys] = useState<string[]>(allColumns.map(c => c.key));
+  const toggleColumn = (key: string) => setVisibleKeys(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  const showAll = () => setVisibleKeys(allColumns.map(c => c.key));
+  const hideAll = () => setVisibleKeys([]);
+  const isVisible = (key: keyof LogItem) => visibleKeys.includes(key);
 
   const headerRef = useRef<HTMLDivElement | null>(null);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -85,6 +101,21 @@ const AuditLogs: React.FC = () => {
             <select id="range" className={cn(common.select, themed.select)} value={range} onChange={(e) => setRange(e.target.value as (typeof RANGES)[number])}>
               {RANGES.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
+            <DensityToggle value={density} onChange={setDensity} />
+            <ColumnVisibilityMenu
+              columns={allColumns}
+              visibleKeys={visibleKeys}
+              onToggle={toggleColumn}
+              onShowAll={showAll}
+              onHideAll={hideAll}
+              aria-label="Column visibility"
+            />
+            <button
+              type="button"
+              className={cn(common.button, themed.button, 'secondary')}
+              onClick={() => { setDensity('comfortable'); showAll(); }}
+              aria-label="Reset table settings"
+            >Reset</button>
           </div>
         </div>
 
@@ -92,11 +123,11 @@ const AuditLogs: React.FC = () => {
           <table className={cn(common.table, themed.table)}>
             <thead>
               <tr>
-                <th scope="col" className={themed.th + ' ' + common.th}>Time</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Actor</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Action</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>Resource</th>
-                <th scope="col" className={themed.th + ' ' + common.th}>IP</th>
+                {isVisible('time') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Time</th>)}
+                {isVisible('actor') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Actor</th>)}
+                {isVisible('action') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Action</th>)}
+                {isVisible('resource') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Resource</th>)}
+                {isVisible('ip') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>IP</th>)}
               </tr>
             </thead>
             <tbody>
@@ -109,11 +140,11 @@ const AuditLogs: React.FC = () => {
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedId(l.id); } }}
                   aria-selected={selectedId === l.id}
                 >
-                  <td className={themed.td + ' ' + common.td}>{new Date(l.time).toLocaleString()}</td>
-                  <td className={themed.td + ' ' + common.td}>{l.actor}</td>
-                  <td className={themed.td + ' ' + common.td}>{l.action}</td>
-                  <td className={themed.td + ' ' + common.td}>{l.resource}</td>
-                  <td className={themed.td + ' ' + common.td}>{l.ip}</td>
+                  {isVisible('time') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{new Date(l.time).toLocaleString()}</td>)}
+                  {isVisible('actor') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.actor}</td>)}
+                  {isVisible('action') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.action}</td>)}
+                  {isVisible('resource') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.resource}</td>)}
+                  {isVisible('ip') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.ip}</td>)}
                 </tr>
               ))}
             </tbody>

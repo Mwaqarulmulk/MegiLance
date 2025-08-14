@@ -10,6 +10,7 @@ import Modal from '@/app/components/Modal/Modal';
 import common from './AdminSupport.common.module.css';
 import light from './AdminSupport.light.module.css';
 import dark from './AdminSupport.dark.module.css';
+import AdminTopbar from '@/app/components/Admin/Layout/AdminTopbar';
 
 interface Ticket {
   id: string;
@@ -180,23 +181,29 @@ const AdminSupport: React.FC = () => {
     <main className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
         <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
-            <h1 className={common.title}>Support</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Triage and resolve support tickets. Filter by status and priority; select a ticket to view details.</p>
-          </div>
-          <div className={common.controls} aria-label="Support filters">
-            <label className={common.srOnly} htmlFor="q">Search</label>
-            <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search subject, requester, assignee…" value={query} onChange={(e) => setQuery(e.target.value)} />
-            <label className={common.srOnly} htmlFor="status">Status</label>
-            <select id="status" className={cn(common.select, themed.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
-              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <label className={common.srOnly} htmlFor="priority">Priority</label>
-            <select id="priority" className={cn(common.select, themed.select)} value={priority} onChange={(e) => setPriority(e.target.value as (typeof PRIORITIES)[number])}>
-              {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
-            <button type="button" className={cn(common.button, themed.button)} onClick={() => setIsNewOpen(true)}>New Ticket</button>
-          </div>
+          <AdminTopbar
+            title="Support"
+            subtitle="Triage and resolve support tickets. Filter by status and priority; select a ticket to view details."
+            breadcrumbs={[
+              { label: 'Admin', href: '/admin' },
+              { label: 'Support' },
+            ]}
+            right={(
+              <div className={common.controls} aria-label="Support filters">
+                <label className={common.srOnly} htmlFor="q">Search</label>
+                <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search subject, requester, assignee…" value={query} onChange={(e) => setQuery(e.target.value)} />
+                <label className={common.srOnly} htmlFor="status">Status</label>
+                <select id="status" className={cn(common.select, themed.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
+                  {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <label className={common.srOnly} htmlFor="priority">Priority</label>
+                <select id="priority" className={cn(common.select, themed.select)} value={priority} onChange={(e) => setPriority(e.target.value as (typeof PRIORITIES)[number])}>
+                  {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+                <button type="button" className={cn(common.button, themed.button)} onClick={() => setIsNewOpen(true)}>New Ticket</button>
+              </div>
+            )}
+          />
         </div>
 
         <section className={cn(common.layout)}>

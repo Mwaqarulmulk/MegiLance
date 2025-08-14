@@ -15,6 +15,7 @@ import JobModerationQueue from '@/app/components/Admin/JobModerationQueue/JobMod
 import FlaggedReviews from '@/app/components/Admin/FlaggedReviews/FlaggedReviews';
 import FlaggedFraudList from '@/app/components/Admin/FlaggedFraudList/FlaggedFraudList';
 import FraudAlertBanner from '@/app/components/AI/FraudAlertBanner/FraudAlertBanner';
+import AdminTopbar from '@/app/components/Admin/Layout/AdminTopbar';
 
 interface KPI { id: string; label: string; value: string; trend: string; }
 interface UserRow { id: string; name: string; email: string; role: 'Admin' | 'Client' | 'Freelancer'; status: 'Active' | 'Suspended'; joined: string; }
@@ -66,19 +67,25 @@ const AdminDashboard: React.FC = () => {
     <main className={cn(common.page, themed.themeWrapper)}>
       <FraudAlertBanner message="Multiple high-risk activities have been detected. Please review the flagged items immediately."/>
       <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
-            <h1 className={common.title}>Admin Dashboard</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Global overview of platform metrics, users, and operations.</p>
-          </div>
-          <div className={common.controls} aria-label="Admin dashboard controls">
-            <label className={common.srOnly} htmlFor="role-filter">Filter by role</label>
-            <select id="role-filter" className={cn(common.select, themed.select)} value={role} onChange={(e) => setRole(e.target.value as any)} title="Filter users by role">
-              {['All','Admin','Client','Freelancer'].map(r => <option key={r} value={r}>{r}</option>)}
-            </select>
-            <button type="button" className={cn(common.button, themed.button)} title="Create a new platform-wide announcement">Create Announcement</button>
-            <button type="button" className={cn(common.button, themed.button, 'secondary')} title="Run system maintenance tasks">Run Maintenance</button>
-          </div>
+        <div ref={headerRef} className={cn(headerVisible ? common.isVisible : common.isNotVisible)}>
+          <AdminTopbar
+            title="Admin Dashboard"
+            subtitle="Global overview of platform metrics, users, and operations."
+            breadcrumbs={[
+              { label: 'Admin', href: '/admin' },
+              { label: 'Dashboard' },
+            ]}
+            right={(
+              <div className={common.controls} aria-label="Admin dashboard controls">
+                <label className={common.srOnly} htmlFor="role-filter">Filter by role</label>
+                <select id="role-filter" className={cn(common.select, themed.select)} value={role} onChange={(e) => setRole(e.target.value as any)} title="Filter users by role">
+                  {['All','Admin','Client','Freelancer'].map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+                <button type="button" className={cn(common.button, themed.button)} title="Create a new platform-wide announcement">Create Announcement</button>
+                <button type="button" className={cn(common.button, themed.button, 'secondary')} title="Run system maintenance tasks">Run Maintenance</button>
+              </div>
+            )}
+          />
         </div>
 
         <section ref={kpiRef} className={cn(common.kpis, kpisVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="kpi-section-title">

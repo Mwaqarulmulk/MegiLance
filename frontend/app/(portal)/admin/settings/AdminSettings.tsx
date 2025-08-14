@@ -9,6 +9,7 @@ import { useAdminData } from '@/hooks/useAdmin';
 import common from './AdminSettings.common.module.css';
 import light from './AdminSettings.light.module.css';
 import dark from './AdminSettings.dark.module.css';
+import AdminTopbar from '@/app/components/Admin/Layout/AdminTopbar';
 
 const AdminSettings: React.FC = () => {
   const { theme } = useTheme();
@@ -42,10 +43,14 @@ const AdminSettings: React.FC = () => {
     <main className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
         <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
-            <h1 className={common.title}>Admin Settings</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Configure organization preferences, security policies, and notifications.</p>
-          </div>
+          <AdminTopbar
+            title="Admin Settings"
+            subtitle="Configure organization preferences, security policies, and notifications."
+            breadcrumbs={[
+              { label: 'Admin', href: '/admin' },
+              { label: 'Settings' },
+            ]}
+          />
         </div>
 
         {loading && <div className={common.skeletonRow} aria-busy="true" />}

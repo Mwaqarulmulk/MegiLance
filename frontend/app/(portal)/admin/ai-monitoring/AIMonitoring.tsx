@@ -9,6 +9,7 @@ import { useAdminData } from '@/hooks/useAdmin';
 import common from './AIMonitoring.common.module.css';
 import light from './AIMonitoring.light.module.css';
 import dark from './AIMonitoring.dark.module.css';
+import AdminTopbar from '@/app/components/Admin/Layout/AdminTopbar';
 
 interface KPI { id: string; label: string; value: string; }
 interface LogRow { id: string; ts: string; level: 'info' | 'warn' | 'error'; message: string; model: string; latencyMs: number; }
@@ -65,19 +66,25 @@ const AIMonitoring: React.FC = () => {
     <main className={cn(common.page, themed.themeWrapper)}>
       <div className={common.container}>
         <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
-          <div>
-            <h1 className={common.title}>AI Monitoring</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Track AI usage, latency, errors, and cost. Filter logs by level and search text.</p>
-          </div>
-          <div className={common.controls} aria-label="AI monitoring controls">
-            <label className={common.srOnly} htmlFor="q">Search</label>
-            <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search logs…" value={query} onChange={(e) => setQuery(e.target.value)} />
-            <label className={common.srOnly} htmlFor="level">Level</label>
-            <select id="level" className={cn(common.select, themed.select)} value={level} onChange={(e) => setLevel(e.target.value as (typeof LEVELS)[number])}>
-              {LEVELS.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <button type="button" className={cn(common.button, themed.button)}>Export Logs</button>
-          </div>
+          <AdminTopbar
+            title="AI Monitoring"
+            subtitle="Track AI usage, latency, errors, and cost. Filter logs by level and search text."
+            breadcrumbs={[
+              { label: 'Admin', href: '/admin' },
+              { label: 'AI Monitoring' },
+            ]}
+            right={(
+              <div className={common.controls} aria-label="AI monitoring controls">
+                <label className={common.srOnly} htmlFor="q">Search</label>
+                <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search logs…" value={query} onChange={(e) => setQuery(e.target.value)} />
+                <label className={common.srOnly} htmlFor="level">Level</label>
+                <select id="level" className={cn(common.select, themed.select)} value={level} onChange={(e) => setLevel(e.target.value as (typeof LEVELS)[number])}>
+                  {LEVELS.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button type="button" className={cn(common.button, themed.button)}>Export Logs</button>
+              </div>
+            )}
+          />
         </div>
 
         <section ref={kpiRef} className={cn(common.kpis, kpisVisible ? common.isVisible : common.isNotVisible)} aria-label="AI KPIs">
