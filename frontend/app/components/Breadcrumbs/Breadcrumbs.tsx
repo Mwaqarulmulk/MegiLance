@@ -14,9 +14,7 @@ const normalize = (s: string) => s.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) =>
 const Breadcrumbs: React.FC = () => {
   const pathname = usePathname();
   const { theme } = useTheme();
-  if (!theme) return null;
-  const themed = theme === 'dark' ? dark : light;
-
+  // Hooks must not be called conditionally. Compute crumbs first.
   const crumbs = useMemo(() => {
     if (!pathname) return [] as string[];
     // Use explicit map first
@@ -27,6 +25,9 @@ const Breadcrumbs: React.FC = () => {
     const rest = segments.slice(1).map(normalize);
     return [area, ...rest];
   }, [pathname]);
+
+  if (!theme) return null;
+  const themed = theme === 'dark' ? dark : light;
 
   if (!crumbs || crumbs.length === 0) return null;
 

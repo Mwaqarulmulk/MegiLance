@@ -2,11 +2,12 @@
 
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { adminNavItems, clientNavItems, freelancerNavItems, NavItem as ConfigNavItem } from '@/app/config/navigation';
 import styles from './SidebarNav.common.module.css';
 import {
   LayoutDashboard,
@@ -21,7 +22,37 @@ import {
   ShieldAlert,
   Briefcase,
   Calendar as CalendarIcon,
+  LifeBuoy,
+  Robot,
+  FileText,
+  User,
+  Bell,
+  Star,
+  Calculator,
+  Rocket,
 } from 'lucide-react';
+
+// AI-HINT: This map resolves string icon identifiers from the central navigation config to actual React components.
+const iconMap: { [key: string]: React.ReactNode } = {
+  FaTachometerAlt: <LayoutDashboard size={18} />,
+  FaUsers: <Users size={18} />,
+  FaBriefcase: <Briefcase size={18} />,
+  FaCreditCard: <CreditCard size={18} />,
+  FaRobot: <Robot size={18} />,
+  FaLifeRing: <LifeBuoy size={18} />,
+  FaCogs: <SettingsIcon size={18} />,
+  FaShieldAlt: <ShieldAlert size={18} />,
+  FaComments: <MessageSquare size={18} />,
+  FaFileContract: <FileText size={18} />,
+  FaPortrait: <User size={18} />,
+  FaChartLine: <LineChart size={18} />,
+  FaWallet: <Wallet size={18} />,
+  FaBell: <Bell size={18} />,
+  FaStar: <Star size={18} />,
+  FaCalculator: <Calculator size={18} />,
+  FaRocket: <Rocket size={18} />,
+};
+
 
 // Define the structure for a navigation item
 export interface NavItem {
@@ -32,16 +63,13 @@ export interface NavItem {
 
 // Define the props for the SidebarNav component
 export interface SidebarNavProps {
-  navItems?: NavItem[];
   userType?: 'admin' | 'client' | 'freelancer';
-  // Accept external theme prop for compatibility with legacy callers; internal theming still uses next-themes.
   theme?: string;
   isCollapsed?: boolean;
   className?: string;
 }
 
 const SidebarNav: React.FC<SidebarNavProps> = ({
-  navItems,
   userType,
   theme: _externalTheme,
   isCollapsed = false,
@@ -50,49 +78,27 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
   const pathname = usePathname();
   const { theme } = useTheme(); // Use hook for theme
 
-  // Provide sensible defaults when navItems are not passed in, based on userType
-  const computedNavItems: NavItem[] = navItems && navItems.length > 0
-    ? navItems
-    : ((): NavItem[] => {
-        switch (userType) {
-          case 'admin':
-            return [
-              { href: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-              { href: '/calendar', label: 'Calendar', icon: <CalendarIcon size={18} /> },
-              { href: '/reports', label: 'Reports', icon: <LineChart size={18} /> },
-              { href: '/admin/users', label: 'Users', icon: <Users size={18} /> },
-              { href: '/admin/projects', label: 'Projects', icon: <FolderGit2 size={18} /> },
-              { href: '/admin/payments', label: 'Payments', icon: <CreditCard size={18} /> },
-              { href: '/admin/support', label: 'Support', icon: <ShieldAlert size={18} /> },
-              { href: '/admin/ai-monitoring', label: 'AI Monitoring', icon: <LineChart size={18} /> },
-              { href: '/admin/settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
-            ];
-          case 'client':
-            return [
-              { href: '/client/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-              { href: '/calendar', label: 'Calendar', icon: <CalendarIcon size={18} /> },
-              { href: '/reports', label: 'Reports', icon: <LineChart size={18} /> },
-              { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
-              { href: '/client/projects', label: 'Projects', icon: <Briefcase size={18} /> },
-              { href: '/client/payments', label: 'Payments', icon: <CreditCard size={18} /> },
-              { href: '/help', label: 'Help', icon: <HelpCircle size={18} /> },
-              { href: '/client/settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
-            ];
-          case 'freelancer':
-            return [
-              { href: '/freelancer/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-              { href: '/calendar', label: 'Calendar', icon: <CalendarIcon size={18} /> },
-              { href: '/reports', label: 'Reports', icon: <LineChart size={18} /> },
-              { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
-              { href: '/freelancer/projects', label: 'Projects', icon: <Briefcase size={18} /> },
-              { href: '/freelancer/wallet', label: 'Wallet', icon: <Wallet size={18} /> },
-              { href: '/help', label: 'Help', icon: <HelpCircle size={18} /> },
-              { href: '/freelancer/settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
-            ];
-          default:
-            return [];
-        }
-      })();
+  const computedNavItems: NavItem[] = useMemo(() => {
+    let sourceItems: ConfigNavItem[] = [];
+    switch (userType) {
+      case 'admin':
+        sourceItems = adminNavItems;
+        break;
+      case 'client':
+        sourceItems = clientNavItems;
+        break;
+      case 'freelancer':
+        sourceItems = freelancerNavItems;
+        break;
+      default:
+        return [];
+    }
+    return sourceItems.map(item => ({
+      href: item.href,
+      label: item.label,
+      icon: item.icon ? iconMap[item.icon] : <FolderGit2 size={18} />, // Default icon
+    }));
+  }, [userType]);
 
   const sidebarClasses = cn(
     styles.sidebarNav,

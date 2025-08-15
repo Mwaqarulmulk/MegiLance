@@ -12,7 +12,7 @@ import Select from '@/app/components/Select/Select';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import { Check, X, Search, ListFilter, Building2, CalendarDays, ShieldAlert, ChevronDown, ChevronUp } from 'lucide-react';
 
-import commonStyles from './JobModerationQueue.common.module.css';
+import baseStyles from './JobModerationQueue.base.module.css';
 import lightStyles from './JobModerationQueue.light.module.css';
 import darkStyles from './JobModerationQueue.dark.module.css';
 
@@ -49,33 +49,33 @@ const JobCard: React.FC<JobCardProps> = ({ job, onModerate, themeStyles, isExpan
   }[job.riskLevel];
 
   return (
-    <Card className={cn(commonStyles.jobCard, themeStyles.jobCard)}>
-      <div className={commonStyles.cardHeader}>
-        <h3 className={cn(commonStyles.jobTitle, themeStyles.jobTitle)}>{job.title}</h3>
+    <Card className={cn(baseStyles.jobCard, themeStyles.jobCard)}>
+      <div className={baseStyles.cardHeader}>
+        <h3 className={cn(baseStyles.jobTitle, themeStyles.jobTitle)}>{job.title}</h3>
         <Badge variant={riskBadgeVariant}>{job.riskLevel} Risk</Badge>
       </div>
 
-      <div className={commonStyles.cardMeta}>
-        <div className={cn(commonStyles.metaItem, themeStyles.metaItem)}>
+      <div className={baseStyles.cardMeta}>
+        <div className={cn(baseStyles.metaItem, themeStyles.metaItem)}>
           <Building2 size={14} />
           <UserAvatar src={job.client.avatarUrl} name={job.client.name} size={24} />
           <span>{job.client.name}</span>
         </div>
-        <div className={cn(commonStyles.metaItem, themeStyles.metaItem)}>
+        <div className={cn(baseStyles.metaItem, themeStyles.metaItem)}>
           <CalendarDays size={14} />
           <span>{job.dateSubmitted}</span>
         </div>
       </div>
 
-      <div className={cn(commonStyles.description, isExpanded ? commonStyles.expanded : '')}>
+      <div className={cn(baseStyles.description, isExpanded ? baseStyles.expanded : '')}>
         <p>{job.description}</p>
       </div>
-      <button onClick={onToggleExpand} className={cn(commonStyles.expandButton, themeStyles.expandButton)}>
+      <button onClick={onToggleExpand} className={cn(baseStyles.expandButton, themeStyles.expandButton)}>
         {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         {isExpanded ? 'Show Less' : 'Show More'}
       </button>
 
-      <div className={commonStyles.cardActions}>
+      <div className={baseStyles.cardActions}>
         <Button variant="success" onClick={() => onModerate(job.id, 'Approved')}><Check size={16} /> Approve</Button>
         <Button variant="danger" onClick={() => onModerate(job.id, 'Rejected')}><X size={16} /> Reject</Button>
       </div>
@@ -126,15 +126,15 @@ const JobModerationQueue: React.FC = () => {
     });
 
   return (
-    <div className={cn(commonStyles.container, themeStyles.container)}>
-      <header className={commonStyles.header}>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>Job Moderation Queue</h2>
-        <p className={cn(commonStyles.description, themeStyles.description)}>
+    <div className={cn(baseStyles.container, themeStyles.container)}>
+      <header className={baseStyles.header}>
+        <h2 className={cn(baseStyles.title, themeStyles.title)}>Job Moderation Queue</h2>
+        <p className={cn(baseStyles.description, themeStyles.description)}>
           {filteredAndSortedJobs.length} jobs awaiting moderation.
         </p>
       </header>
 
-      <div className={cn(commonStyles.toolbar, themeStyles.toolbar)}>
+      <div className={cn(baseStyles.toolbar, themeStyles.toolbar)}>
         <Input
           id="search-jobs"
           placeholder="Search jobs or clients..."
@@ -142,7 +142,7 @@ const JobModerationQueue: React.FC = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           iconBefore={<Search size={16} />}
         />
-        <div className={commonStyles.filters}>
+        <div className={baseStyles.filters}>
           <Select
             id="risk-filter"
             value={riskFilter}
@@ -168,7 +168,7 @@ const JobModerationQueue: React.FC = () => {
         </div>
       </div>
 
-      <div className={commonStyles.jobGrid}>
+      <div className={baseStyles.jobGrid}>
         {filteredAndSortedJobs.length > 0 ? (
           filteredAndSortedJobs.map(job => (
             <JobCard 
@@ -181,7 +181,7 @@ const JobModerationQueue: React.FC = () => {
             />
           ))
         ) : (
-          <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
+          <div className={cn(baseStyles.emptyState, themeStyles.emptyState)}>
             <ListFilter size={48} />
             <h3>No Matching Jobs</h3>
             <p>Adjust your filters or clear the search to find jobs in the queue.</p>

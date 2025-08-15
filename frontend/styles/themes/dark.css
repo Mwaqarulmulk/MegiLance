@@ -1,51 +1,33 @@
 /* @AI-HINT: Defines the global color variables for the dark theme. These variables are scoped to the `.dark` class. When this class is applied to the `<html>` element by the `ThemeProvider`, these variables override the default light theme styles defined in `light.css`. */
 
 .dark {
-  /* Brand & Accent Colors (often remain the same for brand consistency) */
-  --primary-4573df: #4573df;
-  --accent-ff9800: #ff9800;
+  /* ========================================================================= */
+  /* MegiLance Design System: Dark Theme Tokens                              */
+  /* ========================================================================= */
 
-  /* Semantic Colors */
-  --success-27AE60: #27AE60;
-  --error-e81123: #e81123;
-  --warning-f2c94c: #F2C94C;
+  /* ------------------------------------------------------------------------- */
+  /* Abstracted Theme Variables (for component use)                            */
+  /* ------------------------------------------------------------------------- */
+  /* Note: The raw color palette, typography, spacing, and radii are inherited */
+  /* from the :root (light theme) definition. We only override the abstracted */
+  /* variables here to theme the application for dark mode.                  */
 
-  /* UI Surfaces & Backgrounds */
-  --background-1d2127: #1d2127;
-  --surface-272b32: #272b32; /* For cards, forms, etc. */
-  --surface-alt-2c323a: #2c323a; /* A slightly different dark for variation */
-  --container-dark-2c323a: #2c323a; /* This is already a dark color, so it's consistent */
-  --border-3a414a: #3a414a; /* A subtle border for dark mode */
+  --background: var(--color-gray-900);
+  --surface: var(--color-gray-800);
+  --surface-alt: var(--color-gray-700);
+  --border: var(--color-gray-700);
+  --border-hover: var(--color-gray-600);
 
-  /* Text Colors */
-  --text-primary-f5f7fa: #f5f7fa;
-  --text-secondary-a9b1bd: #a9b1bd;
-  --text-on-primary-ffffff: #ffffff;
-  --text-on-accent-ffffff: #ffffff;
-  --text-on-dark-f5f7fa: #f5f7fa;
+  --text-primary: var(--color-gray-100);
+  --text-secondary: var(--color-gray-400);
+  --text-disabled: var(--color-gray-500);
 
-  /* Extended Brand Palette (remain the same) */
-  --brand-indigo-3c3c88: #3C3C88;
-  --brand-electric-blue-2f80ed: #2F80ED;
-
-  /* Abstracted Theme Variables (for component use) */
-  --primary: var(--primary-4573df);
-  --accent: var(--accent-ff9800);
-  --success: var(--success-27AE60);
-  --error: var(--error-e81123);
-  --warning: var(--warning-f2c94c);
-  --background: var(--background-1d2127);
-  --surface: var(--surface-272b32);
-  --surface-alt: var(--surface-alt-2c323a);
-  --container-dark: var(--container-dark-2c323a);
-  --border: var(--border-3a414a);
-  --text-primary: var(--text-primary-f5f7fa);
-  --text-secondary: var(--text-secondary-a9b1bd);
-  --text-on-primary: var(--text-on-primary-ffffff);
-  --text-on-accent: var(--text-on-accent-ffffff);
-  --text-on-dark: var(--text-on-dark-f5f7fa);
-  --brand-indigo: var(--brand-indigo-3c3c88);
-  --brand-electric-blue: var(--brand-electric-blue-2f80ed);
+  /* ------------------------------------------------------------------------- */
+  /* Other                                                                     */
+  /* ------------------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.15);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
 }
 
 

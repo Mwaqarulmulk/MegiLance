@@ -1,0 +1,9 @@
+.appLayout {
+  --main-bg: #f7fafc; /* A very light gray for the main content area */
+}
+
+.pageContent {
+  padding: 2rem;
+}
+
+/* For dark mode, we can adjust this if needed, but for now, we'll assume a light theme for admin content */

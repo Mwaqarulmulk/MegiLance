@@ -10,7 +10,7 @@ import Select from '@/app/components/Select/Select';
 import Slider from '@/app/components/Slider/Slider';
 import { Shield, Scale, BrainCircuit, Save } from 'lucide-react';
 
-import commonStyles from './AISettings.common.module.css';
+import baseStyles from './AISettings.base.module.css';
 import lightStyles from './AISettings.light.module.css';
 import darkStyles from './AISettings.dark.module.css';
 
@@ -57,23 +57,23 @@ const AISettings: React.FC = () => {
   };
 
   return (
-    <Card className={cn(commonStyles.settingsCard, themeStyles.settingsCard)}>
-      <header className={commonStyles.cardHeader}>
-        <h2 className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>AI & Machine Learning Settings</h2>
-        <p className={cn(commonStyles.cardDescription, themeStyles.cardDescription)}>
+    <Card className={cn(baseStyles.settingsCard, themeStyles.settingsCard)}>
+      <header className={baseStyles.cardHeader}>
+        <h2 className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>AI & Machine Learning Settings</h2>
+        <p className={cn(baseStyles.cardDescription, themeStyles.cardDescription)}>
           Tune the underlying models that power MegiLance&apos;s intelligent features.
         </p>
       </header>
 
-      <div className={commonStyles.settingsGrid}>
+      <div className={baseStyles.settingsGrid}>
         {/* Fraud Detection Setting */}
-        <div className={commonStyles.settingRow}>
-          <div className={commonStyles.settingInfo}>
+        <div className={baseStyles.settingRow}>
+          <div className={baseStyles.settingInfo}>
             <Shield size={20} />
             <label htmlFor='fraudDetectionThreshold'>Fraud Detection Sensitivity</label>
             <p>Higher values will flag more activity as potentially fraudulent. Recommended: 0.75-0.90.</p>
           </div>
-          <div className={commonStyles.settingControl}>
+          <div className={baseStyles.settingControl}>
             <Slider 
               id='fraudDetectionThreshold' 
               value={settings.fraudDetectionThreshold} 
@@ -86,13 +86,13 @@ const AISettings: React.FC = () => {
         </div>
 
         {/* Matchmaking Setting */}
-        <div className={commonStyles.settingRow}>
-          <div className={commonStyles.settingInfo}>
+        <div className={baseStyles.settingRow}>
+          <div className={baseStyles.settingInfo}>
             <Scale size={20} />
             <label htmlFor='matchmakingRankWeight'>Matchmaking Rank Weight</label>
             <p>Determines the importance of freelancer rank versus other factors in job matching.</p>
           </div>
-          <div className={commonStyles.settingControl}>
+          <div className={baseStyles.settingControl}>
             <Slider 
               id='matchmakingRankWeight' 
               value={settings.matchmakingRankWeight} 
@@ -105,13 +105,13 @@ const AISettings: React.FC = () => {
         </div>
 
         {/* Sentiment Analysis Model Setting */}
-        <div className={commonStyles.settingRow}>
-          <div className={commonStyles.settingInfo}>
+        <div className={baseStyles.settingRow}>
+          <div className={baseStyles.settingInfo}>
             <BrainCircuit size={20} />
             <label htmlFor='sentimentAnalysisModel'>Sentiment Analysis Model</label>
             <p>Select the model for analyzing review sentiment. BERT is more accurate but slower.</p>
           </div>
-          <div className={commonStyles.settingControl}>
+          <div className={baseStyles.settingControl}>
             <Select
               id='sentimentAnalysisModel'
               name='sentimentAnalysisModel'
@@ -126,7 +126,7 @@ const AISettings: React.FC = () => {
         </div>
       </div>
 
-      <footer className={commonStyles.cardFooter}>
+      <footer className={baseStyles.cardFooter}>
         <Button onClick={handleSave} disabled={!hasChanges || isSaved}>
           <Save size={16} />
           {isSaved ? 'Settings Saved!' : 'Save Changes'}

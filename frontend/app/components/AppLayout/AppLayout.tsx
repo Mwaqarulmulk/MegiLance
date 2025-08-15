@@ -21,6 +21,7 @@ import {
 import commonStyles from './AppLayout.common.module.css';
 import lightStyles from './AppLayout.light.module.css';
 import darkStyles from './AppLayout.dark.module.css';
+import adminStyles from './AppLayout.admin.module.css';
 
 // @AI-HINT: Build profile menu links based on current area (client/freelancer/admin/general)
 // so that portal pages use the portal layout instead of the public website layout.
@@ -90,15 +91,21 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     setIsCollapsed(!isCollapsed);
   };
 
-  if (!theme) return null; // Avoid rendering until theme is loaded to prevent flash of unstyled content
+  // Hooks must not be called conditionally: compute themeStyles before any early return
+  const themeStyles = useMemo(() => {
+    if (area === 'admin') {
+      return adminStyles;
+    }
+    return theme === 'dark' ? darkStyles : lightStyles;
+  }, [area, theme]);
 
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+  if (!theme) return null; // Avoid rendering until theme is loaded to prevent flash of unstyled content
 
   return (
     <div className={cn(commonStyles.appLayout, themeStyles.appLayout)}>
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} userType={area === 'general' ? undefined : area} />
       <div className={cn(commonStyles.mainContent)}>
-        <Breadcrumbs />
+        {area !== 'admin' && <Breadcrumbs />}
         <ErrorBoundary>
           <main id="main-content" className={cn(commonStyles.pageContent, themeStyles.pageContent)}>
             {children}

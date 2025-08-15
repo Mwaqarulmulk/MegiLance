@@ -1,4 +1,4 @@
-/* AI-HINT: Common, theme-agnostic styles for the UserSearchTable component. Defines layout, typography, and structure for the card-based user grid. */
+/* AI-HINT: Base, theme-agnostic styles for the UserSearchTable component. Defines layout, typography, and structure for the card-based user grid. */
 
 .container {
   padding: 1.5rem;
@@ -158,4 +158,3 @@
   max-width: 400px;
   font-size: 0.875rem;
 }
-

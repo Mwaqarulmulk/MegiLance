@@ -1,0 +1,31 @@
+.sidebar {
+  --sidebar-bg: #1a202c; /* A deep, dark background */
+  --sidebar-border-color: #2d3748;
+  --text-color-primary: #e2e8f0; /* Lighter text for contrast */
+  --text-color-secondary: #a0aec0;
+  --nav-item-hover-bg: #2d3748;
+  --nav-item-active-bg: #2c5282; /* A nice blue for active state */
+  --nav-item-active-text: #ffffff;
+}
+
+.logoText {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.toggleButton {
+  color: var(--text-color-secondary);
+}
+
+.toggleButton:hover {
+  background-color: var(--nav-item-hover-bg);
+  color: var(--text-color-primary);
+}
+
+.userName {
+  color: var(--text-color-primary);
+}
+
+.userRole {
+  color: var(--text-color-secondary);
+}

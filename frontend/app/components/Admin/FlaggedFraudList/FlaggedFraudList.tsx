@@ -11,7 +11,7 @@ import Input from '@/app/components/Input/Input';
 import Select from '@/app/components/Select/Select';
 import { User, CreditCard, ShieldCheck, ShieldOff, Search, ListFilter } from 'lucide-react';
 
-import commonStyles from './FlaggedFraudList.common.module.css';
+import baseStyles from './FlaggedFraudList.base.module.css';
 import lightStyles from './FlaggedFraudList.light.module.css';
 import darkStyles from './FlaggedFraudList.dark.module.css';
 
@@ -58,15 +58,15 @@ const FlaggedFraudList: React.FC = () => {
   };
 
   return (
-    <div className={cn(commonStyles.container, themeStyles.container)}>
-      <header className={commonStyles.header}>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>Flagged Fraud & Risk List</h2>
-        <p className={cn(commonStyles.description, themeStyles.description)}>
+    <div className={cn(baseStyles.container, themeStyles.container)}>
+      <header className={baseStyles.header}>
+        <h2 className={cn(baseStyles.title, themeStyles.title)}>Flagged Fraud & Risk List</h2>
+        <p className={cn(baseStyles.description, themeStyles.description)}>
           Showing {filteredItems.length} of {items.length} flagged items.
         </p>
       </header>
 
-      <div className={cn(commonStyles.filterToolbar, themeStyles.filterToolbar)}>
+      <div className={cn(baseStyles.filterToolbar, themeStyles.filterToolbar)}>
         <Input
           id="search-filter"
           placeholder="Search by identifier..."
@@ -74,7 +74,7 @@ const FlaggedFraudList: React.FC = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           iconBefore={<Search size={16} />}
         />
-        <div className={commonStyles.selectFilters}>
+        <div className={baseStyles.selectFilters}>
           <Select
             id="status-filter"
             value={statusFilter}
@@ -99,21 +99,21 @@ const FlaggedFraudList: React.FC = () => {
         </div>
       </div>
 
-      <div className={commonStyles.itemList}>
+      <div className={baseStyles.itemList}>
         {filteredItems.map(item => (
-          <Card key={item.id} className={cn(commonStyles.itemCard, themeStyles.itemCard)}>
-            <div className={commonStyles.cardHeader}>
-              <div className={commonStyles.identifier}>
+          <Card key={item.id} className={cn(baseStyles.itemCard, themeStyles.itemCard)}>
+            <div className={baseStyles.cardHeader}>
+              <div className={baseStyles.identifier}>
                 {item.type === 'User' ? <User size={18} /> : <CreditCard size={18} />}
                 <span>{item.identifier}</span>
               </div>
               <Badge variant={getRiskBadgeVariant(item.riskScore)}>Risk: {item.riskScore}</Badge>
             </div>
-            <p className={commonStyles.reason}>{item.reason}</p>
-            <footer className={commonStyles.cardFooter}>
-              <span className={commonStyles.date}>Flagged: {item.dateFlagged}</span>
+            <p className={baseStyles.reason}>{item.reason}</p>
+            <footer className={baseStyles.cardFooter}>
+              <span className={baseStyles.date}>Flagged: {item.dateFlagged}</span>
               {item.status === 'Pending Review' ? (
-                <div className={commonStyles.actions}>
+                <div className={baseStyles.actions}>
                   <Button variant="success" size="small" onClick={() => handleAction(item.id, 'Resolved')}>
                     <ShieldCheck size={14} /> Resolve
                   </Button>
@@ -128,7 +128,7 @@ const FlaggedFraudList: React.FC = () => {
           </Card>
         ))}
         {filteredItems.length === 0 && (
-          <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
+          <div className={cn(baseStyles.emptyState, themeStyles.emptyState)}>
             <ListFilter size={48} />
             <h3>No Matching Items</h3>
             <p>Adjust your filters or clear the search to see more items.</p>

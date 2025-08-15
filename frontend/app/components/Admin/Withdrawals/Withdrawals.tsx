@@ -3,14 +3,14 @@
 
 import React, { useState, useMemo } from 'react';
 import { useTheme } from 'next-themes';
-import clsx from 'clsx';
+import { cn } from '@/lib/utils';
 import { CheckCircle, XCircle, MoreVertical, Copy, ArrowDownUp, Calendar, Inbox, Search, ChevronDown } from 'lucide-react';
 
 import Button from '@/app/components/Button/Button';
 import Badge from '@/app/components/Badge/Badge';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import ActionMenu, { type ActionMenuItem } from '@/app/components/ActionMenu/ActionMenu';
-import commonStyles from './Withdrawals.common.module.css';
+import baseStyles from './Withdrawals.base.module.css';
 import lightStyles from './Withdrawals.light.module.css';
 import darkStyles from './Withdrawals.dark.module.css';
 
@@ -88,58 +88,58 @@ const Withdrawals: React.FC = () => {
     },
   ];
 
-  const styles = { ...commonStyles, ...(theme === 'dark' ? darkStyles : lightStyles) };
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={clsx(styles.pageContainer, theme === 'dark' ? styles.dark : styles.light)}>
-      <div className={styles.header}>
-        <h1 className={styles.headerTitle}>Withdrawal Requests</h1>
-        <div className={styles.headerActions}>
+    <div className={cn(baseStyles.pageContainer, themeStyles.pageContainer)}>
+      <div className={baseStyles.header}>
+        <h1 className={baseStyles.headerTitle}>Withdrawal Requests</h1>
+        <div className={baseStyles.headerActions}>
           <Button variant={sortBy === 'date' ? 'primary' : 'ghost'} size="sm" onClick={() => setSortBy('date')} iconBefore={<Calendar size={16} />}>Sort by Date</Button>
           <Button variant={sortBy === 'amount' ? 'primary' : 'ghost'} size="sm" onClick={() => setSortBy('amount')} iconBefore={<ArrowDownUp size={16} />}>Sort by Amount</Button>
         </div>
       </div>
 
-      <div className={styles.filterTabs}>
+      <div className={baseStyles.filterTabs}>
         {(['Pending', 'Approved', 'Rejected', 'All'] as const).map(status => (
-          <button key={status} onClick={() => setFilter(status)} className={clsx(styles.filterTab, { [styles.activeTab]: filter === status })}>
+          <button key={status} onClick={() => setFilter(status)} className={cn(baseStyles.filterTab, themeStyles.filterTab, { [baseStyles.activeTab]: filter === status, [themeStyles.activeTab]: filter === status })}>
             {status} <Badge variant="info">{status === 'All' ? requests.length : requests.filter(r => r.status === status).length}</Badge>
           </button>
         ))}
       </div>
 
-      <div className={styles.requestsGrid}>
+      <div className={baseStyles.requestsGrid}>
         {filteredAndSortedRequests.length > 0 ? (
           filteredAndSortedRequests.map(req => (
-            <div key={req.id} className={styles.requestCard}>
-              <div className={styles.cardHeader}>
+            <div key={req.id} className={baseStyles.requestCard}>
+              <div className={baseStyles.cardHeader}>
                 <UserAvatar src={req.freelancerAvatarUrl} name={req.freelancerName} size={40} />
-                <div className={styles.cardHeaderText}>
-                  <span className={styles.freelancerName}>{req.freelancerName}</span>
-                  <span className={styles.requestDate}>{req.dateRequested}</span>
+                <div className={baseStyles.cardHeaderText}>
+                  <span className={baseStyles.freelancerName}>{req.freelancerName}</span>
+                  <span className={baseStyles.requestDate}>{req.dateRequested}</span>
                 </div>
                 <ActionMenu
                   trigger={<Button variant="ghost" size="icon"><MoreVertical size={18} /></Button>}
                   items={getActionItems(req)}
                 />
               </div>
-              <div className={styles.cardBody}>
-                <div className={styles.amount}>${req.amount.toLocaleString()} <Badge variant="info">{req.currency}</Badge></div>
-                <div className={styles.addressWrapper}>
-                  <span className={styles.addressLabel}>To:</span>
-                  <code className={styles.address}>{req.destinationAddress}</code>
+              <div className={baseStyles.cardBody}>
+                <div className={baseStyles.amount}>${req.amount.toLocaleString()} <Badge variant="info">{req.currency}</Badge></div>
+                <div className={baseStyles.addressWrapper}>
+                  <span className={baseStyles.addressLabel}>To:</span>
+                  <code className={baseStyles.address}>{req.destinationAddress}</code>
                 </div>
               </div>
-              <div className={styles.cardFooter}>
+              <div className={baseStyles.cardFooter}>
                 <StatusBadge status={req.status} />
               </div>
             </div>
           ))
         ) : (
-          <div className={styles.emptyState}>
-            <Inbox size={48} className={styles.emptyStateIcon} />
-            <h3 className={styles.emptyStateTitle}>No {filter} Requests</h3>
-            <p className={styles.emptyStateText}>There are currently no withdrawal requests with this status.</p>
+          <div className={baseStyles.emptyState}>
+            <Inbox size={48} className={baseStyles.emptyStateIcon} />
+            <h3 className={baseStyles.emptyStateTitle}>No {filter} Requests</h3>
+            <p className={baseStyles.emptyStateText}>There are currently no withdrawal requests with this status.</p>
           </div>
         )}
       </div>

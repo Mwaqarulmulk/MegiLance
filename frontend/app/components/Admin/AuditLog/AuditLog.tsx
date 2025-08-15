@@ -11,7 +11,7 @@ import Input from '@/app/components/Input/Input';
 import Button from '@/app/components/Button/Button';
 import { ChevronDown, ChevronsUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
-import commonStyles from './AuditLog.common.module.css';
+import baseStyles from './AuditLog.base.module.css';
 import lightStyles from './AuditLog.light.module.css';
 import darkStyles from './AuditLog.dark.module.css';
 
@@ -101,7 +101,7 @@ const AuditLog: React.FC = () => {
 
   const SortableHeader: React.FC<{ tkey: keyof LogEntry; label: string }> = ({ tkey, label }) => (
     <th onClick={() => handleSort(tkey)}>
-      <div className={commonStyles.headerCell}>
+      <div className={baseStyles.headerCell}>
         {label}
         {sort.key === tkey ? (
           sort.direction === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
@@ -113,21 +113,21 @@ const AuditLog: React.FC = () => {
   );
 
   return (
-    <Card className={cn(commonStyles.auditLogCard, themeStyles.auditLogCard)}>
-      <header className={commonStyles.cardHeader}>
-        <h2 className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>System Audit Log</h2>
-        <p className={cn(commonStyles.cardDescription, themeStyles.cardDescription)}>
+    <Card className={cn(baseStyles.auditLogCard, themeStyles.auditLogCard)}>
+      <header className={baseStyles.cardHeader}>
+        <h2 className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>System Audit Log</h2>
+        <p className={cn(baseStyles.cardDescription, themeStyles.cardDescription)}>
           An immutable log of all system and user actions.
         </p>
       </header>
 
-      <div className={commonStyles.filterToolbar}>
+      <div className={baseStyles.filterToolbar}>
         <Input
           name="search"
           placeholder="Search logs..."
           value={filters.search}
           onChange={handleFilterChange}
-          className={commonStyles.searchInput}
+          className={baseStyles.searchInput}
         />
         <Select
           id="actor-filter"
@@ -159,8 +159,8 @@ const AuditLog: React.FC = () => {
         />
       </div>
 
-      <div className={commonStyles.tableWrapper}>
-        <table className={cn(commonStyles.auditLogTable, themeStyles.auditLogTable)}>
+      <div className={baseStyles.tableWrapper}>
+        <table className={cn(baseStyles.auditLogTable, themeStyles.auditLogTable)}>
           <thead>
             <tr>
               <SortableHeader tkey="timestamp" label="Timestamp" />
@@ -174,11 +174,11 @@ const AuditLog: React.FC = () => {
           <tbody>
             {paginatedLogs.map(log => (
               <tr key={log.id}>
-                <td className={commonStyles.timestampCell}>{new Date(log.timestamp).toLocaleString()}</td>
+                <td className={baseStyles.timestampCell}>{new Date(log.timestamp).toLocaleString()}</td>
                 <td>{log.actor.name} <Badge variant="secondary">{log.actor.role}</Badge></td>
                 <td><Badge variant={getActionBadgeVariant(log.action)}>{log.action}</Badge></td>
                 <td>{log.target.type}: {log.target.id}</td>
-                <td className={commonStyles.detailsCell}>{log.details}</td>
+                <td className={baseStyles.detailsCell}>{log.details}</td>
                 <td>{log.ipAddress}</td>
               </tr>
             ))}
@@ -186,11 +186,11 @@ const AuditLog: React.FC = () => {
         </table>
       </div>
 
-      <footer className={commonStyles.paginationFooter}>
-        <span className={cn(commonStyles.paginationInfo, themeStyles.paginationInfo)}>
+      <footer className={baseStyles.paginationFooter}>
+        <span className={cn(baseStyles.paginationInfo, themeStyles.paginationInfo)}>
           Page {currentPage} of {totalPages}
         </span>
-        <div className={commonStyles.paginationControls}>
+        <div className={baseStyles.paginationControls}>
           <Button variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
             Previous
           </Button>

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import common from './AdminTopbar.common.module.css';
+import base from './AdminTopbar.base.module.css';
 import light from './AdminTopbar.light.module.css';
 import dark from './AdminTopbar.dark.module.css';
 
@@ -48,40 +48,40 @@ const AdminTopbar: React.FC<AdminTopbarProps> = ({ title, subtitle, breadcrumbs,
   }, [menuOpen]);
   return (
     <div
-      className={cn(common.topbar, themed.topbar, sticky && common.sticky, scrolled && common.scrolled, className)}
+      className={cn(base.topbar, themed.topbar, sticky && base.sticky, scrolled && base.scrolled, className)}
       role="region"
       aria-label={`${title} header`}
     >
-      <div className={common.left}>
+      <div className={base.left}>
         {Array.isArray(breadcrumbs) && breadcrumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className={common.breadcrumbs}>
+          <nav aria-label="Breadcrumb" className={base.breadcrumbs}>
             {breadcrumbs.map((c: Crumb, i: number) => {
               const isLast = i === breadcrumbs.length - 1;
               return (
                 <React.Fragment key={`${c.label}-${i}`}>
                   {c.href && !isLast ? (
-                    <a className={common.crumb} href={c.href}>{c.label}</a>
+                    <a className={base.crumb} href={c.href}>{c.label}</a>
                   ) : (
-                    <span className={isLast ? common.crumbCurrent : common.crumb}>{c.label}</span>
+                    <span className={isLast ? base.crumbCurrent : base.crumb}>{c.label}</span>
                   )}
-                  {!isLast && <span aria-hidden className={common.sep}>/</span>}
+                  {!isLast && <span aria-hidden className={base.sep}>/</span>}
                 </React.Fragment>
               );
             })}
           </nav>
         )}
-        <div className={cn(common.title, themed.title)}>{title}</div>
-        {subtitle && <div className={cn(common.subtitle, themed.subtitle)}>{subtitle}</div>}
+        <div className={cn(base.title, themed.title)}>{title}</div>
+        {subtitle && <div className={cn(base.subtitle, themed.subtitle)}>{subtitle}</div>}
       </div>
       {/* Desktop/right-side controls */}
-      <div className={common.right}>
+      <div className={base.right}>
         {right}
       </div>
       {/* Small-screen overflow menu */}
-      <div className={common.menuWrap} ref={menuRef}>
+      <div className={base.menuWrap} ref={menuRef}>
         <button
           type="button"
-          className={common.menuBtn}
+          className={base.menuBtn}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           aria-label="More actions"
@@ -89,7 +89,7 @@ const AdminTopbar: React.FC<AdminTopbarProps> = ({ title, subtitle, breadcrumbs,
         >
           •••
         </button>
-        <div className={cn(common.menu, !menuOpen && common.hidden)} role="region" aria-label="Actions">
+        <div className={cn(base.menu, !menuOpen && base.hidden)} role="region" aria-label="Actions">
           {right}
         </div>
       </div>

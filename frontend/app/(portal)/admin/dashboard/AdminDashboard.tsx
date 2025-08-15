@@ -6,9 +6,9 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useAdminData } from '@/hooks/useAdmin';
-import common from './AdminDashboard.common.module.css';
-import light from './AdminDashboard.light.module.css';
-import dark from './AdminDashboard.dark.module.css';
+import baseStyles from './AdminDashboard.base.module.css';
+import lightStyles from './AdminDashboard.light.module.css';
+import darkStyles from './AdminDashboard.dark.module.css';
 import UserSearchTable from '@/app/components/Admin/UserSearchTable/UserSearchTable';
 import ReviewSentimentDashboard from '@/app/components/Admin/ReviewSentimentDashboard/ReviewSentimentDashboard';
 import JobModerationQueue from '@/app/components/Admin/JobModerationQueue/JobModerationQueue';
@@ -36,7 +36,7 @@ const FALLBACK_USERS: UserRow[] = [
 
 const AdminDashboard: React.FC = () => {
   const { theme } = useTheme();
-  const themed = theme === 'dark' ? dark : light;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const { users, kpis, loading, error } = useAdminData();
   const [role, setRole] = useState<'All' | 'Admin' | 'Client' | 'Freelancer'>('All');
@@ -64,10 +64,10 @@ const AdminDashboard: React.FC = () => {
   }, [effectiveUsers, role]);
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
+    <main className={cn(baseStyles.page, themeStyles.themeWrapper)}>
       <FraudAlertBanner message="Multiple high-risk activities have been detected. Please review the flagged items immediately."/>
-      <div className={common.container}>
-        <div ref={headerRef} className={cn(headerVisible ? common.isVisible : common.isNotVisible)}>
+      <div className={baseStyles.container}>
+        <div ref={headerRef} className={cn(headerVisible ? baseStyles.isVisible : baseStyles.isNotVisible)}>
           <AdminTopbar
             title="Admin Dashboard"
             subtitle="Global overview of platform metrics, users, and operations."
@@ -76,45 +76,45 @@ const AdminDashboard: React.FC = () => {
               { label: 'Dashboard' },
             ]}
             right={(
-              <div className={common.controls} aria-label="Admin dashboard controls">
-                <label className={common.srOnly} htmlFor="role-filter">Filter by role</label>
-                <select id="role-filter" className={cn(common.select, themed.select)} value={role} onChange={(e) => setRole(e.target.value as any)} title="Filter users by role">
+              <div className={baseStyles.controls} aria-label="Admin dashboard controls">
+                <label className={baseStyles.srOnly} htmlFor="role-filter">Filter by role</label>
+                <select id="role-filter" className={cn(baseStyles.select, themeStyles.select)} value={role} onChange={(e) => setRole(e.target.value as any)} title="Filter users by role">
                   {['All','Admin','Client','Freelancer'].map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
-                <button type="button" className={cn(common.button, themed.button)} title="Create a new platform-wide announcement">Create Announcement</button>
-                <button type="button" className={cn(common.button, themed.button, 'secondary')} title="Run system maintenance tasks">Run Maintenance</button>
+                <button type="button" className={cn(baseStyles.button, themeStyles.button)} title="Create a new platform-wide announcement">Create Announcement</button>
+                <button type="button" className={cn(baseStyles.button, themeStyles.button, 'secondary')} title="Run system maintenance tasks">Run Maintenance</button>
               </div>
             )}
           />
         </div>
 
-        <section ref={kpiRef} className={cn(common.kpis, kpisVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="kpi-section-title">
-          <h2 id="kpi-section-title" className={common.srOnly}>Key Performance Indicators</h2>
+        <section ref={kpiRef} className={cn(baseStyles.kpis, kpisVisible ? baseStyles.isVisible : baseStyles.isNotVisible)} aria-labelledby="kpi-section-title">
+          <h2 id="kpi-section-title" className={baseStyles.srOnly}>Key Performance Indicators</h2>
           {loading && (
-            <div className={common.skeletonRow} aria-busy="true" />
+            <div className={baseStyles.skeletonRow} aria-busy="true" />
           )}
           {!loading && effectiveKPIs.map(k => (
-            <div key={k.id} className={cn(common.card, themed.card)} tabIndex={0} aria-labelledby={`kpi-${k.id}-label`}>
-              <div id={`kpi-${k.id}-label`} className={cn(common.cardTitle, themed.cardTitle)}>{k.label}</div>
-              <div className={common.metric}>{k.value}</div>
-              {k.trend && <div className={common.trend}>{k.trend}</div>}
+            <div key={k.id} className={cn(baseStyles.card, themeStyles.card)} tabIndex={0} aria-labelledby={`kpi-${k.id}-label`}>
+              <div id={`kpi-${k.id}-label`} className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>{k.label}</div>
+              <div className={baseStyles.metric}>{k.value}</div>
+              {k.trend && <div className={baseStyles.trend}>{k.trend}</div>}
             </div>
           ))}
         </section>
 
-        <div aria-live="polite" className={common.srOnly}>
+        <div aria-live="polite" className={baseStyles.srOnly}>
           {role !== 'All' && `Showing ${filteredUsers.length} ${role} users.`}
         </div>
-        <section ref={gridRef} className={cn(common.grid, gridVisible ? common.isVisible : common.isNotVisible)} aria-labelledby="main-content-title">
-          <h2 id="main-content-title" className={common.srOnly}>Main Content</h2>
+        <section ref={gridRef} className={cn(baseStyles.grid, gridVisible ? baseStyles.isVisible : baseStyles.isNotVisible)} aria-labelledby="main-content-title">
+          <h2 id="main-content-title" className={baseStyles.srOnly}>Main Content</h2>
           <UserSearchTable />
           <ReviewSentimentDashboard />
           <JobModerationQueue />
           <FlaggedReviews />
           <FlaggedFraudList />
 
-          <div className={cn(common.card, themed.card)} aria-labelledby="activity-chart-title">
-            <div id="activity-chart-title" className={cn(common.cardTitle, themed.cardTitle)}>Activity</div>
+          <div className={cn(baseStyles.card, themeStyles.card)} aria-labelledby="activity-chart-title">
+            <div id="activity-chart-title" className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>Activity</div>
             {/* SVG bar chart to avoid inline styles */}
             <svg width="100%" height="140" viewBox="0 0 200 140" preserveAspectRatio="none" role="img" aria-label="Weekly activity bars">
               <desc>Bar chart of weekly activity counts</desc>
@@ -122,7 +122,7 @@ const AdminDashboard: React.FC = () => {
               <rect x="0" y="0" width="200" height="140" fill="transparent" />
               {/* bars */}
               {([40, 68, 55, 90, 120, 70, 95] as const).map((h, i) => (
-                <rect key={i} x={10 + i * 28} y={130 - h} width="18" height={h} rx="3" ry="3" className={cn(common.cardTitle)} fill="currentColor" opacity="0.8" />
+                <rect key={i} x={10 + i * 28} y={130 - h} width="18" height={h} rx="3" ry="3" className={cn(baseStyles.cardTitle)} fill="currentColor" opacity="0.8" />
               ))}
             </svg>
           </div>

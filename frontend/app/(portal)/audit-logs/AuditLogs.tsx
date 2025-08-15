@@ -5,9 +5,9 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
-import common from './AuditLogs.common.module.css';
-import light from './AuditLogs.light.module.css';
-import dark from './AuditLogs.dark.module.css';
+import baseStyles from './AuditLogs.base.module.css';
+import lightStyles from './AuditLogs.light.module.css';
+import darkStyles from './AuditLogs.dark.module.css';
 import DensityToggle, { type Density } from '@/app/components/DataTableExtras/DensityToggle';
 import ColumnVisibilityMenu, { type ColumnDef } from '@/app/components/DataTableExtras/ColumnVisibilityMenu';
 
@@ -34,7 +34,7 @@ const RANGES = ['Any time', 'Past week', 'Past month', 'Past year'] as const;
 
 const AuditLogs: React.FC = () => {
   const { theme } = useTheme();
-  const themed = theme === 'dark' ? dark : light;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   const [action, setAction] = useState<(typeof ACTIONS)[number]>('All');
   const [range, setRange] = useState<(typeof RANGES)[number]>('Past month');
@@ -81,24 +81,24 @@ const AuditLogs: React.FC = () => {
   const selected = logs.find(l => l.id === selectedId) || MOCK_LOGS.find(l => l.id === selectedId) || null;
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
-      <div className={common.container}>
-        <div ref={headerRef} className={cn(common.header, headerVisible ? common.isVisible : common.isNotVisible)}>
+    <main className={cn(baseStyles.page, themeStyles.themeWrapper)}>
+      <div className={baseStyles.container}>
+        <div ref={headerRef} className={cn(baseStyles.header, headerVisible ? baseStyles.isVisible : baseStyles.isNotVisible)}>
           <div>
-            <h1 className={common.title}>Audit Logs</h1>
-            <p className={cn(common.subtitle, themed.subtitle)}>Track important security and activity events across your account.</p>
+            <h1 className={baseStyles.title}>Audit Logs</h1>
+            <p className={cn(baseStyles.subtitle, themeStyles.subtitle)}>Track important security and activity events across your account.</p>
           </div>
-          <div className={common.controls} aria-label="Audit log filters">
-            <label className={common.srOnly} htmlFor="actor">Actor</label>
-            <input id="actor" className={cn(common.input, themed.input)} type="search" placeholder="Search actor…" value={actor} onChange={(e) => setActor(e.target.value)} />
+          <div className={baseStyles.controls} aria-label="Audit log filters">
+            <label className={baseStyles.srOnly} htmlFor="actor">Actor</label>
+            <input id="actor" className={cn(baseStyles.input, themeStyles.input)} type="search" placeholder="Search actor…" value={actor} onChange={(e) => setActor(e.target.value)} />
 
-            <label className={common.srOnly} htmlFor="action">Action</label>
-            <select id="action" className={cn(common.select, themed.select)} value={action} onChange={(e) => setAction(e.target.value as (typeof ACTIONS)[number])}>
+            <label className={baseStyles.srOnly} htmlFor="action">Action</label>
+            <select id="action" className={cn(baseStyles.select, themeStyles.select)} value={action} onChange={(e) => setAction(e.target.value as (typeof ACTIONS)[number])}>
               {ACTIONS.map(a => <option key={a} value={a}>{a}</option>)}
             </select>
 
-            <label className={common.srOnly} htmlFor="range">Date range</label>
-            <select id="range" className={cn(common.select, themed.select)} value={range} onChange={(e) => setRange(e.target.value as (typeof RANGES)[number])}>
+            <label className={baseStyles.srOnly} htmlFor="range">Date range</label>
+            <select id="range" className={cn(baseStyles.select, themeStyles.select)} value={range} onChange={(e) => setRange(e.target.value as (typeof RANGES)[number])}>
               {RANGES.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
             <DensityToggle value={density} onChange={setDensity} />
@@ -112,22 +112,22 @@ const AuditLogs: React.FC = () => {
             />
             <button
               type="button"
-              className={cn(common.button, themed.button, 'secondary')}
+              className={cn(baseStyles.button, themeStyles.button, 'secondary')}
               onClick={() => { setDensity('comfortable'); showAll(); }}
               aria-label="Reset table settings"
             >Reset</button>
           </div>
         </div>
 
-        <div ref={tableRef} className={cn(common.tableWrap, tableVisible ? common.isVisible : common.isNotVisible)}>
-          <table className={cn(common.table, themed.table)}>
+        <div ref={tableRef} className={cn(baseStyles.tableWrap, tableVisible ? baseStyles.isVisible : baseStyles.isNotVisible)}>
+          <table className={cn(baseStyles.table, themeStyles.table)}>
             <thead>
               <tr>
-                {isVisible('time') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Time</th>)}
-                {isVisible('actor') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Actor</th>)}
-                {isVisible('action') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Action</th>)}
-                {isVisible('resource') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Resource</th>)}
-                {isVisible('ip') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>IP</th>)}
+                {isVisible('time') && (<th scope="col" className={cn(baseStyles.th, themeStyles.th)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Time</th>)}
+                {isVisible('actor') && (<th scope="col" className={cn(baseStyles.th, themeStyles.th)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Actor</th>)}
+                {isVisible('action') && (<th scope="col" className={cn(baseStyles.th, themeStyles.th)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Action</th>)}
+                {isVisible('resource') && (<th scope="col" className={cn(baseStyles.th, themeStyles.th)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Resource</th>)}
+                {isVisible('ip') && (<th scope="col" className={cn(baseStyles.th, themeStyles.th)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>IP</th>)}
               </tr>
             </thead>
             <tbody>
@@ -135,16 +135,16 @@ const AuditLogs: React.FC = () => {
                 <tr
                   key={l.id}
                   tabIndex={0}
-                  className={cn(common.row)}
+                  className={cn(baseStyles.row)}
                   onClick={() => setSelectedId(l.id)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedId(l.id); } }}
                   aria-selected={selectedId === l.id}
                 >
-                  {isVisible('time') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{new Date(l.time).toLocaleString()}</td>)}
-                  {isVisible('actor') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.actor}</td>)}
-                  {isVisible('action') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.action}</td>)}
-                  {isVisible('resource') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.resource}</td>)}
-                  {isVisible('ip') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.ip}</td>)}
+                  {isVisible('time') && (<td className={cn(baseStyles.td, themeStyles.td)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{new Date(l.time).toLocaleString()}</td>)}
+                  {isVisible('actor') && (<td className={cn(baseStyles.td, themeStyles.td)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.actor}</td>)}
+                  {isVisible('action') && (<td className={cn(baseStyles.td, themeStyles.td)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.action}</td>)}
+                  {isVisible('resource') && (<td className={cn(baseStyles.td, themeStyles.td)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.resource}</td>)}
+                  {isVisible('ip') && (<td className={cn(baseStyles.td, themeStyles.td)} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{l.ip}</td>)}
                 </tr>
               ))}
             </tbody>
@@ -152,24 +152,24 @@ const AuditLogs: React.FC = () => {
         </div>
 
         {logs.length === 0 && (
-          <div role="status" aria-live="polite" className={cn(common.details, themed.details)}>
+          <div role="status" aria-live="polite" className={cn(baseStyles.details, themeStyles.details)}>
             No matching audit logs.
           </div>
         )}
 
         {selected && (
-          <section className={cn(common.details, themed.details)} aria-label={`Details for event ${selected.id}`}>
-            <div className={cn(common.detailsTitle)}>Event Details</div>
-            <div className={common.kv}><div>Event ID</div><div>{selected.id}</div></div>
-            <div className={common.kv}><div>Time</div><div>{new Date(selected.time).toLocaleString()}</div></div>
-            <div className={common.kv}><div>Actor</div><div>{selected.actor}</div></div>
-            <div className={common.kv}><div>Action</div><div>{selected.action}</div></div>
-            <div className={common.kv}><div>Resource</div><div>{selected.resource}</div></div>
-            <div className={common.kv}><div>IP Address</div><div>{selected.ip}</div></div>
+          <section className={cn(baseStyles.details, themeStyles.details)} aria-label={`Details for event ${selected.id}`}>
+            <div className={cn(baseStyles.detailsTitle)}>Event Details</div>
+            <div className={baseStyles.kv}><div>Event ID</div><div>{selected.id}</div></div>
+            <div className={baseStyles.kv}><div>Time</div><div>{new Date(selected.time).toLocaleString()}</div></div>
+            <div className={baseStyles.kv}><div>Actor</div><div>{selected.actor}</div></div>
+            <div className={baseStyles.kv}><div>Action</div><div>{selected.action}</div></div>
+            <div className={baseStyles.kv}><div>Resource</div><div>{selected.resource}</div></div>
+            <div className={baseStyles.kv}><div>IP Address</div><div>{selected.ip}</div></div>
             {selected.meta && Object.entries(selected.meta).map(([k,v]) => (
-              <div key={k} className={common.kv}><div>{k}</div><div>{v}</div></div>
+              <div key={k} className={baseStyles.kv}><div>{k}</div><div>{v}</div></div>
             ))}
-            <button type="button" className={cn(common.button, themed.button, 'secondary')} onClick={() => setSelectedId(null)}>Close</button>
+            <button type="button" className={cn(baseStyles.button, themeStyles.button, 'secondary')} onClick={() => setSelectedId(null)}>Close</button>
           </section>
         )}
       </div>

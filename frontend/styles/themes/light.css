@@ -1,51 +1,116 @@
 /* @AI-HINT: Defines the global color variables for the light theme. These variables are applied to the `:root` selector, making them the default for the application. They are overridden by `dark.css` when the `.dark` class is applied to the `<html>` element. */
 
 :root {
-  /* Brand & Accent Colors */
-  --primary-4573df: #4573df;
-  --accent-ff9800: #ff9800;
+  /* ========================================================================= */
+  /* MegiLance Design System: Light Theme Tokens                             */
+  /* ========================================================================= */
+
+  /* ------------------------------------------------------------------------- */
+  /* Color Palette                                                             */
+  /* ------------------------------------------------------------------------- */
+  
+  /* Primary (Brand) Colors */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1; /* Base */
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+
+  /* Accent Colors */
+  --color-accent-500: #ff9800;
+
+  /* Grayscale */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
   /* Semantic Colors */
-  --success-27AE60: #27AE60;
-  --error-e81123: #e81123;
-  --warning-f2c94c: #F2C94C;
+  --color-success-500: #22c55e;
+  --color-error-500: #ef4444;
+  --color-warning-500: #f59e0b;
 
-  /* UI Surfaces & Backgrounds */
-  --background-ffffff: #ffffff;
-  --surface-f5f7fa: #f5f7fa; /* For cards, forms, light containers */
-  --surface-alt-f4f6f8: #F4F6F8; /* A slightly different gray for variation */
-  --container-dark-2c323a: #2c323a; /* For dark elements in light mode, e.g., modals */
-  --border-e0e0e0: #e0e0e0; /* A light border color */
+  /* ------------------------------------------------------------------------- */
+  /* Abstracted Theme Variables (for component use)                            */
+  /* ------------------------------------------------------------------------- */
+  --primary: var(--color-primary-500);
+  --accent: var(--color-accent-500);
+  --success: var(--color-success-500);
+  --error: var(--color-error-500);
+  --warning: var(--color-warning-500);
 
-  /* Text Colors */
-  --text-primary-23272f: #23272f;
-  --text-secondary-333333: #333333;
-  --text-on-primary-ffffff: #ffffff;
-  --text-on-accent-ffffff: #ffffff;
-  --text-on-dark-ffffff: #ffffff;
+  --background: var(--color-white);
+  --surface: var(--color-gray-100);
+  --surface-alt: var(--color-gray-50);
+  --border: var(--color-gray-200);
+  --border-hover: var(--color-gray-300);
 
-  /* Extended Brand Palette (for specific use cases) */
-  --brand-indigo-3c3c88: #3C3C88;
-  --brand-electric-blue-2f80ed: #2F80ED;
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-600);
+  --text-disabled: var(--color-gray-400);
+  --text-on-primary: var(--color-white);
+  --text-on-accent: var(--color-white);
 
-  /* Abstracted Theme Variables (for component use) */
-  --primary: var(--primary-4573df);
-  --accent: var(--accent-ff9800);
-  --success: var(--success-27AE60);
-  --error: var(--error-e81123);
-  --warning: var(--warning-f2c94c);
-  --background: var(--background-ffffff);
-  --surface: var(--surface-f5f7fa);
-  --surface-alt: var(--surface-alt-f4f6f8);
-  --container-dark: var(--container-dark-2c323a);
-  --border: var(--border-e0e0e0);
-  --text-primary: var(--text-primary-23272f);
-  --text-secondary: var(--text-secondary-333333);
-  --text-on-primary: var(--text-on-primary-ffffff);
-  --text-on-accent: var(--text-on-accent-ffffff);
-  --text-on-dark: var(--text-on-dark-ffffff);
-  --brand-indigo: var(--brand-indigo-3c3c88);
-  --brand-electric-blue: var(--brand-electric-blue-2f80ed);
+  /* ------------------------------------------------------------------------- */
+  /* Typography                                                                */
+  /* ------------------------------------------------------------------------- */
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family-mono: 'Fira Code', 'Courier New', monospace;
+
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ------------------------------------------------------------------------- */
+  /* Spacing & Sizing                                                          */
+  /* ------------------------------------------------------------------------- */
+  --spacing-1: 0.25rem;  /* 4px */
+  --spacing-2: 0.5rem;   /* 8px */
+  --spacing-3: 0.75rem;  /* 12px */
+  --spacing-4: 1rem;     /* 16px */
+  --spacing-5: 1.25rem;  /* 20px */
+  --spacing-6: 1.5rem;   /* 24px */
+  --spacing-8: 2rem;     /* 32px */
+  --spacing-12: 3rem;    /* 48px */
+
+  /* ------------------------------------------------------------------------- */
+  /* Border Radii                                                              */
+  /* ------------------------------------------------------------------------- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* ------------------------------------------------------------------------- */
+  /* Other                                                                     */
+  /* ------------------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 

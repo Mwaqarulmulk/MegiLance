@@ -43,3 +43,13 @@
   margin-top: 12px; 
 }
 .paginationInfo { opacity: .8; }
+
+.field { display: grid; gap: 6px; }
+.label { font-weight: var(--font-weight-medium); }
+.textarea { resize: vertical; }
+.modalActions { display: flex; justify-content: flex-end; gap: var(--spacing-2); margin-top: var(--spacing-4); }
+.sortButtons { display: flex; gap: var(--spacing-2); flex-wrap: wrap; }
+.sortIndicator { margin-left: 6px; }
+.skeletonRow, .error { padding: 12px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); }
+@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }

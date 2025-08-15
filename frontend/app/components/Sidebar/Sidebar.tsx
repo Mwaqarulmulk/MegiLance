@@ -1,7 +1,7 @@
 // @AI-HINT: This is the Sidebar component. It provides the main navigation for the application dashboard. It is designed to be responsive, themed, and accessible, with a collapsible state, using a per-component CSS module architecture.
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useTheme } from 'next-themes';
@@ -14,6 +14,7 @@ import UserAvatar from '../UserAvatar/UserAvatar';
 import commonStyles from './Sidebar.common.module.css';
 import lightStyles from './Sidebar.light.module.css';
 import darkStyles from './Sidebar.dark.module.css';
+import adminStyles from './Sidebar.admin.module.css';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -26,9 +27,15 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, userType }) => {
   const { theme } = useTheme();
 
-  if (!theme) return null;
+  // Ensure hooks are not called conditionally
+  const themeStyles = useMemo(() => {
+    if (userType === 'admin') {
+      return adminStyles;
+    }
+    return theme === 'light' ? lightStyles : darkStyles;
+  }, [theme, userType]);
 
-  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+  if (!theme) return null;
 
   return (
     <aside

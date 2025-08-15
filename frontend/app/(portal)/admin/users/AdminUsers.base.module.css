@@ -1,4 +1,4 @@
-/* AI-HINT: Common styles for Admin Users page: filters, table with selection, bulk actions, and modal. */
+/* AI-HINT: Base (theme-agnostic) styles for Admin Users page: filters, table with selection, bulk actions, and modal. */
 
 .page { padding: var(--spacing-8); }
 .container { max-width: 1200px; margin: 0 auto; display: grid; gap: var(--spacing-6); }

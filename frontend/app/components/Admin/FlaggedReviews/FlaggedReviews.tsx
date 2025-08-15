@@ -13,7 +13,7 @@ import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import StarRating from '@/app/components/StarRating/StarRating';
 import { ThumbsUp, ThumbsDown, Search, MessageSquareQuote, ListFilter } from 'lucide-react';
 
-import commonStyles from './FlaggedReviews.common.module.css';
+import baseStyles from './FlaggedReviews.base.module.css';
 import lightStyles from './FlaggedReviews.light.module.css';
 import darkStyles from './FlaggedReviews.dark.module.css';
 
@@ -64,15 +64,15 @@ const FlaggedReviews: React.FC = () => {
   };
 
   return (
-    <div className={cn(commonStyles.container, themeStyles.container)}>
-      <header className={commonStyles.header}>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>Flagged Review Queue</h2>
-        <p className={cn(commonStyles.description, themeStyles.description)}>
+    <div className={cn(baseStyles.container, themeStyles.container)}>
+      <header className={baseStyles.header}>
+        <h2 className={cn(baseStyles.title, themeStyles.title)}>Flagged Review Queue</h2>
+        <p className={cn(baseStyles.description, themeStyles.description)}>
           Showing {filteredReviews.length} of {reviews.length} flagged reviews.
         </p>
       </header>
 
-      <div className={cn(commonStyles.filterToolbar, themeStyles.filterToolbar)}>
+      <div className={cn(baseStyles.filterToolbar, themeStyles.filterToolbar)}>
         <Input
           id="search-reviews"
           placeholder="Search by reviewer or reviewee..."
@@ -93,40 +93,40 @@ const FlaggedReviews: React.FC = () => {
         />
       </div>
 
-      <div className={commonStyles.reviewList}>
+      <div className={baseStyles.reviewList}>
         {filteredReviews.map(review => (
-          <Card key={review.id} className={cn(commonStyles.reviewCard, themeStyles.reviewCard)}>
-            <div className={commonStyles.cardHeader}>
-              <div className={commonStyles.userInfo}>
+          <Card key={review.id} className={cn(baseStyles.reviewCard, themeStyles.reviewCard)}>
+            <div className={baseStyles.cardHeader}>
+              <div className={baseStyles.userInfo}>
                 <UserAvatar src={review.reviewer.avatarUrl} name={review.reviewer.name} size={40} />
-                <div className={commonStyles.userMeta}>
-                  <span className={commonStyles.userName}>{review.reviewer.name}</span>
-                  <span className={commonStyles.userRole}>Reviewer</span>
+                <div className={baseStyles.userMeta}>
+                  <span className={baseStyles.userName}>{review.reviewer.name}</span>
+                  <span className={baseStyles.userRole}>Reviewer</span>
                 </div>
               </div>
-              <div className={commonStyles.userInfo}>
+              <div className={baseStyles.userInfo}>
                 <UserAvatar src={review.reviewee.avatarUrl} name={review.reviewee.name} size={40} />
-                <div className={commonStyles.userMeta}>
-                  <span className={commonStyles.userName}>{review.reviewee.name}</span>
-                  <span className={commonStyles.userRole}>Reviewee</span>
+                <div className={baseStyles.userMeta}>
+                  <span className={baseStyles.userName}>{review.reviewee.name}</span>
+                  <span className={baseStyles.userRole}>Reviewee</span>
                 </div>
               </div>
             </div>
 
-            <div className={commonStyles.reviewContent}>
-              <MessageSquareQuote className={cn(commonStyles.quoteIcon, themeStyles.quoteIcon)} size={20} />
+            <div className={baseStyles.reviewContent}>
+              <MessageSquareQuote className={cn(baseStyles.quoteIcon, themeStyles.quoteIcon)} size={20} />
               <p>{review.content}</p>
             </div>
 
-            <div className={commonStyles.reviewDetails}>
+            <div className={baseStyles.reviewDetails}>
               <StarRating rating={review.rating} />
               <Badge variant="default">Reason: {review.reason}</Badge>
             </div>
 
-            <footer className={commonStyles.cardFooter}>
-              <span className={cn(commonStyles.date, themeStyles.date)}>Flagged: {review.dateFlagged}</span>
+            <footer className={baseStyles.cardFooter}>
+              <span className={cn(baseStyles.date, themeStyles.date)}>Flagged: {review.dateFlagged}</span>
               {review.status === 'Pending' ? (
-                <div className={commonStyles.actions}>
+                <div className={baseStyles.actions}>
                   <Button variant="success" size="small" onClick={() => handleAction(review.id, 'Kept')}>
                     <ThumbsUp size={14} /> Keep Review
                   </Button>
@@ -141,7 +141,7 @@ const FlaggedReviews: React.FC = () => {
           </Card>
         ))}
         {filteredReviews.length === 0 && (
-          <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
+          <div className={cn(baseStyles.emptyState, themeStyles.emptyState)}>
             <ListFilter size={48} />
             <h3>No Matching Reviews</h3>
             <p>Adjust your filters or clear the search to see more reviews.</p>

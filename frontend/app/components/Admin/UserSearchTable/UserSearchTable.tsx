@@ -13,7 +13,7 @@ import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import ActionMenu, { ActionMenuItem } from '@/app/components/ActionMenu/ActionMenu';
 import { MoreHorizontal, Users, Briefcase, Calendar, Search, User, Mail, Phone, Edit, Eye, UserX, Shield, UserCog } from 'lucide-react';
 
-import commonStyles from './UserSearchTable.common.module.css';
+import baseStyles from './UserSearchTable.base.module.css';
 import lightStyles from './UserSearchTable.light.module.css';
 import darkStyles from './UserSearchTable.dark.module.css';
 
@@ -57,26 +57,26 @@ const UserCard: React.FC<{ user: User; themeStyles: any }> = ({ user, themeStyle
   ];
 
   return (
-    <Card className={cn(commonStyles.userCard, themeStyles.userCard)}>
-      <div className={commonStyles.cardHeader}>
+    <Card className={cn(baseStyles.userCard, themeStyles.userCard)}>
+      <div className={baseStyles.cardHeader}>
         <UserAvatar src={user.avatarUrl} name={user.name} size={48} />
-        <div className={commonStyles.userInfo}>
-          <h3 className={cn(commonStyles.userName, themeStyles.userName)}>{user.name}</h3>
-          <p className={cn(commonStyles.userEmail, themeStyles.userEmail)}>{user.email}</p>
+        <div className={baseStyles.userInfo}>
+          <h3 className={cn(baseStyles.userName, themeStyles.userName)}>{user.name}</h3>
+          <p className={cn(baseStyles.userEmail, themeStyles.userEmail)}>{user.email}</p>
         </div>
         <ActionMenu items={userActions} />
       </div>
-      <div className={commonStyles.cardBody}>
-        <div className={cn(commonStyles.metaItem, themeStyles.metaItem)}>
+      <div className={baseStyles.cardBody}>
+        <div className={cn(baseStyles.metaItem, themeStyles.metaItem)}>
           {roleIcons[user.role]}
           <span>{user.role}</span>
         </div>
-        <div className={cn(commonStyles.metaItem, themeStyles.metaItem)}>
+        <div className={cn(baseStyles.metaItem, themeStyles.metaItem)}>
           <Calendar size={14} />
           <span>Joined {user.joinDate}</span>
         </div>
       </div>
-      <div className={commonStyles.cardFooter}>
+      <div className={baseStyles.cardFooter}>
         <Badge variant={statusVariantMap[user.status]}>{user.status}</Badge>
       </div>
     </Card>
@@ -110,24 +110,24 @@ const UserSearchTable: React.FC = () => {
     });
 
   return (
-    <div className={cn(commonStyles.container, themeStyles.container)}>
-      <header className={commonStyles.header}>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>User Management</h2>
-        <p className={cn(commonStyles.description, themeStyles.description)}>
+    <div className={cn(baseStyles.container, themeStyles.container)}>
+      <header className={baseStyles.header}>
+        <h2 className={cn(baseStyles.title, themeStyles.title)}>User Management</h2>
+        <p className={cn(baseStyles.description, themeStyles.description)}>
           Search, filter, and manage all users in the system.
         </p>
       </header>
 
-      <div className={cn(commonStyles.toolbar, themeStyles.toolbar)}>
+      <div className={cn(baseStyles.toolbar, themeStyles.toolbar)}>
         <Input
           id="search-users"
           placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           iconBefore={<Search size={16} />}
-          className={commonStyles.searchInput}
+          className={baseStyles.searchInput}
         />
-        <div className={commonStyles.filters}>
+        <div className={baseStyles.filters}>
           <Select
             id="role-filter"
             value={roleFilter}
@@ -164,13 +164,13 @@ const UserSearchTable: React.FC = () => {
         </div>
       </div>
 
-      <div className={commonStyles.userGrid}>
+      <div className={baseStyles.userGrid}>
         {filteredAndSortedUsers.length > 0 ? (
           filteredAndSortedUsers.map(user => (
             <UserCard key={user.id} user={user} themeStyles={themeStyles} />
           ))
         ) : (
-          <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
+          <div className={cn(baseStyles.emptyState, themeStyles.emptyState)}>
             <Users size={48} />
             <h3>No Users Found</h3>
             <p>Adjust your search or filter criteria to find users.</p>

@@ -6,12 +6,16 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useAdminData } from '@/hooks/useAdmin';
-import common from './AdminPayments.common.module.css';
-import light from './AdminPayments.light.module.css';
-import dark from './AdminPayments.dark.module.css';
+import baseStyles from './AdminPayments.base.module.css';
+import lightStyles from './AdminPayments.light.module.css';
+import darkStyles from './AdminPayments.dark.module.css';
 import DensityToggle, { type Density } from '@/app/components/DataTableExtras/DensityToggle';
 import ColumnVisibilityMenu, { type ColumnDef } from '@/app/components/DataTableExtras/ColumnVisibilityMenu';
 import AdminTopbar from '@/app/components/Admin/Layout/AdminTopbar';
+import { toCSVFile } from '@/app/components/DataTable';
+import { useDataTable } from '@/app/components/DataTable/hooks/useDataTable';
+import { Table } from '@/app/components/DataTable/Table';
+import type { Column as DTColumn } from '@/app/components/DataTable/types';
 
 interface Txn {
   id: string;
@@ -29,7 +33,7 @@ const ROLES = ['All', 'Client', 'Freelancer'] as const;
 
 const AdminPayments: React.FC = () => {
   const { theme } = useTheme();
-  const themed = theme === 'dark' ? dark : light;
+  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   const { payments, loading, error } = useAdminData();
 
   const rows: Txn[] = useMemo(() => {
@@ -45,7 +49,6 @@ const AdminPayments: React.FC = () => {
     }));
   }, [payments]);
 
-  const [query, setQuery] = useState('');
   const [type, setType] = useState<(typeof TYPES)[number]>('All');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('All');
   const [role, setRole] = useState<(typeof ROLES)[number]>('All');
@@ -73,31 +76,44 @@ const AdminPayments: React.FC = () => {
   const summaryVisible = useIntersectionObserver(summaryRef, { threshold: 0.1 });
   const tableVisible = useIntersectionObserver(tableRef, { threshold: 0.1 });
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+  // Shared DataTable state
+  const columns: DTColumn<Txn>[] = useMemo(() => ([
+    { key: 'date', label: 'Date', sortable: true },
+    { key: 'user', label: 'User', sortable: true },
+    { key: 'role', label: 'Role', sortable: true },
+    { key: 'type', label: 'Type', sortable: true },
+    { key: 'status', label: 'Status', sortable: true, render: (t) => (
+      <span className={cn(baseStyles.badge, themeStyles.badge)}>{t.status}</span>
+    ) },
+    { key: 'amount', label: 'Amount', sortable: true },
+  ]), [themeStyles]);
+
+  // Apply only local filters here; search is handled inside useDataTable via tableState.query
+  const locallyFiltered = useMemo(() => {
     return rows.filter(t =>
       (type === 'All' || t.type === type) &&
       (status === 'All' || t.status === status) &&
-      (role === 'All' || t.role === role) &&
-      (!q || t.user.toLowerCase().includes(q) || t.amount.toLowerCase().includes(q))
+      (role === 'All' || t.role === role)
     );
-  }, [rows, query, type, status, role]);
+  }, [rows, type, status, role]);
+
+  const tableState = useDataTable<Txn>(locallyFiltered, columns, { initialSortKey: 'date', initialSortDir: 'desc', initialPageSize: 10 });
 
   const metrics = useMemo(() => {
-    const total = filtered.reduce((acc, t) => acc + Number(t.amount.replace(/[$,]/g, '')), 0);
-    const completed = filtered.filter(t => t.status === 'Completed').length;
-    const pending = filtered.filter(t => t.status === 'Pending').length;
+    const total = tableState.allRows.reduce((acc, t) => acc + Number(t.amount.replace(/[$,]/g, '')), 0);
+    const completed = tableState.allRows.filter(t => t.status === 'Completed').length;
+    const pending = tableState.allRows.filter(t => t.status === 'Pending').length;
     return {
       volume: `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       completed,
       pending,
     };
-  }, [filtered]);
+  }, [tableState.allRows]);
 
   return (
-    <main className={cn(common.page, themed.themeWrapper)}>
-      <div className={common.container}>
-        <div ref={headerRef} className={cn(headerVisible ? common.isVisible : common.isNotVisible)}>
+    <main className={cn(baseStyles.page, themeStyles.themeWrapper)}>
+      <div className={baseStyles.container}>
+        <div ref={headerRef} className={cn(headerVisible ? baseStyles.isVisible : baseStyles.isNotVisible)}>
           <AdminTopbar
             title="Payments"
             subtitle="Monitor platform-wide transactions. Filter by type, status, role, and search users."
@@ -106,22 +122,30 @@ const AdminPayments: React.FC = () => {
               { label: 'Payments' },
             ]}
             right={(
-              <div className={common.controls} aria-label="Payment filters">
-                <label className={common.srOnly} htmlFor="q">Search</label>
-                <input id="q" className={cn(common.input, themed.input)} type="search" placeholder="Search users or amounts…" value={query} onChange={(e) => setQuery(e.target.value)} />
-                <label className={common.srOnly} htmlFor="type">Type</label>
-                <select id="type" className={cn(common.select, themed.select)} value={type} onChange={(e) => setType(e.target.value as (typeof TYPES)[number])}>
+              <div className={baseStyles.controls} aria-label="Payment filters">
+                <label className={baseStyles.srOnly} htmlFor="q">Search</label>
+                <input id="q" className={cn(baseStyles.input, themeStyles.input)} type="search" placeholder="Search users or amounts…" value={tableState.query} onChange={(e) => tableState.setQuery(e.target.value)} />
+                <label className={baseStyles.srOnly} htmlFor="type">Type</label>
+                <select id="type" className={cn(baseStyles.select, themeStyles.select)} value={type} onChange={(e) => setType(e.target.value as (typeof TYPES)[number])}>
                   {TYPES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <label className={common.srOnly} htmlFor="status">Status</label>
-                <select id="status" className={cn(common.select, themed.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
+                <label className={baseStyles.srOnly} htmlFor="status">Status</label>
+                <select id="status" className={cn(baseStyles.select, themeStyles.select)} value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}>
                   {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <label className={common.srOnly} htmlFor="role">Role</label>
-                <select id="role" className={cn(common.select, themed.select)} value={role} onChange={(e) => setRole(e.target.value as (typeof ROLES)[number])}>
+                <label className={baseStyles.srOnly} htmlFor="role">Role</label>
+                <select id="role" className={cn(baseStyles.select, themeStyles.select)} value={role} onChange={(e) => setRole(e.target.value as (typeof ROLES)[number])}>
                   {ROLES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <button type="button" className={cn(common.button, themed.button)}>Export CSV</button>
+                <button
+                  type="button"
+                  className={cn(baseStyles.button, themeStyles.button)}
+                  onClick={() => {
+                    const headers = ['Date','User','Role','Type','Status','Amount'];
+                    const data = tableState.allRows.map(t => [t.date, t.user, t.role, t.type, t.status, t.amount]);
+                    toCSVFile(`payments_${new Date().toISOString().slice(0,10)}.csv`, headers, data);
+                  }}
+                >Export CSV</button>
                 <DensityToggle value={density} onChange={setDensity} />
                 <ColumnVisibilityMenu
                   columns={allColumns}
@@ -133,7 +157,7 @@ const AdminPayments: React.FC = () => {
                 />
                 <button
                   type="button"
-                  className={cn(common.button, themed.button, 'secondary')}
+                  className={cn(baseStyles.button, themeStyles.button, 'secondary')}
                   onClick={() => { setDensity('comfortable'); showAll(); }}
                   aria-label="Reset table settings"
                 >Reset</button>
@@ -142,52 +166,58 @@ const AdminPayments: React.FC = () => {
           />
         </div>
 
-        <section ref={summaryRef} className={cn(common.summary, summaryVisible ? common.isVisible : common.isNotVisible)} aria-label="Payments summary">
-          <div className={cn(common.card, themed.card)} tabIndex={0} aria-labelledby="m1">
-            <div id="m1" className={cn(common.cardTitle, themed.cardTitle)}>Total Volume</div>
-            <div className={common.metric}>{metrics.volume}</div>
+        <section ref={summaryRef} className={cn(baseStyles.summary, summaryVisible ? baseStyles.isVisible : baseStyles.isNotVisible)} aria-label="Payments summary">
+          <div className={cn(baseStyles.card, themeStyles.card)} tabIndex={0} aria-labelledby="m1">
+            <div id="m1" className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>Total Volume</div>
+            <div className={baseStyles.metric}>{metrics.volume}</div>
           </div>
-          <div className={cn(common.card, themed.card)} tabIndex={0} aria-labelledby="m2">
-            <div id="m2" className={cn(common.cardTitle, themed.cardTitle)}>Completed</div>
-            <div className={common.metric}>{metrics.completed}</div>
+          <div className={cn(baseStyles.card, themeStyles.card)} tabIndex={0} aria-labelledby="m2">
+            <div id="m2" className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>Completed</div>
+            <div className={baseStyles.metric}>{metrics.completed}</div>
           </div>
-          <div className={cn(common.card, themed.card)} tabIndex={0} aria-labelledby="m3">
-            <div id="m3" className={cn(common.cardTitle, themed.cardTitle)}>Pending</div>
-            <div className={common.metric}>{metrics.pending}</div>
+          <div className={cn(baseStyles.card, themeStyles.card)} tabIndex={0} aria-labelledby="m3">
+            <div id="m3" className={cn(baseStyles.cardTitle, themeStyles.cardTitle)}>Pending</div>
+            <div className={baseStyles.metric}>{metrics.pending}</div>
           </div>
         </section>
 
-        <div ref={tableRef} className={cn(common.tableWrap, tableVisible ? common.isVisible : common.isNotVisible)}>
-          {loading && <div className={common.skeletonRow} aria-busy="true" />}
-          {error && <div className={common.error}>Failed to load transactions.</div>}
-          <table className={cn(common.table, themed.table)}>
-            <thead>
-              <tr>
-                {isVisible('date') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Date</th>)}
-                {isVisible('user') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>User</th>)}
-                {isVisible('role') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Role</th>)}
-                {isVisible('type') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Type</th>)}
-                {isVisible('status') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Status</th>)}
-                {isVisible('amount') && (<th scope="col" className={themed.th + ' ' + common.th} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>Amount</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(t => (
-                <tr key={t.id} className={common.row}>
-                  {isVisible('date') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.date}</td>)}
-                  {isVisible('user') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.user}</td>)}
-                  {isVisible('role') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.role}</td>)}
-                  {isVisible('type') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.type}</td>)}
-                  {isVisible('status') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>
-                    <span className={cn(common.badge, themed.badge)}>{t.status}</span>
-                  </td>)}
-                  {isVisible('amount') && (<td className={themed.td + ' ' + common.td} style={{ padding: density === 'compact' ? '6px 8px' : undefined }}>{t.amount}</td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {filtered.length === 0 && !loading && (
-            <div role="status" aria-live="polite" className={cn(common.card, themed.card)}>
+        <div ref={tableRef} className={cn(baseStyles.tableWrap, tableVisible ? baseStyles.isVisible : baseStyles.isNotVisible)}>
+          {loading && <div className={baseStyles.skeletonRow} aria-busy="true" />}
+          {error && <div className={baseStyles.error}>Failed to load transactions.</div>}
+          {/* Page size control and column visibility */}
+          <div className={cn(baseStyles.toolbar)}>
+            <div className={baseStyles.controls}>
+              <label className={baseStyles.srOnly} htmlFor="page-size">Rows per page</label>
+              <select id="page-size" className={cn(baseStyles.select, themeStyles.select)} value={tableState.pageSize} onChange={(e) => tableState.setPageSize(Number(e.target.value))}>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <DensityToggle value={density} onChange={setDensity} />
+              <ColumnVisibilityMenu
+                columns={allColumns}
+                visibleKeys={visibleKeys}
+                onToggle={toggleColumn}
+                onShowAll={showAll}
+                onHideAll={hideAll}
+                aria-label="Column visibility"
+              />
+              <button
+                type="button"
+                className={cn(baseStyles.button, themeStyles.button, 'secondary')}
+                onClick={() => { setDensity('comfortable'); showAll(); }}
+                aria-label="Reset table settings"
+              >Reset</button>
+            </div>
+          </div>
+          {/* Shared DataTable */}
+          <Table<Txn>
+            columns={useMemo(() => columns.filter(c => isVisible(c.key as keyof Txn)), [columns, visibleKeys])}
+            state={tableState}
+            className={cn(baseStyles.table, themeStyles.table)}
+          />
+          {tableState.allRows.length === 0 && !loading && (
+            <div role="status" aria-live="polite" className={cn(baseStyles.card, themeStyles.card)}>
               No transactions match your filters.
             </div>
           )}
