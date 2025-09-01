@@ -10,6 +10,7 @@
 .controls { display: flex; flex-wrap: wrap; gap: var(--spacing-3); justify-content: center; margin-bottom: var(--spacing-8); }
 .chip { padding: 8px 12px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; font-weight: 600; }
 .chip[aria-pressed="true"] { outline: 2px solid var(--primary); }
+.chipActive { box-shadow: 0 0 0 2px var(--primary-alpha-30); }
 
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--spacing-6); }
 /* Utility to allow a child to span entire grid width (used for EmptyState) */
@@ -20,6 +21,9 @@
 
 .logoCard { border: 1px solid transparent; border-radius: var(--border-radius-lg); padding: var(--spacing-6); display: grid; place-items: center; aspect-ratio: 4 / 3; }
 .logo { max-width: 140px; width: 100%; height: auto; filter: saturate(0.95); }
+.skeleton { position: relative; overflow: hidden; background: var(--skeleton-bg, #eceff1); }
+.skeleton:after { content: ""; position: absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); animation: shimmer 1.2s infinite; }
+@keyframes shimmer { 0% { transform: translateX(-100%);} 100% { transform: translateX(100%);} }
 
 .section { margin-top: var(--spacing-14); }
 .sectionTitle { font-size: clamp(1.25rem,2.6vw,1.8rem); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-4); text-align: center; }
@@ -36,6 +40,15 @@
 .cta { margin-top: var(--spacing-10); display: flex; gap: var(--spacing-4); justify-content: center; }
 .button { padding: 12px 16px; border: none; border-radius: var(--border-radius-md); font-weight: 600; cursor: pointer; }
 .buttonSecondary { background: transparent; border: 1px solid transparent; }
+
+/* Metrics */
+.metricGrid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--spacing-6); margin-top: var(--spacing-6); }
+@media (max-width: 1000px) { .metricGrid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 560px) { .metricGrid { grid-template-columns: 1fr; } }
+.metricCard { text-align: center; padding: var(--spacing-6); border: 1px solid transparent; border-radius: var(--border-radius-lg); background: var(--surface-elev); }
+.metricValue { font-size: clamp(1.6rem,4vw,2.4rem); font-weight: var(--font-weight-bold); letter-spacing: -1px; }
+.metricLabel { margin-top: 4px; font-weight: var(--font-weight-semibold); }
+.metricDetail { margin-top: 2px; font-size: var(--font-size-sm); opacity: .7; }
 
 .isNotVisible { opacity: 0; transform: translateY(16px); }
 .isVisible { opacity: 1; transform: translateY(0); transition: opacity .6s ease-out, transform .6s ease-out; }

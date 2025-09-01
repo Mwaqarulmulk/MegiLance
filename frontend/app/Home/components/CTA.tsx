@@ -3,12 +3,14 @@
 'use client';
 
 import React, { useRef } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import Button from '@/app/components/Button/Button';
+const NewsletterSignup = dynamic(() => import('@/app/components/Newsletter/NewsletterSignup'));
 
 import commonStyles from './CTA.common.module.css';
 import lightStyles from './CTA.light.module.css';
@@ -40,6 +42,10 @@ const CTA: React.FC = () => {
             <Rocket className={commonStyles.buttonIcon} />
           </Button>
         </Link>
+        <div className={commonStyles.newsletterWrapper}>
+          <p className={commonStyles.newsletterLabel}>Stay updated with platform launches & AI features</p>
+          <NewsletterSignup compact />
+        </div>
       </div>
     </section>
   );

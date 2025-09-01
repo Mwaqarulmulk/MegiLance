@@ -1,0 +1,9 @@
+/* Shared legal page styles */
+.LegalPage { padding: var(--spacing-14) 0; }
+.LegalPage-container { max-width: 900px; margin: 0 auto; padding: 0 var(--spacing-6); }
+.LegalPage-header { text-align: center; margin-bottom: var(--spacing-10); }
+.LegalPage-header h1 { font-size: clamp(2rem,4vw,3rem); font-weight: var(--font-weight-bold); }
+.LegalPage-header p { margin-top: var(--spacing-2); opacity: .75; }
+.LegalPage-section { margin-bottom: var(--spacing-10); }
+.LegalPage-section h2 { font-size: 1.4rem; margin-bottom: var(--spacing-3); font-weight: var(--font-weight-semibold); }
+.LegalPage-section p { line-height: 1.7; }

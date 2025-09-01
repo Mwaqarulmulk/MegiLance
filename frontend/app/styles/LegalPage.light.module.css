@@ -1,0 +1,2 @@
+.LegalPage--light { background: var(--background); color: var(--text-primary); }
+.LegalPage--light a { color: var(--primary); }
