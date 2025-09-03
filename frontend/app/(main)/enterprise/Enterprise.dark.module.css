@@ -1,9 +1,0 @@
-/* Enterprise Page Dark Theme */
-.themeWrapper {
-  background: var(--background);
-  color: var(--text-primary);
-}
-
-.subtitle {
-  color: var(--text-secondary);
-} 
