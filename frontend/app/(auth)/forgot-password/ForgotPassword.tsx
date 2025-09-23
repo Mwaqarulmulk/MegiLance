@@ -111,6 +111,7 @@ const ForgotPassword: React.FC = () => {
 
           <div className={styles.signupPrompt}>
             <p>Remembered your password? <Link href="/login">Back to Sign In</Link></p>
+            <p className="mt-1">Or <Link href="/passwordless">sign in with a magic link</Link></p>
           </div>
         </div>
       </div>

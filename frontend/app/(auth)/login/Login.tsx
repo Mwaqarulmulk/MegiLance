@@ -253,9 +253,14 @@ const Login: React.FC = () => {
               >
                 Remember me
               </Checkbox>
-              <Link href="/forgot-password" className={styles.forgotPasswordLink}>
-                Forgot Password?
-              </Link>
+              <div className="flex flex-col items-end">
+                <Link href="/forgot-password" className={styles.forgotPasswordLink}>
+                  Forgot Password?
+                </Link>
+                <Link href="/passwordless" className="text-xs mt-1 text-primary-4573df hover:underline">
+                  Sign in without password
+                </Link>
+              </div>
             </div>
 
             <Button type="submit" variant="primary" fullWidth isLoading={loading} className={styles.submitButton}>

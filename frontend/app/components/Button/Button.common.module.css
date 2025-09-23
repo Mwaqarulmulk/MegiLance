@@ -52,6 +52,21 @@
   animation: ripple 600ms ease-out;
 }
 
+/* Social button specific effects */
+.social::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.3), rgba(255,255,255,0) 70%);
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.social:not(:disabled):active::after {
+  animation: ripple 600ms ease-out;
+}
+
 /* Accessible focus ring aligned with brand */
 .button:focus-visible {
   outline: none;

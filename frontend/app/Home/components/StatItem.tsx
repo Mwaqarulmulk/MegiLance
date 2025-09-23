@@ -15,9 +15,10 @@ interface StatItemProps {
   label: string;
   prefix?: string;
   suffix?: string;
+  icon?: React.ReactNode;
 }
 
-const StatItem: React.FC<StatItemProps> = ({ value, label, prefix = '', suffix = '' }) => {
+const StatItem: React.FC<StatItemProps> = ({ value, label, prefix = '', suffix = '', icon }) => {
   const { theme } = useTheme();
   const styles = theme === 'dark' ? darkStyles : lightStyles;
   const ref = useRef<HTMLDivElement>(null);
@@ -27,6 +28,7 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, prefix = '', suffix =
 
   return (
     <div className={cn(commonStyles.statItem, styles.statItem)} ref={ref}>
+      {icon && <div className={commonStyles.statIcon}>{icon}</div>}
       <span className={cn(commonStyles.statValue, styles.statValue)}>
         {prefix}{formattedValue}{suffix}+
       </span>

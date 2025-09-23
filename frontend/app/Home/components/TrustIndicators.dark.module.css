@@ -1,0 +1,58 @@
+/* @AI-HINT: Dark theme styles for the TrustIndicators component. */
+
+.trustContainer {
+  background: transparent;
+}
+
+.trustTitle {
+  color: transparent;
+  background-image: linear-gradient(120deg, #f5f7fa, #58a6ff);
+}
+
+.trustSubtitle {
+  color: var(--text-secondary-a9b1bd);
+}
+
+.indicatorItem {
+  background: rgba(39, 43, 50, 0.7);
+  border: 1px solid rgba(58, 65, 74, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.indicatorItem:hover {
+  background: rgba(44, 50, 58, 0.9);
+  border-color: rgba(88, 166, 255, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.indicatorValue {
+  color: var(--text-primary-f5f7fa);
+}
+
+.indicatorLabel {
+  color: var(--text-secondary-a9b1bd);
+}
+
+.securityBadges {
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.05), rgba(255, 152, 0, 0.05));
+  border: 1px solid rgba(58, 65, 74, 0.3);
+}
+
+.badgeItem {
+  background: rgba(39, 43, 50, 0.8);
+  border: 1px solid rgba(58, 65, 74, 0.5);
+}
+
+.badgeItem:hover {
+  background: rgba(44, 50, 58, 1);
+  border-color: rgba(88, 166, 255, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.badgeTitle {
+  color: var(--text-primary-f5f7fa);
+}
+
+.badgeDescription {
+  color: var(--text-secondary-a9b1bd);
+}

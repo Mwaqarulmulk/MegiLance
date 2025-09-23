@@ -1,0 +1,72 @@
+/* @AI-HINT: Dark theme styles for the ProductScreenshots carousel component. */
+
+.carouselContainer {
+  background: transparent;
+}
+
+.carouselTitle {
+  color: transparent;
+  background-image: linear-gradient(120deg, #f5f7fa, #58a6ff);
+}
+
+.carouselSubtitle {
+  color: var(--text-secondary-a9b1bd);
+}
+
+.carouselWrapper {
+  background: rgba(39, 43, 50, 0.9);
+  border: 1px solid rgba(58, 65, 74, 0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.navButton {
+  background: rgba(39, 43, 50, 0.9);
+  border: 1px solid rgba(58, 65, 74, 0.5);
+  color: var(--text-primary-f5f7fa);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.navButton:hover {
+  background: rgba(44, 50, 58, 1);
+  border-color: rgba(88, 166, 255, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.screenshotImage {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.playOverlay {
+  background: rgba(88, 166, 255, 0.8);
+  box-shadow: 0 8px 20px rgba(88, 166, 255, 0.3);
+}
+
+.playOverlay:hover {
+  background: rgba(88, 166, 255, 1);
+}
+
+.slideTitle {
+  color: var(--text-primary-f5f7fa);
+}
+
+.slideDescription {
+  color: var(--text-secondary-a9b1bd);
+}
+
+.indicator {
+  background: rgba(88, 166, 255, 0.3);
+}
+
+.indicatorActive {
+  background: var(--primary-4573df);
+}
+
+.autoPlayButton {
+  border: 1px solid var(--primary-4573df);
+  color: var(--primary-4573df);
+}
+
+.autoPlayButton:hover {
+  background: var(--primary-4573df);
+  color: white;
+}

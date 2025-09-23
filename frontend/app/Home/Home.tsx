@@ -9,6 +9,8 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero';
+import ProductScreenshots from './components/ProductScreenshots';
+import TrustIndicators from './components/TrustIndicators';
 
 
 import Features from './components/Features';
@@ -37,6 +39,21 @@ const Home: React.FC = () => {
             <Hero />
           </div>
         </section>
+        
+        {/* Product Screenshots Carousel */}
+        <section className={commonStyles.homeSection} aria-label="Product screenshots">
+          <div className={commonStyles.sectionContainer}>
+            <ProductScreenshots />
+          </div>
+        </section>
+        
+        {/* Trust Indicators and Security Badges */}
+        <section className={commonStyles.homeSection} aria-label="Trust indicators">
+          <div className={commonStyles.sectionContainer}>
+            <TrustIndicators />
+          </div>
+        </section>
+        
         {/* Core Platform Features */}
         <section className={commonStyles.homeSection} aria-label="Core platform features">
           <div className={commonStyles.sectionContainer}>
@@ -85,4 +102,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-

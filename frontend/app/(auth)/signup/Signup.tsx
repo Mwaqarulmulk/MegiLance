@@ -223,7 +223,7 @@ const Signup: React.FC = () => {
           </form>
 
           <div className={styles.signupPrompt}>
-            <p>Already have an account? <Link href="/login">Sign In</Link></p>
+            <p>Already have an account? <Link href="/login">Sign In</Link> or <Link href="/passwordless">use magic link</Link></p>
           </div>
         </div>
       </div>

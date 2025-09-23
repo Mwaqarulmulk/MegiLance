@@ -3,6 +3,13 @@
 .statItem {
   background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(224, 224, 224, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.statItem:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(69, 115, 223, 0.3);
+  box-shadow: 0 10px 25px rgba(69, 115, 223, 0.15);
 }
 
 .statValue {
