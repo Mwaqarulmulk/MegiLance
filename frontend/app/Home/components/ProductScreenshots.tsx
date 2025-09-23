@@ -126,11 +126,13 @@ const ProductScreenshots: React.FC = () => {
             >
               <div className={cn(commonStyles.slideContent, styles.slideContent)}>
                 <div className={cn(commonStyles.screenshotContainer, styles.screenshotContainer)}>
-                  <img 
+                  <Image 
                     src={screenshot.imageUrl} 
                     alt={screenshot.title}
                     className={cn(commonStyles.screenshotImage, styles.screenshotImage)}
                     loading="lazy"
+                    width={800}
+                    height={600}
                   />
                   <div className={cn(commonStyles.playOverlay, styles.playOverlay)}>
                     <Play size={32} />

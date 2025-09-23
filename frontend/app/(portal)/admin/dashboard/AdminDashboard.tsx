@@ -103,7 +103,7 @@ const AdminDashboard: React.FC = () => {
       <div className={common.welcomeBanner}>
         <div className={common.welcomeBannerContent}>
           <h1 className={common.welcomeBannerTitle}>Welcome back, Admin!</h1>
-          <p className={common.welcomeBannerText}>Here's what's happening with the platform today.</p>
+          <p className={common.welcomeBannerText}>Here&apos;s what&apos;s happening with the platform today.</p>
           <div className={common.quickActions}>
             <Button variant="secondary" size="md" iconBefore={<Plus size={18} />}>
               Create Announcement

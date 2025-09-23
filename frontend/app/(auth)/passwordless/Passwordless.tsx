@@ -183,7 +183,7 @@ const Passwordless: React.FC = () => {
               </p>
             ) : (
               <p className={styles.formSubtitle}>
-                Enter your email and we'll send you a magic link to sign in instantly.
+                Enter your email and we&apos;ll send you a magic link to sign in instantly.
               </p>
             )}
           </div>
@@ -204,10 +204,10 @@ const Passwordless: React.FC = () => {
                 <FaMagic className="text-green-600 dark:text-green-400 text-2xl" />
               </div>
               <p className="text-center mb-4">
-                We've sent a magic link to <strong>{email}</strong>. Click the link to sign in.
+                We&apos;ve sent a magic link to <strong>{email}</strong>. Click the link to sign in.
               </p>
               <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-6">
-                Didn't receive the email? Check your spam folder.
+                Didn&apos;t receive the email? Check your spam folder.
               </p>
               <Button 
                 variant="secondary" 
@@ -252,7 +252,7 @@ const Passwordless: React.FC = () => {
 
           <div className={styles.signupPrompt}>
             <p>Want to use a password instead? <Link href="/login">Sign In</Link></p>
-            <p className="mt-1">Don't have an account? <Link href="/signup">Create one now</Link></p>
+            <p className="mt-1">Don&apos;t have an account? <Link href="/signup">Create one now</Link></p>
           </div>
         </div>
       </div>

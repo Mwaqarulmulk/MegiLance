@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
       <div className={commonStyles.welcomeBanner}>
         <div className={commonStyles.welcomeBannerContent}>
           <h1 className={commonStyles.welcomeBannerTitle}>Welcome back, Freelancer!</h1>
-          <p className={commonStyles.welcomeBannerText}>Here's what's happening with your projects and earnings today.</p>
+          <p className={commonStyles.welcomeBannerText}>Here&apos;s what&apos;s happening with your projects and earnings today.</p>
           <div className={commonStyles.quickActions}>
             <Button variant="secondary" size="md" iconBefore={<Plus size={18} />}>
               Browse Jobs

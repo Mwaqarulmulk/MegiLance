@@ -168,14 +168,14 @@ export default function IconShowcase() {
         <div className="mt-8 p-6 bg-card rounded-lg border">
           <h3 className="text-lg font-semibold mb-4">Implementation</h3>
           <div className="bg-background p-4 rounded-md border font-mono text-sm">
-            <div className="text-muted-foreground">// Basic usage</div>
-            <div>&lt;Icon name="menu" /&gt;</div>
+            <div className="text-muted-foreground">{/* Basic usage */}</div>
+            <div>&lt;Icon name=&quot;menu&quot; /&gt;</div>
             <br />
-            <div className="text-muted-foreground">// With size and styling</div>
-            <div>&lt;Icon name="search" size="lg" className="text-primary" /&gt;</div>
+            <div className="text-muted-foreground">{/* With size and styling */}</div>
+            <div>&lt;Icon name=&quot;search&quot; size=&quot;lg&quot; className=&quot;text-primary&quot; /&gt;</div>
             <br />
-            <div className="text-muted-foreground">// With accessibility</div>
-            <div>&lt;Icon name="delete" aria-label="Delete item" /&gt;</div>
+            <div className="text-muted-foreground">{/* With accessibility */}</div>
+            <div>&lt;Icon name=&quot;delete&quot; aria-label=&quot;Delete item&quot; /&gt;</div>
           </div>
         </div>
       </div>

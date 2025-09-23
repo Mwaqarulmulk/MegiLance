@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
@@ -130,7 +131,7 @@ export const Icon: React.FC<IconProps> = ({
     // For brand icons, use the SVG files directly
     const src = name === 'logo-icon' ? '/logo-icon.svg' : '/mock-avatar.svg';
     return (
-      <img 
+      <Image 
         src={src} 
         alt={ariaLabel || name}
         width={iconSize}

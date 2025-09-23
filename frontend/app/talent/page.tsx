@@ -39,7 +39,7 @@ export default function TalentDirectoryPage() {
         {filtered.map(p => (
           <li key={p.id} className="rounded-xl border border-[var(--border)] bg-[var(--surface-elev)] p-5 flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <img src={p.avatar} alt={p.name} className="w-14 h-14 rounded-full object-cover" />
+              <Image src={p.avatar} alt={p.name} className="w-14 h-14 rounded-full object-cover" width={56} height={56} />
               <div>
                 <h3 className="font-semibold leading-tight">{p.name}</h3>
                 <p className="text-sm opacity-75">{p.role}</p>
