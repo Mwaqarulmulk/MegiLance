@@ -22,7 +22,7 @@ import dark from './Hire.dark.module.css';
 const STEPS = ['Freelancer', 'Scope', 'Terms', 'Review'] as const;
 type Step = typeof STEPS[number];
 
-const Hire: React.FC = () => {
+const HireContent: React.FC = () => {
   const { theme } = useTheme();
   const themed = theme === 'dark' ? dark : light;
   const params = useSearchParams();
@@ -154,6 +154,17 @@ const Hire: React.FC = () => {
         </form>
       </div>
     </main>
+  );
+};
+
+// Wrap the component with Suspense to handle useSearchParams during SSR
+import { Suspense } from 'react';
+
+const Hire: React.FC = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HireContent />
+    </Suspense>
   );
 };
 

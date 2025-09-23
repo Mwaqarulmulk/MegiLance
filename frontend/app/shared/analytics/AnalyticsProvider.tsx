@@ -11,7 +11,8 @@ const AnalyticsContext = createContext<AnalyticsContextValue | undefined>(undefi
 
 const queue: any[] = [];
 
-export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Create a separate component for the logic that uses hooks
+const AnalyticsContent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const search = useSearchParams();
   const lastRef = useRef<string | null>(null);
@@ -43,6 +44,28 @@ export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     <AnalyticsContext.Provider value={{ track }}>
       {children}
     </AnalyticsContext.Provider>
+  );
+};
+
+// Wrap the content with Suspense to handle useSearchParams during SSR
+import { Suspense } from 'react';
+
+export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // For server-side rendering, we provide a fallback that doesn't use hooks
+  if (typeof window === 'undefined') {
+    return (
+      <AnalyticsContext.Provider value={{ track: () => {} }}>
+        {children}
+      </AnalyticsContext.Provider>
+    );
+  }
+
+  return (
+    <Suspense fallback={children}>
+      <AnalyticsContent>
+        {children}
+      </AnalyticsContent>
+    </Suspense>
   );
 };
 
