@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import Image from 'next/image';
 
 import commonStyles from './ProductScreenshots.common.module.css';
 import lightStyles from './ProductScreenshots.light.module.css';

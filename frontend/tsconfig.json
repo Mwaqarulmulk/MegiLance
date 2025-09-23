@@ -21,7 +21,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/app/components/Button/Button": ["./app/components/Button/Button.tsx"]
     }
   },
   "include": ["next-env.d.ts", "custom.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

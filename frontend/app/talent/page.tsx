@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface TalentProfile { id: string; name: string; role: string; rank: number; skills: string[]; avatar: string; }
 
