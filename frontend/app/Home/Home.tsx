@@ -1,11 +1,9 @@
 // @AI-HINT: This is the comprehensive Home page showcasing MegiLance's AI-powered freelancing platform with blockchain integration. Maximum scope implementation with premium sections.
-'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero';
@@ -25,8 +23,16 @@ import commonStyles from './Home.common.module.css';
 import lightStyles from './Home.light.module.css';
 import darkStyles from './Home.dark.module.css';
 
-const Home: React.FC = () => {
-  const { theme } = useTheme();
+// Separate client component for the logic that uses hooks
+const HomeClient: React.FC = () => {
+  const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+  
+  React.useEffect(() => {
+    // Simple theme detection
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(isDark ? 'dark' : 'light');
+  }, []);
+
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
   // @AI-HINT: Scrollbar hidden on Home by using the page wrapper as the scroll container (see CSS module).
 
@@ -99,6 +105,11 @@ const Home: React.FC = () => {
 
     </div>
   );
+};
+
+// Server component
+const Home: React.FC = () => {
+  return <HomeClient />;
 };
 
 export default Home;
