@@ -1,0 +1,32 @@
+/* @AI-HINT: Defines the dark theme styles for the SidebarNav component. */
+
+.navLinkInactive {
+  color: #9ca3af; /* text-secondary */
+  background-color: transparent;
+}
+
+.navLinkInactive:hover {
+  background-color: #1f2937; /* surface-alt */
+  color: #f9fafb; /* text-primary */
+}
+
+.navLinkActive {
+  background: linear-gradient(90deg, #4573df, #3b82f6); /* primary gradient */
+  color: #ffffff; /* text-on-primary */
+  box-shadow: 0 4px 14px -1px rgba(69, 115, 223, 0.25);
+}
+
+.navLinkActive:hover {
+  background: linear-gradient(90deg, #60a5fa, #3b82f6); /* lighter gradient */
+  box-shadow: 0 6px 16px -1px rgba(69, 115, 223, 0.35);
+}
+
+.badge {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+.navLinkActive .badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}

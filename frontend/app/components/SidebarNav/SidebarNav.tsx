@@ -8,6 +8,8 @@ import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import styles from './SidebarNav.common.module.css';
+import lightStyles from './SidebarNav.light.module.css';
+import darkStyles from './SidebarNav.dark.module.css';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -20,6 +22,9 @@ import {
   LineChart,
   ShieldAlert,
   Briefcase,
+  Bell,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 // Define the structure for a navigation item
@@ -27,6 +32,8 @@ export interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
+  badge?: string | number;
+  submenu?: NavItem[];
 }
 
 // Define the props for the SidebarNav component
@@ -48,6 +55,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
 }) => {
   const pathname = usePathname();
   const { theme } = useTheme(); // Use hook for theme
+  const [openSubmenus, setOpenSubmenus] = React.useState<Record<string, boolean>>({});
 
   // Provide sensible defaults when navItems are not passed in, based on userType
   const computedNavItems: NavItem[] = navItems && navItems.length > 0
@@ -57,17 +65,26 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
           case 'admin':
             return [
               { href: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-              { href: '/admin/users', label: 'Users', icon: <Users size={18} /> },
+              { href: '/admin/users', label: 'Users', icon: <Users size={18} />, badge: '12' },
               { href: '/admin/projects', label: 'Projects', icon: <FolderGit2 size={18} /> },
-              { href: '/admin/payments', label: 'Payments', icon: <CreditCard size={18} /> },
-              { href: '/admin/support', label: 'Support', icon: <ShieldAlert size={18} /> },
+              { 
+                href: '/admin/payments', 
+                label: 'Payments', 
+                icon: <CreditCard size={18} />,
+                badge: '3',
+                submenu: [
+                  { href: '/admin/payments/invoices', label: 'Invoices', icon: <CreditCard size={14} /> },
+                  { href: '/admin/payments/refunds', label: 'Refunds', icon: <CreditCard size={14} /> },
+                ]
+              },
+              { href: '/admin/support', label: 'Support', icon: <ShieldAlert size={18} />, badge: '5' },
               { href: '/admin/ai-monitoring', label: 'AI Monitoring', icon: <LineChart size={18} /> },
               { href: '/admin/settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
             ];
           case 'client':
             return [
               { href: '/client/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-              { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
+              { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} />, badge: '7' },
               { href: '/client/projects', label: 'Projects', icon: <Briefcase size={18} /> },
               { href: '/client/payments', label: 'Payments', icon: <CreditCard size={18} /> },
               { href: '/help', label: 'Help', icon: <HelpCircle size={18} /> },
@@ -76,7 +93,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
           case 'freelancer':
             return [
               { href: '/freelancer/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-              { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
+              { href: '/messages', label: 'Messages', icon: <MessageSquare size={18} />, badge: '2' },
               { href: '/freelancer/projects', label: 'Projects', icon: <Briefcase size={18} /> },
               { href: '/freelancer/wallet', label: 'Wallet', icon: <Wallet size={18} /> },
               { href: '/help', label: 'Help', icon: <HelpCircle size={18} /> },
@@ -86,6 +103,15 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
             return [];
         }
       })();
+
+  const themeStyles = theme === 'light' ? lightStyles : darkStyles;
+
+  const toggleSubmenu = (href: string) => {
+    setOpenSubmenus(prev => ({
+      ...prev,
+      [href]: !prev[href]
+    }));
+  };
 
   const sidebarClasses = cn(
     styles.sidebarNav,
@@ -105,26 +131,75 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
         <ul className={styles.sidebarNavList}>
           {computedNavItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+            const isSubmenuOpen = openSubmenus[item.href];
+            
             return (
-              <li key={item.href} className={styles.sidebarNavItem}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    styles.sidebarNavLink,
-                    isActive && styles.sidebarNavLinkActive
-                  )}
-                  aria-current={isActive ? 'page' : undefined}
-                  title={item.label}
-                  data-testid={`sidebar-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  <span className={styles.sidebarNavIcon} aria-hidden>
-                    {item.icon}
-                  </span>
-                  {!isCollapsed && (
-                    <span className={styles.sidebarNavLabel}>{item.label}</span>
-                  )}
-                </Link>
-              </li>
+              <React.Fragment key={item.href}>
+                <li className={styles.sidebarNavItem}>
+                  <Link
+                    href={item.submenu ? '#' : item.href}
+                    className={cn(
+                      styles.sidebarNavLink,
+                      themeStyles.navLinkInactive,
+                      isActive && styles.sidebarNavLinkActive,
+                      isActive && themeStyles.navLinkActive
+                    )}
+                    aria-current={isActive ? 'page' : undefined}
+                    title={item.label}
+                    data-testid={`sidebar-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={(e) => {
+                      if (item.submenu) {
+                        e.preventDefault();
+                        toggleSubmenu(item.href);
+                      }
+                    }}
+                  >
+                    <span className={styles.sidebarNavIcon} aria-hidden>
+                      {item.icon}
+                    </span>
+                    {!isCollapsed && (
+                      <>
+                        <span className={styles.sidebarNavLabel}>{item.label}</span>
+                        {item.badge && (
+                          <span className={cn(styles.badge, themeStyles.badge)}>{item.badge}</span>
+                        )}
+                        {item.submenu && (
+                          <span className={styles.sidebarNavIcon}>
+                            {isSubmenuOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Link>
+                </li>
+                {item.submenu && !isCollapsed && isSubmenuOpen && (
+                  <ul className={styles.sidebarNavList} style={{ paddingLeft: '1.5rem' }}>
+                    {item.submenu.map((subItem) => {
+                      const isSubActive = pathname === subItem.href;
+                      return (
+                        <li key={subItem.href} className={styles.sidebarNavItem}>
+                          <Link
+                            href={subItem.href}
+                            className={cn(
+                              styles.sidebarNavLink,
+                              themeStyles.navLinkInactive,
+                              isSubActive && styles.sidebarNavLinkActive,
+                              isSubActive && themeStyles.navLinkActive
+                            )}
+                            aria-current={isSubActive ? 'page' : undefined}
+                            title={subItem.label}
+                          >
+                            <span className={styles.sidebarNavIcon} aria-hidden>
+                              {subItem.icon}
+                            </span>
+                            <span className={styles.sidebarNavLabel}>{subItem.label}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </React.Fragment>
             );
           })}
         </ul>

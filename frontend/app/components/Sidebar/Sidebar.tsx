@@ -55,14 +55,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, userType 
           onClick={toggleSidebar}
           className={cn(commonStyles.toggleButton, themeStyles.toggleButton)}
           title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          aria-label={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
-          {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
       </header>
 
       <div className={cn(commonStyles.sidebarNavContainer, themeStyles.sidebarNavContainer)}>
         <SidebarNav isCollapsed={isCollapsed} userType={userType} />
       </div>
+
+      <div className={commonStyles.divider}></div>
 
       <footer className={cn(commonStyles.sidebarFooter, themeStyles.sidebarFooter)}>
         <div className={cn(commonStyles.userInfo)}>
@@ -85,4 +88,3 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, userType 
 };
 
 export default Sidebar;
-

@@ -1,5 +1,12 @@
 /* @AI-HINT: Dark theme overrides for UserAvatar. Do not use global or theme CSS. */
 .userAvatar {
-  background: #2a2e38;
-  color: #fff;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: #ffffff;
+  border: 2px solid #374151;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.userAvatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }

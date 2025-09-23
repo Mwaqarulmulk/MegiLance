@@ -2,11 +2,13 @@
 .logo {
   display: inline-block;
   vertical-align: middle;
-  transition: transform 0.2s ease-in-out;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.05) rotate(2deg);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
 }
 
 .background {

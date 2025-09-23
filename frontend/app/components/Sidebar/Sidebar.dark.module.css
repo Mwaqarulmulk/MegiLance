@@ -5,7 +5,9 @@
   border-right: 1px solid #374151;
 }
 
-
+.sidebarHeader {
+  background: linear-gradient(90deg, #1e293b, #1f2937);
+}
 
 .logoText {
   color: #f9fafb;
@@ -13,18 +15,23 @@
 
 .toggleButton {
   color: #9ca3af;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .toggleButton:hover {
   background-color: #1f2937;
   color: #f9fafb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .sidebarFooter {
   border-top-color: #374151;
 }
 
-
+.userInfo {
+  border: 1px solid #374151;
+  background: rgba(30, 41, 59, 0.5);
+}
 
 .userName {
   color: #f9fafb;
@@ -32,6 +39,10 @@
 
 .userRole {
   color: #9ca3af;
+}
+
+.divider {
+  background: #374151;
 }
 
 /* Scrollbar styles */
