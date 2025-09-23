@@ -11,6 +11,7 @@
   position: relative;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
 }
 
 .userAvatar::before {
@@ -23,6 +24,24 @@
   background: linear-gradient(135deg, var(--color-primary-400), var(--color-primary-600));
   opacity: 0.1;
   z-index: 0;
+}
+
+.userAvatar::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 12px;
+  background: linear-gradient(45deg, var(--color-primary-400), var(--color-primary-600));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.userAvatar:hover::after {
+  opacity: 1;
 }
 
 .userAvatarSmall {
@@ -49,10 +68,25 @@
   object-fit: cover;
   position: relative;
   z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.userAvatar:hover .userAvatarImage {
+  transform: scale(1.05);
 }
 
 .userAvatar span {
   position: relative;
   z-index: 1;
   color: var(--color-primary-700);
+  transition: all 0.3s ease;
+}
+
+.userAvatar:hover span {
+  transform: scale(1.05);
+}
+
+.userAvatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }

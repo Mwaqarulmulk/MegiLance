@@ -6,6 +6,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.userAvatar::after {
+  background: linear-gradient(45deg, #60a5fa, #4573df);
+}
+
 .userAvatar:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);

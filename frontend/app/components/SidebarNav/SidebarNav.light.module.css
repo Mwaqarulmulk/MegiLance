@@ -47,3 +47,24 @@
 .sidebarNavSubLink:hover {
   background-color: rgba(224, 242, 254, 0.7);
 }
+
+/* Micro-interactions for light theme */
+.sidebarNavItem::before {
+  background: linear-gradient(to bottom, #3b82f6, #4573df);
+}
+
+.sidebarNavLabel::after {
+  background: linear-gradient(90deg, #3b82f6, #4573df);
+}
+
+.sidebarNavIcon::after {
+  background: #3b82f6;
+}
+
+.sidebarNavSubItem::before {
+  background: linear-gradient(to bottom, #93c5fd, #3b82f6);
+}
+
+.sidebarNavSubLink::after {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0));
+}

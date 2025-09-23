@@ -4,6 +4,25 @@
   vertical-align: middle;
   transition: all 0.3s ease;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  position: relative;
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 12px;
+  background: linear-gradient(45deg, var(--color-primary-400), var(--color-primary-600));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.logo:hover::after {
+  opacity: 0.2;
 }
 
 .logo:hover {

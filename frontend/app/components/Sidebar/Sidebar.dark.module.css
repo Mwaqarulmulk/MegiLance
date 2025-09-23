@@ -1,12 +1,14 @@
 /* @AI-HINT: Defines the dark theme styles for the main Sidebar component. */
 
 .sidebar {
-  background-color: #111827;
+  background-color: rgba(17, 24, 39, 0.85);
   border-right: 1px solid #374151;
+  backdrop-filter: blur(10px);
 }
 
 .sidebarHeader {
   background: linear-gradient(90deg, #1e293b, #1f2937);
+  border-bottom-color: #374151;
 }
 
 .logoText {
@@ -75,4 +77,25 @@
 .toggleButton:hover {
   background-color: #1e3a8a;
   color: #bfdbfe;
+}
+
+/* Micro-interactions for dark theme */
+.sidebarHeader::after {
+  background: linear-gradient(90deg, #60a5fa, #4573df);
+}
+
+.logoText::after {
+  background: linear-gradient(90deg, #60a5fa, #4573df);
+}
+
+.userName::after {
+  background: linear-gradient(90deg, #60a5fa, #4573df);
+}
+
+.divider::after {
+  background: linear-gradient(90deg, #60a5fa, #4573df);
+}
+
+.avatar::after {
+  background: linear-gradient(45deg, #60a5fa, #4573df);
 }

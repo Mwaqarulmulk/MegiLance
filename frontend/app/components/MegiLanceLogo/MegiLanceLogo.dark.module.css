@@ -6,3 +6,7 @@
 .foreground {
   fill: #FFFFFF; /* White */
 }
+
+.logo::after {
+  background: linear-gradient(45deg, #60a5fa, #4573df);
+}

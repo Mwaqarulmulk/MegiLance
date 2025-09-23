@@ -1,12 +1,14 @@
 /* @AI-HINT: Defines the light theme styles for the main Sidebar component. */
 
 .sidebar {
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.85);
   border-right: 1px solid #e5e7eb;
+  backdrop-filter: blur(10px);
 }
 
 .sidebarHeader {
   background: linear-gradient(90deg, #f8fafc, #f1f5f9);
+  border-bottom-color: #e5e7eb;
 }
 
 .logoText {
@@ -74,4 +76,25 @@
 .toggleButton:hover {
   background-color: #eff6ff;
   color: #3b82f6;
+}
+
+/* Micro-interactions for light theme */
+.sidebarHeader::after {
+  background: linear-gradient(90deg, #3b82f6, #4573df);
+}
+
+.logoText::after {
+  background: linear-gradient(90deg, #3b82f6, #4573df);
+}
+
+.userName::after {
+  background: linear-gradient(90deg, #3b82f6, #4573df);
+}
+
+.divider::after {
+  background: linear-gradient(90deg, #3b82f6, #4573df);
+}
+
+.avatar::after {
+  background: linear-gradient(45deg, #3b82f6, #4573df);
 }
