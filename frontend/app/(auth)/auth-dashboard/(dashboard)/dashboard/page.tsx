@@ -91,17 +91,17 @@ const DashboardPage = () => {
         {loading
           ? Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className={styles.kpiCard}>
-                <Skeleton width={50} height={50} radius={999} inline theme="light" />
+                <Skeleton width={60} height={60} radius={18} inline theme="light" />
                 <div className={styles.kpiContent}>
-                  <Skeleton width={110} height={12} radius={6} lines={1} theme="light" />
-                  <Skeleton width={80} height={22} radius={8} lines={1} theme="light" />
+                  <Skeleton width={120} height={14} radius={6} lines={1} theme="light" />
+                  <Skeleton width={90} height={28} radius={8} lines={1} theme="light" />
                 </div>
               </div>
             ))
           : kpiData.map((kpi, index) => (
               <div key={index} className={styles.kpiCard}>
                 <div className={`${styles.kpiIcon} ${styles[kpi.colorClass as keyof typeof styles]}`}>
-                  <kpi.icon size={24} color="white" />
+                  <kpi.icon size={28} color="white" />
                 </div>
                 <div className={styles.kpiContent}>
                   <span className={styles.kpiTitle}>{kpi.title}</span>
@@ -116,7 +116,7 @@ const DashboardPage = () => {
           <div className={styles.sectionHeader}>
             <h2>Recent Projects</h2>
             <a href="/projects" className={styles.viewAllLink}>
-              View All <ChevronRight size={16} />
+              View All <ChevronRight size={18} />
             </a>
           </div>
           <div className={styles.projectList}>
@@ -124,16 +124,16 @@ const DashboardPage = () => {
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className={styles.projectCard}>
                   <div className={styles.projectInfo}>
-                    <Skeleton width={22} height={22} radius={6} inline theme="light" />
+                    <Skeleton width={40} height={40} radius={12} inline theme="light" />
                     <div>
-                      <Skeleton width={260} height={16} radius={8} theme="light" />
-                      <Skeleton width={160} height={12} radius={6} theme="light" />
+                      <Skeleton width={280} height={18} radius={8} theme="light" />
+                      <Skeleton width={180} height={14} radius={6} theme="light" />
                     </div>
                   </div>
                   <div className={styles.projectStatus}>
-                    <Skeleton width={80} height={12} radius={6} theme="light" />
+                    <Skeleton width={90} height={14} radius={6} theme="light" />
                     <div className={styles.progressBar}>
-                      <Skeleton width={'100%'} height={6} radius={3} theme="light" />
+                      <Skeleton width={'100%'} height={8} radius={4} theme="light" />
                     </div>
                   </div>
                 </div>
@@ -154,7 +154,7 @@ const DashboardPage = () => {
               >
                 <div className={styles.projectInfo}>
                     <div className={styles.projectIcon}>
-                        <project.icon size={22} />
+                        <project.icon size={24} />
                     </div>
                     <div>
                         <h3 className={styles.projectTitle}>{project.title}</h3>
@@ -179,10 +179,10 @@ const DashboardPage = () => {
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className={styles.taskItem}>
                   <div className={styles.taskInfo}>
-                    <Skeleton width={18} height={18} radius={6} inline theme="light" />
-                    <Skeleton width={280} height={14} radius={6} theme="light" />
+                    <Skeleton width={36} height={36} radius={10} inline theme="light" />
+                    <Skeleton width={300} height={16} radius={6} theme="light" />
                   </div>
-                  <Skeleton width={90} height={20} radius={6} theme="light" />
+                  <Skeleton width={100} height={24} radius={6} theme="light" />
                 </div>
               ))
             ) : upcomingTasks.length === 0 ? (
@@ -193,7 +193,7 @@ const DashboardPage = () => {
             ) : upcomingTasks.map(task => (
               <div key={task.id} className={styles.taskItem}>
                 <div className={styles.taskInfo}>
-                  <CheckCircle size={18} className={styles.taskIcon} />
+                  <CheckCircle size={20} className={styles.taskIcon} />
                   <p>{task.title}</p>
                 </div>
                 <span className={styles.taskDueDate}>{task.dueDate}</span>
@@ -207,4 +207,3 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
-

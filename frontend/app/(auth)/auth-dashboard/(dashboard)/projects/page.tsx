@@ -107,10 +107,10 @@ const ProjectsPage = () => {
       <div className={styles.pageHeader}>
         <h1>Projects</h1>
         {loading ? (
-          <Skeleton width={150} height={36} radius={8} theme="light" />
+          <Skeleton width={160} height={44} radius={12} theme="light" />
         ) : (
           <button className={styles.newProjectButton}>
-            <Plus size={20} />
+            <Plus size={22} />
             <span>Create Project</span>
           </button>
         )}
@@ -120,19 +120,19 @@ const ProjectsPage = () => {
         {loading ? (
           <>
             <div className={styles.searchBox}>
-              <Skeleton width={18} height={18} radius={6} inline theme="light" />
-              <Skeleton width={220} height={36} radius={8} theme="light" />
+              <Skeleton width={22} height={22} radius={6} inline theme="light" />
+              <Skeleton width={240} height={44} radius={12} theme="light" />
             </div>
             <div className={styles.filters}>
-              <Skeleton width={80} height={36} radius={8} inline theme="light" />
-              <Skeleton width={140} height={36} radius={8} inline theme="light" />
-              <Skeleton width={220} height={36} radius={8} inline theme="light" />
+              <Skeleton width={90} height={44} radius={12} inline theme="light" />
+              <Skeleton width={150} height={44} radius={12} inline theme="light" />
+              <Skeleton width={240} height={44} radius={12} inline theme="light" />
             </div>
           </>
         ) : (
           <>
             <div className={styles.searchBox}>
-              <Search size={18} className={styles.searchIcon} />
+              <Search size={22} className={styles.searchIcon} />
               <input
                 type="text"
                 placeholder="Search projects..."
@@ -143,7 +143,7 @@ const ProjectsPage = () => {
             </div>
             <div className={styles.filters}>
               <button className={`${styles.filterButton} ${status !== 'All' ? styles.filterButtonActive : ''}`} aria-haspopup="listbox">
-                <Filter size={16} />
+                <Filter size={18} />
                 <span>Filter</span>
               </button>
               <select
@@ -156,7 +156,7 @@ const ProjectsPage = () => {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-              <div className={styles.filterButton} role="group" aria-label="Sort by">
+              <div className={styles.filterGroup} role="group" aria-label="Sort by">
                 <span>Sort:</span>
                 <button
                   className={`${styles.filterButton} ${sortBy === 'deadline' ? styles.filterButtonActive : ''}`}
@@ -189,24 +189,24 @@ const ProjectsPage = () => {
           Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className={styles.projectRow}>
               <div className={styles.projectInfo}>
-                <Skeleton width={72} height={14} radius={6} theme="light" />
-                <Skeleton width={260} height={16} radius={8} theme="light" />
-                <Skeleton width={180} height={12} radius={6} theme="light" />
+                <Skeleton width={80} height={16} radius={6} theme="light" />
+                <Skeleton width={280} height={18} radius={8} theme="light" />
+                <Skeleton width={200} height={14} radius={6} theme="light" />
               </div>
               <div className={styles.projectStatus}>
-                <Skeleton width={96} height={24} radius={99} theme="light" />
+                <Skeleton width={100} height={28} radius={99} theme="light" />
               </div>
               <div className={styles.projectBudget}>
-                <Skeleton width={80} height={14} radius={6} theme="light" />
+                <Skeleton width={90} height={16} radius={6} theme="light" />
               </div>
               <div className={styles.projectTeam}>
-                <Skeleton width={96} height={32} radius={16} theme="light" />
+                <Skeleton width={100} height={36} radius={18} theme="light" />
               </div>
               <div className={styles.projectDeadline}>
-                <Skeleton width={120} height={14} radius={6} theme="light" />
+                <Skeleton width={130} height={16} radius={6} theme="light" />
               </div>
               <div className={styles.projectActions}>
-                <Skeleton width={32} height={32} radius={8} theme="light" />
+                <Skeleton width={36} height={36} radius={10} theme="light" />
               </div>
             </div>
           ))
@@ -230,13 +230,13 @@ const ProjectsPage = () => {
             <div className={styles.projectBudget}>${project.budget.toLocaleString()}</div>
             <div className={styles.projectTeam}>
               {project.team.map((avatar, index) => (
-                <Image key={index} src={avatar} alt={`Team member ${index + 1}`} className={styles.teamAvatar} width={32} height={32} />
+                <Image key={index} src={avatar} alt={`Team member ${index + 1}`} className={styles.teamAvatar} width={36} height={36} />
               ))}
             </div>
             <div className={styles.projectDeadline}>{new Date(project.deadline).toLocaleDateString()}</div>
             <div className={styles.projectActions}>
               <button className={styles.actionButton} title="More options">
-                <MoreHorizontal size={20} />
+                <MoreHorizontal size={22} />
               </button>
             </div>
           </div>
@@ -247,4 +247,3 @@ const ProjectsPage = () => {
 };
 
 export default ProjectsPage;
-

@@ -20,7 +20,7 @@ const Hero: React.FC = () => {
 
   return (
     <div className={cn(commonStyles.heroContainer, styles.heroContainer)}>
-      <div className={commonStyles.backgroundGlow}></div>
+      <div className={cn(commonStyles.backgroundVisuals, styles.backgroundVisuals)}></div>
       <div className={commonStyles.contentWrapper}>
         <a href="/blog/new-features" className={cn(commonStyles.promoBadge, styles.promoBadge)}>
           <span className={cn(commonStyles.promoBadgeHighlight, styles.promoBadgeHighlight)}>New</span>
@@ -53,19 +53,19 @@ const Hero: React.FC = () => {
 
         <div className={commonStyles.featuresList}>
           <div className={cn(commonStyles.featureItem, styles.featureItem)}>
-            <Bot size={16} />
+            <Bot size={20} />
             <span>AI Smart Matching</span>
           </div>
           <div className={cn(commonStyles.featureItem, styles.featureItem)}>
-            <Zap size={16} />
+            <Zap size={20} />
             <span>Instant USDC Payments</span>
           </div>
           <div className={cn(commonStyles.featureItem, styles.featureItem)}>
-            <ShieldCheck size={16} />
+            <ShieldCheck size={20} />
             <span>Blockchain Escrow</span>
           </div>
           <div className={cn(commonStyles.featureItem, styles.featureItem)}>
-            <Globe size={16} />
+            <Globe size={20} />
             <span>Global Opportunities</span>
           </div>
         </div>

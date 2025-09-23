@@ -3,18 +3,29 @@
 .statItem {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.statItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .statValue {
-  font-size: 2.25rem; /* 36px */
-  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
 }
 
 .statLabel {
-  font-size: 0.9rem; /* 14.4px */
+  font-size: 1rem;
+  font-weight: 500;
   margin-top: 0.25rem;
 }

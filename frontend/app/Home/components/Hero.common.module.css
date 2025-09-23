@@ -6,9 +6,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8rem 1.5rem 6rem;
+  padding: 6rem 1.5rem 4rem;
   overflow: hidden;
-  min-height: 90vh;
+  min-height: 95vh;
 }
 
 .backgroundVisuals {
@@ -28,95 +28,172 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 52rem; /* 832px */
-  animation: floatAnim 6s ease-in-out infinite;
+  max-width: 64rem; /* 1024px */
+  animation: floatAnim 8s ease-in-out infinite;
 }
 
 .promoBadge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.75rem 0.375rem 0.375rem;
+  gap: 0.625rem;
+  padding: 0.5rem 1rem;
   border-radius: 9999px;
   font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
   border: 1px solid;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.promoBadge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .promoBadgeHighlight {
-  padding: 0.125rem 0.625rem;
+  padding: 0.125rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.05em;
 }
 
 .mainHeading {
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(3rem, 6vw, 4.5rem);
-  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   background-clip: text;
   -webkit-background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.mainHeading:hover {
+  transform: scale(1.01);
 }
 
 .subheading {
-  max-width: 42rem; /* 672px */
-  font-size: 1.125rem;
+  max-width: 48rem; /* 768px */
+  font-size: 1.25rem;
   line-height: 1.7;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 3rem;
+  font-weight: 400;
 }
 
 .ctaButtons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 4rem;
+  gap: 1.25rem;
+  margin-bottom: 4.5rem;
 }
 
 .featuresList {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.75rem;
-  margin-bottom: 6rem;
+  gap: 2rem;
+  margin-bottom: 6.5rem;
 }
 
 .featureItem {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  font-size: 0.9375rem; /* 15px */
+  gap: 0.75rem;
+  font-size: 1rem;
   font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.featureItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem 3rem;
+  gap: 2.5rem 4rem;
   width: 100%;
-  max-width: 48rem; /* 768px */
+  max-width: 56rem; /* 896px */
 }
 
 /* Animations */
 @keyframes floatAnim {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-12px); }
 }
 
 /* Responsive Design */
 @media (min-width: 768px) {
   .statsGrid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 2rem 4rem;
+    gap: 2.5rem 4.5rem;
   }
   .heroContainer {
-    padding: 10rem 1.5rem 8rem;
+    padding: 8rem 1.5rem 6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroContainer {
+    padding: 4rem 1rem 3rem;
+    min-height: 90vh;
+  }
+  
+  .contentWrapper {
+    max-width: 100%;
+  }
+  
+  .mainHeading {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+  
+  .subheading {
+    font-size: 1.1rem;
+    max-width: 100%;
+  }
+  
+  .ctaButtons {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .featuresList {
+    gap: 1.25rem;
+  }
+  
+  .featureItem {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .featuresList {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .featureItem {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .statsGrid {
+    gap: 1.5rem;
   }
 }

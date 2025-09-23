@@ -1,11 +1,14 @@
 /* @AI-HINT: Dark theme styles for the StatItem component. */
 
-.statItem {}
+.statItem {
+  background-color: rgba(39, 43, 50, 0.7);
+  border: 1px solid rgba(58, 65, 74, 0.5);
+}
 
 .statValue {
-  color: var(--text-primary-dark);
+  color: var(--text-primary-f5f7fa);
 }
 
 .statLabel {
-  color: var(--text-secondary-dark);
+  color: var(--text-secondary-a9b1bd);
 }

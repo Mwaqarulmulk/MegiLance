@@ -1,44 +1,54 @@
 /* @AI-HINT: Dark theme styles for the Hero component. Colors and visuals only; section background is transparent to use page background. */
 
 .backgroundVisuals {
-  background-image: radial-gradient(circle, var(--color-brand-primary-dark-translucent, hsla(212, 100%, 67%, 0.1)) 0%, transparent 50%),
-    linear-gradient(var(--color-border-subtle-dark, #30363d) 1px, transparent 1px),
-    linear-gradient(to right, var(--color-border-subtle-dark, #30363d) 1px, transparent 1px);
-  background-size: 100% 100%, 50px 50px, 50px 50px;
-  -webkit-mask-image: radial-gradient(circle at center, white 0%, transparent 65%);
-  mask-image: radial-gradient(circle at center, white 0%, transparent 65%);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(69, 115, 223, 0.15) 0%, transparent 25%),
+    radial-gradient(circle at 90% 80%, rgba(255, 152, 0, 0.15) 0%, transparent 25%),
+    linear-gradient(135deg, rgba(29, 33, 39, 0.9) 0%, rgba(39, 43, 50, 0.95) 100%);
+  background-size: 100% 100%;
 }
 
 .promoBadge {
-  color: var(--color-text-default-dark, #e6edf3);
-  border-color: var(--color-border-subtle-dark, #30363d);
-  background-color: var(--color-surface-alt-dark, #161b22);
+  color: var(--text-primary-f5f7fa);
+  border-color: rgba(88, 166, 255, 0.3);
+  background-color: rgba(22, 27, 34, 0.7);
+  backdrop-filter: blur(10px);
 }
 
 .promoBadge:hover {
-  border-color: var(--color-border-default-dark, #8b949e);
-  background-color: var(--color-surface-hover-dark, #21262d);
+  border-color: rgba(88, 166, 255, 0.5);
+  background-color: rgba(33, 38, 45, 0.9);
+  box-shadow: 0 6px 16px rgba(88, 166, 255, 0.15);
 }
 
 .promoBadgeHighlight {
-  color: var(--color-brand-primary-dark, #58a6ff);
-  background-color: var(--color-brand-primary-faded-dark, rgba(88, 166, 255, 0.15));
+  color: var(--text-on-primary-ffffff);
+  background-color: var(--primary-4573df);
 }
 
 .mainHeading {
   color: transparent;
-  background-image: linear-gradient(120deg, #e6edf3, #c9d1d9);
+  background-image: linear-gradient(120deg, #f5f7fa, #58a6ff);
 }
 
 .subheading {
-  color: var(--color-text-secondary-dark, #8b949e);
+  color: var(--text-secondary-a9b1bd);
 }
 
 .featureItem {
-  color: var(--color-text-secondary-dark, #8b949e);
+  color: var(--text-primary-f5f7fa);
+  background-color: rgba(39, 43, 50, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(58, 65, 74, 0.5);
+}
+
+.featureItem:hover {
+  background-color: rgba(44, 50, 58, 0.9);
+  border-color: rgba(88, 166, 255, 0.4);
+  box-shadow: 0 6px 16px rgba(88, 166, 255, 0.1);
 }
 
 .statsGrid {
-  border-top: 1px solid var(--color-border-subtle-dark, #30363d);
-  padding-top: 4rem;
+  border-top: 1px solid rgba(58, 65, 74, 0.5);
+  padding-top: 4.5rem;
 }

@@ -57,7 +57,7 @@
   background-color: transparent;
   color: var(--primary-4573df);
   border-color: transparent;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .link:hover:not(:disabled) {

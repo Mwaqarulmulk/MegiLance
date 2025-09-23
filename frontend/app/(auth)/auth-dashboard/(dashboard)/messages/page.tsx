@@ -74,18 +74,18 @@ const MessagesPage = () => {
           {loading ? (
             <>
               <div className={styles.searchBox}>
-                <Skeleton width={18} height={18} radius={6} inline theme="light" />
-                <Skeleton width={220} height={36} radius={8} theme="light" />
+                <Skeleton width={22} height={22} radius={6} inline theme="light" />
+                <Skeleton width={240} height={44} radius={12} theme="light" />
               </div>
               <div className={styles.filterBar}>
-                <Skeleton width={80} height={32} radius={8} inline theme="light" />
-                <Skeleton width={90} height={32} radius={8} inline theme="light" />
+                <Skeleton width={90} height={36} radius={12} inline theme="light" />
+                <Skeleton width={100} height={36} radius={12} inline theme="light" />
               </div>
             </>
           ) : (
             <>
               <div className={styles.searchBox}>
-                <Search size={18} className={styles.searchIcon} />
+                <Search size={22} className={styles.searchIcon} />
                 <input
                   type="text"
                   placeholder="Search messages..."
@@ -114,16 +114,16 @@ const MessagesPage = () => {
             Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className={styles.convoItem}>
                 <div className={styles.avatarWrap}>
-                  <Skeleton width={48} height={48} radius={999} theme="light" />
+                  <Skeleton width={52} height={52} radius={999} theme="light" />
                 </div>
                 <div className={styles.convoDetails}>
                   <div className={styles.convoHeader}>
-                    <Skeleton width={160} height={14} radius={6} theme="light" />
+                    <Skeleton width={180} height={16} radius={6} theme="light" />
                     <div className={styles.convoActions}>
-                      <Skeleton width={60} height={12} radius={6} inline theme="light" />
+                      <Skeleton width={70} height={14} radius={6} inline theme="light" />
                     </div>
                   </div>
-                  <Skeleton width={220} height={12} radius={6} theme="light" />
+                  <Skeleton width={240} height={14} radius={6} theme="light" />
                 </div>
               </div>
             ))
@@ -146,7 +146,7 @@ const MessagesPage = () => {
               }}
             >
               <div className={styles.avatarWrap}>
-                <Image src={convo.avatar} alt={convo.name} className={styles.avatar} width={48} height={48} />
+                <Image src={convo.avatar} alt={convo.name} className={styles.avatar} width={52} height={52} />
                 <span className={`${styles.presenceDot} ${styles[presence[convo.id]]}`}></span>
               </div>
               <div className={styles.convoDetails}>
@@ -160,7 +160,7 @@ const MessagesPage = () => {
                       aria-label={starred[convo.id] ? 'Unstar conversation' : 'Star conversation'}
                       aria-pressed={starred[convo.id] || undefined}
                     >
-                      <Star size={16} color={starred[convo.id] ? 'var(--color-primary)' : 'var(--color-text-secondary)'} fill={starred[convo.id] ? 'var(--color-primary)' : 'none'} />
+                      <Star size={18} color={starred[convo.id] ? 'var(--color-primary)' : 'var(--color-text-secondary)'} fill={starred[convo.id] ? 'var(--color-primary)' : 'none'} />
                     </button>
                     <span className={styles.convoTimestamp}>{convo.timestamp}</span>
                   </div>
@@ -178,20 +178,20 @@ const MessagesPage = () => {
         {loading ? (
           <>
             <div className={styles.chatHeader}>
-              <Skeleton width={180} height={18} radius={8} theme="light" />
-              <Skeleton width={60} height={12} radius={6} theme="light" />
+              <Skeleton width={200} height={22} radius={8} theme="light" />
+              <Skeleton width={70} height={14} radius={6} theme="light" />
             </div>
             <div className={styles.messageArea}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className={styles.message}>
-                  <Skeleton width={'60%'} height={18} radius={10} theme="light" />
+                  <Skeleton width={'65%'} height={22} radius={12} theme="light" />
                 </div>
               ))}
             </div>
             <div className={styles.chatInputArea}>
-              <Skeleton width={36} height={36} radius={8} inline theme="light" />
-              <Skeleton width={'100%'} height={36} radius={8} theme="light" />
-              <Skeleton width={36} height={36} radius={8} inline theme="light" />
+              <Skeleton width={44} height={44} radius={12} inline theme="light" />
+              <Skeleton width={'100%'} height={44} radius={12} theme="light" />
+              <Skeleton width={44} height={44} radius={12} inline theme="light" />
             </div>
           </>
         ) : (
@@ -210,16 +210,17 @@ const MessagesPage = () => {
                   <span className={styles.dot}></span>
                   <span className={styles.dot}></span>
                   <span className={styles.dot}></span>
+                  <span>Typing...</span>
                 </div>
               )}
             </div>
             <div className={styles.chatInputArea}>
               <button className={styles.iconButton} title="Attach file">
-                <Paperclip size={20} />
+                <Paperclip size={22} />
               </button>
               <input type="text" placeholder="Type a message..." className={styles.chatInput} />
               <button className={`${styles.iconButton} ${styles.sendButton}`} title="Send message">
-                <Send size={20} />
+                <Send size={22} />
               </button>
             </div>
           </>
@@ -231,34 +232,34 @@ const MessagesPage = () => {
         {loading ? (
           <>
             <div className={styles.panelHeader}>
-              <Skeleton width={80} height={80} radius={999} theme="light" />
-              <Skeleton width={160} height={18} radius={8} theme="light" />
-              <Skeleton width={80} height={12} radius={6} theme="light" />
+              <Skeleton width={90} height={90} radius={999} theme="light" />
+              <Skeleton width={180} height={22} radius={8} theme="light" />
+              <Skeleton width={90} height={14} radius={6} theme="light" />
             </div>
             <div className={styles.panelSection}>
-              <Skeleton width={120} height={14} radius={6} theme="light" />
-              <Skeleton width={'100%'} height={12} radius={6} theme="light" />
-              <Skeleton width={'90%'} height={12} radius={6} theme="light" />
+              <Skeleton width={140} height={16} radius={6} theme="light" />
+              <Skeleton width={'100%'} height={14} radius={6} theme="light" />
+              <Skeleton width={'95%'} height={14} radius={6} theme="light" />
             </div>
             <div className={styles.panelSection}>
-              <Skeleton width={140} height={14} radius={6} theme="light" />
-              <Skeleton width={'100%'} height={12} radius={6} theme="light" />
-              <Skeleton width={'85%'} height={12} radius={6} theme="light" />
+              <Skeleton width={160} height={16} radius={6} theme="light" />
+              <Skeleton width={'100%'} height={14} radius={6} theme="light" />
+              <Skeleton width={'90%'} height={14} radius={6} theme="light" />
             </div>
           </>
         ) : (
           <>
             <div className={styles.panelHeader}>
-              <Image src={activeConvo?.avatar || '/avatars/avatar-1.png'} alt={activeConvo?.name || 'User'} className={styles.panelAvatar} width={80} height={80} />
+              <Image src={activeConvo?.avatar || '/avatars/avatar-1.png'} alt={activeConvo?.name || 'User'} className={styles.panelAvatar} width={90} height={90} />
               <h3>{activeConvo?.name}</h3>
               <p>{presence[activeConvo.id] === 'online' ? 'Online' : 'Offline'}</p>
             </div>
             <div className={styles.panelSection}>
-              <h4><User size={16} /> About</h4>
+              <h4><User size={18} /> About</h4>
               <p>Lead UI/UX Designer at Innovate Inc. Passionate about creating intuitive and beautiful user experiences.</p>
             </div>
             <div className={styles.panelSection}>
-              <h4><Paperclip size={16} /> Shared Files</h4>
+              <h4><Paperclip size={18} /> Shared Files</h4>
               {/* AI-HINT: A list of shared files would be rendered here. */}
               <p>No files shared yet.</p>
             </div>

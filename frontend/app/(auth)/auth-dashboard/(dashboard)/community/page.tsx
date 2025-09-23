@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { Plus, Search, ThumbsUp, MessageCircle, Eye, ChevronDown } from 'lucide-react';
+import { Plus, Search, ThumbsUp, MessageCircle, Eye, ChevronDown, TrendingUp, Users, MessageSquare } from 'lucide-react';
 import styles from './Community.module.css';
 import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
@@ -22,6 +22,7 @@ const communityPosts = [
     comments: 42,
     views: 1200,
     timestamp: '2 hours ago',
+    isTrending: true,
   },
   {
     id: 2,
@@ -35,6 +36,7 @@ const communityPosts = [
     comments: 61,
     views: 2500,
     timestamp: '1 day ago',
+    isTrending: false,
   },
   {
     id: 3,
@@ -48,6 +50,21 @@ const communityPosts = [
     comments: 88,
     views: 4800,
     timestamp: '3 days ago',
+    isTrending: true,
+  },
+  {
+    id: 4,
+    author: 'Marcus Johnson',
+    authorAvatar: '/avatars/avatar-1.png',
+    authorTitle: 'Content Strategist',
+    title: 'The rise of AI writing tools: Friend or foe?',
+    excerpt: 'With tools like ChatGPT and Jasper becoming more sophisticated, how are content creators adapting their workflows? Are we seeing quality improvements or declines?',
+    tags: ['content', 'ai', 'writing'],
+    likes: 76,
+    comments: 34,
+    views: 1800,
+    timestamp: '5 days ago',
+    isTrending: false,
   },
 ];
 
@@ -58,7 +75,7 @@ const communityStats = {
   online: '312',
 };
 
-const popularTags = ['freelancing', 'marketing', 'design', 'development', 'business', 'productivity'];
+const popularTags = ['freelancing', 'marketing', 'design', 'development', 'business', 'productivity', 'ai', 'crypto'];
 
 const CommunityPage = () => {
   const [query, setQuery] = useState('');
@@ -96,6 +113,11 @@ const CommunityPage = () => {
     return items;
   }, [query, sortBy, activeTag]);
 
+  // Format numbers with commas
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString();
+  };
+
   return (
     <div className={styles.communityContainer} aria-busy={loading || undefined}>
       {/* Main Content */}
@@ -103,8 +125,8 @@ const CommunityPage = () => {
         <div className={styles.pageHeader}>
           {loading ? (
             <div className={styles.pageHeader}>
-              <Skeleton height={28} width={'30%'} />
-              <Skeleton height={36} width={140} />
+              <Skeleton height={32} width={'40%'} />
+              <Skeleton height={44} width={160} />
             </div>
           ) : (
             <>
@@ -120,8 +142,8 @@ const CommunityPage = () => {
         <div className={styles.feedControls}>
           {loading ? (
             <div className={styles.feedControls}>
-              <Skeleton height={40} width={'70%'} />
-              <Skeleton height={40} width={160} />
+              <Skeleton height={44} width={'70%'} />
+              <Skeleton height={44} width={180} />
             </div>
           ) : (
             <>
@@ -147,7 +169,6 @@ const CommunityPage = () => {
                   <option value="mostCommented">Most Commented</option>
                   <option value="mostViewed">Most Viewed</option>
                 </select>
-                <ChevronDown size={16} />
               </div>
             </>
           )}
@@ -155,31 +176,34 @@ const CommunityPage = () => {
 
         <div className={styles.postFeed}>
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => (
+            Array.from({ length: 4 }).map((_, i) => (
               <article key={i} className={styles.postCard}>
                 <div className={styles.postAuthor}>
-                  <Skeleton width={40} height={40} radius={'50%'} />
+                  <Skeleton width={48} height={48} radius={'50%'} />
                   <div>
-                    <Skeleton height={14} width={140} />
+                    <Skeleton height={16} width={160} />
                     <div className={styles.skeletonSpacerXs}>
-                      <Skeleton height={12} width={120} />
+                      <Skeleton height={14} width={140} />
                     </div>
                   </div>
                 </div>
                 <div className={styles.skeletonSpacerSm}>
-                  <Skeleton height={20} width={'70%'} />
+                  <Skeleton height={24} width={'80%'} />
                 </div>
                 <div className={styles.skeletonSpacerSm}>
-                  <Skeleton height={14} width={'95%'} />
+                  <Skeleton height={16} width={'95%'} />
+                  <div className={styles.skeletonSpacerXs}>
+                    <Skeleton height={16} width={'90%'} />
+                  </div>
                 </div>
                 <div className={styles.postTags}>
-                  <Skeleton height={24} width={80} />
-                  <Skeleton height={24} width={100} />
-                  <Skeleton height={24} width={90} />
+                  <Skeleton height={28} width={90} />
+                  <Skeleton height={28} width={110} />
+                  <Skeleton height={28} width={100} />
                 </div>
                 <footer className={styles.postFooter}>
-                  <Skeleton height={16} width={200} />
-                  <Skeleton height={14} width={100} />
+                  <Skeleton height={20} width={240} />
+                  <Skeleton height={16} width={120} />
                 </footer>
               </article>
             ))
@@ -192,11 +216,17 @@ const CommunityPage = () => {
             posts.map((post) => (
               <article key={post.id} className={styles.postCard}>
                 <div className={styles.postAuthor}>
-                  <Image src={post.authorAvatar} alt={post.author} className={styles.authorAvatar} width={40} height={40} />
+                  <Image src={post.authorAvatar} alt={post.author} className={styles.authorAvatar} width={48} height={48} />
                   <div>
                     <span className={styles.authorName}>{post.author}</span>
                     <span className={styles.authorTitle}>{post.authorTitle}</span>
                   </div>
+                  {post.isTrending && (
+                    <div className={styles.trendingBadge}>
+                      <TrendingUp size={16} />
+                      <span>Trending</span>
+                    </div>
+                  )}
                 </div>
                 <h2 className={styles.postTitle}>{post.title}</h2>
                 <p className={styles.postExcerpt}>{post.excerpt}</p>
@@ -217,9 +247,9 @@ const CommunityPage = () => {
                 </div>
                 <footer className={styles.postFooter}>
                   <div className={styles.postStats}>
-                    <span title="Likes"><ThumbsUp size={16} /> {post.likes}</span>
-                    <span title="Comments"><MessageCircle size={16} /> {post.comments}</span>
-                    <span title="Views"><Eye size={16} /> {post.views}</span>
+                    <span title="Likes"><ThumbsUp size={16} /> {formatNumber(post.likes)}</span>
+                    <span title="Comments"><MessageCircle size={16} /> {formatNumber(post.comments)}</span>
+                    <span title="Views"><Eye size={16} /> {formatNumber(post.views)}</span>
                   </div>
                   <span className={styles.postTimestamp}>{post.timestamp}</span>
                 </footer>
@@ -236,29 +266,38 @@ const CommunityPage = () => {
           {loading ? (
             <div className={styles.statsGrid}>
               <div>
-                <Skeleton height={18} width={60} />
+                <Skeleton height={24} width={70} />
                 <div className={styles.skeletonSpacerXs}>
-                  <Skeleton height={12} width={70} />
+                  <Skeleton height={14} width={80} />
                 </div>
               </div>
               <div>
-                <Skeleton height={18} width={60} />
+                <Skeleton height={24} width={70} />
                 <div className={styles.skeletonSpacerXs}>
-                  <Skeleton height={12} width={90} />
+                  <Skeleton height={14} width={100} />
                 </div>
               </div>
               <div>
-                <Skeleton height={18} width={60} />
+                <Skeleton height={24} width={70} />
                 <div className={styles.skeletonSpacerXs}>
-                  <Skeleton height={12} width={60} />
+                  <Skeleton height={14} width={70} />
                 </div>
               </div>
             </div>
           ) : (
             <div className={styles.statsGrid}>
-              <div><span>{communityStats.members}</span><span>Members</span></div>
-              <div><span>{communityStats.discussions}</span><span>Discussions</span></div>
-              <div><span>{communityStats.online}</span><span>Online</span></div>
+              <div>
+                <span>{communityStats.members}</span>
+                <span>Members</span>
+              </div>
+              <div>
+                <span>{communityStats.discussions}</span>
+                <span>Discussions</span>
+              </div>
+              <div>
+                <span>{communityStats.online}</span>
+                <span>Online</span>
+              </div>
             </div>
           )}
         </div>
@@ -267,8 +306,8 @@ const CommunityPage = () => {
           <h3>Popular Tags</h3>
           {loading ? (
             <div className={styles.popularTags}>
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} height={24} width={90} />
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} height={32} width={100} />
               ))}
             </div>
           ) : (
@@ -286,6 +325,53 @@ const CommunityPage = () => {
                   #{tag}
                 </span>
               ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.sidebarWidget}>
+          <h3>Community Leaders</h3>
+          {loading ? (
+            <div className={styles.leaderList}>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className={styles.leaderItem}>
+                  <Skeleton width={40} height={40} radius={'50%'} />
+                  <div>
+                    <Skeleton height={16} width={140} />
+                    <div className={styles.skeletonSpacerXs}>
+                      <Skeleton height={14} width={100} />
+                    </div>
+                  </div>
+                  <Skeleton height={24} width={60} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.leaderList}>
+              <div className={styles.leaderItem}>
+                <Image src="/avatars/avatar-1.png" alt="Alex Morgan" width={40} height={40} className={styles.leaderAvatar} />
+                <div>
+                  <span className={styles.leaderName}>Alex Morgan</span>
+                  <span className={styles.leaderRole}>Top Contributor</span>
+                </div>
+                <span className={styles.leaderPoints}>1.2K</span>
+              </div>
+              <div className={styles.leaderItem}>
+                <Image src="/avatars/avatar-2.png" alt="Jamie Smith" width={40} height={40} className={styles.leaderAvatar} />
+                <div>
+                  <span className={styles.leaderName}>Jamie Smith</span>
+                  <span className={styles.leaderRole}>Helpful Mentor</span>
+                </div>
+                <span className={styles.leaderPoints}>980</span>
+              </div>
+              <div className={styles.leaderItem}>
+                <Image src="/avatars/avatar-3.png" alt="Taylor Kim" width={40} height={40} className={styles.leaderAvatar} />
+                <div>
+                  <span className={styles.leaderName}>Taylor Kim</span>
+                  <span className={styles.leaderRole}>Discussion Starter</span>
+                </div>
+                <span className={styles.leaderPoints}>870</span>
+              </div>
             </div>
           )}
         </div>
