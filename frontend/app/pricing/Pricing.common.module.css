@@ -80,8 +80,8 @@
   gap: 12px;
   padding: 8px 16px;
   border-radius: 9999px;
-  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
 }
@@ -183,8 +183,8 @@
   border: 1px solid;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
@@ -218,6 +218,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 1px solid;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }

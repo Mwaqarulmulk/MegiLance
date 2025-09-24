@@ -67,7 +67,7 @@ const AnalyticsPage = () => {
   }, [series, xScale, yScale]);
 
   return (
-    <div aria-busy={loading || undefined}>
+    <div>
       <h1 className={styles.pageHeader}>Performance Analytics</h1>
       <div className={styles.analyticsGrid}>
         <Card title="Total Earnings">
@@ -161,7 +161,7 @@ const AnalyticsPage = () => {
                 </button>
               </div>
               <div className={styles.controlsRight}>
-                <div className={styles.legend} aria-hidden>
+                <div className={styles.legend} aria-hidden="true">
                   <span className={styles.legendItem}><span className={styles.legendSwatchPrimary} /> Earnings</span>
                 </div>
               </div>

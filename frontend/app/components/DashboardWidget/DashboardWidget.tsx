@@ -79,7 +79,10 @@ const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       style={style}
     >
       <div className={common.header}>
-        <div className={cn(common.iconWrapper, themed.iconWrapper)} style={iconColor ? { color: iconColor } : undefined}>
+        <div 
+          className={cn(common.iconWrapper, themed.iconWrapper)} 
+          style={iconColor ? { '--icon-color': iconColor } as React.CSSProperties : undefined}
+        >
           {Icon && <Icon size={20} />}
         </div>
         <h3 id={titleId} className={cn(common.title, themed.title)}>{title}</h3>

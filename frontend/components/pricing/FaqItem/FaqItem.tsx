@@ -34,7 +34,7 @@ export const FaqItem: React.FC<FaqItemProps> = ({ question, children }) => {
 
   return (
     <div className={itemClasses}>
-      <button className={styles.question} onClick={() => setIsOpen(!isOpen)} aria-expanded={isOpen}>
+      <button className={styles.question} onClick={() => setIsOpen(!isOpen)}>
         <span>{question}</span>
         <ChevronDown className={chevronClasses} />
       </button>

@@ -90,7 +90,7 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  aria-invalid={!!errors.name}
+                  aria-invalid={Boolean(errors.name)}
                   aria-describedby={errors.name ? 'name-error' : undefined}
                 />
                 {errors.name && (
@@ -106,7 +106,7 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  aria-invalid={!!errors.email}
+                  aria-invalid={Boolean(errors.email)}
                   aria-describedby={errors.email ? 'email-error' : undefined}
                 />
                 {errors.email && (
@@ -125,7 +125,6 @@ const Contact: React.FC = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    aria-invalid={!!errors.message}
                     aria-describedby={errors.message ? 'message-error' : undefined}
                   />
                 </div>
@@ -134,7 +133,7 @@ const Contact: React.FC = () => {
                     {errors.message}
                   </p>
                 )}
-                <Button variant="primary" fullWidth type="submit" disabled={loading} aria-busy={loading ? 'true' : undefined}>
+                <Button variant="primary" fullWidth type="submit" disabled={loading} aria-busy={loading || undefined}>
                   {loading ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
