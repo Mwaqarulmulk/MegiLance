@@ -16,7 +16,7 @@ const mock: TalentProfile[] = Array.from({ length: 8 }).map((_, i) => ({
   avatar: `https://i.pravatar.cc/120?img=${i+10}`
 }));
 
-export default function TalentDirectoryPage() {
+const TalentDirectoryPage = () => {
   const { theme } = useTheme();
   const [q, setQ] = useState('');
   const filtered = mock.filter(m => !q || m.name.toLowerCase().includes(q.toLowerCase()) || m.skills.some(s => s.toLowerCase().includes(q.toLowerCase())));
@@ -57,4 +57,21 @@ export default function TalentDirectoryPage() {
       </ul>
     </main>
   );
-}
+};
+
+// Wrap the component to prevent SSR issues
+const WrappedTalentDirectoryPage = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
+  return <TalentDirectoryPage />;
+};
+
+export default WrappedTalentDirectoryPage;
