@@ -3,6 +3,18 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
+// Import all the components that make up the home page
+import Hero from './components/Hero';
+import TrustIndicators from './components/TrustIndicators';
+import Features from './components/Features';
+import HowItWorks from './components/HowItWorks';
+import AIShowcase from './components/AIShowcase';
+import BlockchainShowcase from './components/BlockchainShowcase';
+import ProductScreenshots from './components/ProductScreenshots';
+import GlobalImpact from './components/GlobalImpact';
+import Testimonials from './components/Testimonials';
+import CTA from './components/CTA';
+
 import commonStyles from './Home.common.module.css';
 import lightStyles from './Home.light.module.css';
 import darkStyles from './Home.dark.module.css';
@@ -14,8 +26,16 @@ const Home: React.FC = () => {
 
   return (
     <div className={cn(commonStyles.homePage, themeStyles.homePage)}>
-      <h1>Welcome to MegiLance</h1>
-      <p>This is the home page.</p>
+      <Hero />
+      <TrustIndicators />
+      <Features />
+      <HowItWorks />
+      <AIShowcase />
+      <BlockchainShowcase />
+      <ProductScreenshots />
+      <GlobalImpact />
+      <Testimonials />
+      <CTA />
     </div>
   );
 };
