@@ -14,7 +14,6 @@ import ProductScreenshots from './components/ProductScreenshots';
 import GlobalImpact from './components/GlobalImpact';
 import Testimonials from './components/Testimonials';
 import CTA from './components/CTA';
-import AnimatedBackground from './components/AnimatedBackground';
 
 import commonStyles from './Home.common.module.css';
 import lightStyles from './Home.light.module.css';
@@ -27,7 +26,6 @@ const Home: React.FC = () => {
 
   return (
     <div className={cn(commonStyles.homePage, themeStyles.homePage)}>
-      <AnimatedBackground />
       <div className={commonStyles.pageContent}>
         <Hero />
         <div className={commonStyles.homeSection}>

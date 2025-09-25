@@ -2,17 +2,6 @@
   padding: 100px 24px;
   position: relative;
   overflow: hidden;
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.isNotVisible {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
-.isVisible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .container {
@@ -27,22 +16,7 @@
   overflow: hidden;
 }
 
-/* Simplified shine effect for better performance */
-.shine {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: shineAnimation 8s linear infinite;
-  z-index: 0;
-}
-
-@keyframes shineAnimation {
-  0% { transform: translate(-10%, -10%) rotate(0deg); }
-  100% { transform: translate(10%, 10%) rotate(360deg); }
-}
+/* Removed shine animation for better performance */
 
 .title {
   font-family: var(--font-poppins);
@@ -76,11 +50,6 @@
 .buttonIcon {
   width: 20px;
   height: 20px;
-  transition: transform 0.3s ease;
-}
-
-.ctaButton:hover .buttonIcon {
-  transform: translateX(4px) rotate(5deg);
 }
 
 @media (max-width: 768px) {

@@ -7,6 +7,11 @@
   display: flex;
   align-items: center;
   overflow: hidden;
+  /* Ensure proper width constraint */
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
@@ -21,24 +26,14 @@
   }
 }
 
-.backgroundVisuals {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* Simplified background with subtler gradients */
-  background: radial-gradient(circle at center, rgba(69, 115, 223, 0.03) 0%, transparent 30%);
-  z-index: -2;
-}
+/* Removed backgroundVisuals with wave effects */
 
 .contentWrapper {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   position: relative;
   z-index: 2;
   text-align: center;
-  width: 100%;
+  margin: 0 auto;
 }
 
 .promoBadge {
@@ -92,6 +87,9 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Ensure proper text wrapping */
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 @media (min-width: 768px) {
@@ -174,6 +172,8 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Ensure proper width */
+  width: 100%;
 }
 
 .featuresListVisible {
@@ -214,6 +214,7 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -229,120 +230,29 @@
   transition-delay: 1.2s;
 }
 
-/* Simplified animated background elements */
-.animatedBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  overflow: hidden;
-}
+/* Removed all animated background elements including blobs and floating elements */
 
-.blob1, .blob2 {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.blob1 {
-  width: 300px;
-  height: 300px;
-  top: -50px;
-  right: -50px;
-  background: linear-gradient(135deg, rgba(69, 115, 223, 0.15), rgba(255, 152, 0, 0.1));
-  transform: scale(0.8);
-  animation: float 15s infinite ease-in-out;
-}
-
-.blob1Visible {
-  opacity: 1;
-  transition-delay: 1.5s;
-}
-
-.blob2 {
-  width: 250px;
-  height: 250px;
-  bottom: -50px;
-  left: -50px;
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(69, 115, 223, 0.1));
-  transform: scale(0.8);
-  animation: float 18s infinite ease-in-out reverse;
-}
-
-.blob2Visible {
-  opacity: 1;
-  transition-delay: 1.7s;
-}
-
-/* Removed grid lines for a cleaner look */
-
-/* Simplified floating elements */
-.floatingElements {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.floatingElementsVisible {
-  opacity: 1;
-  transition-delay: 2s;
-}
-
-.floatingElement1, .floatingElement2, .floatingElement3 {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(69, 115, 223, 0.05);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
-.floatingElement1 {
-  width: 40px;
-  height: 40px;
-  top: 20%;
-  left: 10%;
-  animation: float 12s infinite ease-in-out;
-}
-
-.floatingElement2 {
-  width: 60px;
-  height: 60px;
-  bottom: 30%;
-  right: 15%;
-  animation: float 16s infinite ease-in-out reverse;
-}
-
-.floatingElement3 {
-  width: 30px;
-  height: 30px;
-  top: 60%;
-  right: 25%;
-  animation: float 14s infinite ease-in-out;
-}
-
-/* Keyframe animations */
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .heroContainer {
+    padding: 4rem 1rem 3rem;
+    min-height: auto;
   }
-  25% {
-    transform: translate(-10px, -15px) rotate(2deg);
+  
+  .mainHeading {
+    font-size: 2rem;
   }
-  50% {
-    transform: translate(5px, -25px) rotate(-2deg);
+  
+  .subheading {
+    font-size: 1rem;
   }
-  75% {
-    transform: translate(15px, -10px) rotate(1deg);
+  
+  .featuresList {
+    gap: 1rem;
+  }
+  
+  .featureItem {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
   }
 }
-
-/* Reduced animation intensity */

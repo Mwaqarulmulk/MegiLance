@@ -157,19 +157,7 @@
   display: none;
 }
 
-/* Simplified background with just a subtle gradient */
-.homePage::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(ellipse at top center, rgba(69, 115, 223, 0.02) 0%, transparent 30%);
-  z-index: -1;
-  pointer-events: none;
-}
+/* Removed all background gradients for a completely flat design */
 
 .homePage::-webkit-scrollbar {
   width: 0;
@@ -228,7 +216,11 @@
 
 @media (max-width: 768px) {
   .homeSection { margin-bottom: 3rem; }
-  .sectionContainer { padding-left: 16px; padding-right: 16px; }
+  .sectionContainer { 
+    padding-left: 16px; 
+    padding-right: 16px; 
+    max-width: 100%;
+  }
   .navLinks {
     display: none; /* Hide links on mobile */
   }

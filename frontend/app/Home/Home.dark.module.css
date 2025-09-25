@@ -1,8 +1,8 @@
 /* AI-HINT: Dark theme styles for the Home component. Provides page-wide background and visual rhythm. */
 
 .homePage {
-  /* Use the same subtle background as the hero section for consistency */
-  background: radial-gradient(circle at center, rgba(69, 115, 223, 0.03) 0%, transparent 30%);
+  /* Simplified solid background without radial gradients */
+  background: #0b1020;
   color: #e5e7eb; /* Gray-200 */
 }
 

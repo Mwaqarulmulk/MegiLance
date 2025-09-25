@@ -42,8 +42,6 @@
   align-items: center;
   padding: 1.5rem;
   border-radius: 16px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
   border: 1px solid transparent;
@@ -63,12 +61,6 @@
   border-radius: 16px;
 }
 
-.indicatorItem:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border-color: rgba(69, 115, 223, 0.2);
-}
-
 .indicatorIcon {
   display: flex;
   align-items: center;
@@ -78,7 +70,6 @@
   border-radius: 16px;
   margin-right: 1.5rem;
   background: linear-gradient(135deg, var(--primary-4573df), var(--accent-orange-ff9800));
-  box-shadow: 0 4px 12px rgba(69, 115, 223, 0.3);
   color: white;
   flex-shrink: 0;
   /* Thumb-friendly minimum touch target */
@@ -116,7 +107,6 @@
   background: linear-gradient(135deg, rgba(69, 115, 223, 0.05), rgba(255, 152, 0, 0.05));
   padding: 3rem;
   border-radius: 24px;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(69, 115, 223, 0.1);
 }
 
@@ -125,18 +115,9 @@
   align-items: flex-start;
   padding: 1.5rem;
   border-radius: 16px;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(5px);
   border: 1px solid rgba(224, 224, 224, 0.5);
   /* Thumb-friendly minimum touch target */
   min-height: 120px;
-}
-
-.badgeItem:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  border-color: rgba(69, 115, 223, 0.3);
 }
 
 .badgeIcon {
@@ -148,7 +129,6 @@
   border-radius: 12px;
   margin-right: 1.5rem;
   background: linear-gradient(135deg, var(--primary-4573df), var(--accent-purple-9c27b0));
-  box-shadow: 0 4px 12px rgba(69, 115, 223, 0.2);
   color: white;
   flex-shrink: 0;
   /* Thumb-friendly minimum touch target */

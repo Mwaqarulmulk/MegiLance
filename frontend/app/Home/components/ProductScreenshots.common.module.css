@@ -6,11 +6,13 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 1.5rem;
+  box-sizing: border-box;
 }
 
 .carouselHeader {
   text-align: center;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .carouselTitle {
@@ -39,6 +41,8 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
   background: var(--background-primary-ffffff);
   height: 500px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .navButton {
@@ -91,6 +95,8 @@
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .slideActive {
@@ -102,6 +108,8 @@
   display: flex;
   height: 100%;
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .screenshotContainer {
@@ -111,6 +119,7 @@
   justify-content: center;
   position: relative;
   padding: 2rem;
+  box-sizing: border-box;
 }
 
 .screenshotImage {
@@ -120,6 +129,8 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   object-fit: contain;
   transition: transform 0.3s ease;
+  width: 100%;
+  height: auto;
 }
 
 .screenshotImage:hover {
@@ -159,6 +170,7 @@
   justify-content: center;
   padding: 2rem;
   max-width: 500px;
+  box-sizing: border-box;
 }
 
 .slideTitle {
@@ -179,6 +191,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 2rem;
+  width: 100%;
 }
 
 .indicators {
