@@ -1,12 +1,12 @@
 /* @AI-HINT: Dark theme styles for the GlobalImpact section. Section background is transparent to use page-level background. */
 
 .badge {
-  background-color: #312e81; /* indigo-900 */
+  background-color: #1e293b; /* Darker indigo */
   color: #a5b4fc; /* indigo-300 */
 }
 
 .title {
-  color: #f8fafc; /* cool-gray-50 */
+  color: #e2e8f0; /* Slate-200 */
 }
 
 .highlight {
@@ -14,22 +14,20 @@
 }
 
 .subtitle {
-  color: #94a3b8; /* cool-gray-400 */
+  color: #94a3b8; /* Slate-400 */
 }
 
 .globePlaceholder {
-  background-color: #1e293b; /* cool-gray-800 */
+  background-color: #0f172a; /* Even darker */
 }
 
 .stat {
-  background-color: rgba(15, 23, 42, 0.7);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background-color: rgba(15, 23, 42, 0.7); /* Darker background */
   border: 1px solid #334155; /* cool-gray-700 */
 }
 
 .statIcon {
-  background-color: #3730a3; /* indigo-800 */
+  background-color: #312e81; /* indigo-900 */
   color: #c7d2fe; /* indigo-200 */
 }
 
@@ -38,11 +36,11 @@
 }
 
 .statLabel {
-  color: #94a3b8; /* cool-gray-400 */
+  color: #94a3b8; /* Slate-400 */
 }
 
 .storiesTitle {
-  color: #f8fafc; /* cool-gray-50 */
+  color: #e2e8f0; /* Slate-200 */
 }
 
 .story {
@@ -57,7 +55,7 @@
 }
 
 .storyAvatar {
-  background-color: #312e81; /* indigo-900 */
+  background-color: #1e293b; /* Darker indigo */
   color: #a5b4fc; /* indigo-300 */
 }
 

@@ -1,22 +1,22 @@
 .container {
-  background-color: #111827;
-  border-color: #374151;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 4px 10px rgba(0,0,0,0.1);
+  background-color: #0f172a; /* Even darker background */
+  border-color: #334155; /* Darker border */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.2); /* Darker shadows */
 }
 
 .shine {
   background-image: radial-gradient(
     circle at center,
-    hsla(212, 100%, 67%, 0.1),
+    hsla(212, 100%, 30%, 0.1), /* Darker blue */
     transparent 40%
   );
-  opacity: 0.7;
+  opacity: 0.5; /* Reduced opacity */
 }
 
 .title {
-  color: #f9fafb;
+  color: #e2e8f0; /* Slate-200 */
 }
 
 .subtitle {
-  color: #9ca3af;
+  color: #94a3b8; /* Slate-400 */
 }

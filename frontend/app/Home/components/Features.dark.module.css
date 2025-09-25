@@ -5,16 +5,15 @@
 }
 
 .tagline {
-  color: #58a6ff;
-  background: rgba(31, 41, 55, 0.7);
+  color: #87a8f0; /* Lighter MegiLance Blue */
+  background: rgba(15, 23, 42, 0.7); /* Darker background */
   border: 1px solid rgba(58, 65, 74, 0.5);
-  backdrop-filter: blur(10px);
 }
 
 .title {
-  color: #f5f7fa;
+  color: #e2e8f0; /* Slate-200 */
 }
 
 .subtitle {
-  color: #9ca3af;
+  color: #94a3b8; /* Slate-400 */
 }
