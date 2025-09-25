@@ -32,7 +32,9 @@ import {
   Calendar,
   Mail,
   Phone,
-  Lock
+  Lock,
+  Star,
+  TrendingUp
 } from 'lucide-react';
 
 // Define the structure for a navigation item
@@ -108,6 +110,10 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
               { href: '/freelancer/projects', label: 'Projects', icon: <Briefcase size={18} /> },
               { href: '/freelancer/wallet', label: 'Wallet', icon: <Wallet size={18} /> },
               { href: '/freelancer/analytics', label: 'Analytics', icon: <BarChart3 size={18} /> },
+              { href: '/freelancer/my-jobs', label: 'My Jobs', icon: <Briefcase size={18} /> },
+              { href: '/freelancer/portfolio', label: 'Portfolio', icon: <User size={18} /> },
+              { href: '/freelancer/reviews', label: 'Reviews', icon: <Star size={18} /> },
+              { href: '/freelancer/rank', label: 'Rank', icon: <TrendingUp size={18} /> },
               { href: '/help', label: 'Help', icon: <HelpCircle size={18} /> },
               { href: '/freelancer/settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
             ];

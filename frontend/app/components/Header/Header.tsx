@@ -12,6 +12,14 @@ import commonStyles from './Header.common.module.css';
 import lightStyles from './Header.light.module.css';
 import darkStyles from './Header.dark.module.css';
 
+const navLinks = [
+  { name: 'How It Works', href: '/how-it-works' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'About', href: '/about' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Contact', href: '/contact' },
+];
+
 const Header: React.FC = () => {
   const { theme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);

@@ -71,7 +71,7 @@ const DashboardActivityFeed: React.FC = () => {
     <div className={styles.activityFeedCard}>
       <div className={styles.cardHeader}>
         <h2 className={styles.cardTitle}>Activity Feed</h2>
-        <Link href="/activity" className={styles.viewAllLink}>
+        <Link href="/dashboard" className={styles.viewAllLink}>
           View All
         </Link>
       </div>

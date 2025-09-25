@@ -2,27 +2,10 @@
   "build": {
     "env": {
       "NEXT_TELEMETRY_DISABLED": "1",
-      "TAILWIND_MODE": "build",
       "TAILWIND_DISABLE_OPTIMISTIC": "true"
     }
   },
   "github": {
     "silent": true
-  },
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "distDir": ".next",
-        "outputDirectory": "frontend/.next"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
-    }
-  ]
+  }
 }

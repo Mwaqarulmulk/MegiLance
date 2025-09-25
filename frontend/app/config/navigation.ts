@@ -75,10 +75,10 @@ export const footerNavItems = {
 // Dashboard navigation (general authenticated users)
 export const dashboardNavItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: 'FaTachometerAlt' },
-  { label: 'Projects', href: '/Projects', icon: 'FaBriefcase' },
+  { label: 'Projects', href: '/projects', icon: 'FaBriefcase' },
   { label: 'Messages', href: '/messages', icon: 'FaComments' },
-  { label: 'Payments', href: '/Payments', icon: 'FaCreditCard' },
-  { label: 'Settings', href: '/Settings', icon: 'FaCogs' },
+  { label: 'Payments', href: '/payments', icon: 'FaCreditCard' },
+  { label: 'Settings', href: '/settings', icon: 'FaCogs' },
 ];
 
 // Freelancer-specific navigation
@@ -129,8 +129,8 @@ export const aiToolsNavItems: NavItem[] = [
 
 // Profile menu items (common across all user types)
 export const profileMenuItems: ProfileMenuItem[] = [
-  { label: 'My Profile', href: '/Profile', icon: 'FaUser' },
-  { label: 'Settings', href: '/Settings', icon: 'FaCogs' },
+  { label: 'My Profile', href: '/profile', icon: 'FaUser' },
+  { label: 'Settings', href: '/settings', icon: 'FaCogs' },
   { label: 'Notifications', href: '/notifications', icon: 'FaBell' },
   { label: 'Logout', onClick: () => {
     // Handle logout logic

@@ -88,10 +88,10 @@ const Dashboard: React.FC = () => {
           <h1 className={commonStyles.welcomeBannerTitle}>Welcome back, Freelancer!</h1>
           <p className={commonStyles.welcomeBannerText}>Here&apos;s what&apos;s happening with your projects and earnings today.</p>
           <div className={commonStyles.quickActions}>
-            <Button variant="secondary" size="md" iconBefore={<Plus size={18} />}>
+            <Button as="a" href="/jobs" variant="secondary" size="md" iconBefore={<Plus size={18} />}>
               Browse Jobs
             </Button>
-            <Button variant="secondary" size="md" iconBefore={<FileText size={18} />}>
+            <Button as="a" href="/freelancer/proposals" variant="secondary" size="md" iconBefore={<FileText size={18} />}>
               Submit Proposal
             </Button>
           </div>

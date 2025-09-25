@@ -156,10 +156,10 @@ const ClientDashboard: React.FC = () => {
             <h1 className={common.welcomeBannerTitle}>Welcome back, Client!</h1>
             <p className={common.welcomeBannerText}>Here&apos;s what&apos;s happening with your projects and freelancers today.</p>
             <div className={common.quickActions}>
-              <Button variant="secondary" size="md" iconBefore={<Plus size={18} />}>
+              <Button as="a" href="/client/post-job" variant="secondary" size="md" iconBefore={<Plus size={18} />}>
                 Post New Project
               </Button>
-              <Button variant="secondary" size="md" iconBefore={<Users size={18} />}>
+              <Button as="a" href="/freelancers" variant="secondary" size="md" iconBefore={<Users size={18} />}>
                 Find Freelancers
               </Button>
             </div>

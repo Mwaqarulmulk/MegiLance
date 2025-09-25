@@ -105,11 +105,11 @@ const AdminDashboard: React.FC = () => {
           <h1 className={common.welcomeBannerTitle}>Welcome back, Admin!</h1>
           <p className={common.welcomeBannerText}>Here&apos;s what&apos;s happening with the platform today.</p>
           <div className={common.quickActions}>
-            <Button variant="secondary" size="md" iconBefore={<Plus size={18} />}>
-              Create Announcement
+            <Button as="a" href="/admin/users" variant="secondary" size="md" iconBefore={<Plus size={18} />}>
+              Manage Users
             </Button>
-            <Button variant="secondary" size="md" iconBefore={<Shield size={18} />}>
-              Run Maintenance
+            <Button as="a" href="/admin/settings" variant="secondary" size="md" iconBefore={<Shield size={18} />}>
+              System Settings
             </Button>
           </div>
         </div>
