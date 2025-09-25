@@ -5,7 +5,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 4rem 1.5rem;
+  padding: 5rem 1.5rem;
   box-sizing: border-box;
 }
 
@@ -16,9 +16,11 @@
 }
 
 .carouselTitle {
+  font-family: var(--font-poppins);
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
+  letter-spacing: -0.025em;
   background: linear-gradient(120deg, var(--text-primary-23272f), var(--primary-4573df));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -26,10 +28,12 @@
 }
 
 .carouselSubtitle {
-  font-size: 1.25rem;
+  font-family: var(--font-inter);
+  font-size: 1.125rem;
   color: var(--text-secondary-333333);
   max-width: 600px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
 .carouselWrapper {
@@ -37,12 +41,12 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  border-radius: 1.5rem;
   background: var(--background-primary-ffffff);
   height: 500px;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
 }
 
 .navButton {
@@ -50,8 +54,8 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
-  width: 50px;
-  height: 50px;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -74,29 +78,33 @@
 }
 
 .prevButton {
-  left: 1rem;
+  left: 1.5rem;
 }
 
 .nextButton {
-  right: 1rem;
+  right: 1.5rem;
 }
 
 .carouselSlides {
   display: flex;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .slide {
   min-width: 100%;
   height: 100%;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .slideActive {
@@ -110,6 +118,7 @@
   padding: 2rem;
   width: 100%;
   box-sizing: border-box;
+  align-items: center;
 }
 
 .screenshotContainer {
@@ -125,12 +134,13 @@
 .screenshotImage {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   object-fit: contain;
   transition: transform 0.3s ease;
   width: 100%;
   height: auto;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .screenshotImage:hover {
@@ -142,8 +152,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
   background: rgba(69, 115, 223, 0.8);
   display: flex;
@@ -156,11 +166,13 @@
   /* Thumb-friendly minimum size */
   min-width: 44px;
   min-height: 44px;
+  box-shadow: 0 10px 25px rgba(69, 115, 223, 0.3);
 }
 
 .playOverlay:hover {
   background: rgba(69, 115, 223, 1);
   transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 15px 30px rgba(69, 115, 223, 0.4);
 }
 
 .slideInfo {
@@ -174,13 +186,16 @@
 }
 
 .slideTitle {
+  font-family: var(--font-poppins);
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
   color: var(--text-primary-23272f);
+  line-height: 1.2;
 }
 
 .slideDescription {
+  font-family: var(--font-inter);
   font-size: 1.125rem;
   color: var(--text-secondary-333333);
   line-height: 1.6;
@@ -200,8 +215,8 @@
 }
 
 .indicator {
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.2);
   border: none;
@@ -226,7 +241,7 @@
   background: transparent;
   border: 1px solid var(--primary-4573df);
   color: var(--primary-4573df);
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 9999px;
   font-weight: 600;
   cursor: pointer;
@@ -237,6 +252,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-inter);
 }
 
 .autoPlayButton:hover {
@@ -252,16 +268,16 @@
   
   .slideContent {
     flex-direction: column;
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
   .screenshotContainer {
-    padding: 1rem;
+    padding: 1.5rem;
     margin-bottom: 2rem;
   }
   
   .slideInfo {
-    padding: 1rem;
+    padding: 1.5rem;
     max-width: 100%;
   }
   
@@ -280,27 +296,27 @@
 
 @media (max-width: 768px) {
   .carouselContainer {
-    padding: 3rem 1rem;
+    padding: 4rem 1rem;
   }
   
   .carouselWrapper {
     height: 400px;
-    border-radius: 16px;
+    border-radius: 1rem;
   }
   
   .navButton {
-    width: 44px;
-    height: 44px;
+    width: 2.75rem;
+    height: 2.75rem;
     min-width: 44px;
     min-height: 44px;
   }
   
   .prevButton {
-    left: 0.5rem;
+    left: 1rem;
   }
   
   .nextButton {
-    right: 0.5rem;
+    right: 1rem;
   }
   
   .screenshotImage {
@@ -308,8 +324,8 @@
   }
   
   .playOverlay {
-    width: 60px;
-    height: 60px;
+    width: 4rem;
+    height: 4rem;
     min-width: 44px;
     min-height: 44px;
   }
@@ -324,21 +340,25 @@
 }
 
 @media (max-width: 480px) {
+  .carouselContainer {
+    padding: 3rem 0.75rem;
+  }
+  
   .carouselWrapper {
     height: 350px;
   }
   
   .slideContent {
-    padding: 0.5rem;
+    padding: 1rem;
   }
   
   .screenshotContainer {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .slideInfo {
-    padding: 0.5rem;
+    padding: 1rem;
   }
   
   .carouselTitle {

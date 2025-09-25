@@ -170,6 +170,8 @@
   position: relative;
   /* Ensure sections are properly stacked */
   z-index: 1;
+  /* Adding a subtle transition for theme changes */
+  transition: background 0.5s ease;
 }
 
 /* Removed complex background patterns for a cleaner look */

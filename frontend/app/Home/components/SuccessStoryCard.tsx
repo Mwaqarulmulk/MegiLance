@@ -32,7 +32,7 @@ const SuccessStoryCard: React.FC<SuccessStoryCardProps> = ({ story }) => {
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={cn(commonStyles.storyCard, themeStyles.storyCard)}>
+    <div className={cn(commonStyles.story, themeStyles.story)}>
       <div className={commonStyles.cardContent}>
         <blockquote className={cn(commonStyles.quote, themeStyles.quote)}>
           <span className={cn(commonStyles.quoteMark, themeStyles.quoteMark)}>“</span>
@@ -42,8 +42,8 @@ const SuccessStoryCard: React.FC<SuccessStoryCardProps> = ({ story }) => {
           <Image
             src={story.avatar}
             alt={`${story.name}'s avatar`}
-            width={40}
-            height={40}
+            width={56}
+            height={56}
             className={cn(commonStyles.avatar, themeStyles.avatar)}
           />
           <div className={commonStyles.authorDetails}>

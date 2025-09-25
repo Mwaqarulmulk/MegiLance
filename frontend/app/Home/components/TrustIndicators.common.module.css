@@ -14,6 +14,7 @@
 }
 
 .trustTitle {
+  font-family: var(--font-poppins);
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
@@ -24,6 +25,7 @@
 }
 
 .trustSubtitle {
+  font-family: var(--font-inter);
   font-size: 1.25rem;
   color: var(--text-secondary-333333);
   max-width: 600px;
@@ -41,12 +43,14 @@
   display: flex;
   align-items: center;
   padding: 1.5rem;
-  border-radius: 16px;
+  border-radius: 1rem;
   position: relative;
   overflow: hidden;
   border: 1px solid transparent;
   /* Thumb-friendly minimum touch target */
   min-height: 120px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
 .indicatorItem::before {
@@ -58,23 +62,28 @@
   height: 100%;
   background: linear-gradient(135deg, rgba(69, 115, 223, 0.05), transparent);
   z-index: -1;
-  border-radius: 16px;
+  border-radius: 1rem;
+}
+
+.indicatorItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .indicatorIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 1rem;
   margin-right: 1.5rem;
   background: linear-gradient(135deg, var(--primary-4573df), var(--accent-orange-ff9800));
   color: white;
   flex-shrink: 0;
   /* Thumb-friendly minimum touch target */
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .indicatorContent {
@@ -83,6 +92,7 @@
 }
 
 .indicatorValue {
+  font-family: var(--font-poppins);
   font-size: 2rem;
   font-weight: 800;
   line-height: 1.2;
@@ -95,6 +105,7 @@
 }
 
 .indicatorLabel {
+  font-family: var(--font-inter);
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-secondary-333333);
@@ -106,7 +117,7 @@
   gap: 2rem;
   background: linear-gradient(135deg, rgba(69, 115, 223, 0.05), rgba(255, 152, 0, 0.05));
   padding: 3rem;
-  border-radius: 24px;
+  border-radius: 1.5rem;
   border: 1px solid rgba(69, 115, 223, 0.1);
 }
 
@@ -114,26 +125,33 @@
   display: flex;
   align-items: flex-start;
   padding: 1.5rem;
-  border-radius: 16px;
+  border-radius: 1rem;
   border: 1px solid rgba(224, 224, 224, 0.5);
   /* Thumb-friendly minimum touch target */
   min-height: 120px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.badgeItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .badgeIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
   margin-right: 1.5rem;
   background: linear-gradient(135deg, var(--primary-4573df), var(--accent-purple-9c27b0));
   color: white;
   flex-shrink: 0;
   /* Thumb-friendly minimum touch target */
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .badgeContent {
@@ -142,6 +160,7 @@
 }
 
 .badgeTitle {
+  font-family: var(--font-poppins);
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
@@ -149,6 +168,7 @@
 }
 
 .badgeDescription {
+  font-family: var(--font-inter);
   font-size: 1rem;
   color: var(--text-secondary-333333);
   line-height: 1.5;
@@ -203,11 +223,11 @@
   }
   
   .indicatorIcon {
-    width: 50px;
-    height: 50px;
+    width: 3.125rem;
+    height: 3.125rem;
     margin-right: 1rem;
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
   }
   
   .indicatorValue {
@@ -216,6 +236,7 @@
   
   .securityBadges {
     padding: 1.5rem;
+    border-radius: 1rem;
   }
   
   .badgeItem {
@@ -224,11 +245,11 @@
   }
   
   .badgeIcon {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     margin-right: 1rem;
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
   }
   
   .badgeTitle {
@@ -237,26 +258,65 @@
 }
 
 @media (max-width: 480px) {
+  .trustContainer {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .trustTitle {
+    font-size: 1.5rem;
+  }
+  
+  .trustSubtitle {
+    font-size: 0.95rem;
+  }
+  
+  .trustIndicators {
+    gap: 0.75rem;
+  }
+  
   .indicatorItem {
     flex-direction: column;
     text-align: center;
     min-height: 140px;
+    padding: 1rem;
   }
   
   .indicatorIcon {
     margin-right: 0;
     margin-bottom: 1rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  
+  .indicatorValue {
+    font-size: 1.5rem;
+  }
+  
+  .securityBadges {
+    padding: 1rem;
+    gap: 1rem;
   }
   
   .badgeItem {
     flex-direction: column;
     text-align: center;
     min-height: 140px;
+    padding: 1rem;
   }
   
   .badgeIcon {
     margin-right: 0;
     margin-bottom: 1rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  
+  .badgeTitle {
+    font-size: 1rem;
+  }
+  
+  .badgeDescription {
+    font-size: 0.95rem;
   }
   
   /* Enhanced mobile touch targets */

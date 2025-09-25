@@ -39,16 +39,16 @@ const ImpactStatCard: React.FC<ImpactStatCardProps> = ({ stat }) => {
   const animatedValue = useAnimatedCounter(targetValue, 2500, decimals, ref);
 
   return (
-    <div ref={ref} className={cn(commonStyles.statCard, themeStyles.statCard)}>
-      <div className={cn(commonStyles.iconWrapper, themeStyles.iconWrapper)}>
-        <Icon className={commonStyles.icon} />
+    <div ref={ref} className={cn(commonStyles.stat, themeStyles.stat)}>
+      <div className={cn(commonStyles.statIcon, themeStyles.statIcon)}>
+        <Icon />
       </div>
-      <div className={commonStyles.content}>
-        <p className={cn(commonStyles.number, themeStyles.number)}>
+      <div className={commonStyles.statContent}>
+        <p className={cn(commonStyles.statNumber, themeStyles.statNumber)}>
           {prefix}{animatedValue}{suffix}
         </p>
-        <h4 className={cn(commonStyles.label, themeStyles.label)}>{label}</h4>
-        <p className={cn(commonStyles.description, themeStyles.description)}>{description}</p>
+        <h4 className={cn(commonStyles.statLabel, themeStyles.statLabel)}>{label}</h4>
+        <p className={cn(commonStyles.statDescription, themeStyles.statDescription)}>{description}</p>
       </div>
     </div>
   );

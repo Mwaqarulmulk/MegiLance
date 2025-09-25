@@ -26,12 +26,31 @@ const pointsData = [
   { lat: 30.3753, lng: 69.3451, size: 0.15, color: 'pakistan' }, // Pakistan (larger point)
 ];
 
+// --- Color Definitions ---
+const darkThemeColors = {
+  pakistan: '#2ECC71', // Brighter Green
+  usa: '#5dade2', // Lighter MegiLance Blue
+  uk: '#e74c3c', // Lighter Red
+  aus: '#f39c12', // Lighter Orange
+  eur: '#AF7AC5', // Lighter Purple
+  asia: '#F5D354' // Lighter Yellow
+};
+
+const lightThemeColors = {
+  pakistan: '#27AE60', // Green
+  usa: '#4573df', // MegiLance Blue
+  uk: '#e81123', // Red
+  aus: '#ff9800', // Orange
+  eur: '#9B59B6', // Purple
+  asia: '#F2C94C' // Yellow
+};
+
 // --- Main Component ---
 const ImpactGlobe: React.FC = () => {
   const globeRef = useRef<GlobeMethods | undefined>();
   const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
-  const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
+  const currentThemeColors = theme === 'dark' ? darkThemeColors : lightThemeColors;
 
   useEffect(() => {
     setIsMounted(true);
@@ -46,9 +65,8 @@ const ImpactGlobe: React.FC = () => {
   }, [isMounted, theme]);
 
   const getArcColor = useCallback((arc: any) => {
-    const colorKey = arc.color as keyof typeof themeStyles;
-    return themeStyles[colorKey] || 'rgba(255, 255, 255, 0.5)';
-  }, [themeStyles]);
+    return currentThemeColors[arc.color as keyof typeof currentThemeColors] || 'rgba(255, 255, 255, 0.5)';
+  }, [currentThemeColors]);
 
   useEffect(() => {
     if (globeRef.current) {
@@ -81,7 +99,7 @@ const ImpactGlobe: React.FC = () => {
         arcDashAnimateTime={2000}
         arcStroke={0.2}
         pointsData={pointsData}
-        pointColor={d => themeStyles[(d as any).color as keyof typeof themeStyles]}
+        pointColor={d => currentThemeColors[(d as any).color as keyof typeof currentThemeColors]}
         pointAltitude={0}
         pointRadius={d => (d as any).size}
         width={600}

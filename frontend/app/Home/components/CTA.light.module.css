@@ -1,22 +1,25 @@
 .container {
   background-color: #ffffff;
-  border-color: #e5e7eb;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 4px 10px rgba(0,0,0,0.02);
-}
-
-.shine {
-  background-image: radial-gradient(
-    circle at center,
-    hsla(221, 83%, 53%, 0.08),
-    transparent 40%
-  );
-  opacity: 0.8;
+  border-color: #e2e8f0;
+  box-shadow: 0 25px 50px -12px rgba(69, 115, 223, 0.15);
 }
 
 .title {
-  color: #111827;
+  color: #0f172a;
 }
 
 .subtitle {
-  color: #4b5563;
+  color: #64748b;
+}
+
+.ctaButton {
+  background-color: #4573df;
+  color: #ffffff;
+  border: none;
+}
+
+.ctaButton:hover {
+  background-color: #3a63c5;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(69, 115, 223, 0.25), 0 8px 10px -6px rgba(69, 115, 223, 0.25);
 }

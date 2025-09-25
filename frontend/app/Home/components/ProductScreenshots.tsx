@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import Image from 'next/image';
 
 import commonStyles from './ProductScreenshots.common.module.css';
@@ -182,7 +182,7 @@ const ProductScreenshots: React.FC = () => {
           onClick={toggleAutoPlay}
           aria-label={isAutoPlaying ? "Pause auto-advance" : "Resume auto-advance"}
         >
-          {isAutoPlaying ? "Pause" : "Play"}
+          {isAutoPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
       </div>
     </div>

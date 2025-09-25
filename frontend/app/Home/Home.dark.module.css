@@ -1,20 +1,26 @@
 /* AI-HINT: Dark theme styles for the Home component. Provides page-wide background and visual rhythm. */
 
 .homePage {
-  /* Simplified solid background without radial gradients */
-  background: #0b1020;
+  /* Using the same gradient as the Hero section for consistency across the entire page */
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: #e5e7eb; /* Gray-200 */
 }
 
-/* Section vertical rhythm (dark keeps section backgrounds transparent) */
+/* Section vertical rhythm with enhanced dark mode styling */
 .homeSection {
   padding-top: 4rem;
   padding-bottom: 4rem;
+  /* Adding subtle background visuals to maintain consistency */
+  background: radial-gradient(circle at 10% 20%, rgba(69, 115, 223, 0.05) 0%, transparent 15%),
+              radial-gradient(circle at 80% 30%, rgba(255, 152, 0, 0.05) 0%, transparent 15%),
+              radial-gradient(circle at 40% 80%, rgba(69, 115, 223, 0.03) 0%, transparent 15%);
 }
 
 .header {
-  background: rgba(11, 16, 32, 0.8);
+  background: rgba(15, 23, 42, 0.8); /* Matching the primary dark background */
   border-bottom: 1px solid rgba(58, 65, 74, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .navLink {
@@ -31,8 +37,10 @@
 }
 
 .footer {
-  background: rgba(11, 16, 32, 0.8);
+  background: rgba(15, 23, 42, 0.8); /* Matching the primary dark background */
   border-top: 1px solid rgba(58, 65, 74, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .footerLinks a {
@@ -44,6 +52,6 @@
 }
 
 .mobileNavMenu {
-  background: rgba(11, 16, 32, 0.95);
+  background: rgba(15, 23, 42, 0.95); /* Matching the primary dark background */
   border: 1px solid rgba(58, 65, 74, 0.5);
 }

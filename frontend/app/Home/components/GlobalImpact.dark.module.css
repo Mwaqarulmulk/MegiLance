@@ -1,12 +1,57 @@
-/* @AI-HINT: Dark theme styles for the GlobalImpact section. Section background is transparent to use page-level background. */
+/* @AI-HINT: Dark theme styles for the GlobalImpact component with enhanced visual effects. */
+
+.globalImpactSection {
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: 16px;
+  padding: 3rem;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(55, 65, 81, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .globalImpactSection {
+    padding: 2rem 1rem;
+  }
+}
+
+.sectionTitle {
+  color: #e2e8f0;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.impactContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.impactGlobeContainer {
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  position: relative;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
 
 .badge {
-  background-color: #1e293b; /* Darker indigo */
+  background-color: #1e293b; /* slate-800 */
   color: #a5b4fc; /* indigo-300 */
+  border: 1px solid #312e81;
 }
 
 .title {
-  color: #e2e8f0; /* Slate-200 */
+  color: #f1f5f9; /* slate-100 */
 }
 
 .highlight {
@@ -14,16 +59,25 @@
 }
 
 .subtitle {
-  color: #94a3b8; /* Slate-400 */
+  color: #94a3b8; /* slate-400 */
 }
 
 .globePlaceholder {
-  background-color: #0f172a; /* Even darker */
+  background-color: #0f172a; /* slate-900 */
+  border: 1px solid #1e293b;
 }
 
 .stat {
-  background-color: rgba(15, 23, 42, 0.7); /* Darker background */
-  border: 1px solid #334155; /* cool-gray-700 */
+  background-color: #0f172a; /* slate-900 */
+  border: 1px solid #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.stat:hover {
+  transform: translateY(-5px);
+  border-color: #334155;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
 }
 
 .statIcon {
@@ -36,31 +90,37 @@
 }
 
 .statLabel {
-  color: #94a3b8; /* Slate-400 */
+  color: #94a3b8; /* slate-400 */
+}
+
+.statDescription {
+  color: #cbd5e1; /* slate-300 */
 }
 
 .storiesTitle {
-  color: #e2e8f0; /* Slate-200 */
+  color: #f1f5f9; /* slate-100 */
 }
 
 .story {
-  background-color: #0f172a; /* cool-gray-900 */
-  border-color: #334155; /* cool-gray-700 */
+  background-color: #0f172a; /* slate-900 */
+  border: 1px solid #1e293b;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
 .story:hover {
-  border-color: #475569; /* cool-gray-600 */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px);
+  border-color: #334155;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
 }
 
 .storyAvatar {
-  background-color: #1e293b; /* Darker indigo */
+  background-color: #1e293b; /* slate-800 */
   color: #a5b4fc; /* indigo-300 */
 }
 
 .storyName {
-  color: #f1f5f9; /* cool-gray-100 */
+  color: #f1f5f9; /* slate-100 */
 }
 
 .storyRole {
@@ -68,11 +128,11 @@
 }
 
 .storyLocation {
-  color: #64748b; /* cool-gray-500 */
+  color: #64748b; /* slate-500 */
 }
 
 .storyQuote {
-  color: #cbd5e1; /* cool-gray-300 */
+  color: #cbd5e1; /* slate-300 */
   border-left-color: #4f46e5; /* indigo-600 */
 }
 

@@ -2,11 +2,10 @@
 
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTheme } from 'next-themes';
 import { Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import UserAvatar from '@/app/components/UserAvatar/UserAvatar';
 import StarRating from '@/app/components/StarRating/StarRating';
 
@@ -29,16 +28,12 @@ interface TestimonialCardProps {
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   const { theme } = useTheme();
   const themeStyles = theme === 'dark' ? darkStyles : lightStyles;
-  const ref = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(ref, { threshold: 0.1 });
 
   return (
     <div
-      ref={ref}
       className={cn(
         commonStyles.testimonialCard,
-        themeStyles.testimonialCard,
-        isVisible ? commonStyles.isVisible : commonStyles.isNotVisible
+        themeStyles.testimonialCard
       )}
     >
       <div className={commonStyles.cardHeader}>

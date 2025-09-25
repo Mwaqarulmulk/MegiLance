@@ -1,4 +1,4 @@
-.statCard {
+.stat {
   display: flex;
   flex-direction: column;
   gap: 1.25rem; /* 20px */
@@ -9,7 +9,7 @@
   overflow: hidden;
 }
 
-.iconWrapper {
+.statIcon {
   width: 3.5rem; /* 56px */
   height: 3.5rem; /* 56px */
   border-radius: 0.75rem; /* 12px */
@@ -19,31 +19,33 @@
   flex-shrink: 0;
 }
 
-.icon {
+.statIcon svg {
   width: 1.75rem; /* 28px */
   height: 1.75rem; /* 28px */
 }
 
-.content {
+.statContent {
   display: flex;
   flex-direction: column;
   gap: 0.5rem; /* 8px */
 }
 
-.number {
+.statNumber {
+  font-family: var(--font-poppins);
   font-size: 2.25rem; /* 36px */
-  font-weight: 700;
-  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
   line-height: 1.2;
 }
 
-.label {
+.statLabel {
+  font-family: var(--font-inter);
   font-size: 1rem; /* 16px */
   font-weight: 600;
   line-height: 1.4;
 }
 
-.description {
+.statDescription {
+  font-family: var(--font-inter);
   font-size: 0.875rem; /* 14px */
   line-height: 1.6;
   opacity: 0.8;

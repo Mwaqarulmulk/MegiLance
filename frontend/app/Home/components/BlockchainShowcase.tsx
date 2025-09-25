@@ -13,43 +13,43 @@ import lightStyles from './BlockchainShowcase.light.module.css';
 import darkStyles from './BlockchainShowcase.dark.module.css';
 
 const blockchainFeatures = [
-    {
-      icon: FaBitcoin,
-      title: "USDC Payments",
-      description: "Get paid instantly in stable cryptocurrency. No more waiting for bank transfers or dealing with currency conversion fees.",
-      benefit: "Instant Settlement"
-    },
-    {
-      icon: FaLock,
-      title: "Smart Contract Escrow",
-      description: "Automated escrow system ensures payments are released only when project milestones are completed and verified.",
-      benefit: "100% Secure"
-    },
-    {
-      icon: FaShieldAlt,
-      title: "Blockchain Security",
-      description: "All transactions are recorded on the blockchain, providing immutable proof of payments and project completion.",
-      benefit: "Tamper-Proof"
-    },
-    {
-      icon: FaGlobe,
-      title: "Global Accessibility",
-      description: "Work with clients worldwide without banking restrictions. Perfect for Pakistani freelancers accessing global markets.",
-      benefit: "No Borders"
-    },
-    {
-      icon: FaExchangeAlt,
-      title: "Low Transaction Fees",
-      description: "Blockchain technology eliminates intermediaries, reducing transaction costs to less than 1% compared to traditional platforms.",
-      benefit: "Save 90% on Fees"
-    },
-    {
-      icon: FaChartLine,
-      title: "Transparent Reputation",
-      description: "Your reputation and work history are permanently stored on-chain, building an immutable professional profile.",
-      benefit: "Verifiable History"
-    }
-  ];
+  {
+    icon: FaBitcoin,
+    title: "USDC Payments",
+    description: "Get paid instantly in stable cryptocurrency. No more waiting for bank transfers or dealing with currency conversion fees.",
+    benefit: "Instant Settlement"
+  },
+  {
+    icon: FaLock,
+    title: "Smart Contract Escrow",
+    description: "Automated escrow system ensures payments are released only when project milestones are completed and verified.",
+    benefit: "100% Secure"
+  },
+  {
+    icon: FaShieldAlt,
+    title: "Blockchain Security",
+    description: "All transactions are recorded on the blockchain, providing immutable proof of payments and project completion.",
+    benefit: "Tamper-Proof"
+  },
+  {
+    icon: FaGlobe,
+    title: "Global Accessibility",
+    description: "Work with clients worldwide without banking restrictions. Perfect for Pakistani freelancers accessing global markets.",
+    benefit: "No Borders"
+  },
+  {
+    icon: FaExchangeAlt,
+    title: "Low Transaction Fees",
+    description: "Blockchain technology eliminates intermediaries, reducing transaction costs to less than 1% compared to traditional platforms.",
+    benefit: "Save 90% on Fees"
+  },
+  {
+    icon: FaChartLine,
+    title: "Transparent Reputation",
+    description: "Your reputation and work history are permanently stored on-chain, building an immutable professional profile.",
+    benefit: "Verifiable History"
+  }
+];
 
 const AnimatedStat: React.FC<{ rawValue: string; duration?: number }> = ({ rawValue, duration = 2000 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -115,8 +115,8 @@ const BlockchainShowcase: React.FC = () => {
           </div>
 
           <div className={commonStyles.features}>
-            {blockchainFeatures.map((feature) => (
-              <div key={feature.title} className={commonStyles.feature}>
+            {blockchainFeatures.map((feature, index) => (
+              <div key={feature.title} className={commonStyles.feature} style={{ transitionDelay: `${index * 0.1}s` }}>
                 <div className={commonStyles.featureIcon} aria-hidden="true">
                   <feature.icon />
                 </div>

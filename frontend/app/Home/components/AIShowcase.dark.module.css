@@ -1,4 +1,39 @@
-/* @AI-HINT: Dark theme styles for AIShowcase, defining colors for a sleek, high-contrast, modern look with enhanced visual effects. */
+/* @AI-HINT: Dark theme styles for the AIShowcase component with enhanced visual effects. */
+
+.aiShowcaseSection {
+  background: radial-gradient(circle at 10% 20%, rgba(69, 115, 223, 0.15) 0%, transparent 25%),
+              radial-gradient(circle at 80% 30%, rgba(255, 152, 0, 0.15) 0%, transparent 25%);
+  position: relative;
+  overflow: hidden;
+}
+
+.sectionTitle {
+  color: #e2e8f0;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.sectionSubtitle {
+  color: #94a3b8;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.aiBlob1 {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.2), rgba(255, 152, 0, 0.15));
+}
+
+.aiBlob2 {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(69, 115, 223, 0.15));
+}
 
 .aiShowcase {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -28,7 +63,7 @@
 }
 
 .title {
-  background: linear-gradient(90deg, #e0f2fe, #bae6fd);
+  background: linear-gradient(90deg, #93c5fd, #60a5fa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -58,7 +93,7 @@
   background: rgba(30, 41, 59, 0.9);
   border: 1px solid rgba(75, 85, 99, 0.7);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-  color: #ffffff;
+  color: #e2e8f0;
 }
 
 .techLogo svg {

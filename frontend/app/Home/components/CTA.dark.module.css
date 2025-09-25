@@ -1,22 +1,37 @@
-.container {
-  background-color: #0f172a; /* Even darker background */
-  border-color: #334155; /* Darker border */
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.2); /* Darker shadows */
+/* @AI-HINT: Dark theme styles for the CTA component with enhanced visual effects. */
+
+.ctaSection {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  position: relative;
+  overflow: hidden;
 }
 
-.shine {
-  background-image: radial-gradient(
-    circle at center,
-    hsla(212, 100%, 30%, 0.1), /* Darker blue */
-    transparent 40%
-  );
-  opacity: 0.5; /* Reduced opacity */
+@media (max-width: 768px) {
+  .ctaSection {
+    padding: 3rem 1rem;
+  }
 }
 
-.title {
-  color: #e2e8f0; /* Slate-200 */
+.ctaTitle {
+  color: #e2e8f0;
+  margin-bottom: 1rem;
 }
 
-.subtitle {
-  color: #94a3b8; /* Slate-400 */
+.ctaSubtitle {
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.ctaBlob1 {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.3), rgba(255, 152, 0, 0.25));
+}
+
+.ctaBlob2 {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(69, 115, 223, 0.25));
 }
