@@ -1,3 +1,7 @@
+# Notice: Canonical routes map
+
+For the up-to-date route inventory, see `../ROUTES_MAP.md`. This document contains extended notes and remains for reference.
+
 # MegiLance Routes Documentation
 
 This document provides a comprehensive overview of all routes in the MegiLance platform, organized by user role and functionality.

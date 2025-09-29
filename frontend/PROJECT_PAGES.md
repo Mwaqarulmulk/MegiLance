@@ -1,5 +1,7 @@
 # MegiLance Project Pages & Status
 
+Note: This is the canonical source for page inventory and status. For exact path-to-component mapping, see `ROUTES_MAP.md`.
+
 Last Updated: 2025-08-10
 
 ---

@@ -6,6 +6,10 @@ format: markdown
 ai_agent_optimized: true
 ---
 
+# Notice: Product requirements live elsewhere
+
+This is the canonical brand identity guide. For project requirements and system specifications, see `MegiLance-Requirements-and-Specification.md`.
+
 # 1. Project Metadata
 
 

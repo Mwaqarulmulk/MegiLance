@@ -1,5 +1,7 @@
 # MegiLance Database Design Specifications
 
+See `README.md` in this folder for the docs index and related architecture docs.
+
 This document provides comprehensive database design specifications for the MegiLance freelance marketplace platform, covering both SQL (PostgreSQL) and NoSQL (MongoDB) databases.
 
 ---

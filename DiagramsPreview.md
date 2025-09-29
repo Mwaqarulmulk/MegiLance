@@ -1,3 +1,9 @@
+# Notice: This file is deprecated
+
+This preview has been consolidated. Please use the canonical doc: `docs/SystemArchitectureDiagrams.md`.
+
+---
+
 # MegiLance System Diagrams Preview
 
 This file contains all the key diagrams from your system architecture documentation for easy viewing in VS Code.
@@ -432,8 +438,8 @@ flowchart LR
 
 ## How to View These Diagrams in VS Code:
 
-1. **Open this file** (`DiagramsPreview.md`) in VS Code
-2. **Press `Ctrl+Shift+V`** (or `Cmd+Shift+V` on Mac) to open Markdown Preview
+1. Prefer opening the canonical doc: `docs/SystemArchitectureDiagrams.md` in VS Code
+2. **Press `Ctrl+Shift+V`** to open Markdown Preview
 3. **All diagrams will render beautifully** in the preview pane
 4. You can also **right-click** on any diagram and select "Copy as Image" for presentations
 

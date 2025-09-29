@@ -1,5 +1,7 @@
 # MegiLance Deployment Guide
 
+Canonical deployment reference. See `README.md` in this folder for the full docs index.
+
 This document provides comprehensive deployment strategies and configurations for the MegiLance platform across different environments and cloud providers.
 
 ---

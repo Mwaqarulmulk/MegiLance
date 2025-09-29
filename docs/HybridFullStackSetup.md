@@ -1,5 +1,7 @@
 # Hybrid Full-Stack Setup
 
+Reference guide for stack decisions. See `README.md` in this folder for the docs index.
+
 Perfect timing, Mujtaba. This document captures the latest decisions (hybrid architecture, AWS-to-Oracle migration plan, and AI plus blockchain FYP requirements) as a final blueprint suitable for FYP documentation and implementation.
 
 ---

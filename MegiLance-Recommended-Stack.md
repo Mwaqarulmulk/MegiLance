@@ -1,3 +1,9 @@
+# Notice: Consolidated guidance
+
+Technology choices and setup are covered in `docs/HybridFullStackSetup.md` and deployment specifics in `docs/DeploymentGuide.md`. This file remains for reference.
+
+---
+
 # Recommended Stack for AI Coding Agents
 
 ## 1. Monorepo Structure

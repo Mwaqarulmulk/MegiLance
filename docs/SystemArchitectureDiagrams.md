@@ -1,5 +1,7 @@
 # MegiLance System Architecture Diagrams
 
+Canonical source for system diagrams. The old preview file `DiagramsPreview.md` now redirects here.
+
 This document contains comprehensive architectural diagrams for the MegiLance freelance marketplace platform.
 
 ---

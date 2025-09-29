@@ -1,5 +1,7 @@
 # MegiLance Frontend
 
+Looking for docs? Start at `docs/README.md` for the canonical index.
+
 A premium, investor-grade frontend for the MegiLance platform built with Next.js (App Router), TypeScript, CSS Modules, and a theme-aware design system.
 
 ## Vision

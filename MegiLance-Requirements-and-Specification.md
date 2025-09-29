@@ -7,6 +7,10 @@ format: markdown
 ai_agent_optimized: true
 ---
 
+# Notice: Brand details live elsewhere
+
+This document is the canonical product requirements and specifications. For brand identity (logo, colors, typography, tone), see `MegiLance-Brand-Playbook.md`.
+
 # 1. Project Metadata
 | Key         | Value                                      |
 |-------------|--------------------------------------------|

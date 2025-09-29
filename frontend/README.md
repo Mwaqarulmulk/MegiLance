@@ -160,8 +160,8 @@ AI agents and developers should reference the following project documentation fi
 | Document | Description |
 |---------|-------------|
 | [MegiLance-Brand-Playbook.md](../MegiLance-Brand-Playbook.md) | Visual identity, color palette, typography, brand tone |
-| [MegiLance-Implementation-Plan.md](../MegiLance-Implementation-Plan.md) | Step-by-step roadmap for frontend & backend rollout |
-| [MegiLance-Recommended-Stack.md](../MegiLance-Recommended-Stack.md) | Technologies selected for frontend, backend, AI, blockchain |
+| [SystemConstructionPlan.md](../docs/SystemConstructionPlan.md) | Step-by-step roadmap for frontend & backend rollout |
+| [HybridFullStackSetup.md](../docs/HybridFullStackSetup.md) | Technologies selected for frontend, backend, AI, blockchain |
 | [MegiLance-Requirements-and-Specification.md](../MegiLance-Requirements-and-Specification.md) | Functional and non-functional requirements, user stories |
 
 > 🧠 **AI Agents**: You must read all of the above before suggesting, generating, or modifying components.

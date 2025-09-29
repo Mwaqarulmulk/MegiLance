@@ -6,6 +6,12 @@ format: markdown
 ai_agent_optimized: true
 ---
 
+# Notice: Canonical document moved
+
+This implementation roadmap is now consolidated under `docs/SystemConstructionPlan.md`. Keep this file for history only.
+
+---
+
 # MegiLance – AI & Blockchain Freelance Platform
 
 ## Implementation Roadmap (Module-Based)
