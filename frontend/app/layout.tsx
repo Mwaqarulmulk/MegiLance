@@ -5,12 +5,7 @@ import '../styles/themes/dark.css';
 import '../styles/tokens.css';
 import './styles/theme.css';
 
-import { ThemeProvider } from 'next-themes';
-import AppChrome from './components/AppChrome/AppChrome';
-import { ToasterProvider } from './components/Toast/ToasterProvider';
-import ChatbotAgent from './components/AI/ChatbotAgent/ChatbotAgent';
-import StructuredData from '@/app/shared/StructuredData';
-import { AnalyticsProvider } from '@/app/shared/analytics/AnalyticsProvider';
+import ClientRoot from './ClientRoot';
 
 export const metadata: Metadata = {
   title: 'MegiLance - Next-Gen Freelance Platform',
@@ -49,22 +44,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-[var(--background)] text-[var(--text-primary)]">
-
-        <ThemeProvider 
-          attribute="class" 
-          defaultTheme="light" 
-          enableSystem={true}
-          disableTransitionOnChange={false}
-        >
-          <AnalyticsProvider>
-            <ToasterProvider>
-              <AppChrome>
-                {children}
-              </AppChrome>
-              <StructuredData />
-            </ToasterProvider>
-          </AnalyticsProvider>
-        </ThemeProvider>
+        <ClientRoot>
+          {children}
+        </ClientRoot>
       </body>
     </html>
   );
