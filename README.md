@@ -1,6 +1,47 @@
-# MegiLance Frontend
+# MegiLance
 
 Looking for docs? Start at `docs/README.md` for the canonical index.
+
+This repository contains a Dockerized FastAPI backend and a Next.js frontend.
+
+Quick start with Docker Desktop (Windows/WSL2):
+
+1) From the repo root, start services in the background
+
+```pwsh
+docker compose up -d db backend frontend
+```
+
+2) Open in your browser
+
+- Frontend: http://localhost:3000
+- Backend health: http://localhost:8000/api/health/live and /ready
+
+3) Stop everything
+
+```pwsh
+docker compose down
+```
+
+4) Rebuild images (if you change dependencies)
+
+```pwsh
+docker compose build backend frontend
+```
+
+Notes
+
+- The frontend is configured to proxy the backend under the path prefix `/backend/*`. From browser code you can call:
+
+  ```ts
+  // Example from the frontend
+  const res = await fetch('/backend/api/health/live');
+  const data = await res.json();
+  ```
+
+- The backend container initializes the database and exposes health endpoints at `/api/health/*`.
+
+# MegiLance Frontend
 
 A premium, investor-grade frontend for the MegiLance platform built with Next.js (App Router), TypeScript, CSS Modules, and a theme-aware design system.
 

@@ -61,8 +61,10 @@ const Button = <C extends React.ElementType = 'button'>({
     onClick?.(e);
   };
 
-  // Generate accessible label for icon-only buttons
-  const accessibleLabel = (!children && (iconBefore || iconAfter)) ? props['aria-label'] || props.title : undefined;
+  // Generate accessible label for icon-only buttons (prefer explicit aria-label, fallback to title)
+  const ariaFromProps = (props as unknown as { ['aria-label']?: string })['aria-label'];
+  const titleFromProps = (props as unknown as { title?: string }).title;
+  const accessibleLabel = (!children && (iconBefore || iconAfter)) ? (ariaFromProps ?? titleFromProps) : undefined;
 
   return (
     <Component

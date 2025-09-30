@@ -1,0 +1,1 @@
+"""MegiLance backend application package."""
