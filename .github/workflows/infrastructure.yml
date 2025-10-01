@@ -28,10 +28,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check OIDC role secret
+        env:
+          AWS_OIDC_ROLE_ARN: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+        run: |
+          if [ -z "$AWS_OIDC_ROLE_ARN" ]; then
+            echo "ERROR: AWS_OIDC_ROLE_ARN secret is empty or not set."
+            echo "Add it at: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            exit 1
+          else
+            echo "AWS_OIDC_ROLE_ARN secret is present."
+          fi
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Debug AWS credentials
