@@ -13,6 +13,10 @@ jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-central-1
+      OIDC_ROLE_ARN: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+      TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,8 +24,8 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
-          aws-region: eu-central-1
+          role-to-assume: ${{ env.OIDC_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Debug AWS credentials
         run: |

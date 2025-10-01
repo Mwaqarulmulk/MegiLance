@@ -28,10 +28,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Export env from secrets
+        run: |
+          echo "AWS_OIDC_ROLE_ARN=${{ secrets.AWS_OIDC_ROLE_ARN }}" >> $GITHUB_ENV
+          echo "TF_VAR_db_password=${{ secrets.TF_VAR_db_password }}" >> $GITHUB_ENV
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-to-assume: ${{ env.AWS_OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Debug AWS credentials
@@ -41,8 +46,6 @@ jobs:
           echo "AWS env vars:" && env | grep AWS || true
 
       - name: Check DB password secret
-        env:
-          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
         run: |
           if [ -z "$TF_VAR_db_password" ]; then
             echo "ERROR: TF_VAR_db_password secret is empty or not set."
@@ -68,8 +71,6 @@ jobs:
 
       - name: Terraform Plan
         working-directory: infra/terraform
-        env:
-          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
         run: |
           terraform plan -out=tfplan
           terraform show -no-color tfplan > plan.txt
@@ -83,8 +84,6 @@ jobs:
       - name: Terraform Apply
         if: github.event.inputs.apply == 'yes'
         working-directory: infra/terraform
-        env:
-          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
         run: terraform apply -auto-approve tfplan
 
       - name: Get Terraform Outputs
@@ -107,10 +106,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Export env from secrets
+        run: |
+          echo "AWS_OIDC_ROLE_ARN=${{ secrets.AWS_OIDC_ROLE_ARN }}" >> $GITHUB_ENV
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-to-assume: ${{ env.AWS_OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Create ECS Cluster
@@ -137,10 +140,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Export env from secrets
+        run: |
+          echo "AWS_OIDC_ROLE_ARN=${{ secrets.AWS_OIDC_ROLE_ARN }}" >> $GITHUB_ENV
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-to-assume: ${{ env.AWS_OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Run Alembic Migrations
