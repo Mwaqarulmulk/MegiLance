@@ -92,6 +92,22 @@ jobs:
           terraform state rm 'aws_db_subnet_group.main' 2>/dev/null || true
           echo "State cleanup completed"
 
+      - name: Import Existing Resources
+        working-directory: infra/terraform
+        continue-on-error: true
+        env:
+          TF_VAR_aws_region: ${{ env.AWS_REGION }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
+        run: |
+          echo "Importing existing resources that failed to delete..."
+          terraform import 'aws_ecr_repository.backend[0]' megilance-backend 2>/dev/null || echo "Backend ECR not found"
+          terraform import 'aws_ecr_repository.frontend[0]' megilance-frontend 2>/dev/null || echo "Frontend ECR not found"
+          terraform import aws_secretsmanager_secret.db_credentials megilance/prod/database 2>/dev/null || echo "DB secret not found"
+          terraform import aws_iam_role.apprunner_ecr_access megilance-apprunner-ecr-access 2>/dev/null || echo "AppRunner role not found"
+          terraform import aws_iam_role.task_role megilance-task-role 2>/dev/null || echo "Task role not found"
+          terraform import aws_iam_role.exec_role megilance-exec-role 2>/dev/null || echo "Exec role not found"
+          echo "Import completed"
+
       - name: Terraform Format (write)
         working-directory: infra/terraform
         run: terraform fmt -recursive
