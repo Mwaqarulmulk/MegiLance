@@ -1,5 +1,6 @@
 locals {
-  frontend_ecr_url = try(aws_ecr_repository.frontend.repository_url, null)
+  # aws_ecr_repository.frontend uses count in s3_ecr.tf, so we must reference a specific instance
+  frontend_ecr_url = try(aws_ecr_repository.frontend[0].repository_url, null)
 }
 
 variable "create_apprunner_service" {
