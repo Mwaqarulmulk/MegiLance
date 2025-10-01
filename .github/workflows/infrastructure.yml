@@ -85,6 +85,16 @@ jobs:
         working-directory: infra/terraform
         run: terraform validate
 
+      - name: Import Existing Resources (if any)
+        working-directory: infra/terraform
+        continue-on-error: true
+        run: |
+          echo "Importing existing resources into Terraform state..."
+          terraform import 'aws_ecr_repository.backend[0]' megilance-backend 2>/dev/null || echo "Backend ECR doesn't exist or already imported"
+          terraform import 'aws_ecr_repository.frontend[0]' megilance-frontend 2>/dev/null || echo "Frontend ECR doesn't exist or already imported"
+          terraform import aws_secretsmanager_secret.db_credentials megilance/prod/database 2>/dev/null || echo "DB secret doesn't exist or already imported"
+          terraform import aws_secretsmanager_secret.jwt megilance/prod/jwt 2>/dev/null || echo "JWT secret doesn't exist or already imported"
+
       - name: Terraform Plan
         working-directory: infra/terraform
         env:
