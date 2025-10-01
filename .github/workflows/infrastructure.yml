@@ -88,12 +88,29 @@ jobs:
       - name: Import Existing Resources (if any)
         working-directory: infra/terraform
         continue-on-error: true
+        env:
+          TF_VAR_aws_region: ${{ env.AWS_REGION }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
         run: |
           echo "Importing existing resources into Terraform state..."
-          terraform import 'aws_ecr_repository.backend[0]' megilance-backend 2>/dev/null || echo "Backend ECR doesn't exist or already imported"
-          terraform import 'aws_ecr_repository.frontend[0]' megilance-frontend 2>/dev/null || echo "Frontend ECR doesn't exist or already imported"
-          terraform import aws_secretsmanager_secret.db_credentials megilance/prod/database 2>/dev/null || echo "DB secret doesn't exist or already imported"
-          terraform import aws_secretsmanager_secret.jwt megilance/prod/jwt 2>/dev/null || echo "JWT secret doesn't exist or already imported"
+          
+          # ECR Repositories
+          terraform import 'aws_ecr_repository.backend[0]' megilance-backend 2>&1 | grep -v "already managed" || true
+          terraform import 'aws_ecr_repository.frontend[0]' megilance-frontend 2>&1 | grep -v "already managed" || true
+          
+          # Secrets Manager
+          terraform import aws_secretsmanager_secret.db_credentials megilance/prod/database 2>&1 | grep -v "already managed" || true
+          terraform import aws_secretsmanager_secret.jwt megilance/prod/jwt 2>&1 | grep -v "already managed" || true
+          
+          # IAM Roles
+          terraform import aws_iam_role.apprunner_ecr_access megilance-apprunner-ecr-access 2>&1 | grep -v "already managed" || true
+          terraform import aws_iam_role.task_role megilance-task-role 2>&1 | grep -v "already managed" || true
+          terraform import aws_iam_role.exec_role megilance-exec-role 2>&1 | grep -v "already managed" || true
+          
+          # RDS DB Subnet Group
+          terraform import aws_db_subnet_group.main megilance-db-subnets 2>&1 | grep -v "already managed" || true
+          
+          echo "Import step completed (errors are expected if resources don't exist yet)"
 
       - name: Terraform Plan
         working-directory: infra/terraform
