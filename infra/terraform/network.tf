@@ -72,9 +72,8 @@ resource "aws_route" "private_outbound" {
 }
 
 resource "aws_route_table_association" "private_assoc" {
-  for_each = aws_subnet.private
-  subnet_id = each.value.id
+  for_each       = aws_subnet.private
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.private_rt.id
 }
-
-data "aws_availability_zones" "available" {}
+ 

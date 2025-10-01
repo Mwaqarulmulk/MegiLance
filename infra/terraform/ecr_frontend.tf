@@ -1,13 +1,2 @@
-resource "aws_ecr_repository" "frontend" {
-  name                 = "megilance-frontend"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
-output "ecr_frontend" {
-  description = "ECR repository URL for frontend"
-  value       = aws_ecr_repository.frontend.repository_url
-}
+// Deprecated: frontend ECR and output are now defined in s3_ecr.tf and outputs.tf with conditional creation.
+// This file is intentionally left without resources to avoid duplicate definitions.
