@@ -10,7 +10,7 @@ variable "create_apprunner_service" {
 }
 
 resource "aws_apprunner_service" "frontend" {
-  count        = var.create_apprunner_service && local.frontend_ecr_url != null ? 1 : 0
+  count        = var.create_apprunner_service && var.create_ecr ? 1 : 0
   service_name = "megilance-frontend-service"
 
   source_configuration {
