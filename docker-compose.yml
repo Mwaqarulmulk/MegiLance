@@ -39,12 +39,6 @@ services:
       - ENV=development
     depends_on:
       - backend
-  contracts:
-    build: ./contracts
-    volumes:
-      - ./contracts:/app
-    environment:
-      - ENV=development
   db:
     image: postgres:15
     restart: always
@@ -56,3 +50,7 @@ services:
       - "5432:5432"
     volumes:
       - ./db:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
