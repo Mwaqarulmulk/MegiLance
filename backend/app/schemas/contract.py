@@ -1,36 +1,44 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
 
 class ContractBase(BaseModel):
-    project_id: int
-    freelancer_id: int
-    client_id: int
-    value: float
-    status: Optional[str] = "active"
+    value: float = Field(gt=0, description="Contract value in USDC")
+    description: str = Field(min_length=10)
     start_date: datetime
     end_date: datetime
-    description: str
-    milestones: List[Dict]
-    terms: Dict
+    milestones: Optional[str] = Field(None, description="JSON string of milestones")
+    terms: Optional[str] = Field(None, description="JSON string of contract terms")
 
-class ContractCreate(ContractBase):
-    pass
 
-class ContractUpdate(ContractBase):
-    project_id: Optional[int] = None
-    freelancer_id: Optional[int] = None
-    client_id: Optional[int] = None
-    value: Optional[float] = None
+class ContractCreate(BaseModel):
+    project_id: int
+    freelancer_id: int
+    value: float = Field(gt=0)
+    description: str = Field(min_length=10)
+    start_date: datetime
+    end_date: datetime
+    milestones: Optional[str] = None
+    terms: Optional[str] = None
+
+
+class ContractUpdate(BaseModel):
+    value: Optional[float] = Field(None, gt=0)
+    description: Optional[str] = Field(None, min_length=10)
     status: Optional[str] = None
-    start_date: Optional[datetime] = None
+    milestones: Optional[str] = None
+    terms: Optional[str] = None
     end_date: Optional[datetime] = None
-    description: Optional[str] = None
-    milestones: Optional[List[Dict]] = None
-    terms: Optional[Dict] = None
+
 
 class ContractRead(ContractBase):
     id: str
+    project_id: int
+    freelancer_id: int
+    client_id: int
+    status: str
     created_at: datetime
     updated_at: datetime
 

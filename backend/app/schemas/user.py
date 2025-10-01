@@ -1,24 +1,28 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr, Field
+
 
 class UserBase(BaseModel):
-    email: EmailStr
     is_active: bool = True
     name: Optional[str] = None
-    user_type: Optional[str] = None  # Freelancer, Client
+    user_type: Optional[str] = Field(default=None, description="Freelancer, Client, Admin")
     bio: Optional[str] = None
     skills: Optional[str] = None  # JSON string of skills
     hourly_rate: Optional[float] = None
     profile_image_url: Optional[str] = None
     location: Optional[str] = None
-    joined_at: Optional[datetime] = None
+
 
 class UserCreate(UserBase):
+    email: EmailStr
     password: str
 
-class UserUpdate(UserBase):
+
+class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
+    password: Optional[str] = Field(default=None, min_length=6)
     is_active: Optional[bool] = None
     name: Optional[str] = None
     user_type: Optional[str] = None
@@ -28,8 +32,10 @@ class UserUpdate(UserBase):
     profile_image_url: Optional[str] = None
     location: Optional[str] = None
 
+
 class UserRead(UserBase):
     id: int
+    email: EmailStr
     joined_at: datetime
 
     class Config:

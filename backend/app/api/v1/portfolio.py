@@ -1,22 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.db.session import get_db
 from app.models.portfolio import PortfolioItem
 from app.models.user import User
 from app.schemas.portfolio import PortfolioItemCreate, PortfolioItemRead, PortfolioItemUpdate
-from app.core.security import get_current_user
+from app.core.security import get_current_active_user
 
 router = APIRouter()
 
 @router.get("/", response_model=List[PortfolioItemRead])
 def list_portfolio_items(
-    user_id: int = None,
-    skip: int = 0,
-    limit: int = 100,
+    user_id: Optional[int] = Query(None, description="Filter by freelancer ID"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=100),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     # If user_id is provided, get portfolio for that user
     # Otherwise, get portfolio for current user
@@ -26,38 +26,42 @@ def list_portfolio_items(
     if target_user_id != current_user.id:
         target_user = db.query(User).filter(User.id == target_user_id).first()
         if not target_user or target_user.user_type != "Freelancer":
-            raise HTTPException(status_code=404, detail="Portfolio not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Portfolio not found"
+            )
     
-    portfolio_items = db.query(PortfolioItem).filter(PortfolioItem.freelancer_id == target_user_id).offset(skip).limit(limit).all()
+    portfolio_items = db.query(PortfolioItem).filter(
+        PortfolioItem.freelancer_id == target_user_id
+    ).offset(skip).limit(limit).all()
     return portfolio_items
 
 @router.get("/{portfolio_item_id}", response_model=PortfolioItemRead)
 def get_portfolio_item(
     portfolio_item_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     portfolio_item = db.query(PortfolioItem).filter(PortfolioItem.id == portfolio_item_id).first()
     if not portfolio_item:
-        raise HTTPException(status_code=404, detail="Portfolio item not found")
-    
-    # If viewing another user's portfolio item, only show if they are a freelancer
-    if portfolio_item.freelancer_id != current_user.id:
-        target_user = db.query(User).filter(User.id == portfolio_item.freelancer_id).first()
-        if not target_user or target_user.user_type != "Freelancer":
-            raise HTTPException(status_code=404, detail="Portfolio item not found")
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Portfolio item not found"
+        )
     return portfolio_item
 
 @router.post("/", response_model=PortfolioItemRead, status_code=status.HTTP_201_CREATED)
 def create_portfolio_item(
     portfolio_item: PortfolioItemCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     # Check if user is a freelancer
     if current_user.user_type != "Freelancer":
-        raise HTTPException(status_code=403, detail="Only freelancers can create portfolio items")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only freelancers can create portfolio items"
+        )
     
     db_portfolio_item = PortfolioItem(
         freelancer_id=current_user.id,
@@ -76,17 +80,23 @@ def update_portfolio_item(
     portfolio_item_id: int,
     portfolio_item: PortfolioItemUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     db_portfolio_item = db.query(PortfolioItem).filter(PortfolioItem.id == portfolio_item_id).first()
     if not db_portfolio_item:
-        raise HTTPException(status_code=404, detail="Portfolio item not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Portfolio item not found"
+        )
     
     # Check if user is the owner of the portfolio item
     if db_portfolio_item.freelancer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to update this portfolio item")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this portfolio item"
+        )
     
-    update_data = portfolio_item.dict(exclude_unset=True)
+    update_data = portfolio_item.model_dump(exclude_unset=True, exclude_none=True)
     for key, value in update_data.items():
         setattr(db_portfolio_item, key, value)
     
@@ -98,15 +108,21 @@ def update_portfolio_item(
 def delete_portfolio_item(
     portfolio_item_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     db_portfolio_item = db.query(PortfolioItem).filter(PortfolioItem.id == portfolio_item_id).first()
     if not db_portfolio_item:
-        raise HTTPException(status_code=404, detail="Portfolio item not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Portfolio item not found"
+        )
     
     # Check if user is the owner of the portfolio item
     if db_portfolio_item.freelancer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this portfolio item")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this portfolio item"
+        )
     
     db.delete(db_portfolio_item)
     db.commit()

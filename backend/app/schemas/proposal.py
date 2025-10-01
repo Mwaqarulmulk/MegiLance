@@ -1,31 +1,35 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
 
 class ProposalBase(BaseModel):
-    project_id: int
-    cover_letter: str
-    estimated_hours: int
-    hourly_rate: float
-    availability: str
-    attachments: Optional[List[str]] = None
-    status: Optional[str] = "submitted"
+    cover_letter: str = Field(min_length=50, description="Cover letter explaining proposal")
+    estimated_hours: int = Field(gt=0, description="Estimated hours to complete project")
+    hourly_rate: float = Field(gt=0, description="Hourly rate for this proposal")
+    availability: str = Field(description="immediate, 1-2_weeks, 1_month, flexible")
+    attachments: Optional[str] = None
+
 
 class ProposalCreate(ProposalBase):
-    pass
+    project_id: int
 
-class ProposalUpdate(ProposalBase):
-    project_id: Optional[int] = None
-    cover_letter: Optional[str] = None
-    estimated_hours: Optional[int] = None
-    hourly_rate: Optional[float] = None
+
+class ProposalUpdate(BaseModel):
+    cover_letter: Optional[str] = Field(None, min_length=50)
+    estimated_hours: Optional[int] = Field(None, gt=0)
+    hourly_rate: Optional[float] = Field(None, gt=0)
     availability: Optional[str] = None
-    attachments: Optional[List[str]] = None
+    attachments: Optional[str] = None
     status: Optional[str] = None
+
 
 class ProposalRead(ProposalBase):
     id: int
+    project_id: int
     freelancer_id: int
+    status: str
     created_at: datetime
     updated_at: datetime
 

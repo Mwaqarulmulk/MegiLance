@@ -1,0 +1,61 @@
+{
+  "family": "megilance-backend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::789406175220:role/megilance-exec-role",
+  "taskRoleArn": "arn:aws:iam::789406175220:role/megilance-task-role",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "789406175220.dkr.ecr.eu-central-1.amazonaws.com/megilance-backend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "AWS_DEFAULT_REGION",
+          "value": "eu-central-1"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "eu-central-1"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:eu-central-1:789406175220:secret:megilance/prod/database:database_url::"
+        },
+        {
+          "name": "ACCESS_TOKEN_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:eu-central-1:789406175220:secret:megilance/prod/jwt:access_secret::"
+        },
+        {
+          "name": "REFRESH_TOKEN_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:eu-central-1:789406175220:secret:megilance/prod/jwt:refresh_secret::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/megilance-backend",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}

@@ -1,10 +1,69 @@
 # MegiLance
 
-Looking for docs? Start at `docs/README.md` for the canonical index.
+> **AI-Powered Freelancing Platform with Blockchain Payments**
 
-This repository contains a Dockerized FastAPI backend and a Next.js frontend.
+[![Deploy Status](https://github.com/ghulam-mujtaba5/MegiLance/actions/workflows/deploy-backend.yml/badge.svg)](https://github.com/ghulam-mujtaba5/MegiLance/actions)
+[![Terraform](https://github.com/ghulam-mujtaba5/MegiLance/actions/workflows/terraform.yml/badge.svg)](https://github.com/ghulam-mujtaba5/MegiLance/actions)
 
-Quick start with Docker Desktop (Windows/WSL2):
+A comprehensive freelancing platform featuring AI-powered matching, blockchain-based payments, and enterprise-grade architecture.
+
+## 🚀 Quick Start
+
+**New to deployment?** → See [QUICKSTART.md](QUICKSTART.md)
+
+**Want full AWS deployment?** → See [DEPLOYMENT.md](DEPLOYMENT.md)
+
+**Local development?** → See below ↓
+
+## 📋 Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute autonomous AWS deployment
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete production deployment guide
+- **[docs/](docs/)** - System architecture and design docs
+- **[infra/README.md](infra/README.md)** - Infrastructure as Code details
+- **[backend/README.md](backend/README.md)** - Backend API documentation
+- **[frontend/README.md](frontend/README.md)** - Frontend architecture
+
+## 🏗️ Architecture
+
+```
+Frontend (Next.js) → ALB → ECS Fargate (FastAPI) → RDS PostgreSQL
+                      ↓
+                    S3 (Assets/Uploads)
+                      ↓
+                  Secrets Manager
+```
+
+### Tech Stack
+
+**Backend:**
+- FastAPI + Python 3.11
+- PostgreSQL + SQLAlchemy
+- JWT Authentication
+- AWS S3 for file storage
+- Circle API for USDC payments
+- OpenAI for AI features
+
+**Frontend:**
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- CSS Modules
+
+**Infrastructure:**
+- AWS (ECS Fargate, RDS, S3, ALB)
+- Terraform for IaC
+- GitHub Actions for CI/CD
+- Docker for containerization
+
+## 💻 Local Development
+
+### Prerequisites
+- Docker Desktop
+- Node.js 18+
+- Python 3.11+
+
+### Start Services
 
 1) From the repo root, start services in the background
 
