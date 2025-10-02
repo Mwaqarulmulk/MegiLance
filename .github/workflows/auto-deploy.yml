@@ -36,6 +36,79 @@ env:
   ECS_FRONTEND_SERVICE: megilance-frontend-service
 
 jobs:
+  preflight-fixes:
+    name: Preflight IAM and Service Tuning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-preflight
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Ensure exec role has Secrets Manager access
+        run: |
+          set -e
+          echo "🔐 Ensuring megilance-exec-role has Secrets Manager access..."
+          ACCOUNT=$(aws sts get-caller-identity --query 'Account' --output text)
+          cat > secrets-policy.json << EOF
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "secretsmanager:GetSecretValue",
+                  "secretsmanager:DescribeSecret"
+                ],
+                "Resource": [
+                  "arn:aws:secretsmanager:${{ env.AWS_REGION }}:${ACCOUNT}:secret:megilance/prod/database-*",
+                  "arn:aws:secretsmanager:${{ env.AWS_REGION }}:${ACCOUNT}:secret:megilance/prod/jwt-*"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:DescribeKey"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+          EOF
+          EXISTING=$(aws iam list-policies --scope Local --query "Policies[?PolicyName=='megilance-secrets-access'].Arn" --output text || true)
+          if [ -z "$EXISTING" ]; then
+            POLICY_ARN=$(aws iam create-policy --policy-name megilance-secrets-access --policy-document file://secrets-policy.json --query 'Policy.Arn' --output text)
+            echo "✅ Created policy: $POLICY_ARN"
+          else
+            POLICY_ARN="$EXISTING"
+            echo "ℹ️ Policy exists: $POLICY_ARN"
+          fi
+          ATTACHED=$(aws iam list-attached-role-policies --role-name megilance-exec-role --query 'AttachedPolicies[?PolicyName==`megilance-secrets-access`].PolicyArn' --output text || true)
+          if [ -z "$ATTACHED" ]; then
+            aws iam attach-role-policy --role-name megilance-exec-role --policy-arn "$POLICY_ARN"
+            echo "✅ Attached policy to exec role"
+          else
+            echo "ℹ️ Policy already attached"
+          fi
+
+      - name: Tune ECS health check grace periods (best-effort)
+        continue-on-error: true
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_BACKEND_SERVICE }} \
+            --health-check-grace-period-seconds 120 \
+            --query 'service.{Name:serviceName,Grace:healthCheckGracePeriodSeconds}' \
+            --output table || true
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_FRONTEND_SERVICE }} \
+            --health-check-grace-period-seconds 60 \
+            --query 'service.{Name:serviceName,Grace:healthCheckGracePeriodSeconds}' \
+            --output table || true
   build-and-push-backend:
     name: Build & Push Backend
     runs-on: ubuntu-latest
@@ -164,7 +237,7 @@ jobs:
 
   deploy-backend-to-ecs:
     name: Deploy Backend to ECS
-    needs: [build-and-push-backend, run-database-migrations]
+    needs: [preflight-fixes, build-and-push-backend, run-database-migrations]
     runs-on: ubuntu-latest
     if: ${{ inputs.deploy_backend }}
     steps:
@@ -349,7 +422,7 @@ jobs:
 
   deploy-frontend-to-ecs:
     name: Deploy Frontend to ECS
-    needs: build-and-push-frontend
+    needs: [preflight-fixes, build-and-push-frontend]
     runs-on: ubuntu-latest
     if: ${{ inputs.deploy_frontend }}
     steps:
