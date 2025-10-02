@@ -1,28 +1,31 @@
-name: 🚀 Vercel-Style Auto Deploy
-
-# This workflow automatically deploys to AWS on every push to main
-# Just like Vercel - push code and it's live in minutes!
+name: Build and Deploy Application
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - 'infra/**'
-      - '.github/workflows/auto-deploy.yml'
-
   workflow_dispatch:
     inputs:
-      force_deploy:
-        description: 'Force full deployment (rebuild everything)'
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+      deploy_backend:
+        description: 'Deploy backend'
+        required: true
+        default: true
         type: boolean
-        default: false
+      deploy_frontend:
+        description: 'Deploy frontend'
+        required: true
+        default: true
+        type: boolean
 
 permissions:
   id-token: write
   contents: read
-  pull-requests: write
 
 env:
   AWS_REGION: us-east-2
@@ -30,407 +33,350 @@ env:
   ECR_FRONTEND: megilance-frontend
   ECS_CLUSTER: megilance-cluster
   ECS_BACKEND_SERVICE: megilance-backend-service
-  DEPLOYMENT_TIMEOUT: 600
+  ECS_FRONTEND_SERVICE: megilance-frontend-service
 
 jobs:
-  # Detect what changed to optimize deployment
-  detect-changes:
-    name: 🔍 Detect Changes
+  build-and-push-backend:
+    name: Build & Push Backend
     runs-on: ubuntu-latest
+    if: ${{ inputs.deploy_backend }}
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-      infra: ${{ steps.filter.outputs.infra }}
-      deploy_backend: ${{ steps.decision.outputs.deploy_backend }}
-      deploy_frontend: ${{ steps.decision.outputs.deploy_frontend }}
-      deploy_infra: ${{ steps.decision.outputs.deploy_infra }}
+      image_uri: ${{ steps.push.outputs.image_uri }}
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            backend:
-              - 'backend/**'
-            frontend:
-              - 'frontend/**'
-            infra:
-              - 'infra/terraform/**'
-      
-      - name: Decide what to deploy
-        id: decision
-        run: |
-          if [[ "${{ github.event.inputs.force_deploy }}" == "true" ]]; then
-            echo "deploy_backend=true" >> $GITHUB_OUTPUT
-            echo "deploy_frontend=true" >> $GITHUB_OUTPUT
-            echo "deploy_infra=true" >> $GITHUB_OUTPUT
-          else
-            echo "deploy_backend=${{ steps.filter.outputs.backend }}" >> $GITHUB_OUTPUT
-            echo "deploy_frontend=${{ steps.filter.outputs.frontend }}" >> $GITHUB_OUTPUT
-            echo "deploy_infra=${{ steps.filter.outputs.infra }}" >> $GITHUB_OUTPUT
-          fi
-      
-      - name: 📋 Deployment Summary
-        run: |
-          echo "### 🚀 Deployment Plan" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Backend | ${{ steps.decision.outputs.deploy_backend == 'true' && '✅ Will Deploy' || '⏭️ Skip' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Frontend | ${{ steps.decision.outputs.deploy_frontend == 'true' && '✅ Will Deploy' || '⏭️ Skip' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Infrastructure | ${{ steps.decision.outputs.deploy_infra == 'true' && '✅ Will Deploy' || '⏭️ Skip' }} |" >> $GITHUB_STEP_SUMMARY
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  # Deploy infrastructure if changed
-  deploy-infrastructure:
-    name: 🏗️ Deploy Infrastructure
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_infra == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-backend
           aws-region: ${{ env.AWS_REGION }}
-      
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.7
-      
-      - name: Terraform Init
-        working-directory: infra/terraform
-        run: terraform init
-      
-      - name: Terraform Apply
-        working-directory: infra/terraform
-        env:
-          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
-        run: terraform apply -auto-approve
-      
-      - name: 📊 Infrastructure Status
-        run: echo "✅ Infrastructure deployed successfully!" >> $GITHUB_STEP_SUMMARY
 
-  # Test and deploy backend
-  deploy-backend:
-    name: 🐍 Deploy Backend
-    needs: [detect-changes, deploy-infrastructure]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.deploy_backend == 'true' &&
-      (needs.deploy-infrastructure.result == 'success' || needs.deploy-infrastructure.result == 'skipped')
-    runs-on: ubuntu-latest
-    outputs:
-      image_tag: ${{ steps.build.outputs.image_tag }}
-      deployed: ${{ steps.deploy.outputs.deployed }}
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: 🧪 Run Backend Tests
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      
-      - name: Install dependencies & test
-        working-directory: backend
-        run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
-          pytest --cov=app --cov-report=term-missing || echo "⚠️ Tests failed but continuing deployment"
-      
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-      
-      - name: Login to ECR
+      - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      
-      - name: 🏗️ Build & Push Docker Image
+
+      - name: Build backend image
         id: build
+        working-directory: backend
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
-        working-directory: backend
         run: |
-          echo "Building backend image..."
-          docker build \
-            --cache-from $ECR_REGISTRY/${{ env.ECR_BACKEND }}:latest \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            -t $ECR_REGISTRY/${{ env.ECR_BACKEND }}:$IMAGE_TAG \
-            -t $ECR_REGISTRY/${{ env.ECR_BACKEND }}:latest \
-            .
-          
-          echo "Pushing to ECR..."
+          docker build -t $ECR_REGISTRY/${{ env.ECR_BACKEND }}:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/${{ env.ECR_BACKEND }}:$IMAGE_TAG $ECR_REGISTRY/${{ env.ECR_BACKEND }}:latest
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Push backend image
+        id: push
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.build.outputs.image_tag }}
+        run: |
           docker push $ECR_REGISTRY/${{ env.ECR_BACKEND }}:$IMAGE_TAG
           docker push $ECR_REGISTRY/${{ env.ECR_BACKEND }}:latest
-          
-          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "image_uri=$ECR_REGISTRY/${{ env.ECR_BACKEND }}:$IMAGE_TAG" >> $GITHUB_OUTPUT
-      
-      - name: 🚀 Deploy to ECS
-        id: deploy
-        run: |
-          echo "Deploying backend to ECS..."
-          
-          # Update ECS service with new image
-          aws ecs update-service \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service ${{ env.ECS_BACKEND_SERVICE }} \
-            --force-new-deployment \
-            --region ${{ env.AWS_REGION }}
-          
-          echo "⏳ Waiting for service to stabilize..."
-          aws ecs wait services-stable \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_BACKEND_SERVICE }} \
-            --region ${{ env.AWS_REGION }}
-          
-          echo "deployed=true" >> $GITHUB_OUTPUT
-      
-      - name: 🔍 Verify Deployment
-        run: |
-          # Get ALB DNS
-          ALB_DNS=$(aws elbv2 describe-load-balancers \
-            --names megilance-alb \
-            --query 'LoadBalancers[0].DNSName' \
-            --output text \
-            --region ${{ env.AWS_REGION }})
-          
-          echo "Testing backend at http://$ALB_DNS"
-          
-          # Wait for ALB to update
-          sleep 30
-          
-          # Test health endpoint
-          for i in {1..10}; do
-            if curl -f -s http://$ALB_DNS/api/health/live | grep -q "ok"; then
-              echo "✅ Backend is healthy!"
-              echo "### ✅ Backend Deployed Successfully!" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "- **Image:** \`${{ steps.build.outputs.image_tag }}\`" >> $GITHUB_STEP_SUMMARY
-              echo "- **URL:** http://$ALB_DNS" >> $GITHUB_STEP_SUMMARY
-              echo "- **Health:** ✅ Healthy" >> $GITHUB_STEP_SUMMARY
-              exit 0
-            fi
-            echo "Attempt $i/10: Backend not ready yet, waiting..."
-            sleep 10
-          done
-          
-          echo "⚠️ Backend health check inconclusive, but deployment completed"
-          exit 0
-      
-      - name: 📊 Get Service Info
-        if: always()
-        run: |
-          aws ecs describe-services \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_BACKEND_SERVICE }} \
-            --query 'services[0].{Status:status,Running:runningCount,Desired:desiredCount,Deployment:deployments[0].status}' \
-            --region ${{ env.AWS_REGION }}
 
-  # Deploy frontend to Vercel
-  deploy-frontend:
-    name: ⚡ Deploy Frontend (Vercel)
-    needs: [detect-changes, deploy-backend]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.deploy_frontend == 'true' &&
-      (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-      
-      - name: 🧪 Test Frontend
-        working-directory: frontend
+      - name: Image vulnerability scan
+        continue-on-error: true
         run: |
-          npm ci
-          npm run lint || echo "⚠️ Linting issues found"
-          npm run build
-      
-      - name: 🚀 Deploy to Vercel
-        if: env.VERCEL_TOKEN != ''
-        working-directory: frontend
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          npm install -g vercel@latest
-          
-          # Get backend URL
-          if [[ -n "${{ secrets.AWS_OIDC_ROLE_ARN }}" ]]; then
-            # Configure AWS to get ALB DNS
-            export AWS_REGION=${{ env.AWS_REGION }}
-            # ALB_DNS would be fetched here
-            export NEXT_PUBLIC_API_BASE_URL="https://api.megilance.com"
-          fi
-          
-          echo "Deploying to Vercel..."
-          vercel pull --yes --environment=production --token=$VERCEL_TOKEN || true
-          vercel build --prod --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
-          
-          echo "### ✅ Frontend Deployed to Vercel!" >> $GITHUB_STEP_SUMMARY
-      
-      - name: ℹ️ Vercel Setup Instructions
-        if: env.VERCEL_TOKEN == ''
-        run: |
-          echo "### ℹ️ Vercel Not Configured" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To enable auto-deploy to Vercel, add these secrets:" >> $GITHUB_STEP_SUMMARY
-          echo "1. \`VERCEL_TOKEN\` - Get from https://vercel.com/account/tokens" >> $GITHUB_STEP_SUMMARY
-          echo "2. \`VERCEL_ORG_ID\` - Found in .vercel/project.json" >> $GITHUB_STEP_SUMMARY
-          echo "3. \`VERCEL_PROJECT_ID\` - Found in .vercel/project.json" >> $GITHUB_STEP_SUMMARY
+          aws ecr start-image-scan \
+            --repository-name ${{ env.ECR_BACKEND }} \
+            --image-id imageTag=${{ steps.build.outputs.image_tag }}
 
-  # Post-deployment checks and notifications
-  post-deployment:
-    name: 📢 Post-Deployment
-    needs: [detect-changes, deploy-backend, deploy-frontend]
-    if: always()
+  build-and-push-frontend:
+    name: Build & Push Frontend
     runs-on: ubuntu-latest
+    if: ${{ inputs.deploy_frontend }}
+    outputs:
+      image_uri: ${{ steps.push.outputs.image_uri }}
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: 📊 Deployment Report
-        run: |
-          echo "# 🚀 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
-          
-          if [[ "${{ needs.deploy-backend.result }}" == "success" ]]; then
-            echo "| Backend | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          elif [[ "${{ needs.deploy-backend.result }}" == "skipped" ]]; then
-            echo "| Backend | ⏭️ No Changes |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Backend | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if [[ "${{ needs.deploy-frontend.result }}" == "success" ]]; then
-            echo "| Frontend | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          elif [[ "${{ needs.deploy-frontend.result }}" == "skipped" ]]; then
-            echo "| Frontend | ⏭️ No Changes |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Frontend | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-      
-      - name: Configure AWS (for notifications)
-        if: secrets.AWS_OIDC_ROLE_ARN != ''
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-frontend
           aws-region: ${{ env.AWS_REGION }}
-      
-      - name: 📧 Send SNS Notification
-        if: secrets.AWS_OIDC_ROLE_ARN != ''
-        run: |
-          STATUS="${{ needs.deploy-backend.result == 'success' && needs.deploy-frontend.result == 'success' && '✅ Success' || '⚠️ Partial/Failed' }}"
-          
-          MESSAGE="MegiLance Auto-Deployment ${STATUS}
-          
-          Commit: ${{ github.sha }}
-          Author: ${{ github.actor }}
-          Branch: ${{ github.ref_name }}
-          
-          Backend: ${{ needs.deploy-backend.result }}
-          Frontend: ${{ needs.deploy-frontend.result }}
-          
-          View logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
-          aws sns publish \
-            --topic-arn "arn:aws:sns:${{ env.AWS_REGION }}:789406175220:megilance-alerts" \
-            --subject "MegiLance Deployment ${STATUS}" \
-            --message "$MESSAGE" \
-            --region ${{ env.AWS_REGION }} || echo "SNS notification failed (topic may not exist yet)"
-      
-      - name: 💬 Comment on PR (if applicable)
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const output = `### 🚀 Deployment Preview
-            
-            | Component | Status | Link |
-            |-----------|--------|------|
-            | Backend | ${{ needs.deploy-backend.result == 'success' && '✅' || '❌' }} | [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
-            | Frontend | ${{ needs.deploy-frontend.result == 'success' && '✅' || '❌' }} | [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
-            
-            **Commit:** \`${{ github.sha }}\`
-            `;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            });
 
-  # Rollback on critical failure
-  rollback:
-    name: 🔄 Auto-Rollback
-    needs: [deploy-backend, deploy-frontend]
-    if: |
-      failure() && 
-      (needs.deploy-backend.result == 'failure' || needs.deploy-frontend.result == 'failure')
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build frontend image
+        id: build
+        working-directory: frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.ECR_FRONTEND }}:$IMAGE_TAG \
+            --build-arg NEXT_PUBLIC_API_URL=https://api.megilance.com \
+            .
+          docker tag $ECR_REGISTRY/${{ env.ECR_FRONTEND }}:$IMAGE_TAG $ECR_REGISTRY/${{ env.ECR_FRONTEND }}:latest
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Push frontend image
+        id: push
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.build.outputs.image_tag }}
+        run: |
+          docker push $ECR_REGISTRY/${{ env.ECR_FRONTEND }}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/${{ env.ECR_FRONTEND }}:latest
+          echo "image_uri=$ECR_REGISTRY/${{ env.ECR_FRONTEND }}:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  run-database-migrations:
+    name: Run Database Migrations
+    needs: build-and-push-backend
     runs-on: ubuntu-latest
+    if: ${{ inputs.deploy_backend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-migrations
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get RDS endpoint
+        id: rds
+        run: |
+          cd infra/terraform
+          echo "endpoint=$(terraform output -raw rds_endpoint)" >> $GITHUB_OUTPUT
+
+      - name: Run Alembic migrations
+        env:
+          DATABASE_URL: postgresql://megilance_user:${{ secrets.TF_VAR_db_password }}@${{ steps.rds.outputs.endpoint }}/megilance_db
+        run: |
+          cd backend
+          pip install alembic psycopg2-binary
+          alembic upgrade head
+
+  deploy-backend-to-ecs:
+    name: Deploy Backend to ECS
+    needs: [build-and-push-backend, run-database-migrations]
+    runs-on: ubuntu-latest
+    if: ${{ inputs.deploy_backend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-deploy-backend
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create/Update task definition
+        id: task-def
+        run: |
+          # Get current task definition
+          TASK_DEF=$(aws ecs describe-task-definition \
+            --task-definition megilance-backend \
+            --query 'taskDefinition' || echo '{}')
+          
+          # Create new task definition with updated image
+          cat > task-def.json <<EOF
+          {
+            "family": "megilance-backend",
+            "networkMode": "awsvpc",
+            "requiresCompatibilities": ["FARGATE"],
+            "cpu": "512",
+            "memory": "1024",
+            "executionRoleArn": "$(aws iam get-role --role-name megilance-exec-role --query 'Role.Arn' --output text)",
+            "taskRoleArn": "$(aws iam get-role --role-name megilance-task-role --query 'Role.Arn' --output text)",
+            "containerDefinitions": [
+              {
+                "name": "backend",
+                "image": "${{ needs.build-and-push-backend.outputs.image_uri }}",
+                "portMappings": [
+                  {
+                    "containerPort": 8000,
+                    "protocol": "tcp"
+                  }
+                ],
+                "essential": true,
+                "environment": [
+                  {
+                    "name": "ENVIRONMENT",
+                    "value": "${{ inputs.environment }}"
+                  }
+                ],
+                "secrets": [
+                  {
+                    "name": "DATABASE_URL",
+                    "valueFrom": "arn:aws:secretsmanager:${{ env.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):secret:megilance/prod/database"
+                  },
+                  {
+                    "name": "SECRET_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:${{ env.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):secret:megilance/prod/jwt"
+                  }
+                ],
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/ecs/megilance-backend",
+                    "awslogs-region": "${{ env.AWS_REGION }}",
+                    "awslogs-stream-prefix": "ecs"
+                  }
+                },
+                "healthCheck": {
+                  "command": ["CMD-SHELL", "curl -f http://localhost:8000/api/health/live || exit 1"],
+                  "interval": 30,
+                  "timeout": 5,
+                  "retries": 3,
+                  "startPeriod": 60
+                }
+              }
+            ]
+          }
+          EOF
+          
+          # Register new task definition
+          aws ecs register-task-definition --cli-input-json file://task-def.json
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_BACKEND_SERVICE }} \
+            --task-definition megilance-backend \
+            --force-new-deployment
+
+      - name: Wait for service stability
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --services ${{ env.ECS_BACKEND_SERVICE }}
+
+  deploy-frontend-to-ecs:
+    name: Deploy Frontend to ECS
+    needs: build-and-push-frontend
+    runs-on: ubuntu-latest
+    if: ${{ inputs.deploy_frontend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-deploy-frontend
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create/Update task definition
+        run: |
+          cat > task-def-frontend.json <<EOF
+          {
+            "family": "megilance-frontend",
+            "networkMode": "awsvpc",
+            "requiresCompatibilities": ["FARGATE"],
+            "cpu": "256",
+            "memory": "512",
+            "executionRoleArn": "$(aws iam get-role --role-name megilance-exec-role --query 'Role.Arn' --output text)",
+            "containerDefinitions": [
+              {
+                "name": "frontend",
+                "image": "${{ needs.build-and-push-frontend.outputs.image_uri }}",
+                "portMappings": [
+                  {
+                    "containerPort": 3000,
+                    "protocol": "tcp"
+                  }
+                ],
+                "essential": true,
+                "environment": [
+                  {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                  },
+                  {
+                    "name": "NEXT_PUBLIC_API_URL",
+                    "value": "https://api.megilance.com"
+                  }
+                ],
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/ecs/megilance-frontend",
+                    "awslogs-region": "${{ env.AWS_REGION }}",
+                    "awslogs-stream-prefix": "ecs"
+                  }
+                }
+              }
+            ]
+          }
+          EOF
+          
+          aws ecs register-task-definition --cli-input-json file://task-def-frontend.json
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_FRONTEND_SERVICE }} \
+            --task-definition megilance-frontend \
+            --force-new-deployment
+
+      - name: Wait for service stability
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --services ${{ env.ECS_FRONTEND_SERVICE }}
+
+  smoke-tests:
+    name: Run Smoke Tests
+    needs: [deploy-backend-to-ecs, deploy-frontend-to-ecs]
+    runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: github-actions-smoke-tests
           aws-region: ${{ env.AWS_REGION }}
-      
-      - name: 🔄 Rollback Backend
-        if: needs.deploy-backend.result == 'failure'
+
+      - name: Get service endpoints
+        id: endpoints
         run: |
-          echo "Rolling back backend to previous version..."
-          
-          PREVIOUS_TASK_DEF=$(aws ecs describe-services \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_BACKEND_SERVICE }} \
-            --query 'services[0].deployments[1].taskDefinition' \
-            --output text \
-            --region ${{ env.AWS_REGION }})
-          
-          if [[ "$PREVIOUS_TASK_DEF" != "None" ]]; then
-            aws ecs update-service \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service ${{ env.ECS_BACKEND_SERVICE }} \
-              --task-definition $PREVIOUS_TASK_DEF \
-              --force-new-deployment \
-              --region ${{ env.AWS_REGION }}
-            
-            echo "✅ Rolled back to: $PREVIOUS_TASK_DEF"
-            echo "### 🔄 Automatic Rollback Executed" >> $GITHUB_STEP_SUMMARY
-            echo "Reverted to task definition: \`$PREVIOUS_TASK_DEF\`" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ No previous version found for rollback"
-          fi
-      
-      - name: 📧 Send Rollback Notification
+          # Get backend task IP
+          BACKEND_TASK=$(aws ecs list-tasks --cluster ${{ env.ECS_CLUSTER }} --service-name ${{ env.ECS_BACKEND_SERVICE }} --query 'taskArns[0]' --output text)
+          BACKEND_IP=$(aws ecs describe-tasks --cluster ${{ env.ECS_CLUSTER }} --tasks $BACKEND_TASK --query 'tasks[0].containers[0].networkInterfaces[0].privateIpv4Address' --output text)
+          echo "backend_url=http://$BACKEND_IP:8000" >> $GITHUB_OUTPUT
+
+      - name: Test backend health
         run: |
-          aws sns publish \
-            --topic-arn "arn:aws:sns:${{ env.AWS_REGION }}:789406175220:megilance-alerts" \
-            --subject "🔄 MegiLance Auto-Rollback Executed" \
-            --message "Deployment failed and automatic rollback was triggered. Check GitHub Actions logs for details." \
-            --region ${{ env.AWS_REGION }} || true
+          curl -f ${{ steps.endpoints.outputs.backend_url }}/api/health/live || exit 1
+          curl -f ${{ steps.endpoints.outputs.backend_url }}/api/health/ready || exit 1
+
+      - name: Test API documentation
+        run: |
+          curl -f ${{ steps.endpoints.outputs.backend_url }}/api/docs || exit 1
+
+  notify-deployment:
+    name: Notify Deployment Status
+    needs: [deploy-backend-to-ecs, deploy-frontend-to-ecs, smoke-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Backend deployed**: ${{ inputs.deploy_backend }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Frontend deployed**: ${{ inputs.deploy_frontend }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Status" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY

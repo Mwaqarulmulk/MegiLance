@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .v1 import health, users, mock, projects, proposals, contracts, portfolio, payments, auth, client, upload
+from .v1 import health, users, mock, projects, proposals, contracts, portfolio, payments, auth, client, upload, ai_services
 
 
 api_router = APIRouter()
@@ -13,4 +13,5 @@ api_router.include_router(portfolio.router, prefix="/portfolio", tags=["portfoli
 api_router.include_router(payments.router, prefix="/payments", tags=["payments"])
 api_router.include_router(upload.router, prefix="/upload", tags=["upload"])
 api_router.include_router(client.router, prefix="/client", tags=["client"])
+api_router.include_router(ai_services.router, tags=["ai"])
 api_router.include_router(mock.router, prefix="", tags=["mock"])
