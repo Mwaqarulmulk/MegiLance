@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
 from app.db.session import get_db
-from app.core.auth import get_current_user
+from app.core.security import get_current_active_user
 from app.models import User, Milestone, Contract, Payment, MilestoneStatus, PaymentType, PaymentStatus
 from app.schemas.milestone import (
     Milestone as MilestoneSchema,

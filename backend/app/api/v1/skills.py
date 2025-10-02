@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 
 from app.db.session import get_db
-from app.core.auth import get_current_user
+from app.core.security import get_current_active_user
 from app.models import User, Skill, UserSkill
 from app.schemas.skill import (
     Skill as SkillSchema,

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
 
-from app.db.database import get_db
+from app.db.session import get_db
 from app.models import Notification, User
 from app.schemas import (
     Notification as NotificationSchema,

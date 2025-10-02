@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_
 
 from app.db.session import get_db
-from app.core.auth import get_current_user
+from app.core.security import get_current_active_user
 from app.models import User, Review, Contract
 from app.schemas.review import (
     Review as ReviewSchema,

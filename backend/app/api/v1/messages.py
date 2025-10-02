@@ -5,7 +5,7 @@ from sqlalchemy import or_, and_
 from typing import List
 from datetime import datetime
 
-from app.db.database import get_db
+from app.db.session import get_db
 from app.models import Message, Conversation, User
 from app.schemas import (
     Message as MessageSchema,
