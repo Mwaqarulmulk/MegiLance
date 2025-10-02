@@ -11,7 +11,7 @@ import Input from '@/app/components/Input/Input';
 import Textarea from '@/app/components/Textarea/Textarea';
 import Button from '@/app/components/Button/Button';
 import { Label } from '@/app/components/Label/Label';
-import Switch from '@/app/components/Switch/Switch';
+import Switch from '@/app/components/ToggleSwitch/ToggleSwitch';
 
 import commonStyles from './Settings.common.module.css';
 import lightStyles from './Settings.light.module.css';

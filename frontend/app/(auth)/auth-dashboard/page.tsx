@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Dashboard from './dashboard';
-import userData from '../../../../db/user.json';
+import userData from '../../../db/user.json';
 import { User } from './types';
 
 const DashboardPage = () => {
