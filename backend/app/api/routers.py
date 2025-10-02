@@ -13,5 +13,5 @@ api_router.include_router(portfolio.router, prefix="/portfolio", tags=["portfoli
 api_router.include_router(payments.router, prefix="/payments", tags=["payments"])
 api_router.include_router(upload.router, prefix="/upload", tags=["upload"])
 api_router.include_router(client.router, prefix="/client", tags=["client"])
-api_router.include_router(ai_services.router, tags=["ai"])
+api_router.include_router(ai_services.router, prefix="/ai", tags=["ai"])
 api_router.include_router(mock.router, prefix="", tags=["mock"])

@@ -21,9 +21,9 @@ services:
       - ./backend:/app
       - ./db:/data/db:ro
     env_file:
-      - ./backend/.env.example
+      - ./backend/.env
     environment:
-      ENV: development
+      - ENV=development
     depends_on:
       - db
     healthcheck:
