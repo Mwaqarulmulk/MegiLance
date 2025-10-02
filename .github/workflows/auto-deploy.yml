@@ -167,19 +167,7 @@ jobs:
           pip install alembic psycopg2-binary
           echo "DATABASE_URL=$DATABASE_URL"
           # Validate connection before running migrations
-          python - <<'PY'
-import os
-import sys
-from urllib.parse import urlparse
-import psycopg2
-u=os.getenv('DATABASE_URL')
-if not u:
-    print('DATABASE_URL not set', file=sys.stderr); sys.exit(2)
-o=urlparse(u)
-conn=psycopg2.connect(dbname=o.path.lstrip('/'), user=o.username, password=o.password, host=o.hostname, port=o.port or 5432)
-conn.close()
-print('DB connection OK')
-PY
+          python -c "import os,sys; from urllib.parse import urlparse; import psycopg2; u=os.getenv('DATABASE_URL'); sys.exit(2) if not u else None; o=urlparse(u); conn=psycopg2.connect(dbname=o.path.lstrip('/'), user=o.username, password=o.password, host=o.hostname, port=o.port or 5432); conn.close(); print('DB connection OK')"
           alembic upgrade head
 
   deploy-backend-to-ecs:
