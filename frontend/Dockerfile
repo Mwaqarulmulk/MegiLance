@@ -2,7 +2,8 @@
 FROM node:20-bookworm-slim AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+# Use npm install since lockfile might be out of sync
+RUN npm install && npm cache clean --force
 COPY . .
 # Build the Next.js application
 RUN npm run build
