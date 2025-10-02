@@ -188,13 +188,25 @@ jobs:
             --output text \
             --region ${{ env.AWS_REGION }})
           echo "vpc_id=$VPC_ID" >> $GITHUB_OUTPUT
+          echo "VPC ID: $VPC_ID"
           
-          # Get public subnets
+          # Get public subnets - try multiple tag patterns
           PUBLIC_SUBNETS=$(aws ec2 describe-subnets \
-            --filters "Name=vpc-id,Values=$VPC_ID" "Name=tag:Name,Values=*public*" \
+            --filters "Name=vpc-id,Values=$VPC_ID" "Name=tag:Name,Values=*-public-*" \
             --query 'Subnets[*].SubnetId' \
             --output text \
             --region ${{ env.AWS_REGION }} | tr '\t' ',')
+          
+          # Fallback: if no public subnets found, get ALL subnets in VPC
+          if [ -z "$PUBLIC_SUBNETS" ]; then
+            echo "No public subnets found with tag filter, getting all subnets in VPC"
+            PUBLIC_SUBNETS=$(aws ec2 describe-subnets \
+              --filters "Name=vpc-id,Values=$VPC_ID" \
+              --query 'Subnets[*].SubnetId' \
+              --output text \
+              --region ${{ env.AWS_REGION }} | tr '\t' ',')
+          fi
+          
           echo "public_subnets=$PUBLIC_SUBNETS" >> $GITHUB_OUTPUT
           echo "Found subnets: $PUBLIC_SUBNETS"
           
@@ -339,14 +351,26 @@ jobs:
             --query 'Vpcs[0].VpcId' \
             --output text \
             --region ${{ env.AWS_REGION }})
+          echo "VPC ID: $VPC_ID"
           
-          # Get public subnets
+          # Get public subnets - try multiple tag patterns
           PUBLIC_SUBNETS=$(aws ec2 describe-subnets \
-            --filters "Name=vpc-id,Values=$VPC_ID" "Name=tag:Name,Values=*public*" \
+            --filters "Name=vpc-id,Values=$VPC_ID" "Name=tag:Name,Values=*-public-*" \
             --query 'Subnets[*].SubnetId' \
             --output text \
             --region ${{ env.AWS_REGION }} | tr '\t' ',')
+          
+          # Fallback: if no public subnets found, get ALL subnets in VPC
+          if [ -z "$PUBLIC_SUBNETS" ]; then
+            echo "No public subnets found with tag filter, getting all subnets in VPC"
+            PUBLIC_SUBNETS=$(aws ec2 describe-subnets \
+              --filters "Name=vpc-id,Values=$VPC_ID" \
+              --query 'Subnets[*].SubnetId' \
+              --output text \
+              --region ${{ env.AWS_REGION }} | tr '\t' ',')
+          fi
           echo "public_subnets=$PUBLIC_SUBNETS" >> $GITHUB_OUTPUT
+          echo "Found subnets: $PUBLIC_SUBNETS"
           
           # Get security group
           SG_ID=$(aws ec2 describe-security-groups \
@@ -362,6 +386,7 @@ jobs:
               --region ${{ env.AWS_REGION }})
           fi
           echo "security_group=$SG_ID" >> $GITHUB_OUTPUT
+          echo "Found security group: $SG_ID"
 
       - name: Create/Update task definition
         run: |
