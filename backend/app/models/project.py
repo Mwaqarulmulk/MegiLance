@@ -20,6 +20,14 @@ class ProjectCategory(enum.Enum):
     VIDEO_EDITING = "Video & Animation"
     OTHER = "Other"
 
+class ProjectStatus(enum.Enum):
+    """Project status enumeration"""
+    OPEN = "open"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    ON_HOLD = "on_hold"
+
 class Project(Base):
     __tablename__ = "projects"
 
