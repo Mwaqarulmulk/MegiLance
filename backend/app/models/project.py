@@ -3,10 +3,22 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime
 from typing import List, TYPE_CHECKING
+import enum
 
 if TYPE_CHECKING:
     from .user import User
     from .proposal import Proposal
+
+class ProjectCategory(enum.Enum):
+    """Project category enumeration"""
+    WEB_DEVELOPMENT = "Web Development"
+    MOBILE_DEVELOPMENT = "Mobile Development"
+    DATA_SCIENCE = "Data Science & Analytics"
+    DESIGN = "Design & Creative"
+    WRITING = "Writing & Content"
+    MARKETING = "Marketing & Sales"
+    VIDEO_EDITING = "Video & Animation"
+    OTHER = "Other"
 
 class Project(Base):
     __tablename__ = "projects"

@@ -17,20 +17,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy built files and dependencies from builder
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /app/public ./public
 
-# Create non-root user (check if UID 1000 exists first)
-RUN if id -u 1000 >/dev/null 2>&1; then \
-        userdel $(id -nu 1000); \
-    fi && \
-    useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
+# Use the node user from the base image
+USER node
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 EXPOSE 3000
 
@@ -38,5 +34,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3000/ || exit 1
 
-# Start the production server
-CMD ["npm", "start"]
+# Start the production server using standalone output
+CMD ["node", "server.js"]

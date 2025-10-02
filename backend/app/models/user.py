@@ -2,6 +2,13 @@ from sqlalchemy import String, Boolean, Integer, Float, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 from datetime import datetime
+import enum
+
+class UserType(enum.Enum):
+    """User type enumeration"""
+    FREELANCER = "freelancer"
+    CLIENT = "client"
+    ADMIN = "admin"
 
 class User(Base):
     __tablename__ = "users"

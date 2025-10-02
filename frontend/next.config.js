@@ -11,6 +11,8 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable standalone output for Docker
+  output: 'standalone',
   // Your Next.js config options can go here.
   eslint: {
     // Don't fail the build on ESLint errors; we'll address them incrementally.
@@ -44,4 +46,3 @@ const nextConfig = {
 };
 
 module.exports = withPWA(nextConfig);
-
