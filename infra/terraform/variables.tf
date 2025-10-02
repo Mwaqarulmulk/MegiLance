@@ -43,19 +43,7 @@ variable "db_password" {
 variable "db_instance_class" {
   description = "RDS instance class"
   type        = string
-  default     = "db.t3.micro"
-}
-
-variable "environment" {
-  description = "Environment name (dev, staging, prod)"
-  type        = string
-  default     = "prod"
-}
-
-variable "alert_email" {
-  description = "Email address for CloudWatch alerts"
-  type        = string
-  default     = ""
+  default     = "db.t4g.micro"
 }
 
 variable "db_allocated_storage" {
