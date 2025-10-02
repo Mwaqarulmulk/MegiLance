@@ -6,17 +6,17 @@ on:
       apply_iam_fix:
         description: 'Apply IAM Secrets Manager policy fix'
         required: true
-        default: 'true'
+        default: true
         type: boolean
       create_vpc_endpoints:
         description: 'Create VPC endpoints'
         required: true
-        default: 'true'
+        default: true
         type: boolean
       force_ecs_update:
         description: 'Force ECS service update'
         required: true
-        default: 'true'
+        default: true
         type: boolean
 
 env:
