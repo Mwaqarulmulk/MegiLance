@@ -31,7 +31,7 @@ router = APIRouter()
 @router.post("/milestones", response_model=MilestoneSchema, status_code=status.HTTP_201_CREATED)
 async def create_milestone(
     milestone_data: MilestoneCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -85,7 +85,7 @@ async def list_milestones(
     status: Optional[MilestoneStatus] = Query(None, description="Filter by status"),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -124,7 +124,7 @@ async def list_milestones(
 @router.get("/milestones/{milestone_id}", response_model=MilestoneSchema)
 async def get_milestone(
     milestone_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -154,7 +154,7 @@ async def get_milestone(
 async def update_milestone(
     milestone_id: int,
     milestone_data: MilestoneUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -201,7 +201,7 @@ async def update_milestone(
 async def submit_milestone(
     milestone_id: int,
     submission_data: MilestoneSubmit,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -261,7 +261,7 @@ async def submit_milestone(
 async def approve_milestone(
     milestone_id: int,
     approval_data: MilestoneApprove,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -345,7 +345,7 @@ async def approve_milestone(
 async def reject_milestone(
     milestone_id: int,
     rejection_notes: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -403,7 +403,7 @@ async def reject_milestone(
 @router.delete("/milestones/{milestone_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_milestone(
     milestone_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """

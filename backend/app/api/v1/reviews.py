@@ -29,7 +29,7 @@ router = APIRouter()
 @router.post("/reviews", response_model=ReviewSchema, status_code=status.HTTP_201_CREATED)
 async def create_review(
     review_data: ReviewCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -108,7 +108,7 @@ async def list_reviews(
     is_public: Optional[bool] = Query(None, description="Filter by public status"),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -215,7 +215,7 @@ async def get_review_stats(
 @router.get("/reviews/{review_id}", response_model=ReviewSchema)
 async def get_review(
     review_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -246,7 +246,7 @@ async def get_review(
 async def update_review(
     review_id: int,
     review_data: ReviewUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -293,7 +293,7 @@ async def update_review(
 @router.delete("/reviews/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_review(
     review_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """

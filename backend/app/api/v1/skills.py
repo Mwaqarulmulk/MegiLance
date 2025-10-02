@@ -105,7 +105,7 @@ async def get_skill(
 @router.post("/skills", response_model=SkillSchema, status_code=status.HTTP_201_CREATED)
 async def create_skill(
     skill_data: SkillCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -142,7 +142,7 @@ async def create_skill(
 async def update_skill(
     skill_id: int,
     skill_data: SkillUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -190,7 +190,7 @@ async def update_skill(
 @router.delete("/skills/{skill_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_skill(
     skill_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -226,7 +226,7 @@ async def list_user_skills(
     skill_category: Optional[str] = Query(None, description="Filter by skill category"),
     min_proficiency: Optional[int] = Query(None, ge=1, le=5, description="Minimum proficiency level"),
     verified_only: bool = Query(False, description="Only verified skills"),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -259,7 +259,7 @@ async def list_user_skills(
 @router.post("/user-skills", response_model=UserSkillSchema, status_code=status.HTTP_201_CREATED)
 async def add_user_skill(
     user_skill_data: UserSkillCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -306,7 +306,7 @@ async def add_user_skill(
 async def update_user_skill(
     user_skill_id: int,
     user_skill_data: UserSkillUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -354,7 +354,7 @@ async def update_user_skill(
 @router.delete("/user-skills/{user_skill_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_skill(
     user_skill_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """

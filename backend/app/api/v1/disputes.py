@@ -29,7 +29,7 @@ router = APIRouter()
 @router.post("/disputes", response_model=DisputeSchema, status_code=status.HTTP_201_CREATED)
 async def create_dispute(
     dispute_data: DisputeCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -104,7 +104,7 @@ async def list_disputes(
     raised_by_me: bool = Query(False, description="Only disputes I raised"),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -158,7 +158,7 @@ async def list_disputes(
 @router.get("/disputes/{dispute_id}", response_model=DisputeSchema)
 async def get_dispute(
     dispute_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -189,7 +189,7 @@ async def get_dispute(
 async def update_dispute(
     dispute_id: int,
     dispute_data: DisputeUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -255,7 +255,7 @@ async def update_dispute(
 async def assign_dispute(
     dispute_id: int,
     admin_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -314,7 +314,7 @@ async def assign_dispute(
 async def resolve_dispute(
     dispute_id: int,
     resolution: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
