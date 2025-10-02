@@ -164,7 +164,7 @@ jobs:
           cd backend
           python -V || true
           pip install --upgrade pip
-          pip install alembic psycopg2-binary || true
+          pip install alembic psycopg2-binary
           echo "DATABASE_URL=$DATABASE_URL"
           # Validate connection before running migrations
           python - <<'PY'
