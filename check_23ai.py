@@ -1,0 +1,10 @@
+import oracledb
+c = oracledb.connect(user="ADMIN", password="Bfw5ZvHQXjkDb!3lAa1!", dsn="megilanceai_high", config_dir="/app/oracle-wallet-23ai", wallet_location="/app/oracle-wallet-23ai", wallet_password="MegiLance2025!Wallet")
+r = c.cursor()
+r.execute("SELECT COUNT(*) FROM users")
+print("✅ 23ai Users:", r.fetchone()[0])
+r.execute("SELECT COUNT(*) FROM skills")
+print("✅ 23ai Skills:", r.fetchone()[0])
+r.execute("SELECT COUNT(*) FROM projects")
+print("✅ 23ai Projects:", r.fetchone()[0])
+c.close()

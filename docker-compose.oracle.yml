@@ -6,10 +6,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./oracle-wallet:/app/oracle-wallet:ro
+      - ./oracle-wallet-23ai:/app/oracle-wallet:ro
       - ./db:/data/db:ro
     environment:
-      - DATABASE_URL=oracle+oracledb://ADMIN:Bfw5ZvHQXjkDb!3lAa1!@megilancedb_high?wallet_location=/app/oracle-wallet&wallet_password=MegiLance2025!Wallet
+      - DATABASE_URL=oracle+oracledb://ADMIN:Bfw5ZvHQXjkDb!3lAa1!@megilanceai_high?wallet_location=/app/oracle-wallet&wallet_password=MegiLance2025!Wallet
       - OCI_REGION=eu-frankfurt-1
       - OCI_NAMESPACE=frj6px39shbv
       - OCI_BUCKET_NAME=megilance-storage
@@ -27,16 +27,11 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=production
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
     depends_on:
       - backend
-    command: npm run dev
     networks:
       - megilance
 
