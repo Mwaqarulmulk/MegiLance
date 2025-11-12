@@ -1,0 +1,152 @@
+/* @AI-HINT: Dark theme specific styles for WhyMegiLance component. Defines color palette, text colors, backgrounds, and visual elements for dark mode. */
+
+.section {
+  background: linear-gradient(
+    180deg,
+    #1d2127 0%,
+    #22272e 50%,
+    #272b32 100%
+  );
+}
+
+.bgBlob1 {
+  background: linear-gradient(
+    135deg,
+    rgba(69, 115, 223, 0.2) 0%,
+    rgba(102, 126, 234, 0.12) 100%
+  );
+}
+
+.bgBlob2 {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 152, 0, 0.15) 0%,
+    rgba(255, 180, 77, 0.1) 100%
+  );
+}
+
+.bgBlob3 {
+  background: linear-gradient(
+    135deg,
+    rgba(156, 39, 176, 0.12) 0%,
+    rgba(214, 108, 232, 0.1) 100%
+  );
+}
+
+.badge {
+  background: rgba(69, 115, 223, 0.15);
+  color: #667eea;
+  border: 1px solid rgba(69, 115, 223, 0.3);
+}
+
+.badgeDot {
+  background: #667eea;
+}
+
+.badgeText {
+  color: #667eea;
+}
+
+.header {
+  color: #f5f7fa;
+}
+
+.heading {
+  color: #f5f7fa;
+}
+
+.subtitle {
+  color: #a9b1bd;
+}
+
+.preheader {
+  color: #9ca3af;
+}
+
+/* Value Card Styles - Dark Theme */
+.valueCard {
+  background: linear-gradient(
+    135deg,
+    rgba(44, 50, 58, 0.6) 0%,
+    rgba(39, 43, 50, 0.4) 100%
+  );
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.valueCard:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(44, 50, 58, 0.8) 0%,
+    rgba(39, 43, 50, 0.6) 100%
+  );
+  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 20px 40px rgba(69, 115, 223, 0.15);
+}
+
+.cardTitle {
+  color: #f5f7fa;
+}
+
+.cardSubtitle {
+  color: #9ca3af;
+}
+
+.cardDescription {
+  color: #c5cdd4;
+}
+
+.benefitText {
+  color: #9ca3af;
+}
+
+.cardCta {
+  color: #667eea;
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.cardCta:hover {
+  background: rgba(102, 126, 234, 0.15);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+  border-color: #7b8eef;
+}
+
+/* Trust Section - Dark Theme */
+.trustSection {
+  border-top-color: rgba(102, 126, 234, 0.2);
+}
+
+.trustLabel {
+  color: #9ca3af;
+}
+
+.trustBadge {
+  background: linear-gradient(
+    135deg,
+    rgba(69, 115, 223, 0.1) 0%,
+    rgba(255, 152, 0, 0.08) 100%
+  );
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  color: #f5f7fa;
+}
+
+.trustBadge:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(69, 115, 223, 0.15) 0%,
+    rgba(255, 152, 0, 0.12) 100%
+  );
+  border-color: rgba(102, 126, 234, 0.25);
+  box-shadow: 0 8px 20px rgba(69, 115, 223, 0.2);
+}
+
+.badgeLabel {
+  color: #f5f7fa;
+}
+
+/* Icon Container - Dark Theme */
+.iconContainer {
+  color: #667eea;
+}

@@ -1,0 +1,151 @@
+/* @AI-HINT: Light theme specific styles for WhyMegiLance component. Defines color palette, text colors, backgrounds, and visual elements for light mode. */
+
+.section {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f8f9fc 50%,
+    #f5f7fa 100%
+  );
+}
+
+.bgBlob1 {
+  background: linear-gradient(
+    135deg,
+    rgba(69, 115, 223, 0.15) 0%,
+    rgba(102, 126, 234, 0.1) 100%
+  );
+}
+
+.bgBlob2 {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 152, 0, 0.12) 0%,
+    rgba(255, 180, 77, 0.08) 100%
+  );
+}
+
+.bgBlob3 {
+  background: linear-gradient(
+    135deg,
+    rgba(156, 39, 176, 0.1) 0%,
+    rgba(214, 108, 232, 0.08) 100%
+  );
+}
+
+.badge {
+  background: rgba(69, 115, 223, 0.08);
+  color: #4573df;
+  border: 1px solid rgba(69, 115, 223, 0.2);
+}
+
+.badgeDot {
+  background: #4573df;
+}
+
+.badgeText {
+  color: #4573df;
+}
+
+.header {
+  color: #23272f;
+}
+
+.heading {
+  color: #23272f;
+}
+
+.subtitle {
+  color: #666666;
+}
+
+.preheader {
+  color: #4b5563;
+}
+
+/* Value Card Styles - Light Theme */
+.valueCard {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(245, 247, 250, 0.5) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.valueCard:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(245, 247, 250, 0.8) 100%
+  );
+  border-color: rgba(69, 115, 223, 0.3);
+  box-shadow: 0 20px 40px rgba(69, 115, 223, 0.1);
+}
+
+.cardTitle {
+  color: #23272f;
+}
+
+.cardSubtitle {
+  color: #4b5563;
+}
+
+.cardDescription {
+  color: #666666;
+}
+
+.benefitText {
+  color: #4b5563;
+}
+
+.cardCta {
+  color: #4573df;
+  border-color: #4573df;
+  background: rgba(69, 115, 223, 0.05);
+}
+
+.cardCta:hover {
+  background: rgba(69, 115, 223, 0.1);
+  box-shadow: 0 8px 16px rgba(69, 115, 223, 0.15);
+}
+
+/* Trust Section - Light Theme */
+.trustSection {
+  border-top-color: rgba(69, 115, 223, 0.1);
+}
+
+.trustLabel {
+  color: #4b5563;
+}
+
+.trustBadge {
+  background: linear-gradient(
+    135deg,
+    rgba(69, 115, 223, 0.05) 0%,
+    rgba(255, 152, 0, 0.05) 100%
+  );
+  border: 1px solid rgba(69, 115, 223, 0.1);
+  color: #23272f;
+}
+
+.trustBadge:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(69, 115, 223, 0.1) 0%,
+    rgba(255, 152, 0, 0.1) 100%
+  );
+  border-color: rgba(69, 115, 223, 0.2);
+  box-shadow: 0 8px 20px rgba(69, 115, 223, 0.1);
+}
+
+.badgeLabel {
+  color: #23272f;
+}
+
+/* Icon Container - Light Theme */
+.iconContainer {
+  color: #4573df;
+}

@@ -19,6 +19,10 @@ yarn.lock
 # Env & secrets
 .env*
 !.env.example
+!.env.production.example
+oracle-wallet/
+*.key
+*.pem
 
 # Python
 __pycache__/

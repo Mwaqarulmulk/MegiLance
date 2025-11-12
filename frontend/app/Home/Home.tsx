@@ -9,9 +9,11 @@ import { cn } from '@/lib/utils';
 // Import all the components that make up the home page
 import Hero from './components/Hero';
 import TrustIndicators from './components/TrustIndicators';
+import WhyMegiLance from './components/WhyMegiLance';
 import Features from './components/Features';
 import HowItWorks from './components/HowItWorks';
 import AIShowcase from './components/AIShowcase';
+import PoweredByAI from './components/PoweredByAI';
 import BlockchainShowcase from './components/BlockchainShowcase';
 import ProductScreenshots from './components/ProductScreenshots';
 import GlobalImpact from './components/GlobalImpact';
@@ -36,6 +38,9 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className={commonStyles.homeSection}>
+          <WhyMegiLance />
+        </div>
+        <div className={commonStyles.homeSection}>
           <div className={commonStyles.sectionContainer}>
             <Features />
           </div>
@@ -48,6 +53,11 @@ const Home: React.FC = () => {
         <div className={commonStyles.homeSection}>
           <div className={commonStyles.sectionContainer}>
             <AIShowcase />
+          </div>
+        </div>
+        <div className={commonStyles.homeSection}>
+          <div className={commonStyles.sectionContainer}>
+            <PoweredByAI />
           </div>
         </div>
         <div className={commonStyles.homeSection}>

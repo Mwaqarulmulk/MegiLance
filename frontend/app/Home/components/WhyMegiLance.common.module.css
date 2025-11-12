@@ -1,0 +1,496 @@
+/* @AI-HINT: Common CSS module for WhyMegiLance component. Defines layout, structure, typography, animations, and visual rhythm. Theme-agnostic positioning and interactions. */
+
+.section {
+  position: relative;
+  padding: 5rem 1.5rem;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.backgroundElements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bgBlob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
+}
+
+.bgBlob1 {
+  width: 400px;
+  height: 400px;
+  top: -50px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.bgBlob2 {
+  width: 350px;
+  height: 350px;
+  bottom: -100px;
+  right: 10%;
+  animation-delay: 5s;
+}
+
+.bgBlob3 {
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  right: -50px;
+  animation-delay: 10s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(30px) translateX(-20px);
+  }
+  50% {
+    transform: translateY(60px) translateX(20px);
+  }
+  75% {
+    transform: translateY(30px) translateX(-10px);
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Header Section */
+.header {
+  text-align: center;
+  margin-bottom: 5rem;
+  position: relative;
+}
+
+.preheader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.badge {
+  font-family: var(--font-poppins);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.badgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badgeText {
+  font-family: var(--font-inter);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.heading {
+  font-family: var(--font-poppins);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.highlightText {
+  background: linear-gradient(135deg, #4573df, #ff9800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.subtitle {
+  font-family: var(--font-inter);
+  font-size: 1.125rem;
+  line-height: 1.8;
+  max-width: 75ch;
+  margin: 0 auto;
+  font-weight: 500;
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Value Card Styles */
+.valueCard {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem;
+  border: 1px solid transparent;
+}
+
+/* Card Variants */
+.variantPrimary {
+  --accent-color: #4573df;
+  --gradient: linear-gradient(135deg, #4573df 0%, #667eea 100%);
+  --accent-light: rgba(69, 115, 223, 0.15);
+}
+
+.variantSuccess {
+  --accent-color: #27ae60;
+  --gradient: linear-gradient(135deg, #27ae60 0%, #48d597 100%);
+  --accent-light: rgba(39, 174, 96, 0.15);
+}
+
+.variantOrange {
+  --accent-color: #ff9800;
+  --gradient: linear-gradient(135deg, #ff9800 0%, #ffb84d 100%);
+  --accent-light: rgba(255, 152, 0, 0.15);
+}
+
+.variantPurple {
+  --accent-color: #9c27b0;
+  --gradient: linear-gradient(135deg, #9c27b0 0%, #d66ce8 100%);
+  --accent-light: rgba(156, 39, 176, 0.15);
+}
+
+.cardGradientBorder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: var(--gradient);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.valueCard:hover .cardGradientBorder {
+  opacity: 1;
+}
+
+.valueCardHovered {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon Container */
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+}
+
+.iconBackground {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+  background-color: var(--accent-light);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.valueCard:hover .iconBackground {
+  transform: scale(1.15) rotate(5deg);
+}
+
+/* Card Content */
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.titleSection {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.cardTitle {
+  font-family: var(--font-poppins);
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.cardSubtitle {
+  font-family: var(--font-inter);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.cardDescription {
+  font-family: var(--font-inter);
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 80px;
+  margin-bottom: 0.5rem;
+}
+
+/* Benefits List - Hidden by default, visible on hover */
+.benefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.benefitsListVisible {
+  max-height: 300px;
+  opacity: 1;
+  margin-bottom: 1rem;
+}
+
+.benefitItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  animation: slideInBenefit 0.3s ease forwards;
+}
+
+.checkIcon {
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.benefitItem:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.benefitItem:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.benefitItem:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.benefitItem:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+@keyframes slideInBenefit {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.benefitText {
+  font-family: var(--font-inter);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* CTA Button */
+.cardCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  border: 1.5px solid var(--accent-color);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--accent-color);
+  font-family: var(--font-inter);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: auto;
+}
+
+.cardCta:hover {
+  transform: translateX(4px);
+  box-shadow: 0 8px 16px var(--accent-light);
+}
+
+.cardCta:active {
+  transform: translateX(2px);
+}
+
+/* Trust Section */
+.trustSection {
+  margin-top: 5rem;
+  padding-top: 4rem;
+  border-top: 1px solid;
+  text-align: center;
+}
+
+.trustLabel {
+  font-family: var(--font-poppins);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+.trustBadges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.trustBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: default;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.trustBadge:hover {
+  transform: translateY(-4px);
+}
+
+.badgeEmoji {
+  font-size: 1.75rem;
+  display: inline-block;
+}
+
+.badgeLabel {
+  font-family: var(--font-inter);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1rem;
+  }
+
+  .header {
+    margin-bottom: 3rem;
+  }
+
+  .grid {
+    gap: 1.5rem;
+  }
+
+  .bgBlob1 {
+    width: 250px;
+    height: 250px;
+  }
+
+  .bgBlob2 {
+    width: 200px;
+    height: 200px;
+  }
+
+  .bgBlob3 {
+    width: 180px;
+    height: 180px;
+  }
+
+  .trustBadges {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .valueCardHovered {
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 2rem 1rem;
+  }
+
+  .heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .trustBadges {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .preheader {
+    flex-wrap: wrap;
+  }
+}

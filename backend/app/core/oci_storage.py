@@ -27,6 +27,9 @@ class OCIStorageClient:
         Initialize OCI Object Storage client
         Uses config from ~/.oci/config or instance principal authentication
         """
+        self.object_storage_client = None
+        self.config = None
+        
         try:
             # Try instance principal authentication (for VMs in OCI)
             signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
@@ -45,8 +48,8 @@ class OCIStorageClient:
                 self.object_storage_client = oci.object_storage.ObjectStorageClient(self.config)
                 logger.info(f"Initialized OCI Storage with config file (profile: {settings.oci_profile or 'DEFAULT'})")
             except Exception as config_error:
-                logger.error(f"Failed to initialize OCI Storage client: {config_error}")
-                raise
+                logger.warning(f"OCI Storage not configured (optional for demo): {config_error}")
+                # Don't raise - OCI storage is optional for demo
         
         # Get namespace
         try:

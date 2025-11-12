@@ -74,6 +74,20 @@ class Settings(BaseSettings):
     # Monitoring
     sentry_dsn: Optional[str] = None
     log_level: str = "INFO"
+    
+    # Additional settings from .env
+    debug: bool = False
+    allowed_origins: str = "*"
+    jwt_secret_key: Optional[str] = None
+    refresh_token_expire_days: int = 7
+    smtp_host: Optional[str] = None
+    smtp_port: Optional[int] = None
+    smtp_username: Optional[str] = None
+    smtp_password: Optional[str] = None
+    email_from: Optional[str] = None
+    redis_host: Optional[str] = None
+    redis_port: Optional[int] = None
+    redis_db: Optional[int] = None
 
     class Config:
         env_file = ".env"

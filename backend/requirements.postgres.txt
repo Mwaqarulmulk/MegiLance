@@ -13,6 +13,5 @@ python-multipart==0.0.9
 pytest==8.3.2
 gunicorn==22.0.0
 alembic==1.13.1
-# Oracle Cloud support (oracledb is the modern driver, no C compiler needed)
-oci==2.119.1
-oracledb==2.0.1
+# Oracle Cloud Infrastructure (OCI) dependencies
+# boto3==1.34.144  # Removed AWS S3 dependency

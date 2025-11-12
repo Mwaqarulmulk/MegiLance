@@ -1,0 +1,34 @@
+# Optimized Oracle-enabled backend using oracledb thin mode (no Instant Client needed)
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install minimal dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y gcc && \
+    apt-get autoremove -y
+
+# Copy application code
+COPY . .
+
+# Set Oracle wallet location for thin mode
+ENV TNS_ADMIN=/app/oracle-wallet
+ENV PYTHONUNBUFFERED=1
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/api/health/live || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Run with gunicorn
+CMD ["gunicorn", "main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "120"]

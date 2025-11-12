@@ -1,23 +1,25 @@
-version: '3.8'
-
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.oracle
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
       - ./oracle-wallet:/app/oracle-wallet:ro
       - ./db:/data/db:ro
     environment:
-      - DATABASE_URL=\
+      - DATABASE_URL=oracle+oracledb://ADMIN:Bfw5ZvHQXjkDb!3lAa1!@megilancedb_high?wallet_location=/app/oracle-wallet&wallet_password=MegiLance2025!Wallet
       - OCI_REGION=eu-frankfurt-1
       - OCI_NAMESPACE=frj6px39shbv
       - OCI_BUCKET_NAME=megilance-storage
-      - OCI_COMPARTMENT_ID=ocid1.tenancy.oc1..aaaaaaaa4h764yvig7p4xtyxhmty36cwnbhqxsr3ldbaxnwykf2a5ws3qwlq
+      - OCI_COMPARTMENT_ID=ocid1.tenancy.oc1..aaaaaaaa4qmr2dmzh46gxp2urvb5rdhbg2zjljzlhsqbamujhcjc234iilq
       - ORACLE_WALLET_LOCATION=/app/oracle-wallet
       - ORACLE_WALLET_PASSWORD=MegiLance2025!Wallet
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+      - SECRET_KEY=your-secret-key-change-in-production-min-32-chars-megilance-oracle-2025
+      - FRONTEND_URL=http://localhost:3000
+      - ENVIRONMENT=production
+      - DEBUG=False
     networks:
       - megilance
 

@@ -1,0 +1,210 @@
+/* @AI-HINT: Dark theme styles for PoweredByAI component. Defines colors, backgrounds, enhanced contrast, and glassmorphism effects for dark mode. */
+
+.section {
+  background: linear-gradient(180deg, #1d2127 0%, #22272e 50%, #272b32 100%);
+}
+
+.badge {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.header {
+  color: #f5f7fa;
+}
+
+.heading {
+  color: #f5f7fa;
+}
+
+.subtitle {
+  color: #a9b1bd;
+}
+
+/* Orbs - Dark Theme */
+.gradientOrb1 {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.25) 0%, rgba(102, 126, 234, 0.18) 100%);
+}
+
+.gradientOrb2 {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.18) 0%, rgba(255, 180, 77, 0.12) 100%);
+}
+
+.gradientOrb3 {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.15) 0%, rgba(214, 108, 232, 0.1) 100%);
+}
+
+/* Feature Card - Dark Theme */
+.featureCard {
+  background: linear-gradient(135deg, rgba(44, 50, 58, 0.65) 0%, rgba(39, 43, 50, 0.45) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.featureCard:hover {
+  background: linear-gradient(135deg, rgba(44, 50, 58, 0.85) 0%, rgba(39, 43, 50, 0.65) 100%);
+  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 24px 48px rgba(69, 115, 223, 0.15);
+}
+
+.featureCardHovered {
+  box-shadow: 0 24px 48px rgba(69, 115, 223, 0.15);
+}
+
+/* Icon Wrapper - Dark Theme */
+.variantBlue .iconWrapper {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
+}
+
+.variantGreen .iconWrapper {
+  background: rgba(72, 213, 151, 0.15);
+  color: #48d597;
+}
+
+.variantOrange .iconWrapper {
+  background: rgba(255, 180, 77, 0.15);
+  color: #ffb84d;
+}
+
+.variantPurple .iconWrapper {
+  background: rgba(214, 108, 232, 0.15);
+  color: #d66ce8;
+}
+
+.variantRed .iconWrapper {
+  background: rgba(255, 68, 68, 0.15);
+  color: #ff4444;
+}
+
+.variantTeal .iconWrapper {
+  background: rgba(0, 229, 255, 0.15);
+  color: #00e5ff;
+}
+
+.variantPink .iconWrapper {
+  background: rgba(255, 95, 191, 0.15);
+  color: #ff5fbf;
+}
+
+.cardTitle {
+  color: #f5f7fa;
+}
+
+.cardDescription {
+  color: #c5cdd4;
+}
+
+/* Metric Badge - Dark Theme */
+.featureCard .metricBadge {
+  background: rgba(39, 43, 50, 0.6);
+}
+
+.metricLabel {
+  color: #9ca3af;
+}
+
+/* CTA Arrow - Dark Theme */
+.ctaArrow {
+  background: rgba(39, 43, 50, 0.6);
+  border-color: var(--accent-color-1);
+  color: var(--accent-color-1);
+}
+
+.variantBlue .ctaArrow:hover {
+  background: rgba(102, 126, 234, 0.2);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+}
+
+.variantGreen .ctaArrow:hover {
+  background: rgba(72, 213, 151, 0.2);
+  box-shadow: 0 8px 16px rgba(72, 213, 151, 0.2);
+}
+
+.variantOrange .ctaArrow:hover {
+  background: rgba(255, 180, 77, 0.2);
+  box-shadow: 0 8px 16px rgba(255, 180, 77, 0.2);
+}
+
+.variantPurple .ctaArrow:hover {
+  background: rgba(214, 108, 232, 0.2);
+  box-shadow: 0 8px 16px rgba(214, 108, 232, 0.2);
+}
+
+.variantRed .ctaArrow:hover {
+  background: rgba(255, 68, 68, 0.2);
+  box-shadow: 0 8px 16px rgba(255, 68, 68, 0.2);
+}
+
+.variantTeal .ctaArrow:hover {
+  background: rgba(0, 229, 255, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 229, 255, 0.2);
+}
+
+.variantPink .ctaArrow:hover {
+  background: rgba(255, 95, 191, 0.2);
+  box-shadow: 0 8px 16px rgba(255, 95, 191, 0.2);
+}
+
+/* Tech Stack - Dark Theme */
+.techStackSection {
+  border-top-color: rgba(102, 126, 234, 0.2);
+}
+
+.techStackTitle {
+  color: #f5f7fa;
+}
+
+.techStackSubtitle {
+  color: #a9b1bd;
+}
+
+.techItem {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 180, 77, 0.08) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+.techItem:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(255, 180, 77, 0.12) 100%);
+  border-color: rgba(102, 126, 234, 0.25);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.15);
+}
+
+.techIcon {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
+}
+
+.techName {
+  color: #f5f7fa;
+}
+
+.techType {
+  color: #a9b1bd;
+}
+
+/* Capabilities - Dark Theme */
+.capabilitiesSection {
+  border-top-color: rgba(102, 126, 234, 0.2);
+}
+
+.capabilitiesTitle {
+  color: #f5f7fa;
+}
+
+.capabilityItem {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 180, 77, 0.08) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+.capabilityItem:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(255, 180, 77, 0.12) 100%);
+  border-color: rgba(102, 126, 234, 0.25);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.1);
+}
+
+.capabilityText {
+  color: #f5f7fa;
+}

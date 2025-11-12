@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     wget \
     unzip \
-    libaio1 \
+    libaio-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Oracle Instant Client (required for cx_Oracle)
@@ -33,7 +33,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     libpq5 \
-    libaio1 \
+    libaio-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Oracle Instant Client from builder

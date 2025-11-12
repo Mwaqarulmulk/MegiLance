@@ -1,0 +1,61 @@
+{
+  "failed": 6,
+  "results": [
+    {
+      "status": "FAIL",
+      "test": "Health Check"
+    },
+    {
+      "status": "FAIL",
+      "test": "Database Version"
+    },
+    {
+      "status": "FAIL",
+      "test": "oracledb Module"
+    },
+    {
+      "status": "PASS",
+      "test": "Database Schema",
+      "tables": {
+        "Exception": "System.Management.Automation.RemoteException: Error response from daemon: container 59f0655ad83bb6b831b29d04cbd25cf49d6a2e6e22fd49ca790713e38246e305 is not running",
+        "TargetObject": "Error response from daemon: container 59f0655ad83bb6b831b29d04cbd25cf49d6a2e6e22fd49ca790713e38246e305 is not running",
+        "CategoryInfo": "NotSpecified: (Error response from…e305 is not running:String) [], RemoteException",
+        "FullyQualifiedErrorId": "NativeCommandError",
+        "ErrorDetails": null,
+        "InvocationInfo": "System.Management.Automation.InvocationInfo",
+        "ScriptStackTrace": "at <ScriptBlock>, E:\\MegiLance\\ORACLE_TEST_ALL.ps1: line 73\r\nat <ScriptBlock>, <No file>: line 1",
+        "PipelineIterationInfo": "0 0",
+        "PSMessageDetails": null
+      }
+    },
+    {
+      "status": "FAIL",
+      "test": "User Registration"
+    },
+    {
+      "status": "SKIP",
+      "test": "User Login"
+    },
+    {
+      "status": "SKIP",
+      "test": "Authenticated Endpoint"
+    },
+    {
+      "status": "FAIL",
+      "test": "Data Persistence"
+    },
+    {
+      "status": "FAIL",
+      "test": "Swagger UI"
+    },
+    {
+      "status": "WARN",
+      "test": "Frontend"
+    }
+  ],
+  "total_tests": 10,
+  "timestamp": "2025-11-13 00:33:21",
+  "warned": 2,
+  "passed": 3,
+  "skipped": 2
+}

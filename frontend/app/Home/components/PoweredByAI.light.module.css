@@ -1,0 +1,208 @@
+/* @AI-HINT: Light theme styles for PoweredByAI component. Defines colors, backgrounds, text visibility, and theme-specific visual elements. */
+
+.section {
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fc 50%, #f5f7fa 100%);
+}
+
+.badge {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+  color: #4573df;
+  border: 1px solid rgba(69, 115, 223, 0.2);
+}
+
+.header {
+  color: #23272f;
+}
+
+.heading {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #666666;
+}
+
+/* Orbs - Light Theme */
+.gradientOrb1 {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.2) 0%, rgba(102, 126, 234, 0.15) 100%);
+}
+
+.gradientOrb2 {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 180, 77, 0.1) 100%);
+}
+
+.gradientOrb3 {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.12) 0%, rgba(214, 108, 232, 0.08) 100%);
+}
+
+/* Feature Card - Light Theme */
+.featureCard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 247, 250, 0.5) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.featureCard:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 247, 250, 0.8) 100%);
+  border-color: rgba(69, 115, 223, 0.3);
+  box-shadow: 0 24px 48px rgba(69, 115, 223, 0.08);
+}
+
+.featureCardHovered {
+  box-shadow: 0 24px 48px rgba(69, 115, 223, 0.12);
+}
+
+/* Icon Wrapper - Light Theme */
+.variantBlue .iconWrapper {
+  background: rgba(69, 115, 223, 0.12);
+  color: #4573df;
+}
+
+.variantGreen .iconWrapper {
+  background: rgba(39, 174, 96, 0.12);
+  color: #27ae60;
+}
+
+.variantOrange .iconWrapper {
+  background: rgba(255, 152, 0, 0.12);
+  color: #ff9800;
+}
+
+.variantPurple .iconWrapper {
+  background: rgba(156, 39, 176, 0.12);
+  color: #9c27b0;
+}
+
+.variantRed .iconWrapper {
+  background: rgba(232, 17, 35, 0.12);
+  color: #e81123;
+}
+
+.variantTeal .iconWrapper {
+  background: rgba(0, 172, 193, 0.12);
+  color: #00acc1;
+}
+
+.variantPink .iconWrapper {
+  background: rgba(233, 30, 99, 0.12);
+  color: #e91e63;
+}
+
+.cardTitle {
+  color: #23272f;
+}
+
+.cardDescription {
+  color: #4b5563;
+}
+
+/* Metric Badge - Light Theme */
+.featureCard .metricBadge {
+  background: rgba(245, 247, 250, 0.8);
+}
+
+.metricLabel {
+  color: #666666;
+}
+
+/* CTA Arrow - Light Theme */
+.ctaArrow {
+  background: rgba(245, 247, 250, 0.8);
+  border-color: var(--accent-color-1);
+}
+
+.variantBlue .ctaArrow:hover {
+  background: rgba(69, 115, 223, 0.1);
+  box-shadow: 0 8px 16px rgba(69, 115, 223, 0.15);
+}
+
+.variantGreen .ctaArrow:hover {
+  background: rgba(39, 174, 96, 0.1);
+  box-shadow: 0 8px 16px rgba(39, 174, 96, 0.15);
+}
+
+.variantOrange .ctaArrow:hover {
+  background: rgba(255, 152, 0, 0.1);
+  box-shadow: 0 8px 16px rgba(255, 152, 0, 0.15);
+}
+
+.variantPurple .ctaArrow:hover {
+  background: rgba(156, 39, 176, 0.1);
+  box-shadow: 0 8px 16px rgba(156, 39, 176, 0.15);
+}
+
+.variantRed .ctaArrow:hover {
+  background: rgba(232, 17, 35, 0.1);
+  box-shadow: 0 8px 16px rgba(232, 17, 35, 0.15);
+}
+
+.variantTeal .ctaArrow:hover {
+  background: rgba(0, 172, 193, 0.1);
+  box-shadow: 0 8px 16px rgba(0, 172, 193, 0.15);
+}
+
+.variantPink .ctaArrow:hover {
+  background: rgba(233, 30, 99, 0.1);
+  box-shadow: 0 8px 16px rgba(233, 30, 99, 0.15);
+}
+
+/* Tech Stack - Light Theme */
+.techStackSection {
+  border-top-color: rgba(69, 115, 223, 0.1);
+}
+
+.techStackTitle {
+  color: #23272f;
+}
+
+.techStackSubtitle {
+  color: #666666;
+}
+
+.techItem {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.05) 0%, rgba(255, 152, 0, 0.03) 100%);
+  border: 1px solid rgba(69, 115, 223, 0.08);
+}
+
+.techItem:hover {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.1) 0%, rgba(255, 152, 0, 0.08) 100%);
+  border-color: rgba(69, 115, 223, 0.15);
+  box-shadow: 0 8px 16px rgba(69, 115, 223, 0.08);
+}
+
+.techIcon {
+  background: rgba(69, 115, 223, 0.1);
+  color: #4573df;
+}
+
+.techName {
+  color: #23272f;
+}
+
+.techType {
+  color: #4b5563;
+}
+
+/* Capabilities - Light Theme */
+.capabilitiesSection {
+  border-top-color: rgba(69, 115, 223, 0.1);
+}
+
+.capabilitiesTitle {
+  color: #23272f;
+}
+
+.capabilityItem {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.05) 0%, rgba(255, 152, 0, 0.03) 100%);
+  border: 1px solid rgba(69, 115, 223, 0.08);
+}
+
+.capabilityItem:hover {
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.1) 0%, rgba(255, 152, 0, 0.08) 100%);
+  border-color: rgba(69, 115, 223, 0.15);
+}
+
+.capabilityText {
+  color: #23272f;
+}

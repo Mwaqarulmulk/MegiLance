@@ -9,29 +9,11 @@ from app.models import user, project, proposal, contract, portfolio, payment  # 
 def init_db(engine: Engine) -> None:
     """Initialize database: run migrations and create tables."""
     
-    # Run Alembic migrations on startup (for production)
-    try:
-        alembic_ini = Path(__file__).parent.parent.parent / "alembic.ini"
-        if alembic_ini.exists():
-            print("🔄 Running database migrations...")
-            result = subprocess.run(
-                [sys.executable, "-m", "alembic", "upgrade", "head"],
-                cwd=str(alembic_ini.parent),
-                capture_output=True,
-                text=True
-            )
-            if result.returncode == 0:
-                print("✅ Migrations completed successfully")
-            else:
-                print(f"⚠️ Migration warning: {result.stderr}")
-                # Continue anyway - tables might already exist
-    except Exception as e:
-        print(f"⚠️ Could not run migrations: {e}")
-        print("Falling back to create_all()")
+    # SKIP AUTO-MIGRATIONS FOR DEMO - Manual setup used
+    print("ℹ️  Skipping auto-migrations (manual schema setup for demo)")
     
-    # Fallback: Create tables directly (useful for development)
-    Base.metadata.create_all(bind=engine)
+    # Tables are created manually via create_minimal_schema.py
+    # Seed data is loaded manually via seed_demo_data.py
+    # This prevents startup crashes from migration issues
     
-    # Import and run seed function
-    from app.db.seed_db import seed_database
-    seed_database()
+    print("✅ Database initialization skipped (using manual setup)")
