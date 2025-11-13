@@ -1,0 +1,20 @@
+name: megilance-frontend
+region: blr
+services:
+  - name: megilance-frontend
+    github:
+      repo: Mwaqarulmulk/MegiLance
+      branch: main
+      deploy_on_push: true
+    dockerfile_path: frontend/Dockerfile
+    source_dir: frontend
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    instance_count: 1
+    http_port: 3000
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"

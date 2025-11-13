@@ -2,8 +2,8 @@
 FROM node:20-bookworm-slim AS builder
 WORKDIR /app
 COPY package*.json ./
-# Use npm install since lockfile might be out of sync
-RUN npm install && npm cache clean --force
+# Use npm install with --legacy-peer-deps to handle eslint version conflicts
+RUN npm install --legacy-peer-deps && npm cache clean --force
 COPY . .
 # Build the Next.js application
 RUN npm run build
@@ -27,13 +27,11 @@ COPY --from=builder /app/next.config.js ./
 USER node
 
 ENV NODE_ENV=production
-ENV PORT=3000
-
 EXPOSE 3000
 
 # Health check (Next.js doesn't have built-in health endpoint, so check homepage)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
+    CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
 
-# Start the production server
+# Start the production server (respects PORT env var)
 CMD ["npm", "start"]
