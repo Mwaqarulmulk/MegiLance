@@ -1,14 +1,10 @@
 # Multi-stage production Dockerfile for Next.js frontend
-# Cache bust: 2025-11-13T21:15:00Z
 FROM node:20-bookworm-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 # Use npm install with --legacy-peer-deps to handle eslint version conflicts
 RUN npm install --legacy-peer-deps && npm cache clean --force
 COPY . .
-# Disable Turbopack by setting NEXT_TURBO environment variable to false
-# This forces Next.js to use webpack instead
-ENV NEXT_TURBO=false
 # Build the Next.js application
 RUN npm run build
 

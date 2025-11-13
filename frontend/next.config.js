@@ -11,8 +11,14 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Next.js 16 - Use Turbopack by default (empty config)
-  turbopack: {},
+  // Next.js 16 - Configure Turbopack with explicit path aliases
+  // Turbopack needs explicit alias configuration to work in Docker builds
+  turbopack: {
+    resolveAlias: {
+      '@': './app',
+      '@/*': './*',
+    },
+  },
   
   // ESLint config moved - use .eslintrc.json or CLI flags instead
   // eslint: { ignoreDuringBuilds: true } is no longer supported in next.config.js
