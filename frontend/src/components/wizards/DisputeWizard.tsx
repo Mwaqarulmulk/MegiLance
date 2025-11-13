@@ -304,6 +304,7 @@ export default function DisputeWizard({
                 value={newFileType}
                 onChange={(e) => setNewFileType(e.target.value as EvidenceFile['type'])}
                 className={commonStyles.typeSelect}
+                aria-label="Select evidence file type"
               >
                 <option value="screenshot">Screenshot</option>
                 <option value="document">Document</option>
@@ -348,6 +349,7 @@ export default function DisputeWizard({
                   type="button"
                   className={commonStyles.removeButton}
                   onClick={() => removeEvidence(evidence.id)}
+                  aria-label="Remove evidence file"
                 >
                   <FaTrash />
                 </button>

@@ -223,6 +223,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
               <button
                 onClick={() => setShowRequestForm(false)}
                 className={cn(commonStyles.closeBtn, themeStyles.closeBtn)}
+                aria-label="Close refund request form"
               >
                 <XCircle size={24} />
               </button>
@@ -237,6 +238,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
                   onChange={(e) => setPaymentId(e.target.value)}
                   className={cn(commonStyles.input, themeStyles.input)}
                   required
+                  aria-label="Payment ID"
                 />
               </div>
 
@@ -249,6 +251,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
                   onChange={(e) => setAmount(Number(e.target.value))}
                   className={cn(commonStyles.input, themeStyles.input)}
                   required
+                  aria-label="Refund amount"
                 />
               </div>
 
@@ -260,6 +263,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
                   className={cn(commonStyles.textarea, themeStyles.textarea)}
                   rows={4}
                   required
+                  aria-label="Refund reason"
                 />
               </div>
 
@@ -347,6 +351,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
               <button
                 onClick={() => setSelectedRefund(null)}
                 className={cn(commonStyles.closeBtn, themeStyles.closeBtn)}
+                aria-label="Close refund review"
               >
                 <XCircle size={24} />
               </button>

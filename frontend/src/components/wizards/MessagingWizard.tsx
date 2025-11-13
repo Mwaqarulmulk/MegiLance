@@ -479,6 +479,7 @@ export default function MessagingWizard({
                 type="button"
                 className={commonStyles.removeButton}
                 onClick={() => removeAttachment(attachment.id)}
+                aria-label="Remove attachment"
               >
                 <FaTrash />
               </button>

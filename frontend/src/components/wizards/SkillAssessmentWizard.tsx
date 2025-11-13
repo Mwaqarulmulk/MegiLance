@@ -356,7 +356,7 @@ export default function SkillAssessmentWizard({
       subtitle={skillName}
       steps={steps}
       currentStep={currentStep}
-      onStepChange={(step) => {
+      onStepChange={(step: number) => {
         if (step === 1 && !assessmentData.startTime) {
           setAssessmentData({ ...assessmentData, startTime: Date.now() });
         }

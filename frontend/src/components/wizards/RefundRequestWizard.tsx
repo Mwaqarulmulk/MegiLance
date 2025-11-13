@@ -225,6 +225,7 @@ export default function RefundRequestWizard({
                   value={evidence.type}
                   onChange={(e) => updateEvidence(evidence.id, 'type', e.target.value)}
                   className={cn(commonStyles.select, themeStyles.select)}
+                  aria-label="Select evidence type"
                 >
                   <option value="document">Contract/Agreement</option>
                   <option value="screenshot">Screenshot</option>
@@ -309,6 +310,7 @@ export default function RefundRequestWizard({
               refundAmount: Math.min(parseFloat(e.target.value) || 0, originalAmount)
             })}
             className={cn(commonStyles.input, themeStyles.input)}
+            aria-label="Enter refund amount"
           />
           <div className={commonStyles.helperText}>
             Maximum: ${originalAmount.toFixed(2)} (original payment amount)

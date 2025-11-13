@@ -202,6 +202,7 @@ const TimeTracking: React.FC = () => {
           value={selectedContract || ''}
           onChange={(e) => setSelectedContract(Number(e.target.value))}
           className={cn(commonStyles.select, themeStyles.select)}
+          aria-label="Select Contract"
         >
           <option value="">Choose a contract...</option>
           {contracts.map((contract) => (

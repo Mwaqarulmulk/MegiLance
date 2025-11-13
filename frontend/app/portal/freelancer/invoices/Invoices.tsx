@@ -212,6 +212,7 @@ const Invoices: React.FC = () => {
                 resetForm();
               }}
               className={cn(commonStyles.closeBtn, themeStyles.closeBtn)}
+              aria-label="Close create invoice form"
             >
               <X size={20} />
             </button>
@@ -227,6 +228,7 @@ const Invoices: React.FC = () => {
                 onChange={(e) => setContractId(Number(e.target.value))}
                 className={cn(commonStyles.select, themeStyles.select)}
                 required
+                aria-label="Select Contract"
               >
                 <option value="">Select a contract</option>
                 {contracts.map((contract) => (
@@ -247,6 +249,7 @@ const Invoices: React.FC = () => {
                 onChange={(e) => setDueDate(e.target.value)}
                 className={cn(commonStyles.input, themeStyles.input)}
                 required
+                aria-label="Invoice due date"
               />
             </div>
 
@@ -302,6 +305,7 @@ const Invoices: React.FC = () => {
                       type="button"
                       onClick={() => handleRemoveLineItem(index)}
                       className={cn(commonStyles.removeItemBtn, themeStyles.removeItemBtn)}
+                      aria-label="Remove line item"
                     >
                       <X size={16} />
                     </button>

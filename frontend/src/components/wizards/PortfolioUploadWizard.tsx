@@ -209,6 +209,7 @@ export default function PortfolioUploadWizard({ userId }: PortfolioUploadWizardP
             value={portfolioData.category}
             onChange={(e) => setPortfolioData({ ...portfolioData, category: e.target.value })}
             className={cn(commonStyles.select, themeStyles.select)}
+            aria-label="Select portfolio category"
           >
             <option value="">Select category...</option>
             {CATEGORIES.map(cat => (
@@ -237,6 +238,7 @@ export default function PortfolioUploadWizard({ userId }: PortfolioUploadWizardP
             value={portfolioData.projectDate}
             onChange={(e) => setPortfolioData({ ...portfolioData, projectDate: e.target.value })}
             className={cn(commonStyles.input, themeStyles.input)}
+            aria-label="Project completion date"
           />
         </div>
       </div>
@@ -542,6 +544,7 @@ export default function PortfolioUploadWizard({ userId }: PortfolioUploadWizardP
             value={portfolioData.visibility}
             onChange={(e) => setPortfolioData({ ...portfolioData, visibility: e.target.value as any })}
             className={cn(commonStyles.select, themeStyles.select)}
+            aria-label="Select portfolio visibility"
           >
             <option value="public">Public (visible to everyone)</option>
             <option value="private">Private (only you can see)</option>

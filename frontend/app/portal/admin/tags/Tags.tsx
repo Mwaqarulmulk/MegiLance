@@ -207,6 +207,7 @@ const TagsManagement: React.FC = () => {
                   onChange={(e) => setTagType(e.target.value as any)}
                   className={cn(commonStyles.select, themeStyles.select)}
                   required
+                  aria-label="Select Tag Type"
                 >
                   <option value="general">General</option>
                   <option value="skill">Skill</option>
@@ -330,6 +331,7 @@ const TagsManagement: React.FC = () => {
                     onClick={() => handleEdit(tag)}
                     className={cn(commonStyles.actionBtn, themeStyles.actionBtn)}
                     data-action="edit"
+                    aria-label="Edit tag"
                   >
                     <Edit2 size={16} />
                   </button>
@@ -337,6 +339,7 @@ const TagsManagement: React.FC = () => {
                     onClick={() => handleDelete(tag.id)}
                     className={cn(commonStyles.actionBtn, themeStyles.actionBtn)}
                     data-action="delete"
+                    aria-label="Delete tag"
                   >
                     <Trash2 size={16} />
                   </button>

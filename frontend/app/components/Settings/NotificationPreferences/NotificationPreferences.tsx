@@ -188,6 +188,7 @@ const NotificationPreferences: React.FC = () => {
                   className={styles.checkbox}
                   checked={preferences[category.key].email}
                   onChange={() => handleChannelToggle(category.key, 'email')}
+                  aria-label={`Email notifications for ${category.label}`}
                 />
               </div>
               <div>
@@ -196,6 +197,7 @@ const NotificationPreferences: React.FC = () => {
                   className={styles.checkbox}
                   checked={preferences[category.key].push}
                   onChange={() => handleChannelToggle(category.key, 'push')}
+                  aria-label={`Push notifications for ${category.label}`}
                 />
               </div>
               <div>
@@ -204,6 +206,7 @@ const NotificationPreferences: React.FC = () => {
                   className={styles.checkbox}
                   checked={preferences[category.key].sms}
                   onChange={() => handleChannelToggle(category.key, 'sms')}
+                  aria-label={`SMS notifications for ${category.label}`}
                 />
               </div>
               <div>
@@ -212,6 +215,7 @@ const NotificationPreferences: React.FC = () => {
                   className={styles.checkbox}
                   checked={preferences[category.key].inApp}
                   onChange={() => handleChannelToggle(category.key, 'inApp')}
+                  aria-label={`In-app notifications for ${category.label}`}
                 />
               </div>
             </div>

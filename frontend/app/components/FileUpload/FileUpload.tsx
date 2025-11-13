@@ -169,6 +169,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             accept={accept}
             onChange={handleFileSelect}
             style={{ display: 'none' }}
+            aria-label="Upload file"
           />
           
           {uploading ? (

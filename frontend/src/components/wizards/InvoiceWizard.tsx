@@ -307,6 +307,7 @@ export default function InvoiceWizard({
               min="0"
               step="1"
               className={commonStyles.qtyInput}
+              aria-label="Item quantity"
             />
             <div className={commonStyles.rateInput}>
               <span>$</span>
@@ -316,6 +317,7 @@ export default function InvoiceWizard({
                 onChange={(e) => updateLineItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
                 min="0"
                 step="0.01"
+                aria-label="Item rate"
               />
             </div>
             <div className={commonStyles.amountDisplay}>
@@ -326,6 +328,7 @@ export default function InvoiceWizard({
                 type="button"
                 onClick={() => removeLineItem(item.id)}
                 className={commonStyles.removeButton}
+                aria-label="Remove invoice line item"
               >
                 <FaTrash />
               </button>

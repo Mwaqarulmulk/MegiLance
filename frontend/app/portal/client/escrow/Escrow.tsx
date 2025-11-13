@@ -254,6 +254,7 @@ const EscrowManagement: React.FC = () => {
                 onChange={(e) => setContractId(Number(e.target.value))}
                 className={cn(commonStyles.select, themeStyles.select)}
                 required
+                aria-label="Select Contract for funding"
               >
                 <option value="">Select a contract</option>
                 {contracts.map((contract) => (

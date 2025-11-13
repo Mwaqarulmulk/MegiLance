@@ -176,6 +176,7 @@ const SupportTickets: React.FC = () => {
                   onChange={(e) => setCategory(e.target.value as any)}
                   className={cn(commonStyles.select, themeStyles.select)}
                   required
+                  aria-label="Select Ticket Category"
                 >
                   <option value="general">General</option>
                   <option value="technical">Technical</option>
@@ -191,6 +192,7 @@ const SupportTickets: React.FC = () => {
                   onChange={(e) => setPriority(e.target.value as any)}
                   className={cn(commonStyles.select, themeStyles.select)}
                   required
+                  aria-label="Select Ticket Priority"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>

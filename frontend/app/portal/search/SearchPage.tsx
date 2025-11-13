@@ -137,6 +137,7 @@ const AdvancedSearch: React.FC = () => {
               value={searchType}
               onChange={(e) => setSearchType(e.target.value as any)}
               className={cn(commonStyles.typeSelect, themeStyles.typeSelect)}
+              aria-label="Filter search by type"
             >
               <option value="all">All</option>
               <option value="projects">Projects</option>

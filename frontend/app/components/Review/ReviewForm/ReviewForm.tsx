@@ -140,6 +140,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             onMouseEnter={() => onHover(rating)}
             onMouseLeave={() => onHover(null)}
             onClick={() => onRate(rating)}
+            aria-label={`Rate ${rating} stars`}
           >
             <FaStar
               className={

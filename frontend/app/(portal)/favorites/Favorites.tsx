@@ -22,20 +22,18 @@ const Favorites: React.FC = () => {
 
   useEffect(() => {
     loadFavorites();
-  }, [filterType]);
+  }, [filterType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadFavorites = async () => {
     try {
       setLoading(true);
       setError(null);
-      const filters: any = {};
-      if (filterType !== 'all') {
-        filters.target_type = filterType;
-      }
-      const response = await favoritesApi.list(filters) as { favorites: Favorite[] };
+      const targetType = filterType !== 'all' ? (filterType as 'freelancer' | 'client' | 'project') : undefined;
+      const response = await favoritesApi.list(targetType) as { favorites: Favorite[] };
       setFavorites(response.favorites);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load favorites');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load favorites';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -48,8 +46,8 @@ const Favorites: React.FC = () => {
       setError(null);
       await favoritesApi.delete(favoriteId);
       loadFavorites();
-    } catch (err: any) {
-      setError(err.message || 'Failed to remove favorite');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to remove favorite');
     }
   };
 
@@ -147,6 +145,7 @@ const Favorites: React.FC = () => {
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
           className={cn(commonStyles.filterSelect, themeStyles.filterSelect)}
+          aria-label="Filter favorites by type"
         >
           <option value="all">All Favorites</option>
           <option value="project">Projects</option>
@@ -164,7 +163,7 @@ const Favorites: React.FC = () => {
           <Star size={48} />
           <p>No favorites yet</p>
           <p className={cn(commonStyles.emptyText, themeStyles.emptyText)}>
-            Start saving projects and profiles you're interested in
+            Start saving projects and profiles you&apos;re interested in
           </p>
         </div>
       ) : (

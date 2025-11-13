@@ -491,7 +491,7 @@ const AdvancedSearch: React.FC = () => {
                 <button onClick={() => loadSavedSearch(search)}>
                   {search.name}
                 </button>
-                <button onClick={() => deleteSavedSearch(search.id)}>
+                <button onClick={() => deleteSavedSearch(search.id)} aria-label="Delete saved search">
                   <FaTimes />
                 </button>
               </div>
