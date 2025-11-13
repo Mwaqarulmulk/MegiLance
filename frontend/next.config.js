@@ -12,7 +12,11 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Use Turbopack (explicitly enabled for Next.js 16)
-  turbopack: {},
+  turbopack: {
+    resolveAlias: {
+      '@/app': './app',
+    },
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.pravatar.cc' },
