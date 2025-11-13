@@ -11,13 +11,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Next.js 16 - Empty Turbopack config to use Turbopack with defaults
-  // This silences the "webpack config without turbopack config" error
   turbopack: {},
-  
-  // ESLint config moved - use .eslintrc.json or CLI flags instead
-  // eslint: { ignoreDuringBuilds: true } is no longer supported in next.config.js
-  
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.pravatar.cc' },
@@ -25,19 +19,13 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    // Allow overriding the backend URL in production via env, while keeping
-    // the Docker dev-compose default (http://backend:8000) for local dev.
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://backend:8000';
     return [
-      // Proxy backend through Next server to avoid CORS in browser
       { source: '/backend/:path*', destination: `${backendUrl}/:path*` },
     ];
   },
   async redirects() {
-    return [
-      // Legacy route redirects - route groups (portal) are not in URLs
-      // Routes automatically match based on file structure
-    ];
+    return [];
   },
 };
 
