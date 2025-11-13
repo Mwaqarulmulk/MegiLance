@@ -5,8 +5,8 @@ COPY package*.json ./
 # Use npm install with --legacy-peer-deps to handle eslint version conflicts
 RUN npm install --legacy-peer-deps && npm cache clean --force
 COPY . .
-# Build the Next.js application
-RUN npm run build
+# Build the Next.js application - disable Turbopack to use webpack
+RUN TURBOPACK=0 npm run build
 
 # Production stage
 FROM node:20-bookworm-slim
