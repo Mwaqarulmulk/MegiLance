@@ -30,9 +30,9 @@ const Favorites: React.FC = () => {
       setError(null);
       const filters: any = {};
       if (filterType !== 'all') {
-        filters.item_type = filterType;
+        filters.target_type = filterType;
       }
-      const response = await favoritesApi.list(filters);
+      const response = await favoritesApi.list(filters) as { favorites: Favorite[] };
       setFavorites(response.favorites);
     } catch (err: any) {
       setError(err.message || 'Failed to load favorites');
@@ -74,13 +74,13 @@ const Favorites: React.FC = () => {
   };
 
   const getItemUrl = (favorite: Favorite) => {
-    switch (favorite.item_type) {
+    switch (favorite.target_type) {
       case 'project':
-        return `/portal/projects/${favorite.item_id}`;
+        return `/portal/projects/${favorite.target_id}`;
       case 'freelancer':
-        return `/portal/freelancers/${favorite.item_id}`;
+        return `/portal/freelancers/${favorite.target_id}`;
       case 'client':
-        return `/portal/clients/${favorite.item_id}`;
+        return `/portal/clients/${favorite.target_id}`;
       default:
         return '#';
     }
@@ -119,7 +119,7 @@ const Favorites: React.FC = () => {
           <Briefcase size={24} className={cn(commonStyles.statIcon, themeStyles.statIcon)} />
           <div>
             <div className={cn(commonStyles.statValue, themeStyles.statValue)}>
-              {favorites.filter(f => f.item_type === 'project').length}
+              {favorites.filter(f => f.target_type === 'project').length}
             </div>
             <div className={cn(commonStyles.statLabel, themeStyles.statLabel)}>
               Projects
@@ -130,7 +130,7 @@ const Favorites: React.FC = () => {
           <User size={24} className={cn(commonStyles.statIcon, themeStyles.statIcon)} />
           <div>
             <div className={cn(commonStyles.statValue, themeStyles.statValue)}>
-              {favorites.filter(f => f.item_type === 'freelancer' || f.item_type === 'client').length}
+              {favorites.filter(f => f.target_type === 'freelancer' || f.target_type === 'client').length}
             </div>
             <div className={cn(commonStyles.statLabel, themeStyles.statLabel)}>
               Profiles
@@ -176,26 +176,20 @@ const Favorites: React.FC = () => {
             >
               <div className={commonStyles.cardHeader}>
                 <div className={cn(commonStyles.typeIcon, themeStyles.typeIcon)}>
-                  {getIcon(favorite.item_type)}
+                  {getIcon(favorite.target_type)}
                 </div>
                 <span
                   className={cn(commonStyles.typeBadge, themeStyles.typeBadge)}
-                  data-type={favorite.item_type}
+                  data-type={favorite.target_type}
                 >
-                  {favorite.item_type}
+                  {favorite.target_type}
                 </span>
               </div>
 
               <div className={commonStyles.cardBody}>
                 <h3 className={cn(commonStyles.itemTitle, themeStyles.itemTitle)}>
-                  {favorite.project?.title || favorite.freelancer?.full_name || favorite.client?.full_name || 'Unknown Item'}
+                  {favorite.target_type} #{favorite.target_id}
                 </h3>
-
-                {favorite.notes && (
-                  <p className={cn(commonStyles.notes, themeStyles.notes)}>
-                    {favorite.notes}
-                  </p>
-                )}
 
                 <div className={cn(commonStyles.savedDate, themeStyles.savedDate)}>
                   Saved on {formatDate(favorite.created_at)}

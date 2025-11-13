@@ -353,7 +353,7 @@ const ProposalBuilder: React.FC<ProposalBuilderProps> = ({
               onChange={(e) => setProposalData({ ...proposalData, coverLetter: e.target.value })}
               error={errors.coverLetter}
               rows={12}
-              helperText={`${proposalData.coverLetter.length} characters (minimum 100)`}
+              helpText={`${proposalData.coverLetter.length} characters (minimum 100)`}
             />
           </div>
 
@@ -371,7 +371,7 @@ const ProposalBuilder: React.FC<ProposalBuilderProps> = ({
                 value={proposalData.bidAmount}
                 onChange={(e) => setProposalData({ ...proposalData, bidAmount: e.target.value })}
                 error={errors.bidAmount}
-                helperText={`Client budget: PKR ${projectBudget.min} - ${projectBudget.max}`}
+                helpText={`Client budget: PKR ${projectBudget.min} - ${projectBudget.max}`}
               />
               <Input
                 name="estimatedHours"

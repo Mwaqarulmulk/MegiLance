@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { searchApi } from '@/lib/api';
-import type { SearchResult, AutocompleteResult } from '@/types/api';
+import type { SearchResult, AutocompleteResult, AutocompleteSuggestion } from '@/types/api';
 import { Search, TrendingUp, Filter, Briefcase, User, Code, MapPin, DollarSign } from 'lucide-react';
 import commonStyles from './SearchPage.common.module.css';
 import lightStyles from './SearchPage.light.module.css';
@@ -19,7 +19,7 @@ const AdvancedSearch: React.FC = () => {
   const [searchType, setSearchType] = useState<'all' | 'projects' | 'freelancers'>('all');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [trending, setTrending] = useState<any[]>([]);
-  const [suggestions, setSuggestions] = useState<AutocompleteResult[]>([]);
+  const [suggestions, setSuggestions] = useState<AutocompleteSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -45,8 +45,8 @@ const AdvancedSearch: React.FC = () => {
 
   const loadTrending = async () => {
     try {
-      const response = await searchApi.getTrending();
-      setTrending(response.trending_searches);
+      const response = await searchApi.getTrending('projects') as { trending_searches: any[] };
+      setTrending(response.trending_searches || []);
     } catch (err: any) {
       console.error('Failed to load trending searches:', err);
     }
@@ -54,7 +54,7 @@ const AdvancedSearch: React.FC = () => {
 
   const loadAutocomplete = async () => {
     try {
-      const response = await searchApi.autocomplete(query);
+      const response = await searchApi.autocomplete(query) as AutocompleteResult;
       setSuggestions(response.suggestions);
     } catch (err: any) {
       console.error('Failed to load suggestions:', err);
@@ -77,16 +77,16 @@ const AdvancedSearch: React.FC = () => {
       if (location) filters.location = location;
       if (experienceLevel) filters.experience_level = experienceLevel;
 
-      let response;
+      let response: any;
       if (searchType === 'projects') {
         response = await searchApi.projects(query, filters);
       } else if (searchType === 'freelancers') {
         response = await searchApi.freelancers(query, filters);
       } else {
-        response = await searchApi.global(query, filters);
+        response = await searchApi.global(query);
       }
 
-      setResults(response.results);
+      setResults(response.results || []);
     } catch (err: any) {
       setError(err.message || 'Search failed');
     } finally {

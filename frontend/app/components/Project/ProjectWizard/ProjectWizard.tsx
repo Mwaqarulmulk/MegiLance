@@ -249,7 +249,7 @@ const ProjectWizard: React.FC = () => {
               onChange={(e) => setProjectData({ ...projectData, title: e.target.value })}
               error={errors.title}
               className="col-span-2"
-              helperText={`${projectData.title.length} characters (minimum 10)`}
+              helpText={`${projectData.title.length} characters (minimum 10)`}
             />
             <Textarea
               name="description"
@@ -260,7 +260,7 @@ const ProjectWizard: React.FC = () => {
               error={errors.description}
               rows={8}
               className="col-span-2"
-              helperText={`${projectData.description.length}/1000 characters (minimum 100)`}
+              helpText={`${projectData.description.length}/1000 characters (minimum 100)`}
             />
             <Select
               id="category"

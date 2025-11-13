@@ -31,18 +31,18 @@ async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = getAuthToken();
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string> || {}),
   };
 
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
-    headers,
+    headers: headers as HeadersInit,
   });
 
   if (!response.ok) {
@@ -149,8 +149,15 @@ export const invoicesApi = {
       body: JSON.stringify(data),
     }),
 
-  list: (page = 1, pageSize = 20) =>
-    apiFetch(`/invoices/?page=${page}&page_size=${pageSize}`),
+  list: (filters?: { status?: string; page?: number; page_size?: number }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) params.append(key, value.toString());
+      });
+    }
+    return apiFetch(`/invoices/?${params}`);
+  },
 
   get: (invoiceId: number) =>
     apiFetch(`/invoices/${invoiceId}`),
@@ -184,26 +191,26 @@ export const escrowApi = {
   get: (escrowId: number) =>
     apiFetch(`/escrow/${escrowId}`),
 
-  fund: (contractId: number, amount: number, description?: string) =>
+  fund: (data: { contract_id: number; amount: number; description?: string }) =>
     apiFetch('/escrow/fund', {
       method: 'POST',
-      body: JSON.stringify({ contract_id: contractId, amount, description }),
+      body: JSON.stringify(data),
     }),
 
-  release: (escrowId: number, amount: number, notes?: string) =>
+  release: (escrowId: number, data: { amount: number; notes?: string }) =>
     apiFetch(`/escrow/${escrowId}/release`, {
       method: 'POST',
-      body: JSON.stringify({ amount, notes }),
+      body: JSON.stringify(data),
     }),
 
-  refund: (escrowId: number, amount: number, reason?: string) =>
+  refund: (escrowId: number, data: { amount?: number; reason: string }) =>
     apiFetch(`/escrow/${escrowId}/refund`, {
       method: 'POST',
-      body: JSON.stringify({ amount, reason }),
+      body: JSON.stringify(data),
     }),
 
-  getBalance: (contractId: number) =>
-    apiFetch(`/escrow/balance?contract_id=${contractId}`),
+  getBalance: () =>
+    apiFetch('/escrow/balance'),
 };
 
 // ===========================
@@ -221,7 +228,15 @@ export const categoriesApi = {
 // TAGS
 // ===========================
 export const tagsApi = {
-  list: () => apiFetch('/tags/'),
+  list: (filters?: { type?: string; page?: number; page_size?: number }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) params.append(key, value.toString());
+      });
+    }
+    return apiFetch(`/tags/?${params}`);
+  },
 
   create: (data: { name: string; type: 'skill' | 'priority' | 'location' | 'budget' | 'general' }) =>
     apiFetch('/tags/', {
@@ -240,8 +255,8 @@ export const tagsApi = {
   delete: (tagId: number) =>
     apiFetch(`/tags/${tagId}`, { method: 'DELETE' }),
 
-  getPopular: (limit = 10) =>
-    apiFetch(`/tags/popular?limit=${limit}`),
+  getPopular: () =>
+    apiFetch('/tags/popular'),
 
   getProjectTags: (projectId: number) =>
     apiFetch(`/tags/projects/${projectId}/tags`),
@@ -281,8 +296,15 @@ export const favoritesApi = {
 // SUPPORT TICKETS
 // ===========================
 export const supportTicketsApi = {
-  list: (page = 1, pageSize = 20) =>
-    apiFetch(`/support-tickets/?page=${page}&page_size=${pageSize}`),
+  list: (filters?: { status?: string; page?: number; page_size?: number }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) params.append(key, value.toString());
+      });
+    }
+    return apiFetch(`/support-tickets/?${params}`);
+  },
 
   create: (data: {
     subject: string;
@@ -304,10 +326,10 @@ export const supportTicketsApi = {
       body: JSON.stringify({ status }),
     }),
 
-  addMessage: (ticketId: number, message: string) =>
+  addMessage: (ticketId: number, data: { message: string }) =>
     apiFetch(`/support-tickets/${ticketId}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ message }),
+      body: JSON.stringify(data),
     }),
 };
 
@@ -315,20 +337,26 @@ export const supportTicketsApi = {
 // REFUNDS
 // ===========================
 export const refundsApi = {
-  list: (page = 1, pageSize = 20) =>
-    apiFetch(`/refunds/?page=${page}&page_size=${pageSize}`),
+  list: (filter?: string, page = 1, pageSize = 20) => {
+    const params = new URLSearchParams({ page: page.toString(), page_size: pageSize.toString() });
+    if (filter) params.append('status', filter);
+    return apiFetch(`/refunds/?${params}`);
+  },
 
-  request: (paymentId: number, amount: number, reason: string) =>
+  request: (data: { payment_id: number; amount: number; reason: string }) =>
     apiFetch('/refunds/', {
       method: 'POST',
-      body: JSON.stringify({ payment_id: paymentId, amount, reason }),
+      body: JSON.stringify(data),
     }),
 
   get: (refundId: number) =>
     apiFetch(`/refunds/${refundId}`),
 
-  approve: (refundId: number) =>
-    apiFetch(`/refunds/${refundId}/approve`, { method: 'POST' }),
+  approve: (refundId: number, data?: { admin_notes?: string }) =>
+    apiFetch(`/refunds/${refundId}/approve`, { 
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+    }),
 
   reject: (refundId: number, reason: string) =>
     apiFetch(`/refunds/${refundId}/reject`, {
@@ -433,8 +461,15 @@ export const projectsApi = {
 // CONTRACTS
 // ===========================
 export const contractsApi = {
-  list: (page = 1, pageSize = 20) =>
-    apiFetch(`/contracts/?page=${page}&page_size=${pageSize}`),
+  list: (filters?: { status?: string; page?: number; page_size?: number }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) params.append(key, value.toString());
+      });
+    }
+    return apiFetch(`/contracts/?${params}`);
+  },
 
   create: (data: { project_id: number; freelancer_id: number; terms: string; budget: number }) =>
     apiFetch('/contracts/', {

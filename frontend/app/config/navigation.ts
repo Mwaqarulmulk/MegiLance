@@ -185,6 +185,8 @@ export const getNavigationForUserType = (userType: 'freelancer' | 'client' | 'ad
     default:
       return publicNavItems;
   }
+};
+
 // Icon mapping for client-side resolution
 export const iconMap = {
   FaHome: 'FaHome',
@@ -218,8 +220,6 @@ export const iconMap = {
   FaLock: 'FaLock',
   FaUndo: 'FaUndo',
   FaTag: 'FaTag',
-};FaUser: 'FaUser',
-  FaSignOutAlt: 'FaSignOutAlt',
 };
 
 // Breadcrumb configuration

@@ -41,7 +41,7 @@ const EscrowManagement: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await escrowApi.list();
+      const response = await escrowApi.list() as { escrows: Escrow[] };
       setEscrows(response.escrows);
     } catch (err: any) {
       setError(err.message || 'Failed to load escrow transactions');
@@ -52,7 +52,7 @@ const EscrowManagement: React.FC = () => {
 
   const loadBalance = async () => {
     try {
-      const response = await escrowApi.getBalance();
+      const response = await escrowApi.getBalance() as EscrowBalance;
       setBalance(response);
     } catch (err: any) {
       console.error('Failed to load balance:', err);
@@ -61,7 +61,7 @@ const EscrowManagement: React.FC = () => {
 
   const loadContracts = async () => {
     try {
-      const response = await contractsApi.list({ status: 'active' });
+      const response = await contractsApi.list({ status: 'active' }) as { contracts: Contract[] };
       setContracts(response.contracts);
     } catch (err: any) {
       console.error('Failed to load contracts:', err);

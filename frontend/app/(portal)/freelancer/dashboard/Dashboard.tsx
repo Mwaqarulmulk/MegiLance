@@ -22,8 +22,8 @@ import {
   Star
 } from 'lucide-react';
 
-import KeyMetricsGrid from '@/app/freelancer/dashboard/components/KeyMetricsGrid/KeyMetricsGrid';
-import RecentActivityFeed from '@/app/freelancer/dashboard/components/RecentActivityFeed/RecentActivityFeed';
+import KeyMetricsGrid from '@/app/(portal)/freelancer/dashboard/components/KeyMetricsGrid/KeyMetricsGrid';
+import RecentActivityFeed from '@/app/(portal)/freelancer/dashboard/components/RecentActivityFeed/RecentActivityFeed';
 import ProjectCard from '@/app/components/ProjectCard/ProjectCard';
 import TransactionRow from '@/app/components/TransactionRow/TransactionRow';
 import Button from '@/app/components/Button/Button';

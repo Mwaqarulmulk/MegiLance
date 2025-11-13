@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Profile from '../Profile/Profile';
+import Profile from '../components/Profile/UserProfile/UserProfile';
 
 // @AI-HINT: Public /Profile redirects to portal-scoped profile if a portal area is known
 export default function ProfilePage() {
@@ -30,5 +30,5 @@ export default function ProfilePage() {
 
   // Fallback: render public profile if no portal area
   if (redirected) return null;
-  return <Profile />;
+  return <Profile userId="0" />;
 }

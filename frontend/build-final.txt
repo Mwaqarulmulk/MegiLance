@@ -1,0 +1,22 @@
+
+> frontend@0.1.0 build
+> cross-env NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true next build
+
+   Ôû▓ Next.js 16.0.3 (Turbopack)
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 37.3s
+   Running TypeScript ...
+Failed to compile.
+
+./app/(portal)/favorites/Favorites.tsx:36:20
+Type error: 'response' is of type 'unknown'.
+
+  34 |       }
+  35 |       const response = await favoritesApi.list(filters);
+> 36 |       setFavorites(response.favorites);
+     |                    ^
+  37 |     } catch (err: any) {
+  38 |       setError(err.message || 'Failed to load favorites');
+  39 |     } finally {
+Next.js build worker exited with code: 1 and signal: null

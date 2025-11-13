@@ -43,7 +43,7 @@ interface Review {
 }
 
 interface UserProfileProps {
-  userId: string;
+  userId: string | number;
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
@@ -204,7 +204,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
           <div className={styles.stats}>
             <div className={styles.statItem}>
               <div className="flex items-center gap-1">
-                {renderStars(parseFloat(calculateAverageRating()))}
+                {renderStars(parseFloat(calculateAverageRating() || '0'))}
               </div>
               <span>{calculateAverageRating()} ({reviews.length} reviews)</span>
             </div>

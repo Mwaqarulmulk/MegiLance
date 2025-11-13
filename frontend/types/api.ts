@@ -45,11 +45,14 @@ export interface Invoice {
   id: number;
   invoice_number: string;
   contract_id: number;
+  contract?: Contract;
   from_user_id: number;
   to_user_id: number;
   subtotal: number;
   tax: number;
   total: number;
+  total_amount: number;
+  line_items?: InvoiceItem[];
   due_date: string;
   paid_date?: string;
   status: 'draft' | 'sent' | 'pending' | 'paid' | 'overdue' | 'cancelled';
@@ -62,6 +65,8 @@ export interface Invoice {
 
 export interface InvoiceItem {
   description: string;
+  quantity: number;
+  unit_price: number;
   amount: number;
 }
 
@@ -75,9 +80,10 @@ export interface InvoiceList {
 export interface Escrow {
   id: number;
   contract_id: number;
+  contract?: Contract;
   amount: number;
   released_amount: number;
-  status: 'pending' | 'active' | 'released' | 'refunded' | 'disputed';
+  status: 'pending' | 'active' | 'released' | 'refunded' | 'disputed' | 'held';
   funded_at: string;
   released_at?: string;
   description?: string;
@@ -88,9 +94,13 @@ export interface Escrow {
 
 export interface EscrowBalance {
   contract_id: number;
+  total_balance: number;
   total_funded: number;
   total_released: number;
   available_balance: number;
+  held_amount: number;
+  released_amount: number;
+  refunded_amount: number;
   status: 'active' | 'none';
 }
 
@@ -113,6 +123,7 @@ export interface Tag {
   id: number;
   name: string;
   slug: string;
+  description?: string;
   type: 'skill' | 'priority' | 'location' | 'budget' | 'general';
   usage_count: number;
   created_at: string;
@@ -132,6 +143,20 @@ export interface FavoriteCheck {
   favorite_id?: number;
 }
 
+export interface RefundRequest {
+  id: number;
+  transaction_id: number;
+  payment_id: number;
+  user_id: number;
+  amount: number;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  admin_notes?: string;
+  requested_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SupportTicket {
   id: number;
   user_id: number;
@@ -142,6 +167,7 @@ export interface SupportTicket {
   status: 'open' | 'in_progress' | 'resolved' | 'closed';
   assigned_to?: number;
   attachments?: string;
+  messages?: Array<{ id: number; user_id: number; message: string; sender?: string; created_at: string }>;
   created_at: string;
   updated_at: string;
 }
@@ -200,8 +226,11 @@ export interface ProjectList {
 export interface Contract {
   id: number;
   project_id: number;
+  title?: string;
   client_id: number;
+  client?: { full_name: string };
   freelancer_id: number;
+  freelancer?: { full_name: string };
   status: 'pending' | 'active' | 'completed' | 'cancelled' | 'disputed';
   terms?: string;
   budget: number;
@@ -256,19 +285,31 @@ export interface ReviewList {
 }
 
 export interface SearchResult {
+  id: number;
+  type: 'project' | 'freelancer' | 'skill' | 'tag';
+  title?: string;
+  name?: string;
+  description?: string;
+  budget?: number;
+  location?: string;
+  skills?: string[];
+  url?: string;
+}
+
+export interface SearchResults {
   query: string;
-  results: {
-    projects: Project[];
-    freelancers: User[];
-    skills: string[];
-    tags: Tag[];
-  };
+  results: SearchResult[];
   total_results: number;
+}
+
+export interface AutocompleteSuggestion {
+  text: string;
+  type: 'project' | 'freelancer' | 'skill';
 }
 
 export interface AutocompleteResult {
   query: string;
-  suggestions: string[];
+  suggestions: AutocompleteSuggestion[];
 }
 
 export interface TrendingResult {
@@ -303,6 +344,7 @@ export interface InvoiceFormData {
   to_user_id: number;
   due_date: string;
   items: InvoiceItem[];
+  line_items?: InvoiceItem[];
   notes?: string;
   tax_rate?: number;
 }
@@ -315,6 +357,7 @@ export interface EscrowFundData {
 
 export interface TagFormData {
   name: string;
+  description?: string;
   type: 'skill' | 'priority' | 'location' | 'budget' | 'general';
 }
 

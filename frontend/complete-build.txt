@@ -1,0 +1,22 @@
+
+> frontend@0.1.0 build
+> cross-env NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true next build
+
+   Ôû▓ Next.js 16.0.3 (Turbopack)
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 40s
+   Running TypeScript ...
+Failed to compile.
+
+./app/(portal)/favorites/Favorites.tsx:77:22
+Type error: Property 'item_type' does not exist on type 'Favorite'.
+
+  75 |
+  76 |   const getItemUrl = (favorite: Favorite) => {
+> 77 |     switch (favorite.item_type) {
+     |                      ^
+  78 |       case 'project':
+  79 |         return `/portal/projects/${favorite.item_id}`;
+  80 |       case 'freelancer':
+Next.js build worker exited with code: 1 and signal: null

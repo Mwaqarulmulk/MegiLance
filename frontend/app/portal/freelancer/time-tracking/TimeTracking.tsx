@@ -49,7 +49,7 @@ const TimeTracking: React.FC = () => {
 
   const loadContracts = async () => {
     try {
-      const response = await contractsApi.list();
+      const response = await contractsApi.list() as { contracts: Contract[] };
       setContracts(response.contracts || []);
       if (response.contracts?.length > 0) {
         setSelectedContract(response.contracts[0].id);
@@ -64,7 +64,7 @@ const TimeTracking: React.FC = () => {
     
     setLoading(true);
     try {
-      const response = await timeEntriesApi.list(selectedContract, page, 10);
+      const response = await timeEntriesApi.list(selectedContract, page, 10) as { entries: TimeEntry[] };
       setTimeEntries(response.entries || []);
       
       // Check for active entry
@@ -81,7 +81,7 @@ const TimeTracking: React.FC = () => {
     if (!selectedContract) return;
     
     try {
-      const data = await timeEntriesApi.getSummary(selectedContract);
+      const data = await timeEntriesApi.getSummary(selectedContract) as TimeEntrySummary;
       setSummary(data);
     } catch (err: any) {
       console.error('Failed to load summary:', err);
@@ -100,7 +100,7 @@ const TimeTracking: React.FC = () => {
         description || 'Working on contract tasks',
         billable,
         billable ? hourlyRate : undefined
-      );
+      ) as TimeEntry;
       setActiveEntry(entry);
       setDescription('');
       loadTimeEntries();
@@ -298,8 +298,8 @@ const TimeTracking: React.FC = () => {
                   variant="primary"
                   onClick={handleStart}
                   disabled={loading}
-                  icon={<Play size={18} />}
                 >
+                  <Play size={18} className="mr-2" />
                   Start Timer
                 </Button>
               </div>
@@ -318,8 +318,8 @@ const TimeTracking: React.FC = () => {
                   variant="danger"
                   onClick={handleStop}
                   disabled={loading}
-                  icon={<Square size={18} />}
                 >
+                  <Square size={18} className="mr-2" />
                   Stop Timer
                 </Button>
               </div>

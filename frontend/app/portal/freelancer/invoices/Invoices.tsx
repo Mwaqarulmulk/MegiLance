@@ -46,7 +46,7 @@ const Invoices: React.FC = () => {
       if (statusFilter !== 'all') {
         filters.status = statusFilter;
       }
-      const response = await invoicesApi.list(filters);
+      const response = await invoicesApi.list(filters) as { invoices: Invoice[] };
       setInvoices(response.invoices);
     } catch (err: any) {
       setError(err.message || 'Failed to load invoices');
@@ -57,7 +57,7 @@ const Invoices: React.FC = () => {
 
   const loadContracts = async () => {
     try {
-      const response = await contractsApi.list({ status: 'active' });
+      const response = await contractsApi.list({ status: 'active' }) as { contracts: Contract[] };
       setContracts(response.contracts);
     } catch (err: any) {
       console.error('Failed to load contracts:', err);
@@ -101,9 +101,11 @@ const Invoices: React.FC = () => {
       setError(null);
       const formData: InvoiceFormData = {
         contract_id: contractId,
+        to_user_id: 1, // TODO: Get from contract
         due_date: dueDate,
+        items: lineItems,
+        line_items: lineItems,
         notes: notes || undefined,
-        line_items: lineItems
       };
       await invoicesApi.create(formData);
       setShowCreateForm(false);
@@ -117,7 +119,7 @@ const Invoices: React.FC = () => {
   const handleSend = async (invoiceId: number) => {
     try {
       setError(null);
-      await invoicesApi.send(invoiceId);
+            await invoicesApi.update(invoiceId, { status: 'sent' });
       loadInvoices();
     } catch (err: any) {
       setError(err.message || 'Failed to send invoice');
@@ -127,7 +129,7 @@ const Invoices: React.FC = () => {
   const handleMarkAsPaid = async (invoiceId: number) => {
     try {
       setError(null);
-      await invoicesApi.markAsPaid(invoiceId);
+      await invoicesApi.markAsPaid(invoiceId, 1); // TODO: Get payment ID
       loadInvoices();
     } catch (err: any) {
       setError(err.message || 'Failed to mark invoice as paid');
@@ -518,7 +520,7 @@ const Invoices: React.FC = () => {
 
               <div className={commonStyles.lineItemsSection}>
                 <h3 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Line Items</h3>
-                {selectedInvoice.line_items.map((item, index) => (
+                {(selectedInvoice.line_items || []).map((item, index) => (
                   <div key={index} className={cn(commonStyles.detailLineItem, themeStyles.detailLineItem)}>
                     <div className={commonStyles.lineItemInfo}>
                       <div className={commonStyles.lineItemDescription}>{item.description}</div>

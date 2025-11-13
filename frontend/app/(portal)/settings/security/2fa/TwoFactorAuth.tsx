@@ -261,7 +261,7 @@ const TwoFactorAuth: React.FC = () => {
 
         {setupData && (
           <>
-            <div className={styles.step}>
+            <div className={styles.section}>
               <h2 className={styles.sectionTitle}>Step 1: Scan QR Code</h2>
               <p className={styles.message}>
                 Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)

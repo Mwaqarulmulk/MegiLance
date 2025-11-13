@@ -1,0 +1,4 @@
+
+> frontend@0.1.0 build
+> cross-env NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true next build
+

@@ -44,7 +44,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await refundsApi.list(filter === 'all' ? undefined : filter);
+      const response = await refundsApi.list(filter === 'all' ? undefined : filter) as { refund_requests: RefundRequest[] };
       setRefunds(response.refund_requests);
     } catch (err: any) {
       setError(err.message || 'Failed to load refunds');
@@ -82,7 +82,7 @@ const Refunds: React.FC<RefundsProps> = ({ userRole }) => {
       setActionLoading(true);
       setError(null);
 
-      await refundsApi.approve(refundId, adminNotes);
+      await refundsApi.approve(refundId, { admin_notes: adminNotes });
       setSelectedRefund(null);
       setAdminNotes('');
       loadRefunds();

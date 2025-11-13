@@ -32,6 +32,8 @@ interface WizardContainerProps {
   canSkip?: boolean;
   isLoading?: boolean;
   saveProgress?: () => void;
+  completeBtnText?: string;
+  completeBtnIcon?: ReactNode;
   className?: string;
 }
 

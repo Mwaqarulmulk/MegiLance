@@ -41,7 +41,7 @@ const TagsManagement: React.FC = () => {
       if (filterType !== 'all') {
         filters.type = filterType;
       }
-      const response = await tagsApi.list(filters);
+      const response = await tagsApi.list(filters) as { tags: Tag[] };
       setTags(response.tags);
     } catch (err: any) {
       setError(err.message || 'Failed to load tags');
@@ -52,7 +52,7 @@ const TagsManagement: React.FC = () => {
 
   const loadPopularTags = async () => {
     try {
-      const response = await tagsApi.getPopular(10);
+      const response = await tagsApi.getPopular() as { tags: Tag[] };
       setPopularTags(response.tags);
     } catch (err: any) {
       console.error('Failed to load popular tags:', err);

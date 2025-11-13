@@ -24,7 +24,7 @@ const SupportTickets: React.FC = () => {
 
   // Form state
   const [subject, setSubject] = useState('');
-  const [category, setCategory] = useState<'technical' | 'billing' | 'general' | 'account'>('general');
+    const [category, setCategory] = useState<'technical' | 'billing' | 'account' | 'project' | 'other'>('technical');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high' | 'urgent'>('medium');
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
@@ -41,7 +41,7 @@ const SupportTickets: React.FC = () => {
       if (statusFilter !== 'all') {
         filters.status = statusFilter;
       }
-      const response = await supportTicketsApi.list(filters);
+      const response = await supportTicketsApi.list(filters) as { tickets: SupportTicket[] };
       setTickets(response.tickets);
     } catch (err: any) {
       setError(err.message || 'Failed to load tickets');
@@ -76,7 +76,7 @@ const SupportTickets: React.FC = () => {
       setError(null);
       await supportTicketsApi.addMessage(selectedTicket.id, { message });
       setMessage('');
-      const updated = await supportTicketsApi.get(selectedTicket.id);
+      const updated = await supportTicketsApi.get(selectedTicket.id) as SupportTicket;
       setSelectedTicket(updated);
       loadTickets();
     } catch (err: any) {
@@ -86,7 +86,7 @@ const SupportTickets: React.FC = () => {
 
   const resetForm = () => {
     setSubject('');
-    setCategory('general');
+    setCategory('technical');
     setPriority('medium');
     setDescription('');
   };
@@ -338,7 +338,7 @@ const SupportTickets: React.FC = () => {
                       className={cn(commonStyles.message, themeStyles.message)}
                     >
                       <div className={cn(commonStyles.messageMeta, themeStyles.messageMeta)}>
-                        <strong>{msg.sender?.full_name || 'Support Team'}</strong>
+                        <strong>{msg.sender || 'User'}</strong>
                         <span>{formatDate(msg.created_at)}</span>
                       </div>
                       <p className={cn(commonStyles.messageText, themeStyles.messageText)}>

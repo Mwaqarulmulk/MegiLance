@@ -307,7 +307,7 @@ const ProfileWizard: React.FC = () => {
               error={errors.bio}
               rows={6}
               className="col-span-2"
-              helperText={`${profileData.bio.length}/500 characters (minimum 50)`}
+              helpText={`${profileData.bio.length}/500 characters (minimum 50)`}
             />
             <Input
               name="location"
@@ -476,7 +476,7 @@ const ProfileWizard: React.FC = () => {
               value={profileData.phoneNumber}
               onChange={(e) => setProfileData({ ...profileData, phoneNumber: e.target.value })}
               error={errors.phoneNumber}
-              helperText="Required for verification and important notifications"
+              helpText="Required for verification and important notifications"
               className="col-span-2"
             />
             <Input

@@ -2,7 +2,9 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { io, Socket as SocketIOSocket } from 'socket.io-client';
+
+type Socket = SocketIOSocket;
 
 interface UseWebSocketOptions {
   url?: string;
