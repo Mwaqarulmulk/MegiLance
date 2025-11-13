@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Continue"
 $env:OCI_CLI_AUTH = "security_token"
 
-$vmIP = "152.70.31.175"
+$vmIP = "193.122.57.193"
 $sshKey = "oracle-vm-ssh.key"
 $maxRetries = 20
 $retryDelay = 30
@@ -47,14 +47,14 @@ function Ensure-OpenSSHClient {
 # Function to test SSH (pure PowerShell / OpenSSH, no bash dependency)
 function Test-SSHConnection {
     param($ip, $key)
-    $result = & ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes -i "$key" ubuntu@$ip "echo ok" 2>&1
+    $result = & ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes -i "$key" opc@$ip "echo ok" 2>&1
     return ($LASTEXITCODE -eq 0 -and $result -match 'ok')
 }
 
 # Function to run command on VM (uses native ssh)
 function Invoke-SSHCommand {
     param($ip, $key, $command)
-    & ssh -o StrictHostKeyChecking=no -i "$key" ubuntu@$ip "$command" 2>&1
+    & ssh -o StrictHostKeyChecking=no -i "$key" opc@$ip "$command" 2>&1
 }
 
 # Step 0: Ensure OpenSSH client exists
@@ -87,7 +87,7 @@ for ($i = 1; $i -le $maxRetries; $i++) {
 if (-not $connected) {
     Write-Host "`n❌ Failed to connect after $maxRetries attempts" -ForegroundColor Red
     Write-Host "`n💡 Try these alternatives:" -ForegroundColor Yellow
-    Write-Host "   1. Use Oracle Cloud Shell: ssh ubuntu@$vmIP" -ForegroundColor Gray
+    Write-Host "   1. Use Oracle Cloud Shell: ssh opc@$vmIP" -ForegroundColor Gray
     Write-Host "   2. Check VM Console Connection in Oracle Console" -ForegroundColor Gray
     Write-Host "   3. Wait 10 more minutes and run this script again`n" -ForegroundColor Gray
     exit 1
@@ -136,8 +136,8 @@ Write-Host ""
 # Step 4: Clone repository
 Write-Host "📦 Step 4: Setting up repository..." -ForegroundColor Cyan
 $repoSetup = Invoke-SSHCommand -ip $vmIP -key $sshKey -command @"
-mkdir -p /home/ubuntu/app
-cd /home/ubuntu/app
+mkdir -p /home/opc/app
+cd /home/opc/app
 if [ -d "MegiLance" ]; then
     echo 'Repository exists, pulling latest...'
     cd MegiLance
@@ -160,10 +160,10 @@ Write-Host ""
 Write-Host "📂 Step 5: Uploading Oracle DB wallet..." -ForegroundColor Cyan
 if (Test-Path "oracle-wallet-23ai") {
     Write-Host "   Creating wallet directory on VM..." -ForegroundColor Gray
-    Invoke-SSHCommand -ip $vmIP -key $sshKey -command "mkdir -p /home/ubuntu/app/MegiLance/oracle-wallet-23ai"
+    Invoke-SSHCommand -ip $vmIP -key $sshKey -command "mkdir -p /home/opc/app/MegiLance/oracle-wallet-23ai"
     
     Write-Host "   Uploading wallet files..." -ForegroundColor Gray
-    if (-not (Get-Command scp -ErrorAction SilentlyContinue)) { Write-Host "   ❌ 'scp' not found. Install OpenSSH Client." -ForegroundColor Red } else { & scp -o StrictHostKeyChecking=no -i "$sshKey" -r oracle-wallet-23ai/* ubuntu@${vmIP}:/home/ubuntu/app/MegiLance/oracle-wallet-23ai/ 2>&1 | Out-Null }
+    if (-not (Get-Command scp -ErrorAction SilentlyContinue)) { Write-Host "   ❌ 'scp' not found. Install OpenSSH Client." -ForegroundColor Red } else { & scp -o StrictHostKeyChecking=no -i "$sshKey" -r oracle-wallet-23ai/* opc@${vmIP}:/home/opc/app/MegiLance/oracle-wallet-23ai/ 2>&1 | Out-Null }
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host "   ✅ Wallet uploaded successfully!" -ForegroundColor Green
@@ -202,7 +202,7 @@ PORT=8000
 
 $tempFile = New-TemporaryFile
 Set-Content -Path $tempFile -Value $envContent -NoNewline
-if (-not (Get-Command scp -ErrorAction SilentlyContinue)) { Write-Host "   ❌ 'scp' not found. Install OpenSSH Client." -ForegroundColor Red } else { & scp -o StrictHostKeyChecking=no -i "$sshKey" "$tempFile" ubuntu@${vmIP}:/home/ubuntu/app/MegiLance/backend/.env 2>&1 | Out-Null }
+if (-not (Get-Command scp -ErrorAction SilentlyContinue)) { Write-Host "   ❌ 'scp' not found. Install OpenSSH Client." -ForegroundColor Red } else { & scp -o StrictHostKeyChecking=no -i "$sshKey" "$tempFile" opc@${vmIP}:/home/opc/app/MegiLance/backend/.env 2>&1 | Out-Null }
 Remove-Item $tempFile -ErrorAction SilentlyContinue
 
 Write-Host "   ✅ Environment file created!" -ForegroundColor Green
@@ -213,7 +213,7 @@ Write-Host ""
 Write-Host "🚀 Step 7: Deploying backend..." -ForegroundColor Cyan
 Write-Host "   Starting Docker containers..." -ForegroundColor Gray
 $deployOutput = Invoke-SSHCommand -ip $vmIP -key $sshKey -command @"
-cd /home/ubuntu/app/MegiLance
+cd /home/opc/app/MegiLance
 docker-compose -f docker-compose.minimal.yml pull
 docker-compose -f docker-compose.minimal.yml up -d
 sleep 15
@@ -247,19 +247,19 @@ Write-Host ""
 Write-Host "🔗 Step 9: Setting up Git webhook..." -ForegroundColor Cyan
 $webhookScript = @'
 #!/bin/bash
-cd /home/ubuntu/app/MegiLance
+cd /home/opc/app/MegiLance
 git pull origin main
 docker-compose -f docker-compose.minimal.yml up -d --build
-echo "$(date): Deployment triggered" >> /home/ubuntu/app/deploy.log
+echo "$(date): Deployment triggered" >> /home/opc/app/deploy.log
 '@
 
 $tempHook = New-TemporaryFile
 Set-Content -Path $tempHook -Value $webhookScript -NoNewline
-if (-not (Get-Command scp -ErrorAction SilentlyContinue)) { Write-Host "   ❌ 'scp' not found. Install OpenSSH Client." -ForegroundColor Red } else { & scp -o StrictHostKeyChecking=no -i "$sshKey" "$tempHook" ubuntu@${vmIP}:/home/ubuntu/app/MegiLance/deploy-webhook.sh 2>&1 | Out-Null }
-Invoke-SSHCommand -ip $vmIP -key $sshKey -command "chmod +x /home/ubuntu/app/MegiLance/deploy-webhook.sh"
+if (-not (Get-Command scp -ErrorAction SilentlyContinue)) { Write-Host "   ❌ 'scp' not found. Install OpenSSH Client." -ForegroundColor Red } else { & scp -o StrictHostKeyChecking=no -i "$sshKey" "$tempHook" opc@${vmIP}:/home/opc/app/MegiLance/deploy-webhook.sh 2>&1 | Out-Null }
+Invoke-SSHCommand -ip $vmIP -key $sshKey -command "chmod +x /home/opc/app/MegiLance/deploy-webhook.sh"
 Remove-Item $tempHook -ErrorAction SilentlyContinue
 
-Write-Host "   ✅ Webhook script created at: /home/ubuntu/app/MegiLance/deploy-webhook.sh" -ForegroundColor Green
+Write-Host "   ✅ Webhook script created at: /home/opc/app/MegiLance/deploy-webhook.sh" -ForegroundColor Green
 Write-Host ""
 
 # Final summary
@@ -285,12 +285,12 @@ Write-Host ""
 
 Write-Host "⚠️  IMPORTANT - Manual Steps Required:" -ForegroundColor Yellow
 Write-Host "   1. Update database password in backend/.env:" -ForegroundColor White
-Write-Host "      ssh -i $sshKey ubuntu@$vmIP" -ForegroundColor Gray
-Write-Host "      nano /home/ubuntu/app/MegiLance/backend/.env" -ForegroundColor Gray
+Write-Host "      ssh -i $sshKey opc@$vmIP" -ForegroundColor Gray
+Write-Host "      nano /home/opc/app/MegiLance/backend/.env" -ForegroundColor Gray
 Write-Host "      (Change YOUR_PASSWORD_HERE to actual Oracle DB password)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "   2. Restart backend after password update:" -ForegroundColor White
-Write-Host "      cd /home/ubuntu/app/MegiLance" -ForegroundColor Gray
+Write-Host "      cd /home/opc/app/MegiLance" -ForegroundColor Gray
 Write-Host "      docker-compose -f docker-compose.minimal.yml restart" -ForegroundColor Gray
 Write-Host ""
 Write-Host "   3. Setup GitHub webhook for auto-deployment:" -ForegroundColor White
@@ -299,7 +299,7 @@ Write-Host "      - Add webhook: http://$vmIP:9000/deploy" -ForegroundColor Gray
 Write-Host ""
 
 Write-Host "🔍 Useful Commands:" -ForegroundColor Cyan
-Write-Host "   SSH into VM:       ssh -i $sshKey ubuntu@$vmIP" -ForegroundColor Gray
+Write-Host "   SSH into VM:       ssh -i $sshKey opc@$vmIP" -ForegroundColor Gray
 Write-Host "   View logs:         docker-compose -f docker-compose.minimal.yml logs -f" -ForegroundColor Gray
 Write-Host "   Restart backend:   docker-compose -f docker-compose.minimal.yml restart" -ForegroundColor Gray
 Write-Host "   Check status:      docker ps" -ForegroundColor Gray

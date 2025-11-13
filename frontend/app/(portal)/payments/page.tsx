@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import Payments from '@/app/payments/Payments';
+import Payments from '../../payments/Payments';
 
 const PortalPaymentsPage = () => {
   return <Payments />;
