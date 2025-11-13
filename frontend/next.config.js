@@ -11,6 +11,16 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Turbopack needs explicit config when webpack is also present
+  turbopack: {},
+  // Ensure path aliases work with all bundlers
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').join(__dirname, ''),
+    };
+    return config;
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.pravatar.cc' },
