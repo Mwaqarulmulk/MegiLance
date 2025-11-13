@@ -5,6 +5,8 @@ COPY package*.json ./
 # Use npm install with --legacy-peer-deps to handle eslint version conflicts
 RUN npm install --legacy-peer-deps && npm cache clean --force
 COPY . .
+# Build Next.js with webpack instead of Turbopack by setting env var
+ENV TURBOPACK=0
 # Build the Next.js application
 RUN npm run build
 

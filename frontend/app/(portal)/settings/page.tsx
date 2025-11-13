@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import Settings from 'app/settings/Settings.tsx';
+import Settings from '@/app/settings/Settings';
 
 const PortalSettingsPage = () => {
   return <Settings />;
