@@ -11,8 +11,11 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Next.js 16 configuration
-  // Turbopack disabled via NEXT_TURBO env var in Dockerfile
+  // Next.js 16 - Configure both turbopack and webpack to avoid conflicts
+  turbopack: {},
+  webpack: (config) => {
+    return config;
+  },
   
   // ESLint config moved - use .eslintrc.json or CLI flags instead
   // eslint: { ignoreDuringBuilds: true } is no longer supported in next.config.js
