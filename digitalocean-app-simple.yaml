@@ -1,0 +1,59 @@
+name: megilance-frontend
+region: nyc3
+
+services:
+  - name: web
+    # Source configuration - Docker build
+    source_dir: /frontend
+    dockerfile_path: frontend/Dockerfile
+    
+    # Environment variables
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_AND_BUILD_TIME
+      
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+        scope: RUN_AND_BUILD_TIME
+      
+      - key: NEXT_PUBLIC_API_URL
+        value: http://YOUR_ORACLE_VM_IP/api
+        scope: RUN_AND_BUILD_TIME
+      
+      - key: NEXT_PUBLIC_APP_NAME
+        value: MegiLance
+        scope: RUN_AND_BUILD_TIME
+      
+      - key: NEXT_PUBLIC_APP_URL
+        value: https://megilance-frontend.ondigitalocean.app
+        scope: RUN_AND_BUILD_TIME
+      
+      - key: PORT
+        value: "3000"
+        scope: RUN_TIME
+    
+    # Resource allocation
+    instance_count: 1
+    instance_size_slug: basic-xxs  # 512MB RAM, 1 vCPU ($5/month)
+    
+    # HTTP configuration
+    http_port: 3000
+    
+    # Health check
+    health_check:
+      http_path: /
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+    
+    # Routes
+    routes:
+      - path: /
+
+# Alerts
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DEPLOYMENT_LIVE

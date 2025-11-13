@@ -2,46 +2,68 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
+      # Oracle wallet for database connection
       - ./oracle-wallet-23ai:/app/oracle-wallet:ro
-      - ./backend:/app
-      - /app/__pycache__
+      # Persistent uploads directory
+      - ./backend/uploads:/app/uploads
+      # Logs directory
+      - ./logs:/app/logs
+    env_file:
+      - ./backend/.env
     environment:
-      - DATABASE_URL=oracle+oracledb://ADMIN:Bfw5ZvHQXjkDb!3lAa1!@megilanceai_high?wallet_location=/app/oracle-wallet&wallet_password=MegiLance2025!Wallet
-      - OCI_REGION=eu-frankfurt-1
-      - OCI_NAMESPACE=frj6px39shbv
-      - OCI_BUCKET_NAME=megilance-storage
-      - OCI_COMPARTMENT_ID=ocid1.tenancy.oc1..aaaaaaaa4qmr2dmzh46gxp2urvb5rdhbg2zjljzlhsqbamujhcjc234iilq
-      - ORACLE_WALLET_LOCATION=/app/oracle-wallet
-      - ORACLE_WALLET_PASSWORD=MegiLance2025!Wallet
-      - SECRET_KEY=your-secret-key-change-in-production-min-32-chars-megilance-oracle-2025
-      - FRONTEND_URL=http://localhost:3000
       - ENVIRONMENT=production
-      - DEBUG=False
+      - DATABASE_TYPE=oracle
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
-      - megilance
+      - megilance-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  frontend:
+  ai:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
+      context: ./ai
+      dockerfile: Dockerfile
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      # AI service code
+      - ./ai:/app
+      # Persistent model storage
+      - ai-models:/app/models
+      # Shared data with backend
+      - ./backend/uploads:/app/uploads:ro
     environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
-      - NEXT_TELEMETRY_DISABLED=1
+      - ENV=production
+      - BACKEND_URL=http://backend:8000
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
-      - megilance
+      - megilance-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  ai-models:
+    driver: local
 
 networks:
-  megilance:
+  megilance-network:
     driver: bridge
