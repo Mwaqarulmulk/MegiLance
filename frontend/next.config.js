@@ -11,11 +11,8 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Next.js 16 - Configure both turbopack and webpack to avoid conflicts
+  // Next.js 16 - Use Turbopack by default (empty config)
   turbopack: {},
-  webpack: (config) => {
-    return config;
-  },
   
   // ESLint config moved - use .eslintrc.json or CLI flags instead
   // eslint: { ignoreDuringBuilds: true } is no longer supported in next.config.js
