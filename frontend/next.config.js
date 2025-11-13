@@ -11,14 +11,18 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Turbopack needs explicit config when webpack is also present
-  turbopack: {},
-  // Ensure path aliases work with all bundlers
+  // Configure Turbopack to resolve path aliases from tsconfig.json
+  turbopack: {
+    resolveAlias: {
+      '@': '.',
+    },
+  },
+  // Also configure for webpack fallback
   webpack: (config, { isServer }) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').join(__dirname, ''),
-    };
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    config.resolve.alias['@'] = require('path').join(__dirname, '');
     return config;
   },
   images: {
