@@ -8,8 +8,7 @@ ingress:
 name: megilance-frontend
 region: blr
 services:
-- dockerfile_path: Dockerfile
-  source_dir: frontend
+- dockerfile_path: frontend/Dockerfile
   envs:
   - key: NEXT_PUBLIC_BACKEND_URL
     scope: RUN_AND_BUILD_TIME
