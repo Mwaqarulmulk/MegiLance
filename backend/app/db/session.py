@@ -31,6 +31,7 @@ engine = None
 SessionLocal = None
 
 def get_db():
+    db = None
     try:
         session_factory = get_session_local()
         db = session_factory()
@@ -40,5 +41,8 @@ def get_db():
         # Return a None generator that doesn't block
         yield None
     finally:
-        if db:
-            db.close()
+        if db is not None:
+            try:
+                db.close()
+            except:
+                pass
