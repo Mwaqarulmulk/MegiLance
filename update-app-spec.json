@@ -1,0 +1,46 @@
+{
+  "name": "megilance-frontend",
+  "services": [
+    {
+      "name": "megilance-frontend",
+      "github": {
+        "repo": "Mwaqarulmulk/MegiLance",
+        "branch": "main",
+        "deploy_on_push": true
+      },
+      "source_dir": "frontend",
+      "build_command": "npm install --legacy-peer-deps && npm run build",
+      "run_command": "npm start",
+      "envs": [
+        {
+          "key": "NODE_ENV",
+          "value": "production",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_TELEMETRY_DISABLED",
+          "value": "1",
+          "scope": "RUN_AND_BUILD_TIME"
+        }
+      ],
+      "instance_size_slug": "apps-s-1vcpu-0.5gb",
+      "instance_count": 1,
+      "http_port": 3000
+    }
+  ],
+  "region": "blr",
+  "ingress": {
+    "rules": [
+      {
+        "match": {
+          "path": {
+            "prefix": "/"
+          }
+        },
+        "component": {
+          "name": "megilance-frontend"
+        }
+      }
+    ]
+  }
+}
