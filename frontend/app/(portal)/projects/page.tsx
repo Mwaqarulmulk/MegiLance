@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import Projects from '../../projects/Projects';
+import Projects from '@/app/projects/Projects';
 
 const PortalProjectsPage = () => {
   return <Projects />;
