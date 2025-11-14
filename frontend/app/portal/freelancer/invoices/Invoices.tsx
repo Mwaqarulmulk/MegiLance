@@ -42,7 +42,7 @@ const Invoices: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const filters: any = {};
+      const filters: { status?: string } = {};
       if (statusFilter !== 'all') {
         filters.status = statusFilter;
       }
