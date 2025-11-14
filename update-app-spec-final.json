@@ -1,0 +1,18 @@
+{
+  "name": "MegiLance",
+  "services": [
+    {
+      "name": "megilance-frontend",
+      "github": {
+        "repo": "Mwaqarulmulk/MegiLance",
+        "branch": "main"
+      },
+      "build_command": "npm install --legacy-peer-deps --include=dev && npm run build",
+      "run_command": "npm start",
+      "source_dir": "frontend",
+      "http_port": 3000,
+      "instance_count": 1,
+      "instance_size_slug": "apps-s-1vcpu-0.5gb"
+    }
+  ]
+}
