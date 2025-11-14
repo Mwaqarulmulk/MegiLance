@@ -27,7 +27,7 @@ python-socketio==5.14.0
 pytest==8.3.5
 pytest-asyncio==0.24.0
 pytest-cov==6.0.0
-httpx==0.29.0
+httpx==0.28.1
 
 # Oracle Cloud support (oracledb is the modern driver, no C compiler needed)
 oci==2.163.1
