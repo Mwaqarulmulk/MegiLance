@@ -36,3 +36,24 @@ coverage
 # Temporary files
 *.tmp
 *.temp
+
+# Node.js (CRITICAL - prevents 500MB+ transfer)
+**/node_modules
+**/.next
+**/out
+**/.turbo
+
+# Python (CRITICAL - prevents large cache transfer)
+**/__pycache__
+**/.pytest_cache
+**/.venv
+**/venv
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.Python
+
+# Build artifacts
+**/dist
+**/build
+**/.cache
