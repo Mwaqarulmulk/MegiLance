@@ -1,0 +1,33 @@
+ingress:
+  rules:
+  - component:
+      name: web
+    match:
+      path:
+        prefix: /
+name: megilance-frontend
+region: blr
+services:
+- dockerfile_path: frontend/Dockerfile
+  envs:
+  - key: NEXT_PUBLIC_BACKEND_URL
+    scope: RUN_AND_BUILD_TIME
+    value: https://megilance-backend-qhnxp.ondigitalocean.app
+  - key: NODE_ENV
+    scope: RUN_AND_BUILD_TIME
+    value: production
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: Mwaqarulmulk/MegiLance
+  health_check:
+    failure_threshold: 15
+    http_path: /
+    initial_delay_seconds: 180
+    period_seconds: 20
+    success_threshold: 1
+    timeout_seconds: 20
+  http_port: 3000
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  name: web

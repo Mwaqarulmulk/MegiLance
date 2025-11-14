@@ -47,6 +47,9 @@ COPY --from=builder /usr/local /usr/local
 # Copy application code
 COPY . .
 
+# Copy Oracle wallet (if exists)
+COPY oracle-wallet /app/oracle-wallet
+
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser

@@ -1,0 +1,49 @@
+ingress:
+  rules:
+  - component:
+      name: api
+    match:
+      path:
+        prefix: /
+name: megilance-backend
+region: blr
+services:
+- dockerfile_path: backend/Dockerfile
+  envs:
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: 'oracle+oracledb://admin:CHANGE_ME_ORACLE_PASSWORD@megilanceai_high?wallet_location=/app/oracle-wallet&wallet_password='
+  - key: DB_TYPE
+    scope: RUN_TIME
+    value: oracle
+  - key: ORACLE_CLIENT_DIR
+    scope: RUN_TIME
+    value: /opt/oracle/instantclient_21_13
+  - key: TNS_ADMIN
+    scope: RUN_TIME
+    value: /app/oracle-wallet
+  - key: SECRET_KEY
+    scope: RUN_TIME
+    value: megilance_production_secret_key_change_in_production_min_32_chars
+  - key: ENVIRONMENT
+    scope: RUN_TIME
+    value: production
+  - key: CORS_ORIGINS
+    scope: RUN_TIME
+    value: '*'
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: Mwaqarulmulk/MegiLance
+  health_check:
+    failure_threshold: 15
+    http_path: /api/health/live
+    initial_delay_seconds: 180
+    period_seconds: 20
+    success_threshold: 1
+    timeout_seconds: 20
+  http_port: 8000
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-1gb-fixed
+  name: api
+  source_dir: backend
