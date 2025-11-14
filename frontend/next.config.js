@@ -11,11 +11,22 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Force webpack for Docker builds - Turbopack has issues with path aliases in Docker
+  experimental: {
+    turbopack: process.env.NODE_ENV !== 'production',
+  },
   // Use Turbopack (explicitly enabled for Next.js 16)
   turbopack: {
     resolveAlias: {
       '@': require('path').resolve(__dirname, '.'),
     },
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').resolve(__dirname, '.'),
+    };
+    return config;
   },
   images: {
     remotePatterns: [
