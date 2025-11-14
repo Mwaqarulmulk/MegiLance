@@ -46,5 +46,4 @@ services:
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-1gb-fixed
   name: api
-  source_dir: backend
 

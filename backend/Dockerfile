@@ -21,7 +21,7 @@ RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/2113000
     ldconfig
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage
@@ -45,10 +45,10 @@ RUN ldconfig
 COPY --from=builder /usr/local /usr/local
 
 # Copy application code
-COPY . .
+COPY backend/ .
 
 # Copy Oracle wallet (if exists)
-COPY oracle-wallet /app/oracle-wallet
+COPY backend/oracle-wallet /app/oracle-wallet
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
