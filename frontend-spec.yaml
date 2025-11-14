@@ -9,6 +9,7 @@ name: megilance-frontend
 region: blr
 services:
 - dockerfile_path: frontend/Dockerfile
+  source_dir: frontend
   envs:
   - key: NEXT_PUBLIC_BACKEND_URL
     scope: RUN_AND_BUILD_TIME
