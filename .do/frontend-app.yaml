@@ -1,8 +1,7 @@
 name: megilance-frontend
 services:
 - name: web
-  dockerfile_path: Dockerfile
-  source_dir: frontend
+  dockerfile_path: frontend/Dockerfile
   github:
     repo: Mwaqarulmulk/MegiLance
     branch: main
