@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder
