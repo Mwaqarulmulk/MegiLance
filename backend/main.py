@@ -48,7 +48,12 @@ app.mount("/ws", socket_app)
 
 @app.on_event("startup")
 def on_startup():
-    init_db(engine)
+    try:
+        init_db(engine)
+        print("✅ Database initialized successfully")
+    except Exception as e:
+        print(f"⚠️ Database initialization failed: {e}")
+        print("⚠️ App will continue but database-dependent features will not work")
 
 
 @app.exception_handler(StarletteHTTPException)
