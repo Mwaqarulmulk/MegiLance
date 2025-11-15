@@ -1,8 +1,63 @@
-npm error code ENOENT
-npm error syscall open
-npm error path E:\MegiLance\package.json
-npm error errno -4058
-npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'E:\MegiLance\package.json'
-npm error enoent This is related to npm not being able to find a file.
-npm error enoent
-npm error A complete log of this run can be found in: C:\Users\ghula\AppData\Local\npm-cache\_logs\2025-11-13T16_21_06_314Z-debug-0.log
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.08kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 377B 0.0s done
+#3 DONE 0.0s
+
+#4 [base 1/1] FROM docker.io/library/node:20-alpine@sha256:6178e78b972f79c335df281f4b7674a2d85071aae2af020ffa39f0a770265435
+#4 resolve docker.io/library/node:20-alpine@sha256:6178e78b972f79c335df281f4b7674a2d85071aae2af020ffa39f0a770265435 0.0s done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 25.91MB 4.9s
+#5 transferring context: 50.85MB 10.0s
+#5 transferring context: 80.75MB 15.1s
+#5 transferring context: 109.55MB 20.2s
+#5 transferring context: 155.07MB 25.4s
+#5 transferring context: 194.74MB 30.4s
+#5 transferring context: 222.52MB 35.5s
+#5 transferring context: 247.24MB 40.6s
+#5 transferring context: 273.12MB 45.6s
+#5 transferring context: 298.45MB 50.6s
+#5 transferring context: 329.98MB 55.7s
+#5 transferring context: 362.74MB 60.9s
+#5 transferring context: 385.19MB 65.9s
+#5 transferring context: 407.44MB 70.9s
+#5 transferring context: 431.02MB 75.9s
+#5 transferring context: 456.44MB 81.0s
+#5 transferring context: 485.72MB 86.1s
+#5 transferring context: 518.18MB 91.1s
+#5 transferring context: 554.23MB 96.1s
+#5 transferring context: 592.40MB 101.1s
+#5 transferring context: 611.08MB 104.5s done
+#5 DONE 104.8s
+
+#6 [deps 1/3] WORKDIR /app
+#6 CACHED
+
+#7 [runner 2/6] RUN addgroup --system --gid 1001 nodejs
+#7 CACHED
+
+#8 [runner 3/6] RUN adduser --system --uid 1001 nextjs
+#8 CACHED
+
+#9 [runner 4/6] COPY frontend/public ./public
+#9 CACHED
+
+#10 [deps 2/3] COPY frontend/package.json frontend/package-lock.json* ./
+#10 CACHED
+
+#11 [deps 3/3] RUN npm install --legacy-peer-deps
+#11 CACHED
+
+#12 [builder 2/4] COPY --from=deps /app/node_modules ./node_modules
+#12 CACHED
+
+#13 [builder 3/4] COPY frontend/ .
