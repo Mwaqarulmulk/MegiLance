@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import commonStyles from './Workroom.common.module.css';
 import lightStyles from './Workroom.light.module.css';
 import darkStyles from './Workroom.dark.module.css';
@@ -7,18 +7,39 @@ import { cn } from '@/lib/utils';
 import LiveEditor from './LiveEditor';
 import Whiteboard from './Whiteboard';
 import VideoChat from './VideoChat';
-import { Code, PenTool, Video as VideoIcon, ArrowLeft } from 'lucide-react';
+import { Code, PenTool, Video as VideoIcon, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import Loading from '@/app/components/atoms/Loading/Loading';
 
 interface WorkroomProps {
   contractId: string;
 }
 
 export default function Workroom({ contractId }: WorkroomProps) {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme, theme } = useTheme();
   const [activeTab, setActiveTab] = useState<'editor' | 'whiteboard'>('editor');
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!resolvedTheme) return null;
+  // Wait for theme to resolve
+  useEffect(() => {
+    if (theme) {
+      // Small delay to ensure theme is fully resolved
+      const timer = setTimeout(() => setIsLoading(false), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [theme]);
+
+  // Defensive: ensure contractId is valid
+  const safeContractId = contractId?.toString() || '';
+  const displayId = safeContractId.length >= 8 ? safeContractId.substring(0, 8) : safeContractId;
+
+  if (isLoading || !resolvedTheme) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loading text="Loading collaboration room..." />
+      </div>
+    );
+  }
 
   const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
 
@@ -30,7 +51,7 @@ export default function Workroom({ contractId }: WorkroomProps) {
             <ArrowLeft size={16} /> Back to Dashboard
           </Link>
           <h2>Live Collaboration Room</h2>
-          <span className={themeStyles.contractBadge}>Contract #{contractId.substring(0, 8)}</span>
+          <span className={themeStyles.contractBadge}>Contract #{displayId}</span>
         </div>
       </div>
 

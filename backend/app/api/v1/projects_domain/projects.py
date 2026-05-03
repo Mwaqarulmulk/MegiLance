@@ -271,6 +271,38 @@ def get_project(
         )
 
 
+@router.post("/batch", response_model=List[ProjectRead])
+def get_projects_batch(
+    ids: List[int]
+) -> List[dict]:
+    """Get multiple projects by IDs - used for proposals page efficient loading"""
+    if not ids or len(ids) > 50:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Provide 1-50 project IDs"
+        )
+    
+    try:
+        turso = get_turso_http()
+        placeholders = ",".join("?" for _ in ids)
+        rows = turso.fetch_all(
+            f"""SELECT id, title, description, category, budget_type, 
+                      budget_min, budget_max, experience_level, estimated_duration,
+                      skills, client_id, status, created_at, updated_at 
+               FROM projects WHERE id IN ({placeholders})""",
+            ids
+        )
+        
+        return [_row_to_project(row) for row in rows]
+        
+    except Exception as e:
+        logger.error("get_projects_batch failed: %s", e, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database temporarily unavailable"
+        )
+
+
 @router.post("", response_model=ProjectRead, status_code=status.HTTP_201_CREATED)
 def create_project(
     project: ProjectCreate,

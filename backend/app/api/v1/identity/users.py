@@ -810,8 +810,6 @@ def get_profile_completeness(current_user: User = Depends(get_current_user)) -> 
         from app.services.profile_validation import (
             get_missing_profile_fields,
             is_profile_complete,
-        )
-        from app.services.profile_validation import (
             get_profile_completeness as calc_completeness,
         )
 

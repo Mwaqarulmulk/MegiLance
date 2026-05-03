@@ -6,7 +6,16 @@ import type {
 } from '@/types/api';
 
 export const projectsApi = {
-  list: (filters?: { status?: string; category?: string; page?: number; page_size?: number; limit?: number }) => {
+  list: (filters?: { 
+    status?: string; 
+    category?: string; 
+    page?: number; 
+    page_size?: number; 
+    limit?: number;
+    sort?: string;
+    order?: 'asc' | 'desc';
+    search?: string;
+  }) => {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {

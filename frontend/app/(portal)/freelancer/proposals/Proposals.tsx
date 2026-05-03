@@ -116,68 +116,91 @@ const Proposals: React.FC = () => {
     null,
   );
 
-  // Fetch proposals from API
+// Fetch proposals from API
   const fetchProposals = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Fetch proposals for current freelancer
-      const apiProposals = await apiFetch<APIProposal[]>("/proposals/");
+      // Try to fetch proposals with included project data
+      // Backend should support ?include=project or we get projects separately
+      let apiProposals: APIProposal[];
+      try {
+        apiProposals = await apiFetch<APIProposal[]>("/proposals/?include=project");
+      } catch {
+        // Fallback: fetch proposals and batch get projects
+        apiProposals = await apiFetch<APIProposal[]>("/proposals/");
+      }
 
-      // Get unique project IDs to fetch project details
+      // Get unique project IDs to fetch project details (only if not already included)
       const projectIds = Array.from(
         new Set(apiProposals.map((p) => p.project_id)),
       );
 
-      // Fetch project details for job titles and client names
-      const projectPromises = projectIds.map(async (pid) => {
+      // Batch fetch all projects in one request if needed
+      if (projectIds.length > 0) {
+        let projectMap = new Map<number, APIProject>();
+        
+        // Try batch endpoint first
         try {
-          return await apiFetch<APIProject>(`/projects/${pid}`);
+          const batchProjects = await apiFetch<APIProject[]>(
+            `/projects/batch?ids=${projectIds.join(',')}`
+          );
+          batchProjects.forEach((project) => {
+            projectMap.set(project.id, project);
+          });
         } catch {
-          // Ignore individual project fetch errors
+          // Fallback: parallel fetches (but limited concurrency)
+          const CONCURRENCY_LIMIT = 5;
+          for (let i = 0; i < projectIds.length; i += CONCURRENCY_LIMIT) {
+            const batch = projectIds.slice(i, i + CONCURRENCY_LIMIT);
+            const results = await Promise.all(
+              batch.map(async (pid) => {
+                try {
+                  return await apiFetch<APIProject>(`/projects/${pid}`);
+                } catch {
+                  return null;
+                }
+              })
+            );
+            results.filter((p): p is APIProject => p !== null).forEach((project) => {
+              projectMap.set(project.id, project);
+            });
+          }
         }
-        return null;
-      });
 
-      const projectsData = await Promise.all(projectPromises);
-      const projectMap = new Map<number, APIProject>();
-      projectsData
-        .filter((p): p is APIProject => p !== null)
-        .forEach((project) => {
-          projectMap.set(project.id, project);
+        // Transform API data to UI format
+        const transformedProposals: Proposal[] = apiProposals.map((ap) => {
+          const project = projectMap.get(ap.project_id);
+          // Calculate match score based on bid vs budget alignment
+          const budgetMatch = project?.budget_max
+            ? Math.min(
+                100,
+                Math.round(
+                  (1 -
+                    Math.abs(ap.bid_amount - project.budget_max) /
+                      project.budget_max) *
+                    100,
+                ),
+              )
+            : 75;
+          return {
+            id: String(ap.id),
+            jobTitle: project?.title || `Project #${ap.project_id}`,
+            clientName: project?.client_name || "Client",
+            status: mapAPIStatus(ap.status, ap.is_draft),
+            dateSubmitted:
+              ap.created_at?.split("T")[0] ||
+              new Date().toISOString().split("T")[0],
+            bidAmount: ap.bid_amount,
+            matchScore: Math.max(60, Math.min(95, budgetMatch)),
+            isClientVerified: project?.client_verified ?? true,
+          };
         });
-
-      // Transform API data to UI format
-      const transformedProposals: Proposal[] = apiProposals.map((ap) => {
-        const project = projectMap.get(ap.project_id);
-        // Calculate match score based on bid vs budget alignment
-        const budgetMatch = project?.budget_max
-          ? Math.min(
-              100,
-              Math.round(
-                (1 -
-                  Math.abs(ap.bid_amount - project.budget_max) /
-                    project.budget_max) *
-                  100,
-              ),
-            )
-          : 75;
-        return {
-          id: String(ap.id),
-          jobTitle: project?.title || `Project #${ap.project_id}`,
-          clientName: project?.client_name || "Client",
-          status: mapAPIStatus(ap.status, ap.is_draft),
-          dateSubmitted:
-            ap.created_at?.split("T")[0] ||
-            new Date().toISOString().split("T")[0],
-          bidAmount: ap.bid_amount,
-          matchScore: Math.max(60, Math.min(95, budgetMatch)),
-          isClientVerified: project?.client_verified ?? true,
-        };
-      });
-
-      setProposals(transformedProposals);
+        setProposals(transformedProposals);
+      } else {
+        setProposals([]);
+      }
     } catch (err) {
       if (process.env.NODE_ENV === "development") {
         console.error("Failed to fetch proposals:", err);

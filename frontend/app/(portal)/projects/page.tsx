@@ -48,16 +48,50 @@ export default function PortalProjectsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState<SortField>('newest');
   const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     setMounted(true);
-    loadProjects();
-  }, []);
+    setCurrentPage(1);
+    setHasMore(true);
+    loadProjects(1);
+  }, [statusFilter, sortBy]); 
 
-  const loadProjects = async () => {
+  // Reload when search changes (debounced in component)
+  useEffect(() => {
+    if (mounted) {
+      const timer = setTimeout(() => {
+        setCurrentPage(1);
+        setHasMore(true);
+        loadProjects(1);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [searchQuery]);
+
+  const loadProjects = async (pageNum: number = 1) => {
+    setLoading(true);
     try {
-      const data = await projectsApi.list({ page: 1, page_size: 100 });
-      setProjects(Array.isArray(data) ? data : (data as any)?.items || []);
+      const data = await projectsApi.list({ 
+        page: pageNum, 
+        page_size: PAGE_SIZE,
+        sort: sortBy === 'budget_high' || sortBy === 'budget_low' ? 'budget' : sortBy === 'deadline' ? 'deadline' : 'created_at',
+        order: sortBy === 'budget_high' || sortBy === 'deadline' ? 'desc' : sortBy === 'budget_low' ? 'asc' : 'desc',
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        search: searchQuery || undefined,
+      });
+      const newProjects = Array.isArray(data) ? data : (data as any)?.items || [];
+      
+      if (pageNum === 1) {
+        setProjects(newProjects);
+      } else {
+        setProjects(prev => [...prev, ...newProjects]);
+      }
+      setCurrentPage(pageNum);
+      
+      if (newProjects.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to load projects:', error);
@@ -242,29 +276,24 @@ export default function PortalProjectsPage() {
             ))}
           </StaggerContainer>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <nav className={cn(commonStyles.pagination, themed.pagination)} aria-label="Projects pagination">
-              <button
-                className={cn(commonStyles.pageBtn, themed.pageBtn)}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage <= 1}
-                aria-label="Previous page"
+          {/* Load More for Server-Side Pagination */}
+          {hasMore && !loading && (
+            <div className={cn(commonStyles.pagination, themed.pagination)}>
+              <Button
+                onClick={() => loadProjects(currentPage + 1)}
+                variant="outline"
+                isLoading={loading}
               >
-                <ChevronLeft size={16} /> Prev
-              </button>
-              <span className={cn(commonStyles.pageInfo, themed.pageInfo)}>
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                className={cn(commonStyles.pageBtn, themed.pageBtn)}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage >= totalPages}
-                aria-label="Next page"
-              >
-                Next <ChevronRight size={16} />
-              </button>
-            </nav>
+                Load More Projects
+              </Button>
+            </div>
+          )}
+          
+          {/* Show total count when no more to load */}
+          {!hasMore && filteredAndSorted.length > 0 && (
+            <p className={cn(commonStyles.pageInfo, themed.pageInfo)}>
+              Showing all {filteredAndSorted.length} projects
+            </p>
           )}
           </>
         ) : (

@@ -11,6 +11,7 @@ import { User } from '../../types';
 import commonStyles from './Sidebar.common.module.css';
 import lightStyles from './Sidebar.light.module.css';
 import darkStyles from './Sidebar.dark.module.css';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SidebarProps {
   user: User;
@@ -33,6 +34,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const toggleTheme = () => {
     setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
   };
+
+  const { logout } = useAuth();
 
   return (
     <aside className={styles.sidebar}>
@@ -76,7 +79,19 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         </ul>
       </nav>
       <div className={styles.sidebarFooter}>
-        <button className={styles.logoutButton}>
+        <button
+          className={styles.logoutButton}
+          onClick={() => {
+            try {
+              logout();
+            } catch (e) {
+              // Best-effort: swallow errors to avoid breaking the UI
+              // Logging can be added here if needed
+            }
+          }}
+          aria-label="Sign out"
+          title="Sign out"
+        >
           <LogOut className={styles.navIcon} size={18} />
           <span>Logout</span>
         </button>
