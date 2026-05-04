@@ -34,6 +34,8 @@ class ChatIntent(str, Enum):
     FEEDBACK = "feedback"
     CREATE_TICKET = "create_ticket"
     SPEAK_TO_AGENT = "speak_to_agent"
+    PROJECT_MATCHING = "project_matching"
+    PROPOSAL_ASSISTANCE = "proposal_assistance"
     UNKNOWN = "unknown"
 
 
@@ -104,6 +106,14 @@ class AIChatbotService:
         ChatIntent.SPEAK_TO_AGENT: [
             r'\b(speak to|talk to|human|agent|representative)\b',
             r'\b(real person|live support|escalate)\b'
+        ],
+        ChatIntent.PROJECT_MATCHING: [
+            r'\b(match|matching|projects for me|jobs for me|find projects)\b',
+            r'\b(suitable projects|relevant jobs|recommend projects)\b'
+        ],
+        ChatIntent.PROPOSAL_ASSISTANCE: [
+            r'\b(proposal|write proposal|draft proposal|proposal help|cover letter)\b',
+            r'\b(write bid|bid help|draft bid)\b'
         ]
     }
     
@@ -252,6 +262,10 @@ class AIChatbotService:
         if not conversation:
             return {"error": "Conversation not found"}
         
+        # Verify ownership if conversation is bound to a user
+        if conversation.get("user_id") is not None and conversation.get("user_id") != user_id:
+            return {"error": "Access denied"}
+        
         now = datetime.now(timezone.utc).isoformat()
         
         # Analyze message
@@ -284,13 +298,13 @@ class AIChatbotService:
             return await self._escalate_to_agent(conversation_id, message)
         
         # Generate response
-        response = await self._generate_response(conversation_id, message, intent, sentiment)
+        response = await self._generate_response(conversation_id, message, intent, sentiment, user_id)
         
         # Store bot response
         execute_query(
             """INSERT INTO chatbot_messages (conversation_id, role, content, intent, sentiment, created_at)
-               VALUES (?, 'assistant', ?, ?, ?, ?)""",
-            [conversation_id, response["message"], intent.value, sentiment.value, now]
+               VALUES (?, 'assistant', ?, ?, 'neutral', ?)""",
+            [conversation_id, response["message"], intent.value, now]
         )
         
         return {
@@ -524,7 +538,8 @@ class AIChatbotService:
         conversation_id: str,
         message: str,
         intent: ChatIntent,
-        sentiment: SentimentLevel
+        sentiment: SentimentLevel,
+        user_id: Optional[int] = None
     ) -> Dict[str, Any]:
         """Generate response based on intent."""
         response = {
@@ -607,6 +622,21 @@ class AIChatbotService:
             response["message"] = "Thank you for your feedback! 💡 We love hearing from our users.\n\nI'll make sure this gets to our team. Is there anything specific you'd like to elaborate on?"
             response["actions"] = [{"type": "log_feedback"}]
         
+        elif intent == ChatIntent.PROJECT_MATCHING:
+            if not user_id:
+                response["message"] = "I'd love to help you find matching projects! Please log in to your account so I can analyze your skills and find the best matches for you."
+                response["suggestions"] = ["How to get started", "Browse projects"]
+            else:
+                # Suggest checking the matching dashboard or call service
+                response["message"] = "I'm analyzing the latest projects against your profile... 🔍\n\nI found several projects that match your skills! You can view them in detail on your **Matching Dashboard**.\n\nWould you like me to highlight the top 3 matches here?"
+                response["suggestions"] = ["Show top matches", "Go to Dashboard"]
+                response["actions"] = [{"type": "trigger_matching"}]
+
+        elif intent == ChatIntent.PROPOSAL_ASSISTANCE:
+            response["message"] = "I can help you draft a winning proposal! ✍️\n\nTo get started, please provide:\n1. The **Project ID** or **Link**\n2. Any specific highlights you want to include\n\nI'll then generate a personalized draft for you to review."
+            response["suggestions"] = ["Tips for proposals", "Show my last draft"]
+            response["actions"] = [{"type": "start_proposal_wizard"}]
+
         else:
             # Try to generate response using local AI service
             ai_response = await self._generate_ai_response(message)

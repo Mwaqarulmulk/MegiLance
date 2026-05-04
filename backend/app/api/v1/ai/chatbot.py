@@ -105,7 +105,7 @@ async def send_message(
 @router.get("/{conversation_id}/history")
 async def get_conversation_history(
     conversation_id: str,
-    current_user: User = Depends(get_current_active_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
     
 ):
     """Get conversation history."""
@@ -116,9 +116,14 @@ async def get_conversation_history(
     if "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
     
-    # Verify ownership
+    # Verify ownership if user is logged in or conversation has a user_id
+    user_id = _extract_user_id(current_user)
     conv_user_id = result.get("conversation", {}).get("user_id")
-    if conv_user_id is not None and conv_user_id != current_user.id:
+    
+    # Allow if:
+    # 1. Conversation has no user (guest chat)
+    # 2. Authenticated user matches conversation user
+    if conv_user_id is not None and conv_user_id != user_id:
         raise HTTPException(status_code=403, detail="Access denied")
     
     return result
@@ -128,7 +133,7 @@ async def get_conversation_history(
 async def close_conversation(
     conversation_id: str,
     request: Optional[CloseConversationRequest] = None,
-    current_user: User = Depends(get_current_active_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
     
 ):
     """Close a chatbot conversation."""
@@ -138,8 +143,14 @@ async def close_conversation(
     history = await service.get_conversation_history(conversation_id)
     if "error" in history:
         raise HTTPException(status_code=404, detail=history["error"])
+    
+    user_id = _extract_user_id(current_user)
     conv_user_id = history.get("conversation", {}).get("user_id")
-    if conv_user_id is not None and conv_user_id != current_user.id:
+    
+    # Allow if:
+    # 1. Conversation has no user (guest chat)
+    # 2. Authenticated user matches conversation user
+    if conv_user_id is not None and conv_user_id != user_id:
         raise HTTPException(status_code=403, detail="Access denied")
     
     resolution = request.resolution if request else None
