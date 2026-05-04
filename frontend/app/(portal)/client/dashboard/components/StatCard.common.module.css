@@ -48,6 +48,11 @@
   letter-spacing: -0.02em;
 }
 
+.subtitle {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
 .trend {
   display: flex;
   align-items: center;

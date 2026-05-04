@@ -1,0 +1,116 @@
+.page {
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.header {
+  background: #f9fafb;
+  border-bottom-color: #e5e7eb;
+}
+
+.searchSection {
+  background: #f9fafb;
+  border-bottom-color: #e5e7eb;
+  --bg-secondary: #f9fafb;
+}
+
+.searchInput {
+  background: #ffffff;
+  color: #1f2937;
+  border-color: #e5e7eb;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select {
+  background: #ffffff;
+  color: #1f2937;
+  border-color: #e5e7eb;
+}
+
+.filterButton {
+  background: #ffffff;
+  color: #1f2937;
+  border-color: #e5e7eb;
+}
+
+.filterButton:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.skillFilter[open] .filterButton,
+.levelFilter[open] .filterButton {
+  background: #f3f4f6;
+}
+
+.skillOptions,
+.levelOptions {
+  background: #ffffff;
+  color: #1f2937;
+  border-color: #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.skillCheckbox:hover,
+.levelCheckbox:hover {
+  background: #f3f4f6;
+}
+
+.skillCheckbox span,
+.levelCheckbox span {
+  color: #1f2937;
+}
+
+.card {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  color: #1f2937;
+}
+
+.clientName {
+  color: #1f2937;
+}
+
+.description {
+  color: #6b7280;
+}
+
+.meta {
+  border-top-color: #e5e7eb;
+  border-bottom-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.skillTag {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.emptyState {
+  color: #6b7280;
+}
+
+.resultCount {
+  color: #6b7280;
+}
+
+.stat {
+  color: #6b7280;
+}

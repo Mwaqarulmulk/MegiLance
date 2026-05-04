@@ -178,8 +178,12 @@ const ClientDashboard: React.FC = () => {
 
   // Generate milestone status data unique to clients
   const milestonesMonitoring = useMemo(() => {
-    const milestonesActive = displayProjects.reduce((acc, p) => acc + (p.milestonesActive || Math.floor(Math.random() * 3)), 0);
-    const milestonesPending = displayProjects.reduce((acc, p) => acc + (p.milestonesPending || Math.floor(Math.random() * 2)), 0);
+    const milestonesActive = displayProjects.filter(
+      (p) => (p.status as string) === "In Progress" || (p.status as string) === "in_progress"
+    ).length;
+    const milestonesPending = displayProjects.filter(
+      (p) => (p.status as string) === "On Hold" || (p.status as string) === "on_hold"
+    ).length;
     return {
       active: milestonesActive,
       pending: milestonesPending

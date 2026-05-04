@@ -15,9 +15,10 @@ interface StatCardProps {
   sparklineData?: number[];
   sparklineColor?: 'primary' | 'success' | 'warning' | 'danger';
   href?: string;
+  subtitle?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, trend, icon: Icon, sparklineData, sparklineColor = 'primary', href }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, value, trend, icon: Icon, sparklineData, sparklineColor = 'primary', href, subtitle }) => {
   const { resolvedTheme } = useTheme();
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
   
@@ -37,6 +38,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, trend, icon: Icon, sp
       </div>
       <div className={commonStyles.content}>
         <div className={cn(commonStyles.value, themeStyles.value)}>{value}</div>
+        {subtitle && <div className={cn(commonStyles.subtitle, themeStyles.subtitle)}>{subtitle}</div>}
         {sparklineData && sparklineData.length >= 2 && (
           <KPISparkline data={sparklineData} color={sparklineColor} height={32} />
         )}
