@@ -275,7 +275,8 @@ const Login: React.FC = () => {
   const handleSocialLogin = async (provider: "google" | "github") => {
     setLoading(true);
     try {
-      const redirectUri = `${window.location.origin}/callback`;
+      // Use standard callback path that matches Google Console
+      const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
       try {
         window.localStorage.setItem("portal_area", selectedRole);
       } catch {

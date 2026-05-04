@@ -30,7 +30,7 @@ logger = logging.getLogger("megilance")
 
 class StartOAuthRequest(BaseModel):
     provider: SocialProvider
-    redirect_uri: str
+    redirect_uri: Optional[str] = None
     portal_area: Optional[str] = None
     intent: Optional[str] = None  # "login" | "register" | "link"
 
@@ -91,6 +91,7 @@ async def start_oauth(
 ):
     """Start OAuth flow — returns authorization URL."""
     service = get_social_login_service()
+    settings = get_settings()
 
     user_id = None
     intent = request.intent
@@ -99,9 +100,20 @@ async def start_oauth(
         if not intent:
             intent = "link"
 
+    # Auto-generate or normalize redirect_uri to match Google Console exactly
+    redirect_uri = request.redirect_uri
+    if not redirect_uri:
+        # Fallback to frontend URL from settings + standard callback path
+        frontend_url = settings.FRONTEND_URL.rstrip('/')
+        redirect_uri = f"{frontend_url}/api/auth/callback/{request.provider.value}"
+    
+    # If the user passed /callback, remap it to the one registered in Google Console
+    if "/callback" in redirect_uri and "/api/auth/callback" not in redirect_uri:
+        redirect_uri = redirect_uri.replace("/callback", f"/api/auth/callback/{request.provider.value}")
+
     result = await service.start_oauth(
         provider=request.provider,
-        redirect_uri=request.redirect_uri,
+        redirect_uri=redirect_uri,
         user_id=user_id,
         portal_area=request.portal_area,
         intent=intent,
