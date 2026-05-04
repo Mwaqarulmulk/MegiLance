@@ -7,6 +7,10 @@ Skipped: requires running AI service on port 7860
 import pytest
 from httpx import AsyncClient
 
+# These tests require a live running backend server and AI service.
+# Run manually: pytest tests/integration/ --live-server
+pytestmark = pytest.mark.skip(reason="Integration tests require a live running server")
+
 
 
 
