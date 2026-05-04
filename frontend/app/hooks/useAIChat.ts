@@ -53,19 +53,10 @@ export interface UseAIChatReturn {
 
 function normalizeBackendApiUrl(baseUrl: string): string {
   const trimmed = baseUrl.replace(/\/+$/, '');
-
-  if (!trimmed || trimmed === '/') {
-    return '/api';
-  }
-
-  if (trimmed.endsWith('/api')) {
-    return trimmed;
-  }
-
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return `${trimmed}/api`;
-  }
-
+  if (!trimmed || trimmed === '/') return '/api/v1';
+  if (trimmed.endsWith('/api/v1')) return trimmed;
+  if (trimmed.endsWith('/api')) return `${trimmed}/v1`;
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return `${trimmed}/api/v1`;
   return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 }
 

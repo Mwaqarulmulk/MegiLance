@@ -54,7 +54,7 @@ export default function ContractBuilder() {
 
   const fetchOptions = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/contract-builder/options`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/contract-builder/options`);
       if (res.ok) {
         setOptions(await res.json());
       }
@@ -65,7 +65,7 @@ export default function ContractBuilder() {
 
   const fetchClauses = async (type: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/contract-builder/clauses/${type}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/contract-builder/clauses/${type}`);
       if (res.ok) {
         const data = await res.json();
         setAvailableClauses(data.clauses || []);
@@ -97,7 +97,7 @@ export default function ContractBuilder() {
     setError('');
     
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/contract-builder/generate`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/contract-builder/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       timeline: body.timeline
     };
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/portal/client/projects`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000'}/api/portal/client/projects`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
                   request.cookies.get('access_token')?.value ||
                   '';
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/portal/client/projects`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000'}/api/portal/client/projects`, {
       method: 'GET',
       headers: {
         'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
