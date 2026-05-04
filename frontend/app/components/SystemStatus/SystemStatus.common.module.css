@@ -1,0 +1,373 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid var(--border-color, #e0e0e0);
+  padding-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+.timestamp {
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+  margin: 0;
+}
+
+.card {
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  color: var(--text-primary, #333);
+}
+
+.statusHealthy {
+  border-left: 4px solid #10b981;
+}
+
+.statusDegraded {
+  border-left: 4px solid #f59e0b;
+}
+
+.statusOffline {
+  border-left: 4px solid #ef4444;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.statusIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.statusHealthy .statusIcon {
+  background-color: #d1fae5;
+  color: #10b981;
+}
+
+.statusDegraded .statusIcon {
+  background-color: #fed7aa;
+  color: #f59e0b;
+}
+
+.statusOffline .statusIcon {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.statusText {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+}
+
+.statusDescription {
+  margin: 0;
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.statBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: var(--bg-hover, #f9f9f9);
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.statLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #333);
+}
+
+.servicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.serviceItem {
+  display: flex;
+  align-items: center;
+}
+
+.serviceStatus {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.statusHealthy.serviceStatus {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.statusUnhealthy.serviceStatus {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.serviceIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.statusHealthy .serviceIcon {
+  background-color: #86efac;
+  color: #15803d;
+}
+
+.statusUnhealthy .serviceIcon {
+  background-color: #fca5a5;
+  color: #991b1b;
+}
+
+.serviceInfo h3 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.serviceInfo p {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+}
+
+.serviceInfo small {
+  font-size: 12px;
+  color: var(--text-tertiary, #999);
+}
+
+.tabsContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: var(--text-primary, #333);
+}
+
+.tab.tabActive {
+  color: var(--primary-color, #3b82f6);
+  border-bottom-color: var(--primary-color, #3b82f6);
+}
+
+.endpointsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.endpointItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-hover, #f9f9f9);
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.methodGET {
+  background-color: #3b82f6;
+}
+
+.methodPOST {
+  background-color: #10b981;
+}
+
+.methodPATCH {
+  background-color: #f59e0b;
+}
+
+.methodPUT {
+  background-color: #8b5cf6;
+}
+
+.methodDELETE {
+  background-color: #ef4444;
+}
+
+.path {
+  flex: 1;
+  color: var(--text-primary, #333);
+  word-break: break-all;
+}
+
+.auth {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.loadingState,
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color, #e0e0e0);
+  border-top-color: var(--primary-color, #3b82f6);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingState p,
+.errorState p {
+  color: var(--text-secondary, #666);
+  font-size: 16px;
+  margin: 0;
+}
+
+.errorState h2 {
+  color: var(--text-primary, #333);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.retryButton {
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+  background-color: var(--primary-hover, #2563eb);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tabsContainer {
+    flex-wrap: wrap;
+  }
+
+  .endpointItem {
+    flex-wrap: wrap;
+  }
+
+  .path {
+    flex: 1 0 100%;
+  }
+}

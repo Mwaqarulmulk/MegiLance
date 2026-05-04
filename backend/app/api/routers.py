@@ -14,6 +14,7 @@ from .v1.chat import websocket
 from .v1.core_domain import activity_feed
 from .v1.core_domain import admin_fraud_alerts
 from .v1.core_domain import analytics
+from .v1.core_domain import system_status
 from .v1.core_domain import analytics_dashboard
 from .v1.core_domain import analytics_pro
 from .v1.core_domain import assessments
@@ -126,7 +127,8 @@ from .v1.reviews_domain import user_feedback
 api_router = APIRouter()
 
 # Core services
-api_router.include_router(health.router, prefix="/health", tags=["health"]) 
+api_router.include_router(health.router, prefix="/health", tags=["health"])
+api_router.include_router(system_status.router, prefix="/status", tags=["status"])
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(websocket.router, prefix="/ws", tags=["websocket"])  # WebSocket status
 
