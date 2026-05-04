@@ -150,36 +150,35 @@ async def generate_embeddings(request: EmbeddingRequest):
 
 @app.post("/ai/generate")
 async def generate_text(request: GenerateRequest):
-    """Generate text using Litellm/DigitalOcean AI integration with template fallback"""
+    """Generate text using DigitalOcean AI API directly via httpx"""
     text = ""
     method = "digitalocean-llm"
     try:
-        import litellm
-        litellm.suppress_debug_info = True
         do_api_key = os.getenv("DO_AI_API_KEY")
         do_api_base = os.getenv("DO_AI_API_BASE", "https://inference.do-ai.run/v1")
         do_model = os.getenv("DO_AI_MODEL", "llama3.3-70b-instruct")
-        
-        kwargs = {
-            "messages": [{"role": "user", "content": request.prompt}],
-            "max_tokens": request.max_length,
-            "temperature": request.temperature,
-        }
-        
-        if do_api_key:
-            kwargs["model"] = do_model
-            kwargs["api_base"] = do_api_base
-            kwargs["api_key"] = do_api_key
-            kwargs["custom_llm_provider"] = "openai"
-        elif os.getenv("HUGGINGFACE_API_KEY"):
-            kwargs["model"] = "huggingface/mistralai/Mixtral-8x7B-Instruct-v0.1"
-            kwargs["api_key"] = os.getenv("HUGGINGFACE_API_KEY")
+
+        if not do_api_key:
+            raise ValueError("DO_AI_API_KEY not set.")
+
+        import httpx
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                f"{do_api_base}/chat/completions",
+                headers={"Authorization": f"Bearer {do_api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": do_model,
+                    "messages": [{"role": "user", "content": request.prompt}],
+                    "max_tokens": request.max_length,
+                    "temperature": request.temperature,
+                }
+            )
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get("choices"):
+                text = data["choices"][0]["message"]["content"].strip()
         else:
-            raise ValueError("No LLM API keys provided (DO_AI_API_KEY, HUGGINGFACE_API_KEY).")
-            
-        response = await litellm.acompletion(**kwargs)
-        if response and response.choices:
-            text = response.choices[0].message.content.strip()
+            raise ValueError(f"DO API error {resp.status_code}: {resp.text}")
 
     except Exception as e:
         logger.warning(f"LLM generation failed: {e}. Using fallback templates.")
