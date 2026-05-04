@@ -739,7 +739,7 @@ function StepCategory({ categories, selectedCategory, currentCategoryServices, o
                 whileTap={{ scale: 0.99 }}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelectCategory(cat.key); }}
+                onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => { if (e.key === 'Enter' || e.key === ' ') onSelectCategory(cat.key); }}
                 aria-label={`Select ${cat.label}`}
               >
                 <div className={cn(cs.categoryIconBox, ts.categoryIconBox)}>
@@ -784,7 +784,7 @@ function StepCategory({ categories, selectedCategory, currentCategoryServices, o
             whileTap={{ scale: 0.99 }}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelectService(svc.key); }}
+            onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => { if (e.key === 'Enter' || e.key === ' ') onSelectService(svc.key); }}
             aria-label={`Select ${svc.label}`}
           >
             <p className={cn(cs.serviceLabel, ts.serviceLabel)}>{svc.label}</p>

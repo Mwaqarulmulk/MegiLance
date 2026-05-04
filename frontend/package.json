@@ -8,6 +8,7 @@
     "start": "next start -p ${PORT:-3000}",
     "lint": "eslint app",
     "lint:css": "stylelint \"app/**/*.css\"",
+    "type-check": "tsc --noEmit",
     "test": "jest --verbose",
     "test:unit": "jest --verbose --forceExit",
     "test:e2e": "npx playwright test",
