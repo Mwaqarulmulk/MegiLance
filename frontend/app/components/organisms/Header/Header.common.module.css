@@ -86,17 +86,18 @@
 
 .megaMenu {
   position: absolute;
-  top: 100%;
+  top: calc(100% - 10px); /* Adjust to be closer to trigger but allow padding-top */
   left: 50%;
   transform: translateX(-50%) translateY(10px) scale(0.98);
   opacity: 0;
   visibility: hidden;
   min-width: 600px;
   border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2); /* Increased shadow for better separation */
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
-  padding-top: 1rem; /* Hitbox buffer */
+  padding-top: 1.5rem; /* Increased Hitbox buffer */
+  z-index: 1000; /* Ensure it stays above content */
 }
 
 /* Align Resources to the right to avoid edge clipping */
@@ -124,6 +125,8 @@
   gap: 2rem;
   border: 1px solid transparent;
   overflow: hidden;
+  /* Ensuring background isn't transparent */
+  background: white; 
 }
 
 .megaMenuSection {

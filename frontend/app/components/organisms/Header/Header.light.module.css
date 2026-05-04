@@ -36,7 +36,7 @@
 }
 
 .megaMenuContent {
-  background: var(--bg-primary-light);
+  background: white; /* Force solid white in light mode */
   border-color: rgba(0, 0, 0, 0.08);
 }
 

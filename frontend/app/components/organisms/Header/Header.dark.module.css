@@ -34,9 +34,9 @@
 }
 
 .megaMenuContent {
-  background: var(--bg-secondary-dark);
+  background: #0f172a; /* Force solid Slate 900 in dark mode to prevent transparency glitch */
   border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
 }
 
 .megaMenuLabel {
