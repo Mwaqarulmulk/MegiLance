@@ -1,0 +1,104 @@
+{
+  "health": {
+    "Health": {
+      "status": "OK",
+      "code": 200,
+      "data": {
+        "status": "healthy",
+        "timestamp": "2026-05-03T19:06:00.995129+00:00",
+        "version": "1.0.0",
+        "checks": {
+          "database": {
+            "status": "healthy",
+            "latency_ms": 185.2,
+            "type": "turso"
+          }
+        }
+      }
+    },
+    "Readiness": {
+      "status": "OK",
+      "code": 200,
+      "data": {
+        "status": "ready",
+        "db": "ok",
+        "components": {
+          "db": "ok",
+          "storage": "missing_configuration",
+          "email": "missing_configuration"
+        },
+        "driver": "turso_http",
+        "version": "2.0.0",
+        "environment": "development",
+        "uptime_seconds": 20,
+        "python_version": "3.12.10",
+        "timestamp": "2026-05-03T19:06:03Z"
+      }
+    },
+    "Liveness": {
+      "status": "OK",
+      "code": 200,
+      "data": {
+        "status": "ok",
+        "timestamp": "2026-05-03T19:06:05Z"
+      }
+    }
+  },
+  "auth": {
+    "registration_valid": {
+      "status": "OK",
+      "code": 201
+    },
+    "login_valid": {
+      "status": "OK",
+      "code": 200
+    }
+  },
+  "crud_operations": {
+    "get_me": {
+      "status": "OK",
+      "code": 200
+    },
+    "create_project": {
+      "status": "PARTIAL",
+      "code": 422
+    }
+  },
+  "ai_services": {
+    "Matching Score": {
+      "status": "PARTIAL",
+      "code": 404
+    },
+    "Skill Analyzer": {
+      "status": "PARTIAL",
+      "code": 404
+    },
+    "Sentiment Analysis": {
+      "status": "PARTIAL",
+      "code": 404
+    },
+    "Improve Writing": {
+      "status": "PARTIAL",
+      "code": 404
+    }
+  },
+  "input_validation": {
+    "empty_payload": {
+      "status": "OK",
+      "code": 422
+    },
+    "invalid_json": {
+      "status": "OK",
+      "code": 422
+    },
+    "missing_fields": {
+      "status": "OK",
+      "code": 422
+    },
+    "invalid_type": {
+      "status": "OK",
+      "code": 422
+    }
+  },
+  "errors": []
+}
