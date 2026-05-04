@@ -151,6 +151,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'unpkg.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'example.com' },
+      { protocol: 'https', hostname: 'megilance.site' },
+      { protocol: 'https', hostname: 'www.megilance.site' },
       { protocol: 'http', hostname: 'localhost' },
       { protocol: 'http', hostname: '127.0.0.1' },
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
