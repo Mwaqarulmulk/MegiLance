@@ -358,50 +358,66 @@ class AdvancedAIService:
         context: Dict[str, Any]
     ) -> FraudRiskScore:
         """
-        Advanced fraud detection using anomaly detection
-        
-        Detects:
-        - Fake profiles
-        - Payment fraud
-        - Account takeover
-        - Collusion between users
-        - Bot activity
-        - Plagiarism
+        Advanced fraud detection using LLM
         """
-        detected_patterns = []
-        risk_score = 0.0
-
         # Profile analysis
         profile_risk = await self._analyze_profile_fraud(user_id)
-        risk_score += profile_risk["score"]
-        detected_patterns.extend(profile_risk["patterns"])
-
         # Behavioral analysis
         behavior_risk = await self._analyze_behavioral_patterns(user_id, action_type, context)
-        risk_score += behavior_risk["score"]
-        detected_patterns.extend(behavior_risk["patterns"])
-
         # Network analysis
         network_risk = await self._analyze_network_fraud(user_id)
-        risk_score += network_risk["score"]
-        detected_patterns.extend(network_risk["patterns"])
 
-        # Determine risk level
-        if risk_score < 30:
-            risk_level = "low"
-            action = "allow"
-        elif risk_score < 60:
-            risk_level = "medium"
-            action = "monitor"
-        elif risk_score < 80:
-            risk_level = "high"
-            action = "require_verification"
-        else:
-            risk_level = "critical"
-            action = "block_and_review"
+        raw_patterns = profile_risk["patterns"] + behavior_risk["patterns"] + network_risk["patterns"]
+        
+        prompt = f"""You are a Fraud Detection AI. Assess the fraud risk of a user based on the extracted patterns from our system rules.
+User ID: {user_id}
+Action: {action_type}
+Detected System Patterns: {', '.join(raw_patterns) if raw_patterns else 'None'}
+Context: {json.dumps(context)}
 
-        # Calculate confidence
-        confidence = 0.85 if len(detected_patterns) > 2 else 0.65
+Analyze this data and return a JSON object with:
+- risk_score: float (0-100)
+- risk_level: string ('low', 'medium', 'high', 'critical')
+- detected_patterns: list of strings (your detected combined patterns)
+- recommended_action: string
+- confidence: float (0.0-1.0)
+Respond ONLY with valid JSON."""
+
+        risk_score = 0.0
+        risk_level = "low"
+        detected_patterns = raw_patterns
+        action = "allow"
+        confidence = 0.5
+        
+        try:
+            from app.services.llm_gateway import llm_gateway
+            response = await llm_gateway.generate_text(prompt=prompt)
+            start = response.find("{")
+            end = response.rfind("}") + 1
+            if start != -1 and end != 0:
+                data = json.loads(response[start:end])
+                risk_score = float(data.get("risk_score", 0.0))
+                risk_level = data.get("risk_level", "low")
+                detected_patterns = data.get("detected_patterns", raw_patterns)
+                action = data.get("recommended_action", "allow")
+                confidence = float(data.get("confidence", 0.8))
+        except Exception as e:
+            logger.error(f"LLM Fraud detection failed: {e}")
+            # Fallback to rule-based total
+            risk_score = profile_risk["score"] + behavior_risk["score"] + network_risk["score"]
+            if risk_score < 30:
+                risk_level = "low"
+                action = "allow"
+            elif risk_score < 60:
+                risk_level = "medium"
+                action = "monitor"
+            elif risk_score < 80:
+                risk_level = "high"
+                action = "require_verification"
+            else:
+                risk_level = "critical"
+                action = "block_and_review"
+            confidence = 0.65 if len(detected_patterns) > 2 else 0.85
 
         return FraudRiskScore(
             user_id=user_id,

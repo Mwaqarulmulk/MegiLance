@@ -145,18 +145,20 @@ Please make the tone {tone.value}."""
         """Generate a project description using LLM."""
         await self._ensure_tables()
         
-        prompt = f"""Write a detailed project description based on these requirements: {requirements}
-
-Project Category: {category}
+        prompt = f"""Write a detailed project description based on these requirements:
+Project Type: {project_type}
+Key Features: {', '.join(key_features)}
+Target Audience: {target_audience or 'General'}
+Budget Range: {budget_range or 'Not specified'}
 Desired Tone: {tone.value}"""
         generated_content = await llm_gateway.generate_text(prompt, system_message="You are an expert project manager writing clear, comprehensive project descriptions.")
         
         if not generated_content:
-            generated_content = f"Project Requirements: {requirements}"
+            generated_content = f"Project Requirements: {', '.join(key_features)}"
             
         word_count = len(generated_content.split())
         
-        await self._log_generation(user_id, WritingContentType.PROJECT_DESCRIPTION, prompt, generated_content, {"category": category})
+        await self._log_generation(str(uuid.uuid4()), user_id, WritingContentType.PROJECT_DESCRIPTION, tone.value, word_count, generated_content, {"category": project_type})
         
         return {
             "content": generated_content,
@@ -176,22 +178,20 @@ Desired Tone: {tone.value}"""
         """Generate a profile bio."""
         await self._ensure_tables()
         
-        bio = f"""I'm a passionate {specialization} with {experience_years}+ years of experience crafting exceptional solutions for clients worldwide.
+        prompt = f"""Write a professional profile bio for a freelancer.
+Specialization: {specialization}
+Years of Experience: {experience_years}
+Key Skills: {', '.join(skills)}
+Key Achievements: {', '.join(achievements) if achievements else 'None specified'}
+Desired Tone: {tone.value}
 
-**Expertise:**
-{', '.join(skills[:5])}
-
-**What Sets Me Apart:**
-
-✓ Proven track record with {experience_years * 10}+ successful projects
-✓ Clear communication and timely delivery
-✓ Client satisfaction is my top priority
-✓ Always staying updated with the latest trends
-
-{f"**Key Achievements:**{chr(10)}{chr(10).join(f'• {a}' for a in achievements)}" if achievements else ""}
-
-Let's collaborate and bring your vision to life! I'm available for both short-term and long-term projects."""
+Make the bio engaging, highlighting the freelancer's specific skills and experience. Do not include placeholder brackets, return the final text."""
         
+        bio = await llm_gateway.generate_text(prompt, system_message="You are an expert personal branding copywriter.")
+        
+        if not bio:
+            bio = f"I'm a passionate {specialization} with {experience_years}+ years of experience crafting exceptional solutions."
+            
         gen_id = str(uuid.uuid4())
         word_count = len(bio.split())
         
@@ -260,84 +260,48 @@ Let's collaborate and bring your vision to life! I'm available for both short-te
         """Generate upsell suggestions based on project context."""
         await self._ensure_tables()
         
-        desc_lower = project_description.lower() + " " + proposal_content.lower()
+        prompt = f"""Based on the following project description and proposal, suggest 3-5 upsell services the freelancer could offer.
+Format your output as a JSON array of objects, with each object having:
+- title: string
+- description: string
+- type: string (e.g., 'milestone', 'retainer')
+- relevance: string ('high', 'medium', 'low')
+
+Project Description:
+{project_description}
+
+Proposal Content:
+{proposal_content}
+"""
+        
+        response_text = await llm_gateway.generate_text(prompt, system_message="You are an expert sales strategist for freelancers. Respond ONLY with valid JSON array without syntax wrappers like ```json.")
         suggestions = []
-        
-        # Analyze project context to produce relevant upsells
-        if any(kw in desc_lower for kw in ["website", "web app", "frontend", "landing page", "ui", "ux"]):
-            suggestions.append({
-                "title": "SEO Optimization Package",
-                "description": "Add on-page SEO, meta tags, sitemap, and schema markup to improve search rankings.",
-                "type": "milestone",
-                "relevance": "high"
-            })
-            suggestions.append({
-                "title": "Performance Optimization",
-                "description": "Lighthouse audit, lazy loading, image optimization, and caching strategy.",
-                "type": "milestone",
-                "relevance": "high"
-            })
-        
-        if any(kw in desc_lower for kw in ["mobile", "app", "ios", "android", "react native", "flutter"]):
-            suggestions.append({
-                "title": "App Store Submission",
-                "description": "Handle the full app store submission process including screenshots and descriptions.",
-                "type": "milestone",
-                "relevance": "high"
-            })
-            suggestions.append({
-                "title": "Push Notification Setup",
-                "description": "Integrate push notifications with FCM/APNs for user engagement.",
-                "type": "milestone",
-                "relevance": "medium"
-            })
-        
-        if any(kw in desc_lower for kw in ["backend", "api", "database", "server", "microservice"]):
-            suggestions.append({
-                "title": "API Documentation",
-                "description": "Comprehensive Swagger/OpenAPI documentation for all endpoints.",
-                "type": "milestone",
-                "relevance": "medium"
-            })
-            suggestions.append({
-                "title": "Load Testing & Scaling Plan",
-                "description": "Stress test the system and provide a scaling roadmap.",
-                "type": "milestone",
-                "relevance": "medium"
-            })
-        
-        if any(kw in desc_lower for kw in ["design", "brand", "logo", "graphic", "illustration"]):
-            suggestions.append({
-                "title": "Brand Guidelines Document",
-                "description": "Deliver a complete brand style guide with colors, typography, and usage rules.",
-                "type": "milestone",
-                "relevance": "high"
-            })
-        
-        # Universal upsells
-        suggestions.append({
-            "title": "Monthly Maintenance & Support",
-            "description": "Ongoing bug fixes, updates, and priority support for a fixed monthly fee.",
-            "type": "retainer",
-            "relevance": "medium"
-        })
-        suggestions.append({
-            "title": "Training & Documentation",
-            "description": "Comprehensive documentation and video walkthroughs for your team.",
-            "type": "milestone",
-            "relevance": "low"
-        })
-        
-        # Sort by relevance
-        relevance_order = {"high": 0, "medium": 1, "low": 2}
-        suggestions.sort(key=lambda s: relevance_order.get(s.get("relevance", "low"), 2))
+        try:
+            # Clean possible markdown format
+            cleaned = response_text.strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[7:-3]
+            elif cleaned.startswith("```"):
+                cleaned = cleaned[3:-3]
+            suggestions = json.loads(cleaned.strip())
+        except Exception as e:
+            logger.error(f"Failed to parse upsell suggestions JSON: {e}")
+            # Fallback suggestions
+            suggestions = [
+                {
+                    "title": "Monthly Maintenance & Support",
+                    "description": "Ongoing bug fixes, updates, and priority support.",
+                    "type": "retainer",
+                    "relevance": "medium"
+                }
+            ]
         
         gen_id = str(uuid.uuid4())
         await self._log_generation(gen_id, user_id, "upsell",
-                                    None, 0, json.dumps(suggestions),
+                                    "professional", 0, json.dumps(suggestions),
                                     {"suggestions_count": len(suggestions)})
         
-        return {"id": gen_id, "suggestions": suggestions[:6]}
+        return {"id": gen_id, "suggestions": suggestions}
 
     # Content Enhancement
     async def improve_content(
@@ -347,35 +311,43 @@ Let's collaborate and bring your vision to life! I'm available for both short-te
         content_type: WritingContentType,
         improvements: List[str] = None
     ) -> Dict[str, Any]:
-        """Improve existing content with basic rule-based enhancements."""
+        """Improve existing content with LLM enhancements."""
         await self._ensure_tables()
         improvements = improvements or ["clarity", "grammar"]
         
+        prompt = f"""Review and improve the following text.
+Target improvements: {', '.join(improvements)}
+Content Type: {content_type.value}
+
+Original Text:
+{content}
+
+Respond with a JSON object with the following structure. Do not include markdown codeblocks (```json...```):
+{{
+  "improved_content": "The fully rewritten text",
+  "changes": [
+    {{"type": "grammar", "original": "xyz", "improved": "abc", "reason": "reason"}}
+  ]
+}}"""
+        
+        response_text = await llm_gateway.generate_text(prompt, system_message="You are an expert copy editor. Reply ONLY with valid JSON.")
+        
         improved = content
         changes = []
-        
-        # Basic grammar/style improvements
-        replacements = {
-            "  ": (" ", "Double space removed"),
-            " ,": (",", "Space before comma removed"),
-            " .": (".", "Space before period removed"),
-            "dont": ("don't", "Missing apostrophe"),
-            "cant": ("can't", "Missing apostrophe"),
-            "wont": ("won't", "Missing apostrophe"),
-            "im ": ("I'm ", "Missing apostrophe and capitalization"),
-            "i ": ("I ", "Pronoun capitalization"),
-            "etc..": ("etc.", "Punctuation fix"),
-        }
-        
-        if "grammar" in improvements:
-            for old, (new, reason) in replacements.items():
-                if old in improved.lower():
-                    idx = improved.lower().find(old)
-                    original_text = improved[idx:idx+len(old)]
-                    improved = improved[:idx] + new + improved[idx+len(old):]
-                    changes.append({"type": "grammar", "original": original_text, "improved": new, "reason": reason})
-        
-        # Calculate readability (Flesch-like approximation)
+        try:
+            cleaned = response_text.strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[7:-3]
+            elif cleaned.startswith("```"):
+                cleaned = cleaned[3:-3]
+            data = json.loads(cleaned.strip())
+            improved = data.get("improved_content", content)
+            changes = data.get("changes", [])
+        except Exception as e:
+            logger.error(f"Failed to parse improve_content JSON: {e}")
+            improved = content
+            changes = [{"type": "error", "original": "", "improved": "", "reason": "Failed to parse LLM response"}]
+            
         words = content.split()
         sentences = [s.strip() for s in re.split(r'[.!?]+', content) if s.strip()]
         avg_sentence_len = len(words) / max(len(sentences), 1)
@@ -385,17 +357,6 @@ Let's collaborate and bring your vision to life! I'm available for both short-te
         improved_sentences = [s.strip() for s in re.split(r'[.!?]+', improved) if s.strip()]
         improved_avg = len(improved_words) / max(len(improved_sentences), 1)
         after_score = max(0, min(100, int(100 - improved_avg * 2)))
-        
-        # If clarity improvement requested, add suggestions for long sentences
-        if "clarity" in improvements:
-            for i, sent in enumerate(sentences):
-                if len(sent.split()) > 30:
-                    changes.append({
-                        "type": "clarity",
-                        "original": sent[:50] + "...",
-                        "improved": "(Consider splitting into shorter sentences)",
-                        "reason": f"Sentence {i+1} is {len(sent.split())} words — may be hard to read"
-                    })
         
         gen_id = str(uuid.uuid4())
         await self._log_generation(gen_id, user_id, f"improve_{content_type.value}",
