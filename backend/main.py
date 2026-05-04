@@ -373,11 +373,11 @@ def api_root():
         "redoc": "/api/redoc"
     }
 
-@app.get("/api/health/live")
+@app.get("/api/v1/health/live")
 def health_live():
     return {"status": "ok", "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
 
-@app.get("/api/health/ready")
+@app.get("/api/v1/health/ready")
 def health_ready():
     engine = get_engine()
     uptime_seconds = int(time.time() - _APP_START_TIME)
@@ -429,7 +429,7 @@ def health_ready():
         error_detail = str(e) if settings.environment != "production" else "Database connection failed"
         return JSONResponse(status_code=503, content={"status": "degraded", "db_error": error_detail, **base_info})
 
-@app.get("/api/health/metrics")
+@app.get("/api/v1/health/metrics")
 def health_metrics():
     """Operational metrics endpoint for monitoring."""
     uptime_seconds = int(time.time() - _APP_START_TIME)
@@ -456,7 +456,7 @@ from pathlib import Path
 import os
 import mimetypes
 
-app.include_router(api_router, prefix="/api")
+app.include_router(api_router, prefix="/api/v1")
 
 # Upload directory setup
 uploads_dir = os.path.join(os.path.dirname(__file__), "uploads")
