@@ -6,6 +6,7 @@
 
 ---
 
+
 ## WHAT I DID
 
 I performed a **comprehensive analysis of all 9 core features** of MegiLance:
