@@ -121,6 +121,15 @@ export default function Header() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileMenuOpen]);
 
+  // Accessible escape key handler for mobile
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileMenuOpen) setMobileMenuOpen(false);
+    };
+    if (mobileMenuOpen) document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [mobileMenuOpen]);
+
   // Route change closes menus
   useEffect(() => {
     setActiveMenu(null);
@@ -178,6 +187,16 @@ export default function Header() {
                   className={cn(commonStyles.navBtn, themeStyles.navBtn, activeMenu === key && themeStyles.navBtnActive)}
                   aria-expanded={activeMenu === key}
                   onFocus={() => handleMenuEnter(key)}
+                  onClick={() => activeMenu === key ? setActiveMenu(null) : handleMenuEnter(key)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') setActiveMenu(null);
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      activeMenu === key ? setActiveMenu(null) : handleMenuEnter(key);
+                    }
+                  }}
+                  aria-haspopup="true"
+                  aria-controls={`mega-menu-${key}`}
                 >
                   {megaMenuData[key].title}
                   <ChevronDown size={14} className={cn(commonStyles.chevron, activeMenu === key && commonStyles.chevronRotated)} />
@@ -185,12 +204,15 @@ export default function Header() {
 
                 {/* Animated MegaMenu Dropdown */}
                 <div 
+                  id={`mega-menu-${key}`}
                   className={cn(
                     commonStyles.megaMenu, 
                     themeStyles.megaMenu, 
                     activeMenu === key && commonStyles.megaMenuActive,
                     key === 'resources' && commonStyles.megaMenuAlignRight // Right align last items
                   )}
+                  role="region"
+                  aria-label={`${megaMenuData[key].title} Submenu`}
                 >
                   <div className={commonStyles.megaMenuContent}>
                     {megaMenuData[key].sections.map((section, idx) => (

@@ -98,9 +98,9 @@ const Status: React.FC = () => {
         return { ...service, status: 'degraded', latency, lastChecked: new Date() };
       }
     } catch (error) {
-      // For services we can't directly check, assume operational if main API is up
-      if (service.name !== 'API Gateway' && service.name !== 'Database (Turso)') {
-        return { ...service, status: 'operational', latency: Date.now() - startTime, lastChecked: new Date() };
+      if (service.name === 'AI Services' || service.name === 'Payments' || service.name === 'Messaging') {
+        // If these hit CORS or 404, we can degrade them instead of masking
+        return { ...service, status: 'degraded', lastChecked: new Date() };
       }
       return { ...service, status: 'outage', lastChecked: new Date() };
     }
@@ -109,21 +109,8 @@ const Status: React.FC = () => {
   const checkAllServices = useCallback(async () => {
     setIsRefreshing(true);
     
-    // Check API Gateway and Database first
-    const apiGatewayResult = await checkService(services[0]);
-    const dbResult = await checkService(services[1]);
-    
-    // If API is up, assume other services are operational (they depend on API)
-    const apiIsUp = apiGatewayResult.status === 'operational';
-    
     const updatedServices = await Promise.all(
-      services.map(async (service, index) => {
-        if (index === 0) return apiGatewayResult;
-        if (index === 1) return dbResult;
-        // For other services, if API is up, they're likely operational
-        if (apiIsUp) {
-          return { ...service, status: 'operational' as const, latency: Math.floor(Math.random() * 50) + 20, lastChecked: new Date() };
-        }
+      services.map(async (service) => {
         return await checkService(service);
       })
     );
