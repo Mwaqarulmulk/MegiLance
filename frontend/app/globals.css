@@ -2,9 +2,7 @@
    accessibility utilities, and premium animation keyframes. Component-specific styles 
    go in CSS Modules. */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Global popup config removed to rely on custom 3-file CSS modules */
 
