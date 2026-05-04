@@ -154,12 +154,13 @@ def list_proposals(
     page_size: int = Query(20, ge=1, le=100),
     project_id: Optional[int] = Query(None),
     status: Optional[str] = Query(None),
+    include: Optional[str] = Query(None, description="Include related data: project"),
     current_user: User = Depends(get_current_active_user)
 ):
     """List proposals for current user"""
     offset, limit = paginate_params(page, page_size)
     user_type = _safe_str(current_user.user_type)
-    return proposals_service.list_proposals(
+    proposals = proposals_service.list_proposals(
         user_id=current_user.id,
         user_type=user_type,
         project_id=project_id,
@@ -167,6 +168,32 @@ def list_proposals(
         limit=limit,
         skip=offset
     )
+    
+    # If include=project, enrich with project data
+    if include and "project" in include.lower():
+        from app.db.turso_http import get_turso_http
+        turso = get_turso_http()
+        project_ids = list(set(p.get("project_id") for p in proposals if p.get("project_id")))
+        
+        if project_ids:
+            placeholders = ",".join("?" for _ in project_ids)
+            project_rows = turso.fetch_all(
+                f"""SELECT id, title, client_id FROM projects WHERE id IN ({placeholders})""",
+                project_ids
+            )
+            project_map = {row["id"]: row for row in project_rows}
+            
+            for prop in proposals:
+                proj = project_map.get(prop.get("project_id"))
+                if proj:
+                    # Add project info to proposal response
+                    prop["project"] = {
+                        "id": proj["id"],
+                        "title": proj["title"],
+                        "client_id": proj["client_id"]
+                    }
+    
+    return proposals
 
 
 @router.get("/{proposal_id}", response_model=ProposalRead)

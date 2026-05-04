@@ -257,18 +257,27 @@ export interface ProjectList {
 export interface Contract {
   id: number;
   project_id: number;
-  title?: string;
+  project?: { id: number; title: string };
   client_id: number;
-  client?: { full_name: string };
+  client?: { id: number; name: string; full_name?: string };
   freelancer_id: number;
-  freelancer?: { full_name: string };
+  freelancer?: { id: number; name: string; full_name?: string };
   status: 'pending' | 'active' | 'completed' | 'cancelled' | 'disputed';
   terms?: string;
   budget: number;
+  contract_amount?: number;
+  hourly_rate?: number;
+  contract_type?: 'fixed' | 'hourly';
+  currency?: string;
   start_date?: string;
   end_date?: string;
   created_at: string;
   updated_at: string;
+  // Optional fields for UI
+  job_title?: string;
+  title?: string;
+  client_name?: string;
+  amount?: number;
 }
 
 export interface ContractList {

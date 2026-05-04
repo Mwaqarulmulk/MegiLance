@@ -77,30 +77,60 @@ const Contracts = () => {
   const [contracts, setContracts] = useState<ContractData[]>([]);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  // Fetch contracts from API
-  useEffect(() => {
-    const fetchContracts = async () => {
+  // Fetch contracts from API with retry logic
+  const fetchContracts = useEffect(() => {
+    let cancelled = false;
+    
+    const doFetch = async () => {
+      setFetchLoading(true);
+      setFetchError(null);
+      
       try {
         const data = await api.contracts.list();
-        const items = (data as any).items || (Array.isArray(data) ? data : []);
+        if (cancelled) return;
+        
+        const items = (data as any)?.items || (Array.isArray(data) ? data : []);
+        
+        // Validate contract data structure
         const mapped: ContractData[] = items.map((c: any) => ({
-          id: c.id || c.contract_id,
-          projectTitle: c.job_title || c.project_title || c.title || 'Untitled',
-          clientName: c.client_name || c.client || '—',
-          value: c.amount || c.contract_amount || c.value || 0,
-          status: c.status || 'Active',
-          contractAddress: c.contract_address || c.escrow_address || '—',
-        }));
+          id: c?.id ?? c?.contract_id ?? 0,
+          projectTitle: c?.job_title || c?.project_title || c?.title || 'Untitled',
+          clientName: c?.client_name || c?.client || '—',
+          value: typeof c?.amount === 'number' ? c.amount 
+            : typeof c?.contract_amount === 'number' ? c.contract_amount 
+            : typeof c?.value === 'number' ? c.value 
+            : 0,
+          status: c?.status || 'Active',
+          contractAddress: c?.contract_address || c?.escrow_address || '—',
+        })).filter((c: ContractData) => Number(c.id) > 0);
+        
         setContracts(mapped);
       } catch (err: any) {
-        setFetchError(err.message || 'Failed to load contracts');
+        if (cancelled) return;
+        
+        // Retry up to 3 times with exponential backoff
+        if (retryCount < 3) {
+          const delay = Math.pow(2, retryCount) * 1000;
+          setRetryCount(prev => prev + 1);
+          setTimeout(() => doFetch(), delay);
+          return;
+        }
+        
+        setFetchError(err?.message || 'Failed to load contracts. Please try again.');
+        setContracts([]);
       } finally {
-        setFetchLoading(false);
+        if (!cancelled) {
+          setFetchLoading(false);
+        }
       }
     };
-    fetchContracts();
-  }, []);
+    
+    doFetch();
+    
+    return () => { cancelled = true; };
+  }, [retryCount]);
 
   const [query, setQuery] = usePersistedState<string>('freelancer:contracts:q', '');
   const [sortKey, setSortKey] = usePersistedState<'projectTitle' | 'clientName' | 'value' | 'status'>('freelancer:contracts:sortKey', 'projectTitle');
