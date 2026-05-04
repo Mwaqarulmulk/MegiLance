@@ -7,7 +7,8 @@ import json
 import logging
 import re
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 logger = logging.getLogger("megilance")
@@ -18,6 +19,42 @@ from app.services import ai_services_service
 from app.services.llm_gateway import llm_gateway
 
 router = APIRouter(tags=["AI Services"])  # Prefix is added in routers.py
+
+
+class EstimatePriceRequest(BaseModel):
+    category: str = Field(..., description="Project category")
+    skills_required: List[str] = Field(default_factory=list)
+    description: str = ""
+    estimated_hours: Optional[int] = None
+    complexity: str = "moderate"
+
+
+class ExtractSkillsRequest(BaseModel):
+    text: str
+
+
+class GenerateProposalRequest(BaseModel):
+    project_title: str
+    project_description: str
+    freelancer_name: str = "Professional"
+    years_experience: int = 3
+
+
+class AnalyzeSentimentRequest(BaseModel):
+    text: str
+
+
+class CategorizeProjectRequest(BaseModel):
+    title: str
+    description: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+class FraudCheckRequest(BaseModel):
+    text: str
 
 @router.get("/status")
 async def get_ai_status():
@@ -51,13 +88,14 @@ Keep responses concise (under 150 words) unless detailed explanation is needed."
 
 @router.post("/chat")
 async def ai_chatbot(
-    message: str,
+    request: ChatRequest,
 ):
     """
     AI Chatbot endpoint - responds to user queries using LLM
-    
+
     **No authentication required** - public chatbot
     """
+    message = request.message
     # Use LLM for intelligent responses
     try:
         response = await llm_gateway.generate_text(
@@ -115,7 +153,7 @@ async def ai_chatbot(
 
 @router.post("/fraud-check")
 async def fraud_detection(
-    text: str,
+    request: FraudCheckRequest,
 ):
     """
     AI Fraud Detection - analyzes text for potential fraud indicators.
@@ -127,6 +165,7 @@ async def fraud_detection(
 
     **No authentication required** - can be used during project posting.
     """
+    text = request.text
     text_lower = text.lower()
     text_stripped = text.strip()
     word_count = len(text_stripped.split())
@@ -330,24 +369,25 @@ async def match_freelancers_to_project(
 
 @router.post("/estimate-price")
 async def estimate_project_price(
-    category: ProjectCategory,
-    skills_required: List[str],
-    description: str = "",
-    estimated_hours: Optional[int] = None,
-    complexity: str = "moderate",
+    request: EstimatePriceRequest,
     current_user = Depends(get_current_user)
 ):
     """
-    Get AI-powered price estimation for a project
-    
-    - **category**: Project category
+    Get AI-powered price estimation for a project.
+
+    Accepts JSON body:
+    - **category**: Project category (string)
     - **skills_required**: List of required skills
     - **description**: Project description
     - **estimated_hours**: Estimated hours (optional)
     - **complexity**: simple, moderate, complex, or expert
     """
+    category = request.category
+    skills_required = request.skills_required
+    estimated_hours = request.estimated_hours
+    complexity = request.complexity
+
     try:
-        # Base rates by complexity
         complexity_multipliers = {
             "simple": 0.7,
             "moderate": 1.0,
@@ -355,22 +395,20 @@ async def estimate_project_price(
             "expert": 2.0
         }
         multiplier = complexity_multipliers.get(complexity.lower(), 1.0)
-        
-        category_value = category.value if hasattr(category, 'value') else str(category)
-        avg_budget = ai_services_service.get_category_avg_budget(category_value)
+
+        category_value = str(category)
+        avg_budget = ai_services_service.get_category_avg_budget(category_value) or 0
 
         skills_pattern = "%".join(skills_required[:3]) if skills_required else "%"
-        avg_hourly = ai_services_service.get_skills_avg_hourly_rate(skills_pattern)
-        
-        # Calculate estimates
+        avg_hourly = ai_services_service.get_skills_avg_hourly_rate(skills_pattern) or 50
+
         hours = estimated_hours or 40
         hourly_estimate = avg_hourly * multiplier
         total_estimate = hourly_estimate * hours
-        
-        # Adjust based on category average
+
         if avg_budget > 0:
             total_estimate = (total_estimate + avg_budget) / 2
-        
+
         return {
             "estimated_hourly_rate": round(hourly_estimate, 2),
             "estimated_total": round(total_estimate, 2),
@@ -378,7 +416,7 @@ async def estimate_project_price(
             "low_estimate": round(total_estimate * 0.7, 2),
             "high_estimate": round(total_estimate * 1.4, 2),
             "complexity": complexity,
-            "category": category.value if hasattr(category, 'value') else str(category),
+            "category": category_value,
             "confidence": 0.75,
             "factors": [
                 f"Based on {len(skills_required)} required skills",
@@ -674,14 +712,16 @@ async def check_proposal_fraud_risk(
 
 @router.post("/extract-skills")
 async def extract_skills_from_text(
-    text: str,
+    request: ExtractSkillsRequest,
     current_user = Depends(get_current_user)
 ):
     """
     AI Skill Extraction - extracts skills from project description or profile text
-    
+
+    Accepts JSON body with:
     - **text**: Text to analyze for skills
     """
+    text = request.text
     # Common skill keywords organized by category
     skill_categories = {
         "programming": ["python", "javascript", "typescript", "java", "c++", "c#", "ruby", "go", "rust", "php", "swift", "kotlin"],
@@ -730,21 +770,22 @@ async def extract_skills_from_text(
 
 @router.post("/generate-proposal")
 async def generate_proposal(
-    project_title: str,
-    project_description: str,
-    freelancer_name: str = "Professional",
-    years_experience: int = 3,
+    request: GenerateProposalRequest,
     current_user = Depends(get_current_user)
 ):
     """
     AI Proposal Generator - generates professional cover letter for a project
-    
+
+    Accepts JSON body:
     - **project_title**: Title of the project
     - **project_description**: Description of the project requirements
     - **freelancer_name**: Name of the freelancer
     - **years_experience**: Years of relevant experience
     """
-    # Detect key project aspects for personalization
+    project_title = request.project_title
+    project_description = request.project_description
+    freelancer_name = request.freelancer_name
+    years_experience = request.years_experience
     desc_lower = project_description.lower()
     
     # Detect project type
@@ -797,13 +838,14 @@ Best regards,
 
 @router.post("/analyze-sentiment")
 async def analyze_sentiment(
-    text: str,
+    request: AnalyzeSentimentRequest,
 ):
     """
     AI Sentiment Analysis - analyzes text sentiment for reviews and feedback
-    
+
     **No authentication required** - can be used for review analysis
     """
+    text = request.text
     positive_words = ['excellent', 'great', 'good', 'amazing', 'awesome', 'wonderful', 
                      'fantastic', 'love', 'best', 'perfect', 'outstanding', 'brilliant',
                      'satisfied', 'happy', 'pleased', 'impressed', 'recommend', 'professional',
@@ -1041,18 +1083,20 @@ async def recommend_jobs_for_user(
 
 @router.post("/categorize-project")
 async def categorize_project(
-    title: str,
-    description: str,
+    request: CategorizeProjectRequest,
     current_user = Depends(get_current_user)
 ):
     """
     AI Project Categorization - automatically categorizes projects based on title and description
-    
+
+    Accepts JSON body:
     - **title**: Project title
     - **description**: Project description
-    
+
     Returns the most likely category and confidence scores for all categories
     """
+    title = request.title
+    description = request.description
     # Category keywords mapping
     category_keywords = {
         "web_development": ["website", "web app", "frontend", "backend", "fullstack", "html", "css", "javascript", 

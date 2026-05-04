@@ -138,7 +138,10 @@ export const fraudDetectionApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-  getAlerts: () => apiFetch('/fraud-detection/alerts'),
+  getAlerts: () => apiFetch('/admin/fraud-alerts'),
   dismissAlert: (alertId: ResourceId) =>
-    apiFetch(`/fraud-detection/alerts/${alertId}/dismiss`, { method: 'POST' }),
+    apiFetch(`/admin/fraud-alerts/${alertId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'false_positive' }),
+    }),
 };
