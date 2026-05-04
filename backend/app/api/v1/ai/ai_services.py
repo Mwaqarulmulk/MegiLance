@@ -19,6 +19,11 @@ from app.services.llm_gateway import llm_gateway
 
 router = APIRouter(tags=["AI Services"])  # Prefix is added in routers.py
 
+@router.get("/status")
+async def get_ai_status():
+    """Health check endpoint for AI services."""
+    return {"status": "online", "model": llm_gateway.do_model if llm_gateway.is_active else "disabled", "gateway": "digitalocean"}
+
 # System prompt for the MegiLance chatbot
 CHATBOT_SYSTEM_PROMPT = """You are the MegiLance AI Assistant, a helpful and professional customer support agent for MegiLance - an AI-powered freelancing platform.
 

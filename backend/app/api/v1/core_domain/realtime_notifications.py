@@ -4,14 +4,15 @@ Real-Time Notification System with WebSockets
 Provides instant push notifications for bids, messages, payments, and other events
 """
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, BackgroundTasks
 from typing import Dict, Set, List, Optional
 from datetime import datetime, timezone
 import json
 import asyncio
 from collections import defaultdict
 
-from app.models.notification import Notification
+from app.db.turso_http import execute_query
+from app.services import notifications_service
 from app.core.security import decode_token, get_current_active_user, require_admin
 from app.models.user import User
 import logging
@@ -242,42 +243,21 @@ async def send_realtime_notification(
     notification: dict,
     current_user: User = Depends(get_current_active_user),
     _admin = Depends(require_admin),
-    
 ):
     """
     Send a real-time notification to a user
     (Internal API for server-side notification triggers)
     """
-    # Save to database
-    db_notification = Notification(
+    await notify_user(
         user_id=user_id,
         notification_type=notification.get("type", "general"),
         title=notification.get("title", ""),
         content=notification.get("content", ""),
-        data=json.dumps(notification.get("data", {})),
-        priority=notification.get("priority", "normal"),
-        is_read=False
-    )
-    db.add(db_notification)
-    db.commit()
-    db.refresh(db_notification)
-    
-    # Send via WebSocket if user is online
-    await manager.send_notification(
-        {
-            "id": db_notification.id,
-            "type": db_notification.notification_type,
-            "title": db_notification.title,
-            "content": db_notification.content,
-            "priority": db_notification.priority,
-            "created_at": db_notification.created_at.isoformat()
-        },
-        user_id
+        data=notification.get("data", {})
     )
     
     return {
         "status": "sent",
-        "notification_id": db_notification.id,
         "delivered": manager.is_user_online(user_id)
     }
 
@@ -303,21 +283,59 @@ async def broadcast_notification(
     }
 
 
+def notify_user_sync(user_id: int, notification_type: str, title: str, content: str, data: dict = None):
+    """
+    Synchronous helper to persist notification and emit via WS.
+    Used for background tasks or internal calls.
+    """
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Save to database first to ensure persistence
+    try:
+        data_json = json.dumps(data) if data else "{}"
+        notification_id = notifications_service.insert_notification(
+            user_id=user_id,
+            notification_type=notification_type,
+            title=title,
+            content=content,
+            data_json=data_json,
+            priority="normal",
+            action_url=None,
+            expires_at=None,
+            now=now
+        )
+        logger.info(f"Notification persisted to DB with ID: {notification_id}")
+    except Exception as e:
+        logger.error(f"Failed to persist notification to DB: {e}")
+        notification_id = 0
+
+    notification = {
+        "id": notification_id,
+        "type": notification_type,
+        "title": title,
+        "content": content,
+        "data": data or {},
+        "priority": "normal",
+        "created_at": now
+    }
+    
+    # Run the async send in the loop
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.run_coroutine_threadsafe(manager.send_notification(notification, user_id), loop)
+        else:
+            asyncio.run(manager.send_notification(notification, user_id))
+    except Exception as e:
+        logger.error(f"Failed to send real-time notification: {e}")
+
 # Helper function to send notifications from other parts of the app
 async def notify_user(user_id: int, notification_type: str, title: str, content: str, data: dict = None):
     """
     Helper function to send real-time notifications
     Can be called from anywhere in the application
     """
-    notification = {
-        "type": notification_type,
-        "title": title,
-        "content": content,
-        "data": data or {},
-        "priority": "normal"
-    }
-    
-    await manager.send_notification(notification, user_id)
+    notify_user_sync(user_id, notification_type, title, content, data)
 
 
 # Export the manager for use in other modules

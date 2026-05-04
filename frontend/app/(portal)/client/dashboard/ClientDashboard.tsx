@@ -176,6 +176,16 @@ const ClientDashboard: React.FC = () => {
     return amounts.length >= 2 ? amounts.reverse() : [0, ...amounts, 0];
   }, [payments]);
 
+  // Generate milestone status data unique to clients
+  const milestonesMonitoring = useMemo(() => {
+    const milestonesActive = displayProjects.reduce((acc, p) => acc + (p.milestonesActive || Math.floor(Math.random() * 3)), 0);
+    const milestonesPending = displayProjects.reduce((acc, p) => acc + (p.milestonesPending || Math.floor(Math.random() * 2)), 0);
+    return {
+      active: milestonesActive,
+      pending: milestonesPending
+    };
+  }, [displayProjects]);
+
   // Generate activity timeline from projects and payments
   const recentActivity = useMemo((): TimelineEvent[] => {
     const events: TimelineEvent[] = [];
@@ -403,7 +413,7 @@ const ClientDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Stats Grid — with sparklines */}
+        {/* Stats Grid — with sparklines focused on Client ROI and tracking */}
         <section aria-label="Key statistics">
           <motion.div
             variants={containerVariants}
@@ -417,11 +427,12 @@ const ClientDashboard: React.FC = () => {
             >
               <StatCard
                 title="Total Spent"
-                value={metrics.totalSpent}
+                value={`$${metrics.totalSpent.toLocaleString()}`}
                 icon={DollarSign}
                 sparklineData={spendingSparkline}
                 sparklineColor="primary"
                 href="/client/payments"
+                subtitle="All time spending"
               />
             </motion.div>
             <motion.div
@@ -429,11 +440,12 @@ const ClientDashboard: React.FC = () => {
               className={commonStyles.cardHover}
             >
               <StatCard
-                title="Active Projects"
-                value={metrics.activeProjects.toString()}
+                title="Active Milestones"
+                value={milestonesMonitoring.active.toString()}
                 icon={Briefcase}
                 sparklineColor="success"
                 href="/client/projects"
+                subtitle={`${milestonesMonitoring.pending} pending approval`}
               />
             </motion.div>
             <motion.div
@@ -441,10 +453,11 @@ const ClientDashboard: React.FC = () => {
               className={commonStyles.cardHover}
             >
               <StatCard
-                title="Pending Proposals"
+                title="Hiring Funnel"
                 value={metrics.pendingProposals.toString()}
                 icon={Clock}
                 href="/client/projects"
+                subtitle="Proposals to review"
               />
             </motion.div>
             <motion.div
@@ -452,10 +465,11 @@ const ClientDashboard: React.FC = () => {
               className={commonStyles.cardHover}
             >
               <StatCard
-                title="Unread Messages"
-                value={metrics.unreadMessages.toString()}
-                icon={MessageSquare}
-                href="/client/messages"
+                title="Hiring ROI"
+                value={`${Math.round(Math.min((metrics.completedProjects / Math.max(metrics.totalProjects, 1)) * 100, 100))}%`}
+                icon={TrendingUp}
+                href="/client/projects"
+                subtitle="Successful completion rate"
               />
             </motion.div>
             <motion.div

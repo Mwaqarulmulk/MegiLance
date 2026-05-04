@@ -3,6 +3,7 @@ import logging
 import asyncio
 from typing import Optional, Dict, Any, List
 import httpx
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -11,10 +12,11 @@ class LLMGateway:
     """Advanced Central AI Gateway using DigitalOcean AI API exclusively."""
 
     def __init__(self):
+        settings = get_settings()
         # DigitalOcean AI configuration (REQUIRED - NO FALLBACKS)
-        self.do_api_key = os.getenv("DO_AI_API_KEY")
-        self.do_api_base = os.getenv("DO_AI_API_BASE", "https://inference.do-ai.run/v1")
-        self.do_model = os.getenv("DO_AI_MODEL", "llama3.3-70b-instruct")
+        self.do_api_key = settings.do_ai_api_key or os.getenv("DO_AI_API_KEY")
+        self.do_api_base = settings.do_ai_api_base or os.getenv("DO_AI_API_BASE", "https://inference.do-ai.run/v1")
+        self.do_model = settings.do_ai_model or os.getenv("DO_AI_MODEL", "llama3.3-70b-instruct")
 
         if not self.do_api_key:
             logger.error("❌ DO_AI_API_KEY not set! DigitalOcean AI is REQUIRED for chatbot functionality.")

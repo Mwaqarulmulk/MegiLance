@@ -225,6 +225,8 @@ const Dashboard: React.FC = () => {
       activeJobs: analytics?.activeProjects || 0,
       proposalsSent: analytics?.pendingProposals || 0,
       profileViews: analytics?.profileViews || 0,
+      inquiryRate: Math.round(((analytics?.profileViews || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.profileViews || 1) : 0) * 100),
+      winRate: Math.round(((analytics?.pendingProposals || 1) > 0 ? (analytics?.activeProjects || 0) / (analytics?.pendingProposals || 1) : 0) * 100),
       completionRate: sellerStats?.completionRate ?? 100,
       responseRate: sellerStats?.responseRate ?? 100,
       onTimeRate: sellerStats?.onTimeDeliveryRate ?? 100,
@@ -238,6 +240,14 @@ const Dashboard: React.FC = () => {
   const earningsSparkline = useMemo(() => {
     if (earningsData.length === 0) return [0, 0, 0, 0, 0, 0];
     return earningsData.slice(-7).map((d) => d.amount);
+  }, [earningsData]);
+
+  // Forecast next month's earnings based on recent average
+  const forecastEarnings = useMemo(() => {
+    if (earningsData.length < 2) return 0;
+    const recentValues = earningsData.slice(-3).map(d => d.amount);
+    const avg = recentValues.reduce((a, b) => a + b, 0) / recentValues.length;
+    return avg * 1.1; // 10% expected growth
   }, [earningsData]);
 
   // Generate activity timeline from proposals
@@ -300,6 +310,16 @@ const Dashboard: React.FC = () => {
         title: "Low Job Success Score",
         message: `Your JSS is ${metrics.jssScore}%. Focus on on-time delivery and client satisfaction.`,
         action: { label: "View My Contracts", href: "/freelancer/contracts" },
+      });
+    }
+
+    if (metrics.inquiryRate < 5) {
+      alerts.push({
+        id: "inquiry-rate",
+        type: "info" as const,
+        title: "Boost Your Profile Impressions",
+        message: `Your inquiry rate is ${metrics.inquiryRate}%. Optimize your profile and portfolio to win more clicks.`,
+        action: { label: "Edit Profile", href: "/freelancer/profile" },
       });
     }
 
@@ -599,20 +619,20 @@ const Dashboard: React.FC = () => {
             href="/freelancer/earnings"
           />
           <StatCard
-            title="Active Jobs"
-            value={metrics.activeJobs.toString()}
-            icon={Briefcase}
+            title="Forecast (Next 30D)"
+            value={`$${Math.round(forecastEarnings).toLocaleString()}`}
+            icon={TrendingUp}
             sparklineColor="primary"
           />
           <StatCard
-            title="Proposals Sent"
-            value={metrics.proposalsSent.toString()}
-            icon={FileText}
+            title="Proposal Win Rate"
+            value={`${metrics.winRate}%`}
+            icon={CheckCircle2}
             href="/freelancer/proposals"
           />
           <StatCard
-            title="Profile Views"
-            value={metrics.profileViews.toString()}
+            title="Inquiry Rate"
+            value={`${metrics.inquiryRate}%`}
             icon={Eye}
             sparklineColor="warning"
             href="/freelancer/analytics"

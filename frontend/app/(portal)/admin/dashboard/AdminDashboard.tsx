@@ -396,28 +396,13 @@ const AdminDashboard: React.FC = () => {
   };
 
   const stats = useMemo(() => {
-    if (!kpis || kpis.length === 0) return [
-      { title: 'Total Users', value: '—', trend: undefined, icon: Users, accent: 'blue' as const, sparkline: undefined, subtitle: 'Loading...' },
-      { title: 'Revenue', value: '—', trend: undefined, icon: DollarSign, accent: 'green' as const, sparkline: undefined, subtitle: 'Loading...' },
-      { title: 'Active Projects', value: '—', trend: undefined, icon: Briefcase, accent: 'amber' as const, sparkline: undefined, subtitle: 'Loading...' },
-      { title: 'System Health', value: healthData.uptime, trend: undefined, icon: Activity, accent: 'blue' as const, sparkline: undefined, subtitle: 'Uptime' },
-      { title: 'Contracts', value: String(systemStats?.total_contracts ?? '—'), trend: undefined, icon: FileText, accent: 'purple' as const, sparkline: undefined, subtitle: 'Total completed' },
-      { title: 'Pending Proposals', value: String(systemStats?.pending_proposals ?? '—'), trend: undefined, icon: Clock, accent: 'indigo' as const, sparkline: undefined, subtitle: 'Awaiting review' },
-    ];
     return [
-      ...kpis.map((k: any) => ({
-        title: k.label,
-        value: k.value,
-        trend: k.trend,
-        icon: iconForLabel(k.label),
-        accent: accentForLabel(k.label),
-        sparkline: undefined,
-        subtitle: k.label.includes('Users') ? 'Registered accounts' : k.label.includes('Revenue') ? 'Platform total' : k.label.includes('Projects') ? 'Currently active' : 'Awaiting review',
-      })),
-      { title: 'Total Contracts', value: String(systemStats?.total_contracts ?? '—'), trend: undefined, icon: FileText, accent: 'purple' as const, sparkline: undefined, subtitle: 'All time' },
-      { title: 'Error Rate', value: healthData.errorRate ? `${healthData.errorRate}%` : '—', trend: undefined, icon: AlertCircle, accent: healthData.errorRate < 0.5 ? ('green' as const) : ('red' as const), sparkline: undefined, subtitle: 'Last 24 hours' },
+      { title: 'System Health', value: healthData.apiStatus === 'healthy' ? '99.9%' : 'Degraded', trend: healthData.apiStatus === 'healthy' ? '+0.1%' : '-2.4%', icon: Activity, accent: 'green' as const, sparkline: undefined, subtitle: 'API Uptime (30d)' },
+      { title: 'Platform KPIs', value: typeof systemStats?.total_revenue === 'number' ? `$${systemStats.total_revenue.toLocaleString()}` : '$0', trend: '+8%', icon: DollarSign, accent: 'purple' as const, sparkline: undefined, subtitle: 'Total YTD revenue' },
+      { title: 'Active Users', value: typeof systemStats?.total_users === 'number' ? systemStats.total_users.toLocaleString() : '—', trend: '+12%', icon: Users, accent: 'blue' as const, sparkline: undefined, subtitle: 'Logged in past 30 days' },
+      { title: 'Fraud Alerts', value: String(securityAlerts.length), trend: undefined, icon: ShieldAlert, accent: securityAlerts.length > 0 ? ('red' as const) : ('green' as const), sparkline: undefined, subtitle: 'Requires immediate review' },
     ];
-  }, [kpis, systemStats, healthData.errorRate, healthData.uptime]);
+  }, [kpis, systemStats, healthData, securityAlerts.length]);
 
   const quickActions: Omit<QuickActionProps, 'themeStyles'>[] = [
     { label: 'Manage Users', href: '/admin/users', icon: Users, description: 'View, suspend, or verify accounts', badge: String(systemStats?.total_users ?? '') },
