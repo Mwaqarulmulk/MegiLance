@@ -56,16 +56,10 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/live').read()" || exit 1
 
-# Use gunicorn with uvicorn workers for production
-# Security: Limit worker memory and timeouts
-CMD ["gunicorn", "main:app", \
-     "-w", "2", \
-     "-k", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8000", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "--timeout", "120", \
-     "--graceful-timeout", "30", \
-     "--keep-alive", "5", \
-     "--max-requests", "1000", \
-     "--max-requests-jitter", "50"]
+# Use uvicorn directly for ASGI app (gunicorn adds unnecessary complexity with ASGI)
+# Security: Limit worker processes to 2 per CPU
+CMD ["python", "-m", "uvicorn", "main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "2", \
+     "--loop", "uvloop"]

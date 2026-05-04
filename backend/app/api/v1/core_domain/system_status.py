@@ -8,7 +8,6 @@ from typing import Dict, Any, List
 from fastapi import APIRouter
 import asyncio
 
-from app.db.session import get_db_url
 from app.services.llm_gateway import llm_gateway
 
 logger = logging.getLogger("megilance")
