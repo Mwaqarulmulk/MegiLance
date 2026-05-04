@@ -7,7 +7,7 @@ services:
   # ============================================================
   - name: frontend
     source_dir: frontend
-    build_command: npm ci --legacy-peer-deps && npm run build
+    build_command: npm ci --legacy-peer-deps --production=false && npm run build
     run_command: PORT=3000 node .next/standalone/server.js
     github:
       repo: ghulam-mujtaba5/MegiLance
