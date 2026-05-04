@@ -3,9 +3,9 @@
 /** Unified resource ID type — use for all API method parameters that accept IDs */
 export type ResourceId = string | number;
 
-// In production on DO App Platform: /api routes directly to backend
-// In local dev: /api is proxied via next.config.js rewrites
-const API_BASE_URL = '/api';
+// In production on DO App Platform: /api/v1 routes directly to backend
+// In local dev: /api is proxied via next.config.js rewrites → backend /api/v1
+const API_BASE_URL = '/api/v1';
 
 let authToken: string | null = null;
 
