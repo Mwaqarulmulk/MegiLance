@@ -29,6 +29,24 @@ const SUGGESTIONS = [
   'Explain escrow protection',
 ];
 
+const normalizeBackendApiUrl = (baseUrl: string): string => {
+  const trimmed = baseUrl.replace(/\/+$/, '');
+
+  if (!trimmed || trimmed === '/') {
+    return '/api';
+  }
+
+  if (trimmed.endsWith('/api')) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return `${trimmed}/api`;
+  }
+
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+};
+
 const Chatbot: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [messages, setMessages] = useState<Message[]>([
@@ -51,7 +69,7 @@ const Chatbot: React.FC = () => {
   const [recognitionAvailable, setRecognitionAvailable] = useState(false);
   const [recognitionActive, setRecognitionActive] = useState(false);
   const recognitionRef = useRef<any>(null);
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  const API_URL = normalizeBackendApiUrl(process.env.NEXT_PUBLIC_API_URL || '/api');
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,7 +91,7 @@ const Chatbot: React.FC = () => {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const res = await fetch(`${API_URL}/v1/chatbot/start`, {
+        const res = await fetch(`${API_URL}/chatbot/start`, {
             method: 'POST',
             headers,
             body: JSON.stringify({})
@@ -172,7 +190,7 @@ const Chatbot: React.FC = () => {
 
       let currentConversationId = conversationId;
       if (!currentConversationId) {
-        const startRes = await fetch(`${API_URL}/v1/chatbot/start`, { method: 'POST', headers, body: JSON.stringify({}) });
+        const startRes = await fetch(`${API_URL}/chatbot/start`, { method: 'POST', headers, body: JSON.stringify({}) });
         if (startRes.ok) {
           const startData = await startRes.json();
           currentConversationId = startData.conversation_id;
@@ -180,7 +198,7 @@ const Chatbot: React.FC = () => {
         }
       }
 
-      const res = await fetch(`${API_URL}/v1/chatbot/${currentConversationId}/message`, {
+      const res = await fetch(`${API_URL}/chatbot/${currentConversationId}/message`, {
         method: 'POST', headers, body: JSON.stringify({ message: trimmedInput })
       });
       if (res.ok) {
@@ -233,7 +251,7 @@ const Chatbot: React.FC = () => {
 
         let currentConversationId = conversationId;
         if (!currentConversationId) {
-             const startRes = await fetch(`${API_URL}/v1/chatbot/start`, {
+             const startRes = await fetch(`${API_URL}/chatbot/start`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({})
@@ -247,7 +265,7 @@ const Chatbot: React.FC = () => {
             }
         }
 
-        const res = await fetch(`${API_URL}/v1/chatbot/${currentConversationId}/message`, {
+        const res = await fetch(`${API_URL}/chatbot/${currentConversationId}/message`, {
             method: 'POST',
             headers,
             body: JSON.stringify({ message: trimmedInput })

@@ -51,6 +51,24 @@ export interface UseAIChatReturn {
   getAICapabilities: () => Promise<any>;
 }
 
+function normalizeBackendApiUrl(baseUrl: string): string {
+  const trimmed = baseUrl.replace(/\/+$/, '');
+
+  if (!trimmed || trimmed === '/') {
+    return '/api';
+  }
+
+  if (trimmed.endsWith('/api')) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return `${trimmed}/api`;
+  }
+
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+}
+
 // ============================================================================
 // Offline Response Generator
 // ============================================================================
@@ -241,6 +259,8 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
     onError,
   } = options;
 
+  const backendApiBaseUrl = normalizeBackendApiUrl(apiBaseUrl);
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
@@ -285,7 +305,7 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
   const pingBackend = useCallback(async (): Promise<boolean> => {
     const startTime = Date.now();
     try {
-      const response = await fetch(`${apiBaseUrl}/health/ready`, {
+      const response = await fetch(`${backendApiBaseUrl}/health/ready`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000),
       });
@@ -309,7 +329,7 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
     
     updateStatus({ backendAvailable: false });
     return false;
-  }, [apiBaseUrl, updateStatus]);
+  }, [backendApiBaseUrl, updateStatus]);
 
   // Ping AI service (skipped if no URL configured — chatbot uses backend directly)
   const pingAIService = useCallback(async (): Promise<boolean> => {
@@ -368,14 +388,8 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
 
   // Start conversation
   const startConversation = useCallback(async () => {
-    if (!status.backendAvailable) {
-      // Generate offline conversation ID
-      setConversationId(`offline-${Date.now()}`);
-      return;
-    }
-
     try {
-      const response = await fetch(`${apiBaseUrl}/chatbot/start`, {
+      const response = await fetch(`${backendApiBaseUrl}/chatbot/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
@@ -402,7 +416,7 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
       }
       setConversationId(`offline-${Date.now()}`);
     }
-  }, [apiBaseUrl, status.backendAvailable]);
+  }, [backendApiBaseUrl]);
 
   // Send message
   const sendMessage = useCallback(async (content: string) => {
@@ -456,8 +470,29 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
       }
 
       // Try backend chatbot
-      if (status.backendAvailable && conversationId && !conversationId.startsWith('offline')) {
-        const response = await fetch(`${apiBaseUrl}/chatbot/${conversationId}/message`, {
+      if (status.backendAvailable) {
+        let currentConversationId = conversationId;
+
+        if (!currentConversationId || currentConversationId.startsWith('offline')) {
+          const startResponse = await fetch(`${backendApiBaseUrl}/chatbot/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+            signal: AbortSignal.timeout(10000),
+          });
+
+          if (startResponse.ok) {
+            const startData = await startResponse.json();
+            currentConversationId = startData.conversation_id;
+            setConversationId(currentConversationId);
+          }
+        }
+
+        if (!currentConversationId || currentConversationId.startsWith('offline')) {
+          throw new Error('Unable to start chatbot conversation');
+        }
+
+        const response = await fetch(`${backendApiBaseUrl}/chatbot/${currentConversationId}/message`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: content }),
@@ -521,7 +556,7 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
       setIsTyping(false);
     }
   }, [
-    apiBaseUrl,
+    backendApiBaseUrl,
     aiServiceUrl,
     conversationId,
     enableOfflineMode,

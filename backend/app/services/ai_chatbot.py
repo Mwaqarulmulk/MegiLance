@@ -259,11 +259,10 @@ class AIChatbotService:
         sentiment = self._analyze_sentiment(message)
         
         # Store user message in DB
-        msg_id = f"msg_{secrets.token_hex(8)}"
         execute_query(
-            """INSERT INTO chatbot_messages (id, conversation_id, role, content, intent, sentiment, timestamp)
-               VALUES (?, ?, 'user', ?, ?, ?, ?)""",
-            [msg_id, conversation_id, message, intent.value, sentiment.value, now]
+            """INSERT INTO chatbot_messages (conversation_id, role, content, intent, sentiment, created_at)
+               VALUES (?, 'user', ?, ?, ?, ?)""",
+            [conversation_id, message, intent.value, sentiment.value, now]
         )
         
         # Update conversation intents/sentiment
@@ -288,11 +287,10 @@ class AIChatbotService:
         response = await self._generate_response(conversation_id, message, intent, sentiment)
         
         # Store bot response
-        bot_msg_id = f"msg_{secrets.token_hex(8)}"
         execute_query(
-            """INSERT INTO chatbot_messages (id, conversation_id, role, content, intent, sentiment, timestamp)
-               VALUES (?, ?, 'assistant', ?, ?, ?, ?)""",
-            [bot_msg_id, conversation_id, response["message"], intent.value, sentiment.value, now]
+            """INSERT INTO chatbot_messages (conversation_id, role, content, intent, sentiment, created_at)
+               VALUES (?, 'assistant', ?, ?, ?, ?)""",
+            [conversation_id, response["message"], intent.value, sentiment.value, now]
         )
         
         return {
@@ -315,7 +313,7 @@ class AIChatbotService:
             return {"error": "Conversation not found"}
         
         result = execute_query(
-            "SELECT * FROM chatbot_messages WHERE conversation_id = ? ORDER BY timestamp ASC",
+            "SELECT * FROM chatbot_messages WHERE conversation_id = ? ORDER BY created_at ASC",
             [conversation_id]
         )
         messages = parse_rows(result)
@@ -379,7 +377,7 @@ class AIChatbotService:
 
         conversation = await self._get_conversation(conversation_id) or {}
         msgs_result = execute_query(
-            "SELECT * FROM chatbot_messages WHERE conversation_id = ? ORDER BY timestamp ASC",
+            "SELECT * FROM chatbot_messages WHERE conversation_id = ? ORDER BY created_at ASC",
             [conversation_id]
         )
         messages = parse_rows(msgs_result)

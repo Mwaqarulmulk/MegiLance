@@ -166,7 +166,7 @@ const AIStatusIndicator: React.FC<AIStatusIndicatorProps> = ({
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
               transition={{ duration: 0.15 }}
               className={cn(commonStyles.dropdown, themeStyles.dropdown)}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               <div className={commonStyles.dropdownHeader}>
                 <Bot size={16} />
