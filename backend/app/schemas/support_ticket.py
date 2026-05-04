@@ -7,7 +7,7 @@ class SupportTicketBase(BaseModel):
     """Base support ticket schema with common fields"""
     subject: str = Field(..., min_length=5, max_length=200, description="Ticket subject")
     description: str = Field(..., min_length=20, max_length=2000, description="Detailed description")
-    category: Literal["billing", "technical", "account", "other"] = Field("other", description="Ticket category")
+    category: Literal["billing", "technical", "account", "bug", "auto_detect", "other"] = Field("other", description="Ticket category")
     priority: Literal["low", "medium", "high", "urgent"] = Field("medium", description="Ticket priority")
 
 class SupportTicketCreate(SupportTicketBase):
@@ -26,7 +26,7 @@ class SupportTicketUpdate(BaseModel):
     """Schema for updating a support ticket"""
     subject: Optional[str] = Field(None, min_length=5, max_length=200)
     description: Optional[str] = Field(None, min_length=20, max_length=2000)
-    category: Optional[Literal["billing", "technical", "account", "other"]] = None
+    category: Optional[Literal["billing", "technical", "account", "bug", "auto_detect", "other"]] = None
     priority: Optional[Literal["low", "medium", "high", "urgent"]] = None
     status: Optional[Literal["open", "in_progress", "resolved", "closed"]] = None
     assigned_to: Optional[int] = None
