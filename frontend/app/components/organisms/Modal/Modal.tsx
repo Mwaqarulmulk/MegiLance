@@ -159,7 +159,7 @@ const Modal: React.FC<ModalProps> = ({
           <motion.div
             className={cn(commonStyles.modalContent, themeStyles.modalContent, sizeClass, className)}
             ref={modalRef}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             tabIndex={-1}
             role="dialog"
             aria-modal="true"

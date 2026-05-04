@@ -135,7 +135,7 @@ const StatCard: React.FC<{
   }, [isInView, stat.value, springValue]);
 
   useEffect(() => {
-    return springValue.on("change", (latest) => {
+    return springValue.on("change", (latest: number) => {
       setDisplayValue(Math.floor(latest));
     });
   }, [springValue]);
