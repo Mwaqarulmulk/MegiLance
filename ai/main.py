@@ -204,14 +204,24 @@ from typing import Dict, Any
 
 # Import real sentiment analyzer
 try:
-    import sys, os
-    # Allow importing from backend if co-located (Docker setup)
-    _backend_path = os.path.join(os.path.dirname(__file__), "..", "backend")
-    if os.path.isdir(_backend_path) and _backend_path not in sys.path:
-        sys.path.insert(0, _backend_path)
-    from app.services.sentiment_analysis import SentimentAnalyzer
-    _sentiment_analyzer = SentimentAnalyzer()
-    logger.info("✅ VADER sentiment analyzer loaded")
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+    class VaderWrapper:
+        def __init__(self):
+            self.analyzer = SentimentIntensityAnalyzer()
+        def analyze(self, text: str) -> dict:
+            scores = self.analyzer.polarity_scores(text)
+            compound = scores["compound"]
+            label = "positive" if compound >= 0.05 else "negative" if compound <= -0.05 else "neutral"
+            return {
+                "compound": compound,
+                "label": label,
+                "confidence": min(abs(compound) * 1.3 + 0.3, 1.0),
+                "positive": scores["pos"],
+                "negative": scores["neg"],
+                "neutral": scores["neu"]
+            }
+    _sentiment_analyzer = VaderWrapper()
+    logger.info("✅ VADER sentiment analyzer loaded from vaderSentiment")
 except ImportError:
     # Fallback: embed a minimal analyzer locally
     logger.warning("Backend sentiment module not found, using embedded VADER")
