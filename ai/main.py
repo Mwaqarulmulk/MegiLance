@@ -150,28 +150,54 @@ async def generate_embeddings(request: EmbeddingRequest):
 
 @app.post("/ai/generate")
 async def generate_text(request: GenerateRequest):
-    """Generate text using template-based approach"""
-    prompt_lower = request.prompt.lower()
-    
-    if "proposal" in prompt_lower or "project" in prompt_lower:
-        text = """Thank you for considering my services for this project. 
+    """Generate text using Litellm/DigitalOcean AI integration with template fallback"""
+    text = ""
+    method = "digitalocean-llm"
+    try:
+        import litellm
+        litellm.suppress_debug_info = True
+        do_api_key = os.getenv("DO_AI_API_KEY")
+        do_api_base = os.getenv("DO_AI_API_BASE", "https://inference.do-ai.run/v1")
+        do_model = os.getenv("DO_AI_MODEL", "llama3.3-70b-instruct")
+        
+        kwargs = {
+            "messages": [{"role": "user", "content": request.prompt}],
+            "max_tokens": request.max_length,
+            "temperature": request.temperature,
+        }
+        
+        if do_api_key:
+            kwargs["model"] = do_model
+            kwargs["api_base"] = do_api_base
+            kwargs["api_key"] = do_api_key
+            kwargs["custom_llm_provider"] = "openai"
+        elif os.getenv("HUGGINGFACE_API_KEY"):
+            kwargs["model"] = "huggingface/mistralai/Mixtral-8x7B-Instruct-v0.1"
+            kwargs["api_key"] = os.getenv("HUGGINGFACE_API_KEY")
+        else:
+            raise ValueError("No LLM API keys provided (DO_AI_API_KEY, HUGGINGFACE_API_KEY).")
+            
+        response = await litellm.acompletion(**kwargs)
+        if response and response.choices:
+            text = response.choices[0].message.content.strip()
 
-I have carefully reviewed your requirements and I'm confident I can deliver exceptional results. With my expertise and attention to detail, I will ensure the project meets all specifications and exceeds your expectations.
-
-I propose to complete this work with high quality standards, clear communication throughout, and timely delivery. I'm available to discuss any questions or specific requirements you may have.
-
-Looking forward to working with you on this exciting project!"""
-    elif "describe" in prompt_lower or "summary" in prompt_lower:
-        text = "This is a professional description tailored to your requirements, highlighting key features and benefits that align with your project goals."
-    elif "write" in prompt_lower:
-        text = "Based on your request, here is a professional response that addresses your needs with clarity and attention to detail."
-    else:
-        text = f"I understand you're looking for: {request.prompt[:100]}. I can provide comprehensive assistance with this requirement and deliver quality results."
-    
+    except Exception as e:
+        logger.warning(f"LLM generation failed: {e}. Using fallback templates.")
+        method = "template-based-fallback"
+        prompt_lower = request.prompt.lower()
+        if "proposal" in prompt_lower or "project" in prompt_lower:
+            text = "Thank you for considering my services for this project. \n\nI have carefully reviewed your requirements and I'm confident I can deliver exceptional results. With my expertise and attention to detail, I will ensure the project meets all specifications and exceeds your expectations.\n\nI propose to complete this work with high quality standards, clear communication throughout, and timely delivery. I'm available to discuss any questions or specific requirements you may have."
+        elif "describe" in prompt_lower or "summary" in prompt_lower:
+            text = "This is a professional description tailored to your requirements, highlighting key features and benefits that align with your project goals."
+        elif "write" in prompt_lower:
+            text = "Based on your request, here is a professional response that addresses your needs with clarity and attention to detail."
+        else:
+            text = f"I understand you're looking for: {request.prompt[:100]}. I can provide comprehensive assistance with this requirement and deliver quality results."
+            
     if len(text) > request.max_length:
         text = text[:request.max_length] + "..."
         
-    return {"text": text, "method": "template-based"}
+    return {"text": text, "method": method}
 
 # ── Sentiment Analysis (VADER-based) ────────────────────────────────────────
 from typing import Dict, Any
