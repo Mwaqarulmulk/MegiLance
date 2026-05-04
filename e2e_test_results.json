@@ -1,0 +1,92 @@
+[
+  {
+    "timestamp": "2026-05-04T09:29:40.714703",
+    "test": "Backend Health Check",
+    "status": "FAIL",
+    "details": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=5)"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:09.253364",
+    "test": "Client Registration",
+    "status": "PASS",
+    "details": "User ID: None"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:09.587902",
+    "test": "Client Login",
+    "status": "FAIL",
+    "details": "Status: 401"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:13.572608",
+    "test": "Freelancer Registration",
+    "status": "PASS",
+    "details": "User ID: None"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:13.938549",
+    "test": "Freelancer Login",
+    "status": "FAIL",
+    "details": "Status: 401"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:14.540463",
+    "test": "Project Creation",
+    "status": "FAIL",
+    "details": "Status: 422, Response: {\"detail\":\"4 validation error(s)\",\"error_type\":\"ValidationError\",\"errors\":[{\"field\":\"budget_type\",\"message\":\"Field required\",\"type\":\"missing\"},{\"field\":\"experience_level\",\"message\":\"Field required\",\"type\":\"missing\"},{\"field\":\"estimated_duration\",\"message\":\"Field required\",\"type\":\"missing\"},{\"field\":\"skills\",\"message\":\"Field required\",\"type\":\"missing\"}],\"request_id\":\"\"}"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:14.803425",
+    "test": "Browse Projects",
+    "status": "PASS",
+    "details": "Found 1 projects"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:14.804422",
+    "test": "Submit Proposal",
+    "status": "SKIP",
+    "details": "No project ID available"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:14.939620",
+    "test": "Direct Messaging",
+    "status": "FAIL",
+    "details": "Status: 422"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:15.408346",
+    "test": "Chatbot Interaction",
+    "status": "FAIL",
+    "details": "Status: 404"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:15.411348",
+    "test": "Contract Creation",
+    "status": "SKIP",
+    "details": "No proposal ID available"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:15.772054",
+    "test": "Payment Initiation",
+    "status": "FAIL",
+    "details": "Status: 405"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:15.829189",
+    "test": "Review Submission",
+    "status": "FAIL",
+    "details": "Status: 422"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:15.986970",
+    "test": "Profile Completeness",
+    "status": "FAIL",
+    "details": "Status: 404"
+  },
+  {
+    "timestamp": "2026-05-04T09:33:16.107733",
+    "test": "Matching System",
+    "status": "FAIL",
+    "details": "Status: 422"
+  }
+]

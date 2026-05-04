@@ -22,9 +22,9 @@ interface Message {
 
 const SUGGESTED_ACTIONS = [
   { icon: HelpCircle, text: 'How do I get started?' },
-  { icon: FileText, text: 'View my projects' },
-  { icon: User, text: 'Find freelancers' },
-  { icon: Zap, text: 'Quick tips' },
+  { icon: Sparkles, text: 'Find matching projects' },
+  { icon: FileText, text: 'Write a proposal' },
+  { icon: Zap, text: 'Payment info' },
 ];
 
 export default function ChatbotAgent() {
@@ -193,6 +193,12 @@ export default function ChatbotAgent() {
     }
     if (msg.includes('tips') || msg.includes('advice')) {
       return { text: "Quick tips for success:\n• Complete your profile 100%\n• Add a professional portfolio\n• Respond to messages within 24 hours\n• Ask clarifying questions before bidding\n• Deliver quality work on time!", sentiment: 'positive' };
+    }
+    if (msg.includes('match') || msg.includes('job for me') || msg.includes('relevant')) {
+      return { text: "I can help you find relevant projects! In full mode, I'll analyze your profile skills and recent activity to recommend the best jobs. Try again when I'm back online!", sentiment: 'positive' };
+    }
+    if (msg.includes('proposal') || msg.includes('write') || msg.includes('bid')) {
+      return { text: "To write a winning proposal:\n1. Personalize every bid\n2. Highlight relevant past work\n3. Address the client's specific problems\n4. Propose a clear timeline and budget\n\nI can normally help you draft these automatically!", sentiment: 'positive' };
     }
     
     const limitedMsg = chatStatus === 'offline'

@@ -82,9 +82,11 @@ class Settings(BaseSettings):
     max_upload_size: int = 10 * 1024 * 1024  # 10MB
     allowed_upload_extensions: list[str] = [".jpg", ".jpeg", ".png", ".gif", ".pdf", ".doc", ".docx"]
     
-    # AI Service
+    # AI Service (DigitalOcean only - no OpenAI fallback)
     ai_service_url: Optional[str] = "http://localhost:8001"
-    openai_api_key: Optional[str] = None
+    do_ai_api_key: Optional[str] = None
+    do_ai_api_base: Optional[str] = "https://inference.do-ai.run/v1"
+    do_ai_model: Optional[str] = "llama3.3-70b-instruct"
     
     # Email & Notifications
     ses_region: Optional[str] = None

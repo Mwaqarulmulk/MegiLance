@@ -1,0 +1,43 @@
+frontend 2026-05-04T04:28:32.418205871Z npm warn config production Use `--omit=dev` instead.
+frontend 2026-05-04T04:28:33.384238598Z 
+frontend 2026-05-04T04:28:33.384260827Z > frontend@0.1.0 start
+frontend 2026-05-04T04:28:33.384264066Z > next start -p ${PORT:-3000}
+frontend 2026-05-04T04:28:33.384267851Z 
+frontend 2026-05-04T04:28:34.428307565Z ▲ Next.js 16.2.4
+frontend 2026-05-04T04:28:34.428684177Z - Local:         http://localhost:3000
+frontend 2026-05-04T04:28:34.428768332Z - Network:       http://100.127.31.22:3000
+frontend 2026-05-04T04:28:34.429224254Z ✓ Ready in 470ms
+frontend 2026-05-04T04:28:36.809365375Z ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+backend 2026-05-04T05:05:11.146026003Z [2026-05-04 05:05:11 +0000] [1] [INFO] Starting gunicorn 23.0.0
+backend 2026-05-04T05:05:11.147372540Z [2026-05-04 05:05:11 +0000] [1] [INFO] Listening at: http://0.0.0.0:8000 (1)
+backend 2026-05-04T05:05:11.147412379Z [2026-05-04 05:05:11 +0000] [1] [INFO] Using worker: uvicorn.workers.UvicornWorker
+backend 2026-05-04T05:05:11.196838675Z [2026-05-04 05:05:11 +0000] [2] [INFO] Booting worker with pid: 2
+backend 2026-05-04T05:05:11.319562077Z [2026-05-04 05:05:11 +0000] [3] [INFO] Booting worker with pid: 3
+backend 2026-05-04T05:05:35.460226989Z Server initialized for asgi.
+backend 2026-05-04T05:05:35.460260120Z Server initialized for asgi.
+backend 2026-05-04T05:05:59.831878209Z [2026-05-04 05:05:59 +0000] [3] [INFO] Started server process [3]
+backend 2026-05-04T05:05:59.832189450Z [2026-05-04 05:05:59 +0000] [3] [INFO] Waiting for application startup.
+backend 2026-05-04T05:05:59.836548436Z [2026-05-04 05:05:59 +0000] [2] [INFO] Started server process [2]
+backend 2026-05-04T05:05:59.837004542Z [2026-05-04 05:05:59 +0000] [2] [INFO] Waiting for application startup.
+backend 2026-05-04T05:06:00.030794449Z Failed to create Turso database engine: Can't load plugin: sqlalchemy.dialects:libsql - using HTTP API
+backend 2026-05-04T05:06:00.030867041Z Failed to create Turso database engine: Can't load plugin: sqlalchemy.dialects:libsql - using HTTP API
+backend 2026-05-04T05:06:00.262463347Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.database_initialized via Turso HTTP API"}
+backend 2026-05-04T05:06:00.262499102Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.mongodb_disabled - using Turso/SQLite only"}
+backend 2026-05-04T05:06:00.266187522Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.database_initialized via Turso HTTP API"}
+backend 2026-05-04T05:06:00.266297357Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.mongodb_disabled - using Turso/SQLite only"}
+backend 2026-05-04T05:06:00.383441460Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.token_blacklist_initialized"}
+backend 2026-05-04T05:06:00.383619311Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.token_blacklist_initialized"}
+backend 2026-05-04T05:06:00.589131241Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.indexes_ensured"}
+backend 2026-05-04T05:06:00.590672385Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.indexes_ensured"}
+backend 2026-05-04T05:06:00.592766174Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.escrow_scheduler_started"}
+backend 2026-05-04T05:06:00.593419527Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "startup.escrow_scheduler_started"}
+backend 2026-05-04T05:06:00.626231918Z [2026-05-04 05:06:00 +0000] [2] [INFO] Application startup complete.
+backend 2026-05-04T05:06:00.629088199Z [2026-05-04 05:06:00 +0000] [3] [INFO] Application startup complete.
+backend 2026-05-04T05:06:00.674699231Z {"ts": "2026-05-04T05:06:00Z", "level": "INFO", "logger": "megilance", "msg": "request.complete method=GET path=/api/auth/me duration_ms=2 status=401 client_ip=2400:adc5:47f:e800:dd8e:9a1a:23bd:95f7", "request_id": "56c47a63-e249-4aa4-bf6e-43299daeda09", "path": "/api/auth/me"}
+backend 2026-05-04T05:06:00.675430918Z 100.127.7.214:55024 - "GET /api/auth/me HTTP/1.1" 401
+ai-service 2026-05-04T04:27:25.031422478Z WARNING:main:ML libraries not available: No module named 'sentence_transformers'. Using smart fallbacks.
+ai-service 2026-05-04T04:27:25.040382488Z WARNING:main:Backend sentiment module not found, using embedded VADER
+ai-service 2026-05-04T04:27:25.048102072Z INFO:     Started server process [2]
+ai-service 2026-05-04T04:27:25.048199913Z INFO:     Waiting for application startup.
+ai-service 2026-05-04T04:27:25.048784563Z INFO:     Application startup complete.
+ai-service 2026-05-04T04:27:25.061096419Z INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)

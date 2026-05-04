@@ -1,0 +1,92 @@
+[
+  {
+    "timestamp": "2026-05-04T09:35:49.541540",
+    "test": "1. Client Registration",
+    "status": "PASS",
+    "details": "Email: client_1777869345@test.com"
+  },
+  {
+    "timestamp": "2026-05-04T09:35:53.394253",
+    "test": "2. Freelancer Registration",
+    "status": "PASS",
+    "details": "Email: freelancer_1777869349@test.com"
+  },
+  {
+    "timestamp": "2026-05-04T09:35:56.721107",
+    "test": "3. Client Login",
+    "status": "PASS",
+    "details": "JWT token obtained"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:00.238101",
+    "test": "4. Freelancer Login",
+    "status": "PASS",
+    "details": "JWT token obtained"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:02.956692",
+    "test": "5. Create Project",
+    "status": "FAIL",
+    "details": "Status: 403 | {\"detail\":\"Please complete your profile before posting a project. Missing: name, bio\",\"error_type\":\"HTTPException\",\"status_code\":403,\"request_id\":\"\"}"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:05.655247",
+    "test": "6. Browse Projects",
+    "status": "PASS",
+    "details": "Found 1 projects"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:05.662062",
+    "test": "7. Submit Proposal",
+    "status": "SKIP",
+    "details": "Project or freelancer not available"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:07.842301",
+    "test": "8. Get Freelancer Profile",
+    "status": "FAIL",
+    "details": "Status: 404"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:10.182721",
+    "test": "9. Get Client Profile",
+    "status": "FAIL",
+    "details": "Status: 404"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:12.268571",
+    "test": "10. List Contracts",
+    "status": "FAIL",
+    "details": "Status: 404"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:15.293524",
+    "test": "11. Health Check",
+    "status": "PASS",
+    "details": "Backend operational"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:17.789139",
+    "test": "12. Search Projects",
+    "status": "PASS",
+    "details": "Found 0 projects in category"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:17.887946",
+    "test": "13. Get Project Details",
+    "status": "SKIP",
+    "details": "Project not available"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:18.020803",
+    "test": "14. Get Project Proposals",
+    "status": "SKIP",
+    "details": "Project or client not available"
+  },
+  {
+    "timestamp": "2026-05-04T09:36:20.289568",
+    "test": "15. Auth Me Endpoint",
+    "status": "PASS",
+    "details": "Current user endpoint working"
+  }
+]

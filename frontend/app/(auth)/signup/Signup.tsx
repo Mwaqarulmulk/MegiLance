@@ -166,12 +166,12 @@ const Signup: React.FC = () => {
           email: formData.email,
           password: formData.password,
           name: formData.fullName,
-          role: selectedRole,
+          user_type: selectedRole,  // FIXED: Use user_type instead of role
         });
 
         trackSignupComplete(selectedRole, 'email');
-        // Show verification notice
-        router.push('/verify-email?registered=true');
+        // AUTO-APPROVED: Redirect directly to dashboard (no email verification needed)
+        router.push(selectedRole === 'client' ? '/client/dashboard' : '/freelancer/dashboard');
       } catch (error: unknown) {
         setErrors({ email: error instanceof Error ? error.message : 'Registration failed. Please try again.' });
       } finally {
@@ -193,7 +193,7 @@ const Signup: React.FC = () => {
     
     setLoading(true);
     try {
-const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
+      const redirectUri = `${window.location.origin}/callback`;
       try { window.localStorage.setItem('portal_area', selectedRole); } catch { /* localStorage unavailable in private browsing */ }
       
       const response = await api.socialAuth.start(provider, redirectUri, selectedRole, 'register') as { authorization_url?: string };
