@@ -1,0 +1,185 @@
+name: megilance
+region: nyc
+
+services:
+  # ============================================================
+  # FRONTEND - Next.js 16 with Tailwind CSS v4
+  # ============================================================
+  - name: frontend
+    source_dir: frontend
+    build_command: npm install --legacy-peer-deps && npm run build
+    run_command: PORT=3000 node .next/standalone/server.js
+    github:
+      repo: ghulam-mujtaba5/MegiLance
+      branch: main
+      deploy_on_push: true
+    health_check:
+      http_path: /
+      initial_delay_seconds: 90
+      period_seconds: 30
+      timeout_seconds: 10
+      success_threshold: 1
+      failure_threshold: 5
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xs
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        value: "production"
+        scope: RUN_AND_BUILD_TIME
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://api.megilance.site/api"
+        scope: RUN_AND_BUILD_TIME
+      - key: NEXT_PUBLIC_BACKEND_URL
+        value: "https://api.megilance.site"
+        scope: RUN_AND_BUILD_TIME
+      - key: NEXT_PUBLIC_WS_URL
+        value: "wss://api.megilance.site"
+        scope: RUN_AND_BUILD_TIME
+
+  # ============================================================
+  # BACKEND - FastAPI with Turso (libSQL) database
+  # ============================================================
+  - name: backend
+    dockerfile_path: backend/Dockerfile
+    source_dir: /
+    github:
+      repo: ghulam-mujtaba5/MegiLance
+      branch: main
+      deploy_on_push: true
+    health_check:
+      http_path: /api/health/live
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 10
+      success_threshold: 1
+      failure_threshold: 5
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: basic-xs
+    routes:
+      - path: /api
+    envs:
+      # Database - MUST SET AS SECRETS IN DIGITALOCEAN DASHBOARD
+      - key: TURSO_DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: TURSO_AUTH_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+      # Security - MUST SET AS SECRETS IN DIGITALOCEAN DASHBOARD
+      - key: SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: GOOGLE_CLIENT_ID
+        scope: RUN_TIME
+        type: SECRET
+      - key: GOOGLE_CLIENT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: GITHUB_CLIENT_ID
+        scope: RUN_TIME
+        type: SECRET
+      - key: GITHUB_CLIENT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: RESEND_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: DO_AI_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      # Configuration (non-sensitive)
+      - key: ENVIRONMENT
+        value: "production"
+        scope: RUN_TIME
+      - key: DEBUG
+        value: "false"
+        scope: RUN_TIME
+      - key: LOG_LEVEL
+        value: "INFO"
+        scope: RUN_TIME
+      - key: JWT_ALGORITHM
+        value: "HS256"
+        scope: RUN_TIME
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+        scope: RUN_TIME
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+        scope: RUN_TIME
+
+  # ============================================================
+  # AI SERVICE - Advanced LLM inference
+  # ============================================================
+  - name: ai-service
+    dockerfile_path: ai/Dockerfile
+    source_dir: /
+    github:
+      repo: ghulam-mujtaba5/MegiLance
+      branch: main
+      deploy_on_push: true
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 10
+      success_threshold: 1
+      failure_threshold: 5
+    http_port: 8001
+    instance_count: 1
+    instance_size_slug: basic-xs
+    routes:
+      - path: /ai-api
+    envs:
+      - key: DO_AI_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: DO_AI_MODEL
+        value: "llama3.3-70b-instruct"
+        scope: RUN_TIME
+      - key: API_PORT
+        value: "8001"
+        scope: RUN_TIME
+
+ingress:
+  rules:
+    - component:
+        name: frontend
+      match:
+        path:
+          prefix: /
+    - component:
+        name: backend
+        preserve_path_prefix: true
+      match:
+        path:
+          prefix: /api
+    - component:
+        name: ai-service
+        preserve_path_prefix: true
+      match:
+        path:
+          prefix: /ai-api
+
+domains:
+  - domain: megilance.site
+    type: PRIMARY
+    zone: megilance.site
+  - domain: www.megilance.site
+    type: ALIAS
+    zone: megilance.site
+  - domain: api.megilance.site
+    type: ALIAS
+    zone: megilance.site
