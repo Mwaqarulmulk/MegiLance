@@ -166,7 +166,7 @@ const Signup: React.FC = () => {
           email: formData.email,
           password: formData.password,
           name: formData.fullName,
-          user_type: selectedRole,  // FIXED: Use user_type instead of role
+          role: selectedRole,
         });
 
         trackSignupComplete(selectedRole, 'email');
