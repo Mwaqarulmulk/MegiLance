@@ -1,1 +1,49 @@
-.status { background: transparent; color: var(--text-primary-dark); }
+.themeWrapper {
+  background: var(--bg-primary-dark);
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.heroStatusBanner {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.statusCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.serviceIcon {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--primary-dark);
+}
+
+.statusTitle {
+  color: var(--text-primary-dark);
+}
+
+.statusTime {
+  color: var(--text-secondary-dark);
+  border-top-color: rgba(255,255,255,0.1);
+}
+
+.incidentCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.incidentTitle {
+  color: var(--text-primary-dark);
+}
+
+.incidentDate {
+  color: var(--text-secondary-dark);
+}
+
+.incidentDescription {
+  color: var(--text-secondary-dark);
+}

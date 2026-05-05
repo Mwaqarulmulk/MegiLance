@@ -1,1 +1,374 @@
-.status { display: flex; flex-direction: column; padding: 4rem 2rem; min-height: 80vh; max-width: 1200px; margin: 0 auto; gap: 2rem; }
+.page {
+  padding: 4rem 2rem;
+  min-height: 80vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.heroRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.heroContent {
+  flex: 1;
+  min-width: 300px;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* Hero Status Banner */
+.heroStatusBanner {
+  border-radius: 24px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+}
+
+.heroStatusMain {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.heroStatusIconLarge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.heroStatusContent {
+  flex: 1;
+  min-width: 250px;
+}
+
+.heroStatusTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.heroStatusSubtitle {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.heroStatusMeta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.heroStatusMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+}
+
+.heroRefreshBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  color: inherit;
+}
+
+.heroRefreshBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.refreshing svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Quick Service Pills */
+.quickServiceStatus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.quickServicePill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.quickServiceLatency {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+/* Status Cards Section */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.statusCard {
+  padding: 1.5rem;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.statusCard:hover {
+  transform: translateY(-5px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.serviceIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.statusTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.latency {
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+}
+
+.statusTime {
+  font-size: 0.85rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* Base Status Colors and Pills */
+.statusIconOperational { color: #10b981; }
+.statusIconDegraded { color: #f59e0b; }
+.statusIconOutage { color: #ef4444; }
+.statusIconChecking { color: #6b7280; }
+
+.statusPill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pillOperational { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.pillDegraded { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+.pillOutage { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.pillChecking { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+
+/* Incidents Section */
+.incidentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.incidentCard {
+  padding: 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.incidentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.incidentTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.incidentStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.resolved { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.incidentDate {
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.incidentDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Metrics Section */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.metricCard {
+  padding: 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.metricIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.metricTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.metricValue {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.metricPeriod {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.metricIconBlue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.metricValueBlue { color: #3b82f6; }
+.metricIconGreen { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.metricValueGreen { color: #10b981; }
+.metricIconPurple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.metricValuePurple { color: #8b5cf6; }
+.metricIconOrange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.metricValueOrange { color: #f59e0b; }
+
+@media (max-width: 768px) {
+  .heroStatusMain { flex-direction: column; text-align: center; justify-content: center; }
+  .heroStatusMeta { justify-content: center; }
+  .title { font-size: 2rem; justify-content: center; }
+  .subtitle { text-align: center; }
+  .heroContent { text-align: center; }
+  .quickServiceStatus { justify-content: center; }
+}
