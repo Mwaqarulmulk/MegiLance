@@ -37,7 +37,7 @@ const megaMenuData = {
         title: 'AI-Powered',
         items: [
           { name: 'AI Chatbot', href: '/ai/chatbot', icon: MessageSquare, description: 'Intelligent assistant', status: 'advanced' as FeatureStatus },
-          { name: 'Smart Matching', href: '/explore', icon: Search, description: '7-factor algorithm', status: 'advanced' as FeatureStatus },
+          { name: 'AI Tools Hub', href: '/ai', icon: Zap, description: 'All AI tools in one place', status: 'advanced' as FeatureStatus },
           { name: 'Price Estimator', href: '/ai/price-estimator', icon: BarChart3, description: 'ML-powered pricing', status: 'advanced' as FeatureStatus },
         ]
       },
