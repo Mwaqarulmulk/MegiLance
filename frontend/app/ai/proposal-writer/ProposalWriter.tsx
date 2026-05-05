@@ -421,7 +421,7 @@ export default function ProposalWriter() {
   });
 
   useEffect(() => {
-    fetch('/api/proposal-writer/options').then(r => r.json()).then(setOptions).catch(() => {});
+    fetch('/api/v1/proposal-writer/options').then(r => r.json()).then(setOptions).catch(() => {});
   }, []);
 
   const handleChange = useCallback((f: string, v: any) => setForm(p => ({ ...p, [f]: v })), []);
@@ -450,7 +450,7 @@ export default function ProposalWriter() {
         proposed_timeline: form.proposed_timeline || undefined,
         country_code: form.country_code || 'US',
       };
-      const res = await fetch('/api/proposal-writer/generate', {
+      const res = await fetch('/api/v1/proposal-writer/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

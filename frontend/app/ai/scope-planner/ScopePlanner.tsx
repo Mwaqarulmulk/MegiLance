@@ -357,7 +357,7 @@ export default function ScopePlanner() {
   const [deliverables, setDeliverables] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch('/api/scope-planner/options').then(r => r.json()).then(setOptions).catch(() => {});
+    fetch('/api/v1/scope-planner/options').then(r => r.json()).then(setOptions).catch(() => {});
   }, []);
 
   const handleChange = useCallback((f: string, v: any) => setForm(p => ({ ...p, [f]: v })), []);
@@ -382,7 +382,7 @@ export default function ScopePlanner() {
         features,
         deliverables,
       };
-      const res = await fetch('/api/scope-planner/plan', {
+      const res = await fetch('/api/v1/scope-planner/plan', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       const data = await res.json();

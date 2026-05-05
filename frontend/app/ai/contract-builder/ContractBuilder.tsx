@@ -447,7 +447,7 @@ export default function ContractBuilder() {
 
   // Fetch options
   useEffect(() => {
-    fetch('/api/contract-builder-standalone/options')
+    fetch('/api/v1/contract-builder-standalone/options')
       .then(r => r.json())
       .then(setOptions)
       .catch((e) => console.error('Contract builder options load failed:', e));
@@ -455,7 +455,7 @@ export default function ContractBuilder() {
 
   // Fetch clauses when type changes
   useEffect(() => {
-    fetch(`/api/contract-builder-standalone/clauses/${encodeURIComponent(contractType)}`)
+    fetch(`/api/v1/contract-builder-standalone/clauses/${encodeURIComponent(contractType)}`)
       .then(r => r.json())
       .then(data => setClauses(data.clauses || []))
       .catch((e) => console.error('Contract clauses load failed:', e));
@@ -490,7 +490,7 @@ export default function ContractBuilder() {
         notice_period_days: parseInt(terms.notice_period_days) || 14,
         warranty_days: parseInt(terms.warranty_days) || 30,
       };
-      const res = await fetch('/api/contract-builder-standalone/generate', {
+      const res = await fetch('/api/v1/contract-builder-standalone/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

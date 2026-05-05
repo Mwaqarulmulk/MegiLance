@@ -197,7 +197,7 @@ const PriceEstimator: React.FC = () => {
     const loadingPromise = animateLoadingSteps();
 
     try {
-      const res = await fetch('/api/price-estimator/estimate', {
+      const res = await fetch('/api/v1/price-estimator/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

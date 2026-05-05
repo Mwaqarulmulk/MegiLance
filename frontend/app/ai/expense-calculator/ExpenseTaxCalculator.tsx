@@ -317,7 +317,7 @@ export default function ExpenseTaxCalculator() {
   const [deductions, setDeductions] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch('/api/expense-tax-calculator/options').then(r => r.json()).then(setOptions).catch(() => {});
+    fetch('/api/v1/expense-tax-calculator/options').then(r => r.json()).then(setOptions).catch(() => {});
   }, []);
 
   const handleChange = useCallback((f: string, v: any) => setForm(p => ({ ...p, [f]: v })), []);
@@ -347,7 +347,7 @@ export default function ExpenseTaxCalculator() {
         taxes_already_paid: parseFloat(form.quarterly_tax_paid) || 0,
         current_quarter: parseInt(form.quarters_remaining) || 1,
       };
-      const res = await fetch('/api/expense-tax-calculator/calculate', {
+      const res = await fetch('/api/v1/expense-tax-calculator/calculate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       const data = await res.json();

@@ -391,7 +391,7 @@ export default function SkillAnalyzer() {
   const [targetRole, setTargetRole] = useState('');
 
   useEffect(() => {
-    fetch('/api/skill-analyzer/skills').then(r => r.json()).then((data: any[]) => {
+    fetch('/api/v1/skill-analyzer/skills').then(r => r.json()).then((data: any[]) => {
       const groups: GroupedSkills = {};
       for (const cat of data) {
         groups[cat.label] = (cat.skills || []).map((sk: any) => ({
@@ -422,7 +422,7 @@ export default function SkillAnalyzer() {
         country_code: country || 'US',
         target_role: targetRole || undefined,
       };
-      const res = await fetch('/api/skill-analyzer/analyze', {
+      const res = await fetch('/api/v1/skill-analyzer/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

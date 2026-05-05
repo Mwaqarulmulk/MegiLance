@@ -128,7 +128,7 @@ export default function InvoiceGenerator() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/invoice-generator/options');
+        const res = await fetch('/api/v1/invoice-generator/options');
         if (!res.ok) throw new Error('Failed to fetch options');
         const data: OptionsData = await res.json();
         if (!cancelled) setOptions(data);
@@ -206,7 +206,7 @@ export default function InvoiceGenerator() {
         custom_invoice_number: invoiceNumber,
       };
 
-      const res = await fetch('/api/invoice-generator/generate', {
+      const res = await fetch('/api/v1/invoice-generator/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

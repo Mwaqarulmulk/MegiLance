@@ -79,7 +79,7 @@ const FraudCheck: React.FC = () => {
 
     try {
       const params = new URLSearchParams({ text: text.trim() });
-      const res = await fetch(`/api/ai/fraud-check?${params.toString()}`, { method: 'POST' });
+      const res = await fetch(`/api/v1/ai/fraud-check?${params.toString()}`, { method: 'POST' });
 
       if (!res.ok) throw new Error('API error');
 

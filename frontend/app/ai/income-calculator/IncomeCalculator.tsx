@@ -338,7 +338,7 @@ export default function IncomeCalculator() {
   const [expenses, setExpenses] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch('/api/income-calculator/options').then(r => r.json()).then(setOptions).catch(() => {});
+    fetch('/api/v1/income-calculator/options').then(r => r.json()).then(setOptions).catch(() => {});
   }, []);
 
   const handleChange = useCallback((f: string, v: any) => setForm(p => ({ ...p, [f]: v })), []);
@@ -374,7 +374,7 @@ export default function IncomeCalculator() {
         vacation_weeks: parseInt(form.vacation_weeks) || 4,
         sick_days: parseInt(form.sick_days) || 5,
       };
-      const res = await fetch('/api/income-calculator/calculate', {
+      const res = await fetch('/api/v1/income-calculator/calculate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       const data = await res.json();
