@@ -575,11 +575,15 @@ export default function ChatbotAgent() {
             </div>
             <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
               <button 
-                onClick={() => setIsExpanded(!isExpanded)} 
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/ai/chatbot');
+                }} 
                 className={cn(commonStyles.expandBtn, themeStyles.closeButton)}
-                aria-label={isExpanded ? 'Minimize' : 'Expand'}
+                aria-label="Open full page"
+                title="Open full page"
               >
-                {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                <Maximize2 size={16} />
               </button>
               <button 
                 onClick={toggleChatbot} 

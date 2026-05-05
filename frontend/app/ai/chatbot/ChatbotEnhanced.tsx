@@ -270,14 +270,6 @@ const ChatbotEnhanced: React.FC = () => {
                 >
                   <Trash2 size={18} />
                 </button>
-                <button
-                  className={cn(commonStyles.iconButton, themeStyles.iconButton)}
-                  onClick={clearMessages}
-                  title="Clear chat"
-                  aria-label="Clear chat history"
-                >
-                  <Trash2 size={18} />
-                </button>
                 {recognitionAvailable && (
                   <button
                     className={cn(commonStyles.iconButton, themeStyles.iconButton)}
@@ -297,14 +289,35 @@ const ChatbotEnhanced: React.FC = () => {
                 >
                   <Volume2 size={18} />
                 </button>
-                <button
-                  className={cn(commonStyles.iconButton, themeStyles.iconButton)}
-                  onClick={() => setShowActions(!showActions)}
-                  title="More options"
-                  aria-label="More options"
-                >
-                  <MoreVertical size={18} />
-                </button>
+                <div style={{ position: 'relative' }}>
+                  <button
+                    className={cn(commonStyles.iconButton, themeStyles.iconButton)}
+                    onClick={() => setShowActions(!showActions)}
+                    title="More options"
+                    aria-label="More options"
+                  >
+                    <MoreVertical size={18} />
+                  </button>
+                  <AnimatePresence>
+                    {showActions && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        className={cn(commonStyles.dropdownMenu, themeStyles.dropdownMenu)}
+                      >
+                        <button className={commonStyles.dropdownItem} onClick={clearMessages}><Trash2 size={16}/> Clear Chat</button>
+                        {recognitionAvailable && (
+                          <button className={commonStyles.dropdownItem} onClick={() => startRecognition()}><Mic size={16}/> Voice Input</button>
+                        )}
+                        <button className={commonStyles.dropdownItem} onClick={() => {
+                          const last = [...messages].reverse().find(m => m.role === 'assistant');
+                          if (last) speakText(last.content);
+                        }}><Volume2 size={16}/> Speak Last</button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </header>
 
