@@ -120,7 +120,7 @@ async def estimate_price(request: PriceEstimateRequest):
     detailed breakdowns, market comparisons, and ROI insights.
     """
     try:
-        result = price_estimator_engine.estimate_price(
+        result = await price_estimator_engine.estimate_price(
             category=request.category,
             service_type=request.service_type,
             experience_level=request.experience_level,
@@ -172,7 +172,7 @@ async def compare_estimates(requests: List[PriceEstimateRequest]):
     try:
         estimates = []
         for req in requests:
-            result = price_estimator_engine.estimate_price(
+            result = await price_estimator_engine.estimate_price(
                 category=req.category,
                 service_type=req.service_type,
                 experience_level=req.experience_level,

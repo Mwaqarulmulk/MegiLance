@@ -14,10 +14,13 @@ Enhanced with real-world data from:
 
 import math
 import logging
+import json
+import asyncio
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
 
 from app.db.turso_http import execute_query
+from app.services import llm_gateway
 from app.services.market_data_2025 import (
     DATA_VERSION,
     get_country_rate_data,
@@ -784,7 +787,7 @@ def calculate_smart_hours(
     }
 
 
-def estimate_price(
+async def estimate_price(
     category: str,
     service_type: str,
     experience_level: str = "mid",
@@ -959,7 +962,7 @@ def estimate_price(
         service_type=service_type,
     )
 
-    return {
+    base_result = {
         "estimate": {
             "hourly_rate": round(effective_rate, 2),
             "total_hours": total_hours,
@@ -994,6 +997,70 @@ def estimate_price(
         }
     }
 
+    # -- AI ENHANCEMENT: Fetch advanced contextual analysis from Llama 3.3 --
+    try:
+        llm_analysis = await _generate_llm_pricing_analysis(
+            category, service_type, experience_level, region, 
+            urgency, quality_tier, scope, estimated_hours, 
+            description, features, team_size, client_country, 
+            freelancer_country, base_result
+        )
+        base_result["llm_analysis"] = llm_analysis
+    except Exception as e:
+        logger.error(f"LLM Pricing Analysis failed: {e}")
+        base_result["llm_analysis"] = None
+
+    return base_result
+
+
+async def _generate_llm_pricing_analysis(
+    category, service_type, experience_level, region, 
+    urgency, quality_tier, scope, estimated_hours, 
+    description, features, team_size, client_country, freelancer_country, base_result
+):
+    """Generates an advanced semantic pricing analysis using DigitalOcean LLM."""
+    prompt = f"""
+You are an expert pricing strategist and market analyst.
+Review the following project details and the baseline rule-based cost estimate.
+Provide advanced strategic insights that go beyond simple math.
+
+Project Details:
+- Category: {category} ({service_type})
+- Experience Level: {experience_level}
+- Scope/Quality/Urgency: {scope} / {quality_tier} / {urgency}
+- Team Size: {team_size}
+- Client Country: {client_country or 'Global'} | Freelancer Country: {freelancer_country or 'Global'}
+- Features: {', '.join(features) if features else 'Not specified'}
+- Description: {description}
+
+Baseline Mathematical Estimate:
+- Hourly Rate: ${base_result['estimate']['hourly_rate']}
+- Total Hours: {base_result['estimate']['total_hours']}
+- Estimated Total: ${base_result['estimate']['total_estimate']} (Range: ${base_result['estimate']['low_estimate']} - ${base_result['estimate']['high_estimate']})
+- Demand: {base_result['demand_level']} ({base_result['demand_trend']})
+
+Output a tight JSON object with NO markdown wrapping, following this schema:
+{{
+    "strategic_summary": "A 2-3 sentence executive summary of whether this baseline estimate is realistic given market nuances.",
+    "hidden_costs": ["List 2-4 potential hidden costs or risks that could inflate the price further"],
+    "negotiation_leverage": ["List 2-4 ways the client or freelancer could negotiate the price up or down based on these parameters"],
+    "market_nuance": "1-2 sentences on how the specific countries, tech stack, or urgency chosen uniquely affect this pricing."
+}}
+"""
+    response_text = await llm_gateway.generate_text(
+        prompt=prompt,
+        system_message="You are a JSON-only API. Print nothing but valid JSON.",
+        temperature=0.3
+    )
+    
+    try:
+        # Strip any accidental markdown formatting the LLM might have added
+        cleaned = response_text.replace("```json", "").replace("```", "").strip()
+        analysis = json.loads(cleaned)
+        return analysis
+    except json.JSONDecodeError:
+        logger.warning(f"Failed to parse LLM JSON for price estimator: {response_text}")
+        return None
 
 def _build_breakdown(
     service_type: str,
