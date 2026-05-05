@@ -329,6 +329,13 @@ const ClientDashboard: React.FC = () => {
       color: "purple" as const,
       desc: `${counts.messages} unread`,
     },
+    {
+      label: "AI Services",
+      href: "/ai",
+      icon: Zap,
+      color: "primary" as const,
+      desc: "Smart pricing & tracking",
+    },
   ];
 
   if (!mounted) {

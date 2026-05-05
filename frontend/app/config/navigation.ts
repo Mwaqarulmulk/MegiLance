@@ -65,6 +65,12 @@ export const freelancerNavItems: NavItem[] = [
   { label: 'Messages', href: '/freelancer/messages', icon: 'MessageSquare', section: 'Communication' },
   { label: 'Notifications', href: '/freelancer/notifications', icon: 'Bell' },
   { label: 'Earnings', href: '/freelancer/earnings', icon: 'Wallet', section: 'Finance' },
+  { label: 'AI Suite', href: '/ai', icon: 'Bot', section: 'Intelligence', submenu: [
+    { label: 'AI Operations', href: '/ai', icon: 'Bot' },
+    { label: 'Pricing Engine', href: '/ai/price-estimator', icon: 'TrendingUp' },
+    { label: 'Smart Invoices', href: '/ai/invoice-generator', icon: 'FileText' },
+    { label: 'AI Assistant', href: '/ai/chatbot', icon: 'MessageSquare' },
+  ]},
   { label: 'Profile', href: '/freelancer/profile', icon: 'User', section: 'Account' },
   { label: 'Reviews', href: '/freelancer/reviews', icon: 'Star' },
   { label: 'Settings', href: '/freelancer/settings', icon: 'Settings' },

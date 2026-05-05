@@ -394,6 +394,13 @@ const Dashboard: React.FC = () => {
       desc: "View insights",
     },
     {
+      label: "AI Suite",
+      href: "/ai",
+      icon: Zap,
+      color: "primary" as const,
+      desc: "Smart tools & insights",
+    },
+    {
       label: "Profile",
       href: "/freelancer/profile",
       icon: User,

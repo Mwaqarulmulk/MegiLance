@@ -412,6 +412,7 @@ const AdminDashboard: React.FC = () => {
     { label: 'Payments', href: '/admin/payments', icon: CreditCard, description: 'Transactions, refunds & billing' },
     { label: 'Feature Flags', href: '/admin/feature-flags', icon: Filter, description: 'Toggle features & rollouts' },
     { label: 'System Health', href: '/admin/health', icon: Server, description: 'Infrastructure monitoring' },
+    { label: 'AI Operations', href: '/ai', icon: Zap, description: 'Manage AI estimators & bots' },
     { label: 'Settings', href: '/admin/settings', icon: Settings, description: 'Platform configuration' },
   ];
 

@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { invoicesApi } from '@/lib/api';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
@@ -18,7 +19,7 @@ import {
   FileText, DollarSign, CheckCircle, Clock, AlertTriangle,
   Plus, Send, Edit2, Download, Trash2, X, Search,
   RotateCw, Eye, Receipt, Calendar, User, Mail,
-  Briefcase, Hash, AlertCircle, ChevronDown, MoreVertical
+  Briefcase, Hash, AlertCircle, ChevronDown, MoreVertical, Sparkles
 } from 'lucide-react';
 
 interface Invoice {
@@ -240,9 +241,16 @@ export default function InvoicesPage() {
                 Create and manage invoices for your projects
               </p>
             </div>
-            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-              <Plus size={16} /> Create Invoice
-            </Button>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <Link href="/ai/invoice-generator">
+                <Button variant="outline">
+                  <Sparkles size={16} /> Auto-Generate with AI
+                </Button>
+              </Link>
+              <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+                <Plus size={16} /> Create Invoice
+              </Button>
+            </div>
           </div>
         </ScrollReveal>
 
