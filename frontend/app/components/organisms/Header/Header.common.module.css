@@ -123,9 +123,9 @@
   padding: 1.5rem;
   display: flex;
   gap: 2rem;
-  border: 1px solid transparent;
+  border: 1px solid;
   overflow: hidden;
-  /* Background theme applied via light/dark modules */
+  /* Background & border theme applied via light/dark modules */
 }
 
 .megaMenuSection {

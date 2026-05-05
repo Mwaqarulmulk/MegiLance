@@ -17,8 +17,8 @@ router = APIRouter()
 
 # Columns to fetch for public profiles (no sensitive data)
 PUBLIC_PROFILE_COLUMNS = """
-    id, name, bio, skills, hourly_rate, profile_image_url, location, title,
-    tagline, headline, experience_level, years_of_experience, languages, timezone,
+    id, name, bio, skills, hourly_rate, profile_image_url, location, tagline,
+    headline, experience_level, years_of_experience, languages, timezone,
     availability_status, education, certifications, work_history,
     linkedin_url, github_url, website_url, twitter_url, dribbble_url,
     behance_url, stackoverflow_url, video_intro_url, availability_hours,
@@ -46,7 +46,11 @@ def _build_public_profile(row: list, columns: list) -> dict:
     """Build a public profile dict from a DB row."""
     raw = {}
     for i, col in enumerate(columns):
-        raw[col] = row[i] if i < len(row) else None
+        col_name = col["name"] if isinstance(col, dict) and "name" in col else col
+        val = row[i] if i < len(row) else None
+        if isinstance(val, dict) and "value" in val:
+            val = val["value"]
+        raw[col_name] = val
 
     # Parse JSON fields
     skills = _parse_json_field(raw.get("skills"))
@@ -81,7 +85,7 @@ def _build_public_profile(row: list, columns: list) -> dict:
     profile = {
         "id": raw.get("id"),
         "name": raw.get("name"),
-        "title": extra.get("title") or raw.get("title"),
+        "title": extra.get("title") or raw.get("headline") or raw.get("tagline"),
         "tagline": raw.get("tagline"),
         "headline": raw.get("headline"),
         "bio": raw.get("bio"),
@@ -123,6 +127,8 @@ def _build_public_profile(row: list, columns: list) -> dict:
     return profile
 
 
+@router.get("")
+@router.get("/")
 @router.get("/search")
 def search_freelancers(
     query: Optional[str] = Query(None, description="Search by name or skills"),
@@ -132,8 +138,12 @@ def search_freelancers(
     max_rate: Optional[float] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    limit: Optional[int] = None,
 ) -> dict:
     """Search freelancers by name, skills, location, etc."""
+    if limit is not None:
+        page_size = limit
+
     try:
         conditions = ["role = 'freelancer'", "is_active = 1"]
         params = []
@@ -160,6 +170,7 @@ def search_freelancers(
             f"SELECT {PUBLIC_PROFILE_COLUMNS} FROM users WHERE {where} ORDER BY profile_views DESC LIMIT ? OFFSET ?",
             params
         )
+        logger.info(f"RESULT: {result}")
         cols = result.get("columns", result.get("cols", []))
         freelancers = [_build_public_profile(r, cols) for r in result.get("rows", [])]
         return {"freelancers": freelancers, "total": len(freelancers), "page": page, "page_size": page_size}

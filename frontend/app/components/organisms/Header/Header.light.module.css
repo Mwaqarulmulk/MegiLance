@@ -36,8 +36,8 @@
 }
 
 .megaMenuContent {
-  background: white; /* Force solid white in light mode */
-  border-color: rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-color: #e5e7eb;
 }
 
 .megaMenuLabel {
