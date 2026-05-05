@@ -36,6 +36,13 @@ const footerSections = {
     { name: 'Blog', href: '/blog' },
     { name: 'Community', href: '/community' },
   ],
+  'AI Tools': [
+    { name: 'All AI Tools', href: '/ai' },
+    { name: 'Price Estimator', href: '/ai/price-estimator' },
+    { name: 'Proposal Writer', href: '/ai/proposal-writer' },
+    { name: 'AI Chatbot', href: '/ai/chatbot' },
+    { name: 'Fraud Check', href: '/ai/fraud-check' },
+  ],
   'Legal': [
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Terms of Service', href: '/terms' },

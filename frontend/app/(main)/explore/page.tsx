@@ -45,6 +45,13 @@ export default function ExplorePage() {
           <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Start pitching customized project requests tailored to you.</p>
           <Link href="/jobs" style={{ color: '#4573df', fontWeight: 600, textDecoration: 'none' }}>Find Work &rarr;</Link>
         </div>
+
+        <div style={{ background: '#f8fafc', padding: '2rem', borderRadius: '16px', textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤖</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>AI Tools</h2>
+          <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Estimate prices, draft proposals, and advise your rates.</p>
+          <Link href="/ai" style={{ color: '#4573df', fontWeight: 600, textDecoration: 'none' }}>Use AI Hub &rarr;</Link>
+        </div>
       </section>
     </main>
   );
