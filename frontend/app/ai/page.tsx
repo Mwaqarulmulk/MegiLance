@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { useTheme } from 'next-themes';
+import { useMounted } from '@/app/hooks/useMounted';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import commonStyles from './AiHub.common.module.css';
@@ -130,15 +131,9 @@ const stats = [
 
 const AIHubPage = () => {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useMounted();
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  const isDark = resolvedTheme === 'dark';
+  const isDark = mounted && resolvedTheme === 'dark';
   const themeStyles = isDark ? darkStyles : lightStyles;
 
   const containerVariants = {

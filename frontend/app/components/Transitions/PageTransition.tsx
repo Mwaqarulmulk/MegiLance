@@ -17,12 +17,10 @@ export type PageTransitionProps = {
 // Separate client component for the logic that uses hooks
 const PageTransitionClient: React.FC<PageTransitionProps> = ({ children, className, theme: themeProp, variant = 'fade' }) => {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-  const currentTheme = themeProp || (mounted ? resolvedTheme : undefined);
+  const currentTheme = themeProp || resolvedTheme;
   const [pathname, setPathname] = React.useState<string | null>(null);
-  
+
   React.useEffect(() => {
-    setMounted(true);
     setPathname(window.location.pathname);
   }, []);
 

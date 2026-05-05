@@ -1,12 +1,11 @@
 'use client';
 
 // @AI-HINT: Dynamic Hero component for MegiLance redesign, strict 3-file CSS module.
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-// Note: assuming a standard Button is imported, if missing we would build it.
-// Assuming we have some UI components
+import { useMounted } from '@/app/hooks/useMounted';
 import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
@@ -20,11 +19,7 @@ const defaultStats = [
 
 export default function Hero({ stats = defaultStats }) {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 

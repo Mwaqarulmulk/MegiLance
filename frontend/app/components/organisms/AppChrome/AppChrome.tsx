@@ -2,10 +2,11 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import { useMounted } from '@/app/hooks/useMounted';
 import { cn } from '@/lib/utils';
 import Header from '@/app/components/organisms/Header/Header';
 import PublicFooter from '@/app/components/templates/Layout/PublicFooter/PublicFooter';
@@ -25,8 +26,7 @@ import darkStyles from './AppChrome.dark.module.css';
 const AppChromeClient: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
   const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   /**

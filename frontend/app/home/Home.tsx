@@ -8,7 +8,9 @@ import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero/Hero';
 import TrustIndicators from './components/TrustIndicators';
+import AIToolsHub from './components/AIToolsHub';
 import Features from './components/Features';
+import AIShowcase from './components/AIShowcase';
 import HowItWorks from './components/HowItWorks';
 import Testimonials from './components/Testimonials';
 import { ScrollReveal } from '../components/Animations/ScrollReveal';
@@ -40,11 +42,29 @@ const Home: React.FC = () => {
             </div>
           </section>
 
+          {/* AI Tools Hub */}
+          <section id="ai-tools" className={commonStyles.homeSection} aria-label="AI tools hub">
+            <div className={commonStyles.sectionContainer}>
+              <ScrollReveal width="100%" direction="up" delay={0.1}>
+                <AIToolsHub />
+              </ScrollReveal>
+            </div>
+          </section>
+
           {/* Features */}
           <section id="features" className={commonStyles.homeSection} aria-label="Platform features">
             <div className={commonStyles.sectionContainer}>
               <ScrollReveal width="100%" direction="right">
                 <Features />
+              </ScrollReveal>
+            </div>
+          </section>
+
+          {/* AI Showcase — AI services detail */}
+          <section id="ai-services" className={commonStyles.homeSection} aria-label="AI services">
+            <div className={commonStyles.sectionContainer}>
+              <ScrollReveal width="100%" direction="left" delay={0.1}>
+                <AIShowcase />
               </ScrollReveal>
             </div>
           </section>

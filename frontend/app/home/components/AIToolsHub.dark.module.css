@@ -1,0 +1,10 @@
+.section { background: linear-gradient(to bottom, var(--surface-272b32, #23282f), var(--background-1d2127, #1d2127)); }
+.badge { background: rgba(69, 115, 223, 0.15); color: #7da4f5; }
+.title { color: var(--text-primary-f5f7fa, #f0f3f8); }
+.subtitle { color: var(--text-secondary-a9b1bd, #9ca8b8); }
+.card { background: var(--surface-272b32, #272b32); border-color: var(--border-3a414a, #333b46); }
+.card:hover { border-color: #7da4f5; box-shadow: 0 6px 20px rgba(69, 115, 223, 0.18); }
+.cardLabel { color: var(--text-primary-f5f7fa, #f0f3f8); }
+.cardDesc { color: var(--text-secondary-a9b1bd, #9ca8b8); }
+.ctaBtn { background: #4573df; color: #ffffff; }
+.ctaBtn:hover { background: #5a87f0; }

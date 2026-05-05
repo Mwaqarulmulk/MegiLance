@@ -178,6 +178,27 @@ export default function ChatbotAgent() {
     setMounted(true);
   }, []);
 
+  // Check AI health on mount so widget status matches the full chatbot page
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch('/api/v1/health', { method: 'HEAD', signal: controller.signal });
+        clearTimeout(tid);
+        if (res.status === 503 || res.status === 500) {
+          setChatStatus('degraded');
+        } else if (!res.ok && res.status !== 404 && res.status !== 405) {
+          setChatStatus('offline');
+        }
+      } catch {
+        // AbortError = timeout, TypeError = no network
+        setChatStatus('offline');
+      }
+    };
+    checkHealth();
+  }, []);
+
   useEffect(() => {
     if (isOpen && !conversationId) {
       startConversation();
@@ -536,7 +557,7 @@ export default function ChatbotAgent() {
             <div className={commonStyles.headerLeft}>
               <div className={cn(commonStyles.aiAvatar, themeStyles.aiAvatar)}>
                   <div style={{ marginLeft: '-1px', marginTop: '1px' }}>
-                    <RobotModel size={24} />
+                    <RobotModel size={32} />
                   </div>
                 <div className={cn(commonStyles.aiAvatarPulse, themeStyles.aiAvatarPulse)} />
               </div>
@@ -573,17 +594,17 @@ export default function ChatbotAgent() {
                 </span>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <button 
                 onClick={() => {
                   setIsOpen(false);
                   router.push('/ai/chatbot');
                 }} 
                 className={cn(commonStyles.expandBtn, themeStyles.closeButton)}
-                aria-label="Open full page"
-                title="Open full page"
+                aria-label="Open full page chatbot"
+                title="Open full chatbot page at https://megilance.site/ai/chatbot"
               >
-                <Maximize2 size={16} />
+                <Maximize2 size={18} />
               </button>
               <button 
                 onClick={toggleChatbot} 
@@ -771,7 +792,7 @@ export default function ChatbotAgent() {
               className={commonStyles.flexCenter}
             >
               <div style={{ pointerEvents: 'none', marginLeft: '-2px', marginTop: '2px' }}>
-                <RobotModel size={110} />
+                <RobotModel size={130} />
               </div>
             </motion.div>
           )}
