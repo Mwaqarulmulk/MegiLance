@@ -47,6 +47,64 @@ export default function ChatbotAgent() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // --- Sound Effects Utility ---
+  const playSound = useCallback((type: 'open' | 'close' | 'send' | 'receive') => {
+    if (typeof window === 'undefined') return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      const now = audioCtx.currentTime;
+      switch(type) {
+        case 'open':
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(400, now);
+          oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+          gainNode.gain.setValueAtTime(0, now);
+          gainNode.gain.linearRampToValueAtTime(0.1, now + 0.05);
+          gainNode.gain.linearRampToValueAtTime(0, now + 0.15);
+          oscillator.start(now);
+          oscillator.stop(now + 0.15);
+          break;
+        case 'close':
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(800, now);
+          oscillator.frequency.exponentialRampToValueAtTime(400, now + 0.1);
+          gainNode.gain.setValueAtTime(0, now);
+          gainNode.gain.linearRampToValueAtTime(0.05, now + 0.05);
+          gainNode.gain.linearRampToValueAtTime(0, now + 0.15);
+          oscillator.start(now);
+          oscillator.stop(now + 0.15);
+          break;
+        case 'send':
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(600, now);
+          gainNode.gain.setValueAtTime(0, now);
+          gainNode.gain.linearRampToValueAtTime(0.05, now + 0.05);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          oscillator.start(now);
+          oscillator.stop(now + 0.1);
+          break;
+        case 'receive':
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(500, now);
+          oscillator.frequency.setValueAtTime(700, now + 0.1);
+          gainNode.gain.setValueAtTime(0, now);
+          gainNode.gain.linearRampToValueAtTime(0.1, now + 0.05);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          oscillator.start(now);
+          oscillator.stop(now + 0.2);
+          break;
+      }
+    } catch(e) {
+      console.log('Audio not supported or permitted yet', e);
+    }
+  }, []);
+
   // Magnetic mouse tracking for 3D tilt effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -73,6 +131,20 @@ export default function ChatbotAgent() {
     mouseX.set(0);
     mouseY.set(0);
     setIsHovered(false);
+  };
+
+  const toggleChatbot = () => {
+    if (isOpen) {
+      playSound('close');
+      setIsOpen(false);
+    } else {
+      playSound('open');
+      setIsOpen(true);
+      setUnreadCount(0);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+    }
   };
 
   useEffect(() => {
@@ -220,6 +292,7 @@ export default function ChatbotAgent() {
     };
 
     setMessages(prev => [...prev, newUserMessage]);
+    playSound('send');
     setInputValue('');
     setIsLoading(true);
     setIsTyping(true);
@@ -237,6 +310,8 @@ export default function ChatbotAgent() {
         suggestedActions: offlineData.suggestedActions,
       };
       setMessages(prev => [...prev, botResponse]);
+        if (!isOpen) setUnreadCount(prev => prev + 1);
+        playSound('receive');
       setIsLoading(false);
       setIsTyping(false);
       return;
@@ -265,6 +340,8 @@ export default function ChatbotAgent() {
         suggestedActions: data.suggested_actions,
       };
       setMessages(prev => [...prev, botResponse]);
+        if (!isOpen) setUnreadCount(prev => prev + 1);
+        playSound('receive');
       
       if (!isOpen) {
         setUnreadCount(prev => prev + 1);
@@ -286,6 +363,8 @@ export default function ChatbotAgent() {
         suggestedActions: offlineData.suggestedActions,
       };
       setMessages(prev => [...prev, errorMessage]);
+        if (!isOpen) setUnreadCount(prev => prev + 1);
+        playSound('receive');
     } finally {
       setIsLoading(false);
       setIsTyping(false);
@@ -366,7 +445,7 @@ export default function ChatbotAgent() {
               </div>
             </div>
             <button 
-              onClick={() => setIsOpen(false)} 
+              onClick={toggleChatbot} 
               className={cn(commonStyles.closeButton, themeStyles.closeButton)}
               aria-label="Close chat"
             >
@@ -477,7 +556,7 @@ export default function ChatbotAgent() {
       {/* Toggle Button with Framer Motion, 3D, and Notification Badge */}
       <motion.button
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleChatbot}
         onMouseMove={handleButtonMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleButtonMouseLeave}
@@ -548,7 +627,7 @@ export default function ChatbotAgent() {
               className={commonStyles.flexCenter}
             >
               <div style={{ pointerEvents: 'none', marginLeft: '-2px', marginTop: '2px' }}>
-                <RobotModel size={34} />
+                <RobotModel size={44} />
               </div>
             </motion.div>
           )}

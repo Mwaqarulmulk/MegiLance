@@ -23,7 +23,7 @@ function InnerRobot() {
 
   return (
     <group ref={group} dispose={null}>
-      <primitive object={scene} scale={1.5} position={[0, -0.6, 0]} />
+      <primitive object={scene} scale={1.8} position={[0, -0.7, 0]} />
     </group>
   );
 }
