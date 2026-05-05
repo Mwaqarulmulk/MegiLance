@@ -300,7 +300,7 @@ export default function PriceEstimatorPro() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/price-estimator/categories');
+        const res = await fetch('/api/v1/price-estimator/categories');
         if (!res.ok) throw new Error('Failed to fetch categories');
         const data: CategoriesData = await res.json();
         if (!cancelled) setCategories(data);
@@ -325,7 +325,7 @@ export default function PriceEstimatorPro() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/api/price-estimator/hours-questions/${encodeURIComponent(selectedCategory)}`);
+        const res = await fetch(`/api/v1/price-estimator/hours-questions/${encodeURIComponent(selectedCategory)}`);
         if (!res.ok) return;
         const data = await res.json();
         if (!cancelled) {
@@ -343,7 +343,7 @@ export default function PriceEstimatorPro() {
     if (Object.keys(hoursAnswers).length === 0) return;
     setLoadingHours(true);
     try {
-      const res = await fetch('/api/price-estimator/estimate-hours', {
+      const res = await fetch('/api/v1/price-estimator/estimate-hours', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -429,7 +429,7 @@ export default function PriceEstimatorPro() {
         freelancer_country: freelancerCountry || undefined,
       };
 
-      const res = await fetch('/api/price-estimator/estimate', {
+      const res = await fetch('/api/v1/price-estimator/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
