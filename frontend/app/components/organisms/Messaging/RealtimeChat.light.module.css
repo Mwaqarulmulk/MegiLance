@@ -1,33 +1,71 @@
-/* @AI-HINT: Light theme for realtime chat */
-
+/* RealtimeChat — light theme */
 .container {
-  background: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
+  background: #ffffff;
 }
 
 .header {
-  background: #f8f9fa;
-  border-bottom-color: var(--border-light);
+  background: #ffffff;
+  border-color: #e5e7eb;
 }
 
-.title {
-  color: #1a1a1a;
+.headerName { color: #111827; }
+.headerStatus { color: #6b7280; }
+
+.backBtn, .iconBtn {
+  background: transparent;
+  color: #6b7280;
+}
+.iconBtn:hover { background: #f3f4f6; color: #111827; }
+
+.messagesArea {
+  background: #f9fafb;
 }
 
-.status {
-  color: var(--color-text-secondary-light);
+.dateSep { color: #9ca3af; }
+
+.bubbleOwn {
+  background: #2563eb;
+  color: #ffffff;
 }
 
-.messagesContainer {
-  background: var(--bg-primary-light);
+.bubbleTime { color: rgba(255,255,255,0.75); }
+
+.bubbleOther {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
 
-.messageOther {
-  background: var(--bg-tertiary-light);
-  color: #1a1a1a;
+.attachment {
+  color: inherit;
+  background: rgba(0,0,0,0.06);
 }
 
-.inputContainer {
-  background: #f8f9fa;
-  border-top-color: var(--border-light);
+.inputArea {
+  background: #ffffff;
+  border-color: #e5e7eb;
 }
+
+.inputIconBtn {
+  background: transparent;
+  color: #6b7280;
+}
+.inputIconBtn:hover { background: #f3f4f6; color: #374151; }
+
+.textarea {
+  background: #f3f4f6;
+  border-color: transparent;
+  color: #111827;
+}
+.textarea::placeholder { color: #9ca3af; }
+.textarea:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.sendBtn {
+  background: #2563eb;
+  color: #ffffff;
+}
+.sendBtn:not(:disabled):hover { background: #1d4ed8; }

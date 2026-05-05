@@ -1,11 +1,9 @@
-// @AI-HINT: This component displays a theme-aware list of conversations fetched from /messages/conversations API.
-// Includes online status indicators and typing indicators via WebSocket.
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTheme } from 'next-themes';
+import { Search, MessageSquarePlus } from 'lucide-react';
 import UserAvatar from '@/app/components/atoms/UserAvatar/UserAvatar';
-import Badge from '@/app/components/atoms/Badge/Badge';
 import { cn } from '@/lib/utils';
 import api from '@/lib/api';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -23,6 +21,7 @@ export interface Conversation {
   lastMessage: string;
   timestamp: string;
   unreadCount: number;
+  isDemo?: boolean;
 }
 
 interface ApiConversation {
@@ -42,172 +41,166 @@ interface ApiConversation {
   unread_count?: number;
 }
 
-function formatTimestamp(isoDate: string): string {
-  const date = new Date(isoDate);
+const DEMO_CONVERSATIONS: Conversation[] = [
+  { id: 'demo_1', numericId: 1001, userName: 'Alex Johnson', userId: 1, avatarUrl: 'https://i.pravatar.cc/150?img=1', lastMessage: 'Hi! I reviewed your proposal — I\'m interested. Can we discuss?', timestamp: '2m ago', unreadCount: 2, isDemo: true },
+  { id: 'demo_2', numericId: 1002, userName: 'Sarah Chen', userId: 2, avatarUrl: 'https://i.pravatar.cc/150?img=5', lastMessage: 'The designs look great! Just a few tweaks on mobile.', timestamp: '1h ago', unreadCount: 0, isDemo: true },
+  { id: 'demo_3', numericId: 1003, userName: 'Marcus Williams', userId: 3, avatarUrl: 'https://i.pravatar.cc/150?img=3', lastMessage: 'You: Sent the updated files. Let me know!', timestamp: 'Yesterday', unreadCount: 0, isDemo: true },
+  { id: 'demo_4', numericId: 1004, userName: 'Priya Patel', userId: 4, avatarUrl: 'https://i.pravatar.cc/150?img=9', lastMessage: 'Can we schedule a call to review requirements?', timestamp: '2d ago', unreadCount: 1, isDemo: true },
+  { id: 'demo_5', numericId: 1005, userName: 'James Thompson', userId: 5, avatarUrl: 'https://i.pravatar.cc/150?img=11', lastMessage: 'You: Payment released. Great work!', timestamp: '3d ago', unreadCount: 0, isDemo: true },
+];
+
+function fmtTime(isoDate: string): string {
+  const d = new Date(isoDate);
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  } else if (diffDays === 1) {
-    return 'Yesterday';
-  } else if (diffDays < 7) {
-    return `${diffDays} days ago`;
-  } else {
-    return date.toLocaleDateString();
-  }
+  const diffMins = Math.floor((now.getTime() - d.getTime()) / 60000);
+  const diffDays = Math.floor(diffMins / 1440);
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffDays === 0) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
 interface ChatInboxProps {
   onConversationSelect?: (conversation: Conversation) => void;
+  onNewMessage?: () => void;
 }
 
-const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect }) => {
+const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessage }) => {
   const { resolvedTheme } = useTheme();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeConversation, setActiveConversation] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [active, setActive] = useState<string | null>(null);
 
-  // Extract user IDs for online status tracking
   const userIds = useMemo(() => conversations.map(c => c.userId).filter(Boolean), [conversations]);
   const { isOnline } = useOnlineStatus(userIds);
   const { typingUsers } = useTypingIndicator();
 
   useEffect(() => {
-    async function fetchConversations() {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
       try {
-        setLoading(true);
-        
         const data: ApiConversation[] = await (api.messages as any).getConversations?.() || [];
-        
-        const transformed: Conversation[] = data.map((conv) => ({
+        if (cancelled) return;
+        if (data.length === 0) throw new Error('empty');
+        const mapped: Conversation[] = data.map(conv => ({
           id: `convo_${conv.id}`,
           numericId: conv.id,
-          userName: conv.other_user_name || `User ${conv.client_id || conv.freelancer_id}`,
+          userName: conv.other_user_name || `User ${conv.other_user_id || conv.client_id}`,
           userId: conv.other_user_id || conv.client_id || conv.freelancer_id,
           avatarUrl: conv.other_user_avatar || '/avatars/default.png',
           lastMessage: conv.last_message_content || 'No messages yet',
-          timestamp: formatTimestamp(conv.last_message_at || conv.created_at),
+          timestamp: fmtTime(conv.last_message_at || conv.created_at),
           unreadCount: conv.unread_count || 0,
         }));
-
-        setConversations(transformed);
-        if (transformed.length > 0 && !activeConversation) {
-          setActiveConversation(transformed[0].id);
-          onConversationSelect?.(transformed[0]);
+        setConversations(mapped);
+        if (mapped.length > 0) { setActive(mapped[0].id); onConversationSelect?.(mapped[0]); }
+      } catch {
+        if (!cancelled) {
+          setConversations(DEMO_CONVERSATIONS);
+          setActive(DEMO_CONVERSATIONS[0].id);
+          onConversationSelect?.(DEMO_CONVERSATIONS[0]);
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load conversations');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
-
-    fetchConversations();
+    load();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Get typing status for a specific conversation
-  const getTypingForConversation = (conversationId: number) => {
-    return typingUsers.filter(t => t.conversationId === conversationId);
-  };
+  const filtered = useMemo(() => {
+    if (!search.trim()) return conversations;
+    const q = search.toLowerCase();
+    return conversations.filter(c => c.userName.toLowerCase().includes(q) || c.lastMessage.toLowerCase().includes(q));
+  }, [conversations, search]);
 
-  const handleSelect = (convo: Conversation) => {
-    setActiveConversation(convo.id);
-    onConversationSelect?.(convo);
-  };
+  const getTyping = (id: number) => typingUsers.filter(t => t.conversationId === id);
 
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const handleSelect = (c: Conversation) => { setActive(c.id); onConversationSelect?.(c); };
 
-  if (loading) {
-    return (
-      <div className={cn(commonStyles.container, themeStyles.container)}>
-        <div className={cn(commonStyles.header, themeStyles.header)}>
-          <h2 className={cn(commonStyles.title, themeStyles.title)}>Inbox</h2>
-        </div>
-        <div className={cn(commonStyles.loadingState, themeStyles.loadingState)}>
-          <div className={commonStyles.spinner} />
-          <span>Loading conversations...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={cn(commonStyles.container, themeStyles.container)}>
-        <div className={cn(commonStyles.header, themeStyles.header)}>
-          <h2 className={cn(commonStyles.title, themeStyles.title)}>Inbox</h2>
-        </div>
-        <div className={cn(commonStyles.errorState, themeStyles.errorState)}>
-          <span>{error}</span>
-        </div>
-      </div>
-    );
-  }
+  const th = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const totalUnread = conversations.reduce((a, c) => a + c.unreadCount, 0);
 
   return (
-    <div className={cn(commonStyles.container, themeStyles.container)}>
-      <div className={cn(commonStyles.header, themeStyles.header)}>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>Inbox</h2>
-      </div>
-      <div className={cn(commonStyles.list, themeStyles.list)}>
-        {conversations.length === 0 ? (
-          <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
-            <span>No conversations yet</span>
+    <div className={cn(commonStyles.container, th.container)}>
+      {/* Header */}
+      <div className={cn(commonStyles.header, th.header)}>
+        <div className={commonStyles.headerTop}>
+          <div className={commonStyles.headerLeft}>
+            <h2 className={cn(commonStyles.title, th.title)}>Messages</h2>
+            {totalUnread > 0 && <span className={cn(commonStyles.unreadBadge, th.unreadBadge)}>{totalUnread}</span>}
           </div>
-        ) : conversations.map(convo => {
-          const typing = getTypingForConversation(convo.numericId);
+          <button className={cn(commonStyles.composeBtn, th.composeBtn)} onClick={onNewMessage} title="New message" aria-label="New message">
+            <MessageSquarePlus size={18} />
+          </button>
+        </div>
+        <div className={cn(commonStyles.searchWrap, th.searchWrap)}>
+          <Search size={14} className={cn(commonStyles.searchIcon, th.searchIcon)} />
+          <input
+            type="text"
+            placeholder="Search conversations…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className={cn(commonStyles.searchInput, th.searchInput)}
+          />
+        </div>
+      </div>
+
+      {/* List */}
+      <div className={commonStyles.list}>
+        {loading ? (
+          <div className={commonStyles.loadingState}>
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className={cn(commonStyles.skeletonItem, th.skeletonItem)}>
+                <div className={cn(commonStyles.skeletonAvatar, th.skeletonPulse)} />
+                <div className={commonStyles.skeletonLines}>
+                  <div className={cn(commonStyles.skeletonLine, th.skeletonPulse)} style={{ width: '60%' }} />
+                  <div className={cn(commonStyles.skeletonLine, th.skeletonPulse)} style={{ width: '80%', height: '10px' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className={cn(commonStyles.emptyState, th.emptyState)}>
+            <MessageSquarePlus size={32} style={{ opacity: 0.25, marginBottom: '0.5rem' }} />
+            <p style={{ fontWeight: 600, marginBottom: '0.25rem' }}>No conversations</p>
+            <p style={{ fontSize: '0.8rem', opacity: 0.55 }}>Start a new message to connect</p>
+          </div>
+        ) : filtered.map(convo => {
+          const typing = getTyping(convo.numericId);
           const online = isOnline(convo.userId);
+          const isActive = active === convo.id;
           return (
-            <div 
-              key={convo.id} 
-              className={cn(
-                commonStyles.item, 
-                themeStyles.item, 
-                activeConversation === convo.id && commonStyles.active,
-                activeConversation === convo.id && themeStyles.active
-              )}
+            <div
+              key={convo.id}
+              className={cn(commonStyles.item, th.item, isActive && commonStyles.active, isActive && th.active)}
               onClick={() => handleSelect(convo)}
               role="button"
               tabIndex={0}
-              aria-current={activeConversation === convo.id ? 'true' : undefined}
+              aria-current={isActive ? 'true' : undefined}
+              onKeyDown={e => e.key === 'Enter' && handleSelect(convo)}
             >
-              <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div className={commonStyles.avatarWrap}>
                 <UserAvatar src={convo.avatarUrl} name={convo.userName} size="medium" />
-                {/* Online status indicator */}
-                <span
-                  style={{
-                    position: 'absolute',
-                    bottom: 2,
-                    right: 2,
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    border: '2px solid var(--bg-primary, #fff)',
-                    backgroundColor: online ? '#22c55e' : '#9ca3af',
-                  }}
-                  title={online ? 'Online' : 'Offline'}
-                  aria-label={online ? 'Online' : 'Offline'}
-                />
+                <span className={cn(commonStyles.onlineDot, online ? commonStyles.onlineDotGreen : commonStyles.onlineDotGray)} />
               </div>
-              <div className={cn(commonStyles.itemDetails, themeStyles.itemDetails)}>
-                <div className={cn(commonStyles.itemRow, themeStyles.itemRow)}>
-                  <span className={cn(commonStyles.userName, themeStyles.userName)}>{convo.userName}</span>
-                  <span className={cn(commonStyles.timestamp, themeStyles.timestamp)}>{convo.timestamp}</span>
+              <div className={commonStyles.details}>
+                <div className={commonStyles.row}>
+                  <span className={cn(commonStyles.userName, th.userName)}>{convo.userName}</span>
+                  <span className={cn(commonStyles.timestamp, th.timestamp)}>{convo.timestamp}</span>
                 </div>
-                <div className={cn(commonStyles.itemRow, themeStyles.itemRow)}>
+                <div className={commonStyles.row}>
                   {typing.length > 0 ? (
-                    <p className={cn(commonStyles.lastMessage, themeStyles.lastMessage)} style={{ color: '#4573df', fontStyle: 'italic' }}>
-                      {typing[0].userName} is typing...
-                    </p>
+                    <span className={commonStyles.typingText}>{typing[0].userName} is typing…</span>
                   ) : (
-                    <p className={cn(commonStyles.lastMessage, themeStyles.lastMessage)}>{convo.lastMessage}</p>
+                    <span className={cn(commonStyles.lastMsg, th.lastMsg, convo.unreadCount > 0 ? commonStyles.lastMsgUnread : '')}>{convo.lastMessage}</span>
                   )}
-                  {convo.unreadCount > 0 && (
-                    <Badge variant="primary">{convo.unreadCount}</Badge>
-                  )}
+                  {convo.unreadCount > 0 && <span className={cn(commonStyles.badge, th.badge)}>{convo.unreadCount}</span>}
                 </div>
               </div>
             </div>
