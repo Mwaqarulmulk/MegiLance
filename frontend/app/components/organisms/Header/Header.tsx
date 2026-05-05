@@ -211,14 +211,13 @@ export default function Header() {
                   id={`mega-menu-${key}`}
                   className={cn(
                     commonStyles.megaMenu, 
-                    themeStyles.megaMenu, 
                     activeMenu === key && commonStyles.megaMenuActive,
                     key === 'resources' && commonStyles.megaMenuAlignRight // Right align last items
                   )}
                   role="region"
                   aria-label={`${megaMenuData[key].title} Submenu`}
                 >
-                  <div className={commonStyles.megaMenuContent}>
+                  <div className={cn(commonStyles.megaMenuContent, themeStyles.megaMenuContent)}>
                     {megaMenuData[key].sections.map((section, idx) => (
                       <div key={idx} className={commonStyles.megaMenuSection}>
                         <h4 className={cn(commonStyles.megaMenuLabel, themeStyles.megaMenuLabel)}>{section.title}</h4>
