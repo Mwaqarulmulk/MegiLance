@@ -239,7 +239,7 @@ What would you like to know more about?`,
 
 export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
   const {
-    apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '/api',
+    apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '/api/v1',
     aiServiceUrl = process.env.NEXT_PUBLIC_AI_SERVICE_URL || '',
     enableOfflineMode = true,
     autoReconnect = true,

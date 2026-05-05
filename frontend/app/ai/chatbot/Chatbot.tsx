@@ -60,7 +60,7 @@ const Chatbot: React.FC = () => {
   const [recognitionAvailable, setRecognitionAvailable] = useState(false);
   const [recognitionActive, setRecognitionActive] = useState(false);
   const recognitionRef = useRef<any>(null);
-  const API_URL = normalizeBackendApiUrl(process.env.NEXT_PUBLIC_API_URL || '/api');
+  const API_URL = normalizeBackendApiUrl(process.env.NEXT_PUBLIC_API_URL || '/api/v1');
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
