@@ -1,0 +1,5 @@
+
+> megilance@1.0.0 build
+> echo 'Using Docker builds - see Dockerfiles in frontend/, backend/, ai/'
+
+'Using Docker builds - see Dockerfiles in frontend/, backend/, ai/'

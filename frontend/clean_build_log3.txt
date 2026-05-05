@@ -1,0 +1,6 @@
+
+> frontend@0.1.0 build
+> NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true TURBOPACK=0 next build
+
+'NEXT_TELEMETRY_DISABLED' is not recognized as an internal or external command,
+operable program or batch file.

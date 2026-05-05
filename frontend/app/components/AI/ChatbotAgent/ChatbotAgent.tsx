@@ -2,8 +2,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { MessageSquare, X, Send, Sparkles, Zap, HelpCircle, FileText, User } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, Zap, HelpCircle, FileText, Pickaxe, Maximize2, Minimize2, Paperclip, Command } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import RobotModel from './RobotModel';
@@ -29,8 +30,10 @@ const SUGGESTED_ACTIONS = [
 
 export default function ChatbotAgent() {
   const { resolvedTheme } = useTheme();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
@@ -46,6 +49,25 @@ export default function ChatbotAgent() {
   const [chatStatus, setChatStatus] = useState<'online' | 'degraded' | 'offline'>('online');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Dynamic context-aware actions
+  const getContextualActions = useCallback(() => {
+    const actions = [...SUGGESTED_ACTIONS];
+    if (!pathname) return actions;
+    
+    if (pathname.includes('/client/post-job')) {
+      actions.unshift({ icon: Zap, text: 'Help me estimate a budget' });
+    } else if (pathname.includes('/freelancer/invoices')) {
+      actions.unshift({ icon: FileText, text: 'Draft a professional invoice' });
+    } else if (pathname.includes('/proposals')) {
+      actions.unshift({ icon: Sparkles, text: 'Write a winning proposal' });
+    } else if (pathname.includes('/admin')) {
+      actions.unshift({ icon: Pickaxe, text: 'Summarize system health' });
+    }
+    return actions.slice(0, 4);
+  }, [pathname]);
+
+  const currentActions = getContextualActions();
 
   // --- Sound Effects Utility ---
   const playSound = useCallback((type: 'open' | 'close' | 'send' | 'receive') => {
@@ -191,7 +213,7 @@ export default function ChatbotAgent() {
         sender: 'bot',
         timestamp: new Date(),
         sentiment: 'positive',
-        suggestedActions: ['How do I get started?', 'Find freelancers', 'Post a project']
+        suggestedActions: currentActions.map(a => a.text)
       }]);
     } catch (error: any) {
       // Distinguish: network error (offline) vs server error (backend up but LLM not configured)
@@ -207,7 +229,7 @@ export default function ChatbotAgent() {
           sender: 'bot',
           timestamp: new Date(),
           sentiment: 'neutral',
-          suggestedActions: ['How do I get started?', 'Find freelancers', 'Post a project'],
+          suggestedActions: currentActions.map(a => a.text),
         }]);
       } else if (isDegraded) {
         setChatStatus('degraded');
@@ -217,7 +239,7 @@ export default function ChatbotAgent() {
           sender: 'bot',
           timestamp: new Date(),
           sentiment: 'neutral',
-          suggestedActions: ['How do I get started?', 'Find freelancers', 'Post a project'],
+          suggestedActions: currentActions.map(a => a.text),
         }]);
       } else {
         setChatStatus('degraded');
@@ -227,7 +249,7 @@ export default function ChatbotAgent() {
           sender: 'bot',
           timestamp: new Date(),
           sentiment: 'neutral',
-          suggestedActions: ['How do I get started?', 'Find freelancers', 'Post a project'],
+          suggestedActions: currentActions.map(a => a.text),
         }]);
       }
     } finally {
@@ -397,7 +419,11 @@ export default function ChatbotAgent() {
     <div className={commonStyles.chatbotContainer}>
       {isOpen && (
         <div 
-          className={cn(commonStyles.chatbotAgent, themeStyles.chatbotAgent)}
+          className={cn(
+            commonStyles.chatbotAgent, 
+            themeStyles.chatbotAgent,
+            isExpanded && commonStyles.expanded
+          )}
           role="dialog"
           aria-modal="true"
           aria-label="MegiBot AI Chat"
@@ -444,13 +470,22 @@ export default function ChatbotAgent() {
                 </span>
               </div>
             </div>
-            <button 
-              onClick={toggleChatbot} 
-              className={cn(commonStyles.closeButton, themeStyles.closeButton)}
-              aria-label="Close chat"
-            >
-              <X size={18} />
-            </button>
+            <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)} 
+                className={cn(commonStyles.expandBtn, themeStyles.closeButton)}
+                aria-label={isExpanded ? 'Minimize' : 'Expand'}
+              >
+                {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
+              <button 
+                onClick={toggleChatbot} 
+                className={cn(commonStyles.closeButton, themeStyles.closeButton)}
+                aria-label="Close chat"
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
           
           {/* Messages Area */}
