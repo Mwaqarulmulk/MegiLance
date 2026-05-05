@@ -101,7 +101,9 @@ export default function Header() {
   const [activeMobileSection, setActiveMobileSection] = useState<MenuKey>('platform');
   const pathname = usePathname();
 
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  // Use dark theme during hydration to prevent white background flash in dark mode
+  const isDarkMode = resolvedTheme === 'dark';
+  const themeStyles = isDarkMode ? darkStyles : lightStyles;
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
 
@@ -156,13 +158,15 @@ export default function Header() {
     timeoutRef.current = setTimeout(() => setActiveMenu(null), 250);
   }, []);
 
-  if (!isMounted) return null;
-
   return (
     <>
-      <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} 
+      <motion.header 
+        initial={{ y: -50, opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} 
         className={cn(commonStyles.header, themeStyles.header)} 
         data-scrolled={isScrolled}
+        suppressHydrationWarning
       >
         <div className={commonStyles.innerContainer}>
           <Link href="/" className={commonStyles.brandWrap} aria-label="MegiLance Home">

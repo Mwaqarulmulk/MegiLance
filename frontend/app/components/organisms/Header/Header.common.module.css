@@ -125,8 +125,7 @@
   gap: 2rem;
   border: 1px solid transparent;
   overflow: hidden;
-  /* Ensuring background isn't transparent */
-  background: white; 
+  /* Background theme applied via light/dark modules */
 }
 
 .megaMenuSection {

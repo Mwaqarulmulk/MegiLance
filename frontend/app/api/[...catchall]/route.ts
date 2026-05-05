@@ -7,7 +7,14 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:800
 async function handler(request: NextRequest) {
   // Get the path from the URL
   const url = new URL(request.url);
-  const path = url.pathname; // Keep /api in the path as backend expects it
+  let path = url.pathname; 
+  
+  // Support legacy frontend routes hitting /api/* instead of /api/v1/*
+  // Anything reaching the catchall should likely go to the v1 api if it's missing
+  if (path.startsWith('/api/') && !path.startsWith('/api/v1/')) {
+    path = path.replace('/api/', '/api/v1/');
+  }
+  
   const search = url.search;
   
   // Build the backend URL
