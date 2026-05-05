@@ -200,7 +200,7 @@ def get_options() -> Dict[str, Any]:
     }
 
 
-def plan_project(
+async def plan_project(
     # Project basics
     project_name: str = "Untitled Project",
     category: str = "web_app",
@@ -224,7 +224,7 @@ def plan_project(
     # Deliverables
     deliverables: List[str] = None,
 ) -> Dict[str, Any]:
-    """Generate a complete project scope & budget plan."""
+    """Generate a complete project scope & budget plan, enhanced with DigitalOcean LLM intelligence."""
 
     if not team_members:
         team_members = []
@@ -237,7 +237,90 @@ def plan_project(
     complexity_info = COMPLEXITY_LEVELS.get(complexity, COMPLEXITY_LEVELS["moderate"])
     multiplier = complexity_info["multiplier"]
 
-    # Determine phases
+    # ========================================================================
+    # 🧠 AI-Enhanced Planning (Llama 3.3 Injection via DigitalOcean)
+    # ========================================================================
+    # If the user provided a reasonable description and didn't provide custom phases,
+    # let's generate entirely bespoke phases, risks, and feature breakdown dynamically!
+    llm_error = False
+    if description and len(description.strip()) > 30 and not custom_phases:
+        from app.services.llm_gateway import llm_gateway
+        import json
+        
+        system_prompt = (
+            "You are an elite Agile Project Manager and Technical Architect. "
+            "Your goal is to parse a project description, extract/suggest reasonable scope, "
+            "and return a valid JSON payload specifically matching the requested structure. "
+            "Do NOT output backticks, markdown formatting, or any text other than the raw JSON."
+        )
+
+        user_prompt = f"""
+Analyze this project and generate a bespoke execution plan.
+
+Project Name: {project_name}
+Category: {cat_info['label']}
+Complexity: {complexity_info['label']} 
+Description: {description}
+
+Return ONLY a raw JSON dictionary with this exact structure:
+{{
+  "phases": [
+    {{"name": "Phase 1 Name", "percent": 15, "description": "What happens here"}},
+    {{"name": "Phase 2 Name", "percent": 25, "description": "What happens here"}},
+    ... total percents must equal 100 ...
+  ],
+  "risks": [
+    {{"key": "custom_risk_1", "label": "Specific Risk Name", "description": "Why it's a risk", "mitigation": "How to handle it"}}
+  ],
+  "features": [
+    "List of 5 to 10 specific functional features extracted or implied from the description"
+  ],
+  "deliverables": [
+    "List of 3 to 6 tangible outputs (e.g., Figma files, Source code repo, API docs)"
+  ]
+}}
+"""
+        response = await llm_gateway.generate_text(
+            prompt=user_prompt,
+            system_message=system_prompt,
+            max_tokens=1200,
+            temperature=0.3
+        )
+        
+        try:
+            # Clean potentially tricky JSON output
+            clean_json = response.strip()
+            if clean_json.startswith("```json"):
+                clean_json = clean_json[7:-3]
+            elif clean_json.startswith("```"):
+                clean_json = clean_json[3:-3]
+                
+            ai_plan = json.loads(clean_json.strip())
+            
+            # Adopt AI-generated phases
+            if "phases" in ai_plan and isinstance(ai_plan["phases"], list):
+                # Ensure they total 100% roughly
+                total_pct = sum(p.get("percent", 0) for p in ai_plan["phases"])
+                if 95 <= total_pct <= 105:
+                    custom_phases = ai_plan["phases"]
+            
+            # Adopt AI-extracted features and deliverables if empty
+            if "features" in ai_plan and not features:
+                features = ai_plan["features"]
+            if "deliverables" in ai_plan and not deliverables:
+                deliverables = ai_plan["deliverables"]
+                
+            # Adopt bespoke AI risks
+            ai_risks = ai_plan.get("risks", [])
+            
+        except Exception as e:
+            logger.error(f"Failed to parse LLM scope planner JSON: {e}")
+            llm_error = True
+            ai_risks = []
+    else:
+        ai_risks = []
+
+    # Determine phases (either AI generated or standard defaults)
     phases = custom_phases if custom_phases else cat_info["default_phases"]
 
     # Build phase plan
@@ -268,7 +351,7 @@ def plan_project(
     )
 
     # Risk assessment
-    risks = _assess_risks(
+    risks = ai_risks if ai_risks else _assess_risks(
         complexity=complexity,
         total_weeks=total_weeks,
         budget_total=budget["total"],

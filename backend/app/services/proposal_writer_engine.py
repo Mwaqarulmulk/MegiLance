@@ -305,8 +305,65 @@ async def _compose_proposal(
     proposed_timeline: Optional[str],
     detected_type: Dict,
 ) -> str:
-    """Compose the full proposal text using proven template patterns."""
+    """Compose the full proposal text using DigitalOcean LLM (Llama 3.3 70B)."""
+    from app.services.llm_gateway import llm_gateway
+
     cfg = TONE_CONFIGS.get(tone, TONE_CONFIGS["professional"])
+    matched_skills = [m["skill"] for m in skill_match["matched_skills"]]
+    missing_skills = skill_match.get("missing_signals", [])
+    
+    word_count_target = 150 if length == "concise" else 500 if length == "detailed" else 300
+
+    system_prompt = (
+        "You are an expert freelance proposal writer designed to secure high-value contracts. "
+        "Your task is to write a highly persuasive, non-generic proposal based on the input data. "
+        "Format with clear paragraphs, bold headings if appropriate (Markdown), and bullet points where helpful. "
+        "Do NOT output any JSON, thoughts, or metadata. Output ONLY the proposal text."
+    )
+
+    user_prompt = f"""
+Write a {word_count_target}-word proposal for a freelance project.
+
+Project Title: "{project_title}"
+Project Description: "{project_description}"
+
+Freelancer Profile:
+- Name: {freelancer_name or 'A freelancer'}
+- Experience Level: {experience_level.capitalize()} ({years_experience or 3}+ years)
+- Skills matching the project: {", ".join(matched_skills) if matched_skills else 'General related skills'}
+- Other skills: {", ".join(skills)}
+- Specific Highlights to mention: {", ".join(highlight_points) if highlight_points else "Reliable, communicates clearly, delivers on time."}
+
+Terms to propose:
+- Rate: ${proposed_rate:.2f}/hr
+- Timeline: {proposed_timeline or "To be discussed"}
+
+Guidelines:
+- Tone: {cfg['style']} (Greeting: {cfg['greeting']}, Closing: {cfg['closing']})
+- Enthusiastic level: {cfg['enthusiasm_level']}
+- Project Category context: {detected_type['primary'].replace('_', ' ')}
+- Explain a clear approach or workflow to how you'll tackle this specific project.
+{"- Downplay any missing skills (" + ", ".join(missing_skills) + ") by emphasizing ability to learn." if missing_skills else ""}
+"""
+
+    response = await llm_gateway.generate_text(
+        prompt=user_prompt,
+        system_message=system_prompt,
+        max_tokens=800,
+        temperature=0.7
+    )
+    
+    # Fallback to the old simple template if LLM fails
+    if "Unable to generate" in response or not response:
+        return _fallback_compose_proposal(
+            project_title, project_description, skills, skill_match, experience_level,
+            tone, length, freelancer_name, years_experience, highlight_points,
+            proposed_rate, proposed_timeline, detected_type
+        )
+        
+    return response
+
+def _fallback_compose_proposal(
     matched_skills = [m["skill"] for m in skill_match["matched_skills"]]
     is_concise = length == "concise"
     is_detailed = length == "detailed"
@@ -418,6 +475,7 @@ async def _compose_proposal(
     sections.append(closing)
 
     return "\n".join(sections)
+
 
 
 def _score_proposal(

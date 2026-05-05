@@ -94,7 +94,7 @@ async def plan_project(request: ScopePlanRequest):
                 for p in request.custom_phases
             ]
 
-        result = scope_planner_engine.plan_project(
+        result = await scope_planner_engine.plan_project(
             project_name=request.project_name,
             category=request.category,
             description=request.description,
