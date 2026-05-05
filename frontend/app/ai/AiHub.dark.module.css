@@ -1,0 +1,141 @@
+.pageContainer {
+  background-color: var(--bg-primary-dark);
+  color: var(--text-primary-dark);
+}
+
+.heroTag {
+  background: rgba(69, 115, 223, 0.15);
+  color: var(--ml-blue-light);
+  border: 1px solid rgba(69, 115, 223, 0.2);
+}
+
+.heroDescription {
+  color: var(--text-secondary-dark);
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.statLabel {
+  color: var(--text-secondary-dark);
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sectionTitle {
+  color: var(--text-primary-dark);
+}
+
+.sectionDesc {
+  color: var(--text-secondary-dark);
+}
+
+.featureCard {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: var(--border-dark);
+}
+
+.featureCard:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.featureIconWrapper {
+  background: rgba(69, 115, 223, 0.1);
+  border-color: rgba(69, 115, 223, 0.2);
+  color: var(--ml-blue-light);
+}
+
+.featureStatusLive {
+  background: rgba(39, 174, 96, 0.15);
+  color: var(--ml-green-light);
+}
+
+.featureStatusBeta {
+  background: rgba(242, 201, 76, 0.15);
+  color: var(--ml-yellow);
+}
+
+.featureTitle {
+  color: var(--text-primary-dark);
+}
+
+.featureDesc {
+  color: var(--text-secondary-dark);
+}
+
+.featureFooter {
+  border-top-color: var(--border-dark);
+}
+
+.featureStats {
+  color: var(--text-tertiary-dark);
+}
+
+.exploreLink {
+  color: var(--ml-blue-light);
+}
+
+.capabilitiesSection {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.capabilityCard {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: var(--border-dark);
+}
+
+.capabilityCard:hover {
+  border-color: rgba(69, 115, 223, 0.3);
+}
+
+.capIconWrapper {
+  background: rgba(69, 115, 223, 0.15);
+  color: var(--ml-blue-light);
+}
+
+.capTitle {
+  color: var(--text-primary-dark);
+}
+
+.capDesc {
+  color: var(--text-secondary-dark);
+}
+
+.ctaBox {
+  background: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+}
+
+.ctaTag {
+  background: rgba(39, 174, 96, 0.15);
+  color: var(--ml-green-light);
+}
+
+.ctaTitle {
+  color: var(--text-primary-dark);
+}
+
+.ctaDescription {
+  color: var(--text-secondary-dark);
+}
+
+.btnSecondaryLarge {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btnSecondaryLarge:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

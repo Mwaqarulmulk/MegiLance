@@ -1,0 +1,144 @@
+.pageContainer {
+  background-color: var(--bg-secondary-light);
+  color: var(--text-primary-light);
+}
+
+.heroTag {
+  background: rgba(69, 115, 223, 0.1);
+  color: var(--ml-blue);
+  border: 1px solid rgba(69, 115, 223, 0.2);
+}
+
+.heroDescription {
+  color: var(--text-secondary-light);
+}
+
+.statCard {
+  background: var(--bg-primary-light);
+  border-color: var(--border-light);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.statLabel {
+  color: var(--text-secondary-light);
+}
+
+.btnSecondary {
+  background: var(--bg-primary-light);
+  color: var(--text-primary-light);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btnSecondary:hover {
+  background: var(--bg-tertiary-light);
+}
+
+.sectionTitle {
+  color: var(--text-primary-light);
+}
+
+.sectionDesc {
+  color: var(--text-secondary-light);
+}
+
+.featureCard {
+  background: var(--bg-primary-light);
+  border-color: var(--border-light);
+}
+
+.featureCard:hover {
+  border-color: var(--neutral-300);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.featureIconWrapper {
+  background: var(--bg-secondary-light);
+  border-color: var(--border-light);
+  color: var(--ml-blue);
+}
+
+.featureStatusLive {
+  background: rgba(39, 174, 96, 0.1);
+  color: var(--ml-green);
+}
+
+.featureStatusBeta {
+  background: rgba(242, 201, 76, 0.2);
+  color: var(--ml-orange-dark);
+}
+
+.featureTitle {
+  color: var(--text-primary-light);
+}
+
+.featureDesc {
+  color: var(--text-secondary-light);
+}
+
+.featureFooter {
+  border-top-color: var(--border-light);
+}
+
+.featureStats {
+  color: var(--text-tertiary-light);
+}
+
+.exploreLink {
+  color: var(--ml-blue);
+}
+
+.capabilitiesSection {
+  background: var(--bg-primary-light);
+}
+
+.capabilityCard {
+  background: var(--bg-secondary-light);
+  border-color: var(--border-light);
+}
+
+.capabilityCard:hover {
+  border-color: rgba(69, 115, 223, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.capIconWrapper {
+  background: rgba(69, 115, 223, 0.1);
+  color: var(--ml-blue);
+}
+
+.capTitle {
+  color: var(--text-primary-light);
+}
+
+.capDesc {
+  color: var(--text-secondary-light);
+}
+
+.ctaBox {
+  background: var(--bg-secondary-light);
+  border-color: var(--border-light);
+}
+
+.ctaTag {
+  background: rgba(39, 174, 96, 0.1);
+  color: var(--ml-green);
+}
+
+.ctaTitle {
+  color: var(--text-primary-light);
+}
+
+.ctaDescription {
+  color: var(--text-secondary-light);
+}
+
+.btnSecondaryLarge {
+  background: var(--bg-primary-light);
+  color: var(--text-primary-light);
+  border: 1px solid var(--border-light);
+}
+
+.btnSecondaryLarge:hover {
+  background: var(--bg-secondary-light);
+}

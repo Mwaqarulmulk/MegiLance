@@ -31,13 +31,14 @@ interface HealthResponse {
   status: string;
   db?: string;
   driver?: string;
-  latency_ms?: number;
-  checks?: {
-    database?: {
-      status: string;
-      latency_ms?: number;
-    };
-  };
+  uptime_seconds?: number;
+  python_version?: string;
+  environment?: string;
+  components?: {
+    db?: string;
+    storage?: string;
+    email?: string;
+  }
 }
 
 // Use the Next.js proxy route to avoid CORS issues
@@ -58,17 +59,18 @@ const Status: React.FC = () => {
   const themed = resolvedTheme === 'dark' ? dark : light;
   
   const [services, setServices] = useState<ServiceStatus[]>([
-    { name: 'API Gateway', status: 'checking', lastChecked: new Date(), icon: <Server size={20} />, endpoint: '/api/health/ready' },
-    { name: 'Database (Turso)', status: 'checking', lastChecked: new Date(), icon: <Database size={20} />, endpoint: '/api/health/ready' },
-    { name: 'Authentication', status: 'checking', lastChecked: new Date(), icon: <Zap size={20} />, endpoint: '/api/auth/me' },
-    { name: 'AI Services', status: 'checking', lastChecked: new Date(), icon: <Brain size={20} />, endpoint: '/api/ai/status' },
-    { name: 'Messaging', status: 'checking', lastChecked: new Date(), icon: <MessageSquare size={20} />, endpoint: '/api/messages/health' },
-    { name: 'Payments', status: 'checking', lastChecked: new Date(), icon: <CreditCard size={20} />, endpoint: '/api/payments/health' },
+    { name: 'API Gateway', status: 'checking', lastChecked: new Date(), icon: <Server size={20} />, endpoint: '/api/v1/health/ready' },
+    { name: 'Database (Turso)', status: 'checking', lastChecked: new Date(), icon: <Database size={20} />, endpoint: '/api/v1/health/ready' },
+    { name: 'Authentication', status: 'checking', lastChecked: new Date(), icon: <Zap size={20} />, endpoint: '/api/v1/auth/me' },
+    { name: 'AI Services', status: 'checking', lastChecked: new Date(), icon: <Brain size={20} />, endpoint: '/api/v1/ai/status' },
+    { name: 'Messaging', status: 'checking', lastChecked: new Date(), icon: <MessageSquare size={20} />, endpoint: '/api/v1/conversations' },
+    { name: 'Payments', status: 'checking', lastChecked: new Date(), icon: <CreditCard size={20} />, endpoint: '/api/v1/payments/' },
   ]);
   
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [overallStatus, setOverallStatus] = useState<'operational' | 'degraded' | 'outage'>('operational');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [detailedHealth, setDetailedHealth] = useState<HealthResponse | null>(null);
   
   // Get API base URL
   const API_BASE = getApiBase();
@@ -114,6 +116,16 @@ const Status: React.FC = () => {
         return await checkService(service);
       })
     );
+    
+    try {
+      const healthRes = await fetch(`${API_BASE}/api/v1/health/ready`);
+      if (healthRes.ok) {
+        const data = await healthRes.json();
+        setDetailedHealth(data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch detailed health info', e);
+    }
     
     setServices(updatedServices);
     setLastUpdate(new Date());
@@ -316,41 +328,53 @@ const Status: React.FC = () => {
           </section>
 
           <section className={common.section}>
-            <h2 className={common.sectionTitle}>Performance Metrics</h2>
+            <h2 className={common.sectionTitle}>
+              <Server className="inline-block mr-2 mb-1" size={28} />
+              Technical Overview
+            </h2>
             <StaggerContainer className={common.metricsGrid}>
               <StaggerItem className={cn(common.metricCard, themed.metricCard)}>
                 <div className={cn(common.metricIcon, common.metricIconGreen)}>
                   <CheckCircle size={24} />
                 </div>
-                <h3 className={common.metricTitle}>Uptime</h3>
-                <p className={cn(common.metricValue, common.metricValueGreen)}>99.8%</p>
-                <p className={cn(common.metricPeriod, themed.metricPeriod)}>Last 30 days</p>
+                <h3 className={common.metricTitle}>System Uptime</h3>
+                <p className={cn(common.metricValue, common.metricValueGreen)}>
+                  {detailedHealth?.uptime_seconds ? 
+                    `${Math.floor(detailedHealth.uptime_seconds / 3600)}h ${Math.floor((detailedHealth.uptime_seconds % 3600) / 60)}m` 
+                    : 'System Online'}
+                </p>
+                <p className={cn(common.metricPeriod, themed.metricPeriod)}>Since Last Restart</p>
               </StaggerItem>
               <StaggerItem className={cn(common.metricCard, themed.metricCard)}>
                 <div className={cn(common.metricIcon, common.metricIconBlue)}>
                   <Zap size={24} />
                 </div>
-                <h3 className={common.metricTitle}>Response Time</h3>
+                <h3 className={common.metricTitle}>API Latency</h3>
                 <p className={cn(common.metricValue, common.metricValueBlue)}>
-                  {services[0].latency || 85}ms
+                  {services[0].latency || 10}ms
                 </p>
-                <p className={cn(common.metricPeriod, themed.metricPeriod)}>Average</p>
+                <p className={cn(common.metricPeriod, themed.metricPeriod)}>API Gateway</p>
               </StaggerItem>
               <StaggerItem className={cn(common.metricCard, themed.metricCard)}>
                 <div className={cn(common.metricIcon, common.metricIconPurple)}>
-                  <Activity size={24} />
+                  <Database size={24} />
                 </div>
-                <h3 className={common.metricTitle}>API Modules</h3>
-                <p className={cn(common.metricValue, common.metricValuePurple)}>128</p>
-                <p className={cn(common.metricPeriod, themed.metricPeriod)}>Deployed</p>
+                <h3 className={common.metricTitle}>Database Driver</h3>
+                <p className={cn(common.metricValue, common.metricValuePurple)}>
+                  {detailedHealth?.driver === 'sqlalchemy' ? 'SQLAlchemy' : 
+                   detailedHealth?.driver === 'turso_http' ? 'Turso HTTP' : 'Turso'}
+                </p>
+                <p className={cn(common.metricPeriod, themed.metricPeriod)}>State: {detailedHealth?.components?.db || 'Syncing'}</p>
               </StaggerItem>
               <StaggerItem className={cn(common.metricCard, themed.metricCard)}>
                 <div className={cn(common.metricIcon, common.metricIconOrange)}>
                   <Globe size={24} />
                 </div>
-                <h3 className={common.metricTitle}>Requests/min</h3>
-                <p className={cn(common.metricValue, common.metricValueOrange)}>850+</p>
-                <p className={cn(common.metricPeriod, themed.metricPeriod)}>Current</p>
+                <h3 className={common.metricTitle}>Environment</h3>
+                <p className={cn(common.metricValue, common.metricValueOrange)} style={{textTransform: 'capitalize'}}>
+                  {detailedHealth?.environment || 'Production'}
+                </p>
+                <p className={cn(common.metricPeriod, themed.metricPeriod)}>Python {detailedHealth?.python_version || '3.x'}</p>
               </StaggerItem>
             </StaggerContainer>
           </section>

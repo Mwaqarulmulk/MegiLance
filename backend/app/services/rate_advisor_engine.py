@@ -222,14 +222,22 @@ def _calculate_base_rate(service_type: str, experience_level: str) -> float:
         return rate
 
     # Fall back to platform category rates
-    platform_data = get_platform_rates("upwork")
+    # Assume service_type might match a category if it failed get_upwork_service_rate
+    from app.services.market_data_2025 import PLATFORM_RATES
+    platform_data = PLATFORM_RATES.get("upwork", {})
     if platform_data:
-        categories = platform_data.get("categories", {})
-        for cat_key, cat_data in categories.items():
-            tiers = cat_data.get("tiers", {})
-            tier_key = {"junior": "entry", "mid": "mid", "senior": "expert", "expert": "expert"}.get(experience_level, "mid")
-            if tier_key in tiers:
-                return tiers[tier_key]
+        # Check if service_type matches directly
+        cat_data = platform_data.get(service_type)
+        if not cat_data:
+            # Just grab the first one as an absolute fallback or general average
+            cat_data = platform_data.get("web_development", {})
+            
+        tiers = cat_data
+        tier_key = {"junior": "entry_rate", "mid": "mid_rate", "senior": "expert_rate", "expert": "top_rate"}.get(experience_level, "mid_rate")
+        
+        tier_info = tiers.get(tier_key)
+        if tier_info and isinstance(tier_info, dict) and "avg" in tier_info:
+            return tier_info["avg"]
 
     # Absolute fallback
     base = 40
