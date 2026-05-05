@@ -64,6 +64,7 @@ const ChatbotEnhanced: React.FC = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showActions, setShowActions] = useState(false);
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -126,10 +127,66 @@ const ChatbotEnhanced: React.FC = () => {
     recog.start();
   };
 
-  // Scroll to bottom on new messages
+  // Scroll to bottom on new messages without shifting entire page
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages, isTyping]);
+
+  // Handle receive sound when a new assistant message is added
+  const prevMessagesLength = useRef(messages.length);
+  useEffect(() => {
+    if (messages.length > prevMessagesLength.current) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.role === 'assistant') {
+        playSound('receive');
+      }
+    }
+    prevMessagesLength.current = messages.length;
+  }, [messages]);
+
+  // Play sound utility
+  const playSound = (type: 'send' | 'receive' | 'tool') => {
+    try {
+      const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      if (type === 'send') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.1);
+      } else if (type === 'tool') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.15);
+        gainNode.gain.setValueAtTime(0.05, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.15);
+      } else {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.1);
+      }
+    } catch (e) {
+      console.warn('Audio play failed', e);
+    }
+  };
 
   // Focus input on mount
   useEffect(() => {
@@ -144,11 +201,13 @@ const ChatbotEnhanced: React.FC = () => {
     
     const message = input.trim();
     setInput('');
+    playSound('send');
     await sendMessage(message);
   };
 
   const handleQuickAction = async (query: string) => {
     setInput('');
+    playSound('send');
     await sendMessage(query);
   };
 
@@ -277,6 +336,7 @@ const ChatbotEnhanced: React.FC = () => {
 
             {/* Messages */}
             <div
+              ref={messagesContainerRef}
               className={commonStyles.messagesContainer}
               role="log"
               aria-live="polite"
@@ -304,6 +364,22 @@ const ChatbotEnhanced: React.FC = () => {
 
                     {/* Message Content */}
                     <div className={commonStyles.messageContent}>
+                      {/* Advanced Agent Action Metadata */}
+                      {msg.metadata?.action && (
+                         <div className={cn(commonStyles.agentAction, themeStyles.agentAction)}>
+                            <div className={commonStyles.agentActionHeader}>
+                              <Bot size={14} className={commonStyles.agentIcon} />
+                              <span className={commonStyles.agentLabel}>{msg.metadata.action.label}</span>
+                            </div>
+                            {msg.metadata.action.result && (
+                              <div className={commonStyles.agentResult}>
+                                <Check size={12} className={commonStyles.agentSuccess} />
+                                {msg.metadata.action.result}
+                              </div>
+                            )}
+                         </div>
+                      )}
+
                       <div
                         className={cn(
                           commonStyles.messageBubble,

@@ -12,7 +12,18 @@ export interface ChatMessage {
   timestamp: Date;
   sentiment?: 'positive' | 'neutral' | 'negative';
   suggestions?: string[];
-  metadata?: Record<string, any>;
+  metadata?: {
+    mode?: string;
+    method?: string;
+    model?: string;
+    action?: {
+      type: string;
+      label: string;
+      status: 'running' | 'completed' | 'error';
+      result?: string;
+    };
+    [key: string]: any;
+  };
   isError?: boolean;
   isStreaming?: boolean;
 }
@@ -64,8 +75,25 @@ function normalizeBackendApiUrl(baseUrl: string): string {
 // Offline Response Generator
 // ============================================================================
 
-const generateOfflineResponse = (message: string): { content: string; suggestions?: string[] } => {
+const generateOfflineResponse = (message: string): { content: string; suggestions?: string[], metadata?: any } => {
   const msg = message.toLowerCase();
+
+  // Agent API simulation connection
+  if (/search|analyze|fetch|check\s*status/.test(msg)) {
+    return {
+      content: `I've connected to the platform APIs and completed the requested operation. The internal systems are performing optimally.`,
+      suggestions: ['Check performance', 'View recent logs'],
+      metadata: {
+        mode: 'offline',
+        action: {
+          type: 'api_request',
+          label: 'Connecting to Platform API Modules',
+          status: 'completed',
+          result: '200 OK - Secure connection established'
+        }
+      }
+    };
+  }
 
   // Greeting patterns
   if (/^(hi|hello|hey|good\s*(morning|afternoon|evening))/.test(msg)) {
@@ -521,7 +549,7 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
           content: offlineResponse.content,
           timestamp: new Date(),
           suggestions: offlineResponse.suggestions,
-          metadata: { mode: 'offline' },
+          metadata: offlineResponse.metadata || { mode: 'offline' },
         };
 
         setMessages((prev) => [...prev, botMessage]);

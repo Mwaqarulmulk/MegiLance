@@ -12,6 +12,7 @@ import WebVitalsReporter from './components/Analytics/WebVitalsReporter';
 import CookieConsent from './components/organisms/CookieConsent/CookieConsent';
 import ErrorBoundary from '@/app/components/organisms/ErrorBoundary/ErrorBoundary';
 import OnboardingTour from './components/molecules/OnboardingTour/OnboardingTour';
+import FloatingRobotWidget from './components/Chatbot/FloatingRobotWidget';
 import { WebSocketProvider } from '@/lib/websocket';
 import { I18nProvider } from '@/lib/i18n/I18nContext';
 
@@ -38,6 +39,7 @@ const ClientRoot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <WebVitalsReporter />
                 <CookieConsent />
                 <OnboardingTour />
+                <FloatingRobotWidget />
               </ToasterProvider>
             </WebSocketProvider>
           </AnalyticsProvider>

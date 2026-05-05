@@ -375,6 +375,41 @@
 }
 
 /* ============================================================================
+   Agent Actions Context
+   ============================================================================ */
+
+.agentAction {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-left: 2px solid var(--ml-blue);
+  background: rgba(69, 115, 223, 0.05);
+}
+
+.agentActionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 600;
+}
+
+.agentIcon {
+  color: var(--ml-blue);
+}
+
+.agentResult {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--ml-green);
+  margin-left: 1rem;
+}
+
+/* ============================================================================
    Typing Indicator
    ============================================================================ */
 
