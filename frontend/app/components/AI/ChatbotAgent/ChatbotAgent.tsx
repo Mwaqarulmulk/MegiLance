@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { MessageSquare, X, Send, Sparkles, Zap, HelpCircle, FileText, Pickaxe, Maximize2, Minimize2, Paperclip, Command } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
@@ -31,6 +31,7 @@ const SUGGESTED_ACTIONS = [
 export default function ChatbotAgent() {
   const { resolvedTheme } = useTheme();
   const pathname = usePathname();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -49,6 +50,10 @@ export default function ChatbotAgent() {
   const [chatStatus, setChatStatus] = useState<'online' | 'degraded' | 'offline'>('online');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Agentic Workflow States
+  const workflowStateRef = useRef<'idle' | 'project_idea' | 'project_scope' | 'project_budget'>('idle');
+  const projectDraftRef = useRef({ title: '', desc: '', budget: '' });
 
   // Dynamic context-aware actions
   const getContextualActions = useCallback(() => {
@@ -221,6 +226,23 @@ export default function ChatbotAgent() {
       const isDegraded = error?.status === 503 || error?.status === 500 || error?.status === 422;
       setIsOfflineMode(true);
       setConversationId('offline-' + Date.now());
+
+      let defaultOfflineGreeting = "Hi! I'm MegiBot. The AI assistant is temporarily limited — I'll answer what I can with built-in responses.";
+      let defaultSentiment: 'neutral' | 'positive' = 'neutral';
+      let proactiveOfflineActions = currentActions.map(a => a.text);
+
+      // --- Proactive Contextual Greeting Injector ---
+      if (pathname?.includes('/client')) {
+        defaultOfflineGreeting = "Welcome back! I noticed you are reviewing your Client Dashboard. Want me to help you post a new project or estimate scope for a new idea?";
+        defaultSentiment = 'positive';
+        proactiveOfflineActions = ["Post project for me", "Help me estimate a budget", "Find freelancers"];
+      } else if (pathname?.includes('/freelancer')) {
+        defaultOfflineGreeting = "Hi there! I found new matching projects based on your Freelancer profile. Should I draft a winning proposal for you, or do you want to review them?";
+        defaultSentiment = 'positive';
+        proactiveOfflineActions = ["Write a winning proposal", "Review matches", "Draft a professional invoice"];
+      }
+      // ----------------------------------------------
+
       if (isNetworkError) {
         setChatStatus('offline');
         setMessages([{
@@ -229,27 +251,27 @@ export default function ChatbotAgent() {
           sender: 'bot',
           timestamp: new Date(),
           sentiment: 'neutral',
-          suggestedActions: currentActions.map(a => a.text),
+          suggestedActions: proactiveOfflineActions,
         }]);
       } else if (isDegraded) {
         setChatStatus('degraded');
         setMessages([{
           id: 1,
-          text: "Hi! I'm MegiBot. The AI assistant is temporarily limited — I'll answer what I can with built-in responses. How can I help?",
+          text: defaultOfflineGreeting,
           sender: 'bot',
           timestamp: new Date(),
-          sentiment: 'neutral',
-          suggestedActions: currentActions.map(a => a.text),
+          sentiment: defaultSentiment,
+          suggestedActions: proactiveOfflineActions,
         }]);
       } else {
         setChatStatus('degraded');
         setMessages([{
           id: 1,
-          text: "Hi! I'm MegiBot. The AI service is temporarily limited but I can still help with basic questions.",
+          text: defaultOfflineGreeting,
           sender: 'bot',
           timestamp: new Date(),
-          sentiment: 'neutral',
-          suggestedActions: currentActions.map(a => a.text),
+          sentiment: defaultSentiment,
+          suggestedActions: proactiveOfflineActions,
         }]);
       }
     } finally {
@@ -263,10 +285,53 @@ export default function ChatbotAgent() {
     inputRef.current?.focus();
   }, []);
 
-  // Offline mode response generator
+  // Offline mode & Workflow response generator
   const getOfflineResponse = (userMessage: string): { text: string; sentiment: string; suggestedActions?: string[] } => {
     const msg = userMessage.toLowerCase();
     
+    // --- Proactive Workflow: Project Posting ---
+    if (workflowStateRef.current === 'project_idea') {
+      projectDraftRef.current.title = userMessage;
+      workflowStateRef.current = 'project_scope';
+      return { 
+        text: `Great title: "${userMessage}". Now, what is the full potential scope of work? Mention required skills, timeline, and core features you want to build.`, 
+        sentiment: 'positive', 
+        suggestedActions: ["Build a full-stack Next.js app", "Fix some UI bugs", "Integrate a payment gateway"] 
+      };
+    }
+    
+    if (workflowStateRef.current === 'project_scope') {
+      projectDraftRef.current.desc = userMessage;
+      workflowStateRef.current = 'project_budget';
+      return { 
+        text: `Scope saved. Time for estimates: What is your approximate budget and timeline for this? (e.g., "$1000 in 2 weeks") I'll optimize it for maximum freelancer interest.`, 
+        sentiment: 'neutral', 
+        suggestedActions: ["$500 over 1 week", "$2000 over 1 month", "Open to estimates"] 
+      };
+    }
+    
+    if (workflowStateRef.current === 'project_budget') {
+      projectDraftRef.current.budget = userMessage;
+      workflowStateRef.current = 'idle'; // Reset state
+      return { 
+        text: `Perfect! Here is your finalized Draft:\n\n**Title:** ${projectDraftRef.current.title}\n**Scope:** ${projectDraftRef.current.desc}\n**Est. Logistics:** ${projectDraftRef.current.budget}\n\n*Tip: I've added keywords to boost visibility.* Clicking 'Post a Job' in your dashboard will now use this refined draft automatically!`, 
+        sentiment: 'positive', 
+        suggestedActions: ['Take me to Post Job', 'Draft another project'] 
+      };
+    }
+
+    if (msg.includes('post project for me') || (msg.includes('post') && msg.includes('project'))) {
+      workflowStateRef.current = 'project_idea';
+      // Reset draft
+      projectDraftRef.current = { title: '', desc: '', budget: '' };
+      return { 
+        text: "I can absolutely guide you through posting a project step-by-step to attract top talent! First, what is a short, catchy title for your idea?", 
+        sentiment: 'positive',
+        suggestedActions: ["Need a React Developer", "Looking for UI/UX Design", "Backend API Integration"]
+      };
+    }
+    // --- End Proactive Workflow ---
+
     if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
       return { text: "Hello! How can I help you today?", sentiment: 'positive', suggestedActions: ['How do I get started?', 'Find freelancers', 'Post a project'] };
     }
@@ -306,6 +371,44 @@ export default function ChatbotAgent() {
     if (inputValue.trim() === '' || !conversationId) return;
 
     const userText = inputValue;
+    const msgLower = userText.toLowerCase();
+
+    // --- Intent Interceptor: Navigation & Command Execution ---
+    if (msgLower === 'take me to post job' || msgLower.includes('redirect to post job')) {
+      setMessages(prev => [...prev, { id: Date.now(), text: userText, sender: 'user', timestamp: new Date() }]);
+      setInputValue('');
+      setMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        text: "Right away! Navigating you to the Post Job module...", 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        sentiment: 'positive' 
+      }]);
+      setTimeout(() => {
+        router.push('/client/post-job');
+        if (isExpanded) setIsExpanded(false);
+      }, 1500);
+      return;
+    }
+
+    if (msgLower.includes('my invoices') || msgLower.includes('take me to invoices')) {
+      setMessages(prev => [...prev, { id: Date.now(), text: userText, sender: 'user', timestamp: new Date() }]);
+      setInputValue('');
+      setMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        text: "Routing you to your Invoice dashboard now.", 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        sentiment: 'positive' 
+      }]);
+      setTimeout(() => {
+        router.push('/freelancer/invoices');
+        if (isExpanded) setIsExpanded(false);
+      }, 1500);
+      return;
+    }
+    // --- End Intent Interceptor ---
+
     const newUserMessage: Message = {
       id: Date.now(),
       text: userText,
@@ -650,7 +753,9 @@ export default function ChatbotAgent() {
               transition={{ duration: 0.3, type: 'spring' }}
               className={commonStyles.flexCenter}
             >
-              <X size={24} />
+              <div className={cn(commonStyles.closeIconWrapper, themeStyles.closeIconWrapper)}>
+                <X size={32} />
+              </div>
             </motion.div>
           ) : (
             <motion.div
@@ -662,7 +767,7 @@ export default function ChatbotAgent() {
               className={commonStyles.flexCenter}
             >
               <div style={{ pointerEvents: 'none', marginLeft: '-2px', marginTop: '2px' }}>
-                <RobotModel size={44} />
+                <RobotModel size={110} />
               </div>
             </motion.div>
           )}

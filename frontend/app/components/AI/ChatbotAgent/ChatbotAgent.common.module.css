@@ -96,10 +96,12 @@
 .sendButton:disabled { opacity: 0.4; cursor: not-allowed; }
 .sendButton svg { width: 18px; height: 18px; transform: translateX(1px); }
 
-.toggleButton { width: 80px; height: 80px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; z-index: 20; pointer-events: auto; }
-.notificationBadge { position: absolute; top: -4px; right: -4px; background: var(--color-error-500, #EF4444); color: white; min-width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; padding: 0 6px; box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4); border: 2px solid white; }
+.toggleButton { width: 140px; height: 140px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; z-index: 20; pointer-events: auto; background: transparent; box-shadow: none; outline: none; }
+.notificationBadge { position: absolute; top: 15px; right: 15px; background: var(--color-error-500, #EF4444); color: white; min-width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; padding: 0 6px; box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4); border: 2px solid white; }
 .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; }
 .flexCenter { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+
+.closeIconWrapper { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); transition: all 0.3s ease; }
 
 .expanded {
   width: 90vw !important;
@@ -116,3 +118,5 @@
 .expandBtn { background: none; border: none; cursor: pointer; padding: 0.25rem; opacity: 0.7; transition: all 0.2s; display: flex; }
 .expandBtn:hover { opacity: 1; transform: scale(1.1); }
 
+
+.glowRing { display: none !important; }
