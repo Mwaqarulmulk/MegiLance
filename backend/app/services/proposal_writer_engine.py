@@ -364,6 +364,11 @@ Guidelines:
     return response
 
 def _fallback_compose_proposal(
+    project_title, project_description, skills, skill_match, experience_level,
+    tone, length, freelancer_name, years_experience, highlight_points,
+    proposed_rate, proposed_timeline, detected_type
+):
+    cfg = TONE_CONFIGS.get(tone, TONE_CONFIGS["professional"])
     matched_skills = [m["skill"] for m in skill_match["matched_skills"]]
     is_concise = length == "concise"
     is_detailed = length == "detailed"

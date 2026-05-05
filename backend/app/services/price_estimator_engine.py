@@ -20,7 +20,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
 
 from app.db.turso_http import execute_query
-from app.services import llm_gateway
+from app.services.llm_gateway import llm_gateway
 from app.services.market_data_2025 import (
     DATA_VERSION,
     get_country_rate_data,
