@@ -13,7 +13,7 @@ import darkStyles from './Card.dark.module.css';
 
 export interface CardProps {
   title?: string;
-  icon?: React.ElementType;
+  icon?: any;
   children: React.ReactNode;
   className?: string;
   variant?: 'default' | 'elevated' | 'outline' | 'filled' | 'glass' | 'premium' | 'holographic';

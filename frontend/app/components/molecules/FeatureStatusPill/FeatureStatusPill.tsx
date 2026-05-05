@@ -33,7 +33,7 @@ export interface FeatureStatusPillProps {
 
 const statusConfig: Record<string, { 
   label: string; 
-  icon: React.ElementType;
+  icon: any;
   styleKey: string;
 }> = {
   complete: { 

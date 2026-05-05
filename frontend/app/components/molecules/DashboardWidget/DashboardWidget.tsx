@@ -11,7 +11,7 @@ import dark from './DashboardWidget.dark.module.css';
 export interface DashboardWidgetProps {
   title: string;
   value?: string | number;
-  icon?: React.ElementType;
+  icon?: any;
   trend?: React.ReactNode;
   onClick?: () => void;
   children?: React.ReactNode;

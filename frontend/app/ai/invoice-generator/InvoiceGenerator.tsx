@@ -67,7 +67,7 @@ interface InvoiceResult {
 
 const STEP_LABELS = ['Sender', 'Recipient', 'Items', 'Settings', 'Preview'];
 
-const TEMPLATE_ICONS: Record<string, React.ElementType> = {
+const TEMPLATE_ICONS: Record<string, any> = {
   professional: Building,
   minimal: FileText,
   creative: Palette,

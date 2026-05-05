@@ -47,7 +47,7 @@ type SectionId = 'general' | 'security' | 'api' | 'email' | 'storage' | 'session
 interface SectionMeta {
   id: SectionId;
   title: string;
-  icon: React.ElementType;
+  icon: any;
   description: string;
 }
 

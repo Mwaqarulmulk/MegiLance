@@ -39,7 +39,7 @@ interface AdvancedFileUploadProps {
   multiple?: boolean;
 }
 
-const fileIcons: Record<string, React.ElementType> = {
+const fileIcons: Record<string, any> = {
   'image/': Image,
   'application/pdf': FileText,
   'application/msword': FileText,
@@ -48,7 +48,7 @@ const fileIcons: Record<string, React.ElementType> = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml': Sheet,
 };
 
-const getFileIcon = (mimeType: string): React.ElementType => {
+const getFileIcon = (mimeType: string): any => {
   for (const [key, Icon] of Object.entries(fileIcons)) {
     if (mimeType.startsWith(key)) return Icon;
   }

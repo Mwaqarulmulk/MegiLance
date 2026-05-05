@@ -32,7 +32,7 @@ const roles: {
   id: Role;
   name: string;
   description: string;
-  icon: React.ElementType;
+  icon: any;
 }[] = [
   {
     id: "client",

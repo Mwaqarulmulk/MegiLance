@@ -21,7 +21,7 @@ export interface StatCardProps {
   /** Trend comparison label */
   trendLabel?: string;
   /** Icon component to display */
-  icon: React.ElementType;
+  icon: any;
   /** Additional class names */
   className?: string;
   /** Mini sparkline data points */

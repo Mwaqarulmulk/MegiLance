@@ -23,7 +23,7 @@ export interface ActionMenuItem {
   /** Anchor href */
   href?: string;
   /** Optional icon (Lucide or custom) */
-  icon?: React.ReactNode | React.ElementType;
+  icon?: React.ReactNode | any;
   /** Optional destructive flag for styling (e.g. red color) */
   destructive?: boolean;
   /** Is this just a separator */
@@ -169,7 +169,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
                   }
 
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  const IconComponent = typeof item.icon === 'function' || typeof item.icon === 'object' && 'render' in (item.icon as any) ? item.icon as React.ElementType : null;
+                  const IconComponent = typeof item.icon === 'function' || typeof item.icon === 'object' && 'render' in (item.icon as any) ? item.icon as any : null;
 
                   return (
                     item.href ? (

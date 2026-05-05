@@ -13,7 +13,7 @@ import darkStyles from './ImpactStatCard.dark.module.css';
 
 // --- Type Definitions ---
 interface ImpactStat {
-  icon: React.ElementType;
+  icon: any;
   number: string;
   label: string;
   description: string;

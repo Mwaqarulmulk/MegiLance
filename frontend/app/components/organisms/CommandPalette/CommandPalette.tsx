@@ -22,13 +22,13 @@ interface CommandItem {
   label: string;
   description?: string;
   href: string;
-  icon: React.ElementType;
+  icon: any;
   group: string;
   keywords?: string[];
   shortcut?: string;
 }
 
-const ICON_MAP: Record<string, React.ElementType> = {
+const ICON_MAP: Record<string, any> = {
   LayoutDashboard, Briefcase, FileText, CreditCard, MessageSquare,
   Bell, User, Settings, BarChart3, Users, Package, TrendingUp,
   Star, HelpCircle, Shield, Calendar, Wallet, Eye, Globe, Heart,

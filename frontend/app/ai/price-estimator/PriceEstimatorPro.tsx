@@ -176,7 +176,7 @@ interface SmartHoursResult {
    Constants
    ============================================================================ */
 
-const CATEGORY_ICONS: Record<string, React.ElementType> = {
+const CATEGORY_ICONS: Record<string, any> = {
   software_development: Code,
   design_creative: Palette,
   marketing_growth: Megaphone,
@@ -233,7 +233,7 @@ const OPTION_IMPACTS: Record<string, Record<string, { desc: string; impact: stri
   },
 };
 
-const STEP_GUIDANCE: Record<number, { icon: React.ElementType; title: string; text: string }> = {
+const STEP_GUIDANCE: Record<number, { icon: any; title: string; text: string }> = {
   0: {
     icon: Lightbulb,
     title: 'Category & Service',
@@ -1706,7 +1706,7 @@ function RegionalAnalysisCard({ analysis, cs, ts }: RegionalAnalysisCardProps) {
    ============================================================================ */
 
 interface GuidanceTipProps {
-  icon: React.ElementType;
+  icon: any;
   title: string;
   text: string;
   cs: typeof commonStyles;

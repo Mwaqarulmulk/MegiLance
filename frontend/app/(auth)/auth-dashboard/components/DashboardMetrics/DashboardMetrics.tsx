@@ -13,7 +13,7 @@ import lightStyles from './DashboardMetrics.light.module.css';
 import darkStyles from './DashboardMetrics.dark.module.css';
 
 // Map string names from API data to actual React icon components
-const iconMap: { [key: string]: React.ElementType } = {
+const iconMap: { [key: string]: any } = {
   FaBriefcase: Briefcase,
   FaTasks: ListTodo,
   FaUsers: Users,

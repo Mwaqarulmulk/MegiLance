@@ -26,7 +26,7 @@ export interface TimelineEvent {
   badge?: string;
 }
 
-const DOT_ICONS: Record<string, React.ElementType> = {
+const DOT_ICONS: Record<string, any> = {
   success: CheckCircle2,
   warning: AlertTriangle,
   danger: XCircle,

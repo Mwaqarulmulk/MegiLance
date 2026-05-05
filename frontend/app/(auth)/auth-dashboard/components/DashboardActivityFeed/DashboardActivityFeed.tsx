@@ -14,7 +14,7 @@ import lightStyles from './DashboardActivityFeed.light.module.css';
 import darkStyles from './DashboardActivityFeed.dark.module.css';
 
 // Map string names from API data to actual React icon components
-const iconMap: Record<string, React.ElementType<any>> = {
+const iconMap: Record<string, React.FC<{ className?: string }>> = {
   FaDollarSign: DollarSign,
   FaBriefcase: Briefcase,
   FaTasks: ListTodo,

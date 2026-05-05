@@ -378,7 +378,7 @@ export function useFormFieldA11y(
 
 interface VisuallyHiddenProps {
   children: React.ReactNode;
-  as?: React.ElementType;
+  as?: any;
 }
 
 /**

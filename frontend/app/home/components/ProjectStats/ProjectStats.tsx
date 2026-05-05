@@ -13,7 +13,7 @@ import darkStyles from './ProjectStats.dark.module.css';
 
 interface StatItem {
   id: number;
-  icon: React.ElementType;
+  icon: any;
   value: number;
   label: string;
   description: string;

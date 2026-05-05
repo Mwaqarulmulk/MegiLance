@@ -11,7 +11,7 @@ interface StatCardProps {
   title: string;
   value: string;
   trend?: number;
-  icon: React.ElementType;
+  icon: any;
   sparklineData?: number[];
   sparklineColor?: 'primary' | 'success' | 'warning' | 'danger';
   href?: string;

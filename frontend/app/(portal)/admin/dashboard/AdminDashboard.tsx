@@ -123,7 +123,7 @@ interface StatCardProps {
   title: string;
   value: string;
   trend?: string;
-  icon: React.ElementType;
+  icon: any;
   accent: 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'indigo';
   themeStyles: Record<string, string>;
   subtitle?: string;
@@ -186,7 +186,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, trend, icon: Icon, ac
 interface QuickActionProps {
   label: string;
   href: string;
-  icon: React.ElementType;
+  icon: any;
   description: string;
   badge?: string;
   themeStyles: Record<string, string>;
@@ -379,7 +379,7 @@ const AdminDashboard: React.FC = () => {
 
   const themeStyles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
-  const iconForLabel = (label: string): React.ElementType => {
+  const iconForLabel = (label: string): any => {
     if (label.includes('Users')) return Users;
     if (label.includes('Revenue')) return DollarSign;
     if (label.includes('Projects')) return Briefcase;
