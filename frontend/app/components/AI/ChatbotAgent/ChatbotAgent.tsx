@@ -792,7 +792,7 @@ export default function ChatbotAgent() {
               className={commonStyles.flexCenter}
             >
               <div style={{ pointerEvents: 'none', marginLeft: '-2px', marginTop: '2px' }}>
-                <RobotModel size={130} />
+                <RobotModel size={170} />
               </div>
             </motion.div>
           )}
