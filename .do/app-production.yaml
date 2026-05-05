@@ -135,7 +135,7 @@ services:
     value: 0x228d599d4c7e89194b94e9d65b1b4114870a4c34
   - key: DO_AI_API_KEY
     scope: RUN_AND_BUILD_TIME
-    value: doo_v1_b7d1d014376cd6050e970c269310e43fcf13be70a016cfb94936279db877f0eb
+    value: ${DO_AI_API_KEY}
   - key: DO_AI_API_BASE
     scope: RUN_AND_BUILD_TIME
     value: https://inference.do-ai.run/v1
