@@ -189,7 +189,6 @@ const AIShowcase: React.FC = () => {
           ))}
         </div>
 
-        <TechLogos />
       </div>
     </section>
   );
