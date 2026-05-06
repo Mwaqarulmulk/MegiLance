@@ -112,3 +112,9 @@ screenshots/
 
 # Playwright MCP
 .playwright-mcp/
+
+# Infer Tooling
+infer-out/
+infer-*/
+Infer_Submission.md
+sample.c
