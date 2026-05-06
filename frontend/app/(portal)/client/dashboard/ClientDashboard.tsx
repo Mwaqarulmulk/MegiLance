@@ -337,6 +337,13 @@ const ClientDashboard: React.FC = () => {
       desc: "AI-powered talent match",
     },
     {
+      label: "AI Suite",
+      href: "/ai",
+      icon: Zap,
+      color: "purple" as const,
+      desc: "Smart tools & insights",
+    },
+    {
       label: "Report Issue",
       href: "/feedback",
       icon: AlertCircle,
