@@ -148,6 +148,19 @@ export function useAuth(): UseAuthReturn {
         const normalized = normalizeUser(userData);
 
         if (isMounted.current) {
+          // ml_user_role is set at login time (never overwritten by AppLayout).
+          // If the API returns a different user_type (common with dev/demo DB accounts
+          // that are all registered as 'client'), override with the login-time role
+          // so the portal layout guard keeps the user on the correct portal.
+          try {
+            const loginRole = localStorage.getItem('ml_user_role');
+            if (loginRole && ['admin', 'freelancer', 'client'].includes(loginRole)
+                && loginRole !== normalized.user_type) {
+              normalized.user_type = loginRole as User['user_type'];
+              normalized.role = loginRole;
+            }
+          } catch { /* ignore */ }
+
           setUser(normalized);
           setError(null);
           // CRITICAL: Sync user to localStorage for immediate layout recognition
@@ -276,7 +289,7 @@ export function useAuth(): UseAuthReturn {
       /* best effort */
     }
 
-    clearAuthData();
+    clearAuthData(); // also removes ml_user_role (see core.ts)
     // Broadcast logout to other tabs via localStorage (StorageEvent mechanism)
     localStorage.setItem("auth_logout_broadcast", "true");
     localStorage.removeItem("auth_logout_broadcast");

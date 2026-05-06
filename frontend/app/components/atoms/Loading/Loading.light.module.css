@@ -1,13 +1,63 @@
-/* Loading Component - Light Theme Colors */
+/* Loading – light theme */
 
-.container {
-  background-color: rgba(255, 255, 255, 0.8);
+.overlay    { background: rgba(248, 250, 252, 0.75); }
+.container  { background: transparent; }
+
+/* Simple spinner */
+.simpleSpinner { color: var(--ml-blue, #4573df); }
+.spinnerTrack  { stroke: #1e293b; }
+.spinnerArc    { stroke: var(--ml-blue, #4573df); }
+.inlineText    { color: #1e293b; }
+
+/* Glow */
+.glowBackdrop { background: radial-gradient(circle, rgba(69,115,223,0.25) 0%, rgba(139,92,246,0.1) 60%, transparent 100%); }
+
+/* Outer ring: blue arc (top+right visible) */
+.ringOuter {
+  border-top-color:    #4573df;
+  border-right-color:  rgba(69,115,223,0.4);
+  border-bottom-color: rgba(69,115,223,0.08);
+  border-left-color:   rgba(69,115,223,0.08);
+  box-shadow: 0 0 18px rgba(69,115,223,0.25);
 }
 
-.spinner {
-  color: #2563eb; /* blue-600 */
+/* Middle ring: purple arc (bottom+left visible) */
+.ringMid {
+  border-top-color:    rgba(139,92,246,0.1);
+  border-right-color:  rgba(139,92,246,0.1);
+  border-bottom-color: #7c3aed;
+  border-left-color:   rgba(139,92,246,0.45);
+  box-shadow: 0 0 12px rgba(124,58,237,0.2);
 }
 
-.text {
-  color: var(--color-text-primary-light); /* slate-800 */
+/* Inner ring: cyan arc */
+.ringInner {
+  border-top-color:    #0ea5e9;
+  border-right-color:  rgba(14,165,233,0.15);
+  border-bottom-color: rgba(14,165,233,0.15);
+  border-left-color:   rgba(14,165,233,0.15);
+  box-shadow: 0 0 8px rgba(14,165,233,0.2);
 }
+
+/* Orbiting dots */
+.orbitDot {
+  background: #4573df;
+  box-shadow: 0 0 8px rgba(69,115,223,0.7), 0 0 16px rgba(69,115,223,0.3);
+}
+
+/* Center */
+.centerLogo {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  box-shadow: 0 0 0 3px rgba(69,115,223,0.15), 0 0 20px rgba(69,115,223,0.25);
+}
+.centerLetter { color: #ffffff; }
+
+/* Label */
+.loadingLabel {
+  background-image: linear-gradient(90deg, #1e293b 20%, #4573df 50%, #7c3aed 65%, #1e293b 80%);
+  -webkit-text-fill-color: transparent;
+  color: #1e293b;
+}
+
+/* Dots */
+.bounceDot { background: #4573df; }

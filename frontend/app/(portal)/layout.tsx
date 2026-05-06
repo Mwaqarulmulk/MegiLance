@@ -48,18 +48,28 @@ export default function PortalLayout({ children }: Readonly<{ children: React.Re
       return;
     }
 
-    const role = (user!.user_type || user!.role || 'client').toLowerCase();
-    
-    // Check role-based access
+    // ml_user_role: set only at login time, never overwritten by AppLayout.
+    // This is the authoritative source for the user's intended portal area.
+    // portal_area is NOT used here because AppLayout overwrites it on every
+    // navigation to match the URL — making it useless for role enforcement.
+    let loginRole: string | null = null;
+    try { loginRole = window.localStorage.getItem('ml_user_role'); } catch { /* ignore */ }
+
+    const apiRole = (user!.user_type || user!.role || 'client').toLowerCase();
+    const role = (loginRole && ['admin', 'freelancer', 'client'].includes(loginRole))
+      ? loginRole
+      : apiRole;
+
+    // Strict portal-area access: each role stays in their own area.
     if (pathname?.startsWith('/admin') && role !== 'admin') {
       router.replace(`/${role}/dashboard`);
       return;
     }
-    if (pathname?.startsWith('/client') && role !== 'client' && role !== 'admin') {
+    if (pathname?.startsWith('/client') && role !== 'client') {
       router.replace(`/${role}/dashboard`);
       return;
     }
-    if (pathname?.startsWith('/freelancer') && role !== 'freelancer' && role !== 'admin') {
+    if (pathname?.startsWith('/freelancer') && role !== 'freelancer') {
       router.replace(`/${role}/dashboard`);
       return;
     }

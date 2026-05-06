@@ -1,13 +1,63 @@
-/* Loading Component - Dark Theme Colors */
+/* Loading – dark theme */
 
-.container {
-  background-color: rgba(15, 23, 42, 0.8); /* slate-900 with opacity */
+.overlay    { background: rgba(10, 14, 26, 0.82); }
+.container  { background: transparent; }
+
+/* Simple spinner */
+.simpleSpinner { color: #6b8de6; }
+.spinnerTrack  { stroke: #e2e8f0; }
+.spinnerArc    { stroke: #6b8de6; }
+.inlineText    { color: #e2e8f0; }
+
+/* Glow */
+.glowBackdrop { background: radial-gradient(circle, rgba(107,141,230,0.22) 0%, rgba(167,139,250,0.1) 60%, transparent 100%); }
+
+/* Outer ring */
+.ringOuter {
+  border-top-color:    #6b8de6;
+  border-right-color:  rgba(107,141,230,0.4);
+  border-bottom-color: rgba(107,141,230,0.06);
+  border-left-color:   rgba(107,141,230,0.06);
+  box-shadow: 0 0 22px rgba(107,141,230,0.35);
 }
 
-.spinner {
-  color: #60a5fa; /* blue-400 */
+/* Middle ring */
+.ringMid {
+  border-top-color:    rgba(167,139,250,0.08);
+  border-right-color:  rgba(167,139,250,0.08);
+  border-bottom-color: #a78bfa;
+  border-left-color:   rgba(167,139,250,0.45);
+  box-shadow: 0 0 14px rgba(167,139,250,0.3);
 }
 
-.text {
-  color: var(--color-text-primary-dark); /* slate-100 */
+/* Inner ring */
+.ringInner {
+  border-top-color:    #38bdf8;
+  border-right-color:  rgba(56,189,248,0.12);
+  border-bottom-color: rgba(56,189,248,0.12);
+  border-left-color:   rgba(56,189,248,0.12);
+  box-shadow: 0 0 10px rgba(56,189,248,0.25);
 }
+
+/* Orbiting dots */
+.orbitDot {
+  background: #6b8de6;
+  box-shadow: 0 0 10px rgba(107,141,230,0.9), 0 0 20px rgba(107,141,230,0.4);
+}
+
+/* Center */
+.centerLogo {
+  background: linear-gradient(135deg, #6b8de6 0%, #a78bfa 100%);
+  box-shadow: 0 0 0 3px rgba(107,141,230,0.2), 0 0 24px rgba(107,141,230,0.4);
+}
+.centerLetter { color: #ffffff; }
+
+/* Label */
+.loadingLabel {
+  background-image: linear-gradient(90deg, #cbd5e1 20%, #6b8de6 50%, #a78bfa 65%, #cbd5e1 80%);
+  -webkit-text-fill-color: transparent;
+  color: #cbd5e1;
+}
+
+/* Dots */
+.bounceDot { background: #6b8de6; box-shadow: 0 0 6px rgba(107,141,230,0.6); }

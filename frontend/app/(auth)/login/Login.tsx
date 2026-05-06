@@ -76,8 +76,19 @@ const Login: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo");
-  const getRedirect = (role: UserRole) =>
-    returnTo || roleConfig[role].redirectPath;
+  // Only honor returnTo if it belongs to this role's portal area.
+  // A stale returnTo from a previous session (e.g. /client/dashboard) must
+  // not override the intended role — that's the root cause of the "always
+  // lands on client portal" bug.
+  const getRedirect = (role: UserRole) => {
+    if (returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
+      const rolePrefix = `/${role}`;
+      if (returnTo === rolePrefix || returnTo.startsWith(`${rolePrefix}/`)) {
+        return returnTo;
+      }
+    }
+    return roleConfig[role].redirectPath;
+  };
   const [selectedRole, setSelectedRole] = useState<UserRole>("freelancer");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -196,8 +207,6 @@ const Login: React.FC = () => {
     try {
       const data = await api.auth.login(email, password);
 
-      // For dev quick login: force the intended role in stored user data so the
-      // portal layout's role-based access check (user.user_type) passes correctly.
       if (data.user) {
         localStorage.setItem("user", JSON.stringify({
           ...data.user,
@@ -205,8 +214,12 @@ const Login: React.FC = () => {
           role,
         }));
       }
+      // ml_user_role: the authoritative login-time role.
+      // Unlike portal_area (overwritten by AppLayout on every navigation),
+      // this key is set ONLY here and cleared on logout — never mutated by AppLayout.
       try {
         window.localStorage.setItem("portal_area", role);
+        window.localStorage.setItem("ml_user_role", role);
       } catch {
         /* localStorage unavailable in private browsing */
       }
@@ -259,6 +272,7 @@ const Login: React.FC = () => {
 
       try {
         window.localStorage.setItem("portal_area", resolvedRole);
+        window.localStorage.setItem("ml_user_role", resolvedRole);
       } catch {
         /* localStorage unavailable in private browsing */
       }

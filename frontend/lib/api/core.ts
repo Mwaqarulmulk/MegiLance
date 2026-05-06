@@ -38,6 +38,7 @@ export function clearAuthData() {
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
       localStorage.removeItem('portal_area');
+      localStorage.removeItem('ml_user_role');
       // Drop JS-accessible auth cookies
       document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Lax';
     } catch (e) {
