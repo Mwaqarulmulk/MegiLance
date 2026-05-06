@@ -60,6 +60,12 @@
 .locationWrapper { color: var(--color-text-secondary-light); }
 .cardCta { color: var(--ml-blue); background: rgba(69, 115, 223, 0.06); }
 .cardCta:hover { background: rgba(69, 115, 223, 0.1); }
+.topRatedBadge { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
+.risingBadge { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+.expBadge { background: #f1f5f9; color: #64748b; }
+.jssLabel { color: #374151; }
+.jssTrack { background: #e2e8f0; }
+.projectsLine { color: #64748b; }
 
 /* Skeleton */
 .skeletonCard { background: var(--bg-primary-light); border: 1px solid var(--border-light); }

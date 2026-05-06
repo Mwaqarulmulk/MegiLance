@@ -26,6 +26,18 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/app/components/Animations/StaggerContainer";
+import {
+  Plus,
+  Trash2,
+  ExternalLink,
+  Github,
+  Star,
+  Award,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+  BarChart2,
+} from "lucide-react";
 
 interface Education {
   degree: string;
@@ -52,6 +64,19 @@ interface Achievement {
   title: string;
   description: string;
   year: string;
+}
+
+interface PortfolioProject {
+  id?: string;
+  title: string;
+  description: string;
+  image_url: string;
+  demo_url: string;
+  github_url: string;
+  tech_stack: string;
+  category: string;
+  year: string;
+  featured: boolean;
 }
 
 const experienceLevelOptions = [
@@ -152,6 +177,17 @@ const Profile: React.FC = () => {
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [workHistory, setWorkHistory] = useState<WorkHistory[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [portfolioProjects, setPortfolioProjects] = useState<PortfolioProject[]>([]);
+
+  // Profile stats (read-only from backend)
+  const [profileStats, setProfileStats] = useState({
+    jobSuccessScore: 0,
+    completedProjects: 0,
+    totalEarnings: 0,
+    responseRate: 0,
+    onTimeDelivery: 0,
+    repeatClientRate: 0,
+  });
 
   // Settings
   const [testimonialsEnabled, setTestimonialsEnabled] = useState(true);
@@ -258,6 +294,17 @@ const Profile: React.FC = () => {
       setAchievements(
         Array.isArray(data.achievements) ? data.achievements : [],
       );
+      setPortfolioProjects(
+        Array.isArray(data.portfolio_projects) ? data.portfolio_projects : [],
+      );
+      setProfileStats({
+        jobSuccessScore: data.job_success_score ?? 0,
+        completedProjects: data.completed_projects ?? 0,
+        totalEarnings: data.total_earnings ?? 0,
+        responseRate: data.response_rate ?? 0,
+        onTimeDelivery: data.on_time_delivery ?? 0,
+        repeatClientRate: data.repeat_client_rate ?? 0,
+      });
       setTestimonialsEnabled(data.testimonials_enabled !== false);
       setStatus("");
     } catch (error: any) {
@@ -360,6 +407,7 @@ const Profile: React.FC = () => {
         certifications: certifications.filter((c) => c.name || c.issuer),
         work_history: workHistory.filter((w) => w.company || w.role),
         achievements: achievements.filter((a) => a.title),
+        portfolio_projects: portfolioProjects.filter((p) => p.title),
         testimonials_enabled: testimonialsEnabled,
         profile_visibility: profileVisibility,
       };
@@ -497,6 +545,33 @@ const Profile: React.FC = () => {
       prev.map((a, i) => (i === idx ? { ...a, [field]: val } : a)),
     );
 
+  const addPortfolioProject = () =>
+    setPortfolioProjects((prev) => [
+      ...prev,
+      {
+        id: `new_${Date.now()}`,
+        title: "",
+        description: "",
+        image_url: "",
+        demo_url: "",
+        github_url: "",
+        tech_stack: "",
+        category: "",
+        year: new Date().getFullYear().toString(),
+        featured: false,
+      },
+    ]);
+  const removePortfolioProject = (idx: number) =>
+    setPortfolioProjects((prev) => prev.filter((_, i) => i !== idx));
+  const updatePortfolioProject = (
+    idx: number,
+    field: keyof PortfolioProject,
+    val: string | boolean,
+  ) =>
+    setPortfolioProjects((prev) =>
+      prev.map((p, i) => (i === idx ? { ...p, [field]: val } : p)),
+    );
+
   const sellerLevelLabel: Record<string, string> = {
     new_seller: "New Seller",
     bronze: "Bronze",
@@ -514,6 +589,7 @@ const Profile: React.FC = () => {
     { id: "basic", label: "Basic Info" },
     { id: "professional", label: "Professional" },
     { id: "portfolio", label: "Portfolio" },
+    { id: "stats", label: "Stats & Badges" },
     { id: "experience", label: "Experience" },
     { id: "education", label: "Education & Certs" },
     { id: "social", label: "Links & Social" },
@@ -548,13 +624,20 @@ const Profile: React.FC = () => {
                   {sellerLevelLabel[sellerLevel] || "New Seller"}
                 </span>
                 <span className={styles.metaBadge}>{profileViews} views</span>
-                <span className={styles.metaBadge}>
-                  {availabilityStatus === "available"
-                    ? "Available"
-                    : availabilityStatus === "busy"
-                      ? "Busy"
-                      : "Away"}
+                <span className={styles.metaBadge} style={{
+                  background: availabilityStatus === "available" ? "rgba(16,185,129,0.12)" : availabilityStatus === "busy" ? "rgba(245,158,11,0.12)" : "rgba(107,114,128,0.12)",
+                  color: availabilityStatus === "available" ? "#059669" : availabilityStatus === "busy" ? "#d97706" : "#6b7280",
+                  borderColor: availabilityStatus === "available" ? "#34d399" : availabilityStatus === "busy" ? "#fbbf24" : "#9ca3af",
+                }}>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "currentColor", display: "inline-block", marginRight: 5 }} />
+                  {availabilityStatus === "available" ? "Available for work" : availabilityStatus === "busy" ? "Busy" : "Away"}
                 </span>
+                {profileStats.jobSuccessScore > 0 && (
+                  <span className={styles.metaBadge} style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1", borderColor: "#a5b4fc" }}>
+                    <TrendingUp size={12} style={{ marginRight: 4 }} />
+                    {profileStats.jobSuccessScore}% JSS
+                  </span>
+                )}
               </div>
             </div>
             <div className={styles.headerActions}>
@@ -1301,32 +1384,279 @@ const Profile: React.FC = () => {
               <StaggerItem className={styles.section}>
                 <h2 className={styles.sectionTitle}>Portfolio Projects</h2>
                 <p className={styles.sectionDescription}>
-                  Showcase your best work. Enter your portfolio link below.
-                  Managing individual project items will be available soon.
+                  Showcase your best work with detailed project cards. Clients will see these on your public profile.
                 </p>
-                <div className={styles.twoColumnGrid}>
+
+                {/* Primary portfolio URL */}
+                <div className={styles.twoColumnGrid} style={{ marginBottom: "1.5rem" }}>
                   <Input
-                    label="Primary Portfolio URL"
+                    label="Primary Portfolio Website"
                     value={portfolioUrl}
                     onChange={(e) => setPortfolioUrl(e.target.value)}
-                    placeholder="https://portfolio.dev"
+                    placeholder="https://yourportfolio.dev"
                     error={errors.portfolioUrl}
                   />
                 </div>
-                <div
-                  className={styles.emptyStateContainer}
+
+                {/* Portfolio Projects List */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                  {portfolioProjects.map((project, idx) => (
+                    <div
+                      key={project.id || idx}
+                      style={{
+                        border: "1px solid var(--border-color, #e2e8f0)",
+                        borderRadius: "12px",
+                        padding: "1.25rem",
+                        position: "relative",
+                        background: project.featured ? "var(--featured-bg, rgba(99,102,241,0.04))" : undefined,
+                        borderColor: project.featured ? "var(--primary-color, #6366f1)" : undefined,
+                      }}
+                    >
+                      {project.featured && (
+                        <div style={{
+                          position: "absolute", top: "-10px", left: "16px",
+                          background: "var(--primary-color, #6366f1)",
+                          color: "white", fontSize: "11px", fontWeight: 600,
+                          padding: "2px 10px", borderRadius: "99px",
+                          display: "flex", alignItems: "center", gap: "4px",
+                        }}>
+                          <Star size={11} /> Featured
+                        </div>
+                      )}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
+                        <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-primary)" }}>
+                          Project {idx + 1}
+                        </h3>
+                        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                          <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8rem", cursor: "pointer", color: "var(--text-muted)" }}>
+                            <input
+                              type="checkbox"
+                              checked={project.featured}
+                              onChange={(e) => updatePortfolioProject(idx, "featured", e.target.checked)}
+                            />
+                            Featured
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => removePortfolioProject(idx)}
+                            style={{ padding: "4px", border: "none", background: "none", cursor: "pointer", color: "#ef4444" }}
+                            aria-label="Remove project"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className={styles.twoColumnGrid}>
+                        <Input
+                          label="Project Title *"
+                          value={project.title}
+                          onChange={(e) => updatePortfolioProject(idx, "title", e.target.value)}
+                          placeholder="e.g. E-Commerce Dashboard"
+                        />
+                        <Input
+                          label="Category"
+                          value={project.category}
+                          onChange={(e) => updatePortfolioProject(idx, "category", e.target.value)}
+                          placeholder="e.g. Web App, Mobile, API"
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: "0.75rem" }}>
+                        <Textarea
+                          id={`portfolio-desc-${idx}`}
+                          label="Description"
+                          value={project.description}
+                          onChange={(e) => updatePortfolioProject(idx, "description", e.target.value)}
+                          placeholder="Describe the project, your role, and the impact it had..."
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className={styles.twoColumnGrid}>
+                        <Input
+                          label="Tech Stack / Tags"
+                          value={project.tech_stack}
+                          onChange={(e) => updatePortfolioProject(idx, "tech_stack", e.target.value)}
+                          placeholder="React, Node.js, PostgreSQL"
+                        />
+                        <Input
+                          label="Year Completed"
+                          value={project.year}
+                          onChange={(e) => updatePortfolioProject(idx, "year", e.target.value)}
+                          placeholder={new Date().getFullYear().toString()}
+                        />
+                      </div>
+
+                      <div className={styles.twoColumnGrid}>
+                        <Input
+                          label="Live Demo URL"
+                          value={project.demo_url}
+                          onChange={(e) => updatePortfolioProject(idx, "demo_url", e.target.value)}
+                          placeholder="https://demo.project.com"
+                        />
+                        <Input
+                          label="GitHub / Source Code URL"
+                          value={project.github_url}
+                          onChange={(e) => updatePortfolioProject(idx, "github_url", e.target.value)}
+                          placeholder="https://github.com/you/project"
+                        />
+                      </div>
+
+                      <Input
+                        label="Cover Image URL"
+                        value={project.image_url}
+                        onChange={(e) => updatePortfolioProject(idx, "image_url", e.target.value)}
+                        placeholder="https://i.imgur.com/yourimage.png"
+                      />
+
+                      {/* Live preview of links */}
+                      {(project.demo_url || project.github_url) && (
+                        <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.75rem" }}>
+                          {project.demo_url && (
+                            <a href={project.demo_url} target="_blank" rel="noopener noreferrer"
+                              style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.8rem", color: "var(--primary-color, #6366f1)" }}>
+                              <ExternalLink size={13} /> Live Demo
+                            </a>
+                          )}
+                          {project.github_url && (
+                            <a href={project.github_url} target="_blank" rel="noopener noreferrer"
+                              style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                              <Github size={13} /> Source Code
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addPortfolioProject}
                   style={{
-                    marginTop: "20px",
-                    padding: "30px",
-                    textAlign: "center",
-                    border: "1px dashed var(--border-color)",
-                    borderRadius: "8px",
+                    marginTop: "1rem",
+                    width: "100%",
+                    padding: "0.75rem",
+                    border: "2px dashed var(--border-color, #e2e8f0)",
+                    borderRadius: "10px",
+                    background: "transparent",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    color: "var(--text-muted)",
+                    transition: "all 0.15s",
                   }}
                 >
-                  <p style={{ color: "var(--text-muted)" }}>
-                    Project Gallery feature coming soon. For now, link your
-                    external portfolio or GitHub repositories above.
-                  </p>
+                  <Plus size={18} /> Add Portfolio Project
+                </button>
+              </StaggerItem>
+            </StaggerContainer>
+          )}
+
+          {/* STATS & BADGES */}
+          {activeSection === "stats" && (
+            <StaggerContainer>
+              <StaggerItem className={styles.section}>
+                <h2 className={styles.sectionTitle}>Performance Stats & Badges</h2>
+                <p className={styles.sectionDescription}>
+                  Your platform performance metrics and earned badges. These are automatically calculated from your activity.
+                </p>
+
+                {/* Stats Grid */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                  gap: "1rem",
+                  marginBottom: "2rem",
+                }}>
+                  {[
+                    { label: "Job Success Score", value: `${profileStats.jobSuccessScore}%`, icon: <TrendingUp size={20} />, color: "#10b981", desc: "Based on client ratings and completions" },
+                    { label: "Completed Projects", value: profileStats.completedProjects, icon: <CheckCircle size={20} />, color: "#6366f1", desc: "Total finished projects" },
+                    { label: "Response Rate", value: `${profileStats.responseRate}%`, icon: <Clock size={20} />, color: "#f59e0b", desc: "Avg response within 24h" },
+                    { label: "On-Time Delivery", value: `${profileStats.onTimeDelivery}%`, icon: <BarChart2 size={20} />, color: "#3b82f6", desc: "Delivered by deadline" },
+                    { label: "Repeat Client Rate", value: `${profileStats.repeatClientRate}%`, icon: <Award size={20} />, color: "#8b5cf6", desc: "Clients who hired again" },
+                    { label: "Total Earned", value: profileStats.totalEarnings > 0 ? `$${profileStats.totalEarnings.toLocaleString()}` : "—", icon: <Star size={20} />, color: "#ec4899", desc: "Lifetime earnings on platform" },
+                  ].map((stat) => (
+                    <div
+                      key={stat.label}
+                      style={{
+                        padding: "1.25rem",
+                        borderRadius: "12px",
+                        border: "1px solid var(--border-color, #e2e8f0)",
+                        background: "var(--card-bg, transparent)",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                        <div style={{ color: stat.color }}>{stat.icon}</div>
+                      </div>
+                      <div style={{ fontSize: "1.6rem", fontWeight: 700, color: "var(--text-primary)", lineHeight: 1 }}>
+                        {stat.value || "—"}
+                      </div>
+                      <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-primary)", marginTop: "4px" }}>
+                        {stat.label}
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px" }}>
+                        {stat.desc}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Seller Level & Badges */}
+                <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1rem", color: "var(--text-primary)" }}>
+                  Seller Level & Badges
+                </h3>
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+                  {(["new_seller", "bronze", "silver", "gold", "platinum"] as const).map((level) => {
+                    const levelColors: Record<string, { bg: string; text: string; border: string }> = {
+                      new_seller: { bg: "#f3f4f6", text: "#6b7280", border: "#e5e7eb" },
+                      bronze: { bg: "#fef3c7", text: "#92400e", border: "#fcd34d" },
+                      silver: { bg: "#f1f5f9", text: "#475569", border: "#cbd5e1" },
+                      gold: { bg: "#fefce8", text: "#854d0e", border: "#fde047" },
+                      platinum: { bg: "#ede9fe", text: "#5b21b6", border: "#a78bfa" },
+                    };
+                    const cfg = levelColors[level];
+                    const isActive = sellerLevel === level;
+                    return (
+                      <div
+                        key={level}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          borderRadius: "8px",
+                          border: `2px solid ${isActive ? cfg.border : "var(--border-color, #e2e8f0)"}`,
+                          background: isActive ? cfg.bg : "transparent",
+                          color: isActive ? cfg.text : "var(--text-muted)",
+                          fontSize: "0.85rem",
+                          fontWeight: isActive ? 700 : 400,
+                          opacity: isActive ? 1 : 0.5,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        {isActive && <Star size={14} />}
+                        {sellerLevelLabel[level]}
+                        {isActive && " (Current)"}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div style={{
+                  padding: "1rem",
+                  borderRadius: "10px",
+                  border: "1px solid var(--border-color, #e2e8f0)",
+                  background: "var(--info-bg, rgba(99,102,241,0.04))",
+                  fontSize: "0.85rem",
+                  color: "var(--text-muted)",
+                  lineHeight: 1.6,
+                }}>
+                  <strong style={{ color: "var(--text-primary)" }}>How to level up:</strong> Complete more projects with 5-star ratings, maintain a high response rate, and build a strong track record on the platform. Stats update daily.
                 </div>
               </StaggerItem>
             </StaggerContainer>

@@ -88,6 +88,8 @@ const Login: React.FC = () => {
     password: "",
     general: "",
   });
+  // Tracks the intended role when DevQuickLogin auto-fills credentials
+  const [devLoginRole, setDevLoginRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -174,11 +176,9 @@ const Login: React.FC = () => {
     password: string,
     role: "admin" | "freelancer" | "client",
   ) => {
-    // Auto-fill credentials
     setFormData({ email, password });
-    // Set the correct role tab
     setSelectedRole(role);
-    // Clear any previous errors
+    setDevLoginRole(role); // Remember intended role for handleSubmit
     setErrors({ email: "", password: "", general: "" });
   };
 
@@ -187,9 +187,8 @@ const Login: React.FC = () => {
     password: string,
     role: "admin" | "freelancer" | "client",
   ) => {
-    // Set credentials and role
+    // Set credentials
     setFormData({ email, password });
-    setSelectedRole(role);
     setErrors({ email: "", password: "", general: "" });
 
     // Trigger login
@@ -197,10 +196,14 @@ const Login: React.FC = () => {
     try {
       const data = await api.auth.login(email, password);
 
-      // Tokens already stored by api.auth.login → setAuthToken/setRefreshToken
-      // Store user data and portal area for quick access
+      // For dev quick login: force the intended role in stored user data so the
+      // portal layout's role-based access check (user.user_type) passes correctly.
       if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify({
+          ...data.user,
+          user_type: role,
+          role,
+        }));
       }
       try {
         window.localStorage.setItem("portal_area", role);
@@ -223,12 +226,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     if (isPreviewMode()) {
       // Preview mode: bypass validation and go straight to the role destination
-      try {
-        window.localStorage.setItem("portal_area", selectedRole);
-      } catch {
-        /* localStorage unavailable in private browsing */
-      }
-      router.push(getRedirect(selectedRole));
+      router.push("/freelancer/dashboard");
       return;
     }
     if (!validate()) return;
@@ -237,30 +235,34 @@ const Login: React.FC = () => {
     try {
       const data = await api.auth.login(formData.email, formData.password);
 
-      // Tokens already stored by api.auth.login → setAuthToken/setRefreshToken
-      // Store user data for quick access
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      // Redirect based on user's actual role from API, not the selected tab
-      const userRole = (
+      // Determine actual role: prefer devLoginRole (set by DevQuickLogin auto-fill)
+      // over API response, since dev DB credentials may have incorrect user_type.
+      const apiRole = (
         data.user?.user_type ||
         data.user?.role ||
-        selectedRole
+        ""
       ).toLowerCase() as UserRole;
-      const actualRole =
-        userRole === "admin"
-          ? "admin"
-          : userRole === "freelancer"
-            ? "freelancer"
-            : "client";
+      const resolvedRole: UserRole = devLoginRole
+        ? devLoginRole
+        : (apiRole === "admin" ? "admin" : apiRole === "freelancer" ? "freelancer" : "client");
+
+      if (devLoginRole) setDevLoginRole(null);
+
+      // Store user with correct role (important for portal layout access check)
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(
+          devLoginRole
+            ? { ...data.user, user_type: resolvedRole, role: resolvedRole }
+            : data.user
+        ));
+      }
+
       try {
-        window.localStorage.setItem("portal_area", actualRole);
+        window.localStorage.setItem("portal_area", resolvedRole);
       } catch {
         /* localStorage unavailable in private browsing */
       }
-      router.push(getRedirect(actualRole));
+      router.push(getRedirect(resolvedRole));
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error
@@ -277,16 +279,11 @@ const Login: React.FC = () => {
     try {
       // Use standard callback path that matches Google Console
       const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
-      try {
-        window.localStorage.setItem("portal_area", selectedRole);
-      } catch {
-        /* localStorage unavailable in private browsing */
-      }
 
       const response = (await api.socialAuth.start(
         provider,
         redirectUri,
-        selectedRole,
+        "client",
         "login",
       )) as { authorization_url?: string };
 
@@ -337,7 +334,7 @@ const Login: React.FC = () => {
         {/* Floating 3D Objects - REMOVED */}
 
         <div className={styles.brandingSlot}>
-          <AuthBrandingPanel roleConfig={roleConfig[selectedRole]} />
+          <AuthBrandingPanel roleConfig={{ brandIcon: User, brandTitle: "Client", brandText: "Login to find top talent." }} />
         </div>
         <div className={styles.formPanel}>
           <StaggerContainer className={styles.formContainer}>
@@ -356,25 +353,6 @@ const Login: React.FC = () => {
               <p className={styles.formSubtitle}>
                 Enter your details to access your account.
               </p>
-            </StaggerItem>
-
-            <StaggerItem>
-              <Tabs
-                defaultIndex={Object.keys(roleConfig).indexOf(selectedRole)}
-                onTabChange={(index) =>
-                  setSelectedRole(Object.keys(roleConfig)[index] as UserRole)
-                }
-              >
-                <Tabs.List className={styles.roleSelector}>
-                  {Object.entries(roleConfig).map(
-                    ([role, { label, icon: Icon }]) => (
-                      <Tabs.Tab key={role} icon={<Icon />}>
-                        {label}
-                      </Tabs.Tab>
-                    ),
-                  )}
-                </Tabs.List>
-              </Tabs>
             </StaggerItem>
 
             <StaggerItem className={styles.socialAuth}>
@@ -509,9 +487,7 @@ const Login: React.FC = () => {
                   isLoading={loading}
                   className={styles.submitButton}
                 >
-                  {loading
-                    ? "Signing In..."
-                    : `Sign In as ${roleConfig[selectedRole].label}`}
+                  {loading ? "Signing In..." : "Sign In"}
                 </Button>
               </form>
             </StaggerItem>

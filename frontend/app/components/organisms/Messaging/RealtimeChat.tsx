@@ -17,6 +17,14 @@ import commonStyles from './RealtimeChat.common.module.css';
 import lightStyles from './RealtimeChat.light.module.css';
 import darkStyles from './RealtimeChat.dark.module.css';
 
+const toNumericUserId = (value: string | number | undefined): number | null => {
+  if (value === undefined || value === null) return null;
+  const parsed = typeof value === 'number' ? value : Number.parseInt(String(value), 10);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const toMessageId = (value: string | number | undefined): string => String(value ?? Date.now());
+
 interface ChatMessage {
   id: string;
   sender_id: string;
@@ -115,10 +123,11 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { connected, on, off, joinRoom, leaveRoom, sendMessage, sendReadReceipt } = useWebSocket();
+  const { connected, on, off, joinRoom, leaveRoom, sendMessage, sendReadReceipt } = useWebSocket({ autoConnect: true });
   const { isAnyoneTyping, sendTyping, stopTyping } = useTypingIndicator(conversationId);
   const { isOnline } = useOnlineStatus(otherUserId ? [otherUserId] : []);
   const otherOnline = otherUserId ? isOnline(otherUserId) : false;
+  const numericCurrentUserId = toNumericUserId(currentUserId);
 
   const buildDemoMessages = useCallback((): ChatMessage[] => {
     return DEMO_MESSAGES.map(m => ({
@@ -163,16 +172,19 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
     if (!connected || isDemo) return;
     joinRoom(roomId);
     const handleMsg = (data: any) => {
+      const senderId = toMessageId(data.user_id ?? data.sender_id);
       const msg: ChatMessage = {
-        id: data.id || Date.now().toString(),
-        sender_id: data.user_id || data.sender_id,
+        id: toMessageId(data.id),
+        sender_id: senderId,
         sender_name: data.sender_name || 'User',
         message: data.message,
         timestamp: data.timestamp,
         metadata: { attachment_url: data.attachment_url, attachment_name: data.attachment_name },
       };
       setMessages(prev => [...prev, msg]);
-      if (msg.sender_id !== currentUserId && msg.id) sendReadReceipt(parseInt(msg.id), conversationId);
+      if (senderId !== currentUserId && numericCurrentUserId !== null && Number.isFinite(Number(msg.id))) {
+        sendReadReceipt(Number(msg.id), conversationId);
+      }
     };
     const handleReceipt = (data: { message_id: string; read_by: string; read_at: string }) => {
       setMessages(prev => prev.map(m => m.id === data.message_id
@@ -183,7 +195,7 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
     on('new_message', handleMsg);
     on('read_receipt', handleReceipt);
     return () => { off('new_message', handleMsg); off('read_receipt', handleReceipt); leaveRoom(roomId); };
-  }, [connected, roomId, currentUserId, conversationId, isDemo, joinRoom, leaveRoom, on, off, sendReadReceipt]);
+  }, [connected, roomId, currentUserId, conversationId, isDemo, joinRoom, leaveRoom, on, off, sendReadReceipt, numericCurrentUserId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -197,7 +209,9 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(e.target.value);
     resizeTextarea();
-    sendTyping(conversationId, parseInt(currentUserId), currentUserName);
+    if (numericCurrentUserId !== null) {
+      sendTyping(conversationId, numericCurrentUserId, currentUserName);
+    }
   };
 
   const handleSend = useCallback(async () => {
@@ -205,7 +219,9 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
     if (!text) return;
     setNewMessage('');
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
-    stopTyping(conversationId, parseInt(currentUserId));
+    if (numericCurrentUserId !== null) {
+      stopTyping(conversationId, numericCurrentUserId);
+    }
     const opt: ChatMessage = {
       id: Date.now().toString(), sender_id: currentUserId, sender_name: currentUserName,
       message: text, timestamp: new Date().toISOString(),
@@ -217,7 +233,7 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
         sendMessage(roomId, text, { sender_id: currentUserId, sender_name: currentUserName });
       } catch { /* optimistic shown */ }
     }
-  }, [newMessage, conversationId, currentUserId, currentUserName, otherUserId, roomId, isDemo, sendMessage, stopTyping]);
+  }, [newMessage, conversationId, currentUserId, currentUserName, otherUserId, roomId, isDemo, sendMessage, stopTyping, numericCurrentUserId]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }

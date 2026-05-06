@@ -75,6 +75,7 @@ export const freelancerNavItems: NavItem[] = [
   { label: 'Profile', href: '/freelancer/profile', icon: 'User', section: 'Account' },
   { label: 'Reviews', href: '/freelancer/reviews', icon: 'Star' },
   { label: 'Settings', href: '/freelancer/settings', icon: 'Settings' },
+  { label: 'Report Issue', href: '/feedback', icon: 'Flag', section: 'Support' },
 ];
 
 // Client-specific navigation — streamlined to essential items only
@@ -96,6 +97,7 @@ export const clientNavItems: NavItem[] = [
   { label: 'Profile', href: '/client/profile', icon: 'User', section: 'Account' },
   { label: 'Reviews', href: '/client/reviews', icon: 'Star' },
   { label: 'Settings', href: '/client/settings', icon: 'Settings' },
+  { label: 'Report Issue', href: '/feedback', icon: 'Flag', section: 'Support' },
 ];
 
 // Admin navigation — streamlined to essential management items
@@ -106,6 +108,7 @@ export const adminNavItems: NavItem[] = [
   { label: 'Projects', href: '/admin/projects', icon: 'Briefcase' },
   { label: 'Messages', href: '/admin/messages', icon: 'MessageSquare' },
   { label: 'Disputes', href: '/admin/disputes', icon: 'Gavel' },
+  { label: 'User Feedback', href: '/admin/feedback', icon: 'Flag' },
   { label: 'Payments', href: '/admin/payments', icon: 'CreditCard', section: 'Financial' },
   { label: 'AI Services', href: '/ai', icon: 'Bot', section: 'Intelligence', submenu: [
     { label: 'AI Hub', href: '/ai', icon: 'Bot' },

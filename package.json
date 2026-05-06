@@ -12,6 +12,11 @@
     "start": "echo 'Use docker compose for production'"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.27.19"
+    "@floating-ui/react": "^0.27.19",
+    "@studio-freight/lenis": "^1.0.42",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.14.0",
+    "tailwind-merge": "^3.5.0"
   }
 }

@@ -1,18 +1,7 @@
-// @AI-HINT: Portal route for Notifications - uses shared Notifications component with WebSocket, pagination, icons
+// @AI-HINT: Portal route for Notifications - uses the shared notifications center for consistent UX across roles.
 'use client';
 
-import dynamic from 'next/dynamic';
-import commonStyles from './Notifications.common.module.css';
-
-const Notifications = dynamic(() => import('@/app/components/organisms/Notifications/Notifications'), {
-  ssr: false,
-  loading: () => (
-    <div role="status" aria-label="Loading notifications" className={commonStyles.loadingState}>
-      <div className={commonStyles.spinner} aria-hidden="true" />
-      <p>Loading notifications...</p>
-    </div>
-  ),
-});
+import Notifications from '@/app/components/organisms/Notifications/Notifications';
 
 export default function PortalNotificationsPage() {
   return <Notifications />;

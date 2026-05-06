@@ -143,3 +143,19 @@
 .clearAllBtn:hover {
   color: #2a52b0;
 }
+
+/* Pill Filters */
+.filterChip { color: #475569; border-color: #e2e8f0; }
+.filterChip:hover { background: #f1f5f9; border-color: #cbd5e1; }
+.filterChipActive { background: rgba(69,115,223,0.1); border-color: var(--ml-blue,#4573df); color: var(--ml-blue,#4573df); }
+.budgetInput { background: #f8fafc; border-color: #e2e8f0; color: #1a1a2e; }
+.budgetInput::placeholder { color: #9ca3af; }
+.clearBtn { color: #ef4444; }
+
+/* Match score */
+.matchScoreBar { background: rgba(69,115,223,0.06); border: 1px solid rgba(69,115,223,0.15); color: var(--ml-blue,#4573df); }
+.matchTrack { background: #e2e8f0; }
+
+/* Pagination */
+.pagination { border-top: 1px solid #e2e8f0; }
+.pageInfo { color: #64748b; }

@@ -292,7 +292,7 @@ const ClientDashboard: React.FC = () => {
       href: "/client/post-job",
       icon: Plus,
       color: "primary" as const,
-      desc: "Create a new project listing",
+      desc: "Create a new listing",
     },
     {
       label: "Browse Talent",
@@ -330,11 +330,18 @@ const ClientDashboard: React.FC = () => {
       desc: `${counts.messages} unread`,
     },
     {
-      label: "AI Services",
-      href: "/ai",
+      label: "AI Match",
+      href: "/client/hire?ai=true",
       icon: Zap,
       color: "primary" as const,
-      desc: "Smart pricing & tracking",
+      desc: "AI-powered talent match",
+    },
+    {
+      label: "Report Issue",
+      href: "/feedback",
+      icon: AlertCircle,
+      color: "info" as const,
+      desc: "Report a bug or suggest",
     },
   ];
 

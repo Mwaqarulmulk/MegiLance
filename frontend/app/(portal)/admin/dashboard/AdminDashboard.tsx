@@ -407,6 +407,7 @@ const AdminDashboard: React.FC = () => {
   const quickActions: Omit<QuickActionProps, 'themeStyles'>[] = [
     { label: 'Manage Users', href: '/admin/users', icon: Users, description: 'View, suspend, or verify accounts', badge: String(systemStats?.total_users ?? '') },
     { label: 'View Disputes', href: '/admin/disputes', icon: AlertTriangle, description: 'Review open escalations' },
+    { label: 'User Feedback', href: '/admin/feedback', icon: Bell, description: 'Bug reports & feature requests' },
     { label: 'Fraud Detection', href: '/admin/fraud-detection', icon: ShieldAlert, description: 'AI-powered threat monitoring' },
     { label: 'Analytics', href: '/admin/analytics', icon: BarChart3, description: 'Platform insights & BI reports' },
     { label: 'Payments', href: '/admin/payments', icon: CreditCard, description: 'Transactions, refunds & billing' },
@@ -588,6 +589,36 @@ const AdminDashboard: React.FC = () => {
                 </div>
                 <FlaggedFraudList />
               </div>
+            </div>
+          </div>
+          {/* User Feedback Summary */}
+          <div className={commonStyles.sectionContainer} style={{ marginTop: '1.5rem' }}>
+            <div className={commonStyles.sectionHeader}>
+              <h2 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
+                <Bell size={16} style={{ marginRight: 6, display: 'inline' }} />
+                User Feedback & Reports
+              </h2>
+              <Link href="/admin/feedback" className={cn(commonStyles.viewAllLink, themeStyles.viewAllLink)}>
+                View All <ArrowRight size={14} />
+              </Link>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', padding: '0.5rem 0' }}>
+              {[
+                { label: 'Open Issues', value: '—', icon: AlertCircle, color: '#3b82f6', href: '/admin/feedback?status=open' },
+                { label: 'Bug Reports', value: '—', icon: Eye, color: '#ef4444', href: '/admin/feedback?type=bug_report' },
+                { label: 'Feature Requests', value: '—', icon: Download, color: '#f59e0b', href: '/admin/feedback?type=feature_request' },
+                { label: 'Resolved This Week', value: '—', icon: CheckCircle2, color: '#10b981', href: '/admin/feedback?status=resolved' },
+              ].map((item) => (
+                <Link key={item.label} href={item.href} className={cn(commonStyles.quickAction, themeStyles.quickAction)}>
+                  <div className={cn(commonStyles.quickActionIcon, themeStyles.quickActionIcon)} style={{ color: item.color }}>
+                    <item.icon size={18} />
+                  </div>
+                  <div className={commonStyles.quickActionText}>
+                    <span className={cn(commonStyles.quickActionLabel, themeStyles.quickActionLabel)}>{item.label}</span>
+                    <span className={cn(commonStyles.quickActionDesc, themeStyles.quickActionDesc)}>Click to filter</span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
           </section>

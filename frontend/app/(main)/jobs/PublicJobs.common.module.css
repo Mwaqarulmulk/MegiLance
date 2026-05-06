@@ -113,8 +113,23 @@
 .tag { font-size: 0.78rem; padding: 0.2rem 0.7rem; border-radius: 999px; font-weight: 500; }
 .tagMore { opacity: 0.6; font-style: italic; }
 
+/* ── Job Badge Row (Urgent / Featured) ───────────────────────────── */
+.jobBadgeRow { display: flex; gap: 5px; margin-bottom: 0.25rem; flex-wrap: wrap; }
+.urgentBadge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; }
+.featuredBadge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; }
+
+/* ── Client Info Row ─────────────────────────────────────────────── */
+.clientRow { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; }
+.clientAvatar { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; flex-shrink: 0; }
+.clientName { font-weight: 500; }
+.verifiedBadge { display: inline-flex; align-items: center; line-height: 1; }
+.clientRating { display: inline-flex; align-items: center; gap: 3px; font-size: 0.78rem; font-weight: 600; margin-left: auto; }
+
+/* ── Proposals Count ─────────────────────────────────────────────── */
+.proposalsCount { display: inline-flex; align-items: center; gap: 4px; font-size: 0.82rem; }
+
 .cardFooter { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.5rem; }
-.footerLeft { display: flex; gap: 1rem; }
+.footerLeft { display: flex; gap: 1rem; flex-wrap: wrap; }
 .footerItem { display: flex; align-items: center; gap: 0.3rem; font-size: 0.82rem; opacity: 0.65; }
 
 /* ── Skeleton Loading ────────────────────────────────────────────── */

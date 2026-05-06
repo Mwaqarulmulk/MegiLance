@@ -205,8 +205,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               role="main"
               aria-label={`${area.charAt(0).toUpperCase() + area.slice(1)} Dashboard content`}
             >
-              <div className="mb-4 px-4 pt-4 md:px-0 md:pt-0 max-w-7xl mx-auto w-full"><Breadcrumbs /></div>
-                <React.Suspense fallback={<Loading fullscreen={false} text="Loading module..." />}>
+              <React.Suspense fallback={<Loading fullscreen={false} text="Loading module..." />}>
                 {children}
               </React.Suspense>
             </main>

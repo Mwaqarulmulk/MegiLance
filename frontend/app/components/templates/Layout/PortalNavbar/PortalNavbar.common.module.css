@@ -95,7 +95,50 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Breadcrumb Navigation */
+/* Role Badge & Breadcrumb Navigation */
+.roleAndBreadcrumbRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.roleBadge_admin {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-error-600, #dc2626);
+}
+
+.roleBadge_freelancer {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-success-600, #059669);
+}
+
+.roleBadge_client {
+  background-color: rgba(69, 115, 223, 0.1);
+  color: var(--color-primary-600, #4573df);
+}
+
+html[class="dark"] .roleBadge_admin { color: #f87171; }
+html[class="dark"] .roleBadge_freelancer { color: #34d399; }
+html[class="dark"] .roleBadge_client { color: #60a5fa; }
+
+.roleIcon {
+  flex-shrink: 0;
+}
+
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -148,6 +191,10 @@
 }
 
 @media (max-width: 768px) {
+  .roleAndBreadcrumbRow {
+    display: none;
+  }
+  
   .breadcrumb {
     display: none;
   }

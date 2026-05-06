@@ -1,97 +1,57 @@
-/* @AI-HINT: Portal Projects page - light theme colors */
-
-.page {
-  color: #111827;
-}
-
-.subtitle {
-  color: var(--color-text-secondary-light);
-}
-
-.toolbar {
-  background-color: var(--bg-primary-light);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.searchIcon {
-  color: var(--text-tertiary-light);
-}
-
-.searchInput {
-  background-color: var(--bg-primary-light);
-  border-color: var(--border-light);
-  color: #111827;
-}
-
-.searchInput::placeholder {
-  color: var(--text-tertiary-light);
-}
-
-.searchInput:focus {
-  border-color: var(--ml-blue);
-}
-
-/* Filter Tabs */
-.filterTab {
-  color: var(--color-text-secondary-light);
-}
-
-.filterTab:hover {
-  color: #111827;
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-.filterTabActive {
-  background-color: var(--bg-primary-light);
-  color: var(--ml-blue);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-.filterCount {
-  background-color: var(--border-light);
-  color: #374151;
-}
-
-.projectCard {
-  background-color: var(--bg-primary-light);
-  border-color: var(--border-light);
-}
-
-.projectCard:hover {
-  border-color: #cbd5e1;
-}
-
-.iconWrapper {
-  background-color: #eff6ff;
-}
-
-.projectIcon {
-  color: #2563eb;
-}
-
-.cardDescription {
-  color: var(--color-text-secondary-light);
-}
-
-.skillTag {
-  background-color: var(--bg-tertiary-light);
-  color: #4b5563;
-}
-
-.metaItem {
-  color: var(--color-text-secondary-light);
-}
-
-.chevron {
-  color: var(--text-tertiary-light);
-}
-
-/* Sort */
-.sortWrapper { background: #f9fafb; border-color: var(--border-light); color: var(--color-text-secondary-light); }
+/* @AI-HINT: Portal Projects page - light theme */
+.page { color: #111827; background: var(--bg-secondary-light, #f8fafc); }
+.pageSubtitle { color: var(--color-text-secondary-light, #64748b); }
+.sortWrapper { background: #fff; border-color: var(--border-light, #e2e8f0); color: #374151; }
 .sortSelect { color: #374151; }
+.mobileFilterBtn { color: #475569; border-color: #e2e8f0; }
+.mobileFilterBtn:hover { background: #f1f5f9; }
 
-/* Pagination */
-.pagination { border-top: 1px solid var(--border-light); }
-.pageBtn { color: #374151; border-color: var(--border-light); }
-.pageBtn:hover:not(:disabled) { background: var(--bg-tertiary-light); }
-.pageInfo { color: var(--color-text-secondary-light); }
+.categoryBar { background: #fff; border-color: #e2e8f0; }
+.categoryPill { color: #475569; border-color: #e2e8f0; }
+.categoryPill:hover { background: #f1f5f9; border-color: #cbd5e1; }
+.categoryPillActive { background: rgba(69,115,223,0.08); border-color: var(--ml-blue,#4573df); color: var(--ml-blue,#4573df); }
+
+.sidebar { }
+.sidebarCard { background: #fff; border-color: #e2e8f0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.sidebarTitle { color: #1a1a2e; }
+
+.searchBar { background: #fff; border-color: #e2e8f0; }
+.searchIcon { color: #9ca3af; }
+.searchInput { color: #111827; }
+.searchInput::placeholder { color: #9ca3af; }
+
+.activeTag { background: rgba(69,115,223,0.07); border-color: rgba(69,115,223,0.2); color: var(--ml-blue,#4573df); }
+.clearAllSmall { color: #ef4444; }
+
+.filterGroupLabel { color: #6b7280; }
+.filterOption { color: #374151; }
+.filterRadio { border-color: #d1d5db; }
+.filterRadioActive { border-color: var(--ml-blue,#4573df); }
+.filterChip { color: #475569; border-color: #e2e8f0; }
+.filterChip:hover { background: #f1f5f9; border-color: #cbd5e1; }
+.filterChipActive { background: rgba(69,115,223,0.1); border-color: var(--ml-blue,#4573df); color: var(--ml-blue,#4573df); }
+.clearAllBtn { color: #ef4444; }
+
+.projectCard { background: #fff; border-color: #e8edf5; }
+.projectCard:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.09); border-color: #c7d4ea; }
+.categoryChip { background: rgba(69,115,223,0.07); border-color: rgba(69,115,223,0.15); color: var(--ml-blue,#4573df); }
+.budgetDisplay { color: #059669; }
+.cardTitle { color: #111827; }
+.cardDesc { color: var(--color-text-secondary-light, #64748b); }
+.skillTag { background: #f1f5f9; color: #475569; }
+.metaItem { color: var(--color-text-secondary-light, #64748b); }
+.expBadge { background: rgba(69,115,223,0.07); color: var(--ml-blue,#4573df); }
+.cardActions { border-top-color: #f1f5f9; }
+.viewLink { color: var(--ml-blue,#4573df); }
+.chevron { color: #94a3b8; }
+.cardMeta { }
+
+.pagination { border-top: 1px solid #e2e8f0; }
+.pageBtn { color: #475569; border-color: #e2e8f0; }
+.pageBtn:hover:not(:disabled) { background: #f1f5f9; border-color: #cbd5e1; }
+.pageBtnActive { background: var(--ml-blue,#4573df); color: #fff; border-color: var(--ml-blue,#4573df); }
+
+.mobilePanel { background: #fff; }
+.mobilePanelHeader { border-bottom-color: #e2e8f0; color: #1a1a2e; }
+.mobilePanelHeader button { color: #64748b; }
+.mobilePanelFooter { border-top-color: #e2e8f0; }

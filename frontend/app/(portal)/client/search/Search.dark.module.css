@@ -1,27 +1,66 @@
-/* @AI-HINT: Dark theme for Client Search page */
-.container { background: #0f1419; }
-.title { color: var(--color-text-primary-dark); }
-.subtitle { color: var(--text-tertiary-dark); }
-.searchSection { background: #1a1f2e; border: 1px solid var(--bg-secondary-dark); }
-.searchInput { background: #0f1419; color: var(--color-text-primary-dark); border-color: var(--bg-secondary-dark); }
+/* @AI-HINT: Dark theme for Client Search */
+.page { background: #0f1419; color: var(--color-text-primary-dark, #e2e8f0); }
+.title { color: var(--color-text-primary-dark, #e2e8f0); }
+.subtitle { color: #94a3b8; }
+
+.searchBox { background: #1a1f2e; border: 1px solid #2a2d3e; }
+.searchInput { background: #0f1419; color: var(--color-text-primary-dark, #e2e8f0); border-color: #2a2d3e; }
 .searchInput:focus { border-color: #6b8de6; }
-.filterInput { background: #0f1419; color: var(--color-text-primary-dark); border-color: var(--bg-secondary-dark); }
-.filterLabel { color: var(--text-tertiary-dark); }
-.filterToggle { color: var(--text-tertiary-dark); border-color: var(--border-dark); }
-.filterToggle:hover { background: var(--bg-secondary-dark); }
-.clearFilters { color: #f87171; }
-.availabilityToggle { color: var(--text-tertiary-dark); border-color: var(--border-dark); }
-.availabilityToggle:hover { background: var(--bg-secondary-dark); }
-.resultsBar { background: #1a1f2e; border: 1px solid var(--bg-secondary-dark); }
-.resultCount { color: var(--color-text-primary-dark); }
-.sortSelect { color: var(--color-text-primary-dark); border-color: var(--border-dark); }
-.freelancerCard { background: #1a1f2e; border: 1px solid var(--bg-secondary-dark); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-.freelancerCard:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
-.name { color: var(--color-text-primary-dark); }
-.titleText { color: var(--text-tertiary-dark); }
-.jobCount { color: var(--text-tertiary-dark); }
-.skillTag { background: rgba(69, 115, 223, 0.2); color: #6b8cff; }
-.moreSkills { color: #64748b; }
-.pageBtn { color: var(--text-tertiary-dark); border-color: var(--border-dark); }
-.pageBtn:hover:not(:disabled) { background: var(--bg-secondary-dark); border-color: #475569; }
-.pageBtnActive { background: var(--ml-blue); color: white; border-color: var(--ml-blue); }
+
+.categoryPill { color: #94a3b8; border-color: #2a2d3e; }
+.categoryPill:hover { background: rgba(255,255,255,0.06); border-color: #3a3d4e; }
+.categoryPillActive { background: rgba(107,141,230,0.15); border-color: #6b8de6; color: #6b8de6; }
+
+.sidebar { }
+.sidebarCard { background: #1a1f2e; border-color: #2a2d3e; }
+.sidebarTitle { color: var(--color-text-primary-dark, #e2e8f0); }
+
+.toolbar { }
+.resultCount { color: #cbd5e1; }
+.sortSelect { color: #cbd5e1; border-color: #2a2d3e; background: #1a1f2e; }
+.mobileFilterBtn { color: #94a3b8; border-color: #2a2d3e; }
+.mobileFilterBtn:hover { background: rgba(255,255,255,0.06); }
+
+.activeTag { background: rgba(107,141,230,0.12); border-color: rgba(107,141,230,0.25); color: #6b8de6; }
+.clearAllSmall { color: #f87171; }
+
+.filterGroupLabel { color: #64748b; }
+.filterOption { color: #94a3b8; }
+.filterRadio { border-color: #475569; }
+.filterRadioActive { border-color: #6b8de6; }
+.filterTextInput { background: #0f1419; border-color: #2a2d3e; color: var(--color-text-primary-dark, #e2e8f0); }
+.filterTextInput::placeholder { color: #475569; }
+.checkOption { color: #94a3b8; }
+.checkBox { border-color: #475569; }
+.checkBoxActive { background: #6b8de6; border-color: #6b8de6; color: #fff; }
+.clearAllBtn { color: #f87171; }
+
+.skeletonCard { background: #1a1f2e; border: 1px solid #2a2d3e; }
+.skeletonEl { background: #2a2d3e; animation: shimmer 1.6s ease-in-out infinite; }
+
+.freelancerCard { background: #1a1f2e; border-color: #2a2d3e; }
+.freelancerCard:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.35); border-color: #3a3d4e; }
+.avatar { background: linear-gradient(135deg, #3d5fc4, #5a7de8); }
+.onlineDot { border-color: #1a1f2e; }
+.topRatedBadge { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+.favoriteBtn { color: #475569; }
+.name { color: var(--color-text-primary-dark, #e2e8f0); }
+.titleText { color: #94a3b8; }
+.metaChip { color: #94a3b8; }
+.rateDisplay { color: #6b8de6; }
+.jobsBadge { background: rgba(107,141,230,0.12); color: #6b8de6; }
+.expLevelBadge { background: rgba(255,255,255,0.07); color: #94a3b8; }
+.jssLabel { color: #cbd5e1; }
+.jssTrack { background: #2a2d3e; }
+.responseTime { color: #64748b; }
+.skillTag { background: rgba(107,141,230,0.12); color: #6b8de6; }
+.moreSkills { color: #475569; }
+
+.pageBtn { color: #94a3b8; border-color: #2a2d3e; }
+.pageBtn:hover:not(:disabled) { background: rgba(255,255,255,0.07); border-color: #3a3d4e; }
+.pageBtnActive { background: #6b8de6; color: #fff; border-color: #6b8de6; }
+
+.mobilePanel { background: #1a1f2e; }
+.mobilePanelHeader { border-bottom-color: #2a2d3e; color: var(--color-text-primary-dark, #e2e8f0); }
+.mobilePanelHeader button { color: #94a3b8; }
+.mobilePanelFooter { border-top-color: #2a2d3e; }

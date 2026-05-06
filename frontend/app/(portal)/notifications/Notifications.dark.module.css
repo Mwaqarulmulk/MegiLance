@@ -1,92 +1,75 @@
-/* AI-HINT: Dark theme overrides for Notifications page. */
+/* AI-HINT: Dark theme for Premium Notifications */
 
 .themeWrapper {
   background: var(--bg-primary-dark);
   color: var(--text-primary-dark);
 }
 
-.subtitle {
-  color: var(--text-tertiary-dark);
+.ghostButton {
+  color: var(--text-secondary-dark);
+}
+.ghostButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
 }
 
 .chip {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-dark);
   color: var(--text-secondary-dark);
 }
-
 .chip:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chipIndicator {
   background: rgba(255, 255, 255, 0.1);
-  border-color: #475569;
-  color: var(--text-primary-dark);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.chipActive {
+  color: white;
 }
 
-.chip[aria-pressed="true"] {
-  background: rgba(107, 141, 230, 0.15);
-  border-color: #6b8de6;
-  color: #6b8de6;
+.card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-.item {
-  background: var(--bg-secondary-dark);
-  border: 1px solid var(--border-dark);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.cardUnread {
+  background: rgba(69, 115, 223, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(69, 115, 223, 0.3);
 }
 
-.item:hover {
-  border-color: #475569;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+.dotRead {
+  border-color: var(--text-secondary-dark);
 }
 
-.itemTitle {
-  color: var(--text-primary-dark);
-}
-
-.itemBody {
+.iconBtn {
   color: var(--text-secondary-dark);
+  background: rgba(255, 255, 255, 0.05);
 }
-
-.meta {
-  color: var(--text-tertiary-dark);
+.iconBtn:hover {
+  color: var(--ml-blue);
+  background: rgba(69, 115, 223, 0.15);
 }
-
-.dot {
-  background: #6b8de6;
-}
-
-.button {
-  background: var(--ml-blue);
-  color: #ffffff;
-  box-shadow: 0 1px 3px rgba(69, 115, 223, 0.25);
-}
-
-.button:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 2px 6px rgba(69, 115, 223, 0.35);
-}
-
-.buttonSecondary {
-  color: var(--text-secondary-dark);
-  border: 1px solid var(--border-dark);
-}
-
-.buttonSecondary:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: #475569;
-}
-
-.loadingState {
-  color: #6b8de6;
+.iconBtnDanger:hover {
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.15);
 }
 
 .errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  background: rgba(225, 29, 72, 0.1);
+  color: #fda4af;
+  border: 1px solid rgba(225, 29, 72, 0.2);
 }
-
-.spinner {
-  border-color: var(--border-dark);
-  border-top-color: #6b8de6;
+.errorBanner .retryBtn {
+  color: #fda4af;
 }

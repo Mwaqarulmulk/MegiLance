@@ -448,3 +448,23 @@
     gap: 0.5rem;
   }
 }
+
+/* ── Pill-based Filters ──────────────────────────────────────── */
+.filterGroups { display: flex; flex-direction: column; gap: 1.25rem; }
+.filterGroup { display: flex; flex-direction: column; gap: 0.5rem; }
+.filterChips { display: flex; flex-wrap: wrap; gap: 6px; }
+.filterChip { padding: 4px 11px; border-radius: 20px; border: 1.5px solid transparent; font-size: 0.8rem; font-weight: 500; cursor: pointer; background: none; transition: background 0.15s, border-color 0.15s, color 0.15s; font-family: inherit; }
+.filterChipActive { font-weight: 600; }
+.budgetInput { padding: 0.5rem 0.75rem; border-radius: 8px; border: 1.5px solid transparent; font-size: 0.875rem; font-family: inherit; width: 100%; transition: border-color 0.2s; }
+.budgetInput:focus-visible { outline: 2px solid var(--color-primary, var(--ml-blue)); outline-offset: 2px; }
+.clearBtn { display: flex; align-items: center; gap: 5px; background: none; border: none; font-size: 0.825rem; cursor: pointer; padding: 6px 0; font-family: inherit; margin-top: 0.25rem; }
+.searchClear { background: none; border: none; cursor: pointer; opacity: 0.4; padding: 4px 8px; transition: opacity 0.2s; }
+.searchClear:hover { opacity: 1; }
+
+/* ── Match Score Bar ─────────────────────────────────────────── */
+.matchScoreBar { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px 8px 0 0; font-size: 0.78rem; font-weight: 600; }
+.matchTrack { flex: 1; height: 4px; border-radius: 2px; overflow: hidden; }
+.matchFill { height: 100%; border-radius: 2px; }
+.matchHigh { background: #22c55e; }
+.matchMid { background: #f59e0b; }
+.matchLow { background: #6b8de6; }

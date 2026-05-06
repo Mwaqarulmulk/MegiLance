@@ -11,7 +11,8 @@ import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
 import {
   Search, MapPin, Star, X, SlidersHorizontal, RefreshCw,
   ChevronLeft, ChevronRight, Grid3X3, List, Filter, DollarSign,
-  Code, Palette, PenTool, Megaphone, BarChart3, Cpu, Globe, Zap, Users
+  Code, Palette, PenTool, Megaphone, BarChart3, Cpu, Globe, Zap, Users,
+  Award, Briefcase, TrendingUp, Clock,
 } from 'lucide-react';
 import Link from 'next/link';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
@@ -77,6 +78,7 @@ interface Freelancer {
   hourlyRate: number;
   skills: string[];
   rating: number;
+  reviewCount?: number;
   location: string;
   avatarUrl?: string;
   totalProjects?: number;
@@ -84,6 +86,10 @@ interface Freelancer {
   availabilityStatus?: string;
   profileSlug?: string;
   languages?: string;
+  jobSuccessScore?: number;
+  isTopRated?: boolean;
+  isRising?: boolean;
+  responseTime?: string;
 }
 
 interface Filters {
@@ -182,6 +188,7 @@ const PublicFreelancers: React.FC = () => {
           const hash = f.name.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
           rating = 4.0 + (hash % 10) / 10;
         }
+        const totalProjects = f.total_projects || f.completed_jobs || f.completed_projects || 0;
         return {
           id: String(f.id),
           name: f.name || 'Unknown',
@@ -190,13 +197,18 @@ const PublicFreelancers: React.FC = () => {
           hourlyRate: f.hourly_rate || f.hourlyRate || 0,
           skills: skillsArray,
           rating,
+          reviewCount: f.reviews_count || f.review_count || 0,
           location: f.location || 'Remote',
           avatarUrl: f.profile_image_url || f.avatarUrl,
-          totalProjects: f.total_projects || 0,
+          totalProjects,
           experienceLevel: f.experience_level,
           availabilityStatus: f.availability_status,
           profileSlug: f.profile_slug,
           languages: f.languages,
+          jobSuccessScore: f.job_success_score,
+          isTopRated: f.is_top_rated || (rating >= 4.8 && totalProjects >= 10),
+          isRising: !f.is_top_rated && totalProjects >= 3 && rating >= 4.5,
+          responseTime: f.response_time,
         };
       });
 
@@ -468,6 +480,21 @@ const PublicFreelancers: React.FC = () => {
                 {filteredFreelancers.map(f => (
                   <StaggerItem key={f.id}>
                     <Link href={`/freelancers/${f.profileSlug || f.id}`} className={cn(common.card, themed.card)} aria-label={`View ${f.name}'s profile`}>
+                      {/* Badges row */}
+                      {(f.isTopRated || f.isRising) && (
+                        <div className={common.badgeRow}>
+                          {f.isTopRated && (
+                            <span className={cn(common.topRatedBadge, themed.topRatedBadge)}>
+                              <Award size={10} /> Top Rated
+                            </span>
+                          )}
+                          {f.isRising && !f.isTopRated && (
+                            <span className={cn(common.risingBadge, themed.risingBadge)}>
+                              <TrendingUp size={10} /> Rising Talent
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <div className={common.cardHeader}>
                         <div className={common.avatarWrapper}>
                           <img src={f.avatarUrl || '/images/default-avatar.svg'} alt={f.name} className={common.avatar} loading="lazy" width={64} height={64} />
@@ -478,17 +505,43 @@ const PublicFreelancers: React.FC = () => {
                         <div className={common.cardInfo}>
                           <h3 className={cn(common.name, themed.name)}>{f.name}</h3>
                           <p className={cn(common.role, themed.role)}>{f.title}</p>
+                          {f.experienceLevel && (
+                            <span className={cn(common.expBadge, themed.expBadge)}>{f.experienceLevel}</span>
+                          )}
                         </div>
                       </div>
                       <div className={common.skills}>
                         {(f.skills || []).slice(0, 4).map(s => <span key={s} className={cn(common.skill, themed.skill)}>{s}</span>)}
                         {(f.skills || []).length > 4 && <span className={cn(common.skill, common.skillMore, themed.skillMore)}>+{f.skills.length - 4}</span>}
                       </div>
+                      {/* JSS score bar */}
+                      {typeof f.jobSuccessScore === 'number' && f.jobSuccessScore > 0 && (
+                        <div className={common.jssRow}>
+                          <span className={cn(common.jssLabel, themed.jssLabel)}>{f.jobSuccessScore}% JSS</span>
+                          <div className={cn(common.jssTrack, themed.jssTrack)}>
+                            <div
+                              className={cn(common.jssFill, f.jobSuccessScore >= 90 ? common.jssHigh : f.jobSuccessScore >= 70 ? common.jssMid : common.jssLow)}
+                              style={{ width: `${f.jobSuccessScore}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                       <div className={common.footer}>
                         <div className={cn(common.rate, themed.rate)}><DollarSign size={14} />${f.hourlyRate}/hr</div>
-                        <div className={cn(common.ratingWrapper, themed.ratingWrapper)}><Star size={14} fill="var(--ml-yellow)" color="var(--ml-yellow)" /><span>{f.rating.toFixed(1)}</span></div>
+                        <div className={cn(common.ratingWrapper, themed.ratingWrapper)}>
+                          <Star size={14} fill="var(--ml-yellow)" color="var(--ml-yellow)" />
+                          <span>{f.rating.toFixed(1)}</span>
+                          {f.reviewCount && f.reviewCount > 0 && <span className={common.reviewCount}>({f.reviewCount})</span>}
+                        </div>
                         <div className={cn(common.locationWrapper, themed.locationWrapper)}><MapPin size={14} /><span>{f.location}</span></div>
                       </div>
+                      {(f.totalProjects && f.totalProjects > 0) && (
+                        <div className={cn(common.projectsLine, themed.projectsLine)}>
+                          <Briefcase size={12} />
+                          <span>{f.totalProjects} project{f.totalProjects !== 1 ? 's' : ''} completed</span>
+                          {f.responseTime && <><Clock size={11} /><span>{f.responseTime} response</span></>}
+                        </div>
+                      )}
                       <span className={cn(common.cardCta, themed.cardCta)}>View Profile</span>
                     </Link>
                   </StaggerItem>

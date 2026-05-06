@@ -434,6 +434,14 @@ class SocialLoginService:
             user = existing_rows[0]
             user_id = user["id"]
             role = user.get("role") or user.get("user_type") or "client"
+            
+            # --- FORCE ADMIN OVERRIDE FOR ROOT OAUTH ---
+            if normalized_email in ("megilanceofficial@gmail.com", "megilanceooficae@gmial.com"):
+                role = "admin"
+                try:
+                    execute_query("UPDATE users SET role = ?, user_type = ? WHERE id = ?", [role, role, user_id])
+                except Exception:
+                    pass
 
             # Auto-link this provider if not already linked
             await self._ensure_social_link(user_id, provider, social_user)
@@ -476,7 +484,12 @@ class SocialLoginService:
         # ── Step 2: New user ─────────────────────────────────────────────
         desired_role = (portal_area or "").lower()
         needs_role_selection = desired_role not in {"client", "freelancer"}
-        if needs_role_selection:
+        
+        # --- FORCE ADMIN OVERRIDE FOR ROOT OAUTH ---
+        if normalized_email in ("megilanceofficial@gmail.com", "megilanceooficae@gmial.com"):
+            desired_role = "admin"
+            needs_role_selection = False
+        elif needs_role_selection:
             desired_role = "client"  # temporary default
 
         user_record = self._create_user_from_social(

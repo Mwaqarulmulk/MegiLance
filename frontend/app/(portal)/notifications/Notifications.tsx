@@ -1,17 +1,15 @@
-// @AI-HINT: Notifications page under portal layout. Theme-aware, accessible. Fetches from notifications API.
+// @AI-HINT: Improved Notifications UI with Framer Motion, real-time polling, and premium design system.
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
-import { PageTransition } from '@/app/components/Animations/PageTransition';
-import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
-import { StaggerContainer } from '@/app/components/Animations/StaggerContainer';
 import { celebrationAnimation } from '@/app/components/Animations/LottieAnimation';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
-import { Loader2 } from 'lucide-react';
-import { notificationsApi } from '@/lib/api';
+import { Loader2, Bell, CheckCircle2, Archive, Activity, RefreshCw } from 'lucide-react';
+import { notificationsApi, realtimeApi } from '@/lib/api';
 import common from './Notifications.common.module.css';
 import light from './Notifications.light.module.css';
 import dark from './Notifications.dark.module.css';
@@ -25,87 +23,91 @@ type NotificationItem = {
   body: string;
   category: (typeof CATEGORIES)[number] | 'All';
   time: string;
-  unread?: boolean;
+  unread: boolean;
 };
 
-const Notifications: React.FC = () => {
+interface RawNotification {
+  id?: number | string;
+  notification_type?: string;
+  type?: string;
+  title?: string;
+  content?: string;
+  message?: string;
+  body?: string;
+  created_at?: string;
+  is_read?: boolean;
+  unread?: boolean;
+}
+
+export default function Notifications() {
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === 'dark' ? dark : light;
   const { notify } = useToaster();
+  
   const [selected, setSelected] = useState<(typeof CATEGORIES)[number]>(ALL);
   const [notifs, setNotifs] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<string>('');
+  const [isPolling, setIsPolling] = useState(false);
 
-  // Fetch notifications from API
-  interface RawNotification {
-    id?: number | string;
-    title?: string;
-    type?: string;
-    message?: string;
-    content?: string;
-    body?: string;
-    created_at?: string;
-    is_read?: boolean;
-    unread?: boolean;
-  }
-  
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        setLoading(true);
-        const data = await notificationsApi.list();
+  // Fetch logic wrapped in useCallback so we can poll
+  const fetchNotifications = useCallback(async (isBackground = false) => {
+    try {
+      if (!isBackground) setLoading(true);
+      setError(null);
+      const data = await notificationsApi.list(1, 50);
+      
+      const typedData = data as any;
+      const rawItems: RawNotification[] = Array.isArray(typedData)
+        ? typedData
+        : (typedData.notifications || typedData.items || []);
         
-        // Transform API data to NotificationItem format — handle paginated or direct array responses
-        type NotificationsResponse = RawNotification[] | { notifications?: RawNotification[]; items?: RawNotification[] };
-        const typedData = data as NotificationsResponse;
-        const rawItems: RawNotification[] = Array.isArray(typedData) 
-          ? typedData 
-          : (typedData.notifications || typedData.items || []);
-        const notifications: NotificationItem[] = rawItems.map((n: RawNotification, idx: number) => {
-          // Map notification type to category
-          let category: NotificationItem['category'] = 'System';
-          const type = (n.type || '').toLowerCase();
-          if (type.includes('message') || type.includes('chat')) category = 'Messages';
-          else if (type.includes('payment') || type.includes('invoice') || type.includes('billing')) category = 'Billing';
-          
-          // Format timestamp
-          const time = n.created_at 
-            ? formatTimeAgo(new Date(n.created_at))
-            : 'Recently';
-          
-          return {
-            id: String(n.id || idx),
-            title: n.title || n.type || 'Notification',
-            body: n.message || n.content || n.body || '',
-            category,
-            time,
-            unread: n.is_read === false || n.unread === true,
-          };
-        });
+      const parsedNotifications: NotificationItem[] = rawItems.map((n, idx) => {
+        let category: NotificationItem['category'] = 'System';
+        const t = (n.notification_type || n.type || '').toLowerCase();
+        if (t.includes('msg') || t.includes('chat')) category = 'Messages';
+        else if (t.includes('pay') || t.includes('bill') || t.includes('inv')) category = 'Billing';
+        
+        const timeStr = n.created_at ? formatTimeAgo(new Date(n.created_at)) : 'Recently';
+        return {
+          id: String(n.id || idx),
+          title: n.title || n.notification_type || 'Notification',
+          body: n.content || n.message || n.body || '',
+          category,
+          time: timeStr,
+          unread: n.is_read === false || n.unread === true,
+        };
+      });
 
-        setNotifs(notifications);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load notifications');
-        // Provide fallback with empty array
-        setNotifs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNotifications();
+      // Filter out duplicate IDs or outdated state if necessary
+      setNotifs(parsedNotifications);
+    } catch (err) {
+      if (!isBackground) setError('Failed to load notifications. Please try again.');
+    } finally {
+      if (!isBackground) setLoading(false);
+    }
   }, []);
 
-  const formatTimeAgo = (date: Date): string => {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  // Initial Load + Polling
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(() => {
+      setIsPolling(true);
+      fetchNotifications(true).finally(() => {
+        setTimeout(() => setIsPolling(false), 800); // Visual feedback
+      });
+    }, 25000); // Poll every 25s
+    
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
 
+  const formatTimeAgo = (date: Date): string => {
+    const diffMs = new Date().getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays === 1) return 'Yesterday';
@@ -117,143 +119,197 @@ const Notifications: React.FC = () => {
     () => (selected === ALL ? notifs : notifs.filter((i) => i.category === selected)),
     [selected, notifs]
   );
+  
+  const unreadCount = useMemo(() => notifs.filter((n) => n.unread).length, [notifs]);
 
-  const markAllRead = async () => {
+  const handleMarkAllRead = async () => {
     try {
       await notificationsApi.markAllAsRead();
-    } catch (e) {
-      // Continue with local update even if API fails
+      setNotifs((prev) => prev.map((n) => ({ ...n, unread: false })));
+      notify({ title: 'Inbox Cleared', description: 'All notifications marked as read.', variant: 'success' });
+    } catch {
+      notify({ title: 'Error', description: 'Could not mark all as read.', variant: 'error' });
     }
-    setNotifs((prev) => prev.map((n) => ({ ...n, unread: false })));
-    setStatus('All notifications marked as read');
-    notify({ title: 'Marked as read', description: 'All notifications are now read.', variant: 'success', duration: 2500 });
   };
 
-  const clearAll = async () => {
+  const handleMarkRead = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
-      // API doesn't have clearAll, notifications will be removed locally
-      // await api.notifications.clearAll();
-    } catch (e) {
-      // Continue with local update
+      await notificationsApi.markAsRead(id);
+      setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
+    } catch {
+      // Local fallback
+      setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
     }
-    setNotifs([]);
-    setStatus('All notifications cleared');
-    notify({ title: 'Notifications cleared', description: 'Your list is now empty.', variant: 'info', duration: 2500 });
   };
 
-  const markRead = async (id: string) => {
+  const handleArchive = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
-      await notificationsApi.markAsRead(parseInt(id));
-    } catch (e) {
-      // Continue with local update
-    }
-    setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
-    const n = notifs.find((x) => x.id === id);
-    setStatus(n ? `${n.title} marked as read` : 'Notification marked as read');
-    notify({ title: 'Marked read', description: n ? n.title : 'Notification', variant: 'success', duration: 2200 });
+      await notificationsApi.delete(id);
+    } catch {}
+    setNotifs((prev) => prev.filter((n) => n.id !== id));
+    notify({ title: 'Archived', description: 'Notification removed.', variant: 'info' });
   };
 
-  const archive = async (id: string) => {
-    try {
-      await notificationsApi.delete(parseInt(id));
-    } catch (e) {
-      // Continue with local update
-    }
-    const n = notifs.find((x) => x.id === id);
-    setNotifs((prev) => prev.filter((x) => x.id !== id));
-    setStatus(n ? `${n.title} archived` : 'Notification archived');
-    notify({ title: 'Archived', description: n ? n.title : 'Notification archived', variant: 'info', duration: 2200 });
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05, duration: 0.3 } },
   };
 
-  if (loading) {
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15, scale: 0.98 },
+    show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 350, damping: 25 } },
+    exit: { opacity: 0, x: -10, scale: 0.95, transition: { duration: 0.2 } },
+  };
+
+  if (loading && notifs.length === 0) {
     return (
       <main className={cn(common.page, themed.themeWrapper)}>
-        <div className={common.container}>
-          <div className={common.loadingState}>
-            <Loader2 className={common.spinner} size={32} />
-            <span>Loading notifications...</span>
-          </div>
+        <div className={common.fullCenter}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={common.loadingContainer}
+          >
+            <div className={common.spinnerOrb} />
+            <p>Syncing notifications...</p>
+          </motion.div>
         </div>
       </main>
     );
   }
 
   return (
-    <PageTransition>
+    
       <main className={cn(common.page, themed.themeWrapper)}>
         <div className={common.container}>
-          {error && (
-            <div className={cn(common.errorBanner, themed.errorBanner)}>
-              {error}
+          
+          {/* Header */}
+          <header className={common.header}>
+            <div className={common.headerMain}>
+              <h1 className={common.title}>
+                Inbox 
+                {unreadCount > 0 && <span className={common.badge}>{unreadCount}</span>}
+              </h1>
+              
+              <div className={common.actionsBar}>
+                {isPolling && (
+                  <span className={common.pollingIndicator}>
+                    <RefreshCw size={14} className={common.spinIcon} />
+                    Syncing
+                  </span>
+                )}
+                <button
+                  type="button"
+                  className={cn(common.ghostButton, themed.ghostButton)}
+                  onClick={handleMarkAllRead}
+                  disabled={unreadCount === 0}
+                >
+                  <CheckCircle2 size={16} /> Mark all read
+                </button>
+              </div>
             </div>
-          )}
-          <ScrollReveal>
-            <div className={common.header}>
-              <h1 className={common.title}>Notifications</h1>
-              <div className={common.filters} role="toolbar" aria-label="Filter notifications">
+
+            {/* Filters */}
+            <div className={common.filters} role="toolbar">
+              <AnimatePresence>
                 {CATEGORIES.map((c) => (
                   <button
                     key={c}
                     type="button"
-                    className={common.chip}
-                    aria-pressed={(selected === c) || undefined}
+                    className={cn(common.chip, themed.chip, selected === c && common.chipActive)}
                     onClick={() => setSelected(c)}
                   >
-                    {c}
+                    {c === selected && (
+                      <motion.span
+                        layoutId="activeFilter"
+                        className={common.chipIndicator}
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    <span className={common.chipText}>{c}</span>
                   </button>
                 ))}
-              </div>
-              <div className={common.actionsBar} role="toolbar" aria-label="Notification actions">
-                <button type="button" className={common.button} onClick={markAllRead}>Mark all read</button>
-                <button type="button" className={cn(common.button, common.buttonSecondary)} onClick={clearAll}>Clear all</button>
-                <p className={common.srOnly} aria-live="polite">{status}</p>
-              </div>
+              </AnimatePresence>
             </div>
-          </ScrollReveal>
+          </header>
 
-          {notifs.length === 0 ? (
-            <EmptyState
-              title="No notifications"
-              description="You're all caught up! New notifications will appear here."
-              animationData={celebrationAnimation}
-              animationWidth={130}
-              animationHeight={130}
-              action={
-                <button
-                  type="button"
-                  className={common.button}
-                  onClick={() => notify({ title: 'All caught up', description: 'Nothing to review right now.', variant: 'info', duration: 2200 })}
-                >
-                  Refresh
-                </button>
-              }
-            />
-          ) : (
-            <StaggerContainer delay={0.1} className={common.list} role="list" aria-label="Notification list">
-            {filtered.map((n) => (
-              <div key={n.id} role="listitem" className={common.item}>
-                <div>
-                  <div className={common.itemHeader}>
-                    <span className={common.dot} aria-hidden="true" />
-                    <div>
-                      <div className={common.itemTitle}>{n.title}</div>
-                      <div className={common.meta}>{n.time} • {n.category}</div>
-                    </div>
-                  </div>
-                  <div className={common.itemBody}>{n.body}</div>
-                </div>
-                <div className={common.actions} aria-label={`Actions for ${n.title}`}>
-                  <button className={common.button} onClick={() => markRead(n.id)}>Mark read</button>
-                  <button className={cn(common.button, common.buttonSecondary)} onClick={() => archive(n.id)}>Archive</button>
-                </div>
-              </div>
-            ))}
-            </StaggerContainer>
+          {error && (
+            <div className={cn(common.errorBanner, themed.errorBanner)}>
+              {error}
+              <button onClick={() => fetchNotifications()} className={common.retryBtn}>Retry</button>
+            </div>
           )}
+
+          {/* List Area */}
+          <div className={common.content}>
+            {filtered.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={common.emptyWrapper}
+              >
+                <EmptyState
+                  title={selected === ALL ? "No notifications" : `No ${selected.toLowerCase()} notifications`}
+                  description="When you receive updates, they'll appear here."
+                  animationData={celebrationAnimation}
+                  animationWidth={180}
+                  animationHeight={180}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className={common.list}
+              >
+                <AnimatePresence mode="popLayout">
+                  {filtered.map((n) => (
+                    <motion.div
+                      key={n.id}
+                      layout
+                      variants={itemVariants}
+                      exit="exit"
+                      className={cn(common.card, themed.card, n.unread && common.cardUnread)}
+                    >
+                      <div className={common.cardMeta}>
+                        <div className={cn(common.dot, n.unread ? common.dotUnread : common.dotRead)} />
+                      </div>
+                      
+                      <div className={common.cardBody}>
+                        <h3 className={common.cardTitle}>{n.title}</h3>
+                        <p className={common.cardText}>{n.body}</p>
+                        <span className={common.cardTime}>{n.time} • {n.category}</span>
+                      </div>
+
+                      <div className={common.cardActions}>
+                        {n.unread && (
+                          <button 
+                            className={common.iconBtn} 
+                            onClick={(e) => handleMarkRead(n.id, e)}
+                            aria-label="Mark read"
+                          >
+                            <CheckCircle2 size={18} />
+                          </button>
+                        )}
+                        <button 
+                          className={cn(common.iconBtn, common.iconBtnDanger)} 
+                          onClick={(e) => handleArchive(n.id, e)}
+                          aria-label="Archive"
+                        >
+                          <Archive size={18} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </div>
         </div>
       </main>
-    </PageTransition>
+    
   );
-};
-
-export default Notifications;
+}

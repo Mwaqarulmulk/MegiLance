@@ -488,6 +488,21 @@
   font-size: 0.85rem;
 }
 
+/* ── Card Enhancements (badges, JSS, projects line) ── */
+.badgeRow { display: flex; gap: 5px; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.topRatedBadge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+.risingBadge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+.expBadge { display: inline-block; padding: 1px 7px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; margin-top: 3px; }
+.jssRow { display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem; }
+.jssLabel { font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+.jssTrack { flex: 1; height: 4px; border-radius: 2px; overflow: hidden; }
+.jssFill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+.jssHigh { background: #22c55e; }
+.jssMid { background: #f59e0b; }
+.jssLow { background: #6b8de6; }
+.reviewCount { font-size: 0.75rem; opacity: 0.6; margin-left: 2px; }
+.projectsLine { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; margin-top: 0.5rem; flex-wrap: wrap; }
+
 /* ── Card CTA ── */
 .cardCta {
   display: block;

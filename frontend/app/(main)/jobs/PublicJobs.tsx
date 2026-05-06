@@ -12,7 +12,7 @@ import {
   ChevronLeft, ChevronRight, Grid3X3, List,
   SlidersHorizontal, RefreshCw, Zap, Shield,
   Code, Palette, PenTool, Megaphone, BarChart3, Cpu,
-  Globe, BookOpen, Gamepad2
+  Globe, BookOpen, Gamepad2, Users, Star, AlertCircle, CheckCircle,
 } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
 import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
@@ -88,6 +88,12 @@ interface Project {
   client_id: number;
   status: string;
   created_at: string;
+  proposals_count?: number;
+  client_name?: string;
+  client_rating?: number;
+  client_verified?: boolean;
+  is_urgent?: boolean;
+  is_featured?: boolean;
 }
 
 interface Filters {
@@ -454,26 +460,65 @@ const PublicJobs: React.FC = () => {
                 {filteredProjects.map(project => (
                   <StaggerItem key={project.id}>
                     <Link href={`/jobs/${project.id}`} className={cn(commonStyles.card, themeStyles.card)} aria-label={`View ${project.title}`}>
+                      {/* Urgency / Featured badge row */}
+                      {(project.is_urgent || project.is_featured) && (
+                        <div className={commonStyles.jobBadgeRow}>
+                          {project.is_urgent && (
+                            <span className={cn(commonStyles.urgentBadge, themeStyles.urgentBadge)}>
+                              <AlertCircle size={11} /> Urgent
+                            </span>
+                          )}
+                          {project.is_featured && (
+                            <span className={cn(commonStyles.featuredBadge, themeStyles.featuredBadge)}>
+                              <Star size={11} /> Featured
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <div className={commonStyles.cardTop}>
                         <div className={commonStyles.cardTopLeft}>
                           <h3 className={cn(commonStyles.jobTitle, themeStyles.jobTitle)}>{project.title}</h3>
                           <div className={commonStyles.cardMeta}>
-                            <span className={cn(commonStyles.metaItem, themeStyles.metaItem)}><Clock size={14} /> {formatTimeAgo(project.created_at)}</span>
-                            {project.category && <span className={cn(commonStyles.metaItem, themeStyles.metaItem)}><Tag size={14} /> {project.category}</span>}
+                            <span className={cn(commonStyles.metaItem, themeStyles.metaItem)}><Clock size={13} /> {formatTimeAgo(project.created_at)}</span>
+                            {project.category && <span className={cn(commonStyles.metaItem, themeStyles.metaItem)}><Tag size={13} /> {project.category}</span>}
                             {project.experience_level && <span className={cn(commonStyles.experienceBadge, themeStyles.experienceBadge)}>{project.experience_level}</span>}
                           </div>
                         </div>
-                        <div className={cn(commonStyles.budget, themeStyles.budget)}><DollarSign size={16} /><span>{formatBudget(project)}</span></div>
+                        <div className={cn(commonStyles.budget, themeStyles.budget)}><DollarSign size={15} /><span>{formatBudget(project)}</span></div>
                       </div>
                       <p className={cn(commonStyles.description, themeStyles.description)}>{project.description}</p>
                       <div className={commonStyles.tags}>
                         {(project.skills || []).slice(0, 6).map((skill, idx) => <span key={idx} className={cn(commonStyles.tag, themeStyles.tag)}>{skill}</span>)}
                         {(project.skills || []).length > 6 && <span className={cn(commonStyles.tag, commonStyles.tagMore, themeStyles.tagMore)}>+{project.skills.length - 6} more</span>}
                       </div>
+                      {/* Client info row */}
+                      {project.client_name && (
+                        <div className={cn(commonStyles.clientRow, themeStyles.clientRow)}>
+                          <div className={cn(commonStyles.clientAvatar, themeStyles.clientAvatar)}>
+                            {project.client_name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className={cn(commonStyles.clientName, themeStyles.clientName)}>{project.client_name}</span>
+                          {project.client_verified && (
+                            <span className={cn(commonStyles.verifiedBadge, themeStyles.verifiedBadge)} title="Verified client">
+                              <CheckCircle size={13} />
+                            </span>
+                          )}
+                          {project.client_rating && project.client_rating > 0 && (
+                            <span className={cn(commonStyles.clientRating, themeStyles.clientRating)}>
+                              <Star size={11} fill="#F2C94C" stroke="#F2C94C" /> {project.client_rating.toFixed(1)}
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <div className={cn(commonStyles.cardFooter, themeStyles.cardFooter)}>
                         <div className={commonStyles.footerLeft}>
-                          <span className={cn(commonStyles.footerItem, themeStyles.footerItem)}><Briefcase size={14} />{project.budget_type === 'hourly' ? 'Hourly' : 'Fixed Price'}</span>
-                          {project.estimated_duration && <span className={cn(commonStyles.footerItem, themeStyles.footerItem)}><Clock size={14} />{project.estimated_duration}</span>}
+                          <span className={cn(commonStyles.footerItem, themeStyles.footerItem)}><Briefcase size={13} />{project.budget_type === 'hourly' ? 'Hourly' : 'Fixed Price'}</span>
+                          {project.estimated_duration && <span className={cn(commonStyles.footerItem, themeStyles.footerItem)}><Clock size={13} />{project.estimated_duration}</span>}
+                          {typeof project.proposals_count === 'number' && (
+                            <span className={cn(commonStyles.proposalsCount, themeStyles.proposalsCount)}>
+                              <Users size={13} /> {project.proposals_count} bid{project.proposals_count !== 1 ? 's' : ''}
+                            </span>
+                          )}
                         </div>
                         <Button variant="primary" size="sm" tabIndex={-1}>Apply Now</Button>
                       </div>

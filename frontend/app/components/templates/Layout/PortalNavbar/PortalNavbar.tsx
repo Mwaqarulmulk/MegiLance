@@ -5,10 +5,10 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { 
-  Bell, Search, HelpCircle, Sun, Moon, LogOut, User, Settings, 
+  Bell, Search, HelpCircle, Sun, Moon, LogOut, User, Settings,
   X, Check, CheckCheck, MessageSquare, FileText,
   Briefcase, CreditCard, AlertCircle, Clock, ChevronRight,
-  Keyboard, BookOpen, Mail, Shield, Wallet, Menu, Home
+  Keyboard, BookOpen, Mail, Shield, Wallet, Menu, Home, Flag
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -196,9 +196,9 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
 
   const helpMenuItems = [
     { label: 'Help Center', href: '/help', icon: <BookOpen size={16} />, description: 'Browse help articles' },
+    { label: 'Report an Issue', href: '/feedback', icon: <Flag size={16} />, description: 'Report bugs or suggest features' },
     { label: 'Keyboard Shortcuts', icon: <Keyboard size={16} />, description: 'Ctrl+K to search', onClick: () => {} },
     { label: 'Contact Support', href: `/${userType}/support`, icon: <Mail size={16} />, description: 'Get help from our team' },
-    { label: 'Help Articles', href: '/help', icon: <FileText size={16} />, description: 'Browse guides & FAQs' },
   ];
 
   // Build breadcrumb segments from the current pathname
@@ -262,29 +262,43 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
           {/* Mobile page title (shown when breadcrumbs are hidden) */}
           <h1 className={cn(commonStyles.mobilePageTitle, styles.breadcrumbCurrent)}>{pageTitle}</h1>
           
-          {/* Breadcrumb navigation */}
-          <nav aria-label="Breadcrumb" className={commonStyles.breadcrumb}>
-            {breadcrumbs.map((crumb, idx) => {
-              const isLast = idx === breadcrumbs.length - 1;
-              return (
-                <React.Fragment key={crumb.href}>
-                  {idx > 0 && (
-                    <ChevronRight size={14} className={cn(commonStyles.breadcrumbSeparator, styles.breadcrumbSeparator)} aria-hidden="true" />
-                  )}
-                  {isLast ? (
-                    <span className={cn(commonStyles.breadcrumbCurrent, styles.breadcrumbCurrent)} aria-current="page">
-                      {crumb.label}
-                    </span>
-                  ) : (
-                    <Link href={crumb.href} className={cn(commonStyles.breadcrumbLink, styles.breadcrumbLink)}>
-                      {idx === 0 && <Home size={14} className={commonStyles.breadcrumbHomeIcon} />}
-                      {crumb.label}
-                    </Link>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </nav>
+          {/* Breadcrumb navigation & Role Badge */}
+          <div className={commonStyles.roleAndBreadcrumbRow}>
+            {/* Role Badge Indicator */}
+            <div className={cn(commonStyles.roleBadge, commonStyles[`roleBadge_${userType}`])}>
+              {userType === 'admin' ? (
+                <Shield size={14} className={commonStyles.roleIcon} />
+              ) : userType === 'freelancer' ? (
+                <Briefcase size={14} className={commonStyles.roleIcon} />
+              ) : (
+                <User size={14} className={commonStyles.roleIcon} />
+              )}
+              <span>{userType === 'admin' ? 'Admin Portal' : userType === 'freelancer' ? 'Freelancer Portal' : 'Client Portal'}</span>
+            </div>
+
+            <nav aria-label="Breadcrumb" className={commonStyles.breadcrumb}>
+              {breadcrumbs.map((crumb, idx) => {
+                const isLast = idx === breadcrumbs.length - 1;
+                return (
+                  <React.Fragment key={crumb.href}>
+                    {idx > 0 && (
+                      <ChevronRight size={14} className={cn(commonStyles.breadcrumbSeparator, styles.breadcrumbSeparator)} aria-hidden="true" />
+                    )}
+                    {isLast ? (
+                      <span className={cn(commonStyles.breadcrumbCurrent, styles.breadcrumbCurrent)} aria-current="page">
+                        {crumb.label}
+                      </span>
+                    ) : (
+                      <Link href={crumb.href} className={cn(commonStyles.breadcrumbLink, styles.breadcrumbLink)}>
+                        {idx === 0 && <Home size={14} className={commonStyles.breadcrumbHomeIcon} />}
+                        {crumb.label}
+                      </Link>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </nav>
+          </div>
         </div>
 
         {/* Enhanced Search */}

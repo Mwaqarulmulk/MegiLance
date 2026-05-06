@@ -1,92 +1,75 @@
-/* AI-HINT: Light theme overrides for Notifications page. */
+/* AI-HINT: Light theme for Premium Notifications */
 
 .themeWrapper {
-  background: var(--bg-secondary-light);
+  background: var(--bg-primary-light);
   color: var(--text-primary-light);
 }
 
-.subtitle {
-  color: var(--color-text-secondary-light);
+.ghostButton {
+  color: var(--text-secondary-light);
+}
+.ghostButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary-light);
 }
 
 .chip {
-  background: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
   color: var(--text-secondary-light);
 }
-
 .chip:hover {
-  background: var(--bg-tertiary-light);
-  border-color: #cbd5e1;
   color: var(--text-primary-light);
+  background: rgba(0, 0, 0, 0.03);
 }
 
-.chip[aria-pressed="true"] {
-  background: rgba(69, 115, 223, 0.08);
-  border-color: var(--ml-blue);
+.chipIndicator {
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+.chipActive {
   color: var(--ml-blue);
+  font-weight: 700;
 }
 
-.item {
-  background: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.card:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
-.item:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+.cardUnread {
+  background: white;
+  box-shadow: 0 4px 20px rgba(69, 115, 223, 0.08);
+  border-color: rgba(69, 115, 223, 0.2);
 }
 
-.itemTitle {
-  color: var(--text-primary-light);
+.dotRead {
+  border-color: var(--text-secondary-light);
 }
 
-.itemBody {
+.iconBtn {
   color: var(--text-secondary-light);
+  background: rgba(0, 0, 0, 0.03);
 }
-
-.meta {
-  color: var(--text-tertiary-light);
-}
-
-.dot {
-  background: var(--ml-blue);
-}
-
-.button {
-  background: var(--ml-blue);
-  color: var(--bg-primary-light);
-  box-shadow: 0 1px 3px rgba(69, 115, 223, 0.2);
-}
-
-.button:hover {
-  filter: brightness(1.05);
-  box-shadow: 0 2px 6px rgba(69, 115, 223, 0.3);
-}
-
-.buttonSecondary {
-  color: var(--text-secondary-light);
-  border: 1px solid var(--border-light);
-}
-
-.buttonSecondary:hover {
-  background: var(--bg-tertiary-light);
-  border-color: #cbd5e1;
-}
-
-.loadingState {
+.iconBtn:hover {
   color: var(--ml-blue);
+  background: rgba(69, 115, 223, 0.1);
+}
+.iconBtnDanger:hover {
+  color: #e11d48;
+  background: rgba(225, 29, 72, 0.1);
 }
 
 .errorBanner {
   background: #fef2f2;
-  border: 1px solid #fecaca;
   color: #991b1b;
+  border: 1px solid #fecaca;
 }
-
-.spinner {
-  border-color: var(--border-light);
-  border-top-color: var(--ml-blue);
+.errorBanner .retryBtn {
+  color: #991b1b;
 }

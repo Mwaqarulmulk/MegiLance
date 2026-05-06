@@ -48,6 +48,20 @@
 .cardFooter { border-top: 1px solid var(--bg-tertiary-light); }
 .footerItem { color: var(--color-text-secondary-light); }
 
+/* Badge row */
+.urgentBadge { background: #fff3cd; color: #b45309; border: 1px solid #fcd34d; }
+.featuredBadge { background: #e8f0fe; color: var(--ml-blue); border: 1px solid rgba(69,115,223,0.3); }
+
+/* Client row */
+.clientRow { color: #4b5563; }
+.clientAvatar { background: var(--ml-blue); color: #fff; }
+.clientName { color: #374151; }
+.verifiedBadge { color: #059669; }
+.clientRating { color: #d97706; }
+
+/* Proposals count */
+.proposalsCount { color: var(--color-text-secondary-light); }
+
 .skeletonCard { background: #fff; border: 1px solid var(--border-light); }
 .skeletonLine { background: linear-gradient(90deg, var(--bg-tertiary-light) 25%, var(--border-light) 50%, var(--bg-tertiary-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
 .skeletonTag { background: var(--bg-tertiary-light); }
