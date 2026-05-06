@@ -248,8 +248,7 @@ const Login: React.FC = () => {
     try {
       const data = await api.auth.login(formData.email, formData.password);
 
-      // Determine actual role: prefer devLoginRole (set by DevQuickLogin auto-fill)
-      // over API response, since dev DB credentials may have incorrect user_type.
+      // Determine actual role: prefer devLoginRole OR selectedRole
       const apiRole = (
         data.user?.user_type ||
         data.user?.role ||
@@ -257,16 +256,16 @@ const Login: React.FC = () => {
       ).toLowerCase() as UserRole;
       const resolvedRole: UserRole = devLoginRole
         ? devLoginRole
-        : (apiRole === "admin" ? "admin" : apiRole === "freelancer" ? "freelancer" : "client");
+        : selectedRole
+          ? selectedRole
+          : (apiRole === "admin" ? "admin" : apiRole === "freelancer" ? "freelancer" : "client");
 
       if (devLoginRole) setDevLoginRole(null);
 
       // Store user with correct role (important for portal layout access check)
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(
-          devLoginRole
-            ? { ...data.user, user_type: resolvedRole, role: resolvedRole }
-            : data.user
+          { ...data.user, user_type: resolvedRole, role: resolvedRole }
         ));
       }
 
