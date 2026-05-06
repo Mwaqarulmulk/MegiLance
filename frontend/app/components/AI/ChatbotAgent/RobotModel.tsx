@@ -28,7 +28,7 @@ function InnerRobot() {
   );
 }
 
-export default function RobotModel({ size = 40 }: RobotModelProps) {
+export default function RobotModel({ size = 100 }: RobotModelProps) {
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
 
