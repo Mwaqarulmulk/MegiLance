@@ -69,7 +69,7 @@ for (const targetRole of roles) {
     console.log(`[${targetRole}] Login API responses:`, loginResponses);
 
     // Wait for navigation away from login
-    await page.waitForURL(u => !u.includes('/login'), { timeout: 12000 });
+    await page.waitForURL(u => !u.href.includes('/login'), { timeout: 12000 });
     await sleep(2500); // Wait for portal layout effects to settle
 
     const url1 = page.url();
