@@ -109,7 +109,7 @@ function AuthCallbackPage() {
               setStatus("success");
               setMessage("Account created! Let\u2019s set up your role...");
               showToast("Welcome to MegiLance!", "success");
-              setTimeout(() => router.push("/onboarding/role"), 800);
+              setTimeout(() => router.push("/onboarding?role=client"), 800);
               return;
             }
 
@@ -136,14 +136,12 @@ function AuthCallbackPage() {
             setMessage(`Successfully ${actionLabel}! Redirecting...`);
             showToast(`Successfully ${actionLabel}!`, "success");
 
-            // New users go to role-specific onboarding, returning users go to dashboard
+            // New users go through onboarding to complete their profile
             if (response.is_new_user) {
-              if (role === "freelancer" || storedRole === "freelancer") {
-                setTimeout(() => router.push("/onboarding"), 800);
-              } else {
-                // New clients get the client onboarding wizard
-                setTimeout(() => router.push("/onboarding/client"), 800);
-              }
+              const onboardingRole = role === "freelancer" || storedRole === "freelancer"
+                ? "freelancer"
+                : "client";
+              setTimeout(() => router.push(`/onboarding?role=${onboardingRole}`), 800);
             } else {
               setTimeout(() => router.push(redirectPath), 800);
             }
