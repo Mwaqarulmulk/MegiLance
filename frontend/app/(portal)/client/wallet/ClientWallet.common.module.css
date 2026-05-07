@@ -15,6 +15,12 @@
 /* Deposit Panel */
 .depositPanel { padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid; }
 .depositTitle { font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem; }
+
+.depositMethodsRow { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--ml-border-light, #e5e5e5); }
+.depMethodBtn { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid; font-weight: 500; cursor: pointer; transition: all 0.15s; background: transparent; }
+.depMethodBtn:hover { transform: translateY(-1px); }
+.depMethodActive { border-color: var(--ml-blue, #4573df); background: rgba(69,115,223,0.1); color: var(--ml-blue, #4573df); }
+
 .depositQuick { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .quickAmount { padding: 0.5rem 1.25rem; border-radius: 8px; border: 1px solid; font-weight: 500; cursor: pointer; transition: all 0.15s; }
 .quickAmount:hover { transform: translateY(-1px); }

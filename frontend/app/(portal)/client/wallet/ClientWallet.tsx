@@ -20,7 +20,7 @@ import {
   ChevronDown, ChevronUp, TrendingUp, TrendingDown, CreditCard,
   PiggyBank, Target, Plus, Wallet, BarChart3, PieChart,
   Calendar, AlertTriangle, ArrowDownLeft, ArrowUpLeft,
-  Shield, Clock, Filter, Eye, EyeOff
+  Shield, Clock, Filter, Eye, EyeOff, Bitcoin, QrCode
 } from 'lucide-react';
 
 type TabKey = 'overview' | 'transactions' | 'budget' | 'methods';
@@ -67,6 +67,7 @@ export default function ClientWallet() {
   // Deposit state
   const [showDeposit, setShowDeposit] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
+  const [depositMethod, setDepositMethod] = useState<'card' | 'usdc' | 'binance' | 'wallet_id'>('card');
 
   // Balance visibility
   const [showBalance, setShowBalance] = useState(true);
@@ -279,6 +280,28 @@ export default function ClientWallet() {
           <ScrollReveal>
             <div className={cn(commonStyles.depositPanel, t.depositPanel)}>
               <h3 className={cn(commonStyles.depositTitle, t.depositTitle)}>Add Funds to Wallet</h3>
+              
+              <div className={commonStyles.depositMethodsRow}>
+                <button 
+                  className={cn(commonStyles.depMethodBtn, t.depMethodBtn, depositMethod === 'card' && commonStyles.depMethodActive)}
+                  onClick={() => setDepositMethod('card')}
+                >
+                  <CreditCard size={18} /> Card/PayPal
+                </button>
+                <button 
+                  className={cn(commonStyles.depMethodBtn, t.depMethodBtn, depositMethod === 'usdc' && commonStyles.depMethodActive)}
+                  onClick={() => setDepositMethod('usdc')}
+                >
+                  <DollarSign size={18} /> USDC
+                </button>
+                <button 
+                  className={cn(commonStyles.depMethodBtn, t.depMethodBtn, depositMethod === 'binance' && commonStyles.depMethodActive)}
+                  onClick={() => setDepositMethod('binance')}
+                >
+                  <Bitcoin size={18} /> Binance Pay
+                </button>
+              </div>
+
               <div className={commonStyles.depositQuick}>
                 {[50, 100, 250, 500, 1000].map(amt => (
                   <button
@@ -287,23 +310,35 @@ export default function ClientWallet() {
                       depositAmount === String(amt) && commonStyles.quickAmountActive)}
                     onClick={() => setDepositAmount(String(amt))}
                   >
-                    ${amt}
+                    ${amt} {depositMethod !== 'card' && 'USDC'}
                   </button>
                 ))}
               </div>
               <div className={commonStyles.depositInput}>
                 <Input
-                  label="Custom Amount"
+                  label={`Custom Amount (${depositMethod === 'card' ? 'USD' : 'USDC'})`}
                   type="number"
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
                   placeholder="Enter amount..."
                 />
               </div>
+
+              {depositMethod === 'wallet_id' && (
+                <div className={commonStyles.depositInput} style={{ marginTop: '1rem' }}>
+                  <Input
+                    label="Freelancer Wallet ID (Direct Transfer)"
+                    type="text"
+                    placeholder="0x..."
+                  />
+                </div>
+              )}
+
               <div className={commonStyles.depositActions}>
                 <Button variant="ghost" size="sm" onClick={() => { setShowDeposit(false); setDepositAmount(''); }}>Cancel</Button>
                 <Button variant="primary" size="sm" disabled={!depositAmount || parseFloat(depositAmount) <= 0}>
-                  <Shield size={16} /> Deposit ${depositAmount || '0'}
+                  {depositMethod === 'binance' ? <QrCode size={16} /> : <Shield size={16} />} 
+                  {depositMethod === 'binance' ? 'Generate Pay QR' : 'Deposit'} {depositAmount || '0'} {depositMethod === 'card' ? 'USD' : 'USDC'}
                 </Button>
               </div>
               {/* Deposit fee preview */}
@@ -311,19 +346,29 @@ export default function ClientWallet() {
                 <div className={cn(commonStyles.feePreview, t.feePreview)} role="status" aria-live="polite">
                   <div className={commonStyles.feePreviewRow}>
                     <span>Deposit Amount</span>
-                    <span className={commonStyles.feePreviewValue}>${parseFloat(depositAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span className={commonStyles.feePreviewValue}>
+                      {depositMethod === 'card' ? '$' : ''}{parseFloat(depositAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {depositMethod !== 'card' && 'USDC'}
+                    </span>
                   </div>
                   <div className={commonStyles.feePreviewRow}>
-                    <span>Processing Fee (2.9% + $0.30)</span>
+                    <span>Processing Fee {depositMethod === 'card' ? '(2.9% + $0.30)' : '(0.1% Crypto Network Fee)'}</span>
                     <span className={commonStyles.feePreviewValue}>
-                      ${(parseFloat(depositAmount) * 0.029 + 0.30).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {depositMethod === 'card' ? '$' : ''}
+                      {depositMethod === 'card' 
+                        ? (parseFloat(depositAmount) * 0.029 + 0.30).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : (parseFloat(depositAmount) * 0.001).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {depositMethod !== 'card' && ' USDC'}
                     </span>
                   </div>
                   <div className={cn(commonStyles.feePreviewDivider, t.feePreviewDivider)} />
                   <div className={cn(commonStyles.feePreviewRow, commonStyles.feePreviewTotal)}>
-                    <span>Total Charged</span>
+                    <span>Total {depositMethod === 'card' ? 'Charged' : 'Deducted'}</span>
                     <span className={commonStyles.feePreviewValue}>
-                      ${(parseFloat(depositAmount) * 1.029 + 0.30).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {depositMethod === 'card' ? '$' : ''}
+                      {depositMethod === 'card' 
+                        ? (parseFloat(depositAmount) * 1.029 + 0.30).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : (parseFloat(depositAmount) * 1.001).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {depositMethod !== 'card' && ' USDC'}
                     </span>
                   </div>
                 </div>
@@ -746,30 +791,48 @@ export default function ClientWallet() {
           <ScrollReveal>
             <div className={cn(commonStyles.methodsPanel, t.methodsPanel)}>
               <div className={commonStyles.methodsHeader}>
-                <h3 className={cn(commonStyles.sectionTitle, t.sectionTitle)}>Saved Payment Methods</h3>
+                <h3 className={cn(commonStyles.sectionTitle, t.sectionTitle)}>Saved Payment Methods & Crypto</h3>
                 <Button variant="primary" size="sm"><Plus size={16} /> Add Method</Button>
               </div>
               <div className={commonStyles.methodsList}>
-                {/* Placeholder cards */}
+                {/* Fiat methods */}
                 <div className={cn(commonStyles.methodCard, t.methodCard)}>
                   <div className={commonStyles.methodIcon}><CreditCard size={24} /></div>
                   <div className={commonStyles.methodInfo}>
                     <span className={cn(commonStyles.methodName, t.methodName)}>Visa ending in 4242</span>
-                    <span className={cn(commonStyles.methodExp, t.methodExp)}>Expires 12/26</span>
+                    <span className={cn(commonStyles.methodExp, t.methodExp)}>Expires 12/26 • Fiat</span>
                   </div>
-                  <Badge variant="success">Default</Badge>
+                  <Badge variant="success">Default Fiat</Badge>
+                </div>
+                {/* Crypto methods */}
+                <div className={cn(commonStyles.methodCard, t.methodCard)}>
+                  <div className={commonStyles.methodIcon}><DollarSign size={24} /></div>
+                  <div className={commonStyles.methodInfo}>
+                    <span className={cn(commonStyles.methodName, t.methodName)}>USDC Wallet</span>
+                    <span className={cn(commonStyles.methodExp, t.methodExp)}>0x4a...e12F • Polygon Network</span>
+                  </div>
+                  <Badge variant="warning">Default Crypto</Badge>
+                </div>
+                <div className={cn(commonStyles.methodCard, t.methodCard)}>
+                  <div className={commonStyles.methodIcon}><Bitcoin size={24} /></div>
+                  <div className={commonStyles.methodInfo}>
+                    <span className={cn(commonStyles.methodName, t.methodName)}>Binance Pay</span>
+                    <span className={cn(commonStyles.methodExp, t.methodExp)}>Connected ID: 193****48</span>
+                  </div>
+                  <Button variant="ghost" size="sm">Set Default</Button>
                 </div>
                 <div className={cn(commonStyles.methodCard, t.methodCard)}>
                   <div className={commonStyles.methodIcon}><Wallet size={24} /></div>
                   <div className={commonStyles.methodInfo}>
-                    <span className={cn(commonStyles.methodName, t.methodName)}>PayPal — user@email.com</span>
-                    <span className={cn(commonStyles.methodExp, t.methodExp)}>Connected</span>
+                    <span className={cn(commonStyles.methodName, t.methodName)}>Direct Freelancer Wallets</span>
+                    <span className={cn(commonStyles.methodExp, t.methodExp)}>Save IDs for zero-fee transfers</span>
                   </div>
-                  <Button variant="ghost" size="sm">Set Default</Button>
+                  <Button variant="ghost" size="sm">Manage IDs</Button>
                 </div>
+                {/* Add new */}
                 <div className={cn(commonStyles.addMethodCard, t.addMethodCard)}>
                   <Plus size={28} />
-                  <span>Add a new payment method</span>
+                  <span>Add a new payment or crypto method</span>
                 </div>
               </div>
 
@@ -777,10 +840,10 @@ export default function ClientWallet() {
               <div className={cn(commonStyles.securityInfo, t.securityInfo)}>
                 <Shield size={20} />
                 <div>
-                  <h4 className={cn(commonStyles.securityTitle, t.securityTitle)}>Payment Security</h4>
+                  <h4 className={cn(commonStyles.securityTitle, t.securityTitle)}>Payment & Crypto Security</h4>
                   <p className={cn(commonStyles.securityText, t.securityText)}>
-                    All transactions are encrypted with 256-bit SSL. We never store your full card number.
-                    Payments are processed through PCI DSS compliant payment processors.
+                    Fiat transactions are encrypted with 256-bit SSL via PCI DSS compliant processors. 
+                    Crypto transactions (USDC, Binance Pay) are verified securely on-chain. Smart contracts are audited to ensure zero-risk escrowing.
                   </p>
                 </div>
               </div>

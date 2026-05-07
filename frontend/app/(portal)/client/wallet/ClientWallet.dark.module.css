@@ -8,6 +8,8 @@
 
 .depositPanel { background: #181b2e; border-color: var(--ml-blue); }
 .depositTitle { color: #f3f4f6; }
+.depMethodBtn { border-color: #333752; color: #d1d5db; }
+.depMethodBtn:hover { background: #23263a; }
 .quickAmount { background: #23263a; border-color: #333752; color: #d1d5db; }
 .quickAmount:hover { background: #2a2d4a; }
 

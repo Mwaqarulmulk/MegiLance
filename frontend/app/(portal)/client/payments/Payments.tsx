@@ -5,7 +5,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useClientData } from '@/hooks/useClient';
-import { DollarSign, Search, Download, TrendingUp, TrendingDown, AlertTriangle, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X } from 'lucide-react';
+import { DollarSign, Search, Download, TrendingUp, TrendingDown, AlertTriangle, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X, Wallet } from 'lucide-react';
 
 import PaymentCard, { PaymentCardProps } from '@/app/components/organisms/PaymentCard/PaymentCard';
 import DashboardWidget from '@/app/components/molecules/DashboardWidget/DashboardWidget';
