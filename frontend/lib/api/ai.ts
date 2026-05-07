@@ -127,6 +127,20 @@ export const aiWritingApi = {
     }),
 };
 
+export const aiMatchingApi = {
+  getRecommendedProjects: () =>
+    apiFetch<{ projects: Array<{ project_id: number; match_score: number; reasons: string[] }> }>('/ai-matching/projects'),
+
+  getMatchScore: (projectId: ResourceId, freelancerId: ResourceId) =>
+    apiFetch<{ score: number; breakdown: Record<string, number> }>(`/ai-matching/score/${projectId}/${freelancerId}`),
+
+  trackClick: (projectId: ResourceId) =>
+    apiFetch('/ai-matching/track-click', {
+      method: 'POST',
+      body: JSON.stringify({ project_id: projectId }),
+    }),
+};
+
 export const fraudDetectionApi = {
   checkUser: (userId: ResourceId) => apiFetch(`/fraud-detection/analyze/user/${userId}`),
   checkProject: (projectId: ResourceId) => apiFetch(`/fraud-detection/analyze/project/${projectId}`),

@@ -13,6 +13,7 @@ import Input from '@/app/components/atoms/Input/Input';
 import Select from '@/app/components/molecules/Select/Select';
 import Pagination from '@/app/components/molecules/Pagination/Pagination';
 import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
@@ -321,10 +322,12 @@ export default function ClientContractsPage() {
 
         {/* Contract Cards */}
         {error ? (
-          <div className={commonStyles.emptyState || ''}>
-            <p>{error}</p>
-            <button onClick={() => window.location.reload()}>Try again</button>
-          </div>
+          <ErrorBanner
+            title="Failed to load contracts"
+            message={error}
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
         ) : loading ? (
           <div className={commonStyles.grid}>
             {Array.from({ length: 6 }).map((_, i) => (

@@ -23,6 +23,7 @@ import TableSkeleton from "@/app/components/organisms/DataTableExtras/TableSkele
 import ProposalCard, { Proposal } from "./components/ProposalCard/ProposalCard";
 import StatusFilter from "./components/StatusFilter/StatusFilter";
 
+import ErrorBanner from "@/app/components/molecules/ErrorBanner/ErrorBanner";
 import commonStyles from "./Proposals.common.module.css";
 import lightStyles from "./Proposals.light.module.css";
 import darkStyles from "./Proposals.dark.module.css";
@@ -309,17 +310,12 @@ const Proposals: React.FC = () => {
 
         {error ? (
           <ScrollReveal>
-            <div className={cn(commonStyles.emptyState, styles.emptyState)}>
-              <h3 className={cn(commonStyles.emptyTitle, styles.emptyTitle)}>
-                Error Loading Proposals
-              </h3>
-              <p className={cn(commonStyles.emptyText, styles.emptyText)}>
-                {error}
-              </p>
-              <Button variant="primary" onClick={fetchProposals}>
-                Try Again
-              </Button>
-            </div>
+            <ErrorBanner
+              title="Failed to load proposals"
+              message={error}
+              onRetry={fetchProposals}
+              showGoHome={false}
+            />
           </ScrollReveal>
         ) : (
           <>

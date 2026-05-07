@@ -112,9 +112,9 @@ export const authApi = {
     body: JSON.stringify({ token: code, is_backup_code: false }) 
   }),
 
-  verify2FALogin: (code: string, tempToken: string) => apiFetch<LoginResponse>('/auth/2fa/verify', {
+  verify2FALogin: (code: string, tempToken: string, isBackupCode = false) => apiFetch<LoginResponse>('/auth/2fa/verify', {
     method: 'POST',
-    body: JSON.stringify({ token: code, is_backup_code: false }),
+    body: JSON.stringify({ token: code, temp_token: tempToken, is_backup_code: isBackupCode }),
   }),
 
   verifyEmail: (token: string) => apiFetch('/auth/verify-email', {

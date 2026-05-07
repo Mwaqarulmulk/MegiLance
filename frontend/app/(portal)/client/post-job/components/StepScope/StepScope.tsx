@@ -70,16 +70,14 @@ const StepScope: React.FC<StepScopeProps> = ({ data, updateData, errors }) => {
       setIsGenerating(true);
       const { aiWritingApi } = await import("@/lib/api/ai");
       const res = await aiWritingApi.generateProjectDescription({
-        project_type:
-          data.title || data.category || "General Freelance Project",
-        key_features:
-          data.skills.length > 0
-            ? data.skills
-            : ["Standard project deliverables"],
+        project_type: data.title || data.category || "General Freelance Project",
+        key_features: data.skills.length > 0 ? data.skills : ["Standard project deliverables"],
+        target_audience: "Experienced freelancers",
+        tone: "professional",
       });
-      updateData({ description: res.content });
-    } catch (e) {
-      console.error("AI generation failed", e);
+      if (res.content) updateData({ description: res.content });
+    } catch {
+      // Non-blocking — user can still write description manually
     } finally {
       setIsGenerating(false);
     }

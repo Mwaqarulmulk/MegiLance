@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 
 import { gigsApi } from '@/lib/api';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import common from './GigsList.common.module.css';
 import light from './GigsList.light.module.css';
 import dark from './GigsList.dark.module.css';
@@ -184,13 +185,12 @@ const GigsList: React.FC = () => {
     return (
       <main className={cn(common.page, themed.themeWrapper)}>
         <div className={common.container}>
-          <div className={common.emptyState}>
-            <Package className={cn(common.emptyIcon, themed.emptyIcon)} size={48} />
-            <h2 className={cn(common.emptyTitle, themed.emptyTitle)}>{error}</h2>
-            <Button variant="primary" onClick={() => router.push('/login')}>
-              Sign In
-            </Button>
-          </div>
+          <ErrorBanner
+            title="Failed to load gigs"
+            message={error}
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
         </div>
       </main>
     );

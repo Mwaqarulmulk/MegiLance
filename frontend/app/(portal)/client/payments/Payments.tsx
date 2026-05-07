@@ -5,7 +5,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useClientData } from '@/hooks/useClient';
-import { DollarSign, Search, Download, TrendingUp, TrendingDown, AlertTriangle, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X, Wallet } from 'lucide-react';
+import { DollarSign, Search, Download, TrendingUp, TrendingDown, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X, Wallet } from 'lucide-react';
 
 import PaymentCard, { PaymentCardProps } from '@/app/components/organisms/PaymentCard/PaymentCard';
 import DashboardWidget from '@/app/components/molecules/DashboardWidget/DashboardWidget';
@@ -15,7 +15,8 @@ import Button from '@/app/components/atoms/Button/Button';
 import Pagination from '@/app/components/molecules/Pagination/Pagination';
 import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
 import Modal from '@/app/components/organisms/Modal/Modal';
-import { walletAnimation, errorAlertAnimation } from '@/app/components/Animations/LottieAnimation';
+import { walletAnimation } from '@/app/components/Animations/LottieAnimation';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import Trend from '@/app/components/molecules/Trend/Trend';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
@@ -191,7 +192,18 @@ const Payments: React.FC = () => {
   }, [kpis, filteredPayments]);
 
   if (error) {
-    return <EmptyState title="Error Loading Payments" description="There was an issue retrieving your payment history. Please try again later." icon={<AlertTriangle size={48} />} animationData={errorAlertAnimation} animationWidth={120} animationHeight={120} />;
+    return (
+      <PageTransition>
+        <div className={cn(common.page, themed.theme)}>
+          <ErrorBanner
+            title="Failed to load payments"
+            message="There was an issue retrieving your payment history. Please try again."
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
+        </div>
+      </PageTransition>
+    );
   }
 
   return (

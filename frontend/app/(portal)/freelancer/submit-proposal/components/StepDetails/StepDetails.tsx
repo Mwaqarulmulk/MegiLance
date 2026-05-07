@@ -1,11 +1,11 @@
 // @AI-HINT: Enhanced first step in proposal submission with AI-powered writing assistance and real-time validation.
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { Calculator, CheckCircle, AlertCircle, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calculator, CheckCircle, AlertCircle, Clock, Sparkles, Loader2, TrendingUp } from 'lucide-react';
 
 import { ProposalData, ProposalErrors } from '../../SubmitProposal.types';
 import Textarea from '@/app/components/atoms/Textarea/Textarea';
@@ -13,15 +13,27 @@ import Input from '@/app/components/atoms/Input/Input';
 import { Label } from '@/app/components/atoms/Label/Label';
 import Select from '@/app/components/molecules/Select/Select';
 import { AIProposalAssistant } from '@/app/components/AI';
+import { aiApi } from '@/lib/api/ai';
+import Button from '@/app/components/atoms/Button/Button';
 
 import common from './StepDetails.common.module.css';
 import light from './StepDetails.light.module.css';
 import dark from './StepDetails.dark.module.css';
 
+interface JobDetails {
+  id: number;
+  title: string;
+  description: string;
+  budget_min?: number;
+  budget_max?: number;
+  skills?: string[];
+}
+
 interface StepDetailsProps {
   data: ProposalData;
   updateData: (update: Partial<ProposalData>) => void;
   errors: ProposalErrors;
+  job?: JobDetails | null;
 }
 
 const MIN_COVER_LETTER = 100;
@@ -34,9 +46,11 @@ const availabilityOptions = [
   { value: 'flexible', label: 'Flexible - Open to discussion' },
 ];
 
-const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors }) => {
+const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors, job }) => {
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === 'dark' ? dark : light;
+  const [rateLoading, setRateLoading] = useState(false);
+  const [rateSuggestion, setRateSuggestion] = useState<{ low: number; high: number; estimate: number } | null>(null);
 
   // Character count and progress
   const charCount = data.coverLetter.length;
@@ -52,6 +66,31 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors }) =
   const handleAIGenerate = (content: string) => {
     updateData({ coverLetter: content });
   };
+
+  const handleSuggestRate = useCallback(async () => {
+    if (!job) return;
+    setRateLoading(true);
+    setRateSuggestion(null);
+    try {
+      const userRaw = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+      const user = userRaw ? JSON.parse(userRaw) : null;
+      const result = await aiApi.estimatePrice({
+        category: job.title,
+        skills_required: job.skills || [],
+        description: job.description,
+        complexity: 'medium',
+      });
+      setRateSuggestion({
+        low: Math.round(result.low_estimate / Math.max(result.estimated_hours, 1)),
+        high: Math.round(result.high_estimate / Math.max(result.estimated_hours, 1)),
+        estimate: result.estimated_hourly_rate,
+      });
+    } catch {
+      // Silently ignore — user can set rate manually
+    } finally {
+      setRateLoading(false);
+    }
+  }, [job]);
 
   return (
     <div className={cn(common.container, themed.container)}>
@@ -70,9 +109,10 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors }) =
           </div>
 
           <div className="mb-4">
-            <AIProposalAssistant 
+            <AIProposalAssistant
               {...{
-                jobDescription: "Please review the job description and write a proposal.",
+                jobDescription: job?.description || "Please review the job requirements and write a compelling proposal.",
+                jobTitle: job?.title,
                 currentProposal: data.coverLetter,
                 onGenerate: handleAIGenerate,
                 onImprove: handleAIGenerate,
@@ -151,7 +191,22 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors }) =
             </div>
 
             <div className={common.formGroup}>
-              <Label htmlFor="hourlyRate">Hourly Rate ($)</Label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                <Label htmlFor="hourlyRate">Hourly Rate ($)</Label>
+                {job && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSuggestRate}
+                    disabled={rateLoading}
+                    type="button"
+                    style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', height: 'auto' }}
+                  >
+                    {rateLoading ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
+                    {rateLoading ? 'Estimating...' : 'AI Suggest'}
+                  </Button>
+                )}
+              </div>
               <Input
                 id="hourlyRate"
                 type="number"
@@ -163,6 +218,39 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors }) =
                 aria-invalid={!!errors.hourlyRate}
                 aria-describedby={errors.hourlyRate ? "hourlyRate-error" : undefined}
               />
+              <AnimatePresence>
+                {rateSuggestion && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    style={{
+                      marginTop: '0.5rem',
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '8px',
+                      background: 'var(--color-primary-subtle, rgba(69,115,223,0.08))',
+                      border: '1px solid var(--color-primary-light, rgba(69,115,223,0.2))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    <TrendingUp size={14} style={{ color: 'var(--color-primary, #4573df)', flexShrink: 0 }} />
+                    <span>
+                      AI suggests <strong>${rateSuggestion.low}–${rateSuggestion.high}/hr</strong>
+                      {' '}for this project type.{' '}
+                      <button
+                        type="button"
+                        onClick={() => updateData({ hourlyRate: rateSuggestion.estimate })}
+                        style={{ color: 'var(--color-primary, #4573df)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+                      >
+                        Apply ${rateSuggestion.estimate}/hr
+                      </button>
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               {errors.hourlyRate && (
                 <p id="hourlyRate-error" className={cn(common.error, themed.error)}>
                   {errors.hourlyRate}

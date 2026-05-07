@@ -11,6 +11,7 @@ import { exportData } from '@/app/lib/csv';
 import TableSkeleton from '@/app/components/organisms/DataTableExtras/TableSkeleton';
 import SavedViewsMenu from '@/app/components/organisms/DataTableExtras/SavedViewsMenu';
 import Button from '@/app/components/atoms/Button/Button';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
@@ -177,7 +178,14 @@ const AnalyticsPage: React.FC = () => {
         </ScrollReveal>
 
         {loading && <div className={cn(commonStyles.loadingState, themed.loadingState)} aria-busy="true">Loading analytics...</div>}
-        {error && <div className={cn(commonStyles.errorState, themed.errorState)}>Failed to load analytics data.</div>}
+        {error && (
+          <ErrorBanner
+            title="Failed to load analytics"
+            message="Unable to retrieve your analytics data. Please try again."
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
+        )}
 
         {data && (
           <>

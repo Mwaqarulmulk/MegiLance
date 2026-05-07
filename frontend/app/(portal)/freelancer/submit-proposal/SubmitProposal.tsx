@@ -264,7 +264,7 @@ const SubmitProposal: React.FC = () => {
     switch (currentStep) {
       case "Details":
         return (
-          <StepDetails data={data} updateData={updateData} errors={errors} />
+          <StepDetails data={data} updateData={updateData} errors={errors} job={job} />
         );
       case "Terms":
         return (

@@ -18,6 +18,7 @@ import {
   ChevronDown, ChevronUp, X, Users, BarChart3,
   Grid3X3, List, SlidersHorizontal, Bookmark, BookmarkCheck, Zap, Sparkles
 } from 'lucide-react';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 
 import common from './Freelancers.common.module.css';
 import light from './Freelancers.light.module.css';
@@ -553,7 +554,14 @@ const Freelancers: React.FC = () => {
               </div>
             ))
           )}
-          {!loading && error && <div className={cn(common.error, themed.error)}>Unable to load freelancers. Please check your connection and <button onClick={() => window.location.reload()} style={{textDecoration:'underline',cursor:'pointer',background:'none',border:'none',color:'inherit',fontWeight:600}}>try again</button>.</div>}
+          {!loading && error && (
+            <ErrorBanner
+              title="Failed to load freelancers"
+              message="Unable to load freelancers. Please check your connection and try again."
+              onRetry={() => window.location.reload()}
+              showGoHome={false}
+            />
+          )}
           {!loading && !error && paged.map(f => (
             <div key={f.id} className={cn(viewMode === 'list' ? common.listItem : common.gridItem, themed.cardWrapper)}>
               <div className={common.cardActions}>

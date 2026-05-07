@@ -44,6 +44,9 @@ import {
   AlertCircle,
   BarChart3,
   Zap,
+  Target,
+  Users,
+  Star,
 } from "lucide-react";
 
 import ProfileCompleteness from "@/app/components/organisms/ProfileCompleteness/ProfileCompleteness";
@@ -174,6 +177,36 @@ const ClientDashboard: React.FC = () => {
       return amount;
     });
     return amounts.length >= 2 ? amounts.reverse() : [0, ...amounts, 0];
+  }, [payments]);
+
+  // Generate monthly spending trend (last 6 months) from payments
+  const monthlySpendingTrend = useMemo(() => {
+    const now = new Date();
+    const months: { label: string; amount: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleDateString("en", { month: "short" });
+      const amount = Array.isArray(payments)
+        ? payments
+            .filter((p) => {
+              const pd = new Date(p.date);
+              return (
+                pd.getMonth() === d.getMonth() &&
+                pd.getFullYear() === d.getFullYear() &&
+                (p.status === "Completed" || p.status === "Paid")
+              );
+            })
+            .reduce((s, p) => {
+              const a =
+                typeof p.amount === "number"
+                  ? p.amount
+                  : parseFloat(p.amount?.replace(/[$,]/g, "") || "0");
+              return s + a;
+            }, 0)
+        : 0;
+      months.push({ label, amount });
+    }
+    return months;
   }, [payments]);
 
   // Generate milestone status data unique to clients
@@ -309,10 +342,17 @@ const ClientDashboard: React.FC = () => {
       desc: `${metrics.activeProjects} active`,
     },
     {
-      label: "Contracts",
-      href: "/client/contracts",
+      label: "Proposals",
+      href: "/client/proposals",
       icon: FileText,
       color: "warning" as const,
+      desc: `${metrics.pendingProposals} awaiting review`,
+    },
+    {
+      label: "Contracts",
+      href: "/client/contracts",
+      icon: Target,
+      color: "success" as const,
       desc: "Manage agreements",
     },
     {
@@ -327,7 +367,14 @@ const ClientDashboard: React.FC = () => {
       href: "/client/messages",
       icon: MessageSquare,
       color: "purple" as const,
-      desc: `${counts.messages} unread`,
+      desc: counts.messages > 0 ? `${counts.messages} unread` : "No unread",
+    },
+    {
+      label: "Analytics",
+      href: "/client/analytics",
+      icon: BarChart3,
+      color: "info" as const,
+      desc: "Spending & project insights",
     },
     {
       label: "AI Match",
@@ -337,18 +384,25 @@ const ClientDashboard: React.FC = () => {
       desc: "AI-powered talent match",
     },
     {
-      label: "AI Suite",
-      href: "/ai",
-      icon: Zap,
-      color: "purple" as const,
-      desc: "Smart tools & insights",
+      label: "Talent Pool",
+      href: "/client/freelancers",
+      icon: Users,
+      color: "success" as const,
+      desc: "Browse all freelancers",
     },
     {
-      label: "Report Issue",
-      href: "/feedback",
-      icon: AlertCircle,
-      color: "info" as const,
-      desc: "Report a bug or suggest",
+      label: "My Reviews",
+      href: "/client/reviews",
+      icon: Star,
+      color: "warning" as const,
+      desc: "Feedback & ratings",
+    },
+    {
+      label: "Wallet",
+      href: "/client/wallet",
+      icon: DollarSign,
+      color: "purple" as const,
+      desc: "Balance & deposits",
     },
   ];
 
@@ -452,7 +506,7 @@ const ClientDashboard: React.FC = () => {
             >
               <StatCard
                 title="Total Spent"
-                value={`$${metrics.totalSpent.toLocaleString()}`}
+                value={metrics.totalSpent}
                 icon={DollarSign}
                 sparklineData={spendingSparkline}
                 sparklineColor="primary"
@@ -533,6 +587,84 @@ const ClientDashboard: React.FC = () => {
             onDismiss={() => setDismissedError(true)}
             showGoHome={false}
           />
+        )}
+
+        {/* Spending Trend & Hiring Funnel Row */}
+        {!loading && (
+          <section aria-label="Spending trend and hiring funnel">
+            <ScrollReveal delay={0.1}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginBottom: "1.5rem" }}>
+                {/* Monthly Spending Trend */}
+                <div className={cn(commonStyles.insightCard, themeStyles.insightCard)} style={{ padding: "1.25rem" }}>
+                  <div className={commonStyles.insightHeader}>
+                    <BarChart3 size={18} />
+                    <h3 className={cn(commonStyles.insightTitle, themeStyles.insightTitle)}>
+                      Monthly Spending (6mo)
+                    </h3>
+                    <Link href="/client/analytics" style={{ marginLeft: "auto", fontSize: "0.75rem", opacity: 0.7, display: "flex", alignItems: "center", gap: 4 }}>
+                      View Analytics <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: "0.4rem", height: 72, marginTop: "0.75rem" }}>
+                    {(() => {
+                      const max = Math.max(...monthlySpendingTrend.map((m) => m.amount), 1);
+                      return monthlySpendingTrend.map((m, i) => (
+                        <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, height: "100%" }}>
+                          <div
+                            title={`${m.label}: $${m.amount.toLocaleString()}`}
+                            style={{
+                              width: "100%",
+                              background: m.amount > 0 ? "var(--color-primary, #4573df)" : "var(--color-border, #e2e8f0)",
+                              borderRadius: "4px 4px 0 0",
+                              height: `${Math.max((m.amount / max) * 100, m.amount > 0 ? 8 : 4)}%`,
+                              opacity: i === monthlySpendingTrend.length - 1 ? 1 : 0.55 + (i / monthlySpendingTrend.length) * 0.45,
+                              transition: "height 0.3s ease",
+                            }}
+                          />
+                          <span style={{ fontSize: "0.6rem", opacity: 0.6 }}>{m.label}</span>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                  <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", opacity: 0.65 }}>
+                    Total this period: <strong>${monthlySpendingTrend.reduce((s, m) => s + m.amount, 0).toLocaleString()}</strong>
+                  </div>
+                </div>
+
+                {/* Hiring Funnel */}
+                <div className={cn(commonStyles.insightCard, themeStyles.insightCard)} style={{ padding: "1.25rem" }}>
+                  <div className={commonStyles.insightHeader}>
+                    <Target size={18} />
+                    <h3 className={cn(commonStyles.insightTitle, themeStyles.insightTitle)}>
+                      Hiring Funnel
+                    </h3>
+                    <Link href="/client/proposals" style={{ marginLeft: "auto", fontSize: "0.75rem", opacity: 0.7, display: "flex", alignItems: "center", gap: 4 }}>
+                      View Proposals <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.75rem" }}>
+                    {[
+                      { label: "Projects Posted", value: metrics.totalProjects, color: "#4573df", max: Math.max(metrics.totalProjects, 1) },
+                      { label: "Proposals Received", value: metrics.pendingProposals, color: "#9b59b6", max: Math.max(metrics.totalProjects, 1) },
+                      { label: "Active Projects", value: metrics.activeProjects, color: "#27AE60", max: Math.max(metrics.totalProjects, 1) },
+                      { label: "Completed", value: metrics.completedProjects, color: "#10b981", max: Math.max(metrics.totalProjects, 1) },
+                    ].map((step) => (
+                      <div key={step.label} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{ fontSize: "0.7rem", opacity: 0.65, width: 120, flexShrink: 0 }}>{step.label}</span>
+                        <div style={{ flex: 1, height: 8, borderRadius: 4, background: "var(--color-border, #e2e8f0)", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.max((step.value / step.max) * 100, step.value > 0 ? 6 : 0)}%`, background: step.color, borderRadius: 4, transition: "width 0.4s ease" }} />
+                        </div>
+                        <span style={{ fontSize: "0.75rem", fontWeight: 600, width: 24, textAlign: "right" }}>{step.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", opacity: 0.65 }}>
+                    Hire rate: <strong>{metrics.totalProjects > 0 ? Math.round((metrics.completedProjects / metrics.totalProjects) * 100) : 0}%</strong> completion
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </section>
         )}
 
         {/* Alerts & Pending Actions */}

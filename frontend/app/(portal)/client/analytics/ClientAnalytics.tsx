@@ -10,6 +10,7 @@ import {
   Download, Calendar, ArrowUpRight, ArrowDownRight, Star, Loader2
 } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
@@ -52,6 +53,7 @@ const ClientAnalytics: React.FC = () => {
   const [dateRange, setDateRange] = useState('6m');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [freelancerFilter, setFreelancerFilter] = useState('all');
+  const [dismissedError, setDismissedError] = useState(false);
   const { projects, payments, freelancers, loading, error } = useClientData();
 
   // Calculate metrics from real data
@@ -212,10 +214,14 @@ const ClientAnalytics: React.FC = () => {
           </header>
         </ScrollReveal>
 
-        {error && (
-          <div className={common.error_banner}>
-            Unable to load some analytics data. Showing available information.
-          </div>
+        {error && !dismissedError && (
+          <ErrorBanner
+            title="Analytics data partially unavailable"
+            message="Unable to load some analytics data. Showing available information where possible."
+            onRetry={() => { setDismissedError(false); window.location.reload(); }}
+            onDismiss={() => setDismissedError(true)}
+            showGoHome={false}
+          />
         )}
 
         {/* Metrics Cards */}

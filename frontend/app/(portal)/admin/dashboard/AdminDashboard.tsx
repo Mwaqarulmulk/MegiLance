@@ -21,7 +21,6 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowRight,
-  UserPlus,
   FileText,
   CreditCard,
   Bell,
@@ -35,25 +34,14 @@ import {
   RefreshCw,
   Clock,
   Globe,
-  Database,
-  Cpu,
   HardDrive,
   Wifi,
   Eye,
-  Lock,
   CheckCircle2,
-  XCircle,
   AlertCircle,
-  ChevronRight,
   Download,
   Filter,
-  Search,
-  MoreHorizontal,
-  PieChart,
   MapPin,
-  Monitor,
-  Smartphone,
-  Tablet,
 } from 'lucide-react';
 
 import commonStyles from './AdminDashboard.common.module.css';
@@ -307,16 +295,31 @@ const AdminDashboard: React.FC = () => {
   // Security alerts — fetched from fraud detection API
   const [securityAlerts, setSecurityAlerts] = useState<SecurityAlert[]>([]);
 
+  // Feedback counts — fetched from admin feedback API
+  const [feedbackCounts, setFeedbackCounts] = useState<{ open: string; bugs: string; features: string; resolved: string }>({
+    open: '—', bugs: '—', features: '—', resolved: '—',
+  });
+
   useEffect(() => { setMounted(true); }, []);
 
-  // Fetch geo distribution and security alerts on mount 
+  // Fetch geo distribution, security alerts, and feedback counts on mount
   useEffect(() => {
     async function loadExtras() {
       try {
-        const [geoRes, fraudRes] = await Promise.all([
+        const [geoRes, fraudRes, feedbackRes] = await Promise.all([
           fetch('/backend/api/analytics/users/location-distribution').then(r => r.ok ? r.json() : null).catch(() => null),
           fetch('/backend/api/admin/dashboard/fraud?limit=10').then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch('/backend/api/admin/feedback/stats').then(r => r.ok ? r.json() : null).catch(() => null),
         ]);
+
+        if (feedbackRes) {
+          setFeedbackCounts({
+            open: String(feedbackRes.open_count ?? feedbackRes.total_open ?? '—'),
+            bugs: String(feedbackRes.bug_count ?? feedbackRes.bugs ?? '—'),
+            features: String(feedbackRes.feature_count ?? feedbackRes.feature_requests ?? '—'),
+            resolved: String(feedbackRes.resolved_this_week ?? feedbackRes.resolved_week ?? '—'),
+          });
+        }
 
         if (geoRes && Array.isArray(geoRes) && geoRes.length > 0) {
           const totalUsers = geoRes.reduce((sum: number, g: { count: number }) => sum + g.count, 0) || 1;
@@ -379,22 +382,6 @@ const AdminDashboard: React.FC = () => {
 
   const themeStyles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
-  const iconForLabel = (label: string): any => {
-    if (label.includes('Users')) return Users;
-    if (label.includes('Revenue')) return DollarSign;
-    if (label.includes('Projects')) return Briefcase;
-    if (label.includes('Proposals')) return FileText;
-    if (label.includes('Disputes')) return AlertTriangle;
-    return Activity;
-  };
-
-  const accentForLabel = (label: string): 'blue' | 'green' | 'amber' | 'red' => {
-    if (label.includes('Users')) return 'blue';
-    if (label.includes('Revenue')) return 'green';
-    if (label.includes('Projects')) return 'amber';
-    return 'red';
-  };
-
   const stats = useMemo(() => {
     return [
       { title: 'System Health', value: healthData.apiStatus === 'healthy' ? '99.9%' : 'Degraded', trend: healthData.apiStatus === 'healthy' ? '+0.1%' : '-2.4%', icon: Activity, accent: 'green' as const, sparkline: undefined, subtitle: 'API Uptime (30d)' },
@@ -402,7 +389,7 @@ const AdminDashboard: React.FC = () => {
       { title: 'Active Users', value: typeof systemStats?.total_users === 'number' ? systemStats.total_users.toLocaleString() : '—', trend: '+12%', icon: Users, accent: 'blue' as const, sparkline: undefined, subtitle: 'Logged in past 30 days' },
       { title: 'Fraud Alerts', value: String(securityAlerts.length), trend: undefined, icon: ShieldAlert, accent: securityAlerts.length > 0 ? ('red' as const) : ('green' as const), sparkline: undefined, subtitle: 'Requires immediate review' },
     ];
-  }, [kpis, systemStats, healthData, securityAlerts.length]);
+  }, [systemStats, healthData, securityAlerts.length]);
 
   const quickActions: Omit<QuickActionProps, 'themeStyles'>[] = [
     { label: 'Manage Users', href: '/admin/users', icon: Users, description: 'View, suspend, or verify accounts', badge: String(systemStats?.total_users ?? '') },
@@ -534,6 +521,70 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
+          {/* Platform Growth Snapshot */}
+          <div className={cn(commonStyles.analyticsRow)} style={{ marginBottom: 0 }}>
+            {/* Platform KPI Summary */}
+            <div className={cn(commonStyles.analyticsCard, themeStyles.analyticsCard)}>
+              <div className={commonStyles.analyticsCardHeader}>
+                <h3 className={cn(commonStyles.analyticsCardTitle, themeStyles.analyticsCardTitle)}>
+                  <TrendingUp size={16} /> Platform Growth
+                </h3>
+                <Link href="/admin/analytics" className={cn(commonStyles.viewAllLink, themeStyles.viewAllLink)} style={{ fontSize: '0.75rem' }}>
+                  Full Analytics <ArrowRight size={12} />
+                </Link>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
+                {[
+                  { label: 'Total Users', value: typeof systemStats?.total_users === 'number' ? systemStats.total_users.toLocaleString() : '—', icon: Users, color: '#3b82f6' },
+                  { label: 'Total Revenue', value: typeof systemStats?.total_revenue === 'number' ? `$${systemStats.total_revenue.toLocaleString()}` : '—', icon: DollarSign, color: '#10b981' },
+                  { label: 'Active Projects', value: typeof systemStats?.active_projects === 'number' ? systemStats.active_projects.toLocaleString() : typeof (systemStats as any)?.total_projects === 'number' ? (systemStats as any).total_projects.toLocaleString() : '—', icon: Briefcase, color: '#f59e0b' },
+                  { label: 'Open Disputes', value: typeof (systemStats as any)?.active_disputes === 'number' ? String((systemStats as any).active_disputes) : typeof (systemStats as any)?.disputes === 'number' ? String((systemStats as any).disputes) : '—', icon: AlertTriangle, color: '#ef4444' },
+                ].map((item) => (
+                  <div key={item.label} className={cn(commonStyles.metricCard, themeStyles.metricCard)} style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ color: item.color, flexShrink: 0 }}>
+                      <item.icon size={18} />
+                    </div>
+                    <div>
+                      <div className={cn(commonStyles.metricValue, themeStyles.metricValue)} style={{ fontSize: '1.1rem', fontWeight: 700 }}>{item.value}</div>
+                      <div className={cn(commonStyles.metricLabel, themeStyles.metricLabel)} style={{ fontSize: '0.7rem' }}>{item.label}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* KPI Cards from API */}
+            <div className={cn(commonStyles.analyticsCard, themeStyles.analyticsCard)}>
+              <div className={commonStyles.analyticsCardHeader}>
+                <h3 className={cn(commonStyles.analyticsCardTitle, themeStyles.analyticsCardTitle)}>
+                  <Activity size={16} /> Live KPIs
+                </h3>
+                <span className={cn(commonStyles.analyticsPeriod, themeStyles.analyticsPeriod)}>From API</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.75rem' }}>
+                {(kpis && kpis.length > 0 ? kpis.slice(0, 5) : [
+                  { label: 'Platform Health', value: healthData.apiStatus === 'healthy' ? '99.9%' : 'Degraded' },
+                  { label: 'Cache Hit Rate', value: `${healthData.cacheHitRate}%` },
+                  { label: 'Avg Response', value: `${healthData.avgResponseMs}ms` },
+                  { label: 'Error Rate', value: `${healthData.errorRate}%` },
+                  { label: 'Active Connections', value: String(healthData.activeConnections) },
+                ]).map((kpi: any) => (
+                  <div key={kpi.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span className={cn(commonStyles.metricLabel, themeStyles.metricLabel)} style={{ fontSize: '0.75rem' }}>{kpi.label}</span>
+                    <span className={cn(commonStyles.metricValue, themeStyles.metricValue)} style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                      {kpi.value ?? kpi.current ?? '—'}
+                      {kpi.trend !== undefined && (
+                        <span style={{ fontSize: '0.65rem', marginLeft: 4, color: String(kpi.trend).includes('-') ? '#ef4444' : '#10b981' }}>
+                          {kpi.trend}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Quick Actions */}
           <section aria-label="Quick actions">
             <h2 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>Quick Actions</h2>
@@ -604,10 +655,10 @@ const AdminDashboard: React.FC = () => {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', padding: '0.5rem 0' }}>
               {[
-                { label: 'Open Issues', value: '—', icon: AlertCircle, color: '#3b82f6', href: '/admin/feedback?status=open' },
-                { label: 'Bug Reports', value: '—', icon: Eye, color: '#ef4444', href: '/admin/feedback?type=bug_report' },
-                { label: 'Feature Requests', value: '—', icon: Download, color: '#f59e0b', href: '/admin/feedback?type=feature_request' },
-                { label: 'Resolved This Week', value: '—', icon: CheckCircle2, color: '#10b981', href: '/admin/feedback?status=resolved' },
+                { label: 'Open Issues', value: feedbackCounts.open, icon: AlertCircle, color: '#3b82f6', href: '/admin/feedback?status=open' },
+                { label: 'Bug Reports', value: feedbackCounts.bugs, icon: Eye, color: '#ef4444', href: '/admin/feedback?type=bug_report' },
+                { label: 'Feature Requests', value: feedbackCounts.features, icon: Download, color: '#f59e0b', href: '/admin/feedback?type=feature_request' },
+                { label: 'Resolved This Week', value: feedbackCounts.resolved, icon: CheckCircle2, color: '#10b981', href: '/admin/feedback?status=resolved' },
               ].map((item) => (
                 <Link key={item.label} href={item.href} className={cn(commonStyles.quickAction, themeStyles.quickAction)}>
                   <div className={cn(commonStyles.quickActionIcon, themeStyles.quickActionIcon)} style={{ color: item.color }}>
@@ -615,8 +666,13 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <div className={commonStyles.quickActionText}>
                     <span className={cn(commonStyles.quickActionLabel, themeStyles.quickActionLabel)}>{item.label}</span>
-                    <span className={cn(commonStyles.quickActionDesc, themeStyles.quickActionDesc)}>Click to filter</span>
+                    <span className={cn(commonStyles.quickActionDesc, themeStyles.quickActionDesc)}>{item.value !== '—' ? `${item.value} total` : 'Click to filter'}</span>
                   </div>
+                  {item.value !== '—' && (
+                    <span className={cn(commonStyles.quickActionBadge, themeStyles.quickActionBadge)} style={{ background: item.color, color: '#fff' }}>
+                      {item.value}
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>

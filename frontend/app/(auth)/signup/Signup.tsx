@@ -170,8 +170,8 @@ const Signup: React.FC = () => {
         });
 
         trackSignupComplete(selectedRole, 'email');
-        // AUTO-APPROVED: Redirect directly to dashboard (no email verification needed)
-        router.push(selectedRole === 'client' ? '/client/dashboard' : '/freelancer/dashboard');
+        // Route new users through profile onboarding before landing on dashboard
+        router.push(`/onboarding?role=${selectedRole}`);
       } catch (error: unknown) {
         setErrors({ email: error instanceof Error ? error.message : 'Registration failed. Please try again.' });
       } finally {

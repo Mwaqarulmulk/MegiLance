@@ -9,7 +9,8 @@ import Badge from '@/app/components/atoms/Badge/Badge';
 import Loading from '@/app/components/atoms/Loading/Loading';
 import { escrowApi } from '@/lib/api';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
-import { CreditCard, Clock, CheckCircle, FileText, ShieldAlert, DollarSign } from 'lucide-react';
+import { CreditCard, Clock, CheckCircle, FileText, DollarSign } from 'lucide-react';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import commonStyles from './Escrow.common.module.css';
 import lightStyles from './Escrow.light.module.css';
 import darkStyles from './Escrow.dark.module.css';
@@ -137,11 +138,12 @@ export default function EscrowPage() {
         </ScrollReveal>
 
         {error && (
-          <div className={commonStyles.errorBanner}>
-            <ShieldAlert size={18} />
-            <span>{error}</span>
-            <Button variant="secondary" size="sm" onClick={loadEscrowData}>Retry</Button>
-          </div>
+          <ErrorBanner
+            title="Failed to load escrow data"
+            message={error}
+            onRetry={loadEscrowData}
+            showGoHome={false}
+          />
         )}
 
         {/* Stats Cards */}

@@ -1,0 +1,109 @@
+.page {
+  background: #f8f9fc;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+  color: #1a1a2e;
+}
+
+.logo span {
+  color: #4573df;
+}
+
+.step_badge {
+  background: rgba(69, 115, 223, 0.1);
+  color: #4573df;
+}
+
+.title {
+  color: #111827;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+.progress_bar {
+  background: #e5e7eb;
+}
+
+.label {
+  color: #374151;
+}
+
+.input {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.input:focus {
+  border-color: #4573df;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.skill_chip {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+
+.skill_chip:hover {
+  border-color: #4573df;
+  color: #4573df;
+}
+
+.skill_chip_selected {
+  background: rgba(69, 115, 223, 0.1);
+  color: #4573df;
+  border-color: #4573df;
+}
+
+.budget_option {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+.budget_option:hover {
+  border-color: #4573df;
+}
+
+.budget_option_selected {
+  background: rgba(69, 115, 223, 0.08);
+  border-color: #4573df;
+}
+
+.budget_option_label {
+  color: #111827;
+}
+
+.budget_option_range {
+  color: #6b7280;
+}
+
+.submit_btn {
+  background: linear-gradient(135deg, #4573df, #3563cf);
+  color: #ffffff;
+}
+
+.submit_btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3563cf, #2553bf);
+  box-shadow: 0 4px 12px rgba(69, 115, 223, 0.35);
+}
+
+.skip_btn {
+  color: #6b7280;
+}
+
+.error {
+  color: #dc2626;
+}

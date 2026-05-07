@@ -15,6 +15,7 @@ import UserAvatar from '@/app/components/atoms/UserAvatar/UserAvatar';
 import Textarea from '@/app/components/atoms/Textarea/Textarea';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
 import api from '@/lib/api';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import common from './Reviews.common.module.css';
 import light from './Reviews.light.module.css';
 import dark from './Reviews.dark.module.css';
@@ -382,11 +383,12 @@ const Reviews: React.FC = () => {
     return (
       <PageTransition>
         <div className={cn(common.container, themed.container)}>
-          <div className={cn(common.errorBanner, themed.errorBanner)}>
-            <AlertCircle size={20} />
-            <span>Failed to load reviews.</span>
-            <Button variant="ghost" size="sm" onClick={() => window.location.reload()}>Retry</Button>
-          </div>
+          <ErrorBanner
+            title="Failed to load reviews"
+            message="There was an issue retrieving your reviews. Please try again."
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
         </div>
       </PageTransition>
     );

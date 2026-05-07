@@ -22,6 +22,7 @@ import {
   Calendar, AlertTriangle, ArrowDownLeft, ArrowUpLeft,
   Shield, Clock, Filter, Eye, EyeOff, Bitcoin, QrCode
 } from 'lucide-react';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 
 type TabKey = 'overview' | 'transactions' | 'budget' | 'methods';
 
@@ -234,11 +235,12 @@ export default function ClientWallet() {
     return (
       <PageTransition>
         <div className={cn(commonStyles.container, t.container)}>
-          <div className={cn(commonStyles.errorBanner, t.errorBanner)}>
-            <AlertTriangle size={20} />
-            <span>Failed to load wallet data. Please try again.</span>
-            <Button variant="ghost" size="sm" onClick={() => window.location.reload()}>Retry</Button>
-          </div>
+          <ErrorBanner
+            title="Failed to load wallet data"
+            message="There was an issue retrieving your wallet information. Please try again."
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
         </div>
       </PageTransition>
     );

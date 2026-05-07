@@ -11,6 +11,7 @@ import Button from '@/app/components/atoms/Button/Button';
 import Badge from '@/app/components/atoms/Badge/Badge';
 import Input from '@/app/components/atoms/Input/Input';
 import { portalApi, walletApi } from '@/lib/api';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import commonStyles from './Earnings.common.module.css';
 import lightStyles from './Earnings.light.module.css';
 import darkStyles from './Earnings.dark.module.css';
@@ -275,12 +276,12 @@ export default function Earnings() {
     return (
       <PageTransition>
         <div className={cn(commonStyles.container, t.container)}>
-          <div className={cn(commonStyles.errorBanner, t.errorBanner)}>
-            <AlertTriangle size={20} /> <span>{error}</span>
-            <Button variant="ghost" size="sm" onClick={() => window.location.reload()}>
-              <RefreshCw size={14} /> Retry
-            </Button>
-          </div>
+          <ErrorBanner
+            title="Failed to load earnings"
+            message={error}
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
         </div>
       </PageTransition>
     );

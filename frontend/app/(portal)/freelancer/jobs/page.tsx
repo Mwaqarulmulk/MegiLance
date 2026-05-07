@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { searchApi, projectsApi } from '@/lib/api';
 import api from '@/lib/api';
+import { aiMatchingApi } from '@/lib/api/ai';
 import { Button } from '@/app/components/atoms/Button';
 import JobCard from '@/app/components/organisms/JobCard/JobCard';
 import { PageTransition, StaggerContainer, StaggerItem } from '@/app/components/Animations';
@@ -137,7 +138,21 @@ export default function JobsPage() {
         skills: Array.isArray(job.skills) ? job.skills : typeof job.skills === 'string' ? job.skills.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
       }));
 
-      if (activeTab === 'best-matches') enriched.sort((a, b) => (b.match_score || 0) - (a.match_score || 0));
+      // Overlay AI match scores for best-matches tab
+      if (activeTab === 'best-matches' && enriched.length > 0) {
+        try {
+          const recommendations = await aiMatchingApi.getRecommendedProjects();
+          const scoreMap = new Map<number, number>(
+            (recommendations.projects || []).map(r => [r.project_id, r.match_score])
+          );
+          enriched.forEach(job => {
+            if (scoreMap.has(job.id)) job.match_score = scoreMap.get(job.id)!;
+          });
+          enriched.sort((a, b) => (b.match_score || 0) - (a.match_score || 0));
+        } catch {
+          enriched.sort((a, b) => (b.match_score || 0) - (a.match_score || 0));
+        }
+      }
 
       setJobs(enriched);
       setTotalJobs(total);

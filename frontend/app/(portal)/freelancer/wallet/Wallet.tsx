@@ -22,6 +22,7 @@ import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
 import { WalletIllustration } from '@/app/components/Illustrations/Illustrations';
 import illustrationStyles from '@/app/components/Illustrations/Illustrations.common.module.css';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import commonStyles from './Wallet.common.module.css';
 import lightStyles from './Wallet.light.module.css';
 import darkStyles from './Wallet.dark.module.css';
@@ -218,7 +219,14 @@ const Wallet: React.FC = () => {
         </ScrollReveal>
 
         {loading && <div className={styles.loading} aria-busy="true">Loading wallet...</div>}
-        {error && <div className={styles.error}>Failed to load wallet data.</div>}
+        {error && (
+          <ErrorBanner
+            title="Failed to load wallet data"
+            message="There was an issue retrieving your wallet information. Please try again."
+            onRetry={() => window.location.reload()}
+            showGoHome={false}
+          />
+        )}
 
         <div className={styles.contentGrid}>
           <ScrollReveal>
