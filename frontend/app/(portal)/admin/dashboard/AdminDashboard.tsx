@@ -315,11 +315,12 @@ const AdminDashboard: React.FC = () => {
         ]);
 
         if (feedbackRes) {
+          const fb = feedbackRes as any;
           setFeedbackCounts({
-            open: String(feedbackRes.open_count ?? feedbackRes.total_open ?? '—'),
-            bugs: String(feedbackRes.bug_count ?? feedbackRes.bugs ?? '—'),
-            features: String(feedbackRes.feature_count ?? feedbackRes.feature_requests ?? '—'),
-            resolved: String(feedbackRes.resolved_this_week ?? feedbackRes.resolved_week ?? '—'),
+            open: String(fb.open_count ?? fb.total_open ?? '—'),
+            bugs: String(fb.bug_count ?? fb.bugs ?? '—'),
+            features: String(fb.feature_count ?? fb.feature_requests ?? '—'),
+            resolved: String(fb.resolved_this_week ?? fb.resolved_week ?? '—'),
           });
         }
 

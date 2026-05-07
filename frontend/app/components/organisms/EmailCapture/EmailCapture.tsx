@@ -44,7 +44,7 @@ export default function EmailCapture({
     }
     setStatus('loading');
     try {
-      const res = await fetch('/backend/api/newsletter/subscribe', {
+      const res = await fetch('/api/v1/newsletter/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, source }),

@@ -8,6 +8,7 @@ import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer } from '@/app/components/Animations/StaggerContainer';
 import api from '@/lib/api';
+import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
 import common from './AdminUsers.common.module.css';
 import light from './AdminUsers.light.module.css';
 import dark from './AdminUsers.dark.module.css';
@@ -281,7 +282,7 @@ const AdminUsers: React.FC = () => {
 
           <StaggerContainer delay={0.1} className={common.tableWrap}>
           {loading && <div className={common.skeletonRow} aria-busy={loading || undefined} />}
-          {error && <div className={common.error}>Failed to load users.</div>}
+          {error && <ErrorBanner title="Failed to load users" message={error} onRetry={fetchUsers} showGoHome={false} />}
           <table className={cn(common.table, themed.table)}>
             <thead>
               <tr>

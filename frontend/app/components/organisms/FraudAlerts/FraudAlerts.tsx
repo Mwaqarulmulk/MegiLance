@@ -163,7 +163,7 @@ export default function FraudAlerts({ className = '' }: FraudAlertsProps) {
   const handleAnalyzeUser = async (userId: number, alertId: string) => {
     setAnalyzingUser(userId);
     try {
-      const response = await fetch(`/backend/api/fraud-detection/analyze/user/${userId}`);
+      const response = await fetch(`/api/v1/fraud-detection/analyze/user/${userId}`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         const analysis = data.analysis;
