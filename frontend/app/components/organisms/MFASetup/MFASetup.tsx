@@ -38,12 +38,13 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/security/mfa/setup', {
+      const response = await fetch('/api/v1/security/mfa/setup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
         },
+        credentials: 'include',
         body: JSON.stringify({
           method: selectedMethod,
           phone_number: selectedMethod === 'sms' ? phoneNumber : null
@@ -80,12 +81,13 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/security/mfa/verify', {
+      const response = await fetch('/api/v1/security/mfa/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
         },
+        credentials: 'include',
         body: JSON.stringify({
           method: selectedMethod,
           code: verificationCode

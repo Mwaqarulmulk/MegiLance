@@ -146,7 +146,10 @@ export const proposalsApi = {
     }),
 
   submitDraft: (proposalId: ResourceId) =>
-    apiFetch(`/proposals/${proposalId}/submit`, { method: 'POST' }),
+    apiFetch(`/proposals/${proposalId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: 'submitted' }),
+    }),
 
   get: (proposalId: ResourceId) =>
     apiFetch(`/proposals/${proposalId}`),

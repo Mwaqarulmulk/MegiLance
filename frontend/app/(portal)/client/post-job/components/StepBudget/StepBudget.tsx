@@ -149,7 +149,7 @@ const StepBudget: React.FC<StepBudgetProps> = ({ data, updateData, errors }) => 
     setAiError(null);
     try {
       const scope = TIMELINE_SCOPE_MAP[data.timeline] || 'medium';
-      const res = await fetch('/api/price-estimator/estimate', {
+      const res = await fetch('/api/v1/price-estimator/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

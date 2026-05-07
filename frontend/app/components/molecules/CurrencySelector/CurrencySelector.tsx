@@ -60,7 +60,7 @@ export default function CurrencySelector({
     const fetchCurrencies = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/multicurrency/currencies');
+        const response = await fetch('/api/v1/multicurrency/currencies', { credentials: 'include' });
         if (response.ok) {
           const data = await response.json();
           setCurrencies(data.fiat || []);

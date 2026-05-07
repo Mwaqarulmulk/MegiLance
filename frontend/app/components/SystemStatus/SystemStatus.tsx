@@ -53,7 +53,7 @@ export default function SystemStatus() {
     const fetchStatus = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/status/full');
+        const response = await fetch('/api/v1/status/full');
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }

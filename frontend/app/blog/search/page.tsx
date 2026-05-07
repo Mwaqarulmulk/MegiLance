@@ -26,7 +26,7 @@ interface BlogPost {
 // Fetch blog posts from API
 async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
-    const res = await fetch('/api/blog?limit=50');
+    const res = await fetch('/api/v1/blog?limit=50');
     if (!res.ok) return [];
     const data = await res.json();
     return (data.posts || data || []).map((p: any) => ({

@@ -311,7 +311,7 @@ const AdminDashboard: React.FC = () => {
         const [geoRes, fraudRes, feedbackRes] = await Promise.all([
           analyticsApi.getUserDistribution().catch(() => null),
           adminApi.getFraudAlerts(10).catch(() => null),
-          apiFetch('/admin/feedback/stats').catch(() => null),
+          apiFetch('/feedback/nps/score').catch(() => null),
         ]);
 
         if (feedbackRes) {

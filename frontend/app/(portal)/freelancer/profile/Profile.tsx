@@ -211,8 +211,9 @@ const Profile: React.FC = () => {
       formData.append("file", file);
       formData.append("upload_type", "avatar");
 
-      const response = await fetch("/api/uploads/avatar", {
+      const response = await fetch("/api/v1/uploads/avatar", {
         method: "POST",
+        headers: { Authorization: `Bearer ${(await import('@/lib/api/core')).getAuthToken() || ''}` },
         body: formData,
         credentials: "include",
       });

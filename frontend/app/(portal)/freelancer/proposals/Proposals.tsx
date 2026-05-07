@@ -142,11 +142,12 @@ const Proposals: React.FC = () => {
       if (projectIds.length > 0) {
         let projectMap = new Map<number, APIProject>();
         
-        // Try batch endpoint first
+        // Try batch endpoint first (POST with JSON body)
         try {
-          const batchProjects = await apiFetch<APIProject[]>(
-            `/projects/batch?ids=${projectIds.join(',')}`
-          );
+          const batchProjects = await apiFetch<APIProject[]>('/projects/batch', {
+            method: 'POST',
+            body: JSON.stringify(projectIds),
+          });
           batchProjects.forEach((project) => {
             projectMap.set(project.id, project);
           });

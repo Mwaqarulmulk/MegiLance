@@ -175,9 +175,10 @@ export default function RealTimeNotifications({
     // Send API request to mark all as read
     try {
       const token = getAuthToken();
-      await fetch('/api/notifications/mark-all-read', {
-        method: 'PUT',
+      await fetch('/api/v1/notifications/mark-all-read', {
+        method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: 'include',
       });
     } catch {
       // Failed to mark all as read, optimistic update already applied

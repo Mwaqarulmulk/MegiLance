@@ -196,7 +196,7 @@ export default function FraudAlerts({ className = '' }: FraudAlertsProps) {
     const fetchAlerts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/admin/fraud-alerts');
+        const response = await fetch('/api/v1/admin/fraud-alerts', { credentials: 'include' });
         if (response.ok) {
           const data = await response.json();
           setAlerts(data.alerts || []);
