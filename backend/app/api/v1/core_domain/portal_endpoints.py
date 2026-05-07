@@ -43,11 +43,20 @@ class FreelancerDashboardStats(BaseModel):
 class CreateProjectRequest(BaseModel):
     title: str
     description: str
-    budget: float
-    skills: list
+    budget: Optional[float] = None
+    budget_min: Optional[float] = None
+    budget_max: Optional[float] = None
+    skills: Optional[list] = []
     category: Optional[str] = "Web Development"
     budget_type: Optional[str] = "Fixed"
     timeline: Optional[str] = "1-3 months"
+
+
+class SubmitProposalRequest(BaseModel):
+    project_id: int
+    cover_letter: str
+    bid_amount: float
+    delivery_time: int
 
 
 def _safe_str(val):
@@ -108,8 +117,15 @@ async def create_client_project(
     """Create a new project"""
     now = datetime.now(timezone.utc).isoformat()
 
-    budget_min = project_data.budget * 0.8 if project_data.budget_type == 'Fixed' else project_data.budget
-    budget_max = project_data.budget
+    if project_data.budget_min is not None or project_data.budget_max is not None:
+        budget_min = project_data.budget_min or 0.0
+        budget_max = project_data.budget_max or budget_min
+    elif project_data.budget is not None:
+        budget_min = project_data.budget * 0.8 if project_data.budget_type == 'Fixed' else project_data.budget
+        budget_max = project_data.budget
+    else:
+        budget_min = 0.0
+        budget_max = 0.0
 
     result = portal_service.create_project(
         client.id, project_data.title, project_data.description,
@@ -294,18 +310,20 @@ async def get_freelancer_projects(
 
 @router.post("/freelancer/proposals", status_code=status.HTTP_201_CREATED)
 async def submit_freelancer_proposal(
-    project_id: int,
-    cover_letter: str,
-    bid_amount: float,
-    delivery_time: int,
+    proposal_data: SubmitProposalRequest,
     freelancer: User = Depends(get_freelancer_user)
 ):
     """Submit a proposal for a project"""
+    project_id = proposal_data.project_id
+    cover_letter = proposal_data.cover_letter
+    bid_amount = proposal_data.bid_amount
+    delivery_time = proposal_data.delivery_time
+
     if not portal_service.check_project_exists(project_id):
         raise HTTPException(status_code=404, detail="Project not found")
 
     if portal_service.check_proposal_exists(project_id, freelancer.id):
-        raise HTTPException(status_code=400, detail="Proposal already submitted for this project")
+        raise HTTPException(status_code=409, detail="Proposal already submitted for this project")
 
     now = datetime.now(timezone.utc).isoformat()
     hourly_rate = bid_amount / delivery_time if delivery_time > 0 else float(freelancer.hourly_rate or 0)
