@@ -8,6 +8,8 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useAdminData } from '@/hooks/useAdmin';
 import { useAuth } from '@/hooks/useAuth';
+import { analyticsApi, adminApi } from '@/lib/api/admin';
+import { apiFetch } from '@/lib/api/core';
 import Button from '@/app/components/atoms/Button/Button';
 import ActivityTimeline, { type TimelineEvent } from '@/app/components/molecules/ActivityTimeline/ActivityTimeline';
 import ProgressRing from '@/app/components/atoms/ProgressRing/ProgressRing';
@@ -259,16 +261,16 @@ const AdminDashboard: React.FC = () => {
   const fetchHealthData = useCallback(async () => {
     try {
       const [healthReady, healthMetrics] = await Promise.all([
-        fetch('/backend/api/health/ready').then(r => r.json()).catch(() => null),
-        fetch('/backend/api/health/metrics').then(r => r.json()).catch(() => null),
+        apiFetch('/health/ready').catch(() => null),
+        apiFetch('/health/metrics').catch(() => null),
       ]);
 
       setHealthData(prev => ({
         ...prev,
-        apiStatus: healthReady?.status === 'ready' ? 'healthy' : healthReady?.status === 'degraded' ? 'degraded' : prev.apiStatus,
-        dbStatus: healthReady?.db === 'ok' ? 'healthy' : 'degraded',
-        uptime: healthMetrics?.uptime_seconds
-          ? `${(healthMetrics.uptime_seconds / 86400).toFixed(1)}d`
+        apiStatus: (healthReady as any)?.status === 'ready' ? 'healthy' : (healthReady as any)?.status === 'degraded' ? 'degraded' : prev.apiStatus,
+        dbStatus: (healthReady as any)?.db === 'ok' ? 'healthy' : 'degraded',
+        uptime: (healthMetrics as any)?.uptime_seconds
+          ? `${((healthMetrics as any).uptime_seconds / 86400).toFixed(1)}d`
           : prev.uptime,
         lastChecked: new Date().toISOString(),
       }));
@@ -307,9 +309,9 @@ const AdminDashboard: React.FC = () => {
     async function loadExtras() {
       try {
         const [geoRes, fraudRes, feedbackRes] = await Promise.all([
-          fetch('/backend/api/analytics/users/location-distribution').then(r => r.ok ? r.json() : null).catch(() => null),
-          fetch('/backend/api/admin/dashboard/fraud?limit=10').then(r => r.ok ? r.json() : null).catch(() => null),
-          fetch('/backend/api/admin/feedback/stats').then(r => r.ok ? r.json() : null).catch(() => null),
+          analyticsApi.getUserDistribution().catch(() => null),
+          adminApi.getFraudAlerts(10).catch(() => null),
+          apiFetch('/admin/feedback/stats').catch(() => null),
         ]);
 
         if (feedbackRes) {
