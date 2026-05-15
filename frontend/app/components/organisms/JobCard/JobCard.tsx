@@ -1,10 +1,11 @@
 // @AI-HINT: JobCard component for displaying job listings in the freelancer portal.
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { authApi, proposalsApi } from '@/lib/api';
 import Button from '@/app/components/atoms/Button/Button';
 import { Heart, ShieldCheck, Star, Clock, MapPin, Sparkles } from 'lucide-react';
 import common from './JobCard.common.module.css';
@@ -44,6 +45,7 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const { resolvedTheme } = useTheme();
   const [isSaved, setIsSaved] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   const themeStyles = resolvedTheme === 'dark' ? dark : light;
 
@@ -58,6 +60,26 @@ const JobCard: React.FC<JobCardProps> = ({
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
+
+  useEffect(() => {
+    let mounted = true;
+    const checkApplied = async () => {
+      try {
+        const user = await authApi.me();
+        if (!user || !user.id) return;
+        const resp: any = await proposalsApi.list({ project_id: Number(id) });
+        // API may return array or { data: [] }
+        const items = Array.isArray(resp) ? resp : resp?.proposals || resp?.data || [];
+        if (!mounted) return;
+        const applied = items.some((p: any) => Number(p.freelancer_id) === Number(user.id));
+        setHasApplied(Boolean(applied));
+      } catch (err) {
+        // ignore errors silently; don't block rendering
+      }
+    };
+    checkApplied();
+    return () => { mounted = false; };
+  }, [id]);
 
   return (
     <div className={cn(common.card, themeStyles.card)}>
@@ -136,9 +158,15 @@ const JobCard: React.FC<JobCardProps> = ({
           <Link href={`/jobs/${id}`}>
             <Button variant="outline" size="sm">View Details</Button>
           </Link>
-          <Link href={`/freelancer/submit-proposal?jobId=${id}`}>
-            <Button variant="primary" size="sm">Apply Now</Button>
-          </Link>
+          {hasApplied ? (
+            <Button variant="outline" size="sm" disabled aria-disabled>
+              Already Applied
+            </Button>
+          ) : (
+            <Link href={`/freelancer/submit-proposal?jobId=${id}`}>
+              <Button variant="primary" size="sm">Apply Now</Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>
