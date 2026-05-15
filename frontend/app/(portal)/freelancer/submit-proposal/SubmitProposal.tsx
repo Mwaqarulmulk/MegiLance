@@ -22,6 +22,7 @@ import {
 
 import api, { APIError, apiFetch } from "@/lib/api";
 import { proposalsApi, projectsApi } from "@/lib/api/projects";
+import { authApi } from '@/lib/api';
 import { ProposalData, ProposalErrors } from "./SubmitProposal.types";
 
 import Button from "@/app/components/atoms/Button/Button";
@@ -85,6 +86,7 @@ const SubmitProposal: React.FC = () => {
   const [job, setJob] = useState<JobDetails | null>(null);
   const [jobLoading, setJobLoading] = useState(true);
   const [jobError, setJobError] = useState<string>("");
+  const [alreadyApplied, setAlreadyApplied] = useState(false);
 
   // Fetch job details and validate jobId on mount
   useEffect(() => {
@@ -98,6 +100,18 @@ const SubmitProposal: React.FC = () => {
         const result: any = await projectsApi.get(parseInt(jobIdParam));
         if (!result || !result.id) throw new Error("not_found");
         setJob(result);
+        // check if current freelancer already applied
+        try {
+          const user = await authApi.me();
+          if (user && user.id) {
+            const resp: any = await proposalsApi.list({ project_id: result.id });
+            const items = Array.isArray(resp) ? resp : resp?.proposals || resp?.data || [];
+            const applied = items.some((p: any) => Number(p.freelancer_id) === Number(user.id));
+            setAlreadyApplied(Boolean(applied));
+          }
+        } catch (_) {
+          // ignore inner failures
+        }
       } catch (err: any) {
         const status = err?.status ?? 0;
         if (status === 404 || err?.message === "not_found") {
@@ -470,6 +484,11 @@ const SubmitProposal: React.FC = () => {
                   : job.description}
               </p>
             )}
+            {alreadyApplied && (
+              <div className={cn(common.alreadyAppliedBanner, themed.alreadyAppliedBanner)} role="status" aria-live="polite">
+                <AlertTriangle size={14} /> You have already submitted a proposal for this job.
+              </div>
+            )}
           </div>
 
           <ScrollReveal>
@@ -558,11 +577,13 @@ const SubmitProposal: React.FC = () => {
                 <Button
                   variant="primary"
                   onClick={onSubmit}
-                  disabled={submitting}
+                  disabled={submitting || alreadyApplied}
                   isLoading={submitting}
                   aria-label="Submit proposal"
                 >
-                  {submitting ? (
+                  {alreadyApplied ? (
+                    'Already Applied'
+                  ) : submitting ? (
                     <>
                       <Loader2 size={18} className={common.spinner} />
                       Submitting...
