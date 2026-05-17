@@ -23,7 +23,9 @@ from .v1.core_domain import (
     availability_calendar,
     backup_restore,
     blog,
+    branding,
     client,
+    communication,
     community,
     compliance,
     contact,
@@ -92,6 +94,7 @@ from .v1.core_domain import (
     timezone,
     uploads,
     utils,
+    video_calls,
     webhooks,
     workflow_automation,
     workroom,
@@ -102,6 +105,7 @@ from .v1.payments_domain import (
     invoices,
     multicurrency,
     pakistan_payments,
+    payout_methods,
     payments,
     refunds,
     stripe,
@@ -112,6 +116,7 @@ from .v1.projects_domain import (
     categories,
     contracts,
     favorites,
+    freelancers,
     gigs,
     milestones,
     portfolio,
@@ -525,3 +530,15 @@ api_router.include_router(
 api_router.include_router(
     external_projects.router, prefix="", tags=["external-projects"]
 )
+
+# Communication - SMS, email, push notifications
+api_router.include_router(communication.router, prefix="/communication", tags=["communication"])
+
+# Branding - Organization branding and customization
+api_router.include_router(branding.router, prefix="/branding", tags=["branding"])
+
+# Video Calls - Video communication management
+api_router.include_router(video_calls.router, prefix="/video", tags=["video-calls"])
+
+# Payout Methods - Payment withdrawal methods
+api_router.include_router(payout_methods.router, prefix="/payout-methods", tags=["payout-methods"])

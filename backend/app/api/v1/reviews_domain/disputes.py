@@ -129,3 +129,47 @@ async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=D
 
     execute_query(f"UPDATE disputes SET {', '.join(set_parts)} WHERE id = ?", values)
     return {"message": "Dispute updated successfully"}
+
+
+@router.post("/{dispute_id}/assign")
+async def assign_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
+    admin_id = data.get("admin_id")
+    if not admin_id:
+        raise HTTPException(status_code=400, detail="admin_id is required")
+
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE disputes SET assigned_to = ?, status = 'under_review', updated_at = ? WHERE id = ?",
+        [admin_id, now, dispute_id],
+    )
+    return {"message": "Dispute assigned to admin"}
+
+
+@router.post("/{dispute_id}/resolve")
+async def resolve_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
+    resolution = data.get("resolution", "")
+    contract_status = data.get("contract_status")
+
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE disputes SET status = 'resolved', resolution = ?, updated_at = ? WHERE id = ?",
+        [resolution, now, dispute_id],
+    )
+
+    if contract_status:
+        execute_query(
+            "UPDATE contracts SET status = ? WHERE id = (SELECT contract_id FROM disputes WHERE id = ?)",
+            [contract_status, dispute_id],
+        )
+
+    return {"message": "Dispute resolved"}
+
+
+@router.post("/{dispute_id}/evidence")
+async def upload_evidence(dispute_id: int, current_user=Depends(get_current_user)):
+    now = datetime.now(timezone.utc).isoformat()
+    result = execute_query(
+        "INSERT INTO dispute_evidence (dispute_id, user_id, evidence_url, created_at) VALUES (?, ?, ?, ?)",
+        [dispute_id, current_user.id, "/uploads/evidence/evidence_file", now],
+    )
+    return {"message": "Evidence uploaded", "evidence_id": result.get("last_insert_rowid")}

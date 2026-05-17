@@ -124,3 +124,53 @@ async def get_time_summary(
     )
     rows = parse_rows(result)
     return rows[0] if rows else {"total_hours": 0, "total_amount": 0, "entry_count": 0}
+
+
+class TimeEntryStart(BaseModel):
+    contract_id: int
+    description: str
+    billable: bool = True
+    hourly_rate: Optional[float] = None
+
+
+@router.post("/start")
+async def start_time_entry(request: TimeEntryStart, current_user=Depends(get_current_user)):
+    now = datetime.now(timezone.utc)
+    result = execute_query(
+        "INSERT INTO time_entries (contract_id, freelancer_id, date, hours, description, hourly_rate, status, started_at, created_at, updated_at) VALUES (?, ?, ?, 0, ?, ?, 'running', ?, ?, ?)",
+        [request.contract_id, current_user.id, now.strftime("%Y-%m-%d"), request.description, request.hourly_rate, now.isoformat(), now.isoformat(), now.isoformat()],
+    )
+    return {"message": "Timer started", "entry_id": result.get("last_insert_rowid"), "started_at": now.isoformat()}
+
+
+@router.post("/{entry_id}/stop")
+async def stop_time_entry(entry_id: int, current_user=Depends(get_current_user)):
+    now = datetime.now(timezone.utc)
+    result = execute_query(
+        "SELECT started_at, hourly_rate FROM time_entries WHERE id = ? AND freelancer_id = ?",
+        [entry_id, current_user.id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Time entry not found")
+
+    started_at = datetime.fromisoformat(rows[0]["started_at"]) if rows[0].get("started_at") else now
+    hours = (now - started_at).total_seconds() / 3600
+    hourly_rate = rows[0].get("hourly_rate") or 0
+
+    execute_query(
+        "UPDATE time_entries SET hours = ?, status = 'pending', stopped_at = ?, updated_at = ? WHERE id = ?",
+        [round(hours, 2), now.isoformat(), now.isoformat(), entry_id],
+    )
+    return {"message": "Timer stopped", "hours": round(hours, 2), "amount": round(hours * hourly_rate, 2)}
+
+
+@router.post("/{entry_id}/reject")
+async def reject_time_entry(entry_id: int, data: dict, current_user=Depends(get_current_user)):
+    reason = data.get("reason", "")
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE time_entries SET status = 'rejected', rejection_reason = ?, updated_at = ? WHERE id = ?",
+        [reason, now, entry_id],
+    )
+    return {"message": "Time entry rejected"}
