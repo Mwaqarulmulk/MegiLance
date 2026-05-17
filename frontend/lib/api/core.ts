@@ -148,6 +148,19 @@ export function isOnline(): boolean {
   return typeof navigator !== 'undefined' ? navigator.onLine : true;
 }
 
+/** Build URLSearchParams from a filter object, skipping null/undefined values */
+export function buildQueryParams(filters?: Record<string, unknown>): string {
+  if (!filters) return '';
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(filters)) {
+    if (value !== null && value !== undefined && value !== '') {
+      params.set(key, String(value));
+    }
+  }
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
+}
+
 // Request deduplication for identical concurrent GET requests
 const inflightRequests = new Map<string, Promise<unknown>>();
 

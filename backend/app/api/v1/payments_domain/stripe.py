@@ -1,0 +1,160 @@
+# @AI-HINT: Stripe payments router — payment intents, webhooks, checkout sessions
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime, timezone
+import logging
+
+logger = logging.getLogger(__name__)
+
+from app.core.security import get_current_user
+from app.db.turso_http import execute_query, parse_rows
+from app.core.config import get_settings
+
+router = APIRouter()
+
+
+class CreatePaymentIntent(BaseModel):
+    amount: float
+    currency: str = "usd"
+    description: Optional[str] = None
+    contract_id: Optional[int] = None
+
+class CreateCheckoutSession(BaseModel):
+    amount: float
+    currency: str = "usd"
+    success_url: str
+    cancel_url: str
+    description: Optional[str] = None
+
+
+@router.post("/create-payment-intent")
+async def create_payment_intent(request: CreatePaymentIntent, current_user=Depends(get_current_user)):
+    settings = get_settings()
+    if not settings.STRIPE_SECRET_KEY:
+        return {
+            "mode": "mock",
+            "client_secret": f"pi_mock_{current_user.id}_{int(datetime.now(timezone.utc).timestamp())}",
+            "amount": request.amount,
+            "currency": request.currency,
+            "message": "Stripe not configured — using mock payment intent",
+        }
+
+    try:
+        import stripe
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        intent = stripe.PaymentIntent.create(
+            amount=int(request.amount * 100),
+            currency=request.currency,
+            description=request.description or f"Payment by user {current_user.id}",
+            metadata={"user_id": str(current_user.id), "contract_id": str(request.contract_id or "")},
+        )
+        return {
+            "client_secret": intent.client_secret,
+            "payment_intent_id": intent.id,
+            "amount": request.amount,
+            "currency": request.currency,
+        }
+    except Exception as e:
+        logger.error(f"Stripe error: {e}")
+        raise HTTPException(status_code=500, detail=f"Payment processing failed: {str(e)}")
+
+
+@router.post("/create-checkout-session")
+async def create_checkout_session(request: CreateCheckoutSession, current_user=Depends(get_current_user)):
+    settings = get_settings()
+    if not settings.STRIPE_SECRET_KEY:
+        return {
+            "mode": "mock",
+            "url": f"{request.success_url}?session_id=mock_{current_user.id}",
+            "message": "Stripe not configured — using mock checkout",
+        }
+
+    try:
+        import stripe
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": request.currency,
+                    "product_data": {"name": request.description or "Payment"},
+                    "unit_amount": int(request.amount * 100),
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=request.success_url,
+            cancel_url=request.cancel_url,
+            metadata={"user_id": str(current_user.id)},
+        )
+        return {"url": session.url, "session_id": session.id}
+    except Exception as e:
+        logger.error(f"Stripe checkout error: {e}")
+        raise HTTPException(status_code=500, detail=f"Checkout failed: {str(e)}")
+
+
+@router.post("/webhook")
+async def stripe_webhook(request: Request):
+    settings = get_settings()
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+
+    if not settings.STRIPE_WEBHOOK_SECRET or not settings.STRIPE_SECRET_KEY:
+        return {"received": True, "mode": "mock"}
+
+    try:
+        import stripe
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        event = stripe.Webhook.construct_event(payload, sig_header, settings.STRIPE_WEBHOOK_SECRET)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    if event.type == "payment_intent.succeeded":
+        intent = event.data.object
+        user_id = intent.metadata.get("user_id")
+        if user_id:
+            now = datetime.now(timezone.utc).isoformat()
+            execute_query(
+                "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+                [intent.amount / 100, int(user_id)],
+            )
+            execute_query(
+                "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (NULL, ?, 0, ?, ?, 'stripe', 'completed', ?, ?, ?)",
+                [int(user_id), intent.amount / 100, intent.currency, intent.id, now, now],
+            )
+
+    return {"received": True}
+
+
+@router.get("/payment-methods")
+async def list_payment_methods(current_user=Depends(get_current_user)):
+    settings = get_settings()
+    if not settings.STRIPE_SECRET_KEY:
+        return {"payment_methods": []}
+
+    try:
+        import stripe
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        methods = stripe.Customer.list_payment_methods(
+            settings.STRIPE_PUBLISHABLE_KEY or "",
+            type="card",
+        )
+        return {"payment_methods": [{"id": m.id, "brand": m.card.brand, "last4": m.card.last4} for m in methods.data]}
+    except Exception:
+        return {"payment_methods": []}
+
+
+@router.get("/transactions")
+async def list_stripe_transactions(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user=Depends(get_current_user),
+):
+    offset = (page - 1) * page_size
+    result = execute_query(
+        "SELECT p.id, p.amount, p.currency, p.status, p.transaction_id, p.created_at FROM payments p WHERE p.client_id = ? AND p.payment_method = 'stripe' ORDER BY p.created_at DESC LIMIT ? OFFSET ?",
+        [current_user.id, page_size, offset],
+    )
+    rows = parse_rows(result)
+    return {"items": rows if rows else [], "total": len(rows) if rows else 0}

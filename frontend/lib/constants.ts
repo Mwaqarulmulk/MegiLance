@@ -14,60 +14,6 @@ export const AUTH = {
 } as const;
 
 /**
- * API paths
- */
-export const API_PATHS = {
-  AUTH: {
-    LOGIN: '/api/auth/login',
-    REGISTER: '/api/auth/register',
-    ME: '/api/auth/me',
-    REFRESH: '/api/auth/refresh',
-    LOGOUT: '/api/auth/logout',
-    FORGOT_PASSWORD: '/api/auth/forgot-password',
-    RESET_PASSWORD: '/api/auth/reset-password',
-  },
-  PROJECTS: '/api/projects',
-  PROPOSALS: '/api/proposals',
-  CONTRACTS: '/api/contracts',
-  PAYMENTS: '/api/payments',
-  MESSAGES: '/api/messages',
-  USERS: '/api/users',
-  REVIEWS: '/api/reviews',
-  NOTIFICATIONS: '/api/notifications',
-  SEARCH: '/api/search',
-  AI: '/api/ai',
-} as const;
-
-/**
- * Route paths (for navigation)
- */
-export const ROUTES = {
-  HOME: '/',
-  LOGIN: '/login',
-  SIGNUP: '/signup',
-  FORGOT_PASSWORD: '/forgot-password',
-  
-  // Portal routes (protected)
-  CLIENT_DASHBOARD: '/client/dashboard',
-  FREELANCER_DASHBOARD: '/freelancer/dashboard',
-  ADMIN_DASHBOARD: '/admin/dashboard',
-  MESSAGES: '/messages',
-  SETTINGS: '/settings',
-  
-  // Public routes
-  JOBS: '/jobs',
-  FREELANCERS: '/freelancers',
-  PRICING: '/pricing',
-  ABOUT: '/about',
-  CONTACT: '/contact',
-  HOW_IT_WORKS: '/how-it-works',
-  FAQ: '/faq',
-  BLOG: '/blog',
-  HIRE: '/hire',
-  TALENT: '/talent',
-} as const;
-
-/**
  * User roles
  */
 export const USER_ROLES = {

@@ -59,7 +59,6 @@ const Typography = <C extends React.ElementType = 'p'>({
   const { resolvedTheme } = useTheme();
   
   const Component = as || variantToElement[variant] || 'p';
-  const MotionComponent = animate ? motion.create(Component) : Component;
   
   // Theme check (hydration)
   const [mounted, setMounted] = React.useState(false);
@@ -78,19 +77,15 @@ const Typography = <C extends React.ElementType = 'p'>({
     className
   );
 
-  return (
-    <MotionComponent
-      className={classes}
-      {...(animate ? {
-        initial: { opacity: 0, y: 10 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.3 }
-      } : {})}
-      {...props}
-    >
-      {children}
-    </MotionComponent>
-  );
+  if (animate) {
+    return (
+      <motion.div className={classes} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+        {children}
+      </motion.div>
+    );
+  }
+
+  return React.createElement(Component, { className: classes, ...props }, children);
 };
 
 export default Typography;

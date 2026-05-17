@@ -96,8 +96,16 @@ const nextConfig = {
       'chart.js',
       'react-chartjs-2',
       'zod',
+      'lottie-react',
+      'react-icons',
+      'react-hook-form',
+      '@hookform/resolvers',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-select',
+      '@radix-ui/react-popover',
       '@radix-ui/react-slider',
       '@radix-ui/react-slot',
+      '@radix-ui/react-tooltip',
       'class-variance-authority',
       'clsx',
       'tailwind-merge',
@@ -107,6 +115,10 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Faster scroll restoration
+    scrollRestoration: true,
+    // Optimize server-side React rendering
+    optimizeServerReact: true,
   },
   
   turbopack: {

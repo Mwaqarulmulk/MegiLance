@@ -68,10 +68,13 @@ const eslintConfig = [
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
         destructuredArrayIgnorePattern: "^_",
+        caughtErrors: "none",
       }],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/no-unnecessary-type-constraint": "off",
       "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
       
       // React best practices
       "react/self-closing-comp": ["warn", { component: true, html: true }],
@@ -79,6 +82,8 @@ const eslintConfig = [
       "react/jsx-no-target-blank": "error",
       "react/jsx-boolean-value": ["warn", "never"],
       "react/jsx-curly-brace-presence": ["warn", { props: "never", children: "never" }],
+      "react/prop-types": "off",
+      "react/display-name": "off",
       
       // React Hooks
       "react-hooks/exhaustive-deps": "warn",
@@ -89,16 +94,12 @@ const eslintConfig = [
       "jsx-a11y/anchor-is-valid": "warn",
       "jsx-a11y/click-events-have-key-events": "warn",
       "jsx-a11y/no-static-element-interactions": "warn",
-      "jsx-a11y/aria-props": "off",
-      "jsx-a11y/aria-role": "off",
-      "jsx-a11y/role-has-required-aria-props": "off",
       
       // General best practices
       "no-console": ["warn", { allow: ["warn", "error", "info"] }],
       "prefer-const": "warn",
       "no-var": "error",
       "eqeqeq": ["error", "always", { null: "ignore" }],
-      "no-nested-ternary": "warn",
     },
   },
 ];

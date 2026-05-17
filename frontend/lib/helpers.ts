@@ -1,6 +1,8 @@
 // @AI-HINT: Type-safe fetch utilities following Next.js App Router patterns
 // Includes error handling, request deduplication hints, and proper typing
 
+export { formatCurrency } from './utils';
+
 /**
  * Custom error class for API errors with status codes
  */
@@ -113,22 +115,6 @@ export function formatRelativeTime(date: string | Date): string {
   if (diffHr < 24) return `${diffHr}h ago`;
   if (diffDay < 7) return `${diffDay}d ago`;
   return formatDate(d);
-}
-
-/**
- * Format currency values
- */
-export function formatCurrency(
-  amount: number, 
-  currency = 'USD',
-  locale = 'en-US'
-): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
 }
 
 /**

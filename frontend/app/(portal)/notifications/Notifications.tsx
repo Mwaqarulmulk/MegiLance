@@ -231,7 +231,7 @@ export default function Notifications() {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { type: "spring", stiffness: 350, damping: 25 },
+      transition: { type: 'spring', stiffness: 350, damping: 25 } as const,
     },
     exit: { opacity: 0, x: -10, scale: 0.95, transition: { duration: 0.2 } },
   };

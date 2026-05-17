@@ -35,8 +35,62 @@
   *::before,
   *::after {
     animation-duration: var(--motion-duration, 0.01ms);
+    animation-iteration-count: 1;
     transition-duration: var(--motion-duration, 0.01ms);
   }
+}
+
+/* ============================================= */
+/*   FOCUS VISIBLE - accessible focus rings      */
+/* ============================================= */
+:focus-visible {
+  outline: 2px solid var(--ml-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus outlines for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================= */
+/*   SCROLLBAR STYLING (Webkit)                  */
+/* ============================================= */
+@media (hover: hover) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary-light);
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: var(--border-dark);
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary-dark);
+  }
+}
+
+/* ============================================= */
+/*   COLOR SCHEME FOR NATIVE CONTROLS           */
+/* ============================================= */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+/* ============================================= */
+/*   SCROLLBAR GUTTER - prevents layout shift    */
+/* ============================================= */
+html {
+  scrollbar-gutter: stable;
 }
 
 /* ============================================= */
