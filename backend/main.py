@@ -518,6 +518,16 @@ def api_root():
     }
 
 
+@app.get("/api/v1/health")
+@app.head("/api/v1/health")
+@app.get("/health")
+@app.head("/health")
+@app.get("/")
+@app.head("/")
+async def do_health_check():
+    return {"status": "ok"}
+
+
 @app.get("/api/v1/health/live")
 def health_live():
     return {
