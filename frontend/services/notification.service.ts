@@ -14,7 +14,7 @@ export interface Notification {
 
 export async function fetchNotifications(page = 1, pageSize = 20) {
   try {
-    const res = await api.notifications.list({ page, page_size: pageSize });
+    const res = await api.notifications.list(page, pageSize);
     return {
       items: unwrapResponse<Notification>(res),
       total: getTotalCount(res),
@@ -26,7 +26,7 @@ export async function fetchNotifications(page = 1, pageSize = 20) {
 
 export async function markNotificationRead(id: string | number) {
   try {
-    await api.notifications.markRead(id);
+    await api.notifications.markAsRead(id);
     return true;
   } catch {
     return false;
@@ -35,7 +35,7 @@ export async function markNotificationRead(id: string | number) {
 
 export async function markAllNotificationsRead() {
   try {
-    await api.notifications.markAllRead();
+    await api.notifications.markAllAsRead();
     return true;
   } catch {
     return false;

@@ -12,8 +12,8 @@ export interface ProjectFilters {
 
 export async function fetchMyProjects(filters?: ProjectFilters) {
   try {
-    const res = await api.projects.getMyProjects(filters);
-    return unwrapResponse(res, 'projects');
+    const res = await api.projects.list(filters);
+    return unwrapResponse(res, 'items');
   } catch (err) {
     throw new Error(errorToString(err, 'Failed to fetch projects'));
   }
@@ -27,7 +27,18 @@ export async function fetchProjectById(id: ResourceId) {
   }
 }
 
-export async function createProject(data: Record<string, unknown>) {
+export async function createProject(data: {
+  title: string;
+  description: string;
+  category: string;
+  budget_type?: string;
+  budget_min?: number;
+  budget_max?: number;
+  experience_level?: string;
+  estimated_duration?: string;
+  skills?: string[];
+  status?: string;
+}) {
   try {
     return await api.projects.create(data);
   } catch (err) {

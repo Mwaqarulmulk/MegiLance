@@ -1,4 +1,5 @@
 import api, { ResourceId } from '@/lib/api';
+import { uploadsApi } from '@/lib/api';
 import { errorToString } from './base.service';
 
 export interface ProfileData {
@@ -31,9 +32,7 @@ export async function updateProfile(data: ProfileData) {
 
 export async function uploadAvatar(file: File) {
   try {
-    const formData = new FormData();
-    formData.append('avatar', file);
-    return await api.users.updateAvatar(formData);
+    return await api.uploads.upload('avatar', file);
   } catch (err) {
     throw new Error(errorToString(err, 'Failed to upload avatar'));
   }

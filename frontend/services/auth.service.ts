@@ -35,6 +35,7 @@ interface UserApiResponse {
   title?: string;
   is_verified?: boolean;
   email_verified?: boolean;
+  notification_count?: number;
   joined_at?: string;
   profile_completed?: boolean;
 }
@@ -95,7 +96,7 @@ export function normalizeCurrentUser(userData: UserApiResponse): CurrentUser {
     avatar: userData.profile_image_url || userData.avatar_url || '/images/avatars/avatar-1.png',
     profile_image_url: userData.profile_image_url,
     user_type: userData.role || userData.user_type || 'client',
-    notificationCount: userData.notification_count || 0,
+    notificationCount: (userData as any).notification_count || 0,
   };
 }
 
