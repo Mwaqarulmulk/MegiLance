@@ -33,7 +33,7 @@ from app.services.auth_service import (
     update_backup_codes,
     check_email_available,
 )
-from app.services.email_service import send_email
+from app.services.email_service import email_service
 from app.db.turso_http import execute_query as eq, parse_rows as pr
 
 router = APIRouter()
@@ -431,7 +431,7 @@ async def forgot_password(request: PasswordResetRequest):
     })
 
     try:
-        send_email(
+        email_service.send_email(
             to_email=request.email,
             subject="Password Reset — MegiLance",
             template_name="password_reset",
@@ -527,7 +527,7 @@ async def resend_verification(request: Request):
     })
 
     try:
-        send_email(
+        email_service.send_email(
             to_email=email,
             subject="Verify Your Email — MegiLance",
             template_name="email_verification",

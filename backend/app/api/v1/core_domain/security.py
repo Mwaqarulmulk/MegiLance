@@ -1,5 +1,5 @@
 # @AI-HINT: Security router — advanced security features (MFA, sessions, password change)
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Query
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
