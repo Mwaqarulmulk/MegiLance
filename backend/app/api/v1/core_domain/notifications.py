@@ -99,10 +99,33 @@ async def mark_read(notification_id: int, current_user=Depends(get_current_user)
     return {"message": "Notification marked as read"}
 
 
+@router.put("/{notification_id}")
+async def update_notification(notification_id: int, current_user=Depends(get_current_user)):
+    result = execute_query(
+        "SELECT id FROM notifications WHERE id = ? AND user_id = ?",
+        [notification_id, current_user.id],
+    )
+    if not parse_rows(result):
+        raise HTTPException(status_code=404, detail="Notification not found")
+
+    execute_query("UPDATE notifications SET is_read = 1 WHERE id = ?", [notification_id])
+    return {"message": "Notification marked as read"}
+
+
 @router.post("/mark-all-read")
 async def mark_all_read(current_user=Depends(get_current_user)):
     execute_query("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0", [current_user.id])
     return {"message": "All notifications marked as read"}
+
+
+@router.get("/unread/count")
+async def unread_count(current_user=Depends(get_current_user)):
+    result = execute_query(
+        "SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0",
+        [current_user.id],
+    )
+    rows = parse_rows(result)
+    return {"unread_count": rows[0]["count"] if rows else 0}
 
 
 @router.delete("/{notification_id}")

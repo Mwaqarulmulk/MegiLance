@@ -145,19 +145,53 @@ async def complete_contract(contract_id: str, request: ContractComplete, current
     return {"message": "Contract completed successfully"}
 
 
-@router.post("/{contract_id}/cancel")
-async def cancel_contract(contract_id: str, current_user=Depends(get_current_user)):
+class ContractDirectCreate(BaseModel):
+    freelancer_id: int
+    title: str
+    description: str
+    rate_type: str = "fixed"
+    rate: float
+    start_date: Optional[str] = None
+
+
+@router.post("/direct")
+async def create_direct_contract(request: ContractDirectCreate, current_user=Depends(get_current_user)):
+    now = datetime.now(timezone.utc).isoformat()
+
+    freelancer_result = execute_query(
+        "SELECT id, name FROM users WHERE id = ? AND user_type = 'freelancer'",
+        [request.freelancer_id],
+    )
+    if not parse_rows(freelancer_result):
+        raise HTTPException(status_code=404, detail="Freelancer not found")
+
+    result = execute_query(
+        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_type,
+                  currency, description, terms, milestones, status, start_date, end_date,
+                  created_at, updated_at)
+           VALUES (NULL, ?, ?, ?, ?, 'USD', ?, '', '', 'pending', ?, NULL, ?, ?)""",
+        [
+            request.freelancer_id, current_user.id, request.rate,
+            request.rate_type, request.description,
+            request.start_date or now, now, now,
+        ],
+    )
+
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to create contract")
+
+    return {"message": "Direct contract created successfully", "contract_id": result.get("last_insert_rowid")}
+
+
+@router.delete("/{contract_id}")
+async def delete_contract(contract_id: str, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")
 
     contract = contract_from_row(raw_row)
     if contract["client_id"] != current_user.id:
-        raise HTTPException(status_code=403, detail="Only the client can cancel")
+        raise HTTPException(status_code=403, detail="Only the client can delete")
 
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE contracts SET status = 'cancelled', updated_at = ? WHERE id = ?",
-        [now, contract_id],
-    )
-    return {"message": "Contract cancelled successfully"}
+    execute_query("DELETE FROM contracts WHERE id = ?", [contract_id])
+    return {"message": "Contract deleted successfully"}

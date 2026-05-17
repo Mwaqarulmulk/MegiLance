@@ -34,6 +34,7 @@ from app.services.auth_service import (
     check_email_available,
 )
 from app.services.email_service import send_email
+from app.db.turso_http import execute_query as eq, parse_rows as pr
 
 router = APIRouter()
 
@@ -48,7 +49,8 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
     name: str
-    user_type: str = "client"
+    role: str = "client"
+    user_type: Optional[str] = None
     bio: str = ""
     skills: str = ""
     hourly_rate: float = 0
@@ -63,10 +65,12 @@ class PasswordResetConfirm(BaseModel):
     new_password: str
 
 class TwoFactorVerify(BaseModel):
-    code: str
+    token: str
+    temp_token: Optional[str] = None
+    is_backup_code: bool = False
 
 class TwoFactorSetup(BaseModel):
-    password: str
+    password: Optional[str] = None
 
 class EmailVerifyRequest(BaseModel):
     token: str
@@ -131,9 +135,10 @@ async def register(request: RegisterRequest):
 
     hashed_password = get_password_hash(request.password)
     now = datetime.now(timezone.utc).isoformat()
+    user_type = request.user_type or request.role
 
     profile_data = {
-        "user_type": request.user_type,
+        "user_type": user_type,
         "headline": "",
         "experience_level": "",
         "languages": "",
@@ -146,7 +151,7 @@ async def register(request: RegisterRequest):
         hashed_password=hashed_password,
         is_active=True,
         name=request.name,
-        user_type=request.user_type,
+        user_type=user_type,
         bio=request.bio,
         skills=request.skills,
         hourly_rate=request.hourly_rate,
@@ -334,8 +339,22 @@ async def logout(request: Request, current_user=Depends(get_current_user)):
 
 @router.post("/refresh")
 async def refresh_token(request: Request):
-    body = await request.json()
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+
     token = body.get("refresh_token")
+
+    if not token:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header[7:]
+
+    if not token:
+        cookie_token = request.cookies.get("refresh_token")
+        if cookie_token:
+            token = cookie_token
 
     if not token:
         raise HTTPException(
@@ -484,8 +503,14 @@ async def verify_email(request: EmailVerifyRequest):
 
 @router.post("/resend-verification")
 async def resend_verification(request: Request):
-    body = await request.json()
-    email = body.get("email")
+    try:
+        body = await request.json()
+        email = body.get("email") if body else None
+    except Exception:
+        email = None
+
+    if not email:
+        return {"message": "Email required in request body"}
 
     user = auth_get_user_by_email(email)
     if not user:
@@ -520,13 +545,7 @@ async def resend_verification(request: Request):
 # === 2FA Setup ===
 
 @router.post("/2fa/setup")
-async def setup_2fa(request: TwoFactorSetup, current_user=Depends(get_current_user)):
-    if not verify_password(request.password, current_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect password",
-        )
-
+async def setup_2fa(request: TwoFactorSetup = None, current_user=Depends(get_current_user)):
     secret = pyotp.random_base32()
     totp = pyotp.TOTP(secret)
     provisioning_uri = totp.provisioning_uri(current_user.email, issuer_name="MegiLance")
@@ -542,6 +561,8 @@ async def setup_2fa(request: TwoFactorSetup, current_user=Depends(get_current_us
     return {
         "secret": secret,
         "uri": provisioning_uri,
+        "qr_uri": provisioning_uri,
+        "qr_code_url": provisioning_uri,
         "backup_codes": backup_codes,
     }
 
@@ -550,24 +571,14 @@ async def setup_2fa(request: TwoFactorSetup, current_user=Depends(get_current_us
 
 @router.post("/2fa/enable")
 async def enable_2fa(request: TwoFactorVerify, current_user=Depends(get_current_user)):
-    secret = current_user.profile_data
-    if isinstance(secret, str):
-        import json
-        try:
-            secret = json.loads(secret)
-        except Exception:
-            secret = {}
+    from app.db.turso_http import execute_query as eq2, parse_rows as pr2
 
-    two_factor_secret = None
-    if isinstance(secret, dict):
-        two_factor_secret = secret.get("two_factor_secret")
+    result = eq2("SELECT two_factor_secret FROM users WHERE id = ?", [current_user.id])
+    rows = pr2(result)
+    if not rows:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-    if not two_factor_secret:
-        result = eq("SELECT two_factor_secret FROM users WHERE id = ?", [current_user.id])
-        rows = pr(result)
-        if rows:
-            two_factor_secret = rows[0].get("two_factor_secret")
-
+    two_factor_secret = rows[0].get("two_factor_secret")
     if not two_factor_secret:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -575,7 +586,7 @@ async def enable_2fa(request: TwoFactorVerify, current_user=Depends(get_current_
         )
 
     totp = pyotp.TOTP(two_factor_secret)
-    if not totp.verify(request.code):
+    if not totp.verify(request.token):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid 2FA code",
@@ -583,15 +594,18 @@ async def enable_2fa(request: TwoFactorVerify, current_user=Depends(get_current_
 
     update_user_fields(current_user.id, {"two_factor_enabled": 1})
 
-    return {"message": "2FA enabled successfully"}
+    return {
+        "message": "2FA enabled successfully",
+        "secret": two_factor_secret,
+        "qr_code_url": "",
+        "backup_codes": [],
+    }
 
 
 # === 2FA Verify ===
 
 @router.post("/2fa/verify")
 async def verify_2fa(request: TwoFactorVerify, current_user=Depends(get_current_user)):
-    from app.db.turso_http import execute_query as eq, parse_rows as pr
-
     result = eq("SELECT two_factor_secret, two_factor_backup_codes FROM users WHERE id = ?", [current_user.id])
     rows = pr(result)
     if not rows:
@@ -601,21 +615,22 @@ async def verify_2fa(request: TwoFactorVerify, current_user=Depends(get_current_
     secret = user_row.get("two_factor_secret")
 
     totp = pyotp.TOTP(secret)
-    if totp.verify(request.code):
+    if totp.verify(request.token):
         return {"valid": True, "message": "2FA code verified"}
 
-    backup_codes = user_row.get("two_factor_backup_codes", "[]")
-    if isinstance(backup_codes, str):
-        import json
-        try:
-            backup_codes = json.loads(backup_codes)
-        except Exception:
-            backup_codes = []
+    if request.is_backup_code:
+        backup_codes = user_row.get("two_factor_backup_codes", "[]")
+        if isinstance(backup_codes, str):
+            import json
+            try:
+                backup_codes = json.loads(backup_codes)
+            except Exception:
+                backup_codes = []
 
-    if request.code in backup_codes:
-        backup_codes.remove(request.code)
-        update_backup_codes(current_user.id, str(backup_codes))
-        return {"valid": True, "message": "Backup code used"}
+        if request.token in backup_codes:
+            backup_codes.remove(request.token)
+            update_backup_codes(current_user.id, str(backup_codes))
+            return {"valid": True, "message": "Backup code used"}
 
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
@@ -627,8 +642,6 @@ async def verify_2fa(request: TwoFactorVerify, current_user=Depends(get_current_
 
 @router.post("/2fa/disable")
 async def disable_2fa(request: TwoFactorVerify, current_user=Depends(get_current_user)):
-    from app.db.turso_http import execute_query as eq, parse_rows as pr
-
     result = eq("SELECT two_factor_secret FROM users WHERE id = ?", [current_user.id])
     rows = pr(result)
     if not rows:
@@ -637,7 +650,7 @@ async def disable_2fa(request: TwoFactorVerify, current_user=Depends(get_current
     secret = rows[0].get("two_factor_secret")
     totp = pyotp.TOTP(secret)
 
-    if not totp.verify(request.code):
+    if not totp.verify(request.token):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid 2FA code",

@@ -23,7 +23,9 @@ class ProjectCreate(BaseModel):
     budget_max: Optional[float] = None
     skills: Optional[str] = None
     duration: Optional[str] = None
+    estimated_duration: Optional[str] = None
     experience_level: Optional[str] = None
+    status: Optional[str] = None
 
 class ProjectUpdate(BaseModel):
     title: Optional[str] = None
@@ -152,14 +154,19 @@ async def get_project(project_id: str):
 @router.post("/")
 async def create_project(request: ProjectCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
+
+    skills_str = request.skills
+    if isinstance(skills_str, list):
+        skills_str = ",".join(skills_str)
+
     result = execute_query(
         """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
                   skills, duration, experience_level, status, client_id, created_at, updated_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, ?)""",
         [
             request.title, request.description, request.category, request.budget_type,
-            request.budget_min or 0, request.budget_max or 0, request.skills or "",
-            request.duration or "", request.experience_level or "",
+            request.budget_min or 0, request.budget_max or 0, skills_str or "",
+            request.duration or request.estimated_duration or "", request.experience_level or "",
             current_user.id, now, now,
         ],
     )

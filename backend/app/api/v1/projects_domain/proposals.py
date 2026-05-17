@@ -197,3 +197,54 @@ async def reject_proposal(proposal_id: int, current_user=Depends(get_current_use
         [now, proposal_id],
     )
     return {"message": "Proposal rejected successfully"}
+
+
+@router.get("/drafts")
+async def get_draft_proposals(
+    project_id: Optional[int] = Query(None),
+    current_user=Depends(get_current_user),
+):
+    drafts = get_draft_proposals(current_user.id, project_id)
+    return {"items": drafts, "total": len(drafts)}
+
+
+@router.get("/project/{project_id}")
+async def get_proposals_by_project(project_id: int, current_user=Depends(get_current_user)):
+    proposals = list_proposals(
+        user_id=current_user.id,
+        user_type=current_user.user_type,
+        project_id=project_id,
+    )
+    return {"items": proposals, "total": len(proposals)}
+
+
+@router.post("/draft")
+async def save_draft_proposal(request: ProposalCreate, current_user=Depends(get_current_user)):
+    if not project_exists(request.project_id):
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    proposal_data = request.model_dump()
+    proposal_data["is_draft"] = True
+
+    proposal = create_draft_proposal(current_user.id, proposal_data)
+    if not proposal:
+        raise HTTPException(status_code=500, detail="Failed to save draft")
+
+    return {"message": "Draft saved successfully", "proposal": proposal}
+
+
+@router.post("/{proposal_id}/withdraw")
+async def withdraw_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+    proposal = get_proposal_raw(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found")
+
+    if proposal["freelancer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE proposals SET status = 'withdrawn', updated_at = ? WHERE id = ?",
+        [now, proposal_id],
+    )
+    return {"message": "Proposal withdrawn successfully"}

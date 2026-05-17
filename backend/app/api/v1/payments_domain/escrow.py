@@ -79,11 +79,23 @@ async def fund_escrow(request: EscrowFund, current_user=Depends(get_current_user
     return {"message": "Escrow funded successfully", "escrow": escrow}
 
 
-@router.post("/release")
-async def release_escrow(request: EscrowRelease, current_user=Depends(get_current_user)):
+@router.get("/{escrow_id}")
+async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
+    result = execute_query(
+        "SELECT e.id, e.contract_id, e.client_id, e.amount, e.released_amount, e.status, e.expires_at, e.notes, e.created_at, e.updated_at FROM escrow e WHERE e.id = ? AND (e.client_id = ? OR EXISTS (SELECT 1 FROM contracts c WHERE c.id = e.contract_id AND c.freelancer_id = ?))",
+        [escrow_id, current_user.id, current_user.id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Escrow not found")
+    return rows[0]
+
+
+@router.post("/{escrow_id}/release")
+async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, contract_id, client_id, amount, released_amount, status FROM escrow WHERE id = ?",
-        [request.escrow_id],
+        [escrow_id],
     )
     rows = parse_rows(result)
     if not rows:
@@ -107,10 +119,43 @@ async def release_escrow(request: EscrowRelease, current_user=Depends(get_curren
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE escrow SET released_amount = released_amount + ?, status = 'released', notes = ?, updated_at = ? WHERE id = ?",
-        [release_amount, request.notes or "", now, request.escrow_id],
+        [release_amount, request.notes or "", now, escrow_id],
     )
 
     freelancer_balance = get_user_balance(parties["freelancer_id"])
     update_user_balance(parties["freelancer_id"], freelancer_balance + release_amount)
 
     return {"message": "Escrow released successfully", "amount": release_amount}
+
+
+@router.post("/{escrow_id}/refund")
+async def refund_escrow(escrow_id: int, current_user=Depends(get_current_user)):
+    result = execute_query(
+        "SELECT id, contract_id, client_id, amount, released_amount, status FROM escrow WHERE id = ?",
+        [escrow_id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Escrow not found")
+
+    escrow = rows[0]
+    if escrow["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the client can refund escrow")
+
+    if escrow["status"] != "funded":
+        raise HTTPException(status_code=400, detail="Escrow is not funded")
+
+    refund_amount = escrow["amount"] - escrow["released_amount"]
+    if refund_amount <= 0:
+        raise HTTPException(status_code=400, detail="No amount to refund")
+
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE escrow SET status = 'refunded', updated_at = ? WHERE id = ?",
+        [now, escrow_id],
+    )
+
+    client_balance = get_user_balance(current_user.id)
+    update_user_balance(current_user.id, client_balance + refund_amount)
+
+    return {"message": "Escrow refunded successfully", "amount": refund_amount}

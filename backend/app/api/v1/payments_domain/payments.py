@@ -21,6 +21,15 @@ class PaymentCreate(BaseModel):
     currency: str = "USD"
     description: Optional[str] = None
 
+class AddFundsRequest(BaseModel):
+    amount: float
+    method: str = "stripe"
+
+class PaymentIntentRequest(BaseModel):
+    amount: float
+    currency: str = "USD"
+    description: Optional[str] = None
+
 
 @router.get("/")
 async def list_payments(
@@ -123,3 +132,26 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
         [now, payment_id],
     )
     return {"message": "Payment completed"}
+
+
+@router.post("/add-funds")
+async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_user)):
+    if request.amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive")
+
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+        [request.amount, current_user.id],
+    )
+    return {"message": "Funds added successfully", "amount": request.amount}
+
+
+@router.post("/create-payment-intent")
+async def create_payment_intent(request: PaymentIntentRequest, current_user=Depends(get_current_user)):
+    return {
+        "client_secret": f"pi_{current_user.id}_{int(datetime.now(timezone.utc).timestamp())}",
+        "amount": request.amount,
+        "currency": request.currency,
+        "status": "requires_payment_method",
+    }

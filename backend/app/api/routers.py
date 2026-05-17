@@ -166,7 +166,7 @@ api_router.include_router(wallet.router, prefix="/wallet", tags=["wallet"])
 # Time tracking, invoices, and escrow
 api_router.include_router(time_entries.router, prefix="", tags=["time-tracking"])
 api_router.include_router(invoices.router, prefix="", tags=["invoices"])
-api_router.include_router(escrow.router, prefix="", tags=["escrow"])
+api_router.include_router(escrow.router, prefix="/escrow", tags=["escrow"])
 
 # Categories, tags, and favorites
 api_router.include_router(categories.router, prefix="", tags=["categories"])
@@ -174,7 +174,7 @@ api_router.include_router(tags.router, prefix="", tags=["tags"])
 api_router.include_router(favorites.router, prefix="", tags=["favorites"])
 
 # Support and refunds
-api_router.include_router(support_tickets.router, prefix="", tags=["support"])
+api_router.include_router(support_tickets.router, prefix="/support-tickets", tags=["support"])
 api_router.include_router(refunds.router, prefix="", tags=["refunds"])
 
 # Search functionality
