@@ -55,20 +55,25 @@ export const messagesApi = {
 };
 
 export const notificationsApi = {
-  list: (page = 1, pageSize = 20) =>
-    apiFetch(`/notifications?page=${page}&page_size=${pageSize}`),
+  list: (page = 1, pageSize = 20, unread_only = false) =>
+    apiFetch(`/notifications?page=${page}&page_size=${pageSize}&unread_only=${unread_only}`),
 
   markAsRead: (notificationId: ResourceId) =>
-    apiFetch(`/notifications/${notificationId}`, { 
-      method: 'PATCH', 
-      body: JSON.stringify({ is_read: true }) 
-    }),
+    apiFetch(`/notifications/${notificationId}/read`, { method: 'POST' }),
 
   markAllAsRead: () =>
     apiFetch('/notifications/mark-all-read', { method: 'POST' }),
 
   delete: (notificationId: ResourceId) =>
     apiFetch(`/notifications/${notificationId}`, { method: 'DELETE' }),
+
+  getPreferences: () => apiFetch('/notifications/preferences'),
+
+  updatePreferences: (preferences: Record<string, unknown>) =>
+    apiFetch('/notifications/preferences', {
+      method: 'PUT',
+      body: JSON.stringify(preferences),
+    }),
 };
 
 export const communicationApi = {
