@@ -137,7 +137,7 @@ export const portalApi = {
       project_id: number;
       cover_letter: string;
       bid_amount: number;
-      estimated_hours: number;
+      delivery_time: number;
     }) => {
       return apiFetch(`/portal/freelancer/proposals`, {
         method: "POST",

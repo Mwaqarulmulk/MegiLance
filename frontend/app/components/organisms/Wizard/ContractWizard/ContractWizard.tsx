@@ -250,9 +250,21 @@ const ContractWizard: React.FC<ContractWizardProps> = ({
 
     setSubmitting(true);
     try {
+      // Validate required fields before submission
+      if (!contractData.projectId) {
+        showToast('Project ID is required. Please select a project.', 'error');
+        setSubmitting(false);
+        return;
+      }
+      if (!contractData.freelancerId) {
+        showToast('Freelancer ID is required. Please select a freelancer.', 'error');
+        setSubmitting(false);
+        return;
+      }
+
       const payload = {
-        project_id: contractData.projectId ? parseInt(contractData.projectId) : undefined,
-        freelancer_id: contractData.freelancerId ? parseInt(contractData.freelancerId) : undefined,
+        project_id: parseInt(contractData.projectId),
+        freelancer_id: parseInt(contractData.freelancerId),
         contract_type: contractData.paymentType,
         amount: contractData.paymentType === 'fixed' 
             ? parseFloat(contractData.totalAmount) 

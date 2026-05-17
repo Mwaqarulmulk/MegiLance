@@ -109,7 +109,16 @@ function AuthCallbackPage() {
               setStatus("success");
               setMessage("Account created! Let\u2019s set up your role...");
               showToast("Welcome to MegiLance!", "success");
-              setTimeout(() => router.push("/onboarding?role=client"), 800);
+              // Use stored role from signup flow, fallback to client
+              const storedRole = localStorage.getItem("portal_area");
+              const onboardRole = storedRole || "client";
+              setTimeout(() => {
+                if (onboardRole === "client") {
+                  router.push("/onboarding/client");
+                } else {
+                  router.push(`/onboarding?role=${onboardRole}`);
+                }
+              }, 800);
               return;
             }
 

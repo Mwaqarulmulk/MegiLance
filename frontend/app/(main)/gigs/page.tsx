@@ -1,13 +1,24 @@
-// @AI-HINT: Gigs directory - predefined services
+// @AI-HINT: Gigs directory - fetches real gigs from backend API
 import React, { Suspense } from 'react';
+import Link from 'next/link';
+import { Star, Clock } from 'lucide-react';
 import commonStyles from './Gigs.common.module.css';
+import lightStyles from './Gigs.light.module.css';
+import darkStyles from './Gigs.dark.module.css';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 async function fetchGigs() {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return [
-    { id: '1', title: 'I will design a modern Next.js landing page', price: '$150', delivery: '3 Days', author: 'Sarah Design', rating: 5.0, reviews: 34, image: '🎨' },
-    { id: '2', title: 'I will setup your Turso libSQL database', price: '$80', delivery: '1 Day', author: 'Alex Developer', rating: 4.8, reviews: 12, image: '🗄️' },
-  ];
+  try {
+    const res = await fetch(`${API_URL}/api/v1/gigs?status=published&page=1&page_size=20`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.items || data.gigs || data || [];
+  } catch {
+    return [];
+  }
 }
 
 export default async function GigsPage() {
@@ -29,27 +40,45 @@ export default async function GigsPage() {
 
 async function GigList() {
   const gigs = await fetchGigs();
-  if (gigs.length === 0) return <div className={commonStyles.empty}>No gigs found.</div>;
+  if (gigs.length === 0) {
+    return (
+      <div className={commonStyles.empty}>
+        <p>No gigs available yet. Check back soon or <Link href="/freelancers">browse freelancers</Link>.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className={commonStyles.grid} style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-      {gigs.map(g => (
-        <article key={g.id} className={commonStyles.card} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ height: '160px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>
-            {g.image}
+    <div className={commonStyles.grid}>
+      {gigs.map((g: any) => (
+        <Link key={g.id} href={`/gigs/${g.slug || g.id}`} className={commonStyles.card}>
+          <div className={commonStyles.cardImage}>
+            {g.thumbnail_url ? (
+              <img src={g.thumbnail_url} alt={g.title} className={commonStyles.cardImage} />
+            ) : (
+              <div className={commonStyles.cardImagePlaceholder}>{g.title.charAt(0).toUpperCase()}</div>
+            )}
           </div>
-          <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', flexGrow: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#64748b' }}>{g.author}</span>
-              <span style={{ fontSize: '0.875rem' }}>⭐ {g.rating} ({g.reviews})</span>
+          <div className={commonStyles.cardBody}>
+            <div className={commonStyles.cardMeta}>
+              <span className={commonStyles.cardAuthor}>{g.seller_name || g.seller?.name || 'Freelancer'}</span>
+              <span className={commonStyles.cardRating}>
+                <Star size={14} className={commonStyles.starIcon} />
+                {g.rating || 0} ({g.review_count || 0})
+              </span>
             </div>
-            <h3 style={{ margin: 0, fontSize: '1.125rem', lineHeight: 1.4 }}>{g.title}</h3>
-            <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9' }}>
-              <span style={{ fontWeight: 'bold', fontSize:'1.25rem' }}>{g.price}</span>
-              <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{g.delivery}</span>
+            <h3 className={commonStyles.cardTitle}>{g.title}</h3>
+            <div className={commonStyles.cardFooter}>
+              <span className={commonStyles.cardPrice}>
+                ${g.basic_price || g.price || g.packages?.basic?.price || 0}
+              </span>
+              <span className={commonStyles.cardDelivery}>
+                <Clock size={14} />
+                {g.basic_delivery_days || g.delivery_days || g.packages?.basic?.delivery_days || '?'} days
+              </span>
             </div>
           </div>
-        </article>
+        </Link>
       ))}
     </div>
   );

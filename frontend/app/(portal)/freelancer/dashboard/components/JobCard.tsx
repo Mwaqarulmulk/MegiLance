@@ -95,7 +95,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
               : "N/A"}
           </span>
         </div>
-        <Link href={`/jobs/${job.id}`}>
+        <Link href={`/projects/${job.id}`}>
           <Button variant="outline" size="sm">
             View Job
           </Button>

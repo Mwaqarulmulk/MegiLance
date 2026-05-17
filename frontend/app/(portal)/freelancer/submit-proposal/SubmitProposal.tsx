@@ -300,7 +300,7 @@ const SubmitProposal: React.FC = () => {
           project_id: parseInt(data.jobId),
           cover_letter: data.coverLetter.trim(),
           bid_amount: bidAmount,
-          estimated_hours: data.estimatedHours || 0,
+          delivery_time: data.estimatedHours || 0,
         });
       }
 

@@ -247,7 +247,7 @@ const Login: React.FC = () => {
     try {
       const data = await api.auth.login(formData.email, formData.password);
 
-      // Determine actual role: prefer devLoginRole OR selectedRole
+      // Determine actual role: prefer API response role, fall back to UI selection
       const apiRole = (
         data.user?.user_type ||
         data.user?.role ||
@@ -255,9 +255,11 @@ const Login: React.FC = () => {
       ).toLowerCase() as UserRole;
       const resolvedRole: UserRole = devLoginRole
         ? devLoginRole
-        : selectedRole
-          ? selectedRole
-          : (apiRole === "admin" ? "admin" : apiRole === "freelancer" ? "freelancer" : "client");
+        : apiRole && (apiRole === "admin" || apiRole === "freelancer" || apiRole === "client")
+          ? apiRole
+          : selectedRole
+            ? selectedRole
+            : "client";
 
       if (devLoginRole) setDevLoginRole(null);
 
