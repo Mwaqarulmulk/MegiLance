@@ -235,3 +235,6 @@ def update_review_fields(review_id: int, set_clause: str, params: List) -> None:
 def delete_review_record(review_id: int) -> None:
     """Delete a review by ID."""
     execute_query("DELETE FROM reviews WHERE id = ?", [review_id])
+
+def get_reviews_for_user(user_id: int, offset: int = 0, limit: int = 10) -> List[Dict[str, Any]]:
+    return query_reviews('r.reviewee_id = ?', [user_id])[offset : offset + limit]
