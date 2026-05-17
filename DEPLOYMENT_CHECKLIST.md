@@ -26,18 +26,20 @@
 
 ### 1. Database Migrations
 
-Two migrations must be applied to the live Turso database:
+Three migrations must be applied to the live Turso database:
 
 | Migration | Purpose | File |
 |-----------|---------|------|
 | `003_enhance_portfolio.py` | 14 new portfolio columns (featured, likes, stats, categories) | `backend/scripts/migrations/` |
 | `004_gig_marketplace.py` | 6 new tables (gigs, orders, reviews, revisions, deliveries, faqs) | `backend/scripts/migrations/` |
+| `005_add_missing_tables.py` | 4 new tables + 30+ user profile columns | `backend/scripts/migrations/` |
 
 **Apply via Turso HTTP API:**
 ```bash
 cd backend
 python scripts/apply_migration.py scripts/migrations/003_enhance_portfolio.py
 python scripts/apply_migration.py scripts/migrations/004_gig_marketplace.py
+python scripts/apply_migration.py scripts/migrations/005_add_missing_tables.py
 ```
 
 **Verify:**
@@ -47,7 +49,7 @@ curl -H "Authorization: Bearer $TURSO_AUTH_TOKEN" \
   -d '{"statements": ["SELECT name FROM sqlite_master WHERE type=\"table\" ORDER BY name"]}'
 ```
 
-Expected new tables: `gigs`, `gig_orders`, `gig_reviews`, `gig_revisions`, `gig_deliveries`, `gig_faqs`
+Expected new tables: `gigs`, `gig_orders`, `gig_reviews`, `gig_revisions`, `gig_deliveries`, `gig_faqs`, `notification_preferences`, `wallet_transactions`, `fraud_alerts`, `support_messages`
 
 ### 2. Environment Variables
 
