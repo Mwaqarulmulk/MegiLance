@@ -2,6 +2,7 @@
 
 > **Last Updated**: May 17, 2026
 > **Status**: Production Ready (pending migrations + credential rotation)
+> **Hosting**: DigitalOcean App Platform (both frontend + backend)
 
 ---
 
@@ -69,7 +70,7 @@ NEXT_PUBLIC_API_URL=https://your-backend-url.com
 NEXT_PUBLIC_SOCKET_URL=https://your-backend-url.com
 ```
 
-### 3. Backend Deployment (DigitalOcean)
+### 3. Backend Deployment (DigitalOcean App Platform)
 
 ```bash
 # 1. Ensure .env is NOT committed
@@ -88,16 +89,17 @@ git push origin main
 curl https://your-backend-url.com/health
 ```
 
-### 4. Frontend Deployment (Vercel)
+### 4. Frontend Deployment (DigitalOcean App Platform)
 
 ```bash
 # 1. Push latest code
 git push origin main
 
-# 2. Deploy to Vercel
-#    - Connect GitHub repo
+# 2. Deploy to DigitalOcean App Platform (separate app or same)
+#    - Source: GitHub repo
 #    - Root directory: frontend
-#    - Build command: next build
+#    - Build command: npm install && npm run build
+#    - Start command: npm start
 #    - Set env vars: NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SOCKET_URL
 
 # 3. Verify
