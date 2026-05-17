@@ -56,7 +56,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined, // Only for Docker/production
+
   
   // Security: Remove X-Powered-By header
   poweredByHeader: false,
@@ -298,3 +298,4 @@ const nextConfig = {
 };
 
 module.exports = withPWA(nextConfig);
+
