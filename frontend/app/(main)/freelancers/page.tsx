@@ -1,31 +1,45 @@
-// @AI-HINT: Freelancers Page - Redesign. Next.js 16 Server Component with Suspense.
+// @AI-HINT: Freelancers Page - fetches real data from backend API
 import React, { Suspense } from 'react';
+import Link from 'next/link';
+import { Star, MapPin, Briefcase } from 'lucide-react';
 import commonStyles from './Freelancers.common.module.css';
+import lightStyles from './Freelancers.light.module.css';
+import darkStyles from './Freelancers.dark.module.css';
 
-async function fetchFreelancers(query = '') {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+async function fetchFreelancers(query = '', page = 1, pageSize = 20) {
   try {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // const res = await fetch(\`\${process.env.NEXT_PUBLIC_API_URL}/api/v1/freelancers/search?q=\${query}\`, { next: { revalidate: 60 } });
-    // if (!res.ok) throw new Error('Failed to fetch data');
-    // return await res.json();
-    
-    const all = [
-      { id: '1', name: 'Alex Developer', title: 'Senior Full Stack Engineer', rate: '$55/hr', rating: 4.9, skills: ['React', 'Python', 'FastAPI'] },
-      { id: '2', name: 'Sarah Design', title: 'UI/UX Product Designer', rate: '$45/hr', rating: 5.0, skills: ['Figma', 'Prototyping', 'CSS'] },
-      { id: '3', name: 'Mike Content', title: 'Technical Copywriter', rate: '$30/hr', rating: 4.8, skills: ['SEO', 'Blogging', 'Editing'] },
-      { id: '4', name: 'Nina Data', title: 'Data Scientist', rate: '$70/hr', rating: 4.7, skills: ['Machine Learning', 'Pandas', 'SQL'] },
-    ];
-    
-    if (query) { return all.filter(f => f.skills.some(s => s.toLowerCase().includes(query.toLowerCase())) || f.name.toLowerCase().includes(query.toLowerCase())); }
-    return all;
-  } catch (error) { return []; }
+    const params = new URLSearchParams({
+      page: String(page),
+      page_size: String(pageSize),
+    });
+    if (query) params.set('search', query);
+
+    const res = await fetch(`${API_URL}/api/v1/users/freelancers?${params}`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return { items: [], total: 0 };
+    return await res.json();
+  } catch {
+    return { items: [], total: 0 };
+  }
 }
 
 function Loader() {
   return (
-    <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-      {[1, 2, 3, 4].map(n => (<div key={n} style={{ height: '240px', background: '#e2e8f0', borderRadius: '12px', animation: 'pulse 2s infinite' }}></div>))}
+    <div className={commonStyles.grid}>
+      {[1, 2, 3, 4, 5, 6].map(n => (
+        <div key={n} className={commonStyles.card}>
+          <div className={commonStyles.cardHeader}>
+            <div className={commonStyles.avatar} />
+            <div className={commonStyles.cardMeta}>
+              <div className={commonStyles.skeletonLine} style={{ width: '60%' }} />
+              <div className={commonStyles.skeletonLine} style={{ width: '40%' }} />
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -41,48 +55,86 @@ export default async function FreelancersPage(props: { searchParams?: Promise<{ 
         <p className={commonStyles.pageSubtitle}>Discover the perfect match for your next project with our AI-powered matchmaking algorithm.</p>
         
         <form action="/freelancers" method="GET" className={commonStyles.searchForm}>
-          <input type="search" name="q" defaultValue={q} placeholder="Search skills..." className={commonStyles.searchInput} />
+          <input type="search" name="q" defaultValue={q} placeholder="Search skills, names, or expertise..." className={commonStyles.searchInput} />
           <button type="submit" className={commonStyles.searchSubmit}>Search</button>
         </form>
       </header>
 
-      <div className={commonStyles.contentGrid}>
-        <aside className={commonStyles.sidebar}>
-          <div className={commonStyles.filterGroup}>
-            <h3>Category</h3>
-            <label className={commonStyles.checkboxLabel}><input type="checkbox" /> Web Development</label>
-            <label className={commonStyles.checkboxLabel}><input type="checkbox" /> Design</label>
-          </div>
-        </aside>
-
-        <section className={commonStyles.results}>
-          <Suspense fallback={<Loader />} key={q}>
-            <FreelancerList query={q} />
-          </Suspense>
-        </section>
-      </div>
+      <section className={commonStyles.results}>
+        <Suspense fallback={<Loader />} key={q}>
+          <FreelancerList query={q} />
+        </Suspense>
+      </section>
     </main>
   );
 }
 
 async function FreelancerList({ query }: { query: string }) {
-  const freelancers = await fetchFreelancers(query);
-  if (freelancers.length === 0) return <div className={commonStyles.emptyState}>No freelancers found.</div>;
+  const data = await fetchFreelancers(query);
+  const freelancers = data.items || [];
+
+  if (freelancers.length === 0) {
+    return (
+      <div className={commonStyles.emptyState}>
+        <h3>No freelancers found</h3>
+        <p>Try adjusting your search or <Link href="/post-project">post a project</Link> to get matched.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className={commonStyles.grid}>
-      {freelancers.map(f => (
-        <article key={f.id} className={commonStyles.card}>
-          <div className={commonStyles.cardHeader}>
-            <div className={commonStyles.avatar}>{f.name.charAt(0)}</div>
-            <div className={commonStyles.cardMeta}><h2>{f.name}</h2><p>{f.title}</p></div>
-          </div>
-          <div className={commonStyles.cardBody}>
-            <div className={commonStyles.stats}><span>{f.rate}</span><span>⭐ {f.rating}</span></div>
-            <div className={commonStyles.skills}>{f.skills.map(s => <span key={s} className={commonStyles.skillBadge}>{s}</span>)}</div>
-          </div>
-        </article>
-      ))}
-    </div>
+    <>
+      <div className={commonStyles.resultsHeader}>
+        <p>{data.total || freelancers.length} freelancer{data.total !== 1 ? 's' : ''} found</p>
+      </div>
+      <div className={commonStyles.grid}>
+        {freelancers.map((f: any) => {
+          const skills = Array.isArray(f.skills) ? f.skills : [];
+          const rating = Number(f.avg_rating || f.rating || 0);
+          const reviews = Number(f.review_count || f.total_reviews || 0);
+          return (
+            <Link key={f.id} href={`/freelancers/${f.id}`} className={commonStyles.card}>
+              <div className={commonStyles.cardHeader}>
+                <div className={commonStyles.avatar}>
+                  {f.profile_image_url ? (
+                    <img src={f.profile_image_url} alt={f.name} className={commonStyles.avatarImage} />
+                  ) : (
+                    f.name?.charAt(0).toUpperCase() || 'F'
+                  )}
+                </div>
+                <div className={commonStyles.cardMeta}>
+                  <h2>{f.name || 'Freelancer'}</h2>
+                  <p>{f.headline || f.bio?.substring(0, 80) || 'Freelancer'}</p>
+                </div>
+              </div>
+              <div className={commonStyles.cardBody}>
+                <div className={commonStyles.stats}>
+                  <span className={commonStyles.rate}>${f.hourly_rate || 0}/hr</span>
+                  {rating > 0 && (
+                    <span className={commonStyles.rating}>
+                      <Star size={14} className={commonStyles.starIcon} />
+                      {rating.toFixed(1)} ({reviews})
+                    </span>
+                  )}
+                </div>
+                {f.location && (
+                  <div className={commonStyles.location}>
+                    <MapPin size={12} /> {f.location}
+                  </div>
+                )}
+                {skills.length > 0 && (
+                  <div className={commonStyles.skills}>
+                    {skills.slice(0, 5).map((s: string) => (
+                      <span key={s} className={commonStyles.skillBadge}>{s}</span>
+                    ))}
+                    {skills.length > 5 && <span className={commonStyles.skillBadge}>+{skills.length - 5}</span>}
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </>
   );
 }
