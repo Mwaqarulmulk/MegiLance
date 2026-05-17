@@ -3,11 +3,11 @@ import type { Metadata } from 'next';
 import GigDetail from './GigDetail';
 import { buildMeta, buildBreadcrumbJsonLd, jsonLdScriptProps, BASE_URL, SITE_NAME } from '@/lib/seo';
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 async function fetchGig(slug: string) {
   try {
-    const res = await fetch(`${BACKEND}/api/gigs/${slug}`, {
+    const res = await fetch(`${BACKEND}/api/v1/gigs/slug/${slug}`, {
       next: { revalidate: 300 },
       headers: { 'Content-Type': 'application/json' },
     });

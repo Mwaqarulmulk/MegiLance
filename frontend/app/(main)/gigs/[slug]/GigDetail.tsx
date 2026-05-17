@@ -108,7 +108,7 @@ const GigDetail: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/gigs/${slug}`);
+        const response = await fetch(`/api/v1/gigs/slug/${slug}`);
         if (response.ok) {
           const data = await response.json();
           setGig(transformApiData(data));
