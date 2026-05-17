@@ -1,130 +1,180 @@
 /* @AI-HINT: Client Dashboard — light theme colours */
 
 .dashboardContainer {
-  color: var(--text-primary-light);
+    color: var(--text-primary-light);
 }
 
-.welcomeText h1 { color: var(--text-primary-light); }
-.welcomeText p   { color: var(--color-text-secondary-light); }
+.welcomeText h1 {
+    color: var(--text-primary-light);
+}
+.welcomeText p {
+    color: var(--color-text-secondary-light);
+}
 
 /* ── Welcome Banner ─────────────────── */
 .welcomeBanner {
-  background: linear-gradient(135deg, #27AE60 0%, #4cd97b 100%);
-  color: #ffffff;
+    background: linear-gradient(135deg, #27ae60 0%, #4cd97b 100%);
+    color: #ffffff;
 }
 
 .welcomeBannerTitle,
 .welcomeBannerText {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .welcomeBannerText {
-  opacity: 0.92;
+    opacity: 0.92;
 }
 
 .welcomeBannerPrimaryAction {
-  background: #ffffff;
-  color: #1f8b4e;
+    background: #ffffff;
+    color: #1f8b4e;
 }
 
 .welcomeBannerPrimaryAction:hover {
-  background: #f3fff8;
+    background: #f3fff8;
 }
 
 .welcomeBannerDismissAction {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
 }
 
 .welcomeBannerDismissAction:hover {
-  background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 /* ── Section titles & links ─────────── */
-.sectionTitle { color: var(--text-primary-light); }
-.viewAllLink  { color: var(--ml-blue); }
+.sectionTitle {
+    color: var(--text-primary-light);
+}
+.viewAllLink {
+    color: var(--ml-blue);
+}
 
 /* ── Stat cards ─────────────────────── */
 .statCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 .statCard:hover {
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
-.statHeader { color: var(--color-text-secondary-light); }
-.statValue  { color: var(--text-primary-light); }
+.statHeader {
+    color: var(--color-text-secondary-light);
+}
+.statValue {
+    color: var(--text-primary-light);
+}
 
 /* ── Quick Actions ──────────────────── */
 .quickActionCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 .quickActionCard:hover {
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-  border-color: #cbd5e1;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
 }
-.quickActionLabel { color: #334155; }
+.quickActionLabel {
+    color: #334155;
+}
 
 /* ── Project cards ──────────────────── */
 .projectCard {
-  background-color: var(--bg-primary-light);
-  border-color: var(--border-light);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    background-color: var(--bg-primary-light);
+    border-color: var(--border-light);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 .projectCard:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
 }
-.projectInfo h3 { color: var(--text-primary-light); }
-.projectMeta    { color: var(--color-text-secondary-light); }
+.projectInfo h3 {
+    color: var(--text-primary-light);
+}
+.projectMeta {
+    color: var(--color-text-secondary-light);
+}
 
 /* ── Talent cards ───────────────────── */
 .talentCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
 }
-.talentCard:hover { background-color: var(--bg-tertiary-light); }
-.talentInfo h4    { color: var(--text-primary-light); }
-.talentRole       { color: var(--color-text-secondary-light); }
-.actionButton     { color: var(--color-text-secondary-light); }
+.talentCard:hover {
+    background-color: var(--bg-tertiary-light);
+}
+.talentInfo h4 {
+    color: var(--text-primary-light);
+}
+.talentRole {
+    color: var(--color-text-secondary-light);
+}
+.actionButton {
+    color: var(--color-text-secondary-light);
+}
 .actionButton:hover {
-  background-color: var(--bg-tertiary-light);
-  color: var(--text-primary-light);
+    background-color: var(--bg-tertiary-light);
+    color: var(--text-primary-light);
 }
 
 /* ── Quick Action Description ───────── */
-.quickActionDesc { color: var(--text-tertiary-light); }
+.quickActionDesc {
+    color: var(--text-tertiary-light);
+}
 
 /* ── Metrics Row ────────────────────── */
 .metricCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
-.metricStatValue { color: var(--text-primary-light); }
-.metricStatLabel { color: var(--color-text-secondary-light); }
-.metricHint { color: var(--text-tertiary-light); }
+.metricStatValue {
+    color: var(--text-primary-light);
+}
+.metricStatLabel {
+    color: var(--color-text-secondary-light);
+}
+.metricHint {
+    color: var(--text-tertiary-light);
+}
 
 /* ── Timeline Section ───────────────── */
-.timelineSection { border-color: var(--border-light); }
+.timelineSection {
+    border-color: var(--border-light);
+}
 
 /* ── Insight Card ───────────────────── */
 .insightCard {
-  background-color: var(--bg-secondary-light);
-  border: 1px solid var(--border-light);
+    background-color: var(--bg-secondary-light);
+    border: 1px solid var(--border-light);
 }
-.insightTitle { color: #334155; }
-.insightValue { color: var(--text-primary-light); }
-.insightLabel { color: var(--text-tertiary-light); }
+.insightTitle {
+    color: #334155;
+}
+.insightValue {
+    color: var(--text-primary-light);
+}
+.insightLabel {
+    color: var(--text-tertiary-light);
+}
 \n
+/* ── Charts ────────────────────────────── */
+.funnelTrack {
+    background: #e2e8f0;
+}
+.insightViewLink {
+    color: #4573df;
+}
+
 .glassPanel {
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 .cardHover:hover {
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
 }

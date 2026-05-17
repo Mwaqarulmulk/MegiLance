@@ -577,16 +577,23 @@ class NotificationCenterService:
     ) -> Dict[str, Any]:
         """Send web push notification."""
         subscriptions = self._push_subscriptions.get(user_id, [])
-        
+
         if not subscriptions:
-            return {"status": "no_subscription"}
-        
-        # Would integrate with web-push library in production
-        return {
-            "status": "delivered",
-            "channel": "push",
-            "subscriptions_notified": len(subscriptions)
-        }
+            return {"status": "no_subscription", "channel": "push"}
+
+        # In production, integrate with web-push library or Firebase Cloud Messaging
+        # For now, log and return success for connected WebSocket clients
+        try:
+            from app.api.v1.core_domain.realtime_notifications import manager
+            await manager.send_notification(notification, user_id)
+            return {
+                "status": "delivered",
+                "channel": "push",
+                "subscriptions_notified": len(subscriptions)
+            }
+        except Exception as e:
+            logger.error(f"Push notification error: {str(e)}")
+            return {"status": "failed", "channel": "push", "error": str(e)}
     
     async def _send_email(
         self,
@@ -594,12 +601,57 @@ class NotificationCenterService:
         notification: Dict[str, Any],
         priority: NotificationPriority
     ) -> Dict[str, Any]:
-        """Send email notification."""
-        # Would integrate with SendGrid, Mailgun, etc. in production
-        return {
-            "status": "delivered",
-            "channel": "email"
-        }
+        """Send email notification using the email service."""
+        try:
+            from app.services.email_service import email_service
+
+            # Look up user email from database
+            from app.db.turso_http import execute_query, parse_rows
+
+            result = execute_query(
+                "SELECT email, name FROM users WHERE id = ?",
+                [user_id]
+            )
+            if not result or not result.get("rows"):
+                return {"status": "failed", "channel": "email", "reason": "User not found"}
+
+            rows = parse_rows(result)
+            if not rows:
+                return {"status": "failed", "channel": "email", "reason": "User not found"}
+
+            user_email = rows[0].get("email")
+            user_name = rows[0].get("name") or "User"
+
+            if not user_email:
+                return {"status": "failed", "channel": "email", "reason": "No email address"}
+
+            # Build email body from notification
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #2563eb;">{notification.get('title', 'Notification')}</h2>
+                <p>{notification.get('body', '')}</p>
+                {f'<a href="{notification.get("action_url", "")}" style="display: inline-block; padding: 10px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">View Details</a>' if notification.get('action_url') else ''}
+                <p style="color: #6b7280; font-size: 12px; margin-top: 20px;">This is an automated notification from MegiLance.</p>
+            </body>
+            </html>
+            """
+
+            success = email_service.send_email(
+                to_email=user_email,
+                subject=notification.get('title', 'MegiLance Notification'),
+                html_content=html_content,
+                text_content=notification.get('body', ''),
+            )
+
+            if success:
+                return {"status": "delivered", "channel": "email", "to": user_email}
+            else:
+                return {"status": "failed", "channel": "email", "reason": "Email service error"}
+
+        except Exception as e:
+            logger.error(f"Email notification error: {str(e)}")
+            return {"status": "failed", "channel": "email", "error": str(e)}
     
     async def _send_sms(
         self,
@@ -607,11 +659,14 @@ class NotificationCenterService:
         notification: Dict[str, Any],
         priority: NotificationPriority
     ) -> Dict[str, Any]:
-        """Send SMS notification."""
-        # Would integrate with Twilio in production
+        """Send SMS notification (only for urgent/high priority)."""
+        # SMS requires Twilio or similar integration - skip unless explicitly configured
+        # In production, integrate with Twilio: https://www.twilio.com/docs/sms/api
+        logger.info(f"SMS notification skipped (not configured): user={user_id}, title={notification.get('title')}")
         return {
-            "status": "delivered",
-            "channel": "sms"
+            "status": "skipped",
+            "channel": "sms",
+            "reason": "SMS not configured"
         }
 
 

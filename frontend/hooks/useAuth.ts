@@ -26,7 +26,9 @@ export interface User {
   location?: string;
   title?: string;
   is_verified?: boolean;
+  email_verified?: boolean;
   joined_at?: string;
+  profile_completed?: boolean; // P0-5: onboarding gate
 }
 
 interface UseAuthReturn {
@@ -55,7 +57,9 @@ interface UserApiResponse {
   location?: string;
   title?: string;
   is_verified?: boolean;
+  email_verified?: boolean;
   joined_at?: string;
+  profile_completed?: boolean;
 }
 
 /**
@@ -82,7 +86,9 @@ function normalizeUser(userData: UserApiResponse): User {
     location: userData.location,
     title: userData.title,
     is_verified: userData.is_verified,
+    email_verified: userData.email_verified,
     joined_at: userData.joined_at,
+    profile_completed: userData.profile_completed,
   };
 }
 
@@ -153,13 +159,18 @@ export function useAuth(): UseAuthReturn {
           // that are all registered as 'client'), override with the login-time role
           // so the portal layout guard keeps the user on the correct portal.
           try {
-            const loginRole = localStorage.getItem('ml_user_role');
-            if (loginRole && ['admin', 'freelancer', 'client'].includes(loginRole)
-                && loginRole !== normalized.user_type) {
-              normalized.user_type = loginRole as User['user_type'];
+            const loginRole = localStorage.getItem("ml_user_role");
+            if (
+              loginRole &&
+              ["admin", "freelancer", "client"].includes(loginRole) &&
+              loginRole !== normalized.user_type
+            ) {
+              normalized.user_type = loginRole as User["user_type"];
               normalized.role = loginRole;
             }
-          } catch { /* ignore */ }
+          } catch {
+            /* ignore */
+          }
 
           setUser(normalized);
           setError(null);

@@ -25,17 +25,17 @@ class ProfileCompleteUpdate(BaseModel):
     bio: str
     location: Optional[str] = None
     timezone: str = "Asia/Karachi"
-    
+
     # Professional Info
     skills: List[str]
     hourlyRate: str
     experienceLevel: str
     availability: str
     languages: List[str] = ["English"]
-    
+
     # Portfolio
     portfolioItems: List[PortfolioItemSchema] = []
-    
+
     # Verification
     phoneNumber: Optional[str] = None
     linkedinUrl: Optional[str] = None
@@ -80,14 +80,18 @@ class UserCreate(UserBase):
     email: EmailStr
     password: str
     role: Optional[str] = None  # Alias for user_type from frontend
+    full_name: Optional[str] = None  # Legacy alias for name
     tos_accepted: bool = Field(default=False, description="User must accept Terms of Service")
-    
+
     @model_validator(mode='before')
     @classmethod
     def map_role_to_user_type(cls, data):
-        """Handle frontend 'role' field mapping to 'user_type'"""
-        if isinstance(data, dict) and 'role' in data and 'user_type' not in data:
-            data['user_type'] = data.pop('role')
+        """Handle legacy/variant frontend fields for registration payloads."""
+        if isinstance(data, dict):
+            if 'role' in data and 'user_type' not in data:
+                data['user_type'] = data.pop('role')
+            if 'full_name' in data and 'name' not in data:
+                data['name'] = data.get('full_name')
         return data
 
 

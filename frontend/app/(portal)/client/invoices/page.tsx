@@ -1,18 +1,21 @@
 // @AI-HINT: Client Invoices page - shows invoices the client has received from freelancers
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
-import Button from '@/app/components/atoms/Button/Button';
-import Loading from '@/app/components/atoms/Loading/Loading';
-import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
-import { errorAlertAnimation, emptyBoxAnimation } from '@/app/components/Animations/LottieAnimation';
-import { invoicesApi } from '@/lib/api';
-import { 
-  FileText, 
-  DollarSign, 
+import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import Button from "@/app/components/atoms/Button/Button";
+import Loading from "@/app/components/atoms/Loading/Loading";
+import EmptyState from "@/app/components/molecules/EmptyState/EmptyState";
+import {
+  errorAlertAnimation,
+  emptyBoxAnimation,
+} from "@/app/components/Animations/LottieAnimation";
+import { invoicesApi } from "@/lib/api";
+import {
+  FileText,
+  DollarSign,
   Calendar,
   CheckCircle,
   Clock,
@@ -20,12 +23,12 @@ import {
   Search,
   Filter,
   Download,
-  Eye
-} from 'lucide-react';
+  Eye,
+} from "lucide-react";
 
-import commonStyles from './Invoices.common.module.css';
-import lightStyles from './Invoices.light.module.css';
-import darkStyles from './Invoices.dark.module.css';
+import commonStyles from "./Invoices.common.module.css";
+import lightStyles from "./Invoices.light.module.css";
+import darkStyles from "./Invoices.dark.module.css";
 
 interface Invoice {
   id: string;
@@ -44,8 +47,8 @@ export default function ClientInvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     setMounted(true);
@@ -55,28 +58,30 @@ export default function ClientInvoicesPage() {
     const fetchInvoices = async () => {
       try {
         setLoading(true);
-        const response = await invoicesApi.list({ 
-          status: statusFilter === 'all' ? undefined : statusFilter 
+        const response = await invoicesApi.list({
+          status: statusFilter === "all" ? undefined : statusFilter,
         });
-        const invoicesList = Array.isArray(response) ? response : (response as any).invoices || [];
-        
+        const invoicesList = Array.isArray(response)
+          ? response
+          : (response as any).invoices || [];
+
         const mappedInvoices = invoicesList.map((invoice: any) => ({
-          id: invoice.id?.toString() || '',
+          id: invoice.id?.toString() || "",
           invoice_number: invoice.invoice_number || `INV-${invoice.id}`,
-          freelancer_name: invoice.freelancer_name || 'Freelancer',
-          project_title: invoice.project_title || 'Project',
+          freelancer_name: invoice.freelancer_name || "Freelancer",
+          project_title: invoice.project_title || "Project",
           amount: invoice.amount || invoice.total || 0,
-          status: invoice.status || 'pending',
-          due_date: invoice.due_date || '',
+          status: invoice.status || "pending",
+          due_date: invoice.due_date || "",
           created_at: invoice.created_at || new Date().toISOString(),
         }));
-        
+
         setInvoices(mappedInvoices);
       } catch (err: any) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to fetch invoices:', err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to fetch invoices:", err);
         }
-        setError(err.message || 'Failed to load invoices');
+        setError(err.message || "Failed to load invoices");
       } finally {
         setLoading(false);
       }
@@ -87,34 +92,52 @@ export default function ClientInvoicesPage() {
     }
   }, [mounted, statusFilter]);
 
-  const themeStyles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles =
+    mounted && resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   const filteredInvoices = useMemo(() => {
-    return invoices.filter(invoice => 
-      invoice.invoice_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      invoice.freelancer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      invoice.project_title.toLowerCase().includes(searchQuery.toLowerCase())
+    return invoices.filter(
+      (invoice) =>
+        invoice.invoice_number
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        invoice.freelancer_name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        invoice.project_title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [invoices, searchQuery]);
 
   const totals = useMemo(() => {
     return {
       all: invoices.reduce((sum, inv) => sum + inv.amount, 0),
-      paid: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0),
-      pending: invoices.filter(inv => inv.status === 'pending').reduce((sum, inv) => sum + inv.amount, 0),
+      paid: invoices
+        .filter((inv) => inv.status === "paid")
+        .reduce((sum, inv) => sum + inv.amount, 0),
+      pending: invoices
+        .filter((inv) => inv.status === "pending")
+        .reduce((sum, inv) => sum + inv.amount, 0),
     };
   }, [invoices]);
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
-      paid: { color: 'success', icon: <CheckCircle size={14} /> },
-      pending: { color: 'warning', icon: <Clock size={14} /> },
-      overdue: { color: 'danger', icon: <AlertCircle size={14} /> },
-      cancelled: { color: 'muted', icon: <AlertCircle size={14} /> },
+    const statusConfig: Record<
+      string,
+      { color: string; icon: React.ReactNode }
+    > = {
+      paid: { color: "success", icon: <CheckCircle size={14} /> },
+      pending: { color: "warning", icon: <Clock size={14} /> },
+      overdue: { color: "danger", icon: <AlertCircle size={14} /> },
+      cancelled: { color: "muted", icon: <AlertCircle size={14} /> },
     };
     const config = statusConfig[status.toLowerCase()] || statusConfig.pending;
     return (
-      <span className={cn(commonStyles.statusBadge, commonStyles[`status${config.color}`])}>
+      <span
+        className={cn(
+          commonStyles.statusBadge,
+          commonStyles[`status${config.color}`],
+        )}
+      >
         {config.icon}
         {status}
       </span>
@@ -129,7 +152,9 @@ export default function ClientInvoicesPage() {
     <div className={cn(commonStyles.container, themeStyles.container)}>
       <div className={commonStyles.header}>
         <div>
-          <h1 className={cn(commonStyles.title, themeStyles.title)}>Invoices</h1>
+          <h1 className={cn(commonStyles.title, themeStyles.title)}>
+            Invoices
+          </h1>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
             Manage invoices from your freelancers
           </p>
@@ -150,7 +175,9 @@ export default function ClientInvoicesPage() {
           </div>
         </div>
         <div className={cn(commonStyles.statCard, themeStyles.statCard)}>
-          <div className={cn(commonStyles.statIcon, commonStyles.statIconSuccess)}>
+          <div
+            className={cn(commonStyles.statIcon, commonStyles.statIconSuccess)}
+          >
             <CheckCircle size={24} />
           </div>
           <div>
@@ -161,7 +188,9 @@ export default function ClientInvoicesPage() {
           </div>
         </div>
         <div className={cn(commonStyles.statCard, themeStyles.statCard)}>
-          <div className={cn(commonStyles.statIcon, commonStyles.statIconWarning)}>
+          <div
+            className={cn(commonStyles.statIcon, commonStyles.statIconWarning)}
+          >
             <Clock size={24} />
           </div>
           <div>
@@ -210,7 +239,11 @@ export default function ClientInvoicesPage() {
           animationData={errorAlertAnimation}
           animationWidth={110}
           animationHeight={110}
-          action={<Button variant="primary" onClick={() => window.location.reload()}>Retry</Button>}
+          action={
+            <Button variant="primary" onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          }
         />
       ) : filteredInvoices.length === 0 ? (
         <EmptyState
@@ -222,7 +255,9 @@ export default function ClientInvoicesPage() {
           animationHeight={120}
         />
       ) : (
-        <div className={cn(commonStyles.tableWrapper, themeStyles.tableWrapper)}>
+        <div
+          className={cn(commonStyles.tableWrapper, themeStyles.tableWrapper)}
+        >
           <table className={commonStyles.table}>
             <thead>
               <tr>
@@ -238,26 +273,54 @@ export default function ClientInvoicesPage() {
             <tbody>
               {filteredInvoices.map((invoice) => (
                 <tr key={invoice.id} className={themeStyles.tableRow}>
-                  <td className={commonStyles.invoiceNumber}>{invoice.invoice_number}</td>
+                  <td className={commonStyles.invoiceNumber}>
+                    {invoice.invoice_number}
+                  </td>
                   <td>{invoice.freelancer_name}</td>
-                  <td className={commonStyles.projectCell}>{invoice.project_title}</td>
-                  <td className={commonStyles.amountCell}>${invoice.amount.toLocaleString()}</td>
+                  <td className={commonStyles.projectCell}>
+                    {invoice.project_title}
+                  </td>
+                  <td className={commonStyles.amountCell}>
+                    ${invoice.amount.toLocaleString()}
+                  </td>
                   <td>
-                    {invoice.due_date 
-                      ? new Date(invoice.due_date).toLocaleDateString() 
-                      : '-'}
+                    {invoice.due_date
+                      ? new Date(invoice.due_date).toLocaleDateString()
+                      : "-"}
                   </td>
                   <td>{getStatusBadge(invoice.status)}</td>
                   <td>
                     <div className={commonStyles.actionButtons}>
-                      <Button variant="ghost" size="sm" title="View">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        title="View invoice"
+                        onClick={() =>
+                          window.open(
+                            `/backend/api/v1/invoices/${invoice.id}/view`,
+                            "_blank",
+                          )
+                        }
+                      >
                         <Eye size={16} />
                       </Button>
-                      <Button variant="ghost" size="sm" title="Download">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        title="Download PDF"
+                        onClick={() =>
+                          window.open(
+                            `/backend/api/v1/invoices/${invoice.id}/view`,
+                            "_blank",
+                          )
+                        }
+                      >
                         <Download size={16} />
                       </Button>
-                      {invoice.status === 'pending' && (
-                        <Button variant="primary" size="sm">Pay Now</Button>
+                      {invoice.status === "pending" && (
+                        <Button variant="primary" size="sm">
+                          Pay Now
+                        </Button>
                       )}
                     </div>
                   </td>

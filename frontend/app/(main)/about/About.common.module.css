@@ -1,1 +1,212 @@
-.about { display: flex; flex-direction: column; padding: 4rem 2rem; min-height: 80vh; max-width: 1200px; margin: 0 auto; gap: 2rem; }
+/* @AI-HINT: About page — layout, structure, and animations (theme-agnostic) */
+
+/* ─── Root Wrapper ─── */
+.root {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+}
+
+/* ─── Hero ─── */
+.hero {
+    padding: 5rem 0 4rem;
+}
+
+.heroRow {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.heroContent {
+    flex: 1;
+    min-width: 280px;
+}
+
+.title {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 1.5rem;
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 580px;
+}
+
+/* ─── Section Headers ─── */
+.sectionHeader {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.sectionTitle {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+}
+
+.sectionNote {
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.25rem;
+    opacity: 0.75;
+}
+
+/* ─── Problem/Solution Card Grid ─── */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.card {
+    padding: 2rem;
+    border-radius: 16px;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card:hover,
+.card:focus {
+    transform: translateY(-4px);
+    outline: none;
+}
+
+.cardTitle {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+}
+
+.cardBody {
+    font-size: 0.925rem;
+    line-height: 1.65;
+}
+
+/* ─── Values / Team Grid ─── */
+.valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.valueItem {
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.valueItem:hover {
+    transform: translateY(-2px);
+}
+
+.valueTitle {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+}
+
+.valueDesc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ─── CTA ─── */
+.cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.ctaBtn {
+    background: var(--color-primary, #4573df);
+    color: #ffffff;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 999px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.ctaBtn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* ─── Icon Color Helpers ─── */
+.iconPrimary {
+    color: var(--color-primary, #4573df);
+}
+.iconSuccess {
+    color: #27ae60;
+}
+.iconWarning {
+    color: #f2c94c;
+}
+.iconError {
+    color: #e81123;
+}
+.iconAccent {
+    color: #ff9800;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+    .heroRow {
+        flex-direction: column-reverse;
+        gap: 2rem;
+    }
+    .title {
+        font-size: 2.5rem;
+    }
+    .grid,
+    .valuesGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .root {
+        padding: 0 1rem 3rem;
+    }
+    .hero {
+        padding: 3rem 0 2rem;
+    }
+    .title {
+        font-size: 2rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+    }
+    .sectionTitle {
+        font-size: 1.5rem;
+    }
+    .card {
+        padding: 1.5rem;
+    }
+    .ctaBtn {
+        font-size: 1rem;
+        padding: 0.875rem 2rem;
+    }
+}

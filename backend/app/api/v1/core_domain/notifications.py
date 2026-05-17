@@ -121,6 +121,16 @@ def get_notifications(
     }
 
 
+@router.get("/unread/count")
+def get_unread_count(
+    current_user = Depends(get_current_user)
+):
+    """Get count of unread notifications for current user."""
+    user_id = current_user.get("user_id")
+    count = notifications_service.query_unread_count(user_id)
+    return {"unread_count": count, "count": count}
+
+
 @router.get("/{notification_id}", response_model=dict)
 def get_notification(
     notification_id: int,
@@ -236,15 +246,12 @@ def delete_notification(
     return {"message": "Notification deleted successfully"}
 
 
-@router.get("/unread/count")
-def get_unread_count(
+@router.get("/_legacy_unread_count_unused", include_in_schema=False)
+def _legacy_unread_count_unused(
     current_user = Depends(get_current_user)
 ):
-    """Get count of unread notifications for current user"""
     user_id = current_user.get("user_id")
-    
     count = notifications_service.query_unread_count(user_id)
-    
     return {"unread_count": count}
 
 

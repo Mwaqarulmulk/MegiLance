@@ -32,6 +32,31 @@ import commonStyles from "./Onboarding.common.module.css";
 import lightStyles from "./Onboarding.light.module.css";
 import darkStyles from "./Onboarding.dark.module.css";
 
+// === Safe localStorage utility (prevents SSR/storage errors from crashing the component) ===
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // ignore storage errors
+    }
+  },
+  removeItem: (key: string): void => {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // ignore storage errors
+    }
+  },
+};
+
 // === Validation Schemas ===
 
 const profileSchema = z.object({
@@ -119,20 +144,25 @@ const Onboarding: React.FC = () => {
 
   // Restore saved progress on mount
   useEffect(() => {
-    try {
-      const savedStep = localStorage.getItem("freelancer_onboarding_step");
-      const savedData = localStorage.getItem("freelancer_onboarding_data");
-      if (savedStep) setStep(parseInt(savedStep, 10));
-      if (savedData) setData(JSON.parse(savedData));
-    } catch {}
+    const savedStep = safeLocalStorage.getItem("freelancer_onboarding_step");
+    const savedData = safeLocalStorage.getItem("freelancer_onboarding_data");
+    if (savedStep) setStep(parseInt(savedStep, 10));
+    if (savedData) {
+      try {
+        setData(JSON.parse(savedData));
+      } catch {
+        safeLocalStorage.removeItem("freelancer_onboarding_data");
+      }
+    }
   }, []);
 
   // Persist progress on every step / data change
   useEffect(() => {
-    try {
-      localStorage.setItem("freelancer_onboarding_step", String(step));
-      localStorage.setItem("freelancer_onboarding_data", JSON.stringify(data));
-    } catch {}
+    safeLocalStorage.setItem("freelancer_onboarding_step", String(step));
+    safeLocalStorage.setItem(
+      "freelancer_onboarding_data",
+      JSON.stringify(data),
+    );
   }, [step, data]);
 
   const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;

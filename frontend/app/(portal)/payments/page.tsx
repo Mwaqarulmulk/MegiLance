@@ -1,7 +1,7 @@
 // @AI-HINT: Portal route for general Payments page.
 'use client';
 
-import Payments from '../../Payments/Payments';
+import Payments from '../../payments/payments';
 
 const PortalPaymentsPage = () => {
   return <Payments />;

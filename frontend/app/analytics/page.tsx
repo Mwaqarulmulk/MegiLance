@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { analyticsApi } from '@/lib/api';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
@@ -29,24 +30,24 @@ const AnalyticsPage: React.FC = () => {
   useEffect(() => {
     const loadAnalytics = async () => {
       try {
-        const apiModule = await import('@/lib/api') as any;
-        const metricsApi = apiModule.metricsApi;
-        if (metricsApi?.getDashboard) {
-          const data = await metricsApi.getDashboard();
-          if (data) {
-            setStats([
-              { label: 'Total Users', value: String(data.total_users ?? '0'), change: '--', positive: true, icon: <Users size={22} /> },
-              { label: 'Active Projects', value: String(data.active_projects ?? '0'), change: '--', positive: true, icon: <Briefcase size={22} /> },
-              { label: 'Revenue', value: `$${Number(data.revenue ?? 0).toLocaleString()}`, change: '--', positive: true, icon: <DollarSign size={22} /> },
-              { label: 'Proposals', value: String(data.total_proposals ?? '0'), change: '--', positive: true, icon: <FileText size={22} /> },
-              { label: 'Avg Rating', value: String(data.avg_rating ?? 'N/A'), change: '--', positive: true, icon: <Star size={22} /> },
-              { label: 'Completion Rate', value: data.completion_rate ? `${data.completion_rate}%` : 'N/A', change: '--', positive: true, icon: <TrendingUp size={22} /> },
-              { label: 'Avg Response Time', value: data.avg_response_hours ? `${data.avg_response_hours}h` : 'N/A', change: '--', positive: true, icon: <Clock size={22} /> },
-              { label: 'Active Contracts', value: String(data.active_contracts ?? '0'), change: '--', positive: true, icon: <BarChart3 size={22} /> },
-            ]);
-            setLoading(false);
-            return;
-          }
+        const data = await analyticsApi.getDashboardSummary() as Record<string, any>;
+        if (data) {
+          const users = data.users || {};
+          const projects = data.projects || {};
+          const revenue = data.revenue || {};
+          const engagement = data.engagement || {};
+          setStats([
+            { label: 'Total Users', value: String(users.total_users ?? users.total ?? '0'), change: '--', positive: true, icon: <Users size={22} /> },
+            { label: 'Active Projects', value: String(projects.active_projects ?? projects.active ?? '0'), change: '--', positive: true, icon: <Briefcase size={22} /> },
+            { label: 'Revenue', value: `$${Number(revenue.total_revenue ?? revenue.revenue ?? 0).toLocaleString()}`, change: '--', positive: true, icon: <DollarSign size={22} /> },
+            { label: 'Proposals', value: String(projects.total_proposals ?? projects.proposals ?? '0'), change: '--', positive: true, icon: <FileText size={22} /> },
+            { label: 'Avg Rating', value: String(engagement.avg_rating ?? 'N/A'), change: '--', positive: true, icon: <Star size={22} /> },
+            { label: 'Completion Rate', value: projects.completion_rate ? `${projects.completion_rate}%` : 'N/A', change: '--', positive: true, icon: <TrendingUp size={22} /> },
+            { label: 'Avg Response Time', value: engagement.avg_response_hours ? `${engagement.avg_response_hours}h` : 'N/A', change: '--', positive: true, icon: <Clock size={22} /> },
+            { label: 'Active Contracts', value: String(projects.active_contracts ?? '0'), change: '--', positive: true, icon: <BarChart3 size={22} /> },
+          ]);
+          setLoading(false);
+          return;
         }
       } catch {
         // API not available, use defaults

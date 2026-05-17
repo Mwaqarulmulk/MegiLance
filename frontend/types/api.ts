@@ -569,7 +569,9 @@ export interface PayoutMethodCreateData {
 
 export interface DisputeCreateData {
   contract_id: number;
-  reason: string;
+  reason?: string;
+  dispute_type?: string;
+  title?: string;
   description: string;
 }
 
@@ -603,10 +605,13 @@ export interface SkillAssessmentSubmission {
 }
 
 export interface WeeklyPatternSlot {
-  day: number;
-  start_time: string;
-  end_time: string;
-  available: boolean;
+  day_of_week: number;
+  is_working_day: boolean;
+  slots: {
+    start_time: string;
+    end_time: string;
+    is_available: boolean;
+  }[];
 }
 
 export interface AvailabilityBlockUpdate {

@@ -1,0 +1,269 @@
+/* @AI-HINT: ContractDetail light theme — colors only. No layout rules. */
+
+.page {
+    background: var(--bg-secondary-light);
+    color: var(--text-primary-light);
+}
+
+.contractTitle {
+    color: var(--text-primary-light);
+}
+
+.metaChip {
+    background: var(--bg-tertiary-light);
+    color: var(--text-secondary-light);
+}
+
+/* ─── Status badge variants ─── */
+.statusActive {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.statusCompleted {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.statusPending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.statusCancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.statusDefault {
+    background: var(--bg-tertiary-light);
+    color: var(--text-secondary-light);
+}
+
+/* ─── Tabs ─── */
+.tabs {
+    border-bottom-color: var(--border-light);
+}
+
+.tab {
+    background: transparent;
+    color: var(--text-secondary-light);
+}
+
+.tab:hover {
+    background: var(--bg-tertiary-light);
+    color: var(--text-primary-light);
+}
+
+.tabActive {
+    background: var(--ml-blue);
+    color: #ffffff;
+}
+
+/* ─── Cards ─── */
+.card {
+    background: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+}
+
+.cardTitle {
+    color: var(--text-primary-light);
+}
+
+/* ─── Party cards ─── */
+.partyCard {
+    background: var(--bg-tertiary-light);
+}
+
+.partyAvatar {
+    background: var(--ml-blue);
+    color: #ffffff;
+}
+
+.partyLabel {
+    color: var(--text-tertiary-light);
+}
+
+.partyName {
+    color: var(--text-primary-light);
+}
+
+/* ─── Stats ─── */
+.statBox {
+    background: var(--bg-tertiary-light);
+    border: 1px solid var(--border-light);
+}
+
+.statValue {
+    color: var(--ml-blue);
+}
+
+.statLabel {
+    color: var(--text-secondary-light);
+}
+
+/* ─── Milestones ─── */
+.milestone {
+    background: var(--bg-tertiary-light);
+}
+
+.milestoneName {
+    color: var(--text-primary-light);
+}
+
+.milestoneAmount {
+    color: var(--text-secondary-light);
+}
+
+.milestoneBadgeCompleted {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.milestoneBadgeActive {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.milestoneBadgePending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+/* ─── Description ─── */
+.description {
+    color: var(--text-secondary-light);
+}
+
+/* ─── Skeleton ─── */
+.skeleton {
+    background: var(--bg-tertiary-light);
+}
+
+/* ─── Empty state ─── */
+.emptyState {
+    background: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+}
+
+.emptyIcon {
+    background: var(--bg-tertiary-light);
+    color: var(--text-tertiary-light);
+}
+
+.emptyTitle {
+    color: var(--text-primary-light);
+}
+
+.emptySubtitle {
+    color: var(--text-secondary-light);
+}
+
+/* ─── Divider ─── */
+.sectionDivider {
+    background: var(--border-light);
+}
+
+/* ─── Action bar ─── */
+.actionBar {
+    background: #f0f7ff;
+    border: 1px solid #c7dffb;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* ─── Acknowledge box ─── */
+.acknowledgeBox {
+    background: #eff6ff;
+    border-color: var(--ml-blue);
+}
+
+.acknowledgeText {
+    color: #1e40af;
+}
+
+/* ─── Milestone management card ─── */
+.milestoneCard {
+    background: var(--bg-tertiary-light);
+    border: 1px solid var(--border-light);
+}
+
+/* ─── Milestone form ─── */
+.milestoneForm {
+    background: var(--bg-secondary-light);
+    border-color: var(--border-light);
+}
+
+.milestoneInput {
+    background: var(--bg-primary-light);
+    border-color: var(--border-light);
+    color: var(--text-primary-light);
+}
+
+.milestoneInput::placeholder {
+    color: var(--text-tertiary-light);
+}
+
+.milestoneTextarea {
+    background: var(--bg-primary-light);
+    border-color: var(--border-light);
+    color: var(--text-primary-light);
+}
+
+.milestoneTextarea::placeholder {
+    color: var(--text-tertiary-light);
+}
+
+/* ─── Empty text ─── */
+.emptyText {
+    color: var(--text-tertiary-light);
+}
+
+/* ─── Dispute modal ─── */
+.disputeModal {
+    background: var(--bg-primary-light);
+    border-color: var(--border-light);
+}
+
+.disputeModalHeader {
+    border-bottom-color: var(--border-light);
+}
+
+.disputeModalTitle {
+    color: var(--text-primary-light);
+}
+
+.modalClose {
+    color: var(--text-secondary-light);
+}
+
+.disputeModalFooter {
+    border-top-color: var(--border-light);
+}
+
+.formLabel {
+    color: var(--text-primary-light);
+}
+
+.formSelect {
+    background: var(--bg-primary-light);
+    border-color: var(--border-light);
+    color: var(--text-primary-light);
+}
+
+.formTextarea {
+    background: var(--bg-primary-light);
+    border-color: var(--border-light);
+    color: var(--text-primary-light);
+}
+
+/* ─── Escrow section (P1-4) ─── */
+.escrowSection {
+    background: #fff8eb;
+    border-color: var(--ml-accent);
+}
+
+.escrowStatus {
+    background: #fef3c7;
+    color: #92400e;
+}

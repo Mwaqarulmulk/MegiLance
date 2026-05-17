@@ -2,416 +2,662 @@
 
 /* ============ PAGE LAYOUT ============ */
 .page {
-  min-height: 100vh;
-  width: 100%;
+    min-height: 100vh;
+    width: 100%;
 }
 
 .loadingContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
 }
 
 .errorText {
-  margin: 0 0 1rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
 }
 
 .loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid transparent;
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+    width: 40px;
+    height: 40px;
+    border: 3px solid transparent;
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ============ HEADER ============ */
 .header {
-  padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .headerContent {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
 }
 
 .headerActions {
-  display: flex;
-  gap: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
 }
 
 /* ============ TABS ============ */
 .tabContainer {
-  padding: 0 1.5rem;
+    padding: 0 1.5rem;
 }
 
 .tabs {
-  display: inline-flex;
-  gap: 0.25rem;
-  padding: 0.25rem;
-  border-radius: 8px;
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 8px;
 }
 
 .tab {
-  padding: 0.625rem 1rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease,
-    opacity 0.2s ease;
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
+        opacity 0.2s ease;
 }
 
 .activeTab {
-  font-weight: 600;
+    font-weight: 600;
 }
 
 /* ============ CONTENT ============ */
 .content {
-  padding: 1.5rem;
+    padding: 1.5rem;
+    flex: 1;
+    min-width: 0; /* prevent flex overflow */
 }
 
 /* ============ KANBAN BOARD ============ */
 .kanbanContainer {
-  overflow-x: auto;
+    overflow-x: auto;
 }
 
 .kanbanHeader {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .kanbanBoard {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(280px, 1fr));
-  gap: 1rem;
-  min-width: max-content;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+    gap: 1rem;
+    min-width: max-content;
 }
 
 .kanbanColumn {
-  padding: 1rem;
-  border-radius: 12px;
-  min-height: 400px;
+    padding: 1rem;
+    border-radius: 12px;
+    min-height: 400px;
 }
 
 .columnHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
 }
 
 .columnDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
 }
 
 .columnDot_todo {
-  background-color: #94a3b8;
+    background-color: #94a3b8;
 }
 
 .columnDot_in_progress {
-  background-color: #3b82f6;
+    background-color: #3b82f6;
 }
 
 .columnDot_review {
-  background-color: #f59e0b;
+    background-color: #f59e0b;
 }
 
 .columnDot_done {
-  background-color: #22c55e;
+    background-color: #22c55e;
 }
 
 .taskList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .taskCard {
-  padding: 1rem;
-  border-radius: 8px;
-  cursor: grab;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: grab;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .taskCard:hover {
-  transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 .dragging {
-  opacity: 0.5;
-  cursor: grabbing;
+    opacity: 0.5;
+    cursor: grabbing;
 }
 
 .taskPriority {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .priorityDot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
 }
 
 .priority_high {
-  background-color: #ef4444;
+    background-color: #ef4444;
 }
 
 .priority_medium {
-  background-color: #f59e0b;
+    background-color: #f59e0b;
 }
 
 .priority_low {
-  background-color: #22c55e;
+    background-color: #22c55e;
 }
 
 .taskMeta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.75rem;
-  font-size: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
 }
 
 /* ============ FILES ============ */
 .filesContainer {
-  max-width: 900px;
+    max-width: 900px;
 }
 
 .filesHeader {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .fileList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .fileCard {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
 }
 
 .fileIcon {
-  font-size: 1.5rem;
-  width: 40px;
-  text-align: center;
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
 }
 
 .fileInfo {
-  flex: 1;
+    flex: 1;
 }
 
 .fileActions {
-  flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 /* ============ DISCUSSIONS ============ */
 .discussionsContainer {
-  max-width: 900px;
+    max-width: 900px;
 }
 
 .discussionsHeader {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .discussionList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .discussionCard {
-  padding: 1.25rem;
-  border-radius: 12px;
+    padding: 1.25rem;
+    border-radius: 12px;
 }
 
 .discussionMeta {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.8125rem;
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
 }
 
 .resolvedBadge {
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
 }
 
 .discussionTitle {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
 .discussionFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+/* ============ CONTENT WRAPPER (main + milestone sidebar) ============ */
+.contentWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+}
+
+/* ============ MILESTONE SIDEBAR ============ */
+.milestoneSidebar {
+    width: 240px;
+    flex-shrink: 0;
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1.5rem 1.5rem 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.milestoneTitle {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.milestoneItem {
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    border: 1px solid transparent;
+}
+
+.milestoneName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.milestoneTag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    width: fit-content;
+}
+
+.tagSuccess {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.tagWarning {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.tagDefault {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.milestoneAmt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+    .contentWrapper {
+        flex-direction: column;
+    }
+    .milestoneSidebar {
+        width: 100%;
+        margin: 0 1.5rem 1.5rem;
+        box-sizing: border-box;
+        width: calc(100% - 3rem);
+    }
+}
+
+/* ============ DISPUTE MODAL ============ */
+.disputeOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.disputeModal {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.disputeModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid transparent;
+}
+
+.disputeModalTitle {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.disputeCloseBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s;
+}
+
+.disputeCloseBtn:hover {
+    opacity: 0.7;
+}
+
+.disputeModalBody {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.disputeLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.disputeSelect {
+    width: 100%;
+    padding: 0.6rem 0.875rem;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+}
+
+.disputeSelect:focus {
+    border-color: var(--ml-blue, #4573df);
+}
+
+.disputeTextarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.6rem 0.875rem;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    background: transparent;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.disputeTextarea:focus {
+    border-color: var(--ml-blue, #4573df);
+}
+
+.disputeCharCount {
+    font-size: 0.75rem;
+    opacity: 0.55;
+    text-align: right;
+    margin-top: 2px;
+}
+
+.disputeCharCountError {
+    opacity: 1;
+}
+
+.disputeError {
+    padding: 0.6rem 0.875rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.disputeSuccess {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 1.5rem 1.5rem;
+}
+
+.disputeModalFooter {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid transparent;
+}
+
+@media (max-width: 380px) {
+    .disputeModal {
+        border-radius: 12px;
+    }
+    .disputeModalHeader {
+        padding: 1rem;
+    }
+    .disputeModalBody {
+        padding: 1rem;
+    }
+    .disputeModalFooter {
+        flex-direction: column;
+    }
 }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1024px) {
-  .kanbanBoard {
-    grid-template-columns: repeat(2, minmax(260px, 1fr));
-  }
+    .kanbanBoard {
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+    }
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: 1rem;
-  }
+    .header {
+        padding: 1rem;
+    }
 
-  .kanbanBoard {
-    grid-template-columns: minmax(280px, 1fr);
-  }
+    .kanbanBoard {
+        grid-template-columns: minmax(280px, 1fr);
+    }
 
-  .kanbanColumn {
-    min-height: 300px;
-  }
+    .kanbanColumn {
+        min-height: 300px;
+    }
 
-  .fileCard {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .fileCard {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-  .fileActions {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
+    .fileActions {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .header {
-    padding: 0.75rem;
-  }
+    .header {
+        padding: 0.75rem;
+    }
 
-  .tabContainer {
-    padding: 0 0.75rem;
-  }
+    .tabContainer {
+        padding: 0 0.75rem;
+    }
 
-  .tabs {
-    width: 100%;
-  }
+    .tabs {
+        width: 100%;
+    }
 
-  .tab {
-    padding: 0.5rem 0.625rem;
-    font-size: 0.8125rem;
-  }
+    .tab {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.8125rem;
+    }
 
-  .content {
-    padding: 0.75rem;
-  }
+    .content {
+        padding: 0.75rem;
+    }
 
-  .kanbanColumn {
-    min-height: 250px;
-    padding: 0.75rem;
-  }
+    .kanbanColumn {
+        min-height: 250px;
+        padding: 0.75rem;
+    }
 
-  .taskCard {
-    padding: 0.75rem;
-  }
+    .taskCard {
+        padding: 0.75rem;
+    }
 
-  .fileCard {
-    padding: 0.75rem;
-  }
+    .fileCard {
+        padding: 0.75rem;
+    }
 
-  .discussionCard {
-    padding: 1rem;
-  }
+    .discussionCard {
+        padding: 1rem;
+    }
 }
 
 @media (max-width: 374px) {
-  .header {
-    padding: 0.5rem;
-  }
+    .header {
+        padding: 0.5rem;
+    }
 
-  .content {
-    padding: 0.5rem;
-  }
+    .content {
+        padding: 0.5rem;
+    }
 
-  .tab {
-    padding: 0.375rem 0.5rem;
-    font-size: 0.75rem;
-  }
+    .tab {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.75rem;
+    }
 }
 
 @media (max-width: 380px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-  .headerContent {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    width: 100%;
-  }
+    .headerContent {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        width: 100%;
+    }
 
-  .headerActions {
-    flex-direction: column;
-    width: 100%;
-  }
+    .headerActions {
+        flex-direction: column;
+        width: 100%;
+    }
 
-  .headerActions > * {
-    width: 100%;
-  }
+    .headerActions > * {
+        width: 100%;
+    }
 
-  .tabs {
-    flex-direction: column;
-  }
+    .tabs {
+        flex-direction: column;
+    }
 
-  .tab {
-    width: 100%;
-    text-align: center;
-  }
+    .tab {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 @media (max-width: 320px) {
-  .kanbanBoard {
-    grid-template-columns: minmax(240px, 1fr);
-  }
+    .kanbanBoard {
+        grid-template-columns: minmax(240px, 1fr);
+    }
 
-  .taskMeta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
+    .taskMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 
-  .discussionFooter {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
+    .discussionFooter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 }

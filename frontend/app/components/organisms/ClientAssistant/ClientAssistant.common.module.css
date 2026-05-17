@@ -1,0 +1,858 @@
+/* @AI-HINT: ClientAssistant common styles — layout, structure, animations only. No colors. */
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────── */
+
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-6px); }
+}
+
+@keyframes panelSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  70%  { transform: scale(1.9); opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+@keyframes buttonPop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes iconSwap {
+  from { transform: scale(0) rotate(-90deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+
+/* ─── Floating Trigger Button ────────────────────────────────────────────── */
+
+.floatingButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: buttonPop 0.4s var(--ease-elastic) both;
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.floatingButton:hover {
+  transform: scale(1.08) translateY(-2px);
+}
+
+.floatingButton:active {
+  transform: scale(0.95);
+}
+
+.floatingButton:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.floatingButtonActive {
+  transform: scale(0.95);
+}
+
+.floatingIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: transform 0.3s var(--ease-elastic), opacity 0.2s ease;
+  animation: iconSwap 0.25s var(--ease-elastic) both;
+}
+
+.floatingIconClose {
+  animation: iconSwap 0.25s var(--ease-elastic) both;
+}
+
+/* Pulse ring behind the floating button */
+.pulseRing {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: rgba(69, 115, 223, 0.35);
+  animation: pulse 2.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ─── Chat Panel ─────────────────────────────────────────────────────────── */
+
+.chatPanel {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 380px;
+  height: 580px;
+  border-radius: var(--radius-2xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 999;
+  animation: panelSlideUp 0.35s var(--ease-premium) both;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.panelHidden {
+  display: none;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────────── */
+
+.panelHeader {
+  height: 64px;
+  padding: 0 var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.headerAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.headerTitle {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.statusLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.minimizeBtn,
+.closeBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.minimizeBtn:hover,
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.minimizeBtn:active,
+.closeBtn:active {
+  transform: scale(0.92);
+}
+
+/* ─── Messages Area ──────────────────────────────────────────────────────── */
+
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,116,139,0.3) transparent;
+}
+
+.messagesArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.messagesArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messagesArea::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: var(--radius-full);
+}
+
+/* ─── Message Wrappers ───────────────────────────────────────────────────── */
+
+.messageWrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  animation: fadeInUp 0.22s var(--ease-premium) both;
+}
+
+.messageWrapperUser {
+  flex-direction: row-reverse;
+}
+
+.messageWrapperBot {
+  flex-direction: row;
+}
+
+/* ─── Bot Avatar ─────────────────────────────────────────────────────────── */
+
+.botAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ─── Message Bubble Group ───────────────────────────────────────────────── */
+
+.messageBubbleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 85%;
+}
+
+.messageWrapperUser .messageBubbleGroup {
+  align-items: flex-end;
+}
+
+.messageWrapperBot .messageBubbleGroup {
+  align-items: flex-start;
+}
+
+/* ─── Message Bubbles ────────────────────────────────────────────────────── */
+
+.messageBubble {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.userBubble {
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.botBubble {
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.bubbleText {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  font-family: var(--font-body);
+}
+
+/* ─── Typing dots ────────────────────────────────────────────────────────── */
+
+.typingDots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) 0;
+  height: 20px;
+}
+
+.typingDots span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+  opacity: 0.7;
+  animation: bounce 1.4s infinite;
+  display: block;
+}
+
+.typingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ─── Timestamp ──────────────────────────────────────────────────────────── */
+
+.timestamp {
+  font-size: 10px;
+  font-family: var(--font-body);
+  opacity: 0.5;
+  padding: 0 var(--space-1);
+}
+
+/* ─── Tool Results ───────────────────────────────────────────────────────── */
+
+.toolResultsArea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.toolCard {
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: fadeInUp 0.25s var(--ease-premium) both;
+}
+
+.toolCardLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  font-family: var(--font-heading);
+}
+
+.toolTextContent {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ─── Freelancer Grid ────────────────────────────────────────────────────── */
+
+.freelancerGrid {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,116,139,0.2) transparent;
+}
+
+.freelancerGrid::-webkit-scrollbar {
+  height: 3px;
+}
+
+.freelancerGrid::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: var(--radius-full);
+}
+
+/* ─── Freelancer Card ────────────────────────────────────────────────────── */
+
+.freelancerCard {
+  min-width: 148px;
+  max-width: 148px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  text-align: center;
+  flex-shrink: 0;
+  transition: transform 0.2s var(--ease-bounce);
+}
+
+.freelancerCard:hover {
+  transform: translateY(-2px);
+}
+
+.avatarCircle {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-family: var(--font-heading);
+  background: var(--gradient-primary);
+  color: #ffffff;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarInitial {
+  color: #ffffff;
+}
+
+.cardName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  /* Truncate long names */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+}
+
+.cardTitle {
+  font-size: 11px;
+  line-height: 1.3;
+  opacity: 0.65;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-body);
+}
+
+/* ─── Rate Tag ───────────────────────────────────────────────────────────── */
+
+.rateTag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+/* ─── Stars ──────────────────────────────────────────────────────────────── */
+
+.starsRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+}
+
+.starFilled {
+  color: var(--ml-yellow);
+}
+
+.starEmpty {
+  color: var(--neutral-300);
+}
+
+/* ─── View Profile Button ────────────────────────────────────────────────── */
+
+.viewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  margin-top: var(--space-1);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.viewBtn:hover {
+  opacity: 0.8;
+  transform: translateX(2px);
+}
+
+/* ─── Cost Estimate Card ─────────────────────────────────────────────────── */
+
+.priceRange {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.timelineLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.phaseList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.phaseRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  gap: var(--space-2);
+}
+
+.phaseName {
+  font-weight: 600;
+  font-family: var(--font-body);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phaseCost {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tipRow {
+  font-size: 11px;
+  line-height: var(--line-height-relaxed);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  opacity: 0.85;
+  font-family: var(--font-body);
+}
+
+/* ─── Market Rates Table ─────────────────────────────────────────────────── */
+
+.rateTable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.rateTableRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  gap: var(--space-2);
+}
+
+.rateRole {
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+
+.rateValues {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ─── Scope Plan / Milestones ────────────────────────────────────────────── */
+
+.milestoneList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.milestoneRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-lg);
+}
+
+.milestoneNumber {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+}
+
+.milestoneContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.milestoneTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: var(--font-heading);
+  line-height: 1.3;
+}
+
+.milestoneDesc {
+  font-size: 11px;
+  line-height: var(--line-height-relaxed);
+  opacity: 0.7;
+  font-family: var(--font-body);
+}
+
+.milestoneDuration {
+  font-size: 11px;
+  opacity: 0.6;
+  font-family: var(--font-mono);
+}
+
+/* ─── Action Buttons ─────────────────────────────────────────────────────── */
+
+.actionButtonsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  font-family: var(--font-heading);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.actionBtn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.actionBtnPrimary {
+  background: var(--gradient-primary);
+  color: #ffffff;
+}
+
+.actionBtnSecondary {
+  /* Colors supplied by theme files */
+}
+
+/* ─── Suggestion Chips ───────────────────────────────────────────────────── */
+
+.suggestionChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.chip {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  border: none;
+  outline: none;
+  line-height: 1.4;
+}
+
+.chip:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.chip:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Input Row ──────────────────────────────────────────────────────────── */
+
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  flex-shrink: 0;
+}
+
+.inputField {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  resize: none;
+  border-radius: var(--radius-xl);
+  padding: var(--space-2) var(--space-3);
+  outline: none;
+  overflow-y: hidden;
+  min-height: 40px;
+  max-height: 120px;
+  border: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.inputField:focus {
+  box-shadow: var(--focus-ring);
+}
+
+.inputField:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Send Button ────────────────────────────────────────────────────────── */
+
+.sendButton {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s var(--ease-bounce), opacity 0.15s ease;
+  background: var(--gradient-primary);
+  color: #ffffff;
+  outline: none;
+}
+
+.sendButton:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+.sendButton:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.sendButton:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.sendButtonDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─── Panel Footer ───────────────────────────────────────────────────────── */
+
+.panelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  font-size: 10px;
+  font-family: var(--font-body);
+  opacity: 0.45;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Header subtitle ────────────────────────────────────────────────────── */
+
+.headerSubtitle {
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+/* ─── Responsive: smaller screens ───────────────────────────────────────── */
+
+@media (max-width: 440px) {
+  .chatPanel {
+    width: calc(100vw - 24px);
+    right: 12px;
+    bottom: 90px;
+    height: 70vh;
+    max-height: 560px;
+  }
+
+  .floatingButton {
+    right: 16px;
+    bottom: 16px;
+  }
+}

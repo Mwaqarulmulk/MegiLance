@@ -842,7 +842,7 @@ New to Payoneer? Sign up at payoneer.com
             fee=Decimal("0"),
             net_amount=request.amount,
             status="error",
-            message="Payment handler not implemented"
+            message=f"Unsupported Pakistan payment provider: {request.provider.value}"
         )
     
     async def get_transaction_status(self, transaction_id: str) -> Dict[str, Any]:

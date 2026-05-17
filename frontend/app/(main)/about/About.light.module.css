@@ -1,1 +1,48 @@
-.about { background: var(--bg-primary-light); color: var(--text-primary-light); }
+/* @AI-HINT: About page light theme — colors only */
+.root {
+    background: #ffffff;
+    color: #0f172a;
+}
+.title {
+    color: #0f172a;
+}
+.subtitle {
+    color: #334155;
+}
+.sectionTitle {
+    color: #0f172a;
+}
+.sectionNote {
+    color: #64748b;
+}
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+.card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.cardTitle {
+    color: #0f172a;
+}
+.cardBody {
+    color: #475569;
+}
+.valueItem {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+.valueTitle {
+    color: #0f172a;
+}
+.valueDesc {
+    color: #475569;
+}
+.cta {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+.ctaBtn {
+    background: #4573df;
+    color: #ffffff;
+}

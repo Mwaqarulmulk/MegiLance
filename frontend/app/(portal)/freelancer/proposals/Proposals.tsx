@@ -188,6 +188,7 @@ const Proposals: React.FC = () => {
             : 75;
           return {
             id: String(ap.id),
+            projectId: String(ap.project_id),
             jobTitle: project?.title || `Project #${ap.project_id}`,
             clientName: project?.client_name || "Client",
             status: mapAPIStatus(ap.status, ap.is_draft),
@@ -286,12 +287,12 @@ const Proposals: React.FC = () => {
     }
   };
 
-  const handleView = (id: string) => {
-    router.push(`/freelancer/proposals/${id}`);
+  const handleView = (id: string, projectId: string) => {
+    router.push(`/jobs/${projectId}`);
   };
 
-  const handleEdit = (id: string) => {
-    router.push(`/freelancer/proposals/${id}/edit`);
+  const handleEdit = (id: string, projectId: string) => {
+    router.push(`/freelancer/submit-proposal?jobId=${projectId}`);
   };
 
   return (

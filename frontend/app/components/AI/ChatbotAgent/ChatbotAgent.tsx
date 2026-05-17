@@ -189,11 +189,11 @@ export default function ChatbotAgent() {
         if (res.status === 503 || res.status === 500) {
           setChatStatus('degraded');
         } else if (!res.ok && res.status !== 404 && res.status !== 405) {
-          setChatStatus('offline');
+          setChatStatus('degraded');
         }
       } catch {
         // AbortError = timeout, TypeError = no network
-        setChatStatus('offline');
+        setChatStatus('degraded');
       }
     };
     checkHealth();
@@ -245,7 +245,7 @@ export default function ChatbotAgent() {
       // Distinguish: network error (offline) vs server error (backend up but LLM not configured)
       const isNetworkError = !error?.status && (error instanceof TypeError || error?.message?.includes('fetch'));
       const isDegraded = error?.status === 503 || error?.status === 500 || error?.status === 422;
-      setIsOfflineMode(true);
+      // // setIsOfflineMode(true);
       setConversationId('offline-' + Date.now());
 
       let defaultOfflineGreeting = "Hi! I'm MegiBot. The AI assistant is temporarily limited — I'll answer what I can with built-in responses.";
@@ -265,7 +265,7 @@ export default function ChatbotAgent() {
       // ----------------------------------------------
 
       if (isNetworkError) {
-        setChatStatus('offline');
+        setChatStatus('degraded');
         setMessages([{
           id: 1,
           text: "I can't reach the server right now. Check your connection — I can still answer basic questions in the meantime.",
@@ -496,7 +496,7 @@ export default function ChatbotAgent() {
       // On any send failure, flip to offline mode and surface a helpful response
       const isNetworkErr = !err?.status && (err instanceof TypeError || err?.message?.includes('fetch'));
       if (!isOfflineMode) {
-        setIsOfflineMode(true);
+        // // setIsOfflineMode(true);
         setChatStatus(isNetworkErr ? 'offline' : 'degraded');
       }
       const offlineData = getOfflineResponse(userText);

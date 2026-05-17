@@ -1,0 +1,593 @@
+/* @AI-HINT: ContractDetail page — layout, structure, skeleton, animations. Theme-agnostic only. */
+
+/* ─── Page wrapper ─── */
+.page {
+    min-height: calc(100vh - 120px);
+    padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.container {
+    max-width: var(--container-xl);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* ─── Header bar ─── */
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.backBtn {
+    flex-shrink: 0;
+}
+
+.headerMeta {
+    flex: 1;
+    min-width: 0;
+}
+
+.contractTitle {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--spacing-xs) 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.metaChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+}
+
+/* ─── Status badge ─── */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─── Tab navigation ─── */
+.tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0;
+    margin-bottom: var(--spacing-md);
+}
+
+.tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+/* ─── Content grid ─── */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-lg);
+    align-items: start;
+}
+
+/* ─── Cards ─── */
+.card {
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.cardTitle {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+/* ─── Party cards (client / freelancer) ─── */
+.partyCard {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.partyAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.partyInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.partyLabel {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+}
+
+.partyName {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ─── Stats row ─── */
+.statsRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.statBox {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.statValue {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.statLabel {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─── Milestones ─── */
+.milestoneList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.milestone {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid transparent;
+}
+
+.milestoneIcon {
+    flex-shrink: 0;
+}
+
+.milestoneContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.milestoneName {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.milestoneAmount {
+    font-size: var(--font-size-xs);
+}
+
+.milestoneBadge {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+/* ─── Description ─── */
+.description {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    white-space: pre-wrap;
+}
+
+/* ─── Skeleton loader ─── */
+.skeleton {
+    border-radius: var(--radius-md);
+    animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.skeletonTitle {
+    height: 32px;
+    width: 55%;
+    margin-bottom: var(--spacing-sm);
+}
+
+.skeletonLine {
+    height: 16px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.skeletonCard {
+    height: 160px;
+    border-radius: var(--radius-xl);
+}
+
+/* ─── Error / empty states ─── */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    border-radius: var(--radius-xl);
+}
+
+.emptyIcon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyTitle {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin: 0;
+}
+
+.emptySubtitle {
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+/* ─── Section divider ─── */
+.sectionDivider {
+    height: 1px;
+    margin: var(--spacing-lg) 0;
+}
+
+/* ─── Action bar ─── */
+.actionBar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    padding: var(--spacing-sm) 0;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* ─── Section header (title + button row) ─── */
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+/* ─── Acknowledge box ─── */
+.acknowledgeBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--ml-blue);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-xs);
+}
+
+.acknowledgeText {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    flex: 1;
+    margin: 0;
+    min-width: 200px;
+}
+
+/* ─── Milestone management card ─── */
+.milestoneCard {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+}
+
+.milestoneActions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* ─── Add Milestone form ─── */
+.milestoneForm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin-top: var(--spacing-md);
+    border: 1px dashed transparent;
+}
+
+.milestoneInput {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    outline: none;
+    transition: border-color var(--duration-fast) var(--ease-smooth);
+}
+
+.milestoneInput:focus {
+    border-color: var(--ml-blue);
+}
+
+.milestoneTextarea {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color var(--duration-fast) var(--ease-smooth);
+}
+
+.milestoneTextarea:focus {
+    border-color: var(--ml-blue);
+}
+
+.milestoneFormActions {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-xs);
+}
+
+/* ─── Empty text ─── */
+.emptyText {
+    font-size: var(--font-size-sm);
+    text-align: center;
+    padding: var(--spacing-lg) 0;
+    margin: 0;
+}
+
+/* ─── Dispute modal ─── */
+.disputeOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: var(--spacing-md);
+    backdrop-filter: blur(2px);
+}
+
+.disputeModal {
+    width: 100%;
+    max-width: 480px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid transparent;
+    box-shadow: var(--shadow-xl);
+}
+
+.disputeModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid transparent;
+}
+
+.disputeModalTitle {
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    margin: 0;
+}
+
+.modalClose {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: var(--radius-sm);
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.modalClose:hover {
+    opacity: 0.7;
+}
+
+.disputeModalBody {
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.formLabel {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.formSelect {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-smooth);
+}
+
+.formSelect:focus {
+    border-color: var(--ml-blue);
+}
+
+.formTextarea {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color var(--duration-fast) var(--ease-smooth);
+}
+
+.formTextarea:focus {
+    border-color: var(--ml-blue);
+}
+
+.disputeModalFooter {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-top: 1px solid transparent;
+}
+
+/* ─── Escrow section (P1-4) ─── */
+.escrowSection {
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-xs);
+    border-left: 4px solid var(--ml-accent);
+}
+
+.escrowTitle {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.escrowInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+    font-size: var(--font-size-sm);
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.escrowStatus {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .page {
+        padding: var(--spacing-md);
+    }
+
+    .contractTitle {
+        font-size: var(--font-size-lg);
+    }
+
+    .statsRow {
+        grid-template-columns: 1fr 1fr;
+    }
+}

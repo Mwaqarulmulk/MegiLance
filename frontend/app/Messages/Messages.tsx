@@ -10,9 +10,9 @@ import ChatInbox, { Conversation } from '@/app/components/organisms/Messaging/Ch
 import RealtimeChat from '@/app/components/organisms/Messaging/RealtimeChat';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import commonStyles from './Messages.common.module.css';
-import lightStyles from './Messages.light.module.css';
-import darkStyles from './Messages.dark.module.css';
+import commonStyles from './messages.common.module.css';
+import lightStyles from './messages.light.module.css';
+import darkStyles from './messages.dark.module.css';
 
 const Messages: React.FC = () => {
   const { resolvedTheme } = useTheme();

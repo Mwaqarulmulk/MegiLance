@@ -21,7 +21,18 @@ export default function Error({
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    // Log error for debugging
+    console.error('[Global Error Boundary]', error);
+    // Production error tracking (Sentry, LogRocket, etc.)
+    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
+      // TODO: Replace with actual error tracking service
+      // Sentry.captureException(error);
+      // or use browser's built-in reporting
+      if (window.reportError) {
+        window.reportError(error);
+      }
+    }
+  }, [error]);
 
   // Build merged styles
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;

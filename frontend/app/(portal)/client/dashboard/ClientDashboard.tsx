@@ -2,11 +2,7 @@
 // Production-ready: Uses real API data, no mock fallbacks.
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -212,14 +208,18 @@ const ClientDashboard: React.FC = () => {
   // Generate milestone status data unique to clients
   const milestonesMonitoring = useMemo(() => {
     const milestonesActive = displayProjects.filter(
-      (p) => (p.status as string) === "In Progress" || (p.status as string) === "in_progress"
+      (p) =>
+        (p.status as string) === "In Progress" ||
+        (p.status as string) === "in_progress",
     ).length;
     const milestonesPending = displayProjects.filter(
-      (p) => (p.status as string) === "On Hold" || (p.status as string) === "on_hold"
+      (p) =>
+        (p.status as string) === "On Hold" ||
+        (p.status as string) === "on_hold",
     ).length;
     return {
       active: milestonesActive,
-      pending: milestonesPending
+      pending: milestonesPending,
     };
   }, [displayProjects]);
 
@@ -328,11 +328,11 @@ const ClientDashboard: React.FC = () => {
       desc: "Create a new listing",
     },
     {
-      label: "Browse Talent",
-      href: "/client/hire",
+      label: "Find Talent",
+      href: "/browse-talent",
       icon: Search,
       color: "success" as const,
-      desc: "Find skilled freelancers",
+      desc: "Browse all freelancers",
     },
     {
       label: "My Projects",
@@ -385,7 +385,7 @@ const ClientDashboard: React.FC = () => {
     },
     {
       label: "Talent Pool",
-      href: "/client/freelancers",
+      href: "/client/browse-talent",
       icon: Users,
       color: "success" as const,
       desc: "Browse all freelancers",
@@ -464,18 +464,39 @@ const ClientDashboard: React.FC = () => {
 
         {/* Welcome Banner — shown only to new clients who haven't completed onboarding */}
         {showWelcomeBanner && (
-          <div className={cn(commonStyles.welcomeBanner, themeStyles.welcomeBanner)}>
+          <div
+            className={cn(
+              commonStyles.welcomeBanner,
+              themeStyles.welcomeBanner,
+            )}
+          >
             <div className={commonStyles.welcomeBannerContent}>
-              <h3 className={cn(commonStyles.welcomeBannerTitle, themeStyles.welcomeBannerTitle)}>
+              <h3
+                className={cn(
+                  commonStyles.welcomeBannerTitle,
+                  themeStyles.welcomeBannerTitle,
+                )}
+              >
                 🚀 Welcome to MegiLance, {user?.name?.split(" ")[0] || "there"}!
               </h3>
-              <p className={cn(commonStyles.welcomeBannerText, themeStyles.welcomeBannerText)}>
+              <p
+                className={cn(
+                  commonStyles.welcomeBannerText,
+                  themeStyles.welcomeBannerText,
+                )}
+              >
                 You&apos;re all set! Post your first project and connect with
                 world-class freelancers.
               </p>
             </div>
             <div className={commonStyles.welcomeBannerActions}>
-              <Link href="/client/post-job" className={cn(commonStyles.welcomeBannerPrimaryAction, themeStyles.welcomeBannerPrimaryAction)}>
+              <Link
+                href="/client/post-job"
+                className={cn(
+                  commonStyles.welcomeBannerPrimaryAction,
+                  themeStyles.welcomeBannerPrimaryAction,
+                )}
+              >
                 Post a Project
               </Link>
               <button
@@ -483,7 +504,10 @@ const ClientDashboard: React.FC = () => {
                   localStorage.setItem("onboarding_complete", "dismissed");
                   setShowWelcomeBanner(false);
                 }}
-                className={cn(commonStyles.welcomeBannerDismissAction, themeStyles.welcomeBannerDismissAction)}
+                className={cn(
+                  commonStyles.welcomeBannerDismissAction,
+                  themeStyles.welcomeBannerDismissAction,
+                )}
                 type="button"
               >
                 Dismiss
@@ -593,73 +617,181 @@ const ClientDashboard: React.FC = () => {
         {!loading && (
           <section aria-label="Spending trend and hiring funnel">
             <ScrollReveal delay={0.1}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginBottom: "1.5rem" }}>
+              <div className={commonStyles.chartsGrid}>
                 {/* Monthly Spending Trend */}
-                <div className={cn(commonStyles.insightCard, themeStyles.insightCard)} style={{ padding: "1.25rem" }}>
+                <div
+                  className={cn(
+                    commonStyles.insightCard,
+                    themeStyles.insightCard,
+                  )}
+                >
                   <div className={commonStyles.insightHeader}>
                     <BarChart3 size={18} />
-                    <h3 className={cn(commonStyles.insightTitle, themeStyles.insightTitle)}>
+                    <h3
+                      className={cn(
+                        commonStyles.insightTitle,
+                        themeStyles.insightTitle,
+                      )}
+                    >
                       Monthly Spending (6mo)
                     </h3>
-                    <Link href="/client/analytics" style={{ marginLeft: "auto", fontSize: "0.75rem", opacity: 0.7, display: "flex", alignItems: "center", gap: 4 }}>
+                    <Link
+                      href="/client/analytics"
+                      className={cn(
+                        commonStyles.insightViewLink,
+                        themeStyles.insightViewLink,
+                      )}
+                    >
                       View Analytics <ArrowRight size={12} />
                     </Link>
                   </div>
-                  <div style={{ display: "flex", alignItems: "flex-end", gap: "0.4rem", height: 72, marginTop: "0.75rem" }}>
+                  <div className={commonStyles.spendingBarChart}>
                     {(() => {
-                      const max = Math.max(...monthlySpendingTrend.map((m) => m.amount), 1);
+                      const max = Math.max(
+                        ...monthlySpendingTrend.map((m) => m.amount),
+                        1,
+                      );
                       return monthlySpendingTrend.map((m, i) => (
-                        <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, height: "100%" }}>
+                        <div
+                          key={i}
+                          style={{
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 4,
+                            height: "100%",
+                          }}
+                        >
                           <div
                             title={`${m.label}: $${m.amount.toLocaleString()}`}
                             style={{
                               width: "100%",
-                              background: m.amount > 0 ? "var(--color-primary, #4573df)" : "var(--color-border, #e2e8f0)",
+                              background:
+                                m.amount > 0
+                                  ? "var(--color-primary, #4573df)"
+                                  : "var(--color-border, #e2e8f0)",
                               borderRadius: "4px 4px 0 0",
                               height: `${Math.max((m.amount / max) * 100, m.amount > 0 ? 8 : 4)}%`,
-                              opacity: i === monthlySpendingTrend.length - 1 ? 1 : 0.55 + (i / monthlySpendingTrend.length) * 0.45,
+                              opacity:
+                                i === monthlySpendingTrend.length - 1
+                                  ? 1
+                                  : 0.55 +
+                                    (i / monthlySpendingTrend.length) * 0.45,
                               transition: "height 0.3s ease",
                             }}
                           />
-                          <span style={{ fontSize: "0.6rem", opacity: 0.6 }}>{m.label}</span>
+                          <span style={{ fontSize: "0.6rem", opacity: 0.6 }}>
+                            {m.label}
+                          </span>
                         </div>
                       ));
                     })()}
                   </div>
-                  <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", opacity: 0.65 }}>
-                    Total this period: <strong>${monthlySpendingTrend.reduce((s, m) => s + m.amount, 0).toLocaleString()}</strong>
+                  <div className={commonStyles.chartFootnote}>
+                    Total this period:{" "}
+                    <strong>
+                      $
+                      {monthlySpendingTrend
+                        .reduce((s, m) => s + m.amount, 0)
+                        .toLocaleString()}
+                    </strong>
                   </div>
                 </div>
 
                 {/* Hiring Funnel */}
-                <div className={cn(commonStyles.insightCard, themeStyles.insightCard)} style={{ padding: "1.25rem" }}>
+                <div
+                  className={cn(
+                    commonStyles.insightCard,
+                    themeStyles.insightCard,
+                  )}
+                >
                   <div className={commonStyles.insightHeader}>
                     <Target size={18} />
-                    <h3 className={cn(commonStyles.insightTitle, themeStyles.insightTitle)}>
+                    <h3
+                      className={cn(
+                        commonStyles.insightTitle,
+                        themeStyles.insightTitle,
+                      )}
+                    >
                       Hiring Funnel
                     </h3>
-                    <Link href="/client/proposals" style={{ marginLeft: "auto", fontSize: "0.75rem", opacity: 0.7, display: "flex", alignItems: "center", gap: 4 }}>
+                    <Link
+                      href="/client/proposals"
+                      className={cn(
+                        commonStyles.insightViewLink,
+                        themeStyles.insightViewLink,
+                      )}
+                    >
                       View Proposals <ArrowRight size={12} />
                     </Link>
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.75rem" }}>
+                  <div className={commonStyles.funnelList}>
                     {[
-                      { label: "Projects Posted", value: metrics.totalProjects, color: "#4573df", max: Math.max(metrics.totalProjects, 1) },
-                      { label: "Proposals Received", value: metrics.pendingProposals, color: "#9b59b6", max: Math.max(metrics.totalProjects, 1) },
-                      { label: "Active Projects", value: metrics.activeProjects, color: "#27AE60", max: Math.max(metrics.totalProjects, 1) },
-                      { label: "Completed", value: metrics.completedProjects, color: "#10b981", max: Math.max(metrics.totalProjects, 1) },
+                      {
+                        label: "Projects Posted",
+                        value: metrics.totalProjects,
+                        color: "#4573df",
+                        max: Math.max(metrics.totalProjects, 1),
+                      },
+                      {
+                        label: "Proposals Received",
+                        value: metrics.pendingProposals,
+                        color: "#9b59b6",
+                        max: Math.max(metrics.totalProjects, 1),
+                      },
+                      {
+                        label: "Active Projects",
+                        value: metrics.activeProjects,
+                        color: "#27AE60",
+                        max: Math.max(metrics.totalProjects, 1),
+                      },
+                      {
+                        label: "Completed",
+                        value: metrics.completedProjects,
+                        color: "#10b981",
+                        max: Math.max(metrics.totalProjects, 1),
+                      },
                     ].map((step) => (
-                      <div key={step.label} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <span style={{ fontSize: "0.7rem", opacity: 0.65, width: 120, flexShrink: 0 }}>{step.label}</span>
-                        <div style={{ flex: 1, height: 8, borderRadius: 4, background: "var(--color-border, #e2e8f0)", overflow: "hidden" }}>
-                          <div style={{ height: "100%", width: `${Math.max((step.value / step.max) * 100, step.value > 0 ? 6 : 0)}%`, background: step.color, borderRadius: 4, transition: "width 0.4s ease" }} />
+                      <div key={step.label} className={commonStyles.funnelRow}>
+                        <span className={commonStyles.funnelLabel}>
+                          {step.label}
+                        </span>
+                        <div
+                          className={cn(
+                            commonStyles.funnelTrack,
+                            themeStyles.funnelTrack,
+                          )}
+                        >
+                          <div
+                            style={{
+                              height: "100%",
+                              width: `${Math.max((step.value / step.max) * 100, step.value > 0 ? 6 : 0)}%`,
+                              background: step.color,
+                              borderRadius: 4,
+                              transition: "width 0.4s ease",
+                            }}
+                          />
                         </div>
-                        <span style={{ fontSize: "0.75rem", fontWeight: 600, width: 24, textAlign: "right" }}>{step.value}</span>
+                        <span className={commonStyles.funnelValue}>
+                          {step.value}
+                        </span>
                       </div>
                     ))}
                   </div>
-                  <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", opacity: 0.65 }}>
-                    Hire rate: <strong>{metrics.totalProjects > 0 ? Math.round((metrics.completedProjects / metrics.totalProjects) * 100) : 0}%</strong> completion
+                  <div className={commonStyles.chartFootnote}>
+                    Hire rate:{" "}
+                    <strong>
+                      {metrics.totalProjects > 0
+                        ? Math.round(
+                            (metrics.completedProjects /
+                              metrics.totalProjects) *
+                              100,
+                          )
+                        : 0}
+                      %
+                    </strong>{" "}
+                    completion
                   </div>
                 </div>
               </div>

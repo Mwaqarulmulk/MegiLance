@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 import { Wallet, History, ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
 import { getAuthToken } from '@/lib/api';
-import common from './Payments.common.module.css';
-import light from './Payments.light.module.css';
-import dark from './Payments.dark.module.css';
+import common from './payments.common.module.css';
+import light from './payments.light.module.css';
+import dark from './payments.dark.module.css';
 
 interface Transaction {
   id: number;

@@ -1,0 +1,36 @@
+/* @AI-HINT: Freelancers browse page — light theme colors */
+
+.page    { background: #f8fafc; color: #111827; }
+
+.pageTitle { color: #111827; }
+.pageCount { color: #6b7280; }
+
+/* Filter bar */
+.filterBar  { background: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.filterInput { background: #f3f4f6; border-color: #e5e7eb !important; color: #111827; }
+.input      { color: #111827; }
+.input::placeholder { color: #9ca3af; }
+
+/* Cards */
+.card    { background: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
+
+.avatarFallback { background: #dbeafe; color: #1d4ed8; }
+.avatar         { border: 2px solid #e5e7eb; }
+
+.name     { color: #111827; }
+.headline { color: #4b5563; }
+.location { color: #9ca3af; }
+
+.ratingVal { color: #374151; }
+.rate      { color: #111827; }
+
+.skillTag { background: rgba(59,130,246,0.1); color: #1e40af; }
+
+/* Error / empty */
+.errorBanner { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.empty       { color: #9ca3af; }
+
+/* Pagination */
+.pagination {}
+.pageInfo { color: #6b7280; }

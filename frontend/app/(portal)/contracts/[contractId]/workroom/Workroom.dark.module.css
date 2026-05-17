@@ -2,158 +2,222 @@
 
 /* ============ PAGE ============ */
 .page {
-  background-color: #0f0f1a;
-  color: #e4e4e7;
+    background-color: #0f0f1a;
+    color: #e4e4e7;
 }
 
 .errorText {
-  color: #f87171;
+    color: #f87171;
 }
 
 /* ============ HEADER ============ */
 .header {
-  background-color: #1a1a2e;
-  border-bottom: 1px solid #2a2a3e;
+    background-color: #1a1a2e;
+    border-bottom: 1px solid #2a2a3e;
 }
 
 .pageTitle {
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .contractId {
-  color: #a1a1aa;
-  font-size: 0.875rem;
+    color: #a1a1aa;
+    font-size: 0.875rem;
 }
 
 /* ============ TABS ============ */
 .tabs {
-  background-color: #1a1a2e;
-  border: 1px solid #2a2a3e;
+    background-color: #1a1a2e;
+    border: 1px solid #2a2a3e;
 }
 
 .tab {
-  color: #a1a1aa;
-  background-color: transparent;
+    color: #a1a1aa;
+    background-color: transparent;
 }
 
 .tab:hover {
-  background-color: #252538;
-  color: #ffffff;
+    background-color: #252538;
+    color: #ffffff;
 }
 
 .activeTab {
-  background-color: #6b8cef;
-  color: #ffffff;
+    background-color: #6b8cef;
+    color: #ffffff;
 }
 
 .activeTab:hover {
-  background-color: #5a7ad9;
-  color: #ffffff;
+    background-color: #5a7ad9;
+    color: #ffffff;
 }
 
 /* ============ KANBAN ============ */
 .kanbanColumn {
-  background-color: #1a1a2e;
-  border: 1px solid #2a2a3e;
+    background-color: #1a1a2e;
+    border: 1px solid #2a2a3e;
 }
 
 .columnTitle {
-  color: #ffffff;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  margin: 0;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .columnCount {
-  color: #a1a1aa;
-  font-size: 0.75rem;
-  background-color: #2a2a3e;
-  padding: 0.125rem 0.5rem;
-  border-radius: 10px;
+    color: #a1a1aa;
+    font-size: 0.75rem;
+    background-color: #2a2a3e;
+    padding: 0.125rem 0.5rem;
+    border-radius: 10px;
 }
 
 .taskCard {
-  background-color: #252538;
-  border: 1px solid #3a3a4e;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    background-color: #252538;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .taskCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .taskTitle {
-  color: #ffffff;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  margin: 0 0 0.25rem;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
 }
 
 .taskDesc {
-  color: #a1a1aa;
-  font-size: 0.8125rem;
-  margin: 0;
-  line-height: 1.4;
+    color: #a1a1aa;
+    font-size: 0.8125rem;
+    margin: 0;
+    line-height: 1.4;
 }
 
 .assignee {
-  color: #6b8cef;
-  font-weight: 500;
+    color: #6b8cef;
+    font-weight: 500;
 }
 
 .dueDate {
-  color: #a1a1aa;
+    color: #a1a1aa;
 }
 
 /* ============ FILES ============ */
 .fileCard {
-  background-color: #1a1a2e;
-  border: 1px solid #2a2a3e;
+    background-color: #1a1a2e;
+    border: 1px solid #2a2a3e;
 }
 
 .fileName {
-  color: #ffffff;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  margin: 0 0 0.25rem;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
 }
 
 .fileMeta {
-  color: #a1a1aa;
-  font-size: 0.8125rem;
-  margin: 0;
+    color: #a1a1aa;
+    font-size: 0.8125rem;
+    margin: 0;
 }
 
 /* ============ DISCUSSIONS ============ */
 .discussionCard {
-  background-color: #1a1a2e;
-  border: 1px solid #2a2a3e;
+    background-color: #1a1a2e;
+    border: 1px solid #2a2a3e;
 }
 
 .resolvedBadge {
-  background-color: #166534;
-  color: #dcfce7;
+    background-color: #166534;
+    color: #dcfce7;
 }
 
 .replyCount {
-  color: #a1a1aa;
+    color: #a1a1aa;
 }
 
 .discussionTitle {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .discussionContent {
-  color: #a1a1aa;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  margin: 0;
+    color: #a1a1aa;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .discussionAuthor {
-  color: #71717a;
-  font-size: 0.8125rem;
+    color: #71717a;
+    font-size: 0.8125rem;
+}
+
+/* ============ MILESTONE SIDEBAR ============ */
+.milestoneSidebar {
+    background-color: #1a1a2e;
+    border: 1px solid #2a2a3e;
+}
+
+.milestoneTitle {
+    color: #ffffff;
+}
+
+.milestoneItem {
+    background-color: #252538;
+    border-color: #3a3a4e;
+}
+
+/* ============ DISPUTE MODAL ============ */
+.disputeModal {
+    background: #1a1a2e;
+    border-color: #2a2a3e;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.disputeModalHeader {
+    border-bottom-color: #2a2a3e;
+    color: #ffffff;
+}
+.disputeModalTitle {
+    color: #ffffff;
+}
+.disputeCloseBtn {
+    color: #a1a1aa;
+}
+.disputeLabel {
+    color: #e4e4e7;
+}
+.disputeSelect {
+    background: #252538;
+    border-color: #3a3a4e;
+    color: #e4e4e7;
+}
+.disputeTextarea {
+    background: #252538;
+    border-color: #3a3a4e;
+    color: #e4e4e7;
+}
+.disputeCharCount {
+    color: #71717a;
+}
+.disputeCharCountError {
+    color: #f87171;
+}
+.disputeError {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+.disputeSuccess {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.disputeModalFooter {
+    border-top-color: #2a2a3e;
 }

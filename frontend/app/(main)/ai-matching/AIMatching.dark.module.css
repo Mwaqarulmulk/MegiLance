@@ -1,1 +1,23 @@
-.aimatching { background: transparent; color: var(--text-primary-dark); }
+/* @AI-HINT: AI Matching page dark theme — colors only */
+.hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+}
+.badge {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+.heroDesc {
+    color: #cbd5e1;
+}
+.searchBox {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.searchInput {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+.searchInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}

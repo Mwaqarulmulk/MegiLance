@@ -1,7 +1,0 @@
-[
-  { "id": "u1", "name": "Alex Johnson", "email": "alex.j@example.com", "type": "Freelancer", "status": "Active", "joined": "2025-08-01" },
-  { "id": "u2", "name": "Beta Corp", "email": "contact@betacorp.com", "type": "Client", "status": "Active", "joined": "2025-08-01" },
-  { "id": "u3", "name": "Sam Lee", "email": "sam.lee@example.com", "type": "Freelancer", "status": "Suspended", "joined": "2025-07-28" },
-  { "id": "u4", "name": "Innovate Inc.", "email": "hello@innovate.com", "type": "Client", "status": "Active", "joined": "2025-07-25" },
-  { "id": "u5", "name": "Maria Garcia", "email": "maria.g@example.com", "type": "Freelancer", "status": "Active", "joined": "2025-07-22" }
-]

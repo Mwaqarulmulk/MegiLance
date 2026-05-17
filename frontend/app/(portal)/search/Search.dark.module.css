@@ -1,78 +1,91 @@
-/* AI-HINT: Dark theme overrides for portal Search page. */
+/* @AI-HINT: Search page dark theme colors */
 
-.themeWrapper {
-  background: var(--bg-primary-dark);
-  color: var(--text-primary-dark);
+.pageTitle {
+    color: #f1f5f9;
 }
 
-.subtitle {
-  color: var(--text-tertiary-dark);
+.pageSubtitle {
+    color: #94a3b8;
 }
 
-.input,
-.select {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid var(--border-dark);
-  color: var(--text-primary-dark);
+.searchInput {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
-.input::placeholder {
-  color: #64748b;
+.searchInput::placeholder {
+    color: #475569;
 }
 
-.input:hover,
-.select:hover {
-  border-color: #475569;
+.searchIcon {
+    color: #475569;
 }
 
-.input:focus,
-.select:focus {
-  border-color: #6b8de6;
-  box-shadow: 0 0 0 3px rgba(107, 141, 230, 0.15);
+.tabs {
+    border-bottom-color: #334155;
 }
 
-.chip {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid var(--border-dark);
-  color: var(--text-secondary-dark);
+.tab {
+    color: #94a3b8;
 }
 
-.chip:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #475569;
-  color: var(--text-primary-dark);
+.tab:hover {
+    color: #f1f5f9;
+    background: #1e293b;
 }
 
-.chip[aria-pressed="true"] {
-  background: rgba(107, 141, 230, 0.15);
-  border-color: #6b8de6;
-  color: #6b8de6;
+.tabActive {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+}
+
+.resultsCount {
+    color: #94a3b8;
 }
 
 .card {
-  background: var(--bg-secondary-dark);
-  border: 1.5px solid var(--border-dark);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.12);
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .card:hover {
-  border-color: #475569;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-color: #475569;
+}
+
+.cardAvatar {
+    background: #0f172a;
+    color: #94a3b8;
+}
+
+.cardName {
+    color: #f1f5f9;
 }
 
 .cardTitle {
-  color: var(--text-primary-dark);
+    color: #94a3b8;
 }
 
-.cardMeta {
-  color: var(--text-tertiary-dark);
+.cardDescription {
+    color: #94a3b8;
 }
 
-.loadingState {
-  color: #6b8de6;
+.cardMetaItem {
+    color: #94a3b8;
 }
 
-.spinner {
-  border-color: var(--border-dark);
-  border-top-color: #6b8de6;
+.tag {
+    background: #0f172a;
+    color: #94a3b8;
+}
+
+.emptyTitle {
+    color: #f1f5f9;
+}
+
+.emptyDescription {
+    color: #94a3b8;
 }

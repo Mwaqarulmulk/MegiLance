@@ -110,7 +110,7 @@ const RecommendedTalent: React.FC = () => {
         )}
       </div>
       <div className="mt-4 flex justify-end">
-        <Link href="/freelancers">
+        <Link href="/browse-talent">
           <Button variant="ghost" size="sm">View All</Button>
         </Link>
       </div>

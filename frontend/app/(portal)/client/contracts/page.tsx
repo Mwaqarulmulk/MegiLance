@@ -1,30 +1,41 @@
 // @AI-HINT: Client Contracts List Page - Full-featured with KPI stats, status tabs, search, sorting, and rich contract cards
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { contractsApi } from '@/lib/api';
-import { Button } from '@/app/components/atoms/Button';
-import { Badge } from '@/app/components/atoms/Badge';
-import Input from '@/app/components/atoms/Input/Input';
-import Select from '@/app/components/molecules/Select/Select';
-import Pagination from '@/app/components/molecules/Pagination/Pagination';
-import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
-import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
-import { PageTransition } from '@/app/components/Animations/PageTransition';
-import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
-import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
-import { 
-  Search, FileText, DollarSign, CheckCircle, 
-  Plus, Download, Calendar,
-  ArrowRight, Briefcase
-} from 'lucide-react';
-import commonStyles from './Contracts.common.module.css';
-import lightStyles from './Contracts.light.module.css';
-import darkStyles from './Contracts.dark.module.css';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { contractsApi } from "@/lib/api";
+import { Button } from "@/app/components/atoms/Button";
+import { Badge } from "@/app/components/atoms/Badge";
+import Input from "@/app/components/atoms/Input/Input";
+import Select from "@/app/components/molecules/Select/Select";
+import Pagination from "@/app/components/molecules/Pagination/Pagination";
+import EmptyState from "@/app/components/molecules/EmptyState/EmptyState";
+import ErrorBanner from "@/app/components/molecules/ErrorBanner/ErrorBanner";
+import { PageTransition } from "@/app/components/Animations/PageTransition";
+import { ScrollReveal } from "@/app/components/Animations/ScrollReveal";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/app/components/Animations/StaggerContainer";
+import {
+  Search,
+  FileText,
+  DollarSign,
+  CheckCircle,
+  Plus,
+  Download,
+  Calendar,
+  ArrowRight,
+  Briefcase,
+  XCircle,
+} from "lucide-react";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
+import commonStyles from "./Contracts.common.module.css";
+import lightStyles from "./Contracts.light.module.css";
+import darkStyles from "./Contracts.dark.module.css";
 
 interface Contract {
   id: number;
@@ -43,67 +54,75 @@ interface Contract {
 }
 
 const STATUS_TABS = [
-  { key: 'all', label: 'All' },
-  { key: 'active', label: 'Active' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'cancelled', label: 'Cancelled' },
+  { key: "all", label: "All" },
+  { key: "active", label: "Active" },
+  { key: "completed", label: "Completed" },
+  { key: "pending", label: "Pending" },
+  { key: "cancelled", label: "Cancelled" },
 ];
 
 const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest First' },
-  { value: 'oldest', label: 'Oldest First' },
-  { value: 'budget_high', label: 'Budget (High to Low)' },
-  { value: 'budget_low', label: 'Budget (Low to High)' },
-  { value: 'title', label: 'Title (A-Z)' },
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "budget_high", label: "Budget (High to Low)" },
+  { value: "budget_low", label: "Budget (Low to High)" },
+  { value: "title", label: "Title (A-Z)" },
 ];
 
-const getStatusVariant = (status: string): 'success' | 'warning' | 'danger' | 'default' | 'primary' => {
+const getStatusVariant = (
+  status: string,
+): "success" | "warning" | "danger" | "default" | "primary" => {
   const normalized = status?.toLowerCase();
   switch (normalized) {
-    case 'active':
-    case 'in_progress':
-      return 'success';
-    case 'completed':
-    case 'done':
-      return 'primary';
-    case 'pending':
-    case 'draft':
-      return 'warning';
-    case 'cancelled':
-    case 'terminated':
-      return 'danger';
+    case "active":
+    case "in_progress":
+      return "success";
+    case "completed":
+    case "done":
+      return "primary";
+    case "pending":
+    case "draft":
+      return "warning";
+    case "cancelled":
+    case "terminated":
+      return "danger";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 export default function ClientContractsPage() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
-  
+  const toaster = useToaster();
+  const themeStyles = resolvedTheme === "light" ? lightStyles : darkStyles;
+
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  const [sortKey, setSortKey] = useState('newest');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+  const [sortKey, setSortKey] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
+  const [cancelLoading, setCancelLoading] = useState(false);
   const itemsPerPage = 9;
 
   useEffect(() => {
     async function loadContracts() {
       try {
-        const response = await contractsApi.list() as { contracts: Contract[] };
-        const data = Array.isArray(response) ? response : (response.contracts || []);
+        const response = (await contractsApi.list()) as {
+          contracts: Contract[];
+        };
+        const data = Array.isArray(response)
+          ? response
+          : response.contracts || [];
         setContracts(data);
         setError(null);
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to load contracts', error);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load contracts", error);
         }
-        setError('Failed to load contracts. Please try again.');
+        setError("Failed to load contracts. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -114,12 +133,15 @@ export default function ClientContractsPage() {
   // KPI calculations
   const kpis = useMemo(() => {
     const total = contracts.length;
-    const active = contracts.filter(c => 
-      ['active', 'in_progress'].includes(c.status?.toLowerCase())
+    const active = contracts.filter((c) =>
+      ["active", "in_progress"].includes(c.status?.toLowerCase()),
     ).length;
-    const totalValue = contracts.reduce((sum, c) => sum + (c.total_budget || 0), 0);
-    const completed = contracts.filter(c => 
-      ['completed', 'done'].includes(c.status?.toLowerCase())
+    const totalValue = contracts.reduce(
+      (sum, c) => sum + (c.total_budget || 0),
+      0,
+    );
+    const completed = contracts.filter((c) =>
+      ["completed", "done"].includes(c.status?.toLowerCase()),
     ).length;
     return { total, active, totalValue, completed };
   }, [contracts]);
@@ -127,24 +149,28 @@ export default function ClientContractsPage() {
   // Status counts for tab badges
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = { all: contracts.length };
-    contracts.forEach(c => {
-      const s = c.status?.toLowerCase() || 'unknown';
+    contracts.forEach((c) => {
+      const s = c.status?.toLowerCase() || "unknown";
       counts[s] = (counts[s] || 0) + 1;
       // Normalize in_progress to active
-      if (s === 'in_progress') counts['active'] = (counts['active'] || 0) + 1;
+      if (s === "in_progress") counts["active"] = (counts["active"] || 0) + 1;
     });
     return counts;
   }, [contracts]);
 
   // Filtered contracts
   const filteredContracts = useMemo(() => {
-    return contracts.filter(c => {
-      const matchesTab = activeTab === 'all' || 
+    return contracts.filter((c) => {
+      const matchesTab =
+        activeTab === "all" ||
         c.status?.toLowerCase() === activeTab ||
-        (activeTab === 'active' && c.status?.toLowerCase() === 'in_progress');
-      const matchesSearch = !searchQuery || 
+        (activeTab === "active" && c.status?.toLowerCase() === "in_progress");
+      const matchesSearch =
+        !searchQuery ||
         c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.freelancer?.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+        c.freelancer?.full_name
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase());
       return matchesTab && matchesSearch;
     });
   }, [contracts, activeTab, searchQuery]);
@@ -153,16 +179,28 @@ export default function ClientContractsPage() {
   const sortedContracts = useMemo(() => {
     const sorted = [...filteredContracts];
     switch (sortKey) {
-      case 'newest':
-        return sorted.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
-      case 'oldest':
-        return sorted.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
-      case 'budget_high':
-        return sorted.sort((a, b) => (b.total_budget || 0) - (a.total_budget || 0));
-      case 'budget_low':
-        return sorted.sort((a, b) => (a.total_budget || 0) - (b.total_budget || 0));
-      case 'title':
-        return sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      case "newest":
+        return sorted.sort(
+          (a, b) =>
+            new Date(b.start_date).getTime() - new Date(a.start_date).getTime(),
+        );
+      case "oldest":
+        return sorted.sort(
+          (a, b) =>
+            new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
+        );
+      case "budget_high":
+        return sorted.sort(
+          (a, b) => (b.total_budget || 0) - (a.total_budget || 0),
+        );
+      case "budget_low":
+        return sorted.sort(
+          (a, b) => (a.total_budget || 0) - (b.total_budget || 0),
+        );
+      case "title":
+        return sorted.sort((a, b) =>
+          (a.title || "").localeCompare(b.title || ""),
+        );
       default:
         return sorted;
     }
@@ -177,29 +215,64 @@ export default function ClientContractsPage() {
   const totalPages = Math.ceil(sortedContracts.length / itemsPerPage);
 
   // Reset page on filter changes
-  useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortKey]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery, sortKey]);
 
   const getProgress = useCallback((contract: Contract) => {
     if (contract.milestones_count && contract.milestones_completed) {
-      return Math.round((contract.milestones_completed / contract.milestones_count) * 100);
+      return Math.round(
+        (contract.milestones_completed / contract.milestones_count) * 100,
+      );
     }
     if (contract.paid_amount && contract.total_budget) {
       return Math.round((contract.paid_amount / contract.total_budget) * 100);
     }
-    if (['completed', 'done'].includes(contract.status?.toLowerCase())) return 100;
-    if (['active', 'in_progress'].includes(contract.status?.toLowerCase())) return 50;
+    if (["completed", "done"].includes(contract.status?.toLowerCase()))
+      return 100;
+    if (["active", "in_progress"].includes(contract.status?.toLowerCase()))
+      return 50;
     return 0;
   }, []);
 
+  const handleCancelContract = useCallback(
+    async (contractId: number) => {
+      if (cancelLoading) return;
+      const confirmed = window.confirm(
+        "Are you sure you want to cancel this contract? This action cannot be undone.",
+      );
+      if (!confirmed) return;
+      setCancelLoading(true);
+      try {
+        await (contractsApi as any).cancel(contractId);
+        setContracts((prev) => prev.filter((c) => c.id !== contractId));
+        toaster.success("Contract cancelled successfully.");
+      } catch (err: any) {
+        toaster.error(
+          err?.message || "Failed to cancel contract. Please try again.",
+        );
+      } finally {
+        setCancelLoading(false);
+      }
+    },
+    [cancelLoading, toaster],
+  );
+
   const handleExport = useCallback(() => {
-    const header = ['Title', 'Status', 'Budget', 'Freelancer', 'Start Date'];
-    const rows = contracts.map(c => [
-      c.title, c.status, `$${c.total_budget}`, c.freelancer?.full_name || 'N/A', c.start_date
+    const header = ["Title", "Status", "Budget", "Freelancer", "Start Date"];
+    const rows = contracts.map((c) => [
+      c.title,
+      c.status,
+      `$${c.total_budget}`,
+      c.freelancer?.full_name || "N/A",
+      c.start_date,
     ]);
-    const csv = [header, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const csv = [header, ...rows]
+      .map((r) => r.map((v) => `"${v}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `contracts_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
@@ -213,16 +286,29 @@ export default function ClientContractsPage() {
         <ScrollReveal>
           <header className={commonStyles.header}>
             <div className={commonStyles.headerInfo}>
-              <h1 className={cn(commonStyles.title, themeStyles.title)}>Contracts</h1>
+              <h1 className={cn(commonStyles.title, themeStyles.title)}>
+                Contracts
+              </h1>
               <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-                Manage all your contracts, milestones, and freelancer agreements.
+                Manage all your contracts, milestones, and freelancer
+                agreements.
               </p>
             </div>
             <div className={commonStyles.headerActions}>
-              <Button variant="secondary" size="md" iconBefore={<Download size={16} />} onClick={handleExport}>
+              <Button
+                variant="secondary"
+                size="md"
+                iconBefore={<Download size={16} />}
+                onClick={handleExport}
+              >
                 Export
               </Button>
-              <Button variant="primary" size="md" iconBefore={<Plus size={16} />} onClick={() => router.push('/client/post-job')}>
+              <Button
+                variant="primary"
+                size="md"
+                iconBefore={<Plus size={16} />}
+                onClick={() => router.push("/client/post-job")}
+              >
                 New Contract
               </Button>
             </div>
@@ -237,8 +323,16 @@ export default function ClientContractsPage() {
                 <FileText size={22} />
               </div>
               <div>
-                <span className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}>Total Contracts</span>
-                <span className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}>{kpis.total}</span>
+                <span
+                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
+                >
+                  Total Contracts
+                </span>
+                <span
+                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
+                >
+                  {kpis.total}
+                </span>
               </div>
             </div>
             <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
@@ -246,8 +340,16 @@ export default function ClientContractsPage() {
                 <Briefcase size={22} />
               </div>
               <div>
-                <span className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}>Active</span>
-                <span className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}>{kpis.active}</span>
+                <span
+                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
+                >
+                  Active
+                </span>
+                <span
+                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
+                >
+                  {kpis.active}
+                </span>
               </div>
             </div>
             <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
@@ -255,8 +357,16 @@ export default function ClientContractsPage() {
                 <DollarSign size={22} />
               </div>
               <div>
-                <span className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}>Total Value</span>
-                <span className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}>${kpis.totalValue.toLocaleString()}</span>
+                <span
+                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
+                >
+                  Total Value
+                </span>
+                <span
+                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
+                >
+                  ${kpis.totalValue.toLocaleString()}
+                </span>
               </div>
             </div>
             <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
@@ -264,8 +374,16 @@ export default function ClientContractsPage() {
                 <CheckCircle size={22} />
               </div>
               <div>
-                <span className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}>Completed</span>
-                <span className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}>{kpis.completed}</span>
+                <span
+                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
+                >
+                  Completed
+                </span>
+                <span
+                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
+                >
+                  {kpis.completed}
+                </span>
               </div>
             </div>
           </div>
@@ -273,8 +391,12 @@ export default function ClientContractsPage() {
 
         {/* Status Tabs */}
         <ScrollReveal delay={0.15}>
-          <div className={commonStyles.statusTabs} role="tablist" aria-label="Contract status filter">
-            {STATUS_TABS.map(tab => (
+          <div
+            className={commonStyles.statusTabs}
+            role="tablist"
+            aria-label="Contract status filter"
+          >
+            {STATUS_TABS.map((tab) => (
               <button
                 key={tab.key}
                 role="tab"
@@ -288,7 +410,9 @@ export default function ClientContractsPage() {
                 onClick={() => setActiveTab(tab.key)}
               >
                 {tab.label}
-                <span className={cn(commonStyles.tabCount, themeStyles.tabCount)}>
+                <span
+                  className={cn(commonStyles.tabCount, themeStyles.tabCount)}
+                >
                   {statusCounts[tab.key] || 0}
                 </span>
               </button>
@@ -331,43 +455,81 @@ export default function ClientContractsPage() {
         ) : loading ? (
           <div className={commonStyles.grid}>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className={cn(commonStyles.skeletonCard, themeStyles.skeletonCard)} />
+              <div
+                key={i}
+                className={cn(
+                  commonStyles.skeletonCard,
+                  themeStyles.skeletonCard,
+                )}
+              />
             ))}
           </div>
         ) : paginatedContracts.length > 0 ? (
           <StaggerContainer className={commonStyles.grid}>
             {paginatedContracts.map((contract) => {
               const progress = getProgress(contract);
-              const initials = contract.freelancer?.full_name
-                ?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '??';
-              
+              const initials =
+                contract.freelancer?.full_name
+                  ?.split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2) || "??";
+
               return (
                 <StaggerItem key={contract.id}>
-                  <Link 
-                    href={`/client/contracts/${contract.id}`} 
+                  <Link
+                    href={`/client/contracts/${contract.id}`}
                     className={cn(commonStyles.card, themeStyles.card)}
                     aria-label={`Contract: ${contract.title}`}
                   >
                     {/* Card Header */}
                     <div className={commonStyles.cardHeader}>
-                      <h3 className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>{contract.title}</h3>
+                      <h3
+                        className={cn(
+                          commonStyles.cardTitle,
+                          themeStyles.cardTitle,
+                        )}
+                      >
+                        {contract.title}
+                      </h3>
                       <div className={commonStyles.cardBadge}>
                         <Badge variant={getStatusVariant(contract.status)}>
-                          {contract.status?.replace('_', ' ')}
+                          {contract.status?.replace("_", " ")}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Freelancer Info */}
-                    <div className={cn(commonStyles.freelancerInfo, themeStyles.freelancerInfo)}>
-                      <div className={cn(commonStyles.freelancerAvatar, themeStyles.freelancerAvatar)}>
+                    <div
+                      className={cn(
+                        commonStyles.freelancerInfo,
+                        themeStyles.freelancerInfo,
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          commonStyles.freelancerAvatar,
+                          themeStyles.freelancerAvatar,
+                        )}
+                      >
                         {initials}
                       </div>
                       <div className={commonStyles.freelancerDetails}>
-                        <span className={cn(commonStyles.freelancerName, themeStyles.freelancerName)}>
-                          {contract.freelancer?.full_name || 'Unassigned'}
+                        <span
+                          className={cn(
+                            commonStyles.freelancerName,
+                            themeStyles.freelancerName,
+                          )}
+                        >
+                          {contract.freelancer?.full_name || "Unassigned"}
                         </span>
-                        <span className={cn(commonStyles.freelancerLabel, themeStyles.freelancerLabel)}>
+                        <span
+                          className={cn(
+                            commonStyles.freelancerLabel,
+                            themeStyles.freelancerLabel,
+                          )}
+                        >
                           Freelancer
                         </span>
                       </div>
@@ -376,14 +538,38 @@ export default function ClientContractsPage() {
                     {/* Stats */}
                     <div className={commonStyles.cardStats}>
                       <div className={commonStyles.cardStat}>
-                        <span className={cn(commonStyles.cardStatLabel, themeStyles.cardStatLabel)}>Budget</span>
-                        <span className={cn(commonStyles.cardStatValue, themeStyles.cardStatValue)}>
-                          ${contract.total_budget?.toLocaleString() || '0'}
+                        <span
+                          className={cn(
+                            commonStyles.cardStatLabel,
+                            themeStyles.cardStatLabel,
+                          )}
+                        >
+                          Budget
+                        </span>
+                        <span
+                          className={cn(
+                            commonStyles.cardStatValue,
+                            themeStyles.cardStatValue,
+                          )}
+                        >
+                          ${contract.total_budget?.toLocaleString() || "0"}
                         </span>
                       </div>
                       <div className={commonStyles.cardStat}>
-                        <span className={cn(commonStyles.cardStatLabel, themeStyles.cardStatLabel)}>Paid</span>
-                        <span className={cn(commonStyles.cardStatValue, themeStyles.cardStatValue)}>
+                        <span
+                          className={cn(
+                            commonStyles.cardStatLabel,
+                            themeStyles.cardStatLabel,
+                          )}
+                        >
+                          Paid
+                        </span>
+                        <span
+                          className={cn(
+                            commonStyles.cardStatValue,
+                            themeStyles.cardStatValue,
+                          )}
+                        >
                           ${(contract.paid_amount || 0).toLocaleString()}
                         </span>
                       </div>
@@ -392,13 +578,35 @@ export default function ClientContractsPage() {
                     {/* Progress */}
                     <div className={commonStyles.progressSection}>
                       <div className={commonStyles.progressHeader}>
-                        <span className={cn(commonStyles.progressLabel, themeStyles.progressLabel)}>Progress</span>
-                        <span className={cn(commonStyles.progressValue, themeStyles.progressValue)}>{progress}%</span>
+                        <span
+                          className={cn(
+                            commonStyles.progressLabel,
+                            themeStyles.progressLabel,
+                          )}
+                        >
+                          Progress
+                        </span>
+                        <span
+                          className={cn(
+                            commonStyles.progressValue,
+                            themeStyles.progressValue,
+                          )}
+                        >
+                          {progress}%
+                        </span>
                       </div>
-                      <div className={cn(commonStyles.progressBar, themeStyles.progressBar)}>
-                        <div 
-                          className={cn(commonStyles.progressFill, themeStyles.progressFill)} 
-                          style={{ width: `${progress}%` }} 
+                      <div
+                        className={cn(
+                          commonStyles.progressBar,
+                          themeStyles.progressBar,
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            commonStyles.progressFill,
+                            themeStyles.progressFill,
+                          )}
+                          style={{ width: `${progress}%` }}
                         />
                       </div>
                     </div>
@@ -407,21 +615,80 @@ export default function ClientContractsPage() {
                     {contract.milestones_count != null && (
                       <div className={commonStyles.milestoneSummary}>
                         <CheckCircle size={12} />
-                        {contract.milestones_completed || 0}/{contract.milestones_count} milestones completed
+                        {contract.milestones_completed || 0}/
+                        {contract.milestones_count} milestones completed
                       </div>
                     )}
 
                     {/* Footer */}
-                    <div className={cn(commonStyles.cardFooter, themeStyles.cardFooter)}>
-                      <span className={cn(commonStyles.cardDate, themeStyles.cardDate)}>
+                    <div
+                      className={cn(
+                        commonStyles.cardFooter,
+                        themeStyles.cardFooter,
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          commonStyles.cardDate,
+                          themeStyles.cardDate,
+                        )}
+                      >
                         <Calendar size={12} />
-                        {new Date(contract.start_date).toLocaleDateString('en-US', {
-                          month: 'short', day: 'numeric', year: 'numeric'
-                        })}
+                        {new Date(contract.start_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )}
                       </span>
-                      <span className={cn(commonStyles.cardDate, themeStyles.cardDate, commonStyles.labelBold)}>
-                        View Details <ArrowRight size={12} />
-                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "6px",
+                          alignItems: "center",
+                        }}
+                      >
+                        {["active", "in_progress"].includes(
+                          contract.status?.toLowerCase(),
+                        ) && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleCancelContract(contract.id);
+                            }}
+                            disabled={cancelLoading}
+                            aria-label="Cancel this contract"
+                            style={{
+                              background: "transparent",
+                              border: "1px solid #e81123",
+                              color: "#e81123",
+                              borderRadius: "4px",
+                              padding: "2px 8px",
+                              fontSize: "11px",
+                              cursor: cancelLoading ? "not-allowed" : "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "3px",
+                              flexShrink: 0,
+                              opacity: cancelLoading ? 0.6 : 1,
+                            }}
+                          >
+                            <XCircle size={11} /> Cancel
+                          </button>
+                        )}
+                        <span
+                          className={cn(
+                            commonStyles.cardDate,
+                            themeStyles.cardDate,
+                            commonStyles.labelBold,
+                          )}
+                        >
+                          View Details <ArrowRight size={12} />
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </StaggerItem>
@@ -434,18 +701,20 @@ export default function ClientContractsPage() {
               <FileText size={36} />
             </div>
             <h3 className={cn(commonStyles.emptyTitle, themeStyles.emptyTitle)}>
-              {searchQuery || activeTab !== 'all' ? 'No matching contracts' : 'No contracts yet'}
+              {searchQuery || activeTab !== "all"
+                ? "No matching contracts"
+                : "No contracts yet"}
             </h3>
             <p className={cn(commonStyles.emptyText, themeStyles.emptyText)}>
-              {searchQuery || activeTab !== 'all' 
-                ? 'Try adjusting your search or filter criteria.' 
-                : 'Start by posting a job and hiring a freelancer to create your first contract.'}
+              {searchQuery || activeTab !== "all"
+                ? "Try adjusting your search or filter criteria."
+                : "Start by posting a job and hiring a freelancer to create your first contract."}
             </p>
-            {!searchQuery && activeTab === 'all' && (
-              <Button 
-                variant="primary" 
+            {!searchQuery && activeTab === "all" && (
+              <Button
+                variant="primary"
                 iconBefore={<Plus size={16} />}
-                onClick={() => router.push('/client/post-job')}
+                onClick={() => router.push("/client/post-job")}
               >
                 Post a Job
               </Button>
@@ -459,8 +728,8 @@ export default function ClientContractsPage() {
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPrev={() => setCurrentPage(p => Math.max(1, p - 1))}
-              onNext={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             />
           </div>
         )}

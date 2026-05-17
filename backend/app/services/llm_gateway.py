@@ -38,12 +38,11 @@ class LLMGateway:
         max_tokens: int = 1500, 
         temperature: float = 0.7, 
         retries: int = 3
-    ) -> str:
-        """Generate text using DigitalOcean LLM API - NO OpenAI FALLBACK."""
+    ) -> Optional[str]:
+        """Generate text using DigitalOcean LLM API. Returns None on failure for graceful fallback."""
         if not self.is_active:
-            error_msg = "AI service not configured. Set DO_AI_API_KEY environment variable."
-            logger.error(error_msg)
-            return error_msg
+            logger.warning("AI service not configured. Set DO_AI_API_KEY environment variable.")
+            return None
 
         messages = []
         if system_message:
@@ -73,19 +72,31 @@ class LLMGateway:
                         if data.get("choices") and len(data["choices"]) > 0:
                             content = data["choices"][0].get("message", {}).get("content", "").strip()
                             if content:
-                                logger.debug(f"✓ LLM response generated (attempt {attempt+1})")
+                                logger.debug(f"LLM response generated (attempt {attempt+1})")
                                 return content
-                    else:
-                        logger.error(f"DigitalOcean API error (attempt {attempt+1}): {response.status_code} - {response.text}")
+                    
+                    if response.status_code >= 500 and attempt < retries:
+                        await asyncio.sleep(2 ** attempt)
+                        continue
                         
+                    logger.error(f"DigitalOcean API error (attempt {attempt+1}): {response.status_code}")
+                    return None
+                        
+            except httpx.ConnectError as e:
+                logger.warning(f"AI service connection error (attempt {attempt+1}): {e}")
+                if attempt < retries:
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+                return None
             except Exception as e:
                 logger.error(f"LLM Generation Error on attempt {attempt+1}: {type(e).__name__}: {e}")
                 if attempt < retries:
-                    await asyncio.sleep(2 ** attempt)  # Exponential backoff
-                continue
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+                return None
 
-        logger.error("❌ All retry attempts failed for LLM generation")
-        return "Unable to generate AI response at this time. Please try again."
+        logger.error("All retry attempts failed for LLM generation")
+        return None
 
 
 llm_gateway = LLMGateway()

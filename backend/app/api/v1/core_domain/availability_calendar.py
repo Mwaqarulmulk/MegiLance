@@ -3,9 +3,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime, date, timezone
+from urllib.parse import urlencode
 
 from app.db.turso_http import execute_query
 from app.core.security import get_current_active_user
+from app.core.config import get_settings
 
 router = APIRouter(prefix="/availability")
 
@@ -274,11 +276,23 @@ async def sync_calendar(
     
     if provider not in ["google", "outlook", "apple"]:
         return {"error": "Unsupported provider"}
-        
-    # Generate mock oauth URL
-    auth_url = f"https://auth.megilance.com/calendar/{provider}?user={user_id}"
-    
-    # In a real oauth flow, this happens after callback, but for completion:
+
+    settings = get_settings()
+    if provider == "google":
+        if not settings.GOOGLE_CLIENT_ID:
+            raise HTTPException(status_code=503, detail="Google Calendar OAuth is not configured")
+        auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urlencode({
+            "client_id": settings.GOOGLE_CLIENT_ID,
+            "redirect_uri": f"{settings.FRONTEND_URL.rstrip('/')}/callback?provider=google_calendar",
+            "response_type": "code",
+            "scope": "https://www.googleapis.com/auth/calendar",
+            "access_type": "offline",
+            "prompt": "consent",
+            "state": f"calendar:{provider}:{user_id}",
+        })
+    else:
+        raise HTTPException(status_code=503, detail=f"{provider.title()} calendar OAuth is not configured")
+
     try:
         from app.db.turso_http import execute_query
         import uuid

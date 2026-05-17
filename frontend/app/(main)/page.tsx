@@ -1,6 +1,48 @@
 // @AI-HINT: This is the Next.js home route. It delegates to the Home component, which uses per-component theming and styles only.
 import Home from '@/app/home/Home';
+import type { Metadata } from 'next';
+import { buildWebSiteJsonLd, buildOrganizationJsonLd, buildFAQJsonLd } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'MegiLance — AI-Powered Freelancing Platform',
+  description: 'Connect with top AI-vetted freelancers worldwide. Secure escrow payments, smart matching, and real-time collaboration. The future of freelancing starts here.',
+  keywords: ['freelance platform', 'AI matching', 'escrow payments', 'hire freelancers', 'remote work', 'gig economy'],
+  alternates: {
+    canonical: 'https://megilance.site',
+  },
+};
 
 export default function Page() {
-  return <Home />;
+  const jsonLd = [
+    buildWebSiteJsonLd(),
+    buildOrganizationJsonLd(),
+    buildFAQJsonLd([
+      {
+        question: 'What is MegiLance?',
+        answer: 'MegiLance is an AI-powered freelancing platform that connects clients with top-vetted freelancers using smart matching algorithms, secure escrow payments, and real-time collaboration tools.',
+      },
+      {
+        question: 'How does AI matching work?',
+        answer: 'Our AI analyzes project requirements, freelancer skills, past performance, and market rates to recommend the best matches for your project.',
+      },
+      {
+        question: 'Is payment secure?',
+        answer: 'Yes. All payments are held in secure escrow until milestones are completed and approved. We support Stripe, crypto (USDC), and bank transfers.',
+      },
+      {
+        question: 'What types of projects can I post?',
+        answer: 'You can post any project — web development, design, writing, marketing, AI/ML, data science, and more.',
+      },
+    ]),
+  ];
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Home />
+    </>
+  );
 }

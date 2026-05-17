@@ -1,7 +1,7 @@
 // @AI-HINT: Admin portal messages page - reuses shared Messages component within admin layout
 'use client';
 
-import Messages from '@/app/Messages/Messages';
+import Messages from '@/app/messages/messages';
 
 const AdminMessagesPage = () => {
   return <Messages />;

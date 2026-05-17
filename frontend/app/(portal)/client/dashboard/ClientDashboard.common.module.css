@@ -1,864 +1,967 @@
 /* @AI-HINT: Client Dashboard layout — structure, spacing, animations, responsive */
 
 .dashboardContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-  width: 100%;
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    width: 100%;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ── Loading State ──────────────────────────────── */
 .loadingContainer {
-  align-items: center;
-  justify-content: center;
-  min-height: 40vh;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
 }
 
 /* ── Error Banner ──────────────────────────────── */
 .errorBanner {
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-error, var(--ml-red));
-  background: rgba(232, 17, 35, 0.08);
-  color: var(--color-error, var(--ml-red));
-  font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-error, var(--ml-red));
+    background: rgba(232, 17, 35, 0.08);
+    color: var(--color-error, var(--ml-red));
+    font-size: 0.875rem;
 }
 
 /* ── Header ─────────────────────────────────────── */
 .headerSection {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-  flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .welcomeText h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0 0 0.25rem;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
 }
 
 .welcomeText p {
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .headerActions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  flex-shrink: 0;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 /* ── Welcome Banner ────────────────────────────── */
 .welcomeBanner {
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .welcomeBannerContent {
-  min-width: 0;
+    min-width: 0;
 }
 
 .welcomeBannerTitle {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
 }
 
 .welcomeBannerText {
-  font-size: 0.875rem;
-  margin: 0;
-  line-height: 1.45;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.45;
 }
 
 .welcomeBannerActions {
-  display: flex;
-  gap: 0.75rem;
-  flex-shrink: 0;
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
 }
 
 .welcomeBannerPrimaryAction,
 .welcomeBannerDismissAction {
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  line-height: 1;
-  white-space: nowrap;
-  text-decoration: none;
-  border: 1px solid transparent;
-  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
 }
 
 .welcomeBannerPrimaryAction {
-  font-weight: 700;
+    font-weight: 700;
 }
 
 .welcomeBannerDismissAction {
-  font-weight: 500;
-  cursor: pointer;
+    font-weight: 500;
+    cursor: pointer;
 }
 
 .welcomeBannerPrimaryAction:hover,
 .welcomeBannerDismissAction:hover {
-  transform: translateY(-1px);
+    transform: translateY(-1px);
 }
 
 .welcomeBannerPrimaryAction:focus-visible,
 .welcomeBannerDismissAction:focus-visible {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
 }
 
 /* ── Stats Grid ─────────────────────────────────── */
 .statsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
 }
 
 .statCard {
-  padding: 1.5rem;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 1.5rem;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (hover: hover) {
-  .statCard:hover {
-    transform: translateY(-3px);
-  }
+    .statCard:hover {
+        transform: translateY(-3px);
+    }
 }
 
 .statCard:focus-visible {
-  outline: 2px solid var(--color-primary, var(--ml-blue));
-  outline-offset: 2px;
+    outline: 2px solid var(--color-primary, var(--ml-blue));
+    outline-offset: 2px;
 }
 
 .statHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .statValue {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .statTrend {
-  font-size: 0.8125rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: 500;
+    font-size: 0.8125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 500;
 }
 
 /* ── Error Banner ── (enhanced) */
 .errorBanner {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /* ── Quick Actions ──────────────────────────────── */
 .quickActionsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .quickActionsGrid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
 }
 
 .quickActionCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1.25rem 0.75rem;
-  border-radius: 14px;
-  text-decoration: none;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.2s ease;
-  cursor: pointer;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+    border-radius: 14px;
+    text-decoration: none;
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.2s ease;
+    cursor: pointer;
+    text-align: center;
 }
 
 @media (hover: hover) {
-  .quickActionCard:hover {
-    transform: translateY(-3px);
-  }
+    .quickActionCard:hover {
+        transform: translateY(-3px);
+    }
 }
 
 .quickActionCard:focus-visible {
-  outline: 2px solid var(--color-primary, var(--ml-blue));
-  outline-offset: 2px;
+    outline: 2px solid var(--color-primary, var(--ml-blue));
+    outline-offset: 2px;
 }
 
 .quickActionIcon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 /* Color-coded icon backgrounds */
-.quickActionIcon-primary { background: rgba(69, 115, 223, 0.12); color: var(--color-primary, var(--ml-blue)); }
-.quickActionIcon-success { background: rgba(39, 174, 96, 0.12); color: var(--color-success, var(--ml-green)); }
-.quickActionIcon-info    { background: rgba(59, 130, 246, 0.12); color: var(--color-primary, #3b82f6); }
-.quickActionIcon-warning { background: rgba(242, 201, 76, 0.15); color: #d4a017; }
-.quickActionIcon-danger  { background: rgba(232, 17, 35, 0.10); color: var(--color-error, var(--ml-red)); }
-.quickActionIcon-purple  { background: rgba(139, 92, 246, 0.12); color: #8b5cf6; }
+.quickActionIcon-primary {
+    background: rgba(69, 115, 223, 0.12);
+    color: var(--color-primary, var(--ml-blue));
+}
+.quickActionIcon-success {
+    background: rgba(39, 174, 96, 0.12);
+    color: var(--color-success, var(--ml-green));
+}
+.quickActionIcon-info {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--color-primary, #3b82f6);
+}
+.quickActionIcon-warning {
+    background: rgba(242, 201, 76, 0.15);
+    color: #d4a017;
+}
+.quickActionIcon-danger {
+    background: rgba(232, 17, 35, 0.1);
+    color: var(--color-error, var(--ml-red));
+}
+.quickActionIcon-purple {
+    background: rgba(139, 92, 246, 0.12);
+    color: #8b5cf6;
+}
 
 .quickActionLabel {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  white-space: nowrap;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .quickActionDesc {
-  font-size: 0.6875rem;
-  font-weight: 400;
-  opacity: 0.7;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    opacity: 0.7;
 }
 
 /* ── Metrics Row ────────────────────────────────── */
 .metricsRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr;
-  gap: 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr;
+    gap: 1.25rem;
 }
 
 .metricCard {
-  padding: 1.5rem;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+    padding: 1.5rem;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .metricHint {
-  font-size: 0.75rem;
-  opacity: 0.65;
-  text-align: center;
-  line-height: 1.3;
+    font-size: 0.75rem;
+    opacity: 0.65;
+    text-align: center;
+    line-height: 1.3;
 }
 
 .retryButton {
-  background: none;
-  border: none;
-  color: var(--color-error, var(--ml-red));
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0.25rem 0;
-  font-size: inherit;
-  font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--color-error, var(--ml-red));
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    font-size: inherit;
+    font-weight: 600;
 }
 
 .metricStats {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
 }
 
 .metricStatItem {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
 }
 
-.metricIconSuccess { color: var(--color-success, var(--ml-green)); }
-.metricIconPrimary { color: var(--color-primary, var(--ml-blue)); }
-.metricIconWarning { color: #d4a017; }
+.metricIconSuccess {
+    color: var(--color-success, var(--ml-green));
+}
+.metricIconPrimary {
+    color: var(--color-primary, var(--ml-blue));
+}
+.metricIconWarning {
+    color: #d4a017;
+}
 
 .metricStatValue {
-  font-size: 1.25rem;
-  font-weight: 700;
-  min-width: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    min-width: 1.5rem;
 }
 
 .metricStatLabel {
-  font-size: 0.8125rem;
-  font-weight: 500;
+    font-size: 0.8125rem;
+    font-weight: 500;
 }
 
 /* ── Activity Timeline Section ──────────────────── */
 .timelineSection {
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid transparent;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid transparent;
 }
 
 /* ── Profile Completeness Widget ──────────────────── */
 .profileCompletenessWidget {
-  margin-top: 1rem;
-  border-radius: 14px;
+    margin-top: 1rem;
+    border-radius: 14px;
 }
 
 /* ── Platform Insight Card ──────────────────────── */
 .insightCard {
-  margin-top: 1rem;
-  padding: 1.25rem;
-  border-radius: 14px;
+    margin-top: 1rem;
+    padding: 1.25rem;
+    border-radius: 14px;
 }
 
 .insightHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .insightTitle {
-  font-size: 0.9375rem;
-  font-weight: 600;
+    font-size: 0.9375rem;
+    font-weight: 600;
 }
 
 .insightGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
 }
 
 .insightItem {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
 }
 
 .insightValue {
-  font-size: 1.125rem;
-  font-weight: 700;
+    font-size: 1.125rem;
+    font-weight: 700;
 }
 
 .insightLabel {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 /* ── Main Content Grid ──────────────────────────── */
 .mainContentGrid {
-  display: grid;
-  grid-template-columns: 5fr 3fr;
-  gap: 1.75rem;
+    display: grid;
+    grid-template-columns: 5fr 3fr;
+    gap: 1.75rem;
 }
 
 .sectionContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .sectionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .sectionTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
 .viewAllLink {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: opacity 0.15s ease;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: opacity 0.15s ease;
 }
 
 .viewAllLink:hover {
-  opacity: 0.8;
-  text-decoration: underline;
+    opacity: 0.8;
+    text-decoration: underline;
 }
 
 /* ── Project List ───────────────────────────────── */
 .projectList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .projectCard {
-  padding: 1.5rem;
-  border-radius: 14px;
-  border: 1px solid transparent;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    padding: 1.5rem;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .projectCard:hover {
-  transform: translateY(-1px);
+    transform: translateY(-1px);
 }
 
 .projectInfo h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
 }
 
 .projectMeta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.8125rem;
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8125rem;
 }
 
 .projectStatus {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 /* ── Talent List ────────────────────────────────── */
 .talentList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .talentCard {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 12px;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
 }
 
 .talentInfo h4 {
-  font-size: 0.9375rem;
-  font-weight: 600;
+    font-size: 0.9375rem;
+    font-weight: 600;
 }
 
 .talentRole {
-  font-size: 0.8125rem;
+    font-size: 0.8125rem;
 }
 
 .actionButton {
-  margin-left: auto;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: background-color 0.15s ease;
+    margin-left: auto;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
 }
 
 /* ── Alerts & Pending Actions ──────────────────────– */
 .alertsSection {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .alertsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
 }
 
 .alertCard {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  text-decoration: none;
-  transition: all 0.15s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: all 0.15s ease;
 }
 
 .alertCard:hover {
-  transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 .alertCardWarning {
-  border-color: rgba(212, 160, 23, 0.2);
-	background-color: rgba(212, 160, 23, 0.08);
+    border-color: rgba(212, 160, 23, 0.2);
+    background-color: rgba(212, 160, 23, 0.08);
 }
 
 .alertCardAlert {
-  border-color: rgba(232, 17, 35, 0.2);
-  background-color: rgba(232, 17, 35, 0.08);
+    border-color: rgba(232, 17, 35, 0.2);
+    background-color: rgba(232, 17, 35, 0.08);
 }
 
 .alertCardInfo {
-  border-color: rgba(69, 115, 223, 0.2);
-  background-color: rgba(69, 115, 223, 0.08);
+    border-color: rgba(69, 115, 223, 0.2);
+    background-color: rgba(69, 115, 223, 0.08);
 }
 
 .alertIcon {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.125rem;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.125rem;
 }
 
 .alertIconWarning {
-  background-color: rgba(212, 160, 23, 0.15);
-  color: #d4a017;
+    background-color: rgba(212, 160, 23, 0.15);
+    color: #d4a017;
 }
 
 .alertIconAlert {
-  background-color: rgba(232, 17, 35, 0.15);
-  color: var(--color-error, var(--ml-red));
+    background-color: rgba(232, 17, 35, 0.15);
+    color: var(--color-error, var(--ml-red));
 }
 
 .alertIconInfo {
-  background-color: rgba(69, 115, 223, 0.15);
-  color: var(--color-primary, var(--ml-blue));
+    background-color: rgba(69, 115, 223, 0.15);
+    color: var(--color-primary, var(--ml-blue));
 }
 
 .alertContent {
-  flex: 1;
-  min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 .alertTitle {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
 }
 
 .alertDesc {
-  font-size: 0.8125rem;
-  opacity: 0.75;
+    font-size: 0.8125rem;
+    opacity: 0.75;
 }
 
 .alertArrow {
-  flex-shrink: 0;
-  margin-left: auto;
-  opacity: 0.5;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+    opacity: 0.5;
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease;
 }
 
 .alertCard:hover .alertArrow {
-  opacity: 1;
-  transform: translateX(2px);
+    opacity: 1;
+    transform: translateX(2px);
 }
 
 /* ── Responsive ─────────────────────────────────── */
 @media (max-width: 1279px) {
-  .statsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .alertsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-  .quickActionsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .metricsRow {
-    grid-template-columns: 1fr 1fr;
-  }
+    .statsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .alertsGrid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .quickActionsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .metricsRow {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 @media (max-width: 1024px) {
-  .mainContentGrid {
-    grid-template-columns: 1fr;
-  }
-  .metricsRow {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
+    .mainContentGrid {
+        grid-template-columns: 1fr;
+    }
+    .metricsRow {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 }
 
 @media (max-width: 768px) {
-  .dashboardContainer {
-    gap: 1.25rem;
-  }
+    .dashboardContainer {
+        gap: 1.25rem;
+    }
 
-  .welcomeBanner {
-    padding: 1rem;
-  }
+    .welcomeBanner {
+        padding: 1rem;
+    }
 
-  .welcomeBannerActions {
-    width: 100%;
-  }
+    .welcomeBannerActions {
+        width: 100%;
+    }
 
-  .welcomeBannerPrimaryAction,
-  .welcomeBannerDismissAction {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
+    .welcomeBannerPrimaryAction,
+    .welcomeBannerDismissAction {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
 
-  .headerSection {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  .headerActions {
-    width: 100%;
-  }
-  .welcomeText h1 {
-    font-size: 1.5rem;
-  }
-  .statsGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  .alertsGrid {
-    grid-template-columns: 1fr;
-  }
-  .quickActionsGrid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-  }
-  .quickActionCard {
-    padding: 1rem 0.5rem;
-  }
-  .quickActionIcon {
-    width: 38px;
-    height: 38px;
-  }
-  .metricsRow {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+    .headerSection {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .headerActions {
+        width: 100%;
+    }
+    .welcomeText h1 {
+        font-size: 1.5rem;
+    }
+    .statsGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+    .alertsGrid {
+        grid-template-columns: 1fr;
+    }
+    .quickActionsGrid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+    .quickActionCard {
+        padding: 1rem 0.5rem;
+    }
+    .quickActionIcon {
+        width: 38px;
+        height: 38px;
+    }
+    .metricsRow {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .statsGrid {
-    grid-template-columns: 1fr;
-  }
-  .quickActionsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+    .quickActionsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* Small phones (380px and below) */
 @media (max-width: 380px) {
-  .dashboardContainer {
-    gap: 1rem;
-  }
+    .dashboardContainer {
+        gap: 1rem;
+    }
 
-  .welcomeBannerTitle {
-    font-size: 1rem;
-  }
+    .welcomeBannerTitle {
+        font-size: 1rem;
+    }
 
-  .welcomeBannerText {
-    font-size: 0.8rem;
-  }
-  
-  .welcomeText h1 {
-    font-size: 1.25rem;
-  }
-  
-  .welcomeText p {
-    font-size: 0.875rem;
-  }
-  
-  .statsGrid {
-    gap: 0.625rem;
-  }
-  
-  .statCard {
-    padding: 1rem;
-    border-radius: 12px;
-  }
-  
-  .statHeader {
-    font-size: 0.6875rem;
-  }
-  
-  .statValue {
-    font-size: 1.5rem;
-  }
-  
-  .statTrend {
-    font-size: 0.75rem;
-  }
-  
-  .quickActionsGrid {
-    gap: 0.5rem;
-  }
-  
-  .quickActionCard {
-    padding: 0.75rem 0.375rem;
-    border-radius: 10px;
-  }
-  
-  .quickActionIcon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-  }
-  
-  .quickActionLabel {
-    font-size: 0.6875rem;
-  }
-  
-  .quickActionDesc {
-    display: none;
-  }
-  
-  .sectionTitle {
-    font-size: 1rem;
-  }
-  
-  .viewAllLink {
-    font-size: 0.75rem;
-  }
-  
-  .projectCard {
-    padding: 1rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  
-  .projectInfo h3 {
-    font-size: 0.9375rem;
-  }
-  
-  .projectMeta {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-  }
-  
-  .alertCard {
-    padding: 0.875rem 1rem;
-    gap: 0.75rem;
-  }
-  
-  .alertIcon {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .alertTitle {
-    font-size: 0.875rem;
-  }
-  
-  .alertDesc {
-    font-size: 0.75rem;
-  }
+    .welcomeBannerText {
+        font-size: 0.8rem;
+    }
+
+    .welcomeText h1 {
+        font-size: 1.25rem;
+    }
+
+    .welcomeText p {
+        font-size: 0.875rem;
+    }
+
+    .statsGrid {
+        gap: 0.625rem;
+    }
+
+    .statCard {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .statHeader {
+        font-size: 0.6875rem;
+    }
+
+    .statValue {
+        font-size: 1.5rem;
+    }
+
+    .statTrend {
+        font-size: 0.75rem;
+    }
+
+    .quickActionsGrid {
+        gap: 0.5rem;
+    }
+
+    .quickActionCard {
+        padding: 0.75rem 0.375rem;
+        border-radius: 10px;
+    }
+
+    .quickActionIcon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+
+    .quickActionLabel {
+        font-size: 0.6875rem;
+    }
+
+    .quickActionDesc {
+        display: none;
+    }
+
+    .sectionTitle {
+        font-size: 1rem;
+    }
+
+    .viewAllLink {
+        font-size: 0.75rem;
+    }
+
+    .projectCard {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .projectInfo h3 {
+        font-size: 0.9375rem;
+    }
+
+    .projectMeta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .alertCard {
+        padding: 0.875rem 1rem;
+        gap: 0.75rem;
+    }
+
+    .alertIcon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .alertTitle {
+        font-size: 0.875rem;
+    }
+
+    .alertDesc {
+        font-size: 0.75rem;
+    }
 }
 
 /* Extra small phones (320px) */
 @media (max-width: 320px) {
-  .welcomeText h1 {
-    font-size: 1.125rem;
-  }
-  
-  .welcomeText p {
-    font-size: 0.8125rem;
-  }
-  
-  .statCard {
-    padding: 0.75rem;
-    border-radius: 10px;
-  }
-  
-  .statHeader {
-    font-size: 0.625rem;
-  }
-  
-  .statValue {
-    font-size: 1.25rem;
-  }
-  
-  .quickActionCard {
-    padding: 0.625rem 0.25rem;
-  }
-  
-  .quickActionIcon {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .quickActionLabel {
-    font-size: 0.625rem;
-  }
-  
-  .sectionTitle {
-    font-size: 0.9375rem;
-  }
-  
-  .projectCard {
-    padding: 0.875rem;
-  }
-  
-  .projectInfo h3 {
-    font-size: 0.875rem;
-  }
-  
-  .talentCard {
-    padding: 0.75rem;
-    gap: 0.75rem;
-  }
-  
-  .talentInfo h4 {
-    font-size: 0.875rem;
-  }
-  
-  .talentRole {
-    font-size: 0.75rem;
-  }
+    .welcomeText h1 {
+        font-size: 1.125rem;
+    }
+
+    .welcomeText p {
+        font-size: 0.8125rem;
+    }
+
+    .statCard {
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+
+    .statHeader {
+        font-size: 0.625rem;
+    }
+
+    .statValue {
+        font-size: 1.25rem;
+    }
+
+    .quickActionCard {
+        padding: 0.625rem 0.25rem;
+    }
+
+    .quickActionIcon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .quickActionLabel {
+        font-size: 0.625rem;
+    }
+
+    .sectionTitle {
+        font-size: 0.9375rem;
+    }
+
+    .projectCard {
+        padding: 0.875rem;
+    }
+
+    .projectInfo h3 {
+        font-size: 0.875rem;
+    }
+
+    .talentCard {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .talentInfo h4 {
+        font-size: 0.875rem;
+    }
+
+    .talentRole {
+        font-size: 0.75rem;
+    }
 }
 \n
 /* Added for 2026 motion aesthetics */
+/* ── Charts Grid & Inline Chart Elements ──────────────────────── */
+.chartsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.insightViewLink {
+    margin-left: auto;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.spendingBarChart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    height: 72px;
+    margin-top: 0.75rem;
+}
+.chartFootnote {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0.65;
+}
+.funnelList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+.funnelRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.funnelLabel {
+    font-size: 0.7rem;
+    opacity: 0.65;
+    width: 120px;
+    flex-shrink: 0;
+}
+.funnelTrack {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.funnelValue {
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 24px;
+    text-align: right;
+}
+
 .motionWrapper {
-  width: 100%;
+    width: 100%;
 }
 .glassPanel {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 .cardHover {
-  will-change: transform, box-shadow;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    will-change: transform, box-shadow;
+    transition:
+        transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease;
 }
 .cardHover:hover {
-  transform: translateY(-4px) scale(1.01);
-  z-index: 10;
+    transform: translateY(-4px) scale(1.01);
+    z-index: 10;
 }

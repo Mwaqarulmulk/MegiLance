@@ -1,0 +1,21 @@
+/* @AI-HINT: Delete account page — dark theme */
+
+.page { background: #0f1419; }
+
+.card { background: #1a1f2e; border-color: #2a2d3e; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+.warningBanner { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.25); }
+.warningTitle { color: #fca5a5; }
+.warningList li { color: #fca5a5; }
+
+.pageTitle { color: #f1f5f9; }
+.pageSub { color: #94a3b8; }
+
+.label { color: #e2e8f0; }
+.input { background: #252538; border-color: #3a3a4e; color: #e2e8f0; }
+.input::placeholder { color: #475569; }
+
+.checkboxLabel { color: #cbd5e1; }
+
+.errorMsg { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+.successMsg { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }

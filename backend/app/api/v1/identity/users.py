@@ -6,6 +6,7 @@ Enhanced with input validation and security measures
 
 import json
 import logging
+import math
 import re
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -208,6 +209,88 @@ def list_users(
         )
 
 
+@router.get("/freelancers")
+def list_freelancers(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    search: Optional[str] = Query(None),
+    min_rate: Optional[float] = Query(None, ge=0),
+    max_rate: Optional[float] = Query(None),
+) -> dict:
+    """Browse active freelancers — public endpoint, no auth required"""
+    try:
+        turso = get_turso_http()
+        offset = (page - 1) * page_size
+
+        where_clauses = ["user_type = 'freelancer'", "is_active = 1"]
+        params: list = []
+
+        if search:
+            where_clauses.append("(name LIKE ? OR bio LIKE ? OR skills LIKE ?)")
+            s = f"%{search}%"
+            params.extend([s, s, s])
+        if min_rate is not None:
+            where_clauses.append("hourly_rate >= ?")
+            params.append(min_rate)
+        if max_rate is not None:
+            where_clauses.append("hourly_rate <= ?")
+            params.append(max_rate)
+
+        where_sql = " AND ".join(where_clauses)
+
+        total = (
+            turso.fetch_scalar(f"SELECT COUNT(*) FROM users WHERE {where_sql}", params)
+            or 0
+        )
+
+        result = turso.execute(
+            f"""SELECT id, name, profile_image_url, bio, hourly_rate,
+                       headline, location, skills,
+                       0 as rating, experience_level
+                FROM users WHERE {where_sql}
+                ORDER BY id DESC
+                LIMIT ? OFFSET ?""",
+            params + [page_size, offset],
+        )
+
+        columns = result.get("columns", [])
+        items = []
+        for row in result.get("rows", []):
+            item = dict(zip(columns, row))
+            # Normalise skills field to a list
+            raw = item.get("skills")
+            if raw:
+                try:
+                    if isinstance(raw, str) and raw.startswith("["):
+                        item["skills"] = json.loads(raw)
+                    elif isinstance(raw, str):
+                        item["skills"] = [
+                            s.strip() for s in raw.split(",") if s.strip()
+                        ]
+                except (json.JSONDecodeError, AttributeError):
+                    item["skills"] = []
+            else:
+                item["skills"] = []
+            items.append(item)
+
+        return {
+            "items": items,
+            "total": int(total),
+            "page": page,
+            "page_size": page_size,
+            "pages": math.ceil(int(total) / page_size) if page_size else 1,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("list_freelancers failed: %s", e, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database temporarily unavailable",
+        )
+
+
 @router.get("/me", response_model=UserRead)
 def get_current_user_profile(current_user: User = Depends(get_current_user)) -> dict:
     """Get the currently authenticated user's profile"""
@@ -240,14 +323,30 @@ def update_current_user_profile(
     payload: UserUpdate, current_user: User = Depends(get_current_user)
 ) -> dict:
     """Update the currently authenticated user's profile"""
+    import secrets as _secrets
+
     try:
         turso = get_turso_http()
         updates = []
         params = []
         data = payload.dict(exclude_unset=True)
+
+        # --- Email uniqueness check BEFORE processing any fields ---
+        if "email" in data:
+            new_email = str(data["email"])
+            existing = turso.fetch_one(
+                "SELECT id FROM users WHERE email = ? AND id != ?",
+                [new_email, current_user.id],
+            )
+            if existing:
+                raise HTTPException(status_code=409, detail="Email already in use")
+
         allowed_fields = {
+            # Core identity
             "name",
             "bio",
+            "email",
+            # Freelancer-specific
             "skills",
             "hourly_rate",
             "profile_image_url",
@@ -255,6 +354,25 @@ def update_current_user_profile(
             "headline",
             "experience_level",
             "languages",
+            # Extended profile (P1-10)
+            "tagline",
+            "timezone",
+            "availability_status",
+            "linkedin_url",
+            "github_url",
+            "website_url",
+            "twitter_url",
+            "phone_number",
+            "years_of_experience",
+            "availability_hours",
+            "work_history",
+            "certifications",
+            "education",
+            "portfolio_url",
+            "title",
+            "full_name",
+            "username",
+            "company_name",
         }
         # Fields that need JSON serialization (list/dict types stored as TEXT in SQLite)
         json_fields = {
@@ -276,12 +394,27 @@ def update_current_user_profile(
                     params.append(value)
         if not updates:
             raise HTTPException(status_code=400, detail="No valid fields to update")
+
+        # --- If email is changing, force re-verification ---
+        if "email" in data:
+            new_email = str(data["email"])
+            verification_token = _secrets.token_urlsafe(32)
+            updates.append("email_verified = ?")
+            params.append(0)
+            updates.append("email_verification_token = ?")
+            params.append(verification_token)
+            logger.info(
+                f"Email change verification token for {new_email}: {verification_token}"
+            )
+
         updates.append("updated_at = ?")
         params.append(datetime.now(timezone.utc).isoformat())
         params.append(current_user.id)
         turso.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
         # Invalidate auth cache so subsequent requests see updated profile
         invalidate_user_cache(current_user.email)
+        if "email" in data:
+            invalidate_user_cache(str(data["email"]))
         result = turso.execute(
             """SELECT id, email, name, role, is_active, user_type, joined_at, created_at,
                       bio, skills, hourly_rate, profile_image_url, location, profile_data,
@@ -339,6 +472,40 @@ def get_user(user_id: int) -> dict:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Database temporarily unavailable",
         )
+
+
+@router.get("/{user_id}/portfolio")
+def get_user_portfolio(user_id: int) -> dict:
+    """Get a user's public portfolio items (no auth required)."""
+    try:
+        turso = get_turso_http()
+        result = turso.execute(
+            """SELECT id, title, description, image_url, project_url, tags, created_at
+               FROM portfolio_items WHERE freelancer_id = ?
+               ORDER BY created_at DESC LIMIT 20""",
+            [user_id],
+        )
+        columns = result.get("columns", [])
+        result_rows = result.get("rows", [])
+
+        # Fallback: try user_id column if freelancer_id yielded nothing
+        if not result_rows:
+            result2 = turso.execute(
+                """SELECT id, title, description, image_url, project_url, tags, created_at
+                   FROM portfolio_items WHERE user_id = ?
+                   ORDER BY created_at DESC LIMIT 20""",
+                [user_id],
+            )
+            columns = result2.get("columns", [])
+            result_rows = result2.get("rows", [])
+
+        items = [dict(zip(columns, r)) for r in result_rows]
+        return {"portfolio_items": items, "total": len(items)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("get_user_portfolio failed: %s", e, exc_info=True)
+        return {"portfolio_items": [], "total": 0}
 
 
 @router.post("/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
@@ -451,6 +618,32 @@ def change_password(
             pass  # Best-effort blacklisting
 
     return {"message": "Password changed successfully. Please log in again."}
+
+
+@router.delete("/me", status_code=204)
+def delete_current_user(
+    current_user: User = Depends(get_current_user),
+) -> None:
+    """Soft-delete the current user's account (GDPR right to erasure).
+
+    Anonymizes PII instead of a hard delete so that contract/payment
+    audit trails remain intact.
+    """
+    turso = get_turso_http()
+    now = datetime.now(timezone.utc).isoformat()
+    anonymized_email = f"deleted_{current_user.id}@deleted.megil"
+    turso.execute(
+        """UPDATE users SET
+           email = ?, full_name = 'Deleted User', username = ?,
+           bio = NULL, avatar_url = NULL, phone_number = NULL,
+           is_active = 0, email_verified = 0,
+           updated_at = ?
+           WHERE id = ?""",
+        [anonymized_email, f"deleted_{current_user.id}", now, current_user.id],
+    )
+    # Invalidate auth cache after account deletion
+    invalidate_user_cache(current_user.email)
+    return None
 
 
 @router.put("/me/complete-profile", response_model=UserRead)
@@ -810,47 +1003,53 @@ def get_profile_completeness(current_user: User = Depends(get_current_user)) -> 
         from app.services.profile_validation import (
             get_missing_profile_fields,
             is_profile_complete,
-            get_profile_completeness as calc_completeness,
         )
 
-        percentage = calc_completeness(current_user)
         missing = get_missing_profile_fields(current_user)
+        user_type = str(getattr(current_user, "user_type", "") or "").lower()
 
-        # Build detailed field status for UI
-        fields = {
-            "name": bool(
-                current_user.name
-                or (current_user.first_name and current_user.last_name)
-            ),
-            "bio": bool(current_user.bio and len(current_user.bio) > 20),
-            "location": bool(current_user.location),
-            "profile_picture": bool(
-                current_user.get("profile_image_url")
-                or current_user.get("profile_picture_url")
-            ),
-        }
+        # Resolve name safely (supports display name or first+last)
+        _name = getattr(current_user, "name", None)
+        _first = getattr(current_user, "first_name", None)
+        _last = getattr(current_user, "last_name", None)
+        _bio = getattr(current_user, "bio", None) or ""
 
-        if str(current_user.user_type).lower() == "freelancer":
-            fields["skills"] = bool(
-                current_user.skills and len(current_user.skills) > 2
+        # Build per-user-type field status for the UI breakdown
+        if user_type == "freelancer":
+            _avatar = getattr(current_user, "profile_image_url", None) or getattr(
+                current_user, "avatar_url", None
             )
-            fields["hourly_rate"] = bool(
-                current_user.hourly_rate and current_user.hourly_rate > 0
-            )
-            fields["headline"] = bool(getattr(current_user, "headline", None))
-            fields["experience_level"] = bool(
-                getattr(current_user, "experience_level", None)
-            )
-            fields["languages"] = bool(getattr(current_user, "languages", None))
-            fields["timezone"] = bool(getattr(current_user, "timezone", None))
-            fields["linkedin_url"] = bool(getattr(current_user, "linkedin_url", None))
-            fields["github_url"] = bool(getattr(current_user, "github_url", None))
-            fields["website_url"] = bool(getattr(current_user, "website_url", None))
-        elif str(current_user.user_type).lower() == "client":
-            fields["company_name"] = bool(current_user.company_name)
+            fields = {
+                "name": bool(_name or (_first and _last)),
+                "bio": bool(_bio and len(_bio) > 20),
+                "skills": bool(getattr(current_user, "skills", None)),
+                "hourly_rate": bool(
+                    getattr(current_user, "hourly_rate", None)
+                    and (getattr(current_user, "hourly_rate", 0) or 0) > 0
+                ),
+                "experience_level": bool(
+                    getattr(current_user, "experience_level", None)
+                ),
+                "location": bool(getattr(current_user, "location", None)),
+                "avatar_url": bool(_avatar),
+            }
+        else:  # client or unknown
+            fields = {
+                "name": bool(_name or (_first and _last)),
+                "bio": bool(_bio and len(_bio) > 20),
+                # company_name is optional — use getattr to avoid AttributeError (P0-2)
+                "company_name": bool(getattr(current_user, "company_name", None)),
+                "location": bool(getattr(current_user, "location", None)),
+                "email_verified": bool(
+                    getattr(current_user, "email_verified", False)
+                    or getattr(current_user, "is_verified", False)
+                ),
+            }
 
         completed = sum(1 for v in fields.values() if v)
         total = len(fields)
+        # Compute percentage directly from tracked fields for UI consistency
+        percentage = round((completed / total) * 100, 1) if total > 0 else 0
 
         return {
             "percentage": percentage,

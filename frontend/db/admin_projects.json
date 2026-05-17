@@ -1,7 +1,0 @@
-[
-  { "id": "p1", "title": "AI Chatbot Integration", "client": "Innovate Inc.", "freelancer": "John D.", "status": "In Progress", "budget": 5000, "flagged": false },
-  { "id": "p2", "title": "E-commerce UI/UX Redesign", "client": "Shopify Plus Store", "freelancer": "Mike R.", "status": "Completed", "budget": 8000, "flagged": false },
-  { "id": "p3", "title": "Urgent Data Entry", "client": "Data Co.", "freelancer": "N/A", "status": "Open for Proposals", "budget": 500, "flagged": true },
-  { "id": "p4", "title": "Mobile App Development", "client": "Appify Ltd.", "freelancer": "Jane S.", "status": "In Progress", "budget": 12000, "flagged": false },
-  { "id": "p5", "title": "Social Media Manager Needed", "client": "Startup X", "freelancer": "N/A", "status": "Dispute", "budget": 1500, "flagged": true }
-]

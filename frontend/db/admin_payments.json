@@ -1,7 +1,0 @@
-[
-  { "id": "txn1", "date": "2025-08-03", "type": "Milestone Release", "from": "Innovate Inc.", "to": "John D.", "amount": 5000, "status": "Completed" },
-  { "id": "txn2", "date": "2025-08-02", "type": "Deposit", "from": "Shopify Plus Store", "to": "Platform Wallet", "amount": 8000, "status": "Completed" },
-  { "id": "txn3", "date": "2025-08-01", "type": "Withdrawal", "from": "Mike R.", "to": "Bank Account", "amount": 7500, "status": "Pending" },
-  { "id": "txn4", "date": "2025-07-31", "type": "Platform Fee", "from": "Innovate Inc.", "to": "Platform", "amount": 250, "status": "Completed" },
-  { "id": "txn5", "date": "2025-07-30", "type": "Refund", "from": "Platform", "to": "Startup X", "amount": 1500, "status": "Failed" }
-]

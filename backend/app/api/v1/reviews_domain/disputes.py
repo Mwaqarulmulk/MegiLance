@@ -2,32 +2,36 @@
 @AI-HINT: Dispute Management API - Turso HTTP only (NO SQLite fallback)
 Handles dispute creation, listing, admin assignment, and resolution.
 """
-from typing import Optional
-import logging
+
 import json
-from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File
+import logging
+from typing import Optional
+
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from pydantic import BaseModel, Field
+
 logger = logging.getLogger(__name__)
 
-from app.core.security import get_current_active_user
-from app.api.v1.core_domain.uploads import validate_file, save_uploaded_file, DOCUMENT_DIR, ALLOWED_DOCUMENT_TYPES, ALLOWED_IMAGE_TYPES, MAX_DOCUMENT_SIZE
-from app.models import User
-from app.services.db_utils import get_user_role, sanitize_text, paginate_params
-from app.schemas.dispute import (
-    Dispute as DisputeSchema,
-    DisputeCreate,
-    DisputeUpdate,
-    DisputeList
+from app.api.v1.core_domain.uploads import (
+    ALLOWED_DOCUMENT_TYPES,
+    ALLOWED_IMAGE_TYPES,
+    MAX_DOCUMENT_SIZE,
+    save_uploaded_file,
+    validate_file,
 )
+from app.core.security import get_current_active_user
+from app.models import User
+from app.schemas.dispute import Dispute as DisputeSchema
+from app.schemas.dispute import DisputeCreate, DisputeList, DisputeUpdate
 from app.services import disputes_service
+from app.services.db_utils import get_user_role, paginate_params, sanitize_text
 
 router = APIRouter()
 
 
 @router.post("", response_model=DisputeSchema, status_code=status.HTTP_201_CREATED)
 async def create_dispute(
-    dispute_data: DisputeCreate,
-    current_user: User = Depends(get_current_active_user)
+    dispute_data: DisputeCreate, current_user: User = Depends(get_current_active_user)
 ):
     """Create a new dispute. Only contract parties can raise disputes."""
     contract = disputes_service.get_contract_parties(dispute_data.contract_id)
@@ -38,15 +42,26 @@ async def create_dispute(
     freelancer_id = contract["freelancer_id"]
 
     if current_user.id not in [client_id, freelancer_id]:
-        raise HTTPException(status_code=403, detail="Only contract parties can raise disputes")
+        raise HTTPException(
+            status_code=403, detail="Only contract parties can raise disputes"
+        )
 
-    dispute_type = dispute_data.dispute_type.value if hasattr(dispute_data.dispute_type, 'value') else dispute_data.dispute_type
+    dispute_type = (
+        dispute_data.dispute_type.value
+        if hasattr(dispute_data.dispute_type, "value")
+        else dispute_data.dispute_type
+    )
 
     dispute = disputes_service.create_dispute(
-        dispute_data.contract_id, current_user.id, dispute_type, sanitize_text(dispute_data.description)
+        dispute_data.contract_id,
+        current_user.id,
+        dispute_type,
+        sanitize_text(dispute_data.description),
     )
     if not dispute:
-        raise HTTPException(status_code=500, detail="Failed to retrieve created dispute")
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve created dispute"
+        )
 
     # Notify other party
     other_party_id = freelancer_id if current_user.id == client_id else client_id
@@ -57,7 +72,7 @@ async def create_dispute(
         content=f"A dispute has been raised on contract #{dispute_data.contract_id}",
         data={"dispute_id": dispute["id"], "contract_id": dispute_data.contract_id},
         priority="high",
-        action_url=f"/disputes/{dispute['id']}"
+        action_url=f"/disputes/{dispute['id']}",
     )
 
     # Notify admins
@@ -69,7 +84,7 @@ async def create_dispute(
             content=f"Dispute #{dispute['id']} raised on contract #{dispute_data.contract_id}",
             data={"dispute_id": dispute["id"], "contract_id": dispute_data.contract_id},
             priority="high",
-            action_url=f"/admin/disputes/{dispute['id']}"
+            action_url=f"/admin/disputes/{dispute['id']}",
         )
 
     return dispute
@@ -78,28 +93,35 @@ async def create_dispute(
 @router.get("", response_model=DisputeList)
 async def list_disputes(
     contract_id: Optional[int] = Query(None, description="Filter by contract"),
-    status_filter: Optional[str] = Query(None, alias="status", description="Filter by status"),
+    status_filter: Optional[str] = Query(
+        None, alias="status", description="Filter by status"
+    ),
     dispute_type: Optional[str] = Query(None, description="Filter by type"),
     raised_by_me: bool = Query(False, description="Only disputes I raised"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """List disputes with filtering. Regular users see only disputes they're involved in."""
     offset, limit = paginate_params(page, page_size)
     user_type = get_user_role(current_user)
 
     data = disputes_service.list_disputes(
-        user_type, current_user.id, contract_id, status_filter,
-        dispute_type, raised_by_me, offset, limit
+        user_type,
+        current_user.id,
+        contract_id,
+        status_filter,
+        dispute_type,
+        raised_by_me,
+        offset,
+        limit,
     )
     return DisputeList(total=data["total"], disputes=data["disputes"])
 
 
 @router.get("/{dispute_id}", response_model=DisputeSchema)
 async def get_dispute(
-    dispute_id: int,
-    current_user: User = Depends(get_current_active_user)
+    dispute_id: int, current_user: User = Depends(get_current_active_user)
 ):
     """Get a specific dispute. Only viewable by contract parties and admins."""
     dispute = disputes_service.get_dispute_by_id(dispute_id)
@@ -109,10 +131,18 @@ async def get_dispute(
     user_type = get_user_role(current_user)
 
     if user_type != "admin":
-        contract = disputes_service.get_contract_client_freelancer(dispute["contract_id"])
+        contract = disputes_service.get_contract_client_freelancer(
+            dispute["contract_id"]
+        )
         if contract:
-            if current_user.id not in [contract["client_id"], contract["freelancer_id"]]:
-                raise HTTPException(status_code=403, detail="You don't have permission to view this dispute")
+            if current_user.id not in [
+                contract["client_id"],
+                contract["freelancer_id"],
+            ]:
+                raise HTTPException(
+                    status_code=403,
+                    detail="You don't have permission to view this dispute",
+                )
 
     return dispute
 
@@ -121,7 +151,7 @@ async def get_dispute(
 async def update_dispute(
     dispute_id: int,
     dispute_data: DisputeUpdate,
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """Update a dispute. Regular users can only update description, admins can update everything."""
     dispute_core = disputes_service.get_dispute_contract_id(dispute_id)
@@ -145,7 +175,7 @@ async def update_dispute(
     if user_type == "admin":
         if "status" in update_dict and update_dict["status"] != current_status:
             new_status = update_dict["status"]
-            if hasattr(new_status, 'value'):
+            if hasattr(new_status, "value"):
                 new_status = new_status.value
             for party_id in [client_id, freelancer_id]:
                 disputes_service.send_notification(
@@ -155,15 +185,19 @@ async def update_dispute(
                     content=f"Dispute #{dispute_id} status changed to {new_status}",
                     data={"dispute_id": dispute_id, "new_status": new_status},
                     priority="high",
-                    action_url=f"/disputes/{dispute_id}"
+                    action_url=f"/disputes/{dispute_id}",
                 )
     elif current_user.id in [client_id, freelancer_id]:
         if set(update_dict.keys()) - {"description"}:
-            raise HTTPException(status_code=403, detail="You can only update the description")
+            raise HTTPException(
+                status_code=403, detail="You can only update the description"
+            )
         if "description" not in update_dict:
             update_dict = {}
     else:
-        raise HTTPException(status_code=403, detail="You don't have permission to update this dispute")
+        raise HTTPException(
+            status_code=403, detail="You don't have permission to update this dispute"
+        )
 
     if update_dict:
         disputes_service.update_dispute(dispute_id, update_dict)
@@ -174,15 +208,17 @@ async def update_dispute(
 class AssignDisputeRequest(BaseModel):
     admin_id: int = Field(..., gt=0)
 
+
 class ResolveDisputeRequest(BaseModel):
     resolution: str = Field(..., min_length=5, max_length=5000)
     contract_status: Optional[str] = None
+
 
 @router.post("/{dispute_id}/assign", response_model=DisputeSchema)
 async def assign_dispute(
     dispute_id: int,
     body: AssignDisputeRequest,
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """Assign a dispute to an admin. Admin-only endpoint."""
     user_type = get_user_role(current_user)
@@ -208,7 +244,7 @@ async def assign_dispute(
         content=f"You have been assigned dispute #{dispute_id}",
         data={"dispute_id": dispute_id},
         priority="high",
-        action_url=f"/admin/disputes/{dispute_id}"
+        action_url=f"/admin/disputes/{dispute_id}",
     )
 
     return await get_dispute(dispute_id, current_user)
@@ -218,7 +254,7 @@ async def assign_dispute(
 async def resolve_dispute(
     dispute_id: int,
     body: ResolveDisputeRequest,
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """Resolve a dispute. Admin-only endpoint."""
     user_type = get_user_role(current_user)
@@ -234,9 +270,20 @@ async def resolve_dispute(
 
     # Validate contract_status BEFORE resolving to prevent inconsistent state
     if body.contract_status:
-        valid_statuses = ["pending", "active", "completed", "cancelled", "disputed", "terminated", "refunded"]
+        valid_statuses = [
+            "pending",
+            "active",
+            "completed",
+            "cancelled",
+            "disputed",
+            "terminated",
+            "refunded",
+        ]
         if body.contract_status not in valid_statuses:
-            raise HTTPException(status_code=400, detail=f"Invalid contract status. Must be one of: {', '.join(valid_statuses)}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid contract status. Must be one of: {', '.join(valid_statuses)}",
+            )
 
     disputes_service.resolve_dispute(dispute_id, sanitize_text(body.resolution))
 
@@ -253,7 +300,7 @@ async def resolve_dispute(
                 content=f"Dispute #{dispute_id} has been resolved",
                 data={"dispute_id": dispute_id, "resolution": body.resolution},
                 priority="high",
-                action_url=f"/disputes/{dispute_id}"
+                action_url=f"/disputes/{dispute_id}",
             )
 
     return await get_dispute(dispute_id, current_user)
@@ -263,7 +310,7 @@ async def resolve_dispute(
 async def upload_evidence(
     dispute_id: int,
     file: UploadFile = File(...),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """Upload evidence for a dispute. Only contract parties and admins can upload."""
     evidence_data = disputes_service.get_dispute_evidence(dispute_id)
@@ -280,16 +327,21 @@ async def upload_evidence(
         if not contract:
             raise HTTPException(status_code=404, detail="Contract not found")
         if current_user.id not in [contract["client_id"], contract["freelancer_id"]]:
-            raise HTTPException(status_code=403, detail="You don't have permission to upload evidence for this dispute")
+            raise HTTPException(
+                status_code=403,
+                detail="You don't have permission to upload evidence for this dispute",
+            )
 
     # Validate file type (images and documents allowed as evidence), size, and content
     allowed_evidence_types = ALLOWED_DOCUMENT_TYPES | ALLOWED_IMAGE_TYPES
     file_content = validate_file(file, allowed_evidence_types, MAX_DOCUMENT_SIZE)
 
     # Save using the secure upload pipeline (sanitizes filename, prevents path traversal)
-    evidence_dir = DOCUMENT_DIR / "disputes" / str(dispute_id)
-    evidence_dir.mkdir(parents=True, exist_ok=True)
-    file_url = save_uploaded_file(file_content, file.filename or "evidence", evidence_dir)
+    # Include dispute_id in filename so evidence is identifiable without a custom subdir
+    dispute_filename = f"dispute_{dispute_id}_{file.filename or 'evidence'}"
+    file_url = save_uploaded_file(
+        file_content, dispute_filename, "documents", file.content_type
+    )
 
     evidence_list = []
     if current_evidence_json:
@@ -304,4 +356,3 @@ async def upload_evidence(
     disputes_service.update_dispute_evidence(dispute_id, json.dumps(evidence_list))
 
     return await get_dispute(dispute_id, current_user)
-

@@ -318,14 +318,41 @@ async def get_skill_leaderboard(
 ):
     """
     Get leaderboard for a specific skill
-    
+
     Shows top performers with scores and badges.
     """
-    # In production, this would query the database
-    # For now, return placeholder
+    engine = get_assessment_engine()
+    normalized_skill = skill.strip().lower()
+    completed_sessions = [
+        session for session in engine._active_sessions.values()
+        if session.get("status") == "completed"
+        and str(session.get("skill", "")).lower() == normalized_skill
+    ]
+
+    best_by_user: dict[int, dict] = {}
+    for session in completed_sessions:
+        user_id = int(session.get("user_id", 0))
+        score = session.get("score", {})
+        percentage = float(score.get("percentage", 0))
+        current_best = best_by_user.get(user_id)
+        if not current_best or percentage > current_best["score"]:
+            best_by_user[user_id] = {
+                "user_id": user_id,
+                "skill": session.get("skill"),
+                "difficulty": session.get("difficulty"),
+                "score": percentage,
+                "passed": bool(score.get("passed", False)),
+                "badges": score.get("badges", []),
+                "completed_at": session.get("completed_at"),
+            }
+
+    leaderboard = sorted(best_by_user.values(), key=lambda item: item["score"], reverse=True)[:limit]
+    for index, item in enumerate(leaderboard, start=1):
+        item["rank"] = index
+
     return {
         "success": True,
         "skill": skill,
-        "leaderboard": [],
-        "message": "Leaderboard data will be available after more assessments"
+        "leaderboard": leaderboard,
+        "total": len(leaderboard)
     }

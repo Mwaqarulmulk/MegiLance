@@ -14,22 +14,46 @@ from app.db.turso_http import execute_query, to_str, parse_date
 
 def _row_to_dispute(row) -> dict:
     """Convert Turso row to dispute dict"""
-    return {
+    raised_by_id = int(row[2].get("value")) if row[2].get("type") != "null" else None
+    assigned_to_id = int(row[6].get("value")) if row[6].get("type") != "null" else None
+    dispute_type = to_str(row[3])
+    description = to_str(row[4])
+    evidence_value = to_str(row[10]) if len(row) > 10 else None
+    evidence = None
+    if evidence_value:
+        try:
+            parsed_evidence = json.loads(evidence_value)
+            if isinstance(parsed_evidence, list):
+                evidence = [
+                    item if isinstance(item, dict) else {"url": str(item)}
+                    for item in parsed_evidence
+                ]
+        except json.JSONDecodeError:
+            evidence = [{"url": evidence_value}]
+
+    dispute = {
         "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
         "contract_id": int(row[1].get("value")) if row[1].get("type") != "null" else None,
-        "raised_by_id": int(row[2].get("value")) if row[2].get("type") != "null" else None,
-        "dispute_type": to_str(row[3]),
-        "description": to_str(row[4]),
+        "raised_by_id": raised_by_id,
+        "raised_by": raised_by_id,
+        "dispute_type": dispute_type,
+        "title": dispute_type.replace("_", " ").title() if dispute_type else "Dispute",
+        "description": description,
         "status": to_str(row[5]) or "open",
-        "assigned_to_id": int(row[6].get("value")) if row[6].get("type") != "null" else None,
+        "assigned_to_id": assigned_to_id,
+        "assigned_to": assigned_to_id,
         "resolution": to_str(row[7]),
         "created_at": parse_date(row[8]),
-        "updated_at": parse_date(row[9])
+        "updated_at": parse_date(row[9]),
+        "resolved_at": None,
+        "resolution_amount": None,
+        "evidence": evidence,
     }
+    return dispute
 
 
 DISPUTE_SELECT_COLS = ("id, contract_id, raised_by_id, dispute_type, description, "
-                       "status, assigned_to_id, resolution, created_at, updated_at")
+                       "status, assigned_to_id, resolution, created_at, updated_at, evidence")
 
 
 def send_notification(user_id: int, notification_type: str, title: str,
@@ -89,7 +113,7 @@ def create_dispute(contract_id: int, raised_by_id: int, dispute_type: str, descr
 
 def get_admin_user_ids() -> List[int]:
     """Get all admin user IDs."""
-    result = execute_query("SELECT id FROM users WHERE user_type = 'Admin'", [])
+    result = execute_query("SELECT id FROM users WHERE lower(user_type) = 'admin' OR lower(role) = 'admin'", [])
     if not result or not result.get("rows"):
         return []
     return [int(r[0].get("value")) for r in result["rows"]]

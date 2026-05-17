@@ -1,0 +1,35 @@
+/* @AI-HINT: Proposals list page — dark theme */
+
+.page { background: #0f1419; color: #e2e8f0; }
+
+.pageTitle { color: #f1f5f9; }
+.pageSub { color: #94a3b8; }
+
+.toolbar { }
+.sortSelect { background: #1a1f2e; border-color: #2a2d3e; color: #cbd5e1; }
+
+.skeletonCard { background: #1a1f2e; border-color: #2a2d3e; }
+
+.proposalCard { background: #1a1f2e; border-color: #2a2d3e; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.proposalCard:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.4); border-color: #3a3d4e; }
+
+.freelancerAvatarPlaceholder { background: rgba(107,141,230,0.15); color: #6b8de6; }
+.freelancerName { color: #f1f5f9; }
+.metaItem { color: #94a3b8; }
+.bidAmount { color: #34d399; }
+
+.coverLetter { color: #cbd5e1; }
+.readMoreBtn { color: #6b8de6; }
+
+.starsRow { color: #94a3b8; }
+
+.cardActions { border-top-color: #2a2d3e; }
+
+.statusBadge.pending { background: rgba(251,191,36,0.12); color: #fcd34d; }
+.statusBadge.submitted { background: rgba(107,141,230,0.12); color: #6b8de6; }
+.statusBadge.accepted { background: rgba(52,211,153,0.12); color: #34d399; }
+.statusBadge.rejected { background: rgba(248,113,113,0.12); color: #f87171; }
+.statusBadge.withdrawn { background: rgba(255,255,255,0.06); color: #94a3b8; }
+
+.emptyState { color: #475569; }
+.errorState { color: #f87171; }

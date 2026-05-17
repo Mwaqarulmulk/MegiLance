@@ -1,5 +1,13 @@
-# @AI-HINT: Schemas package init - exports all Pydantic request/response models
-"""Initialize all schemas"""
+"""
+MegiLance Pydantic Schema Definitions.
+
+ARCHITECTURE NOTE:
+- These are Pydantic v2 models for API request/response validation.
+- They mirror the ORM models in app.models but are decoupled from
+  SQLAlchemy — no ORM integration is used in production.
+- Schemas serve as the contract layer between FastAPI route handlers
+  and the Turso HTTP client.
+"""
 
 from .auth import Token, RefreshTokenRequest, AuthResponse
 from .user import UserCreate, UserUpdate, UserRead

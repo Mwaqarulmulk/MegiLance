@@ -1,0 +1,264 @@
+/* @AI-HINT: ClientAssistant dark theme colors only. No layout/structure styles. */
+
+/* ─── Floating Button ────────────────────────────────────────────────────── */
+
+.floatingButton {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  box-shadow: 0 8px 32px rgba(69, 115, 223, 0.5), 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.floatingButton:hover {
+  box-shadow: 0 12px 40px rgba(69, 115, 223, 0.65), 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+
+/* ─── Chat Panel ─────────────────────────────────────────────────────────── */
+
+.chatPanel {
+  background: #1e293b;
+  border: 1px solid #334155;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
+.panelHeader {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+.headerAvatar {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.headerSubtitle {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.statusDot {
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+}
+
+.statusLabel {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.minimizeBtn,
+.closeBtn {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ─── Messages Area ──────────────────────────────────────────────────────── */
+
+.messagesArea {
+  background: #0f172a;
+}
+
+/* ─── Bot Avatar ─────────────────────────────────────────────────────────── */
+
+.botAvatar {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+/* ─── Message Bubbles ────────────────────────────────────────────────────── */
+
+.userBubble {
+  background: linear-gradient(135deg, #4573df 0%, #5b7fdb 100%);
+  color: #ffffff;
+}
+
+.botBubble {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+}
+
+/* ─── Timestamp ──────────────────────────────────────────────────────────── */
+
+.timestamp {
+  color: #64748b;
+}
+
+/* ─── Tool Cards ─────────────────────────────────────────────────────────── */
+
+.toolCard {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+}
+
+.toolCardLabel {
+  color: #93c5fd;
+}
+
+.toolTextContent {
+  color: #cbd5e1;
+}
+
+/* ─── Freelancer Grid ────────────────────────────────────────────────────── */
+
+.freelancerGrid {
+  /* inherits dark panel background */
+}
+
+/* ─── Freelancer Card ────────────────────────────────────────────────────── */
+
+.freelancerCard {
+  background: #0f172a;
+  border: 1px solid #334155;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.avatarCircle {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+.cardName {
+  color: #f1f5f9;
+}
+
+.cardTitle {
+  color: #94a3b8;
+}
+
+/* ─── Rate Tag ────────────────────────────────────────────────────────────── */
+
+.rateTag {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border: 1px solid #1d4ed8;
+}
+
+/* ─── View Profile Button ────────────────────────────────────────────────── */
+
+.viewBtn {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border: 1px solid #1d4ed8;
+}
+
+/* ─── Price Range ─────────────────────────────────────────────────────────── */
+
+.priceRange {
+  color: #93c5fd;
+}
+
+.timelineLabel {
+  color: #94a3b8;
+}
+
+/* ─── Phase Row ──────────────────────────────────────────────────────────── */
+
+.phaseRow {
+  background: #1e293b;
+}
+
+.phaseCost {
+  color: #93c5fd;
+}
+
+/* ─── Tip Row ─────────────────────────────────────────────────────────────── */
+
+.tipRow {
+  background: #1c1a07;
+  color: #fde68a;
+}
+
+/* ─── Rate Table ─────────────────────────────────────────────────────────── */
+
+.rateTableRow {
+  background: #1e293b;
+}
+
+.rateRole {
+  color: #f1f5f9;
+}
+
+.rateValues {
+  color: #93c5fd;
+}
+
+/* ─── Milestone ──────────────────────────────────────────────────────────── */
+
+.milestoneRow {
+  background: #1e293b;
+}
+
+.milestoneNumber {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+.milestoneTitle {
+  color: #f1f5f9;
+}
+
+.milestoneDesc {
+  color: #94a3b8;
+}
+
+.milestoneDuration {
+  color: #64748b;
+}
+
+/* ─── Action Buttons ─────────────────────────────────────────────────────── */
+
+.actionBtnSecondary {
+  background: #1e293b;
+  color: #93c5fd;
+  border: 1px solid #334155;
+}
+
+/* ─── Suggestion Chips ───────────────────────────────────────────────────── */
+
+.chip {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border: 1px solid #1d4ed8;
+}
+
+.chip:hover:not(:disabled) {
+  background: #1d3461;
+  border-color: #3b82f6;
+}
+
+/* ─── Input Row ──────────────────────────────────────────────────────────── */
+
+.inputRow {
+  background: #0f172a;
+  border-top: 1px solid #334155;
+}
+
+.inputField {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+}
+
+.inputField::placeholder {
+  color: #475569;
+}
+
+.inputField:focus {
+  border-color: #4573df;
+}
+
+/* ─── Send Button ────────────────────────────────────────────────────────── */
+
+.sendButton {
+  background: linear-gradient(135deg, #4573df 0%, #7c3aed 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.4);
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+.panelFooter {
+  background: #0f172a;
+  color: #475569;
+  border-top: 1px solid #1e293b;
+}

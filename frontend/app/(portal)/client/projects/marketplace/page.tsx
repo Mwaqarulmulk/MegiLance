@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { projectsApi } from '@/lib/api';
 import Button from '@/app/components/atoms/Button/Button';
 import Loading from '@/app/components/atoms/Loading/Loading';
 import {
@@ -16,9 +17,7 @@ import {
   Users,
   Zap,
   Star,
-  MapPin,
   Clock,
-  TrendingUp,
   ChevronRight,
   Eye,
 } from 'lucide-react';
@@ -46,16 +45,91 @@ interface Project {
   proposals?: number;
   views?: number;
   posted?: string;
+  createdAt?: string;
   status?: 'Open' | 'In Progress' | 'Completed';
   type?: 'Fixed' | 'Hourly';
   hoursPerWeek?: number;
 }
+
+const asArray = (value: unknown): unknown[] => {
+  if (Array.isArray(value)) return value;
+  if (value && typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    const candidate = record.projects ?? record.items ?? record.data ?? record.results;
+    return Array.isArray(candidate) ? candidate : [];
+  }
+  return [];
+};
+
+const toNumber = (value: unknown): number => {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  if (typeof value === 'string') return Number(value.replace(/[$,]/g, '')) || 0;
+  return 0;
+};
+
+const toTextArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    return value.split(',').map((item) => item.trim()).filter(Boolean);
+  }
+  return [];
+};
+
+const formatLevel = (value: unknown): Project['level'] | undefined => {
+  const normalized = String(value ?? '').toLowerCase();
+  if (normalized.includes('entry') || normalized.includes('beginner')) return 'Entry';
+  if (normalized.includes('expert') || normalized.includes('senior')) return 'Expert';
+  if (normalized.includes('intermediate') || normalized.includes('mid')) return 'Intermediate';
+  return undefined;
+};
+
+const formatPostedDate = (value: unknown): string | undefined => {
+  if (!value) return undefined;
+  const date = new Date(String(value));
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const mapProject = (value: unknown): Project => {
+  const project = value as Record<string, any>;
+  const client = project.client && typeof project.client === 'object' ? project.client : {};
+  const budgetType = String(project.budget_type ?? project.type ?? '').toLowerCase();
+  const createdAt = project.created_at ?? project.createdAt ?? project.posted_at;
+
+  return {
+    id: toNumber(project.id),
+    title: String(project.title ?? 'Untitled Project'),
+    description: String(project.description ?? project.summary ?? ''),
+    budget: toNumber(project.budget_max ?? project.budget ?? project.rate ?? project.budget_min),
+    type: budgetType.includes('hour') ? 'Hourly' : 'Fixed',
+    hoursPerWeek: toNumber(project.hours_per_week || project.hoursPerWeek) || undefined,
+    duration: project.estimated_duration ?? project.duration,
+    level: formatLevel(project.experience_level ?? project.level),
+    skills: toTextArray(project.skills),
+    category: project.category,
+    location: project.location,
+    client: {
+      name: String(project.client_name ?? client.name ?? (project.client_id ? `Client #${project.client_id}` : 'Verified Client')),
+      avatar: project.client_avatar ?? client.avatar,
+      rating: toNumber(project.client_rating ?? client.rating) || undefined,
+      reviews: toNumber(project.client_reviews ?? client.reviews) || undefined,
+    },
+    proposals: toNumber(project.proposal_count ?? project.proposals_count ?? project.proposals),
+    views: toNumber(project.views ?? project.view_count),
+    posted: formatPostedDate(createdAt),
+    createdAt: createdAt ? String(createdAt) : undefined,
+    status: 'Open',
+  };
+};
 
 const ProjectMarketplacePage: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'budget' | 'proposals'>('recent');
   const [filterSkills, setFilterSkills] = useState<string[]>([]);
@@ -68,101 +142,29 @@ const ProjectMarketplacePage: React.FC = () => {
     setMounted(true);
   }, []);
 
-  // Simulated data - in production, fetch from API
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setProjects([
-        {
-          id: 1,
-          title: 'Build E-commerce Platform with Next.js',
-          description: 'Looking for experienced developer to build a full-featured e-commerce platform with product catalog, shopping cart, and payment integration.',
-          budget: 5000,
-          type: 'Fixed',
-          level: 'Expert',
-          skills: ['Next.js', 'React', 'TypeScript', 'Stripe'],
-          category: 'Web Development',
-          client: { name: 'Tech Startup Inc', rating: 4.8, reviews: 24 },
-          proposals: 12,
-          views: 487,
-          posted: '2 days ago',
-        },
-        {
-          id: 2,
-          title: 'Mobile App UI/UX Design',
-          description: 'Need creative designer to create stunning UI/UX for iOS and Android mobile application. Must have experience with Figma and user research.',
-          budget: 2500,
-          type: 'Fixed',
-          level: 'Intermediate',
-          skills: ['Figma', 'UI Design', 'UX Design', 'Mobile Design'],
-          category: 'Design',
-          client: { name: 'Digital Agency Co', rating: 4.9, reviews: 56 },
-          proposals: 8,
-          views: 312,
-          posted: '1 day ago',
-        },
-        {
-          id: 3,
-          title: 'Python Data Analysis Project',
-          description: 'Analyze large dataset and create visualizations. Need someone proficient in pandas, numpy, and matplotlib. Deliver Jupyter notebooks with insights.',
-          budget: 1500,
-          type: 'Fixed',
-          level: 'Intermediate',
-          skills: ['Python', 'Data Analysis', 'Pandas', 'Matplotlib'],
-          category: 'Data Science',
-          client: { name: 'Analytics Firm', rating: 4.7, reviews: 18 },
-          proposals: 15,
-          views: 623,
-          posted: '3 days ago',
-        },
-        {
-          id: 4,
-          title: 'WordPress Site Customization',
-          description: 'Customize existing WordPress site with custom plugins and theme modifications. Update booking system and improve site speed.',
-          budget: 800,
-          type: 'Fixed',
-          level: 'Entry',
-          skills: ['WordPress', 'PHP', 'CSS', 'jQuery'],
-          category: 'WordPress',
-          client: { name: 'Small Business LLC', rating: 4.5, reviews: 9 },
-          proposals: 5,
-          views: 156,
-          posted: '5 days ago',
-        },
-        {
-          id: 5,
-          title: 'Ongoing Content Writing - Blog Posts',
-          description: 'Need continuous content writing for tech blog. 2-3 posts per week about web development, startups, and technology trends.',
-          budget: 25,
-          type: 'Hourly',
-          hoursPerWeek: 10,
-          level: 'Intermediate',
-          skills: ['Content Writing', 'Technical Writing', 'SEO'],
-          category: 'Writing',
-          client: { name: 'Media Company', rating: 4.6, reviews: 41 },
-          proposals: 22,
-          views: 891,
-          posted: '1 week ago',
-        },
-        {
-          id: 6,
-          title: 'Social Media Management',
-          description: 'Long-term social media management for tech startup. Handle Instagram, Twitter, and LinkedIn. Create content calendar and manage engagement.',
-          budget: 30,
-          type: 'Hourly',
-          hoursPerWeek: 20,
-          level: 'Intermediate',
-          skills: ['Social Media', 'Content Creation', 'Community Management'],
-          category: 'Marketing',
-          client: { name: 'Startup Hub', rating: 4.8, reviews: 33 },
-          proposals: 18,
-          views: 567,
-          posted: '4 days ago',
-        },
-      ]);
-      setLoading(false);
-    }, 800);
+    let cancelled = false;
 
-    return () => clearTimeout(timer);
+    const loadProjects = async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const response = await projectsApi.list({ status: 'open', page: 1, page_size: 50, sort: 'created_at', order: 'desc' });
+        if (cancelled) return;
+        setProjects(asArray(response).map(mapProject).filter((project) => project.id > 0));
+      } catch (error) {
+        if (cancelled) return;
+        setProjects([]);
+        setLoadError(error instanceof Error ? error.message : 'Unable to load projects.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadProjects();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const allSkills = useMemo(() => {
@@ -206,7 +208,7 @@ const ProjectMarketplacePage: React.FC = () => {
     // Sort
     switch (sortBy) {
       case 'recent':
-        results.sort((a, b) => (b.posted ? 1 : 0) - (a.posted ? 1 : 0));
+        results.sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
         break;
       case 'budget':
         results.sort((a, b) => b.budget - a.budget);
@@ -315,6 +317,10 @@ const ProjectMarketplacePage: React.FC = () => {
       {/* Results */}
       {loading ? (
         <Loading />
+      ) : loadError ? (
+        <div className={commonStyles.emptyState} role="alert">
+          <p>{loadError}</p>
+        </div>
       ) : filteredAndSortedProjects.length === 0 ? (
         <div className={commonStyles.emptyState}>
           <p>No projects found. Try adjusting your search or filters.</p>
@@ -430,7 +436,7 @@ const ProjectMarketplacePage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <Link href={`/project/${project.id}`}>
+                  <Link href={`/client/projects/${project.id}`}>
                     <Button variant="primary" size="sm" className={commonStyles.viewBtn}>
                       View Project
                       <ChevronRight size={16} />

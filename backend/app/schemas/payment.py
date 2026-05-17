@@ -6,7 +6,9 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class PaymentBase(BaseModel):
-    contract_id: Optional[int] = Field(default=None, description="Related contract identifier")
+    contract_id: Optional[int] = Field(
+        default=None, description="Related contract identifier"
+    )
     amount: float = Field(gt=0, description="Payment amount")
     currency: str = "USD"
     status: Optional[str] = "pending"
@@ -15,17 +17,30 @@ class PaymentBase(BaseModel):
 
 
 class PaymentCreate(BaseModel):
-    contract_id: Optional[int] = Field(default=None, description="Optional contract reference")
-    to_user_id: Optional[int] = Field(default=None, description="Recipient user ID when no contract is provided")
+    contract_id: Optional[int] = Field(
+        default=None, description="Optional contract reference"
+    )
+    to_user_id: Optional[int] = Field(
+        default=None, description="Recipient user ID when no contract is provided"
+    )
     amount: float = Field(gt=0, description="Payment amount")
     currency: str = "USD"
-    payment_type: Optional[str] = Field(default="milestone", description="Payment type: milestone, full, hourly, escrow, refund, bonus")
+    payment_type: Optional[str] = Field(
+        default="milestone",
+        description="Payment type: milestone, full, hourly, escrow, refund, bonus",
+    )
+    payment_method: Optional[str] = Field(
+        default="stripe",
+        description="Payment method: stripe, crypto, bank_transfer, paypal",
+    )
     description: Optional[str] = None
 
 
 class PaymentUpdate(BaseModel):
     status: Optional[str] = Field(default=None, description="New payment status")
-    transaction_hash: Optional[str] = Field(default=None, description="Blockchain transaction hash")
+    transaction_hash: Optional[str] = Field(
+        default=None, description="Blockchain transaction hash"
+    )
     description: Optional[str] = Field(default=None, description="Updated description")
 
 

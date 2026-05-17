@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { saveHireDraft, clearHireDraft } from '@/app/mocks/hires';
@@ -30,6 +30,7 @@ const Hire: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === 'dark' ? dark : light;
   const params = useSearchParams();
+  const router = useRouter();
 
   const [step, setStep] = useState<Step>('Freelancer');
   const [freelancerId, setFreelancerId] = useState('');
@@ -126,23 +127,27 @@ const Hire: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!canNext) return;
+    const fId = parseInt(freelancerId.toString().replace('freelancer_', ''), 10);
+    if (!Number.isFinite(fId) || fId <= 0) {
+      setLiveMessage('Error: Select a valid freelancer before sending a hire request.');
+      return;
+    }
+
     setSubmitting(true);
     setLiveMessage('Sending hire request…');
     try {
-      // Extract numeric ID if prefixed
-      const fId = parseInt(freelancerId.toString().replace('freelancer_', ''));
-      
       const res: any = await api.contracts.createDirect({
-        freelancer_id: isNaN(fId) ? 0 : fId,
+        freelancer_id: fId,
         title,
         description,
         rate_type: rateType,
         rate: Number(rate),
         start_date: startDate
       });
-      
+
       setLiveMessage(`Success: Contract created (id: ${res.id})`);
-      resetForm();
+      clearHireDraft();
+      router.push(`/client/contracts/${res.id}`);
     } catch (e: any) {
       setLiveMessage(`Error: ${e.message || 'Failed to create contract'}`);
     } finally {

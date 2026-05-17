@@ -5,13 +5,38 @@ from typing import List, Optional
 from app.core.security import get_current_user
 from app.models import User
 from app.schemas.escrow import (
-    EscrowCreate, EscrowUpdate, EscrowRead,
+    EscrowCreate, EscrowFund, EscrowUpdate, EscrowRead,
     EscrowRelease, EscrowRefund, EscrowBalance
 )
 from app.services import escrow_service
 from app.services.db_utils import get_user_role
 
 router = APIRouter(prefix="/escrow", tags=["escrow"])
+
+
+@router.post("/fund", response_model=EscrowRead)
+async def fund_pending_escrow(
+    escrow: EscrowFund,
+    current_user: User = Depends(get_current_user)
+):
+    """Fund an existing pending escrow."""
+    contract = escrow_service.get_contract_parties(escrow.contract_id)
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+        
+    if contract["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the contract client can fund escrow")
+        
+    balance = escrow_service.get_user_balance(current_user.id)
+    if balance < escrow.amount:
+        raise HTTPException(status_code=400, detail=f"Insufficient balance. Available: ${balance:.2f}")
+        
+    result = escrow_service.fund_pending_escrow(
+        escrow.contract_id, current_user.id, escrow.amount, escrow.description
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail="Pending escrow not found for this contract")
+    return result
 
 
 @router.post("/", response_model=EscrowRead, status_code=status.HTTP_201_CREATED)

@@ -1,0 +1,36 @@
+/* @AI-HINT: Freelancers browse page — dark theme colors */
+
+.page    { background: #0f1419; color: #e2e8f0; }
+
+.pageTitle { color: #f1f5f9; }
+.pageCount { color: #64748b; }
+
+/* Filter bar */
+.filterBar  { background: #1a1f2e; border-color: #2a2d3e; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.filterInput { background: rgba(255,255,255,0.05); border-color: #2a2d3e !important; color: #e2e8f0; }
+.input      { color: #e2e8f0; }
+.input::placeholder { color: #475569; }
+
+/* Cards */
+.card    { background: #1a1f2e; border-color: #2a2d3e; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.45); border-color: #3a3f52; }
+
+.avatarFallback { background: rgba(107,141,230,0.15); color: #6b8de6; }
+.avatar         { border: 2px solid #2a2d3e; }
+
+.name     { color: #f1f5f9; }
+.headline { color: #94a3b8; }
+.location { color: #64748b; }
+
+.ratingVal { color: #cbd5e1; }
+.rate      { color: #f1f5f9; }
+
+.skillTag { background: rgba(107,141,230,0.12); color: #6b8de6; }
+
+/* Error / empty */
+.errorBanner { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+.empty       { color: #475569; }
+
+/* Pagination */
+.pagination {}
+.pageInfo { color: #64748b; }

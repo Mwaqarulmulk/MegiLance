@@ -84,7 +84,7 @@ def test_user(db: Session) -> User:
         role="freelancer",
         is_verified=True,
         is_active=True,
-        joined_at=datetime.now(timezone.utc).isoformat()
+        joined_at=datetime.now(timezone.utc)
     )
     db.add(user)
     db.commit()
@@ -103,7 +103,7 @@ def admin_user(db: Session) -> User:
         role="admin",
         is_verified=True,
         is_active=True,
-        joined_at=datetime.now(timezone.utc).isoformat()
+        joined_at=datetime.now(timezone.utc)
     )
     db.add(user)
     db.commit()

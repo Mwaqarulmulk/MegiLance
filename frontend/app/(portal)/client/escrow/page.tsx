@@ -79,6 +79,25 @@ export default function EscrowPage() {
     }
   };
 
+  const handleFund = async (transactionId: string) => {
+    setProcessingId(transactionId);
+    try {
+      const tx = transactions.find(t => t.id === transactionId);
+      if (tx) {
+        await escrowApi.fund({ contract_id: parseInt(tx.contract_id), amount: tx.amount });
+      }
+      refreshEscrowData();
+    } catch {
+      // Ignore
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const refreshEscrowData = () => {
+    loadEscrowData();
+  };
+
   const handleRelease = async (transactionId: string) => {
     setProcessingId(transactionId);
     try {
@@ -266,6 +285,16 @@ export default function EscrowPage() {
                       </td>
                       <td className={themeStyles.td}>{formatDate(tx.created_at)}</td>
                       <td className={themeStyles.td}>
+                        {tx.status === 'pending' && (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleFund(tx.id)}
+                            isLoading={processingId === tx.id}
+                          >
+                            Fund
+                          </Button>
+                        )}
                         {tx.status === 'funded' && (
                           <Button
                             variant="success"

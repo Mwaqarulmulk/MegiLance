@@ -1,28 +1,75 @@
-// @AI-HINT: AI Matching directory - Showcase platform's AI capabilities
-import React from 'react';
-import commonStyles from './AIMatching.common.module.css';
+// @AI-HINT: AI Matching page — showcase AI capabilities with interactive search demo; theme-aware via 3-file CSS modules
+"use client";
+import React, { useState } from "react";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/app/components/molecules/Toast/use-toast";
+import commonStyles from "./AIMatching.common.module.css";
+import lightStyles from "./AIMatching.light.module.css";
+import darkStyles from "./AIMatching.dark.module.css";
 
 export default function AiMatchingPage() {
+  const { resolvedTheme } = useTheme();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [query, setQuery] = useState("");
+
+  if (!resolvedTheme) return null;
+  const t = resolvedTheme === "light" ? lightStyles : darkStyles;
+
+  const handleMatch = () => {
+    if (!query.trim()) {
+      toast({
+        title: "Enter a description",
+        description: "Please describe your project to find matching talent.",
+        variant: "warning",
+      });
+      return;
+    }
+    toast({
+      title: "AI Matching — Demo Mode",
+      description:
+        "AI matching is not available in demo mode. Create a project to get started!",
+    });
+    router.push("/create-project");
+  };
+
   return (
     <main className={commonStyles.container}>
-      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', color: 'white', padding: '2rem' }}>
-        <div style={{ maxWidth: '800px', textAlign: 'center' }}>
-           <div style={{ display: 'inline-block', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.1)', borderRadius: '999px', marginBottom: '2rem', border: '1px solid rgba(255,255,255,0.2)' }}>
-              🤖 Powered by Advanced Machine Learning
-           </div>
-           <h1 style={{ fontSize: '4.5rem', fontWeight: 800, marginBottom: '2rem', lineHeight: 1.1, background: 'linear-gradient(to right, #60a5fa, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-             Smart Talent Discovery
-           </h1>
-           <p style={{ fontSize: '1.5rem', color: '#cbd5e1', marginBottom: '3rem', lineHeight: 1.6 }}>
-             Stop scrolling through endless profiles. Tell our AI what you need to build, and it will instantly compile a shortlist of the perfect freelancers for the job based on past performance, skills, and success rates.
-           </p>
-           
-           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', display: 'flex', gap: '1rem' }}>
-              <input type="text" placeholder="e.g. I need a Next.js developer who knows Turso..." style={{ flexGrow: 1, padding: '1rem 1.5rem', fontSize: '1.125rem', borderRadius: '12px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', outline: 'none' }} />
-              <button style={{ background: '#4573df', color: 'white', border: 'none', padding: '0 2rem', borderRadius: '12px', fontSize: '1.125rem', fontWeight: 600, cursor: 'pointer' }}>
-                 Match Me
-              </button>
-           </div>
+      <div className={cn(commonStyles.hero, t.hero)}>
+        <div className={commonStyles.heroInner}>
+          <div className={cn(commonStyles.badge, t.badge)}>
+            🤖 Powered by Advanced Machine Learning
+          </div>
+
+          <h1 className={commonStyles.heroTitle}>Smart Talent Discovery</h1>
+
+          <p className={cn(commonStyles.heroDesc, t.heroDesc)}>
+            Stop scrolling through endless profiles. Tell our AI what you need
+            to build, and it will instantly compile a shortlist of the perfect
+            freelancers for the job based on past performance, skills, and
+            success rates.
+          </p>
+
+          <div className={cn(commonStyles.searchBox, t.searchBox)}>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleMatch()}
+              placeholder="e.g. I need a Next.js developer who knows Turso..."
+              className={cn(commonStyles.searchInput, t.searchInput)}
+              aria-label="Describe your project for AI talent matching"
+            />
+            <button
+              onClick={handleMatch}
+              className={commonStyles.searchBtn}
+              aria-label="Find matching talent"
+            >
+              Match Me
+            </button>
+          </div>
         </div>
       </div>
     </main>

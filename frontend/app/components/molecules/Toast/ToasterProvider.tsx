@@ -25,6 +25,8 @@ interface ToasterContextValue {
   success: (description: string, title?: string) => string;
   error: (description: string, title?: string) => string;
   info: (description: string, title?: string) => string;
+  // Backward-compatible showToast(message, variant?) — maps to notify()
+  showToast: (message: string, variant?: ToastVariant | 'success' | 'error' | 'info' | 'warning') => string;
 }
 
 const ToasterContext = createContext<ToasterContextValue | null>(null);
@@ -58,7 +60,14 @@ export const ToasterProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const error = useCallback((description: string, title = 'Error') => notify({ title, description, variant: 'danger' }), [notify]);
   const info = useCallback((description: string, title = 'Info') => notify({ title, description, variant: 'info' }), [notify]);
 
-  const value = useMemo(() => ({ notify, dismiss, success, error, info }), [notify, dismiss, success, error, info]);
+  // Backward-compatible showToast(message, variant?) — maps to notify()
+  const showToast = useCallback((message: string, variant?: string) => {
+    const v = variant as ToastVariant | undefined;
+    const titleMap: Record<string, string> = { success: 'Success', error: 'Error', danger: 'Error', info: 'Info', warning: 'Warning' };
+    return notify({ description: message, title: titleMap[v || ''] || 'Notification', variant: v || 'info' });
+  }, [notify]);
+
+  const value = useMemo(() => ({ notify, dismiss, success, error, info, showToast }), [notify, dismiss, success, error, info, showToast]);
 
   return (
     <ToasterContext.Provider value={value}>

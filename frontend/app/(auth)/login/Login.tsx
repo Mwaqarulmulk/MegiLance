@@ -14,7 +14,6 @@ import {
   ListChecks,
   UserCog,
 } from "lucide-react";
-import Tabs from "@/app/components/molecules/Tabs/Tabs";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
@@ -292,11 +291,17 @@ const Login: React.FC = () => {
     try {
       // Use standard callback path that matches Google Console
       const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
+      try {
+        window.localStorage.setItem("portal_area", selectedRole);
+        window.localStorage.setItem("ml_user_role", selectedRole);
+      } catch {
+        /* localStorage unavailable in private browsing */
+      }
 
       const response = (await api.socialAuth.start(
         provider,
         redirectUri,
-        "client",
+        selectedRole,
         "login",
       )) as { authorization_url?: string };
 
@@ -366,6 +371,27 @@ const Login: React.FC = () => {
               <p className={styles.formSubtitle}>
                 Enter your details to access your account.
               </p>
+            </StaggerItem>
+
+            <StaggerItem className={styles.roleSelector}>
+              {(["freelancer", "client", "admin"] as UserRole[]).map((role) => {
+                const RoleIcon = roleConfig[role].icon;
+                return (
+                  <button
+                    key={role}
+                    type="button"
+                    className={cn(
+                      styles.roleButton,
+                      selectedRole === role && styles.roleButtonSelected,
+                    )}
+                    onClick={() => setSelectedRole(role)}
+                    aria-pressed={selectedRole === role}
+                  >
+                    <RoleIcon size={16} className={styles.roleIcon} />
+                    {roleConfig[role].label}
+                  </button>
+                );
+              })}
             </StaggerItem>
 
             <StaggerItem className={styles.socialAuth}>

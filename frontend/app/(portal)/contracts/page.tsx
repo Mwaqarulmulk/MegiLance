@@ -1,30 +1,26 @@
-// @AI-HINT: Root contracts page - redirects to role-specific contracts view
-'use client';
+// @AI-HINT: Root contracts page - redirects to role-specific contracts view using useAuth to avoid localStorage race conditions
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuthToken } from '@/lib/api';
-import Loading from '@/app/components/atoms/Loading/Loading';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/app/components/atoms/Loading/Loading";
 
-export default function ContractsRedirect() {
+export default function ContractsPage() {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    const authToken = getAuthToken();
-    if (!authToken) {
-      router.replace('/login?returnTo=/contracts');
-      return;
-    }
-
-    const portalArea = localStorage.getItem('portal_area') || 'client';
-    if (portalArea === 'freelancer') {
-      router.replace('/freelancer/contracts');
-    } else if (portalArea === 'admin') {
-      router.replace('/admin/dashboard');
+    if (isLoading) return;
+    const role = user?.user_type || user?.role || "client";
+    if (role === "freelancer") {
+      router.replace("/freelancer/contracts");
+    } else if (role === "admin") {
+      router.replace("/admin/contracts");
     } else {
-      router.replace('/client/contracts');
+      router.replace("/client/contracts");
     }
-  }, [router]);
+  }, [user, isLoading, router]);
 
   return <Loading text="Loading contracts..." />;
 }

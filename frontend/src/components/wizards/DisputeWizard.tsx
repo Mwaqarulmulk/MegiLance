@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { getAuthToken } from '@/lib/api';
 import WizardContainer from '@/app/components/organisms/Wizard/WizardContainer/WizardContainer';
 import Modal from '@/app/components/organisms/Modal/Modal';
 import commonStyles from './DisputeWizard.common.module.css';
@@ -77,7 +76,6 @@ export default function DisputeWizard({
   contractId,
   projectName,
   otherPartyName,
-  userId,
   onComplete
 }: DisputeWizardProps) {
   const router = useRouter();
@@ -693,31 +691,32 @@ export default function DisputeWizard({
     setIsSubmitting(true);
 
     try {
-      const token = getAuthToken();
-      const formData = new FormData();
+      const descriptionParts = [
+        disputeData.description,
+        disputeData.timeline ? `\n\nTimeline:\n${disputeData.timeline}` : '',
+        disputeData.desiredOutcome ? `\n\nDesired outcome:\n${disputeData.desiredOutcome}` : '',
+        disputeData.resolutionPreference ? `\n\nPreferred resolution: ${disputeData.resolutionPreference}` : '',
+        disputeData.refundAmount ? `\nRequested refund: $${disputeData.refundAmount}` : '',
+        disputeData.revisionDetails ? `\nRevision details: ${disputeData.revisionDetails}` : '',
+        disputeData.additionalNotes ? `\nAdditional notes: ${disputeData.additionalNotes}` : '',
+      ].join('');
 
-      formData.append('contract_id', contractId);
-      formData.append('user_id', userId);
-      formData.append('dispute_type', disputeData.disputeType);
-      formData.append('title', disputeData.title);
-      formData.append('description', disputeData.description);
-      formData.append('timeline', disputeData.timeline);
-      formData.append('desired_outcome', disputeData.desiredOutcome);
-      formData.append('resolution_preference', disputeData.resolutionPreference);
+      const result = await api.disputes.create({
+        contract_id: Number(contractId),
+        dispute_type: disputeData.disputeType === 'other'
+          ? (disputeData.customType || 'other')
+          : disputeData.disputeType,
+        title: disputeData.title,
+        description: descriptionParts,
+      }) as any;
 
-      if (disputeData.customType) formData.append('custom_type', disputeData.customType);
-      if (disputeData.refundAmount) formData.append('refund_amount', disputeData.refundAmount.toString());
-      if (disputeData.revisionDetails) formData.append('revision_details', disputeData.revisionDetails);
-      if (disputeData.additionalNotes) formData.append('additional_notes', disputeData.additionalNotes);
-
-      // Append evidence files
-      disputeData.evidence.forEach((evidence, index) => {
-        formData.append(`evidence_${index}`, evidence.file);
-        formData.append(`evidence_${index}_type`, evidence.type);
-        formData.append(`evidence_${index}_description`, evidence.description);
-      });
-
-      const result = await api.disputes.create(formData) as any;
+      if (result?.id && disputeData.evidence.length > 0) {
+        await Promise.all(
+          disputeData.evidence.map(evidence =>
+            (api.disputes as any).uploadEvidence(result.id, evidence.file)
+          )
+        );
+      }
 
       localStorage.removeItem(`dispute_draft_${contractId}`);
       showToast('Dispute submitted successfully. Our team will review it within 24 hours.', 'success');
@@ -725,7 +724,7 @@ export default function DisputeWizard({
       if (onComplete) {
         onComplete(result.id);
       } else {
-        router.push(`/portal/disputes/${result.id}`);
+        router.push(`/disputes/${result.id}`);
       }
     } catch (error) {
       console.error('Error submitting dispute:', error);

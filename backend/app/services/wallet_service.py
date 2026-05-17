@@ -5,9 +5,15 @@ from typing import Optional
 from app.db.turso_http import execute_query
 from app.services.db_utils import get_val as _get_val
 
+# Module-level flag — ensures DDL runs only once per process (P0-9: stops 9 DDL statements per request)
+_wallet_tables_initialized = False
 
-def ensure_wallet_tables():
-    """Create wallet tables if they don't exist"""
+
+def ensure_wallet_tables() -> None:
+    """Create wallet tables if they don't exist (idempotent after first call)"""
+    global _wallet_tables_initialized
+    if _wallet_tables_initialized:
+        return
     execute_query("""
         CREATE TABLE IF NOT EXISTS wallet_balances (
             user_id INTEGER PRIMARY KEY,
@@ -36,27 +42,27 @@ def ensure_wallet_tables():
     """)
 
     execute_query("""
-        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_id 
+        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_id
         ON wallet_transactions(user_id)
     """)
 
     execute_query("""
-        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_status 
+        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_status
         ON wallet_transactions(status)
     """)
 
     execute_query("""
-        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_status 
+        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_status
         ON wallet_transactions(user_id, status)
     """)
 
     execute_query("""
-        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_created 
+        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_created
         ON wallet_transactions(created_at DESC)
     """)
 
     execute_query("""
-        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_created 
+        CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_created
         ON wallet_transactions(user_id, created_at DESC)
     """)
 
@@ -75,12 +81,14 @@ def ensure_wallet_tables():
         )
     """)
 
+    _wallet_tables_initialized = True
+
 
 def get_or_create_balance(user_id: int) -> dict:
     """Get user's wallet balance, creating entry if needed."""
     result = execute_query(
         "SELECT available, pending, escrow, currency, updated_at FROM wallet_balances WHERE user_id = ?",
-        [user_id]
+        [user_id],
     )
 
     if result and result.get("rows") and len(result["rows"]) > 0:
@@ -95,20 +103,33 @@ def get_or_create_balance(user_id: int) -> dict:
             "escrow": escrow,
             "total": available + pending + escrow,
             "currency": _get_val(row, 3, "USD"),
-            "last_updated": _get_val(row, 4, None)
+            "last_updated": _get_val(row, 4, None),
         }
 
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "INSERT INTO wallet_balances (user_id, available, pending, escrow, currency, updated_at) VALUES (?, 0, 0, 0, 'USD', ?)",
-        [user_id, now]
+        [user_id, now],
     )
-    return {"available": 0, "pending": 0, "escrow": 0, "total": 0, "currency": "USD", "last_updated": now}
+    return {
+        "available": 0,
+        "pending": 0,
+        "escrow": 0,
+        "total": 0,
+        "currency": "USD",
+        "last_updated": now,
+    }
 
 
-def get_transaction_history(user_id: int, skip: int, limit: int,
-                            tx_type: Optional[str], tx_status: Optional[str],
-                            from_date: Optional[str], to_date: Optional[str]) -> list:
+def get_transaction_history(
+    user_id: int,
+    skip: int,
+    limit: int,
+    tx_type: Optional[str],
+    tx_status: Optional[str],
+    from_date: Optional[str],
+    to_date: Optional[str],
+) -> list:
     """Get wallet transactions with filters."""
     sql = "SELECT id, type, amount, currency, status, description, reference_id, created_at, completed_at FROM wallet_transactions WHERE user_id = ?"
     params: list = [user_id]
@@ -134,17 +155,19 @@ def get_transaction_history(user_id: int, skip: int, limit: int,
     transactions = []
     if result and result.get("rows"):
         for row in result["rows"]:
-            transactions.append({
-                "id": _get_val(row, 0),
-                "type": _get_val(row, 1, "unknown"),
-                "amount": float(_get_val(row, 2, 0)),
-                "currency": _get_val(row, 3, "USD"),
-                "status": _get_val(row, 4, "pending"),
-                "description": _get_val(row, 5),
-                "reference_id": _get_val(row, 6),
-                "created_at": _get_val(row, 7, ""),
-                "completed_at": _get_val(row, 8)
-            })
+            transactions.append(
+                {
+                    "id": _get_val(row, 0),
+                    "type": _get_val(row, 1, "unknown"),
+                    "amount": float(_get_val(row, 2, 0)),
+                    "currency": _get_val(row, 3, "USD"),
+                    "status": _get_val(row, 4, "pending"),
+                    "description": _get_val(row, 5),
+                    "reference_id": _get_val(row, 6),
+                    "created_at": _get_val(row, 7, ""),
+                    "completed_at": _get_val(row, 8),
+                }
+            )
 
     return transactions
 
@@ -155,7 +178,7 @@ def deduct_for_withdrawal(user_id: int, amount: float) -> bool:
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "UPDATE wallet_balances SET available = available - ?, pending = pending + ?, updated_at = ? WHERE user_id = ? AND available >= ?",
-        [amount, amount, now, user_id, amount]
+        [amount, amount, now, user_id, amount],
     )
     # Turso HTTP returns rows_affected for UPDATE statements
     rows_affected = 0
@@ -166,24 +189,109 @@ def deduct_for_withdrawal(user_id: int, amount: float) -> bool:
     return rows_affected > 0
 
 
-def create_transaction(user_id: int, tx_type: str, amount: float, currency: str,
-                       status: str, description: str, reference_id: str,
-                       metadata: str):
+def create_transaction(
+    user_id: int,
+    tx_type: str,
+    amount: float,
+    currency: str,
+    status: str,
+    description: str,
+    reference_id: str,
+    metadata: str,
+):
     """Insert a wallet transaction record."""
     now = datetime.now(timezone.utc).isoformat()
-    execute_query("""
+    execute_query(
+        """
         INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, metadata, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, [user_id, tx_type, amount, currency, status, description, reference_id, metadata, now])
+    """,
+        [
+            user_id,
+            tx_type,
+            amount,
+            currency,
+            status,
+            description,
+            reference_id,
+            metadata,
+            now,
+        ],
+    )
+
+
+def get_pending_withdrawals(user_id: int) -> list:
+    """Get all pending/processing withdrawal transactions for a user."""
+    result = execute_query(
+        """SELECT id, type, amount, currency, status, description, reference_id, created_at, completed_at
+           FROM wallet_transactions
+           WHERE user_id = ? AND type = 'withdrawal' AND status IN ('pending', 'processing')
+           ORDER BY created_at DESC""",
+        [user_id],
+    )
+    rows = []
+    if result and result.get("rows"):
+        for row in result["rows"]:
+            rows.append(
+                {
+                    "id": _get_val(row, 0, 0),
+                    "type": _get_val(row, 1, "withdrawal"),
+                    "amount": float(_get_val(row, 2, 0)),
+                    "currency": _get_val(row, 3, "USD"),
+                    "status": _get_val(row, 4, "pending"),
+                    "description": _get_val(row, 5, ""),
+                    "reference_id": _get_val(row, 6, ""),
+                    "created_at": _get_val(row, 7, ""),
+                    "completed_at": _get_val(row, 8, None),
+                }
+            )
+    return rows
+
+
+def cancel_withdrawal_transaction(user_id: int, reference_id: str) -> bool:
+    """Cancel a pending/processing withdrawal and restore balance to available.
+    Returns True if successfully cancelled, False if not found or not cancellable."""
+    result = execute_query(
+        "SELECT id, amount, status FROM wallet_transactions WHERE user_id = ? AND reference_id = ? AND type = 'withdrawal'",
+        [user_id, reference_id],
+    )
+    if not result or not result.get("rows") or len(result["rows"]) == 0:
+        return False
+
+    row = result["rows"][0]
+    tx_id = _get_val(row, 0, None)
+    amount = float(_get_val(row, 1, 0))
+    status = _get_val(row, 2, "")
+
+    if status not in ("pending", "processing"):
+        return False
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Mark transaction as cancelled
+    execute_query(
+        "UPDATE wallet_transactions SET status = 'cancelled', completed_at = ? WHERE id = ? AND user_id = ?",
+        [now, tx_id, user_id],
+    )
+
+    # Restore balance: reduce pending, increase available
+    execute_query(
+        "UPDATE wallet_balances SET pending = MAX(0.0, pending - ?), available = available + ?, updated_at = ? WHERE user_id = ?",
+        [amount, amount, now, user_id],
+    )
+    return True
 
 
 def get_wallet_analytics(user_id: int, start_date: str) -> dict:
     """Get income, expenses, and transaction count for analytics."""
-    income_result = execute_query("""
-        SELECT COALESCE(SUM(amount), 0) FROM wallet_transactions 
+    income_result = execute_query(
+        """
+        SELECT COALESCE(SUM(amount), 0) FROM wallet_transactions
         WHERE user_id = ? AND type IN ('deposit', 'escrow_release', 'milestone_payment', 'bonus')
         AND status = 'completed' AND created_at >= ?
-    """, [user_id, start_date])
+    """,
+        [user_id, start_date],
+    )
 
     total_income = 0
     if income_result and income_result.get("rows"):
@@ -193,11 +301,14 @@ def get_wallet_analytics(user_id: int, start_date: str) -> dict:
         else:
             total_income = float(val or 0)
 
-    expense_result = execute_query("""
-        SELECT COALESCE(SUM(amount), 0) FROM wallet_transactions 
+    expense_result = execute_query(
+        """
+        SELECT COALESCE(SUM(amount), 0) FROM wallet_transactions
         WHERE user_id = ? AND type IN ('withdrawal', 'fee', 'escrow_lock')
         AND status = 'completed' AND created_at >= ?
-    """, [user_id, start_date])
+    """,
+        [user_id, start_date],
+    )
 
     total_expenses = 0
     if expense_result and expense_result.get("rows"):
@@ -207,10 +318,13 @@ def get_wallet_analytics(user_id: int, start_date: str) -> dict:
         else:
             total_expenses = float(val or 0)
 
-    count_result = execute_query("""
-        SELECT COUNT(*) FROM wallet_transactions 
+    count_result = execute_query(
+        """
+        SELECT COUNT(*) FROM wallet_transactions
         WHERE user_id = ? AND created_at >= ?
-    """, [user_id, start_date])
+    """,
+        [user_id, start_date],
+    )
 
     transaction_count = 0
     if count_result and count_result.get("rows"):
@@ -223,16 +337,19 @@ def get_wallet_analytics(user_id: int, start_date: str) -> dict:
     return {
         "total_income": total_income,
         "total_expenses": total_expenses,
-        "transaction_count": transaction_count
+        "transaction_count": transaction_count,
     }
 
 
 def get_payout_schedule(user_id: int) -> Optional[dict]:
     """Get user's payout schedule, or None if not configured."""
-    result = execute_query("""
+    result = execute_query(
+        """
         SELECT frequency, minimum_amount, destination_type, destination_details, is_active, next_payout_at
         FROM payout_schedules WHERE user_id = ?
-    """, [user_id])
+    """,
+        [user_id],
+    )
 
     if result and result.get("rows") and len(result["rows"]) > 0:
         row = result["rows"][0]
@@ -243,18 +360,24 @@ def get_payout_schedule(user_id: int) -> Optional[dict]:
             "destination_type": _get_val(row, 2),
             "destination_details": _get_val(row, 3),
             "is_active": bool(_get_val(row, 4, 1)),
-            "next_payout_at": _get_val(row, 5)
+            "next_payout_at": _get_val(row, 5),
         }
 
     return None
 
 
-def upsert_payout_schedule(user_id: int, frequency: str, minimum_amount: float,
-                           destination_type: str, destination_details: str,
-                           next_payout: str):
+def upsert_payout_schedule(
+    user_id: int,
+    frequency: str,
+    minimum_amount: float,
+    destination_type: str,
+    destination_details: str,
+    next_payout: str,
+):
     """Insert or update the payout schedule for a user."""
     now = datetime.now(timezone.utc).isoformat()
-    execute_query("""
+    execute_query(
+        """
         INSERT INTO payout_schedules (user_id, frequency, minimum_amount, destination_type, destination_details, is_active, next_payout_at, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)
         ON CONFLICT(user_id) DO UPDATE SET
@@ -265,14 +388,25 @@ def upsert_payout_schedule(user_id: int, frequency: str, minimum_amount: float,
             is_active = 1,
             next_payout_at = excluded.next_payout_at,
             updated_at = excluded.updated_at
-    """, [user_id, frequency, minimum_amount, destination_type, destination_details, next_payout, now, now])
+    """,
+        [
+            user_id,
+            frequency,
+            minimum_amount,
+            destination_type,
+            destination_details,
+            next_payout,
+            now,
+            now,
+        ],
+    )
 
 
 def disable_payout_schedule(user_id: int):
     """Disable automatic payouts for a user."""
     execute_query(
         "UPDATE payout_schedules SET is_active = 0, updated_at = ? WHERE user_id = ?",
-        [datetime.now(timezone.utc).isoformat(), user_id]
+        [datetime.now(timezone.utc).isoformat(), user_id],
     )
 
 
@@ -282,10 +416,10 @@ def credit_balance(user_id: int, amount: float) -> bool:
     now = datetime.now(timezone.utc).isoformat()
     # Ensure wallet exists first
     get_or_create_balance(user_id)
-    
+
     result = execute_query(
         "UPDATE wallet_balances SET available = available + ?, updated_at = ? WHERE user_id = ?",
-        [amount, now, user_id]
+        [amount, now, user_id],
     )
     rows_affected = 0
     if isinstance(result, dict):
@@ -295,19 +429,21 @@ def credit_balance(user_id: int, amount: float) -> bool:
     return rows_affected > 0
 
 
-def update_transaction_status(reference_id: str, new_status: str, completed: bool = False):
+def update_transaction_status(
+    reference_id: str, new_status: str, completed: bool = False
+):
     """Update a wallet transaction's status by reference_id.
     If completed=True, also sets completed_at timestamp."""
     now = datetime.now(timezone.utc).isoformat()
     if completed:
         execute_query(
             "UPDATE wallet_transactions SET status = ?, completed_at = ? WHERE reference_id = ?",
-            [new_status, now, reference_id]
+            [new_status, now, reference_id],
         )
     else:
         execute_query(
             "UPDATE wallet_transactions SET status = ? WHERE reference_id = ?",
-            [new_status, reference_id]
+            [new_status, reference_id],
         )
 
 
@@ -315,7 +451,7 @@ def get_transaction_by_reference(reference_id: str) -> Optional[dict]:
     """Get a wallet transaction by its reference_id."""
     result = execute_query(
         "SELECT id, user_id, type, amount, currency, status, description, reference_id, created_at, completed_at FROM wallet_transactions WHERE reference_id = ?",
-        [reference_id]
+        [reference_id],
     )
     if result and result.get("rows") and len(result["rows"]) > 0:
         row = result["rows"][0]
@@ -329,6 +465,6 @@ def get_transaction_by_reference(reference_id: str) -> Optional[dict]:
             "description": _get_val(row, 6),
             "reference_id": _get_val(row, 7),
             "created_at": _get_val(row, 8, ""),
-            "completed_at": _get_val(row, 9)
+            "completed_at": _get_val(row, 9),
         }
     return None

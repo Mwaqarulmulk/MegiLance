@@ -17,6 +17,7 @@ import darkStyles from './VideoCalls.dark.module.css';
 
 interface VideoCall {
   id: string;
+  call_id?: number;
   room_id: string;
   title: string;
   participants: Participant[];
@@ -26,6 +27,7 @@ interface VideoCall {
   duration?: number;
   status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
   has_recording: boolean;
+  recording_url?: string;
 }
 
 interface Participant {
@@ -69,14 +71,36 @@ export default function VideoCallsPage() {
   const loadCalls = async () => {
     try {
       setLoading(true);
-      const response = await videoCallsApi.getHistory().catch(() => ({ calls: [] })) as any;
-      
-      // Use API data if available
-      let callsData: VideoCall[] = [];
-      
-      if (response && (response.calls?.length > 0 || Array.isArray(response) && response.length > 0)) {
-        callsData = response.calls || response;
-      }
+      const response = await videoCallsApi.getHistory().catch(() => []) as unknown;
+      const rows = Array.isArray(response)
+        ? response
+        : response && typeof response === 'object' && Array.isArray((response as { calls?: unknown[] }).calls)
+          ? (response as { calls: unknown[] }).calls
+          : [];
+
+      const callsData = rows.map((row): VideoCall => {
+        const call = row as Record<string, any>;
+        const participantIds = Array.isArray(call.participant_ids) ? call.participant_ids : [];
+
+        return {
+          id: String(call.call_id ?? call.id ?? call.room_id),
+          call_id: Number(call.call_id ?? call.id) || undefined,
+          room_id: String(call.room_id ?? ''),
+          title: String(call.metadata?.title ?? call.title ?? (call.call_type === 'group' ? 'Group Video Call' : 'Video Call')),
+          participants: participantIds.map((id: number | string) => ({
+            id: String(id),
+            name: `Participant #${id}`,
+            role: 'participant',
+          })),
+          scheduled_at: call.scheduled_at,
+          started_at: call.started_at,
+          ended_at: call.ended_at,
+          duration: call.duration_seconds ? Math.round(Number(call.duration_seconds) / 60) : undefined,
+          status: call.status === 'ongoing' ? 'in_progress' : call.status,
+          has_recording: Boolean(call.recording_url),
+          recording_url: call.recording_url,
+        };
+      });
 
       setCalls(callsData);
     } catch (error) {
@@ -93,6 +117,7 @@ export default function VideoCallsPage() {
       await videoCallsApi.createRoom({
         participant_ids: newCall.participant_ids,
         scheduled_at: newCall.scheduled_at,
+        call_type: newCall.participant_ids.length > 1 ? 'group' : 'one_on_one',
       });
       setShowScheduleModal(false);
       setNewCall({ title: '', scheduled_at: '', participant_ids: [] });
@@ -107,8 +132,7 @@ export default function VideoCallsPage() {
   const handleJoinCall = async (roomId: string) => {
     try {
       await videoCallsApi.joinRoom(roomId);
-      // In production, this would open a video call interface
-      window.open(`/call/${roomId}`, '_blank');
+      window.open(`/freelancer/video-calls?room=${encodeURIComponent(roomId)}`, '_blank');
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to join call:', error);
@@ -123,10 +147,10 @@ export default function VideoCallsPage() {
     setRoomCode('');
   };
 
-  const handleEndCall = async (roomId: string) => {
+  const handleEndCall = async (callId: string) => {
     setEndCallTarget(null);
     try {
-      await videoCallsApi.endCall(roomId);
+      await videoCallsApi.endCall(callId);
       loadCalls();
       showToast('Call ended successfully.');
     } catch (error) {
@@ -137,17 +161,21 @@ export default function VideoCallsPage() {
     }
   };
 
-  const handleViewRecording = async (roomId: string) => {
-    try {
-      const recording = await videoCallsApi.getRecording(roomId) as any;
-      if (recording?.url) {
-        window.open(recording.url, '_blank');
-      }
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to get recording:', error);
-      }
+  const handleViewRecording = (recordingUrl?: string) => {
+    if (recordingUrl) {
+      window.open(recordingUrl, '_blank');
+    } else {
       showToast('Recording not available.', 'error');
+    }
+  };
+
+  const handleCopyLink = async (roomId: string) => {
+    const link = `${window.location.origin}/freelancer/video-calls?room=${encodeURIComponent(roomId)}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast('Call link copied.');
+    } catch {
+      showToast('Unable to copy call link.', 'error');
     }
   };
 
@@ -359,7 +387,7 @@ export default function VideoCallsPage() {
                         </button>
                         <button
                           className={cn(commonStyles.endButton, themeStyles.endButton)}
-                          onClick={() => setEndCallTarget(call.room_id)}
+                          onClick={() => setEndCallTarget(String(call.call_id ?? call.id))}
                         >
                           End Call
                         </button>
@@ -368,12 +396,12 @@ export default function VideoCallsPage() {
                     {call.status === 'completed' && call.has_recording && (
                       <button
                         className={cn(commonStyles.actionButton, themeStyles.actionButton)}
-                        onClick={() => handleViewRecording(call.room_id)}
+                        onClick={() => handleViewRecording(call.recording_url)}
                       >
                         📼 View Recording
                       </button>
                     )}
-                    <button className={cn(commonStyles.actionButton, themeStyles.actionButton)}>
+                    <button className={cn(commonStyles.actionButton, themeStyles.actionButton)} onClick={() => handleCopyLink(call.room_id)}>
                       📋 Copy Link
                     </button>
                   </div>

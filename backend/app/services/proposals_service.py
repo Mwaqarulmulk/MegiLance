@@ -436,9 +436,22 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
                 now, now
             ]
         )
-        logger.info(f"Contract created for project {project_id} on proposal {proposal_id} acceptance")
+
+        contract_res = execute_query(
+            "SELECT id FROM contracts WHERE project_id = ? AND freelancer_id = ? AND winning_bid_id = ? ORDER BY id DESC LIMIT 1",
+            [project_id, freelancer_id, proposal_id]
+        )
+        if contract_res and contract_res.get("rows"):
+            contract_id = int(contract_res["rows"][0][0])
+            execute_query(
+                """INSERT INTO escrow (contract_id, client_id, freelancer_id, amount, status, released_amount, created_at, updated_at)
+                   VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)""",
+                [contract_id, client_id, freelancer_id, contract_amount, 0, now, now]
+            )
+            logger.info(f"Contract {contract_id} and escrow created for project {project_id} on proposal {proposal_id} acceptance")
+
     except Exception as e:
-        logger.error(f"Contract creation error on proposal {proposal_id}: {str(e)}")
+        logger.error(f"Contract/Escrow creation error on proposal {proposal_id}: {str(e)}")
 
     return get_proposal_raw(proposal_id)
 

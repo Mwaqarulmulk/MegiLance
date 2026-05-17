@@ -35,9 +35,11 @@ interface Goal {
   unit: string;
 }
 
+type SkillTrend = 'up' | 'stable' | 'down';
+
 const AnalyticsPage: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const { analytics, loading, error } = useFreelancerData();
+  const { analytics, projects, jobs, recommendedJobs, loading, error } = useFreelancerData();
   const [range, setRange] = usePersistedState<Range>('freelancer:analytics:range', '30d');
   const [uiLoading, setUiLoading] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>('csv');
@@ -55,7 +57,7 @@ const AnalyticsPage: React.FC = () => {
     const proposals = analytics.pendingProposals || 0;
     const avgProjectValue = completed > 0 ? totalEarned / completed : 0;
     const responseRate = 92; // calculated server-side ideally
-    const onTimeDelivery = completed > 0 ? Math.min(100, Math.round(85 + Math.random() * 12)) : 0;
+    const onTimeDelivery = analytics.successRate ? Math.round(analytics.successRate) : 0;
 
     // Time series
     const len = range === '7d' ? 7 : 12;
@@ -76,14 +78,29 @@ const AnalyticsPage: React.FC = () => {
       { label: '5-Star Reviews', current: Math.max(0, completed - 2), target: completed, unit: '' },
     ];
 
-    // Top skills demand (mock, would come from API)
-    const topSkills = [
-      { name: 'React', demand: 94, trend: 'up' as const },
-      { name: 'TypeScript', demand: 89, trend: 'up' as const },
-      { name: 'Next.js', demand: 82, trend: 'up' as const },
-      { name: 'Python', demand: 78, trend: 'stable' as const },
-      { name: 'Node.js', demand: 75, trend: 'down' as const },
-    ];
+    const skillCounts = new Map<string, number>();
+    [...(jobs || []), ...(recommendedJobs || [])].forEach((job) => {
+      job.skills.forEach((skill) => {
+        const key = skill.trim();
+        if (key) skillCounts.set(key, (skillCounts.get(key) || 0) + 1);
+      });
+    });
+    (projects || []).forEach((project) => {
+      project.tags.forEach((skill) => {
+        const key = skill.trim();
+        if (key) skillCounts.set(key, (skillCounts.get(key) || 0) + 1);
+      });
+    });
+
+    const maxSkillCount = Math.max(...Array.from(skillCounts.values()), 1);
+    const topSkills = Array.from(skillCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, count]) => ({
+        name,
+        demand: Math.max(10, Math.round((count / maxSkillCount) * 100)),
+        trend: 'stable' as SkillTrend,
+      }));
 
     return {
       kpis: [
@@ -103,7 +120,7 @@ const AnalyticsPage: React.FC = () => {
       completed,
       active,
     };
-  }, [analytics, range]);
+  }, [analytics, jobs, projects, range, recommendedJobs]);
 
   useEffect(() => {
     setUiLoading(true);
@@ -310,6 +327,11 @@ const AnalyticsPage: React.FC = () => {
                     <Zap size={18} /> Top Skills in Demand
                   </h2>
                   <div className={commonStyles.skillDemandList}>
+                    {data.topSkills.length === 0 && (
+                      <div className={cn(commonStyles.skillDemandItem, themed.skillDemandItem)}>
+                        <span className={cn(commonStyles.skillName, themed.skillName)}>No skill demand data yet</span>
+                      </div>
+                    )}
                     {data.topSkills.map((skill, i) => (
                       <div key={i} className={cn(commonStyles.skillDemandItem, themed.skillDemandItem)}>
                         <span className={cn(commonStyles.skillRank, themed.skillRank)}>#{i + 1}</span>

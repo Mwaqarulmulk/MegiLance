@@ -31,20 +31,38 @@ export const legalDocsApi = {
   getAcceptanceHistory: () => apiFetch('/legal-documents/acceptance-history'),
 };
 
-// NOTE: fileVersionsApi was removed as dead code - never used in the app
+export const fileVersionsApi = {
+  get: (fileId: ResourceId) => apiFetch(`/file-versions/${fileId}`),
+  getVersions: (fileId: ResourceId, limit = 50) =>
+    apiFetch(`/file-versions/${fileId}/versions?limit=${limit}`),
+  getVersion: (fileId: ResourceId, versionNumber: number) =>
+    apiFetch(`/file-versions/${fileId}/versions/${versionNumber}`),
+  rollback: (fileId: ResourceId, versionNumber: number) =>
+    apiFetch(`/file-versions/${fileId}/rollback?version_number=${versionNumber}`, { method: 'POST' }),
+  compare: (fileId: ResourceId, versionA: number, versionB: number) =>
+    apiFetch(`/file-versions/${fileId}/compare`, {
+      method: 'POST',
+      body: JSON.stringify({ version_a: versionA, version_b: versionB }),
+    }),
+};
 
 export const videoCallsApi = {
-  createRoom: (data: { participant_ids: string[]; scheduled_at?: string }) =>
-    apiFetch('/video-calls/rooms', {
+  createRoom: (data: { participant_ids: Array<string | number>; scheduled_at?: string; call_type?: 'one_on_one' | 'group' | 'screen_share'; enable_recording?: boolean }) =>
+    apiFetch('/video/calls', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        participant_ids: data.participant_ids.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0),
+        call_type: data.call_type ?? (data.participant_ids.length > 1 ? 'group' : 'one_on_one'),
+        scheduled_at: data.scheduled_at || undefined,
+        enable_recording: data.enable_recording ?? false,
+      }),
     }),
-  getRoom: (roomId: ResourceId) => apiFetch(`/video-calls/rooms/${roomId}`),
-  joinRoom: (roomId: ResourceId) => apiFetch(`/video-calls/rooms/${roomId}/join`, { method: 'POST' }),
-  leaveRoom: (roomId: ResourceId) => apiFetch(`/video-calls/rooms/${roomId}/leave`, { method: 'POST' }),
-  endCall: (roomId: ResourceId) => apiFetch(`/video-calls/rooms/${roomId}/end`, { method: 'POST' }),
-  getHistory: () => apiFetch('/video-calls/history'),
-  getRecording: (roomId: ResourceId) => apiFetch(`/video-calls/rooms/${roomId}/recording`),
+  getRoom: (roomId: ResourceId) => apiFetch(`/video/calls?limit=1&room_id=${encodeURIComponent(String(roomId))}`),
+  joinRoom: (roomId: ResourceId) => apiFetch(`/video/calls/${roomId}/join`, { method: 'POST' }),
+  leaveRoom: (_roomId: ResourceId) => Promise.resolve({ message: 'Left call' }),
+  endCall: (callId: ResourceId) => apiFetch(`/video/calls/${callId}/end`, { method: 'POST' }),
+  getHistory: () => apiFetch('/video/calls?limit=50'),
+  getRecording: (callId: ResourceId) => apiFetch(`/video/calls/${callId}`),
 };
 
 // NOTE: notesTagsApi was removed as dead code - never used in the app

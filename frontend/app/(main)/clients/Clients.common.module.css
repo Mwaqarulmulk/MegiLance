@@ -1,1 +1,159 @@
-.clients { display: flex; flex-direction: column; padding: 4rem 2rem; min-height: 80vh; max-width: 1200px; margin: 0 auto; gap: 2rem; }
+/* @AI-HINT: Clients page — layout, structure, and animations (theme-agnostic) */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+}
+
+.hero {
+    padding: 6rem 2rem;
+    text-align: center;
+    border-radius: 0 0 40px 40px;
+}
+
+.heroTitle {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+}
+
+.heroSubtitle {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
+}
+
+.heroActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btnPrimary {
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 999px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btnPrimary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btnOutline {
+    background: transparent;
+    padding: 1rem 2rem;
+    border-radius: 999px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btnOutline:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.featuresSection {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.featuresTitle {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+}
+
+.featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.featureCard {
+    padding: 2rem;
+    border-radius: 16px;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.featureCard:hover {
+    transform: translateY(-4px);
+}
+
+.featureCardTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.featureCardText {
+    line-height: 1.6;
+}
+
+.ctaSection {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.ctaTitle {
+    font-family: var(--font-heading, Poppins), sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: 2.25rem;
+    }
+    .heroSubtitle {
+        font-size: 1rem;
+    }
+    .featuresGrid {
+        grid-template-columns: 1fr;
+    }
+    .ctaTitle {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 4rem 1.5rem;
+        border-radius: 0 0 24px 24px;
+    }
+    .heroTitle {
+        font-size: 1.875rem;
+    }
+    .featuresTitle {
+        font-size: 1.75rem;
+    }
+    .btnPrimary,
+    .btnOutline {
+        font-size: 1rem;
+        padding: 0.875rem 1.5rem;
+    }
+}

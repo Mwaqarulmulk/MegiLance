@@ -55,6 +55,30 @@ def update_user_balance(user_id: int, new_balance: float):
     execute_query("UPDATE users SET account_balance = ? WHERE id = ?", [new_balance, user_id])
 
 
+def fund_pending_escrow(contract_id: int, client_id: int, amount: float, notes: Optional[str]) -> Optional[dict]:
+    """Fund a pending escrow record and update balance."""
+    now = datetime.now(timezone.utc).isoformat()
+    
+    result = execute_query("SELECT id, amount, status FROM escrow WHERE contract_id = ? AND client_id = ? ORDER BY id DESC LIMIT 1", [contract_id, client_id])
+    if not result or not result.get("rows"):
+        return None
+        
+    escrow_id = int(result["rows"][0][0])
+    
+    # Deduct balance
+    balance = get_user_balance(client_id)
+    update_user_balance(client_id, balance - amount)
+    
+    # Update escrow and contract
+    execute_query("UPDATE escrow SET status = 'funded', notes = ?, updated_at = ? WHERE id = ?", [notes, now, escrow_id])
+    
+    # Important: Also mark the contract as 'active' when funded 
+    execute_query("UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?", [now, contract_id])
+    
+    updated = execute_query(f"SELECT {ESCROW_SELECT_COLS} FROM escrow WHERE id = ?", [escrow_id])
+    return _row_to_escrow(updated["rows"][0]) if updated and updated.get("rows") else None
+
+
 def create_escrow(contract_id: int, client_id: int, amount: float,
                   expires_at: Optional[str], notes: Optional[str]) -> dict:
     """Insert a new escrow record, deduct client balance, and return the created escrow."""

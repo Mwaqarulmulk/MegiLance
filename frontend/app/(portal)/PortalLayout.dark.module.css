@@ -1,0 +1,15 @@
+/* @AI-HINT: PortalLayout dark theme — email verification banner colors */
+
+.verifyBanner {
+  background: #3d2a00;
+  border-color: #5c4000;
+  color: #fbbf24;
+}
+
+.verifyResendBtn {
+  color: #fbbf24;
+}
+
+.verifyDismissBtn {
+  color: #fbbf24;
+}

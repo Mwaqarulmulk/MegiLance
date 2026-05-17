@@ -14,3 +14,4 @@ export { useNotifications } from './useNotifications';
 export { useOnlineStatus } from './useOnlineStatus';
 export { useTypingIndicator } from './useTypingIndicator';
 export { default as useAnimatedCounter } from './useAnimatedCounter';
+export { useRecommendations } from './useRecommendations';

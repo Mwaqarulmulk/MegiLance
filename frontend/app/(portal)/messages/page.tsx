@@ -3,7 +3,7 @@
 
 // Styles are imported in this route's layout.tsx to comply with Next.js global CSS rules.
 
-import Messages from '../../Messages/Messages';
+import Messages from '../../messages/messages';
 
 const PortalMessagesPage = () => {
   return <Messages />;

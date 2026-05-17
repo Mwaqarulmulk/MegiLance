@@ -236,16 +236,33 @@ async def get_quick_help(
 ):
     """Get quick help resources for current user."""
     service = get_knowledge_base_service()
-    
-    user_role = getattr(current_user, 'user_type', None) or getattr(current_user, 'role', 'freelancer')
-    
+
+    user_role = str(getattr(current_user, 'user_type', None) or getattr(current_user, 'role', 'freelancer')).lower()
+    role_tips = {
+        "client": [
+            "Post projects with clear outcomes, budget range, timeline, and review criteria.",
+            "Shortlist freelancers by verified skills, portfolio proof, recent reviews, and availability.",
+            "Use milestones and escrow for larger work so payment and delivery stay aligned.",
+        ],
+        "freelancer": [
+            "Keep your profile complete with a focused headline, portfolio proof, and verified skills.",
+            "Send proposals that reference the client's deliverables, risks, and first milestone.",
+            "Keep availability, response time, and delivery notes current to improve client confidence.",
+        ],
+        "admin": [
+            "Review disputes, refunds, verification queues, and moderation items before growth campaigns.",
+            "Watch conversion, payment, and support metrics for broken flow signals.",
+            "Keep categories, skills, and help articles current so search and onboarding stay useful.",
+        ],
+    }
+
     return {
         "getting_started": await service.get_articles(
             category=ArticleCategory.GETTING_STARTED,
             limit=3
         ),
         "faqs": await service.get_faqs(limit=5),
-        "role_specific_tips": f"Tips for {user_role}s coming soon"
+        "role_specific_tips": role_tips.get(user_role, role_tips["freelancer"])
     }
 
 

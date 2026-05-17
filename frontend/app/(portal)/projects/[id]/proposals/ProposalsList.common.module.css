@@ -1,0 +1,246 @@
+/* @AI-HINT: Client proposals list page — layout, proposal cards, filter bar, sort */
+
+/* ── Page ────────────────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .page { padding: 2rem; }
+}
+
+.inner {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.headerLeft {}
+
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  font-family: var(--font-family-headings, 'Poppins', sans-serif);
+}
+
+.pageSub {
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.65;
+}
+
+/* ── Toolbar (sort/filter) ───────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.toolbarLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.sortSelect {
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  border: 1.5px solid transparent;
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* ── Skeleton ────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeletonCard {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid transparent;
+  margin-bottom: 1rem;
+}
+
+.skeletonLine {
+  height: 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Proposal Card ───────────────────────────────────────────── */
+.proposalList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.proposalCard {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.proposalCard:hover {
+  transform: translateY(-2px);
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.freelancerAvatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.freelancerAvatarPlaceholder {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.freelancerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.freelancerName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem;
+}
+
+.freelancerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  opacity: 0.7;
+}
+
+.bidAmount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── Cover letter ────────────────────────────────────────────── */
+.coverLetter {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 0 0 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.coverLetterExpanded {
+  -webkit-line-clamp: unset;
+}
+
+.readMoreBtn {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 0.75rem;
+  font-family: inherit;
+}
+
+/* ── Stars ───────────────────────────────────────────────────── */
+.starsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+/* ── Card actions ────────────────────────────────────────────── */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid transparent;
+  margin-top: 0.5rem;
+}
+
+.statusBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.spacer { flex: 1; }
+
+/* ── Empty / Error states ────────────────────────────────────── */
+.emptyState {
+  text-align: center;
+  padding: 4rem 1rem;
+  opacity: 0.55;
+  font-size: 0.9375rem;
+}
+
+.errorState {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .cardTop { flex-direction: column; }
+  .bidAmount { align-self: flex-start; }
+  .pageTitle { font-size: 1.4rem; }
+}
+
+@media (max-width: 320px) {
+  .page { padding: 0.75rem; }
+  .proposalCard { padding: 1rem; }
+}

@@ -22,7 +22,7 @@ import {
 
 import api, { APIError, apiFetch } from "@/lib/api";
 import { proposalsApi, projectsApi } from "@/lib/api/projects";
-import { authApi } from '@/lib/api';
+import { authApi } from "@/lib/api";
 import { ProposalData, ProposalErrors } from "./SubmitProposal.types";
 
 import Button from "@/app/components/atoms/Button/Button";
@@ -86,7 +86,7 @@ const SubmitProposal: React.FC = () => {
   const [job, setJob] = useState<JobDetails | null>(null);
   const [jobLoading, setJobLoading] = useState(true);
   const [jobError, setJobError] = useState<string>("");
-  const [alreadyApplied, setAlreadyApplied] = useState(false);
+  const [existingProposal, setExistingProposal] = useState<any>(null);
 
   // Fetch job details and validate jobId on mount
   useEffect(() => {
@@ -104,10 +104,29 @@ const SubmitProposal: React.FC = () => {
         try {
           const user = await authApi.me();
           if (user && user.id) {
-            const resp: any = await proposalsApi.list({ project_id: result.id });
-            const items = Array.isArray(resp) ? resp : resp?.proposals || resp?.data || [];
-            const applied = items.some((p: any) => Number(p.freelancer_id) === Number(user.id));
-            setAlreadyApplied(Boolean(applied));
+            const resp: any = await proposalsApi.list({
+              project_id: result.id,
+            });
+            const items = Array.isArray(resp)
+              ? resp
+              : resp?.proposals || resp?.data || [];
+            const applied = items.find(
+              (p: any) => Number(p.freelancer_id) === Number(user.id),
+            );
+            if (applied) {
+              setExistingProposal(applied);
+              setData((prev) => ({
+                ...prev,
+                coverLetter: applied.cover_letter || "",
+                estimatedHours:
+                  applied.estimated_hours || applied.delivery_time || null,
+                hourlyRate:
+                  applied.estimated_hours && applied.bid_amount
+                    ? Math.round(applied.bid_amount / applied.estimated_hours)
+                    : applied.hourly_rate || null,
+                availability: "immediate",
+              }));
+            }
           }
         } catch (_) {
           // ignore inner failures
@@ -136,18 +155,33 @@ const SubmitProposal: React.FC = () => {
     return (data.hourlyRate || 0) * (data.estimatedHours || 0);
   }, [data.hourlyRate, data.estimatedHours]);
 
-  // Auto-save simulation
+  // Auto-save draft to backend
   useEffect(() => {
-    const saveTimeout = setTimeout(() => {
-      if (data.coverLetter || data.estimatedHours || data.hourlyRate) {
+    if (!jobIdParam || !data.coverLetter) return;
+
+    const saveTimeout = setTimeout(async () => {
+      try {
+        await proposalsApi.saveDraft({
+          project_id: parseInt(jobIdParam),
+          cover_letter: data.coverLetter,
+          bid_amount: estimatedTotal || 0,
+          estimated_hours: data.estimatedHours || 0,
+          hourly_rate: data.hourlyRate || 0,
+          availability: data.availability || "immediate",
+        });
         setIsSaved(true);
         setLastSaved(new Date());
-        // Reset saved indicator after 2 seconds
-        setTimeout(() => setIsSaved(false), 2000);
+        setTimeout(() => setIsSaved(false), 3000);
+      } catch {
+        // Silently fail - auto-save is non-critical
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Auto-save failed");
+        }
       }
-    }, 1000);
+    }, 2000);
+
     return () => clearTimeout(saveTimeout);
-  }, [data]);
+  }, [data.coverLetter, data.estimatedHours, data.hourlyRate, data.availability, jobIdParam, estimatedTotal]);
 
   const updateData = useCallback((update: Partial<ProposalData>) => {
     setData((prev) => ({ ...prev, ...update }));
@@ -255,12 +289,20 @@ const SubmitProposal: React.FC = () => {
     try {
       const bidAmount = estimatedTotal;
 
-      await api.portal.freelancer.submitProposal({
-        project_id: parseInt(data.jobId),
-        cover_letter: data.coverLetter.trim(),
-        bid_amount: bidAmount,
-        delivery_time: data.estimatedHours || 0,
-      });
+      if (existingProposal) {
+        await proposalsApi.update(existingProposal.id, {
+          cover_letter: data.coverLetter.trim(),
+          bid_amount: bidAmount,
+          estimated_hours: data.estimatedHours || 0,
+        });
+      } else {
+        await api.portal.freelancer.submitProposal({
+          project_id: parseInt(data.jobId),
+          cover_letter: data.coverLetter.trim(),
+          bid_amount: bidAmount,
+          estimated_hours: data.estimatedHours || 0,
+        });
+      }
 
       setSubmissionState("success");
     } catch (err) {
@@ -278,7 +320,12 @@ const SubmitProposal: React.FC = () => {
     switch (currentStep) {
       case "Details":
         return (
-          <StepDetails data={data} updateData={updateData} errors={errors} job={job} />
+          <StepDetails
+            data={data}
+            updateData={updateData}
+            errors={errors}
+            job={job}
+          />
         );
       case "Terms":
         return (
@@ -294,7 +341,11 @@ const SubmitProposal: React.FC = () => {
   if (jobLoading) {
     return (
       <div className={cn(common.centered_container, themed.centered_container)}>
-        <Loader2 className={common.spinner} size={36} aria-label="Loading job details…" />
+        <Loader2
+          className={common.spinner}
+          size={36}
+          aria-label="Loading job details…"
+        />
       </div>
     );
   }
@@ -302,20 +353,34 @@ const SubmitProposal: React.FC = () => {
   if (jobError || !job) {
     return (
       <PageTransition>
-        <div className={cn(common.centered_container, themed.centered_container)}>
+        <div
+          className={cn(common.centered_container, themed.centered_container)}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className={cn(common.result_card, themed.result_card)}
             role="alert"
           >
-            <AlertTriangle className={cn(common.result_icon, common.error_icon, themed.error_icon)} size={56} />
-            <h2 className={cn(common.result_title, themed.result_title)}>Job Not Found</h2>
+            <AlertTriangle
+              className={cn(
+                common.result_icon,
+                common.error_icon,
+                themed.error_icon,
+              )}
+              size={56}
+            />
+            <h2 className={cn(common.result_title, themed.result_title)}>
+              Job Not Found
+            </h2>
             <p className={cn(common.result_message, themed.result_message)}>
               {jobError || "This job is no longer available."}
             </p>
             <div className={cn(common.result_actions, themed.result_actions)}>
-              <Button variant="primary" onClick={() => router.push("/freelancer/jobs")}>
+              <Button
+                variant="primary"
+                onClick={() => router.push("/freelancer/jobs")}
+              >
                 <Briefcase size={18} />
                 Browse Jobs
               </Button>
@@ -449,28 +514,38 @@ const SubmitProposal: React.FC = () => {
                 {job.title}
               </h2>
               {job.client_name && (
-                <span className={cn(common.jobBannerClient, themed.jobBannerClient)}>by {job.client_name}</span>
+                <span
+                  className={cn(common.jobBannerClient, themed.jobBannerClient)}
+                >
+                  by {job.client_name}
+                </span>
               )}
             </div>
             <div className={common.jobBannerMeta}>
               {(job.budget_min || job.budget_max) && (
-                <span className={cn(common.jobBannerBadge, themed.jobBannerBadge)}>
+                <span
+                  className={cn(common.jobBannerBadge, themed.jobBannerBadge)}
+                >
                   <DollarSign size={13} />
                   {job.budget_min && job.budget_max
                     ? `$${job.budget_min.toLocaleString()} – $${job.budget_max.toLocaleString()}`
                     : job.budget_max
-                    ? `Up to $${job.budget_max.toLocaleString()}`
-                    : `$${job.budget_min!.toLocaleString()}+`}
+                      ? `Up to $${job.budget_max.toLocaleString()}`
+                      : `$${job.budget_min!.toLocaleString()}+`}
                 </span>
               )}
               {job.estimated_duration && (
-                <span className={cn(common.jobBannerBadge, themed.jobBannerBadge)}>
+                <span
+                  className={cn(common.jobBannerBadge, themed.jobBannerBadge)}
+                >
                   <Clock size={13} />
                   {job.estimated_duration.replace(/_/g, " ")}
                 </span>
               )}
               {job.skills && job.skills.length > 0 && (
-                <span className={cn(common.jobBannerBadge, themed.jobBannerBadge)}>
+                <span
+                  className={cn(common.jobBannerBadge, themed.jobBannerBadge)}
+                >
                   <Tag size={13} />
                   {job.skills.slice(0, 3).join(", ")}
                   {job.skills.length > 3 && ` +${job.skills.length - 3}`}
@@ -484,9 +559,17 @@ const SubmitProposal: React.FC = () => {
                   : job.description}
               </p>
             )}
-            {alreadyApplied && (
-              <div className={cn(common.alreadyAppliedBanner, themed.alreadyAppliedBanner)} role="status" aria-live="polite">
-                <AlertTriangle size={14} /> You have already submitted a proposal for this job.
+            {existingProposal && (
+              <div
+                className={cn(
+                  common.alreadyAppliedBanner,
+                  themed.alreadyAppliedBanner,
+                )}
+                role="status"
+                aria-live="polite"
+              >
+                <AlertTriangle size={14} /> You have already submitted a
+                proposal for this job. You can edit and update it below.
               </div>
             )}
           </div>
@@ -495,7 +578,7 @@ const SubmitProposal: React.FC = () => {
             <header className={common.header}>
               <div className={cn(common.headerTop, themed.headerTop)}>
                 <h1 className={cn(common.title, themed.title)}>
-                  Submit a Proposal
+                  {existingProposal ? "Edit Proposal" : "Submit a Proposal"}
                 </h1>
                 {/* Auto-save indicator */}
                 {isSaved && (
@@ -577,21 +660,21 @@ const SubmitProposal: React.FC = () => {
                 <Button
                   variant="primary"
                   onClick={onSubmit}
-                  disabled={submitting || alreadyApplied}
+                  disabled={submitting}
                   isLoading={submitting}
-                  aria-label="Submit proposal"
+                  aria-label={
+                    existingProposal ? "Update proposal" : "Submit proposal"
+                  }
                 >
-                  {alreadyApplied ? (
-                    'Already Applied'
-                  ) : submitting ? (
+                  {submitting ? (
                     <>
                       <Loader2 size={18} className={common.spinner} />
-                      Submitting...
+                      {existingProposal ? "Updating..." : "Submitting..."}
                     </>
                   ) : (
                     <>
                       <Send size={18} />
-                      Submit Proposal
+                      {existingProposal ? "Update Proposal" : "Submit Proposal"}
                     </>
                   )}
                 </Button>

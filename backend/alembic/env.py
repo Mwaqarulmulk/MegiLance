@@ -1,112 +1,93 @@
+"""
+Alembic environment configuration.
+
+ARCHITECTURE NOTE:
+- sqlalchemy-libsql is NOT installed in production
+- All runtime DB access goes through Turso HTTP API (turso_http.py / turso_http_async.py)
+- ORM models are schema reference only — NOT used at runtime
+- Alembic runs in OFFLINE mode by default, generating SQL migration scripts
+- Apply migrations via: python scripts/apply_migration.py <revision_id>
+"""
+
 from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
-config = context.config
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-from app.db.base import Base
+from sqlalchemy import engine_from_config, pool
 from app.core.config import get_settings
+from app.db.base import Base
 
-# Import all models to ensure they're registered with Base
+# Import all models to register them with Base.metadata
 from app.models import (
     User, Skill, UserSkill, Project, Proposal, Contract, Payment,
     PortfolioItem, Message, Conversation, Notification, Review,
     Dispute, Milestone, UserSession, AuditLog,
     Category, Tag, ProjectTag, TimeEntry, Invoice, Escrow,
-    Favorite, SupportTicket, Refund
+    Favorite, SupportTicket, Refund, Gig, GigOrder, GigReview,
+    GigRevision, GigDelivery, GigFaq, SellerStats,
+    TalentInvitation, Referral, ExternalProject,
 )
 
-# Get settings
+config = context.config
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
 settings = get_settings()
 
-# Determine database URL - prioritize Turso if configured
+# Use Turso HTTP URL for schema generation context
 if settings.turso_database_url and settings.turso_auth_token:
-    # Construct Turso URL for SQLAlchemy
-    # Format: sqlite+libsql://dbname.turso.io?authToken=...
-    turso_url = settings.turso_database_url
-    if turso_url.startswith("libsql://"):
-        turso_url = turso_url.replace("libsql://", "")
-    elif turso_url.startswith("https://"):
-        turso_url = turso_url.replace("https://", "")
-        
-    db_url = f"sqlite+libsql://{turso_url}?authToken={settings.turso_auth_token}"
-else:
-    # Fallback to local sqlite if Turso is not configured (though Settings requires it)
-    # This path might be taken if validation is bypassed or for testing
-    db_url = "sqlite:///./local_dev.db"
-
-# Override sqlalchemy.url from settings
-config.set_main_option("sqlalchemy.url", db_url)
+    turso_url = settings.turso_database_url.replace("libsql://", "sqlite+libsql://")
+    config.set_main_option("sqlalchemy.url", turso_url)
 
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+# Check if sqlalchemy-libsql is available for online migrations
+_has_libsql = False
+try:
+    import sqlalchemy_libsql  # noqa: F401
+    _has_libsql = True
+except ImportError:
+    pass
 
 
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
+    """Generate SQL migration scripts without connecting to DB."""
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        render_as_batch=True,
     )
-
     with context.begin_transaction():
         context.run_migrations()
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
+    """Run migrations against live database (requires sqlalchemy-libsql)."""
+    if not _has_libsql:
+        raise RuntimeError(
+            "sqlalchemy-libsql is not installed. "
+            "Install it with: pip install sqlalchemy-libsql\n"
+            "Or use: alembic upgrade --sql head  (offline mode)"
+        )
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
-
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            render_as_batch=True,
         )
-
         with context.begin_transaction():
             context.run_migrations()
 
 
 if context.is_offline_mode():
+    run_migrations_offline()
+elif not _has_libsql:
     run_migrations_offline()
 else:
     run_migrations_online()

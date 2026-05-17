@@ -1,6 +1,60 @@
-// @AI-HINT: AI services — pricing estimation, fraud detection, writing assistance
-import { apiFetch } from './core';
-import type { ResourceId } from './core';
+// @AI-HINT: AI services — Client Assistant, pricing estimation, fraud detection, writing assistance, matching
+import { apiFetch } from "./core";
+import type { ResourceId } from "./core";
+
+// ─── Client Assistant ─────────────────────────────────────────────────────────
+
+export interface ConversationMessage {
+  role: "user" | "assistant";
+  content: string;
+  tool_results?: unknown[];
+}
+
+export interface ClientAssistantResponse {
+  reply: string;
+  tool_results: Array<{
+    tool_name: string;
+    data: Record<string, unknown>;
+    display_type:
+      | "freelancer_cards"
+      | "cost_estimate"
+      | "market_rates"
+      | "scope_plan"
+      | "text";
+  }>;
+  suggestions: string[];
+  action_buttons: Array<{ label: string; href: string; variant: string }>;
+  intent?: string;
+}
+
+export const clientAssistantApi = {
+  chat: (
+    message: string,
+    conversationHistory: ConversationMessage[] = [],
+    pageContext?: string,
+  ): Promise<ClientAssistantResponse> =>
+    apiFetch("/ai/client-assistant/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        message,
+        conversation_history: conversationHistory,
+        page_context: pageContext,
+      }),
+    }) as Promise<ClientAssistantResponse>,
+
+  getWelcomeMessage: (): Promise<{
+    greeting: string;
+    message: string;
+    suggestions: string[];
+    action_buttons: Array<{ label: string; href: string; variant: string }>;
+  }> =>
+    apiFetch("/ai/client-assistant/welcome", { method: "POST" }) as Promise<{
+      greeting: string;
+      message: string;
+      suggestions: string[];
+      action_buttons: Array<{ label: string; href: string; variant: string }>;
+    }>,
+};
 
 export const aiApi = {
   checkFraud: (userId: ResourceId) =>
@@ -29,23 +83,26 @@ export const aiApi = {
       category: string;
       confidence: number;
       factors: string[];
-    }>('/ai/estimate-price', {
-      method: 'POST',
+    }>("/ai/estimate-price", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
-  estimateFreelancerRate: (freelancerId: ResourceId, data?: {
-    years_experience?: number;
-    skills?: string[];
-    completed_projects?: number;
-    average_rating?: number;
-  }) => {
+  estimateFreelancerRate: (
+    freelancerId: ResourceId,
+    data?: {
+      years_experience?: number;
+      skills?: string[];
+      completed_projects?: number;
+      average_rating?: number;
+    },
+  ) => {
     const params = new URLSearchParams();
     if (data) {
       Object.entries(data).forEach(([key, value]) => {
         if (value !== undefined) {
           if (Array.isArray(value)) {
-            value.forEach(v => params.append(key, v));
+            value.forEach((v) => params.append(key, v));
           } else {
             params.append(key, value.toString());
           }
@@ -73,8 +130,8 @@ export const aiWritingApi = {
     tone?: string;
     highlight_points?: string[];
   }) =>
-    apiFetch<{ content: string }>('/ai-writing/generate/proposal', {
-      method: 'POST',
+    apiFetch<{ content: string }>("/ai-writing/generate/proposal", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
@@ -85,8 +142,8 @@ export const aiWritingApi = {
     budget_range?: string;
     tone?: string;
   }) =>
-    apiFetch<{ content: string }>('/ai-writing/generate/project-description', {
-      method: 'POST',
+    apiFetch<{ content: string }>("/ai-writing/generate/project-description", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
@@ -95,8 +152,8 @@ export const aiWritingApi = {
     content_type: string;
     improvements?: string[];
   }) =>
-    apiFetch<{ content: string }>('/ai-writing/improve', {
-      method: 'POST',
+    apiFetch<{ content: string }>("/ai-writing/improve", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
@@ -112,8 +169,8 @@ export const aiWritingApi = {
       timeline_realism: string;
       flags: string[];
       recommendations: string[];
-    }>('/ai-writing/analyze/feasibility', {
-      method: 'POST',
+    }>("/ai-writing/analyze/feasibility", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
@@ -121,41 +178,59 @@ export const aiWritingApi = {
     project_description: string;
     proposal_content: string;
   }) =>
-    apiFetch<{ suggestions: { title: string; description: string; type: string }[] }>('/ai-writing/generate/upsell', {
-      method: 'POST',
+    apiFetch<{
+      suggestions: { title: string; description: string; type: string }[];
+    }>("/ai-writing/generate/upsell", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
 };
 
 export const aiMatchingApi = {
   getRecommendedProjects: () =>
-    apiFetch<{ projects: Array<{ project_id: number; match_score: number; reasons: string[] }> }>('/ai-matching/projects'),
+    apiFetch<{
+      projects: Array<{
+        project_id: number;
+        match_score: number;
+        reasons: string[];
+      }>;
+    }>("/ai-matching/projects"),
 
   getMatchScore: (projectId: ResourceId, freelancerId: ResourceId) =>
-    apiFetch<{ score: number; breakdown: Record<string, number> }>(`/ai-matching/score/${projectId}/${freelancerId}`),
+    apiFetch<{ score: number; breakdown: Record<string, number> }>(
+      `/ai-matching/score/${projectId}/${freelancerId}`,
+    ),
 
   trackClick: (projectId: ResourceId) =>
-    apiFetch('/ai-matching/track-click', {
-      method: 'POST',
+    apiFetch("/ai-matching/track-click", {
+      method: "POST",
       body: JSON.stringify({ project_id: projectId }),
     }),
 };
 
 export const fraudDetectionApi = {
-  checkUser: (userId: ResourceId) => apiFetch(`/fraud-detection/analyze/user/${userId}`),
-  checkProject: (projectId: ResourceId) => apiFetch(`/fraud-detection/analyze/project/${projectId}`),
-  checkProposal: (proposalId: ResourceId) => apiFetch(`/fraud-detection/analyze/proposal/${proposalId}`),
+  checkUser: (userId: ResourceId) =>
+    apiFetch(`/fraud-detection/analyze/user/${userId}`),
+  checkProject: (projectId: ResourceId) =>
+    apiFetch(`/fraud-detection/analyze/project/${projectId}`),
+  checkProposal: (proposalId: ResourceId) =>
+    apiFetch(`/fraud-detection/analyze/proposal/${proposalId}`),
   checkTransaction: (transactionId: ResourceId) =>
     apiFetch(`/fraud-detection/transaction/${transactionId}`),
-  reportSuspicious: (data: { type: string; target_id: string; reason: string; details?: string }) =>
-    apiFetch('/fraud-detection/report', {
-      method: 'POST',
+  reportSuspicious: (data: {
+    type: string;
+    target_id: string;
+    reason: string;
+    details?: string;
+  }) =>
+    apiFetch("/fraud-detection/report", {
+      method: "POST",
       body: JSON.stringify(data),
     }),
-  getAlerts: () => apiFetch('/admin/fraud-alerts'),
+  getAlerts: () => apiFetch("/admin/fraud-alerts"),
   dismissAlert: (alertId: ResourceId) =>
     apiFetch(`/admin/fraud-alerts/${alertId}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status: 'false_positive' }),
+      method: "PATCH",
+      body: JSON.stringify({ status: "false_positive" }),
     }),
 };

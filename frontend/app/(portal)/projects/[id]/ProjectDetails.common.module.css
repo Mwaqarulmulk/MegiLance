@@ -1,153 +1,230 @@
 /* @AI-HINT: Project details page — layout, structure, spacing */
 
 .pageContainer {
-  min-height: 100vh;
-  padding: 2rem 1rem;
+    min-height: 100vh;
+    padding: 2rem 1rem;
 }
 
 @media (min-width: 768px) {
-  .pageContainer {
-    padding: 2rem;
-  }
+    .pageContainer {
+        padding: 2rem;
+    }
 }
 
 .innerContainer {
-  max-width: 56rem;
-  margin: 0 auto;
+    max-width: 56rem;
+    margin: 0 auto;
 }
 
 .card {
-  border-radius: 0.75rem;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: 1px solid transparent;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid transparent;
 }
 
 .cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
-  flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 }
 
 .metaRow {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.875rem;
-  opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    opacity: 0.7;
 }
 
 .metaItem {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .detailsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
 @media (min-width: 768px) {
-  .detailsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+    .detailsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .detailBox {
-  padding: 1rem;
-  border-radius: 0.5rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
 }
 
 .detailLabel {
-  font-size: 0.875rem;
-  opacity: 0.7;
-  margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
 }
 
 .detailValue {
-  font-weight: 700;
-  font-size: 1.125rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.iconGreen { color: #22c55e; }
-.iconBlue { color: #3b82f6; }
-.iconPurple { color: #a855f7; }
+.iconGreen {
+    color: #22c55e;
+}
+.iconBlue {
+    color: #3b82f6;
+}
+.iconPurple {
+    color: #a855f7;
+}
 
 .descriptionSection {
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
 }
 
 .descriptionText {
-  white-space: pre-wrap;
-  line-height: 1.7;
+    white-space: pre-wrap;
+    line-height: 1.7;
 }
 
 .skillsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .skillTag {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
 }
 
 .proposalBuilderWrapper {
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 }
 
 .backButton {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .loadingState {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* ── Skeleton Loader ───────────────────────────────────────── */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeletonTitle {
+    height: 2rem;
+    width: 70%;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.skeletonMeta {
+    height: 1rem;
+    width: 40%;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.skeletonBody {
+    height: 1rem;
+    width: 100%;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Already Applied ───────────────────────────────────────── */
+.alreadyApplied {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    flex-wrap: wrap;
 }
 
 .notFoundState {
-  text-align: center;
-  padding: 5rem 0;
+    text-align: center;
+    padding: 5rem 0;
 }
 
 @media (max-width: 380px) {
-  .pageContainer { padding: 1rem 0.5rem; }
-  .cardHeader { flex-direction: column; align-items: flex-start; }
-  .metaRow { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-  .skillsContainer { flex-direction: column; align-items: stretch; }
-  .skillTag { text-align: center; }
+    .pageContainer {
+        padding: 1rem 0.5rem;
+    }
+    .cardHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .metaRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .skillsContainer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .skillTag {
+        text-align: center;
+    }
 }
 
 @media (max-width: 320px) {
-  .card { padding: 1rem; }
-  .title { font-size: 1.5rem; }
-  .detailBox { padding: 0.75rem; }
+    .card {
+        padding: 1rem;
+    }
+    .title {
+        font-size: 1.5rem;
+    }
+    .detailBox {
+        padding: 0.75rem;
+    }
 }
-

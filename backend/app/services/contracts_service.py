@@ -199,8 +199,8 @@ def insert_contract(params: List) -> Optional[int]:
     return None
 
 
-def insert_contract_full(params: List) -> bool:
-    """Insert a contract record with milestones and terms."""
+def insert_contract_full(params: List) -> Optional[int]:
+    """Insert a contract record with milestones and terms and return its ID."""
     result = execute_query(
         """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, 
            contract_type, currency, hourly_rate, retainer_amount, retainer_frequency,
@@ -208,7 +208,14 @@ def insert_contract_full(params: List) -> bool:
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         params
     )
-    return bool(result)
+    if result:
+        from app.db.turso_http import parse_rows
+        id_result = execute_query("SELECT last_insert_rowid() as id", [])
+        if id_result and id_result.get("rows"):
+            rows = parse_rows(id_result)
+            if rows:
+                return rows[0].get("id")
+    return None
 
 
 def fetch_contract_for_update(contract_id: str) -> Optional[dict]:

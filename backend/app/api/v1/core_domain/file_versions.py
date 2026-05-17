@@ -21,6 +21,14 @@ from app.services.db_utils import sanitize_text
 router = APIRouter()
 
 
+def _current_user_id(current_user) -> str:
+    return str(current_user.get("id") if isinstance(current_user, dict) else current_user.id)
+
+
+def _current_user_role(current_user) -> str:
+    return str(current_user.get("role") if isinstance(current_user, dict) else getattr(current_user, "role", ""))
+
+
 # ============== Pydantic Models ==============
 
 class VersionCommentRequest(BaseModel):
@@ -53,7 +61,7 @@ async def create_versioned_file(
     content = await file.read()
     
     result = await file_versioning_service.create_file(
-        user_id=str(current_user.get("id")),
+        user_id=_current_user_id(current_user),
         filename=file.filename,
         content=content,
         mime_type=file.content_type or "application/octet-stream",
@@ -75,7 +83,7 @@ async def search_files(
 ):
     """Search and list versioned files."""
     result = await file_versioning_service.search_files(
-        user_id=str(current_user.get("id")),
+        user_id=_current_user_id(current_user),
         query=query,
         resource_type=resource_type,
         resource_id=resource_id,
@@ -117,7 +125,7 @@ async def upload_new_version(
         content = await file.read()
         
         result = await file_versioning_service.upload_new_version(
-            user_id=str(current_user.get("id")),
+            user_id=_current_user_id(current_user),
             file_id=file_id,
             content=content,
             comment=sanitize_text(comment, 500) if comment else None
@@ -183,7 +191,7 @@ async def delete_version(
     """
     try:
         result = await file_versioning_service.delete_version(
-            user_id=str(current_user.get("id")),
+            user_id=_current_user_id(current_user),
             file_id=file_id,
             version_number=version_number
         )
@@ -208,7 +216,7 @@ async def rollback_to_version(
     """
     try:
         result = await file_versioning_service.rollback_to_version(
-            user_id=str(current_user.get("id")),
+            user_id=_current_user_id(current_user),
             file_id=file_id,
             version_number=version_number
         )
@@ -257,7 +265,7 @@ async def lock_file(
     """
     try:
         result = await file_versioning_service.lock_file(
-            user_id=str(current_user.get("id")),
+            user_id=_current_user_id(current_user),
             file_id=file_id
         )
         return result
@@ -275,11 +283,11 @@ async def unlock_file(
     """Unlock a file."""
     try:
         # Only admins can force unlock
-        if force and current_user.get("role") != "admin":
+        if force and _current_user_role(current_user) != "admin":
             raise ValueError("Only admins can force unlock")
-        
+
         result = await file_versioning_service.unlock_file(
-            user_id=str(current_user.get("id")),
+            user_id=_current_user_id(current_user),
             file_id=file_id,
             force=force
         )

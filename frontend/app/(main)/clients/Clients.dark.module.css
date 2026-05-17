@@ -1,1 +1,42 @@
-.clients { background: transparent; color: var(--text-primary-dark); }
+/* @AI-HINT: Clients page dark theme — colors only */
+.container {
+    background: #0f172a;
+    color: #f1f5f9;
+}
+.hero {
+    background: linear-gradient(135deg, #020617 0%, #1e1b4b 100%);
+    color: #f1f5f9;
+}
+.heroSubtitle {
+    color: #94a3b8;
+}
+.btnPrimary {
+    background: #4573df;
+    color: #ffffff;
+}
+.btnOutline {
+    color: #f1f5f9;
+    border: 2px solid #475569;
+}
+.featuresTitle {
+    color: #f1f5f9;
+}
+.featureCard {
+    border: 1px solid #334155;
+    background: #1e293b;
+}
+.featureCard:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.featureCardTitle {
+    color: #f1f5f9;
+}
+.featureCardText {
+    color: #94a3b8;
+}
+.ctaSection {
+    background: #1e293b;
+}
+.ctaTitle {
+    color: #f1f5f9;
+}

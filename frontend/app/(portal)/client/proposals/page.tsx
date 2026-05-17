@@ -1,25 +1,37 @@
-'use client';
+"use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
-import { proposalsApi } from '@/lib/api/projects';
-import { portalApi } from '@/lib/api';
-import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
-import Button from '@/app/components/atoms/Button/Button';
-import Modal from '@/app/components/organisms/Modal/Modal';
-import { PageTransition } from '@/app/components/Animations/PageTransition';
-import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
-import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { proposalsApi } from "@/lib/api/projects";
+import { portalApi } from "@/lib/api";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
+import Button from "@/app/components/atoms/Button/Button";
+import Modal from "@/app/components/organisms/Modal/Modal";
+import { PageTransition } from "@/app/components/Animations/PageTransition";
+import { ScrollReveal } from "@/app/components/Animations/ScrollReveal";
 import {
-  Search, FileText, CheckCircle, XCircle, Clock, Briefcase,
-  ChevronDown, ChevronUp, User, DollarSign, MessageSquare,
+  StaggerContainer,
+  StaggerItem,
+} from "@/app/components/Animations/StaggerContainer";
+import {
+  Search,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Briefcase,
+  ChevronDown,
+  ChevronUp,
+  User,
+  DollarSign,
+  MessageSquare,
   AlertTriangle,
-} from 'lucide-react';
-import common from './Proposals.common.module.css';
-import light from './Proposals.light.module.css';
-import dark from './Proposals.dark.module.css';
+} from "lucide-react";
+import common from "./Proposals.common.module.css";
+import light from "./Proposals.light.module.css";
+import dark from "./Proposals.dark.module.css";
 
 interface Proposal {
   id: number;
@@ -45,46 +57,53 @@ interface GroupedByProject {
 }
 
 const STATUS_TABS = [
-  { key: 'all', label: 'All' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'accepted', label: 'Accepted' },
-  { key: 'rejected', label: 'Rejected' },
+  { key: "all", label: "All" },
+  { key: "pending", label: "Pending" },
+  { key: "accepted", label: "Accepted" },
+  { key: "rejected", label: "Rejected" },
 ];
 
 function getStatusClass(status: string, themed: Record<string, string>) {
   const s = status?.toLowerCase();
-  if (s === 'accepted' || s === 'approved') return cn(common.statusBadge, themed.statusAccepted);
-  if (s === 'rejected' || s === 'declined') return cn(common.statusBadge, themed.statusRejected);
-  if (s === 'pending' || s === 'submitted') return cn(common.statusBadge, themed.statusPending);
+  if (s === "accepted" || s === "approved")
+    return cn(common.statusBadge, themed.statusAccepted);
+  if (s === "rejected" || s === "declined")
+    return cn(common.statusBadge, themed.statusRejected);
+  if (s === "pending" || s === "submitted")
+    return cn(common.statusBadge, themed.statusPending);
   return cn(common.statusBadge, themed.statusDefault);
 }
 
 function getInitials(name: string) {
   return name
-    .split(' ')
+    .split(" ")
     .map((w) => w[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 }
 
 export default function ClientProposalsPage() {
   const { resolvedTheme } = useTheme();
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const themed = resolvedTheme === "dark" ? dark : light;
   const router = useRouter();
   const toaster = useToaster();
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(
+    new Set(),
+  );
 
   // Detail / action modal state
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
+    null,
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
+  const [rejectReason, setRejectReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   const fetchProposals = useCallback(async () => {
@@ -93,25 +112,30 @@ export default function ClientProposalsPage() {
       const res: any = await portalApi.client.getProposals();
       const raw: Proposal[] = Array.isArray(res)
         ? res
-        : res?.proposals ?? res?.items ?? [];
+        : (res?.proposals ?? res?.items ?? []);
       setProposals(raw);
     } catch {
-      toaster.error('Failed to load proposals. Please try again.');
+      toaster.error("Failed to load proposals. Please try again.");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchProposals(); }, [fetchProposals]);
+  useEffect(() => {
+    fetchProposals();
+  }, [fetchProposals]);
 
   const filtered = useMemo(() => {
     let result = proposals;
-    if (activeTab !== 'all') {
+    if (activeTab !== "all") {
       result = result.filter((p) => {
         const s = p.status?.toLowerCase();
-        if (activeTab === 'pending') return s === 'pending' || s === 'submitted';
-        if (activeTab === 'accepted') return s === 'accepted' || s === 'approved';
-        if (activeTab === 'rejected') return s === 'rejected' || s === 'declined';
+        if (activeTab === "pending")
+          return s === "pending" || s === "submitted";
+        if (activeTab === "accepted")
+          return s === "accepted" || s === "approved";
+        if (activeTab === "rejected")
+          return s === "rejected" || s === "declined";
         return true;
       });
     }
@@ -143,39 +167,58 @@ export default function ClientProposalsPage() {
   }, [filtered]);
 
   const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: proposals.length, pending: 0, accepted: 0, rejected: 0 };
+    const counts: Record<string, number> = {
+      all: proposals.length,
+      pending: 0,
+      accepted: 0,
+      rejected: 0,
+    };
     for (const p of proposals) {
       const s = p.status?.toLowerCase();
-      if (s === 'pending' || s === 'submitted') counts.pending++;
-      else if (s === 'accepted' || s === 'approved') counts.accepted++;
-      else if (s === 'rejected' || s === 'declined') counts.rejected++;
+      if (s === "pending" || s === "submitted") counts.pending++;
+      else if (s === "accepted" || s === "approved") counts.accepted++;
+      else if (s === "rejected" || s === "declined") counts.rejected++;
     }
     return counts;
   }, [proposals]);
 
-  const kpis = useMemo(() => ({
-    total: proposals.length,
-    pending: tabCounts.pending,
-    accepted: tabCounts.accepted,
-    avgBid: proposals.length
-      ? Math.round(proposals.reduce((s, p) => s + p.bid_amount, 0) / proposals.length)
-      : 0,
-  }), [proposals, tabCounts]);
+  const kpis = useMemo(
+    () => ({
+      total: proposals.length,
+      pending: tabCounts.pending,
+      accepted: tabCounts.accepted,
+      avgBid: proposals.length
+        ? Math.round(
+            proposals.reduce((s, p) => s + p.bid_amount, 0) / proposals.length,
+          )
+        : 0,
+    }),
+    [proposals, tabCounts],
+  );
 
   const handleAccept = async (proposal: Proposal) => {
     setActionLoading(true);
     try {
-      await proposalsApi.accept(proposal.id);
-      toaster.success(`Proposal from ${proposal.freelancer_name || 'freelancer'} accepted! A contract has been created.`);
+      const response = (await proposalsApi.accept(proposal.id)) as any;
+      toaster.success("Proposal accepted! A contract has been created.");
       setModalOpen(false);
       setSelectedProposal(null);
       fetchProposals();
-      // Navigate to contracts after a short delay
-      setTimeout(() => router.push('/client/contracts'), 1200);
+      // Redirect to the specific contract if backend returns contract_id
+      const contractId =
+        response?.contract_id ?? response?.contract?.id ?? null;
+      setTimeout(() => {
+        if (contractId) {
+          router.push(`/contracts/${contractId}`);
+        } else {
+          router.push("/client/contracts");
+        }
+      }, 1200);
     } catch (err: any) {
-      const msg = err?.status === 409
-        ? 'You have already accepted a proposal for this job.'
-        : 'Failed to accept proposal. Please try again.';
+      const msg =
+        err?.status === 409
+          ? "You have already accepted a proposal for this job."
+          : "Failed to accept proposal. Please try again.";
       toaster.error(msg);
     } finally {
       setActionLoading(false);
@@ -186,15 +229,20 @@ export default function ClientProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(true);
     try {
-      await proposalsApi.reject(selectedProposal.id, rejectReason.trim() || 'Not a good fit at this time.');
-      toaster.info(`Proposal from ${selectedProposal.freelancer_name || 'freelancer'} rejected.`);
+      await proposalsApi.reject(
+        selectedProposal.id,
+        rejectReason.trim() || "Not a good fit at this time.",
+      );
+      toaster.info(
+        `Proposal from ${selectedProposal.freelancer_name || "freelancer"} rejected.`,
+      );
       setRejectModalOpen(false);
       setModalOpen(false);
       setSelectedProposal(null);
-      setRejectReason('');
+      setRejectReason("");
       fetchProposals();
     } catch {
-      toaster.error('Failed to reject proposal. Please try again.');
+      toaster.error("Failed to reject proposal. Please try again.");
     } finally {
       setActionLoading(false);
     }
@@ -216,7 +264,7 @@ export default function ClientProposalsPage() {
 
   const isActionable = (status: string) => {
     const s = status?.toLowerCase();
-    return s === 'pending' || s === 'submitted';
+    return s === "pending" || s === "submitted";
   };
 
   return (
@@ -231,7 +279,10 @@ export default function ClientProposalsPage() {
                 Review and respond to freelancer proposals for your projects.
               </p>
             </div>
-            <Button variant="primary" onClick={() => router.push('/client/post-job')}>
+            <Button
+              variant="primary"
+              onClick={() => router.push("/client/post-job")}
+            >
               <Briefcase size={16} /> Post a Job
             </Button>
           </div>
@@ -241,18 +292,26 @@ export default function ClientProposalsPage() {
         <ScrollReveal>
           <div className={common.kpiGrid}>
             {[
-              { label: 'Total Proposals', value: kpis.total, icon: FileText },
-              { label: 'Awaiting Review', value: kpis.pending, icon: Clock },
-              { label: 'Accepted', value: kpis.accepted, icon: CheckCircle },
-              { label: 'Avg. Bid', value: kpis.avgBid ? `$${kpis.avgBid.toLocaleString()}` : '—', icon: DollarSign },
+              { label: "Total Proposals", value: kpis.total, icon: FileText },
+              { label: "Awaiting Review", value: kpis.pending, icon: Clock },
+              { label: "Accepted", value: kpis.accepted, icon: CheckCircle },
+              {
+                label: "Avg. Bid",
+                value: kpis.avgBid ? `$${kpis.avgBid.toLocaleString()}` : "—",
+                icon: DollarSign,
+              },
             ].map(({ label, value, icon: Icon }) => (
               <div key={label} className={cn(common.kpiCard, themed.kpiCard)}>
                 <div className={cn(common.kpiIcon, themed.kpiIcon)}>
                   <Icon size={20} />
                 </div>
                 <div>
-                  <p className={cn(common.kpiLabel, themed.kpiLabel)}>{label}</p>
-                  <p className={cn(common.kpiValue, themed.kpiValue)}>{value}</p>
+                  <p className={cn(common.kpiLabel, themed.kpiLabel)}>
+                    {label}
+                  </p>
+                  <p className={cn(common.kpiValue, themed.kpiValue)}>
+                    {value}
+                  </p>
                 </div>
               </div>
             ))}
@@ -285,10 +344,14 @@ export default function ClientProposalsPage() {
                 onClick={() => setActiveTab(tab.key)}
               >
                 {tab.label}
-                <span className={cn(
-                  common.tabCount,
-                  activeTab === tab.key ? themed.tabCountActive : themed.tabCount,
-                )}>
+                <span
+                  className={cn(
+                    common.tabCount,
+                    activeTab === tab.key
+                      ? themed.tabCountActive
+                      : themed.tabCount,
+                  )}
+                >
                   {tabCounts[tab.key]}
                 </span>
               </button>
@@ -300,21 +363,28 @@ export default function ClientProposalsPage() {
         {loading ? (
           <div className={common.emptyState}>
             <Clock size={40} className={common.emptyIcon} />
-            <p className={cn(common.emptyTitle, themed.emptyTitle)}>Loading proposals…</p>
+            <p className={cn(common.emptyTitle, themed.emptyTitle)}>
+              Loading proposals…
+            </p>
           </div>
         ) : grouped.length === 0 ? (
           <div className={common.emptyState}>
             <FileText size={48} className={common.emptyIcon} />
             <h3 className={cn(common.emptyTitle, themed.emptyTitle)}>
-              {activeTab === 'all' ? 'No proposals yet' : `No ${activeTab} proposals`}
+              {activeTab === "all"
+                ? "No proposals yet"
+                : `No ${activeTab} proposals`}
             </h3>
             <p className={cn(common.emptyText, themed.emptyText)}>
-              {activeTab === 'all'
-                ? 'Once freelancers apply to your jobs, their proposals will appear here.'
+              {activeTab === "all"
+                ? "Once freelancers apply to your jobs, their proposals will appear here."
                 : `You have no ${activeTab} proposals matching your filters.`}
             </p>
-            {activeTab === 'all' && (
-              <Button variant="primary" onClick={() => router.push('/client/post-job')}>
+            {activeTab === "all" && (
+              <Button
+                variant="primary"
+                onClick={() => router.push("/client/post-job")}
+              >
                 Post a Job
               </Button>
             )}
@@ -327,18 +397,33 @@ export default function ClientProposalsPage() {
                 <StaggerItem key={group.project_id}>
                   <div className={cn(common.projectGroup, themed.projectGroup)}>
                     <div
-                      className={cn(common.projectGroupHeader, themed.projectGroupHeader)}
+                      className={cn(
+                        common.projectGroupHeader,
+                        themed.projectGroupHeader,
+                      )}
                       onClick={() => toggleGroup(group.project_id)}
                       role="button"
                       aria-expanded={!isCollapsed}
                     >
-                      <h3 className={cn(common.projectGroupTitle, themed.projectGroupTitle)}>
+                      <h3
+                        className={cn(
+                          common.projectGroupTitle,
+                          themed.projectGroupTitle,
+                        )}
+                      >
                         <Briefcase size={16} />
                         {group.project_title}
                       </h3>
                       <div className={common.projectGroupMeta}>
-                        <span>{group.proposals.length} proposal{group.proposals.length !== 1 ? 's' : ''}</span>
-                        {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+                        <span>
+                          {group.proposals.length} proposal
+                          {group.proposals.length !== 1 ? "s" : ""}
+                        </span>
+                        {isCollapsed ? (
+                          <ChevronDown size={16} />
+                        ) : (
+                          <ChevronUp size={16} />
+                        )}
                       </div>
                     </div>
 
@@ -347,44 +432,90 @@ export default function ClientProposalsPage() {
                         {group.proposals.map((proposal) => (
                           <div
                             key={proposal.id}
-                            className={cn(common.proposalRow, themed.proposalRow)}
+                            className={cn(
+                              common.proposalRow,
+                              themed.proposalRow,
+                            )}
                             onClick={() => openDetail(proposal)}
                             role="button"
                             tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Enter' && openDetail(proposal)}
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && openDetail(proposal)
+                            }
                           >
                             <div className={common.proposalFreelancer}>
-                              <div className={cn(common.proposalAvatar, themed.proposalAvatar)}>
+                              <div
+                                className={cn(
+                                  common.proposalAvatar,
+                                  themed.proposalAvatar,
+                                )}
+                              >
                                 {proposal.freelancer_avatar ? (
                                   <img
                                     src={proposal.freelancer_avatar}
                                     alt={proposal.freelancer_name}
-                                    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                    style={{
+                                      width: "100%",
+                                      height: "100%",
+                                      borderRadius: "50%",
+                                      objectFit: "cover",
+                                    }}
                                   />
                                 ) : (
-                                  getInitials(proposal.freelancer_name || 'FL')
+                                  getInitials(proposal.freelancer_name || "FL")
                                 )}
                               </div>
                               <div>
-                                <p className={cn(common.proposalName, themed.proposalName)}>
-                                  {proposal.freelancer_name || `Freelancer #${proposal.freelancer_id}`}
+                                <p
+                                  className={cn(
+                                    common.proposalName,
+                                    themed.proposalName,
+                                  )}
+                                >
+                                  {proposal.freelancer_name ||
+                                    `Freelancer #${proposal.freelancer_id}`}
                                 </p>
-                                <p className={cn(common.proposalPreview, themed.proposalPreview)}>
+                                <p
+                                  className={cn(
+                                    common.proposalPreview,
+                                    themed.proposalPreview,
+                                  )}
+                                >
                                   {proposal.cover_letter}
                                 </p>
                               </div>
                             </div>
 
-                            <p className={cn(common.proposalBid, themed.proposalBid)}>
+                            <p
+                              className={cn(
+                                common.proposalBid,
+                                themed.proposalBid,
+                              )}
+                            >
                               ${proposal.bid_amount.toLocaleString()}
                             </p>
 
-                            <p className={cn(common.proposalDate, themed.proposalDate)}>
-                              {new Date(proposal.created_at).toLocaleDateString()}
+                            <p
+                              className={cn(
+                                common.proposalDate,
+                                themed.proposalDate,
+                              )}
+                            >
+                              {new Date(
+                                proposal.created_at,
+                              ).toLocaleDateString()}
                             </p>
 
-                            <div className={common.proposalActions} onClick={(e) => e.stopPropagation()}>
-                              <span className={getStatusClass(proposal.status, themed)}>
+                            <div
+                              className={common.proposalActions}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span
+                                className={getStatusClass(
+                                  proposal.status,
+                                  themed,
+                                )}
+                              >
                                 {proposal.status}
                               </span>
                               {isActionable(proposal.status) && (
@@ -392,7 +523,10 @@ export default function ClientProposalsPage() {
                                   <Button
                                     variant="primary"
                                     size="sm"
-                                    onClick={(e) => { e.stopPropagation(); handleAccept(proposal); }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAccept(proposal);
+                                    }}
                                   >
                                     Accept
                                   </Button>
@@ -426,8 +560,11 @@ export default function ClientProposalsPage() {
       {selectedProposal && (
         <Modal
           isOpen={modalOpen}
-          onClose={() => { setModalOpen(false); setSelectedProposal(null); }}
-          title={`Proposal from ${selectedProposal.freelancer_name || 'Freelancer'}`}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedProposal(null);
+          }}
+          title={`Proposal from ${selectedProposal.freelancer_name || "Freelancer"}`}
           size="large"
         >
           <div className={common.modalContent}>
@@ -435,58 +572,80 @@ export default function ClientProposalsPage() {
               <div className={common.modalSection}>
                 <p className={common.modalLabel}>Bid Amount</p>
                 <p className={common.modalValue}>
-                  <strong>${selectedProposal.bid_amount.toLocaleString()}</strong>
+                  <strong>
+                    ${selectedProposal.bid_amount.toLocaleString()}
+                  </strong>
                 </p>
               </div>
               {selectedProposal.estimated_hours && (
                 <div className={common.modalSection}>
                   <p className={common.modalLabel}>Estimated Hours</p>
-                  <p className={common.modalValue}>{selectedProposal.estimated_hours} hrs</p>
+                  <p className={common.modalValue}>
+                    {selectedProposal.estimated_hours} hrs
+                  </p>
                 </div>
               )}
               {selectedProposal.hourly_rate && (
                 <div className={common.modalSection}>
                   <p className={common.modalLabel}>Hourly Rate</p>
-                  <p className={common.modalValue}>${selectedProposal.hourly_rate}/hr</p>
+                  <p className={common.modalValue}>
+                    ${selectedProposal.hourly_rate}/hr
+                  </p>
                 </div>
               )}
               <div className={common.modalSection}>
                 <p className={common.modalLabel}>Availability</p>
                 <p className={common.modalValue}>
-                  {selectedProposal.availability?.replace(/_/g, ' ') || 'Immediate'}
+                  {selectedProposal.availability?.replace(/_/g, " ") ||
+                    "Immediate"}
                 </p>
               </div>
               <div className={common.modalSection}>
                 <p className={common.modalLabel}>Status</p>
-                <span className={getStatusClass(selectedProposal.status, themed)}>
+                <span
+                  className={getStatusClass(selectedProposal.status, themed)}
+                >
                   {selectedProposal.status}
                 </span>
               </div>
               <div className={common.modalSection}>
                 <p className={common.modalLabel}>Submitted</p>
                 <p className={common.modalValue}>
-                  {new Date(selectedProposal.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'long', day: 'numeric',
-                  })}
+                  {new Date(selectedProposal.created_at).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    },
+                  )}
                 </p>
               </div>
             </div>
 
             <div className={common.modalSection}>
               <p className={common.modalLabel}>Cover Letter</p>
-              <p className={common.modalValue}>{selectedProposal.cover_letter}</p>
+              <p className={common.modalValue}>
+                {selectedProposal.cover_letter}
+              </p>
             </div>
 
             <div className={cn(common.modalActions, themed.modalActions)}>
               <Button
                 variant="ghost"
-                onClick={() => router.push(`/messages?userId=${selectedProposal.freelancer_id}`)}
+                onClick={() =>
+                  router.push(
+                    `/messages?userId=${selectedProposal.freelancer_id}`,
+                  )
+                }
               >
                 <MessageSquare size={16} /> Message
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => router.push(`/talent/${selectedProposal.freelancer_id}`)}
+                onClick={() =>
+                  router.push(`/talent/${selectedProposal.freelancer_id}`)
+                }
               >
                 <User size={16} /> View Profile
               </Button>
@@ -494,7 +653,10 @@ export default function ClientProposalsPage() {
                 <>
                   <Button
                     variant="outline"
-                    onClick={() => { setModalOpen(false); setRejectModalOpen(true); }}
+                    onClick={() => {
+                      setModalOpen(false);
+                      setRejectModalOpen(true);
+                    }}
                   >
                     <XCircle size={16} /> Reject
                   </Button>
@@ -516,15 +678,25 @@ export default function ClientProposalsPage() {
       {selectedProposal && (
         <Modal
           isOpen={rejectModalOpen}
-          onClose={() => { setRejectModalOpen(false); setRejectReason(''); }}
+          onClose={() => {
+            setRejectModalOpen(false);
+            setRejectReason("");
+          }}
           title="Reject Proposal"
           size="small"
         >
           <div className={common.rejectForm}>
-            <AlertTriangle size={32} style={{ color: '#f87171', alignSelf: 'center' }} />
+            <AlertTriangle
+              size={32}
+              style={{ color: "#f87171", alignSelf: "center" }}
+            />
             <p className={common.rejectLabel}>
-              Rejecting the proposal from <strong>{selectedProposal.freelancer_name || 'this freelancer'}</strong>.
-              You can optionally provide a reason — it helps freelancers improve.
+              Rejecting the proposal from{" "}
+              <strong>
+                {selectedProposal.freelancer_name || "this freelancer"}
+              </strong>
+              . You can optionally provide a reason — it helps freelancers
+              improve.
             </p>
             <textarea
               className={cn(common.rejectTextarea, themed.rejectTextarea)}

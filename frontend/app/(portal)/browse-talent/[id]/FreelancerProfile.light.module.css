@@ -1,0 +1,42 @@
+/* @AI-HINT: Public freelancer profile page — light theme */
+
+.page { background: #f8fafc; color: #111827; }
+
+.card { background: #fff; border-color: #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+
+.avatarPlaceholder { background: #e0e7ff; color: #4573df; }
+
+.name { color: #111827; }
+.title { color: #374151; }
+.metaItem { color: #6b7280; }
+.ratingValue { color: #1f2937; }
+.ratingCount { color: #9ca3af; }
+
+.statsStrip { border-top: 1px solid #e5e7eb; padding-top: 1.25rem; margin-top: 0.25rem; }
+.statValue { color: #111827; }
+.statLabel { color: #9ca3af; }
+
+.sectionTitle { color: #111827; }
+
+.infoBox { background: #f3f4f6; }
+.infoBoxLabel { color: #6b7280; }
+.infoBoxValue { color: #111827; }
+
+.skillTag { background: rgba(59,130,246,0.1); color: #1e40af; }
+
+.bio { color: #374151; }
+
+.portfolioCard { border-color: #e5e7eb; }
+.portfolioThumbPlaceholder { background: #f3f4f6; color: #9ca3af; }
+.portfolioInfo { background: #fff; }
+.portfolioTitle { color: #111827; }
+.portfolioDesc { color: #6b7280; }
+.portfolioTag { background: #f1f5f9; color: #475569; }
+
+.reviewCard { background: #fff; border-color: #e5e7eb; }
+.reviewerName { color: #111827; }
+.reviewDate { color: #9ca3af; }
+.reviewComment { color: #374151; }
+
+.emptyState { color: #9ca3af; }
+.errorState { color: #ef4444; }

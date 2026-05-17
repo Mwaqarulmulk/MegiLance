@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import VideoCall from '@/app/components/organisms/VideoCall/VideoCall';
@@ -12,9 +13,11 @@ import darkStyles from './VideoCalls.dark.module.css';
 
 export default function VideoCallPage() {
   const { resolvedTheme } = useTheme();
+  const searchParams = useSearchParams();
   if (!resolvedTheme) return null;
 
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const roomId = searchParams.get('room') || 'sync-xyz-123';
 
   return (
     <main className={cn(commonStyles.page, themeStyles.page)}>
@@ -22,12 +25,12 @@ export default function VideoCallPage() {
         <p className={cn(commonStyles.kicker, themeStyles.kicker)}>Video collaboration</p>
         <h1 className={cn(commonStyles.title, themeStyles.title)}>Client Sync Room</h1>
         <p className={cn(commonStyles.description, themeStyles.description)}>
-          Real-time WebRTC session for calls, screen-sharing, and project coordination.
+          Room {roomId}
         </p>
       </header>
 
       <section className={cn(commonStyles.callSurface, themeStyles.callSurface)} aria-label="Active video call session">
-        <VideoCall roomId="sync-xyz-123" userName="Freelancer" />
+        <VideoCall roomId={roomId} userName="Freelancer" />
       </section>
     </main>
   );

@@ -1,11 +1,14 @@
-# @AI-HINT: Models package init - exports all SQLAlchemy ORM models for the platform
 """
-MegiLance database models.
+MegiLance ORM Model Definitions (Schema Reference Only).
 
-ARCHITECTURE NOTE: These SQLAlchemy models serve as the canonical schema
-reference but are NOT used at runtime for queries.  All database access goes
-through raw SQL via the Turso HTTP client (app.db.turso_http).  Changes here
-should be mirrored in the corresponding SQL DDL / Alembic migrations.
+ARCHITECTURE NOTE:
+- These SQLAlchemy ORM models are a SCHEMA REFERENCE ONLY.
+- Runtime database access uses the Turso HTTP API via
+  app.db.turso_http_async (async) or app.db.turso_http (sync).
+- sqlalchemy-libsql is NOT installed in production; these models are
+  never used for live queries.
+- All models are registered with Base.metadata solely so Alembic can
+  autogenerate accurate migration scripts.
 """
 
 from .user import User, UserType

@@ -1,9 +1,0 @@
-{
-  "tickets": [
-    { "id": "t1", "subject": "Withdrawal not processing", "user": "Mike R.", "priority": "High", "status": "Open", "lastUpdate": "2 hours ago" },
-    { "id": "t2", "subject": "Question about platform fees", "user": "Innovate Inc.", "priority": "Medium", "status": "Open", "lastUpdate": "1 day ago" },
-    { "id": "t3", "subject": "Report a bug in messaging", "user": "Alex Johnson", "priority": "Medium", "status": "In Progress", "lastUpdate": "3 hours ago" },
-    { "id": "t4", "subject": "Project dispute assistance", "user": "Startup X", "priority": "High", "status": "Open", "lastUpdate": "5 hours ago" },
-    { "id": "t5", "subject": "How to change my email?", "user": "Sam Lee", "priority": "Low", "status": "Closed", "lastUpdate": "2 days ago" }
-  ]
-}

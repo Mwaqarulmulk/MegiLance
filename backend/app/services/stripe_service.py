@@ -23,6 +23,15 @@ class StripeService:
         
         if self.stripe_secret_key:
             stripe.api_key = self.stripe_secret_key
+        else:
+            logger.warning("STRIPE_SECRET_KEY is not configured. Stripe operations will fail gracefully.")
+    
+    def _check_stripe_configured(self) -> bool:
+        """Check if Stripe is properly configured."""
+        if not self.stripe_secret_key:
+            logger.error("Stripe is not configured. Set STRIPE_SECRET_KEY in environment.")
+            return False
+        return True
     
     # ===== Customer Management =====
     
@@ -79,7 +88,7 @@ class StripeService:
         metadata: Optional[Dict[str, str]] = None,
         application_fee_amount: Optional[int] = None,
         capture_method: str = "automatic",
-    ) -> stripe.PaymentIntent:
+    ) -> Optional[Any]:
         """
         Create a payment intent
         
@@ -94,8 +103,11 @@ class StripeService:
             capture_method: 'automatic' or 'manual' (for escrow)
         
         Returns:
-            stripe.PaymentIntent: Created payment intent
+            stripe.PaymentIntent: Created payment intent, or None if Stripe not configured
         """
+        if not self._check_stripe_configured():
+            return None
+
         # Convert dollars to cents
         amount_cents = int(amount * 100)
         

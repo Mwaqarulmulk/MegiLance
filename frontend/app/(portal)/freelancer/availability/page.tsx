@@ -43,6 +43,16 @@ interface AvailabilitySettings {
   max_bookings_per_day: number;
 }
 
+interface WeeklyPatternDay {
+  day_of_week: number;
+  is_working_day: boolean;
+  slots: Array<{
+    start_time: string;
+    end_time: string;
+    is_available: boolean;
+  }>;
+}
+
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
@@ -71,14 +81,29 @@ export default function AvailabilityPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [slotsRes, bookingsRes, settingsRes] = await Promise.all([
-        (availabilityApi as any).getSlots?.().catch(() => []),
-        (availabilityApi as any).getBookings?.().catch(() => []),
-        (availabilityApi as any).getSettings?.().catch(() => null)
+      const [patternRes, bookingsRes, settingsRes] = await Promise.all([
+        availabilityApi.getWeeklyPattern().catch(() => []),
+        availabilityApi.getBookings().catch(() => []),
+        availabilityApi.getSettings().catch(() => null)
       ]);
-      setSlots(slotsRes || []);
-      setBookings(bookingsRes || []);
-      setSettings(settingsRes);
+      const pattern = Array.isArray(patternRes) ? patternRes as WeeklyPatternDay[] : [];
+      setSlots(pattern.flatMap((day) => day.slots.map((slot, index) => ({
+        id: `${day.day_of_week}-${index}`,
+        day_of_week: day.day_of_week,
+        start_time: slot.start_time,
+        end_time: slot.end_time,
+        is_recurring: true,
+        is_available: slot.is_available,
+      }))));
+      setBookings(Array.isArray(bookingsRes) ? bookingsRes as Booking[] : []);
+      const rawSettings = settingsRes as Record<string, unknown> | null;
+      setSettings(rawSettings ? {
+        timezone: String(rawSettings.timezone || 'UTC'),
+        default_slot_duration: Number(rawSettings.default_slot_duration ?? rawSettings.default_meeting_duration ?? 60),
+        buffer_time: Number(rawSettings.buffer_time ?? rawSettings.buffer_before ?? 15),
+        auto_accept_bookings: Boolean(rawSettings.auto_accept_bookings),
+        max_bookings_per_day: Number(rawSettings.max_bookings_per_day ?? 5),
+      } : null);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to load availability data:', err);
@@ -91,11 +116,18 @@ export default function AvailabilityPage() {
   const handleSaveSlot = async () => {
     if (!editingSlot) return;
     try {
-      if (editingSlot.id) {
-        await (availabilityApi as any).updateSlot(editingSlot.id, editingSlot);
-      } else {
-        await (availabilityApi as any).createSlot(editingSlot);
-      }
+      const nextSlots = editingSlot.id
+        ? slots.map((slot) => slot.id === editingSlot.id ? { ...slot, ...editingSlot } as TimeSlot : slot)
+        : [...slots, {
+            id: `new-${Date.now()}`,
+            day_of_week: editingSlot.day_of_week ?? 1,
+            start_time: editingSlot.start_time ?? '09:00',
+            end_time: editingSlot.end_time ?? '17:00',
+            is_recurring: editingSlot.is_recurring ?? true,
+            is_available: editingSlot.is_available ?? true,
+          }];
+
+      await saveWeeklySlots(nextSlots);
       setShowSlotModal(false);
       setEditingSlot(null);
       loadData();
@@ -113,7 +145,7 @@ export default function AvailabilityPage() {
   const confirmDeleteSlot = async () => {
     if (!deleteSlotId) return;
     try {
-      await (availabilityApi as any).deleteSlot(deleteSlotId);
+      await saveWeeklySlots(slots.filter((slot) => slot.id !== deleteSlotId));
       loadData();
       showToast('Time slot deleted');
     } catch (err) {
@@ -128,9 +160,9 @@ export default function AvailabilityPage() {
   const handleBookingAction = async (bookingId: string, action: 'confirm' | 'cancel') => {
     try {
       if (action === 'confirm') {
-        await (availabilityApi as any).confirmBooking(bookingId);
+        await availabilityApi.updateBooking(bookingId, { status: 'confirmed' });
       } else {
-        await (availabilityApi as any).cancelBooking(bookingId);
+        await availabilityApi.cancelBooking(bookingId);
       }
       loadData();
     } catch (err) {
@@ -143,7 +175,14 @@ export default function AvailabilityPage() {
   const handleSaveSettings = async () => {
     if (!settings) return;
     try {
-      await (availabilityApi as any).updateSettings(settings);
+      await availabilityApi.updateSettings({
+        timezone: settings.timezone,
+        default_meeting_duration: settings.default_slot_duration,
+        buffer_before: settings.buffer_time,
+        buffer_after: settings.buffer_time,
+        auto_accept_bookings: settings.auto_accept_bookings,
+        max_bookings_per_day: settings.max_bookings_per_day,
+      });
       showToast('Settings saved successfully!');
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
@@ -154,6 +193,26 @@ export default function AvailabilityPage() {
 
   const getSlotsByDay = (dayIndex: number) => {
     return slots.filter(s => s.day_of_week === dayIndex);
+  };
+
+  const saveWeeklySlots = async (nextSlots: TimeSlot[]) => {
+    const pattern: WeeklyPatternDay[] = DAYS.map((_, dayIndex) => {
+      const daySlots = nextSlots
+        .filter((slot) => slot.day_of_week === dayIndex)
+        .map((slot) => ({
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+          is_available: slot.is_available,
+        }));
+
+      return {
+        day_of_week: dayIndex,
+        is_working_day: daySlots.length > 0,
+        slots: daySlots,
+      };
+    });
+
+    await availabilityApi.updateWeeklyPattern(pattern);
   };
 
   const getBookingStatus = (status: string) => {

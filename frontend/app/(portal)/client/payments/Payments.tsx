@@ -5,6 +5,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useClientData } from '@/hooks/useClient';
+import { refundsApi } from '@/lib/api';
 import { DollarSign, Search, Download, TrendingUp, TrendingDown, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X, Wallet } from 'lucide-react';
 
 import PaymentCard, { PaymentCardProps } from '@/app/components/organisms/PaymentCard/PaymentCard';
@@ -27,16 +28,22 @@ import light from './Payments.light.module.css';
 import dark from './Payments.dark.module.css';
 
 // Data transformation
+const toNumber = (value: unknown): number => {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  if (typeof value === 'string') return Number(value.replace(/[$,]/g, '')) || 0;
+  return 0;
+};
+
 const transformPaymentData = (payments: any[]): (PaymentCardProps & { escrowStatus?: string; verified?: boolean; refundable?: boolean; taxYear?: number })[] => {
   if (!Array.isArray(payments)) return [];
   return payments.map(p => ({
-    id: p.id,
+    id: String(p.id),
     date: p.date || new Date().toISOString(),
     project: p.project || 'Untitled Project',
     projectId: p.projectId || `proj_${p.id}`,
     freelancerName: p.freelancer || 'Unknown Freelancer',
     freelancerAvatarUrl: p.freelancerAvatarUrl,
-    amount: Number(p.amount?.replace(/[$,]/g, '')) || 0,
+    amount: toNumber(p.amount),
     status: p.status || 'Pending',
     escrowStatus: p.escrowStatus || (p.status === 'Completed' ? 'Released' : 'Held'),
     verified: p.verified || p.status === 'Completed',
@@ -77,6 +84,9 @@ const Payments: React.FC = () => {
   const [refundRequest, setRefundRequest] = useState<{ paymentId: string; reason: string } | null>(null);
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [refundReason, setRefundReason] = useState('');
+  const [refundSubmitting, setRefundSubmitting] = useState(false);
+  const [refundError, setRefundError] = useState<string | null>(null);
+  const [refundSuccess, setRefundSuccess] = useState<string | null>(null);
 
   // Compute year options dynamically
   const yearOptions = useMemo(() => {
@@ -148,14 +158,36 @@ const Payments: React.FC = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   // Refund handler
-  const handleRefundRequest = useCallback(() => {
-    if (refundRequest && refundReason.trim()) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Refund request submitted:', { paymentId: refundRequest.paymentId, reason: refundReason });
-      }
+  const closeRefundModal = useCallback(() => {
+    if (refundSubmitting) return;
+    setShowRefundModal(false);
+    setRefundRequest(null);
+    setRefundReason('');
+    setRefundError(null);
+  }, [refundSubmitting]);
+
+  const handleRefundRequest = useCallback(async () => {
+    if (!refundRequest || !refundReason.trim()) return;
+
+    const paymentId = Number(refundRequest.paymentId);
+    if (!Number.isFinite(paymentId) || paymentId <= 0) {
+      setRefundError('This payment cannot be refunded because its payment ID is invalid.');
+      return;
+    }
+
+    setRefundSubmitting(true);
+    setRefundError(null);
+    setRefundSuccess(null);
+    try {
+      await refundsApi.request({ payment_id: paymentId, reason: refundReason.trim() });
       setShowRefundModal(false);
       setRefundRequest(null);
       setRefundReason('');
+      setRefundSuccess('Refund request submitted. You can track the review status in your payment history.');
+    } catch (err) {
+      setRefundError(err instanceof Error ? err.message : 'Unable to submit refund request. Please try again.');
+    } finally {
+      setRefundSubmitting(false);
     }
   }, [refundRequest, refundReason]);
 
@@ -265,6 +297,15 @@ const Payments: React.FC = () => {
           </div>
         </ScrollReveal>
 
+        {refundSuccess && (
+          <div role="status" className={cn(common.selectionBar, common.selectionBarVisible)}>
+            <span>{refundSuccess}</span>
+            <Button variant="ghost" size="sm" onClick={() => setRefundSuccess(null)}>
+              Dismiss
+            </Button>
+          </div>
+        )}
+
         {/* Date Range Filter */}
         <ScrollReveal delay={0.25}>
           <div className={common.dateRangeFilter}>
@@ -346,7 +387,7 @@ const Payments: React.FC = () => {
                           size="sm"
                           variant="ghost"
                           className={common.refundBtn}
-                          onClick={() => { setRefundRequest({ paymentId: payment.id, reason: '' }); setShowRefundModal(true); }}
+                          onClick={() => { setRefundRequest({ paymentId: payment.id, reason: '' }); setRefundError(null); setRefundSuccess(null); setShowRefundModal(true); }}
                         >
                           <RefreshCw size={14} /> Request Refund
                         </Button>
@@ -385,7 +426,7 @@ const Payments: React.FC = () => {
         {showRefundModal && (
           <Modal
             isOpen={showRefundModal}
-            onClose={() => { setShowRefundModal(false); setRefundRequest(null); setRefundReason(''); }}
+            onClose={closeRefundModal}
             title="Request Refund"
           >
             <div className={common.refundModal}>
@@ -398,13 +439,19 @@ const Payments: React.FC = () => {
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
                 rows={4}
+                disabled={refundSubmitting}
               />
+              {refundError && (
+                <p role="alert" className={common.refundModalText}>
+                  {refundError}
+                </p>
+              )}
               <div className={common.refundModalActions}>
-                <Button variant="secondary" onClick={() => { setShowRefundModal(false); setRefundRequest(null); setRefundReason(''); }}>
+                <Button variant="secondary" onClick={closeRefundModal} disabled={refundSubmitting}>
                   Cancel
                 </Button>
-                <Button variant="primary" onClick={handleRefundRequest} disabled={!refundReason.trim()}>
-                  Submit Refund Request
+                <Button variant="primary" onClick={handleRefundRequest} disabled={!refundReason.trim() || refundSubmitting}>
+                  {refundSubmitting ? 'Submitting...' : 'Submit Refund Request'}
                 </Button>
               </div>
             </div>

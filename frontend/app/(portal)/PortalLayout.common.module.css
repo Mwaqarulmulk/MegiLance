@@ -1,0 +1,51 @@
+/* @AI-HINT: PortalLayout common styles — email verification banner layout & structure */
+
+.verifyBanner {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  border-bottom: 1px solid transparent;
+}
+
+.verifyBannerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.verifyResendBtn {
+  padding: 4px 14px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.verifyResendBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verifyDismissBtn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.verifyDismissBtn:hover {
+  opacity: 0.75;
+}

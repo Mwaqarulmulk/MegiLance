@@ -1,5 +1,5 @@
 # @AI-HINT: Messages and conversations API - uses service layer for all DB operations
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, BackgroundTasks
 from typing import List, Optional
 from datetime import datetime, timezone
 from pydantic import BaseModel, Field, field_validator
@@ -9,6 +9,7 @@ from app.core.security import get_current_user_from_token
 from app.services import messages_service
 from app.services.db_utils import paginate_params
 from app.api.v1.core_domain.utils import SCRIPT_PATTERN, moderate_content
+from app.api.v1.core_domain.realtime_notifications import notify_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -243,6 +244,7 @@ def update_conversation(
 @router.post("/messages", response_model=dict, status_code=status.HTTP_201_CREATED)
 def send_message(
     message: MessageCreate,
+    background_tasks: BackgroundTasks,
     current_user = Depends(get_current_user)
 ):
     """Send a new message"""
@@ -323,6 +325,54 @@ def send_message(
         messages_service.update_conversation_timestamp(conversation_id, now)
 
         logger.info(f"Message {new_id} sent from user {user_id} to user {receiver_id} in conversation {conversation_id}")
+
+        # Send real-time notification to receiver
+        background_tasks.add_task(
+            notify_user,
+            user_id=receiver_id,
+            notification_type="new_message",
+            title="New Message",
+            content=f"New message in conversation {conversation_id}",
+            data={
+                "message_id": new_id,
+                "conversation_id": conversation_id,
+                "sender_id": user_id,
+                "preview": content[:100],
+            },
+        )
+
+        # Send email notification to receiver
+        from app.db.turso_http import execute_query, parse_rows
+        from app.services.email_service import email_service
+
+        receiver_result = execute_query(
+            "SELECT email, name FROM users WHERE id = ?",
+            [receiver_id]
+        )
+        if receiver_result and receiver_result.get("rows"):
+            receiver_rows = parse_rows(receiver_result)
+            if receiver_rows:
+                receiver_email = receiver_rows[0].get("email")
+                receiver_name = receiver_rows[0].get("name") or "User"
+
+                sender_result = execute_query(
+                    "SELECT name FROM users WHERE id = ?",
+                    [user_id]
+                )
+                sender_name = "Someone"
+                if sender_result and sender_result.get("rows"):
+                    sender_rows = parse_rows(sender_result)
+                    if sender_rows:
+                        sender_name = sender_rows[0].get("name") or "Someone"
+
+                if receiver_email:
+                    background_tasks.add_task(
+                        email_service.send_message_notification,
+                        to_email=receiver_email,
+                        recipient_name=receiver_name,
+                        sender_name=sender_name,
+                        message_preview=content,
+                    )
 
         return {
             "id": new_id,

@@ -177,10 +177,12 @@ function addRefreshSubscriber(callback: (token: string) => void) {
 
 async function attemptTokenRefresh(): Promise<string | null> {
   try {
+    const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
+
     const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
+      body: JSON.stringify(refreshToken ? { refresh_token: refreshToken } : {}),
       credentials: 'include',
     });
 
@@ -193,6 +195,9 @@ async function attemptTokenRefresh(): Promise<string | null> {
     const newToken = data.access_token;
     if (newToken) {
       setAuthToken(newToken);
+      if (data.refresh_token) {
+        localStorage.setItem('refresh_token', data.refresh_token);
+      }
       return newToken;
     }
     return null;
@@ -210,11 +215,7 @@ export async function apiFetch<T = unknown>(
 ): Promise<T> {
   const method = (options.method || 'GET').toUpperCase();
   const token = getAuthToken();
-  const isPublicAuthEndpoint =
-    endpoint.includes('/auth/login') ||
-    endpoint.includes('/auth/register') ||
-    endpoint.includes('/auth/refresh');
-  const shouldUseResponseCache = method === 'GET' && !skipCache && !token && isPublicAuthEndpoint;
+  const shouldUseResponseCache = method === 'GET' && !skipCache;
 
   // Offline check
   if (!isOnline()) {
@@ -229,9 +230,13 @@ export async function apiFetch<T = unknown>(
 
   // Invalidate related cache on mutations
   if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
-    // Invalidate cache for the resource being mutated
-    const resourceBase = endpoint.split('?')[0].split('/').slice(0, 3).join('/');
-    invalidateCache(resourceBase);
+    // Invalidate cache for the specific resource being mutated
+    const pathParts = endpoint.split('?')[0].split('/').filter(Boolean);
+    // Invalidate the base resource (e.g., /projects) and the specific item (e.g., /projects/123)
+    if (pathParts.length >= 2) {
+      const resourceBase = `/${pathParts[0]}/${pathParts[1]}`;
+      invalidateCache(resourceBase);
+    }
   }
 
   const dedupeKey = getDedupeKey(endpoint, method);

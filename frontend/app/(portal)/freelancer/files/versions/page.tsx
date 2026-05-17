@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useTheme } from 'next-themes';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { fileVersionsApi } from '@/lib/api';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
@@ -52,7 +53,7 @@ function FileVersionsPage() {
   const [versions, setVersions] = useState<FileVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
-  const [comparing, setComparing] = useState(false);
+  const [compareResult, setCompareResult] = useState<string | null>(null);
   const [toast, setToast] = useState<{message: string; type: 'success' | 'error'} | null>(null);
   const showToast = (message: string, type: 'success' | 'error' = 'error') => {
     setToast({ message, type });
@@ -71,13 +72,9 @@ function FileVersionsPage() {
   const fetchFileVersions = async (id: string) => {
     setLoading(true);
     try {
-      // Fetch real file versions from API
-      const apiModule = await import('@/lib/api') as any;
-      const filesApi = apiModule.filesApi || apiModule.default?.files || {};
-      
       const [fileData, versionsData] = await Promise.all([
-        filesApi.get?.(id).catch(() => null),
-        filesApi.getVersions?.(id).catch(() => null),
+        fileVersionsApi.get(id).catch(() => null),
+        fileVersionsApi.getVersions(id).catch(() => null),
       ]);
 
       // Transform API data or use defaults
@@ -91,7 +88,16 @@ function FileVersionsPage() {
         createdAt: (fileData as any).created_at || new Date().toISOString()
       } : null;
 
-      const versionsArray = Array.isArray(versionsData) ? versionsData : versionsData?.items || [];
+      const versionsRecord = versionsData && typeof versionsData === 'object'
+        ? versionsData as Record<string, unknown>
+        : {};
+      const versionsArray = Array.isArray(versionsData)
+        ? versionsData
+        : Array.isArray(versionsRecord.versions)
+          ? versionsRecord.versions
+          : Array.isArray(versionsRecord.items)
+            ? versionsRecord.items
+            : [];
       const transformedVersions: FileVersion[] = versionsArray.map((v: any, idx: number, arr: any[]) => ({
         id: v.id?.toString() || `v${idx + 1}`,
         versionNumber: v.version_number || v.versionNumber || arr.length - idx,
@@ -100,7 +106,7 @@ function FileVersionsPage() {
         mimeType: v.mime_type || v.mimeType || 'application/octet-stream',
         uploadedBy: v.uploaded_by_name || v.uploadedBy || 'Unknown',
         uploadedAt: v.uploaded_at || v.uploadedAt || new Date().toISOString(),
-        changeNote: v.change_note || v.changeNote,
+        changeNote: v.change_note || v.changeNote || v.comment,
         downloadUrl: v.download_url || v.downloadUrl || '#',
         isCurrent: v.is_current ?? idx === 0,
       }));
@@ -139,15 +145,33 @@ function FileVersionsPage() {
   };
 
   const handleRestore = async (versionId: string) => {
-    // API call would go here
-    showToast(`Version ${versionId} restored as current version`, 'success');
-    fetchFileVersions(fileId!);
+    if (!fileId) return;
+    const version = versions.find((item) => item.id === versionId);
+    if (!version) return;
+
+    try {
+      await fileVersionsApi.rollback(fileId, version.versionNumber);
+      showToast(`Version ${version.versionNumber} restored as current version`, 'success');
+      fetchFileVersions(fileId);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Failed to restore version');
+    }
   };
 
-  const handleCompare = () => {
-    if (selectedVersions.length === 2) {
-      setComparing(true);
-      // Would open comparison view
+  const handleCompare = async () => {
+    if (!fileId || selectedVersions.length !== 2) return;
+    const [left, right] = selectedVersions
+      .map((id) => versions.find((version) => version.id === id))
+      .filter((version): version is FileVersion => Boolean(version));
+
+    if (!left || !right) return;
+
+    try {
+      await fileVersionsApi.compare(fileId, left.versionNumber, right.versionNumber);
+      setCompareResult(`Compared version ${left.versionNumber} with version ${right.versionNumber}.`);
+      showToast('Version comparison loaded', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Failed to compare versions');
     }
   };
 
@@ -235,6 +259,11 @@ function FileVersionsPage() {
                   </div>
                 </div>
               </ScrollReveal>
+            )}
+            {compareResult && (
+              <div className={cn(commonStyles.compareBar, themeStyles.compareBar)} role="status">
+                {compareResult}
+              </div>
             )}
 
             {/* Version Timeline */}

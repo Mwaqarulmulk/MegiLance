@@ -3,34 +3,34 @@
 // Uses framer-motion for animated step transitions, pill-chip multi-select for skill categories,
 // and auto-saves to the backend (with silent fallback) upon reaching the final step.
 // Mirrors the pattern from Onboarding.tsx (freelancer flow) for visual / structural consistency.
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Building2,
   Target,
   ChevronRight,
   ChevronLeft,
   AlertCircle,
-} from 'lucide-react';
-import Button from '@/app/components/atoms/Button/Button';
-import Input from '@/app/components/atoms/Input/Input';
-import Select from '@/app/components/molecules/Select/Select';
-import { PageTransition } from '@/app/components/Animations/PageTransition';
+} from "lucide-react";
+import Button from "@/app/components/atoms/Button/Button";
+import Input from "@/app/components/atoms/Input/Input";
+import Select from "@/app/components/molecules/Select/Select";
+import { PageTransition } from "@/app/components/Animations/PageTransition";
 import {
   LottieAnimation,
   welcomeWaveAnimation,
   walletAnimation,
-} from '@/app/components/Animations/LottieAnimation';
-import api from '@/lib/api';
+} from "@/app/components/Animations/LottieAnimation";
+import api from "@/lib/api";
 
-import commonStyles from './ClientOnboarding.common.module.css';
-import lightStyles from './ClientOnboarding.light.module.css';
-import darkStyles from './ClientOnboarding.dark.module.css';
+import commonStyles from "./ClientOnboarding.common.module.css";
+import lightStyles from "./ClientOnboarding.light.module.css";
+import darkStyles from "./ClientOnboarding.dark.module.css";
 
 // ─────────────────────────────────────────────
 // Constants
@@ -39,56 +39,56 @@ import darkStyles from './ClientOnboarding.dark.module.css';
 const TOTAL_STEPS = 4;
 
 const SKILL_CATEGORIES = [
-  'Web Development',
-  'Mobile Apps',
-  'UI/UX Design',
-  'Graphic Design',
-  'Content Writing',
-  'Digital Marketing',
-  'Data Science',
-  'Video & Animation',
-  'SEO',
-  'DevOps',
-  'Other',
+  "Web Development",
+  "Mobile Apps",
+  "UI/UX Design",
+  "Graphic Design",
+  "Content Writing",
+  "Digital Marketing",
+  "Data Science",
+  "Video & Animation",
+  "SEO",
+  "DevOps",
+  "Other",
 ] as const;
 
 const INDUSTRY_OPTIONS = [
-  { value: '', label: 'Select your industry' },
-  { value: 'technology', label: 'Technology' },
-  { value: 'marketing', label: 'Marketing' },
-  { value: 'design_creative', label: 'Design & Creative' },
-  { value: 'writing_content', label: 'Writing & Content' },
-  { value: 'business', label: 'Business' },
-  { value: 'finance', label: 'Finance' },
-  { value: 'healthcare', label: 'Healthcare' },
-  { value: 'education', label: 'Education' },
-  { value: 'ecommerce', label: 'E-commerce' },
-  { value: 'other', label: 'Other' },
+  { value: "", label: "Select your industry" },
+  { value: "technology", label: "Technology" },
+  { value: "marketing", label: "Marketing" },
+  { value: "design_creative", label: "Design & Creative" },
+  { value: "writing_content", label: "Writing & Content" },
+  { value: "business", label: "Business" },
+  { value: "finance", label: "Finance" },
+  { value: "healthcare", label: "Healthcare" },
+  { value: "education", label: "Education" },
+  { value: "ecommerce", label: "E-commerce" },
+  { value: "other", label: "Other" },
 ];
 
 const TEAM_SIZE_OPTIONS = [
-  { value: '', label: 'Select team size' },
-  { value: 'solo', label: 'Just me' },
-  { value: '2-10', label: '2–10' },
-  { value: '11-50', label: '11–50' },
-  { value: '50+', label: '50+' },
+  { value: "", label: "Select team size" },
+  { value: "solo", label: "Just me" },
+  { value: "2-10", label: "2–10" },
+  { value: "11-50", label: "11–50" },
+  { value: "50+", label: "50+" },
 ];
 
 const BUDGET_OPTIONS = [
-  { value: '', label: 'Select budget range' },
-  { value: 'under_500', label: 'Under $500' },
-  { value: '500_2000', label: '$500–$2,000' },
-  { value: '2000_10000', label: '$2,000–$10,000' },
-  { value: '10000_plus', label: '$10,000+' },
-  { value: 'not_sure', label: 'Not sure yet' },
+  { value: "", label: "Select budget range" },
+  { value: "under_500", label: "Under $500" },
+  { value: "500_2000", label: "$500–$2,000" },
+  { value: "2000_10000", label: "$2,000–$10,000" },
+  { value: "10000_plus", label: "$10,000+" },
+  { value: "not_sure", label: "Not sure yet" },
 ];
 
 const URGENCY_OPTIONS = [
-  { value: '', label: 'Select timeline' },
-  { value: 'asap', label: 'ASAP' },
-  { value: 'within_month', label: 'Within a month' },
-  { value: 'next_3_months', label: 'In the next 3 months' },
-  { value: 'exploring', label: 'Just exploring' },
+  { value: "", label: "Select timeline" },
+  { value: "asap", label: "ASAP" },
+  { value: "within_month", label: "Within a month" },
+  { value: "next_3_months", label: "In the next 3 months" },
+  { value: "exploring", label: "Just exploring" },
 ];
 
 // ─────────────────────────────────────────────
@@ -99,17 +99,17 @@ const slideVariants = {
   enter: (dir: number) => ({
     x: dir > 0 ? 60 : -60,
     opacity: 0,
-    filter: 'blur(4px)',
+    filter: "blur(4px)",
   }),
   center: {
     x: 0,
     opacity: 1,
-    filter: 'blur(0px)',
+    filter: "blur(0px)",
   },
   exit: (dir: number) => ({
     x: dir > 0 ? -60 : 60,
     opacity: 0,
-    filter: 'blur(4px)',
+    filter: "blur(4px)",
   }),
 };
 
@@ -144,13 +144,13 @@ const ClientOnboarding: React.FC = () => {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
 
   const [data, setData] = useState<ClientOnboardingData>({
-    fullName: '',
-    company: '',
-    industry: '',
-    teamSize: '',
+    fullName: "",
+    company: "",
+    industry: "",
+    teamSize: "",
     categories: [],
-    budget: '',
-    urgency: '',
+    budget: "",
+    urgency: "",
   });
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -158,8 +158,8 @@ const ClientOnboarding: React.FC = () => {
   // Pre-populate fullName from stored user session after mount
   useEffect(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem('user') || '{}');
-      const name: string = stored.full_name || stored.name || '';
+      const stored = JSON.parse(localStorage.getItem("user") || "{}");
+      const name: string = stored.full_name || stored.name || "";
       if (name) {
         setData((prev) => ({ ...prev, fullName: name }));
       }
@@ -171,7 +171,7 @@ const ClientOnboarding: React.FC = () => {
   // ── Theme ──────────────────────────────────
   // Default to light on SSR; resolves to correct theme after hydration.
   // No early return to avoid hook ordering violations.
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   // ── Helpers ────────────────────────────────
 
@@ -191,7 +191,7 @@ const ClientOnboarding: React.FC = () => {
         ? prev.categories.filter((c) => c !== cat)
         : [...prev.categories, cat],
     }));
-    clearFieldError('categories');
+    clearFieldError("categories");
   };
 
   // ── Validation ─────────────────────────────
@@ -201,13 +201,13 @@ const ClientOnboarding: React.FC = () => {
 
     if (step === 2) {
       if (!data.fullName || data.fullName.trim().length < 2) {
-        newErrors.fullName = 'Full name must be at least 2 characters';
+        newErrors.fullName = "Full name must be at least 2 characters";
       }
     }
 
     if (step === 3) {
       if (data.categories.length === 0) {
-        newErrors.categories = 'Please select at least one skill category';
+        newErrors.categories = "Please select at least one skill category";
       }
     }
 
@@ -234,12 +234,12 @@ const ClientOnboarding: React.FC = () => {
     try {
       await api.auth.updateProfile({
         company: data.company || undefined,
-        bio: `Looking for ${data.categories.join(', ')} talent. Budget: ${data.budget}.`,
+        bio: `Looking for ${data.categories.join(", ")} talent. Budget: ${data.budget}.`,
       });
     } catch {
       // Continue regardless — user can update their profile later
     }
-    localStorage.setItem('onboarding_complete', 'true');
+    localStorage.setItem("onboarding_complete", "true");
     setLoading(false);
   };
 
@@ -255,7 +255,10 @@ const ClientOnboarding: React.FC = () => {
       setDirection(1);
       setErrors({});
       setStep(nextStep);
-      contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      contentRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
 
       // When entering the final step, lock action buttons and auto-save after animation settles
       if (nextStep === TOTAL_STEPS) {
@@ -278,13 +281,17 @@ const ClientOnboarding: React.FC = () => {
   // ── Render ─────────────────────────────────
 
   return (
-    <PageTransition className={cn(commonStyles.container, themeStyles.container)}>
+    <PageTransition
+      className={cn(commonStyles.container, themeStyles.container)}
+    >
       <div className={commonStyles.innerContainer}>
-
         {/* ── Progress bar ── */}
         <div className={commonStyles.progressBar}>
           <motion.div
-            className={cn(commonStyles.progressBarFill, themeStyles.progressBarFill)}
+            className={cn(
+              commonStyles.progressBarFill,
+              themeStyles.progressBarFill,
+            )}
             initial={false}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
@@ -293,11 +300,13 @@ const ClientOnboarding: React.FC = () => {
 
         {/* ── Card ── */}
         <div className={cn(commonStyles.card, themeStyles.card)}>
-
           {/* Step content with animated transitions */}
           <div
             ref={contentRef}
-            className={cn(commonStyles.stepWrapper, shakeError && commonStyles.shakeError)}
+            className={cn(
+              commonStyles.stepWrapper,
+              shakeError && commonStyles.shakeError,
+            )}
           >
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
@@ -308,13 +317,12 @@ const ClientOnboarding: React.FC = () => {
                 animate="center"
                 exit="exit"
                 transition={{
-                  x: { type: 'spring', stiffness: 280, damping: 28 },
+                  x: { type: "spring", stiffness: 280, damping: 28 },
                   opacity: { duration: 0.2 },
                   filter: { duration: 0.25 },
                 }}
                 className={commonStyles.step}
               >
-
                 {/* ────────────────────────────────
                     STEP 1 — Welcome
                 ──────────────────────────────── */}
@@ -327,11 +335,22 @@ const ClientOnboarding: React.FC = () => {
                       ariaLabel="Welcome wave animation"
                       className="mx-auto mb-6"
                     />
-                    <h2 className={cn(commonStyles.stepTitle, themeStyles.stepTitle)}>
+                    <h2
+                      className={cn(
+                        commonStyles.stepTitle,
+                        themeStyles.stepTitle,
+                      )}
+                    >
                       Welcome to MegiLance!
                     </h2>
-                    <p className={cn(commonStyles.stepDescription, themeStyles.stepDescription)}>
-                      Let&apos;s set up your account so you can find and hire the best talent in minutes.
+                    <p
+                      className={cn(
+                        commonStyles.stepDescription,
+                        themeStyles.stepDescription,
+                      )}
+                    >
+                      Let&apos;s set up your account so you can find and hire
+                      the best talent in minutes.
                     </p>
                     <Button onClick={goNext} variant="primary" size="lg">
                       Get Started <ChevronRight size={18} />
@@ -347,13 +366,26 @@ const ClientOnboarding: React.FC = () => {
                     <div className={commonStyles.stepHeader}>
                       <Building2
                         size={28}
-                        className={cn(commonStyles.stepHeaderIcon, themeStyles.stepHeaderIcon)}
+                        className={cn(
+                          commonStyles.stepHeaderIcon,
+                          themeStyles.stepHeaderIcon,
+                        )}
                         aria-hidden="true"
                       />
-                      <h2 className={cn(commonStyles.stepTitle, themeStyles.stepTitle)}>
+                      <h2
+                        className={cn(
+                          commonStyles.stepTitle,
+                          themeStyles.stepTitle,
+                        )}
+                      >
                         Tell Us About Yourself
                       </h2>
-                      <p className={cn(commonStyles.stepDescription, themeStyles.stepDescription)}>
+                      <p
+                        className={cn(
+                          commonStyles.stepDescription,
+                          themeStyles.stepDescription,
+                        )}
+                      >
                         A few quick details to personalize your experience.
                       </p>
                     </div>
@@ -366,7 +398,7 @@ const ClientOnboarding: React.FC = () => {
                         value={data.fullName}
                         onChange={(e) => {
                           setData({ ...data, fullName: e.target.value });
-                          clearFieldError('fullName');
+                          clearFieldError("fullName");
                         }}
                         error={errors.fullName}
                         required
@@ -378,7 +410,9 @@ const ClientOnboarding: React.FC = () => {
                         label="Company or Project Name (Optional)"
                         placeholder="e.g., Acme Corp or My Startup"
                         value={data.company}
-                        onChange={(e) => setData({ ...data, company: e.target.value })}
+                        onChange={(e) =>
+                          setData({ ...data, company: e.target.value })
+                        }
                         autoComplete="organization"
                       />
 
@@ -386,7 +420,9 @@ const ClientOnboarding: React.FC = () => {
                         id="industry"
                         label="Industry"
                         value={data.industry}
-                        onChange={(e) => setData({ ...data, industry: e.target.value })}
+                        onChange={(e) =>
+                          setData({ ...data, industry: e.target.value })
+                        }
                         options={INDUSTRY_OPTIONS}
                       />
 
@@ -394,7 +430,9 @@ const ClientOnboarding: React.FC = () => {
                         id="teamSize"
                         label="Team Size"
                         value={data.teamSize}
-                        onChange={(e) => setData({ ...data, teamSize: e.target.value })}
+                        onChange={(e) =>
+                          setData({ ...data, teamSize: e.target.value })
+                        }
                         options={TEAM_SIZE_OPTIONS}
                       />
                     </div>
@@ -409,24 +447,47 @@ const ClientOnboarding: React.FC = () => {
                     <div className={commonStyles.stepHeader}>
                       <Target
                         size={28}
-                        className={cn(commonStyles.stepHeaderIcon, themeStyles.stepHeaderIcon)}
+                        className={cn(
+                          commonStyles.stepHeaderIcon,
+                          themeStyles.stepHeaderIcon,
+                        )}
                         aria-hidden="true"
                       />
-                      <h2 className={cn(commonStyles.stepTitle, themeStyles.stepTitle)}>
+                      <h2
+                        className={cn(
+                          commonStyles.stepTitle,
+                          themeStyles.stepTitle,
+                        )}
+                      >
                         What Do You Need Help With?
                       </h2>
-                      <p className={cn(commonStyles.stepDescription, themeStyles.stepDescription)}>
+                      <p
+                        className={cn(
+                          commonStyles.stepDescription,
+                          themeStyles.stepDescription,
+                        )}
+                      >
                         Tell us what kind of talent you&apos;re looking for.
                       </p>
                     </div>
 
                     <div className={commonStyles.formFields}>
-
                       {/* Multi-select chip grid */}
                       <div className={commonStyles.chipSection}>
-                        <label className={cn(commonStyles.chipLabel, themeStyles.chipLabel)}>
+                        <label
+                          className={cn(
+                            commonStyles.chipLabel,
+                            themeStyles.chipLabel,
+                          )}
+                        >
                           Skill Categories
-                          <span className={commonStyles.required} aria-hidden="true"> *</span>
+                          <span
+                            className={commonStyles.required}
+                            aria-hidden="true"
+                          >
+                            {" "}
+                            *
+                          </span>
                         </label>
 
                         <div
@@ -457,7 +518,10 @@ const ClientOnboarding: React.FC = () => {
 
                         {errors.categories && (
                           <p
-                            className={cn(commonStyles.chipError, themeStyles.chipError)}
+                            className={cn(
+                              commonStyles.chipError,
+                              themeStyles.chipError,
+                            )}
                             role="alert"
                           >
                             <AlertCircle size={13} aria-hidden="true" />
@@ -470,7 +534,9 @@ const ClientOnboarding: React.FC = () => {
                         id="budget"
                         label="Typical Budget Per Project"
                         value={data.budget}
-                        onChange={(e) => setData({ ...data, budget: e.target.value })}
+                        onChange={(e) =>
+                          setData({ ...data, budget: e.target.value })
+                        }
                         options={BUDGET_OPTIONS}
                       />
 
@@ -478,7 +544,9 @@ const ClientOnboarding: React.FC = () => {
                         id="urgency"
                         label="When do you need to hire?"
                         value={data.urgency}
-                        onChange={(e) => setData({ ...data, urgency: e.target.value })}
+                        onChange={(e) =>
+                          setData({ ...data, urgency: e.target.value })
+                        }
                         options={URGENCY_OPTIONS}
                       />
                     </div>
@@ -497,11 +565,22 @@ const ClientOnboarding: React.FC = () => {
                       ariaLabel="Ready to hire animation"
                       className="mx-auto mb-6"
                     />
-                    <h2 className={cn(commonStyles.stepTitle, themeStyles.stepTitle)}>
+                    <h2
+                      className={cn(
+                        commonStyles.stepTitle,
+                        themeStyles.stepTitle,
+                      )}
+                    >
                       You&apos;re Ready to Hire!
                     </h2>
-                    <p className={cn(commonStyles.stepDescription, themeStyles.stepDescription)}>
-                      Your account is all set. Post your first project and connect with top talent today.
+                    <p
+                      className={cn(
+                        commonStyles.stepDescription,
+                        themeStyles.stepDescription,
+                      )}
+                    >
+                      Your account is all set. Post your first project and
+                      connect with top talent today.
                     </p>
 
                     <div className={commonStyles.finalActions}>
@@ -511,35 +590,51 @@ const ClientOnboarding: React.FC = () => {
                         fullWidth
                         isLoading={loading}
                         disabled={loading}
-                        onClick={() => router.push('/client/post-job')}
+                        onClick={() => router.push("/create-project")}
                       >
-                        Post a Project
+                        Post Your First Project
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        fullWidth
+                        disabled={loading}
+                        onClick={() => router.push("/freelancers")}
+                      >
+                        Browse Freelancers
                       </Button>
                       <Button
                         variant="ghost"
                         size="lg"
                         fullWidth
                         disabled={loading}
-                        onClick={() => router.push('/talent')}
+                        onClick={() => router.push("/client/dashboard")}
                       >
-                        Browse Freelancers
+                        Explore the Platform
                       </Button>
                     </div>
                   </>
                 )}
-
               </motion.div>
             </AnimatePresence>
-          </div>{/* end stepWrapper */}
+          </div>
+          {/* end stepWrapper */}
 
           {/* ── Navigation bar — visible only on steps 2 and 3 ── */}
           {step > 1 && step < TOTAL_STEPS && (
-            <div className={cn(commonStyles.navigation, themeStyles.navigation)}>
+            <div
+              className={cn(commonStyles.navigation, themeStyles.navigation)}
+            >
               <Button variant="ghost" onClick={goBack} disabled={loading}>
                 <ChevronLeft size={16} /> Back
               </Button>
 
-              <span className={cn(commonStyles.stepCounter, themeStyles.stepCounter)}>
+              <span
+                className={cn(
+                  commonStyles.stepCounter,
+                  themeStyles.stepCounter,
+                )}
+              >
                 {step} of {TOTAL_STEPS}
               </span>
 
@@ -548,8 +643,8 @@ const ClientOnboarding: React.FC = () => {
               </Button>
             </div>
           )}
-
-        </div>{/* end card */}
+        </div>
+        {/* end card */}
 
         {/* ── Progress dots ── */}
         <div className={commonStyles.progress} aria-hidden="true">
@@ -563,11 +658,10 @@ const ClientOnboarding: React.FC = () => {
                 step >= i + 1 && themeStyles.progressDotActive,
               )}
               animate={{ scale: step === i + 1 ? 1.3 : 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             />
           ))}
         </div>
-
       </div>
     </PageTransition>
   );

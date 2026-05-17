@@ -159,9 +159,9 @@ const JobCard: React.FC<JobCardProps> = ({
             <Button variant="outline" size="sm">View Details</Button>
           </Link>
           {hasApplied ? (
-            <Button variant="outline" size="sm" disabled aria-disabled>
-              Already Applied
-            </Button>
+            <Link href={`/freelancer/submit-proposal?jobId=${id}`}>
+              <Button variant="outline" size="sm">Edit Proposal</Button>
+            </Link>
           ) : (
             <Link href={`/freelancer/submit-proposal?jobId=${id}`}>
               <Button variant="primary" size="sm">Apply Now</Button>

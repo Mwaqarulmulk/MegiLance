@@ -2,158 +2,222 @@
 
 /* ============ PAGE ============ */
 .page {
-  background-color: var(--bg-secondary-light);
-  color: #1a1a2e;
+    background-color: var(--bg-secondary-light);
+    color: #1a1a2e;
 }
 
 .errorText {
-  color: var(--color-error, #e81123);
+    color: var(--color-error, #e81123);
 }
 
 /* ============ HEADER ============ */
 .header {
-  background-color: var(--bg-primary-light);
-  border-bottom: 1px solid var(--border-light);
+    background-color: var(--bg-primary-light);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .pageTitle {
-  color: #1a1a2e;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
+    color: #1a1a2e;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .contractId {
-  color: var(--color-text-secondary-light);
-  font-size: 0.875rem;
+    color: var(--color-text-secondary-light);
+    font-size: 0.875rem;
 }
 
 /* ============ TABS ============ */
 .tabs {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
 }
 
 .tab {
-  color: var(--color-text-secondary-light);
-  background-color: transparent;
+    color: var(--color-text-secondary-light);
+    background-color: transparent;
 }
 
 .tab:hover {
-  background-color: var(--bg-tertiary-light);
-  color: #1a1a2e;
+    background-color: var(--bg-tertiary-light);
+    color: #1a1a2e;
 }
 
 .activeTab {
-  background-color: var(--ml-blue);
-  color: var(--bg-primary-light);
+    background-color: var(--ml-blue);
+    color: var(--bg-primary-light);
 }
 
 .activeTab:hover {
-  background-color: #3b5ec9;
-  color: var(--bg-primary-light);
+    background-color: #3b5ec9;
+    color: var(--bg-primary-light);
 }
 
 /* ============ KANBAN ============ */
 .kanbanColumn {
-  background-color: var(--bg-tertiary-light);
-  border: 1px solid var(--border-light);
+    background-color: var(--bg-tertiary-light);
+    border: 1px solid var(--border-light);
 }
 
 .columnTitle {
-  color: #1a1a2e;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  margin: 0;
+    color: #1a1a2e;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .columnCount {
-  color: var(--color-text-secondary-light);
-  font-size: 0.75rem;
-  background-color: var(--border-light);
-  padding: 0.125rem 0.5rem;
-  border-radius: 10px;
+    color: var(--color-text-secondary-light);
+    font-size: 0.75rem;
+    background-color: var(--border-light);
+    padding: 0.125rem 0.5rem;
+    border-radius: 10px;
 }
 
 .taskCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .taskCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .taskTitle {
-  color: #1a1a2e;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  margin: 0 0 0.25rem;
+    color: #1a1a2e;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
 }
 
 .taskDesc {
-  color: var(--color-text-secondary-light);
-  font-size: 0.8125rem;
-  margin: 0;
-  line-height: 1.4;
+    color: var(--color-text-secondary-light);
+    font-size: 0.8125rem;
+    margin: 0;
+    line-height: 1.4;
 }
 
 .assignee {
-  color: var(--ml-blue);
-  font-weight: 500;
+    color: var(--ml-blue);
+    font-weight: 500;
 }
 
 .dueDate {
-  color: var(--color-text-secondary-light);
+    color: var(--color-text-secondary-light);
 }
 
 /* ============ FILES ============ */
 .fileCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
 }
 
 .fileName {
-  color: #1a1a2e;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  margin: 0 0 0.25rem;
+    color: #1a1a2e;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
 }
 
 .fileMeta {
-  color: var(--color-text-secondary-light);
-  font-size: 0.8125rem;
-  margin: 0;
+    color: var(--color-text-secondary-light);
+    font-size: 0.8125rem;
+    margin: 0;
 }
 
 /* ============ DISCUSSIONS ============ */
 .discussionCard {
-  background-color: var(--bg-primary-light);
-  border: 1px solid var(--border-light);
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
 }
 
 .resolvedBadge {
-  background-color: #dcfce7;
-  color: #166534;
+    background-color: #dcfce7;
+    color: #166534;
 }
 
 .replyCount {
-  color: var(--color-text-secondary-light);
+    color: var(--color-text-secondary-light);
 }
 
 .discussionTitle {
-  color: #1a1a2e;
+    color: #1a1a2e;
 }
 
 .discussionContent {
-  color: var(--color-text-secondary-light);
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  margin: 0;
+    color: var(--color-text-secondary-light);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .discussionAuthor {
-  color: var(--text-tertiary-light);
-  font-size: 0.8125rem;
+    color: var(--text-tertiary-light);
+    font-size: 0.8125rem;
+}
+
+/* ============ MILESTONE SIDEBAR ============ */
+.milestoneSidebar {
+    background-color: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+}
+
+.milestoneTitle {
+    color: #1a1a2e;
+}
+
+.milestoneItem {
+    background-color: var(--bg-tertiary-light);
+    border-color: var(--border-light);
+}
+
+/* ============ DISPUTE MODAL ============ */
+.disputeModal {
+    background: #fff;
+    border-color: #e5e7eb;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+.disputeModalHeader {
+    border-bottom-color: #e5e7eb;
+    color: #1a1a2e;
+}
+.disputeModalTitle {
+    color: #1a1a2e;
+}
+.disputeCloseBtn {
+    color: #6b7280;
+}
+.disputeLabel {
+    color: #374151;
+}
+.disputeSelect {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #111827;
+}
+.disputeTextarea {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #111827;
+}
+.disputeCharCount {
+    color: #9ca3af;
+}
+.disputeCharCountError {
+    color: #ef4444;
+}
+.disputeError {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+.disputeSuccess {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+.disputeModalFooter {
+    border-top-color: #e5e7eb;
 }

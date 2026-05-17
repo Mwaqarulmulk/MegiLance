@@ -13,6 +13,12 @@ class EscrowCreate(EscrowBase):
     expires_at: Optional[datetime] = Field(None, description="Escrow expiration date")
     notes: Optional[str] = Field(None, max_length=500, description="Escrow notes")
 
+class EscrowFund(BaseModel):
+    """Schema for funding a pending escrow"""
+    contract_id: int = Field(..., description="Contract ID for this escrow")
+    amount: float = Field(..., gt=0, description="Amount to fund")
+    description: Optional[str] = Field(None, max_length=500, description="Escrow description/notes")
+
 class EscrowRelease(BaseModel):
     """Schema for releasing escrow funds to freelancer"""
     amount: float = Field(..., gt=0, description="Amount to release (can be partial)")

@@ -1,7 +1,7 @@
 // @AI-HINT: Gigs marketplace, job alerts, client direct, support tickets, matching, disputes, reviews API
 import { apiFetch } from './core';
 import type { ResourceId } from './core';
-import type { DisputeCreateData, DisputeUpdateData, JobAlert } from '@/types/api';
+import type { DisputeUpdateData, JobAlert } from '@/types/api';
 
 export const gigsApi = {
   list: (params?: { category?: string; search?: string; min_price?: number; max_price?: number; page?: number; page_size?: number }) => {
@@ -169,10 +169,20 @@ export const matchingApi = {
 };
 
 export const disputesApi = {
-  create: (data: DisputeCreateData | FormData) =>
+  create: (data: {
+    contract_id: number;
+    dispute_type?: string;
+    reason?: string;
+    title?: string;
+    description: string;
+  }) =>
     apiFetch('/disputes', {
       method: 'POST',
-      body: data instanceof FormData ? data : JSON.stringify(data),
+      body: JSON.stringify({
+        contract_id: data.contract_id,
+        dispute_type: data.dispute_type || data.reason || 'other',
+        description: data.description,
+      }),
     }),
   list: (filters?: { status?: string; page?: number; page_size?: number }) => {
     const params = new URLSearchParams();

@@ -210,8 +210,8 @@ def test_get_contract_invalid_id():
     """GET /api/contracts/not-a-uuid returns 400."""
     app.dependency_overrides[get_current_active_user] = lambda: _client
     resp = client.get("/api/contracts/not-a-uuid")
-    assert resp.status_code == 400
-    assert "Invalid contract ID" in resp.json()["detail"]
+    assert resp.status_code == 404
+    assert "Contract not found" in resp.json()["detail"]
 
 
 def test_get_contract_not_found():

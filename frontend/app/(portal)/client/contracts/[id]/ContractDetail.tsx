@@ -126,12 +126,9 @@ export default function ContractDetail({ contractId }: ContractDetailProps) {
     if (!contract) return;
     setActionLoading(-1);
     try {
-      // API call would happen here
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Contract action: ${action} on ${contract.id}`);
-      }
-      // Simulate successful update
-      setContract(prev => prev ? { ...prev, status: action === 'pause' ? 'paused' : action === 'resume' ? 'active' : 'terminated' } : null);
+      const status = action === 'pause' ? 'paused' : action === 'resume' ? 'active' : 'terminated';
+      const updatedContract = await contractsApi.update(contract.id, { status });
+      setContract(updatedContract);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.error(`Failed to ${action} contract:`, err);
@@ -142,24 +139,11 @@ export default function ContractDetail({ contractId }: ContractDetailProps) {
   }, [contract]);
 
   const handleFileDispute = useCallback(async () => {
-    if (!disputeReason || !disputeDescription) return;
-    setActionLoading(-2);
-    try {
-      // API call would happen here
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Filing dispute: ${disputeReason} - ${disputeDescription}`);
-      }
-      setShowDisputeModal(false);
-      setDisputeReason('');
-      setDisputeDescription('');
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to file dispute:', err);
-      }
-    } finally {
-      setActionLoading(null);
-    }
-  }, [disputeReason, disputeDescription]);
+    if (!contract || !disputeReason || !disputeDescription) return;
+    const project = encodeURIComponent(contract.title || `Contract #${contract.id}`);
+    const party = encodeURIComponent(contract.freelancer?.full_name || `Freelancer #${contract.freelancer_id}`);
+    router.push(`/disputes/create?contract=${contract.id}&project=${project}&party=${party}`);
+  }, [contract, disputeReason, disputeDescription, router]);
 
   // Calculations
   const progress = useMemo(() => {
@@ -267,7 +251,7 @@ export default function ContractDetail({ contractId }: ContractDetailProps) {
                 variant="secondary"
                 size="md"
                 iconBefore={<Briefcase size={16} />}
-                onClick={() => router.push(`/workroom?contractId=${contract.id}`)}
+                onClick={() => router.push(`/contracts/${contract.id}/workroom`)}
               >
                 Workroom
               </Button>

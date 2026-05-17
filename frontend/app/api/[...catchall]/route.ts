@@ -60,7 +60,7 @@ async function handler(request: NextRequest) {
       console.error('API proxy error:', error);
     }
     return NextResponse.json(
-      { detail: 'Backend service unavailable', error: String(error) },
+      { detail: 'Backend service unavailable. Please try again later.' },
       { status: 503 }
     );
   }

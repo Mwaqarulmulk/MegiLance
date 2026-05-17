@@ -1,20 +1,20 @@
 // @AI-HINT: This page displays detailed information about a specific contract.
-'use client';
+"use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTheme } from 'next-themes';
-import { useRouter, useParams } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import api from '@/lib/api';
-import { ArrowLeft, Download, Loader2, AlertTriangle } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTheme } from "next-themes";
+import { useRouter, useParams } from "next/navigation";
+import { cn } from "@/lib/utils";
+import api from "@/lib/api";
+import { ArrowLeft, Download, Loader2, AlertTriangle } from "lucide-react";
 
-import Button from '@/app/components/atoms/Button/Button';
-import Badge from '@/app/components/atoms/Badge/Badge';
-import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
+import Button from "@/app/components/atoms/Button/Button";
+import Badge from "@/app/components/atoms/Badge/Badge";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
 
-import commonStyles from './ContractDetails.common.module.css';
-import lightStyles from './ContractDetails.light.module.css';
-import darkStyles from './ContractDetails.dark.module.css';
+import commonStyles from "./ContractDetails.common.module.css";
+import lightStyles from "./ContractDetails.light.module.css";
+import darkStyles from "./ContractDetails.dark.module.css";
 
 interface Milestone {
   id: number;
@@ -44,15 +44,21 @@ interface Contract {
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status.toLowerCase()) {
-    case 'active': 
-    case 'in_progress': return 'info';
-    case 'completed': return 'success';
-    case 'disputed': return 'danger';
-    case 'pending': 
-    case 'negotiation': return 'warning';
-    case 'cancelled':
-    case 'terminated': return 'danger';
-    default: return 'secondary';
+    case "active":
+    case "in_progress":
+      return "info";
+    case "completed":
+      return "success";
+    case "disputed":
+      return "danger";
+    case "pending":
+    case "negotiation":
+      return "warning";
+    case "cancelled":
+    case "terminated":
+      return "danger";
+    default:
+      return "secondary";
   }
 };
 
@@ -64,45 +70,49 @@ const ContractDetailsPage: React.FC = () => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const styles = useMemo(() => {
-    const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+    const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
     return { ...commonStyles, ...themeStyles };
   }, [resolvedTheme]);
 
   const fetchContract = useCallback(async () => {
     if (!params.id) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
-      const contractData = await api.contracts.get(Number(params.id)) as any as Contract;
-      
+      const contractData = (await api.contracts.get(
+        Number(params.id),
+      )) as any as Contract;
+
       // Try to fetch project details
       try {
-        const projectData = await api.projects.get(contractData.project_id) as any;
+        const projectData = (await api.projects.get(
+          contractData.project_id,
+        )) as any;
         contractData.project_title = projectData.title;
         contractData.client_name = projectData.client_name;
       } catch {
         // Ignore project fetch errors
       }
-      
+
       // Parse milestones if it's a string
-      if (typeof contractData.milestones === 'string') {
+      if (typeof contractData.milestones === "string") {
         try {
           contractData.milestones = JSON.parse(contractData.milestones);
         } catch {
           contractData.milestones = [];
         }
       }
-      
+
       setContract(contractData);
     } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to fetch contract:', err);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Failed to fetch contract:", err);
       }
-      setError(err instanceof Error ? err.message : 'Failed to load contract');
+      setError(err instanceof Error ? err.message : "Failed to load contract");
     } finally {
       setLoading(false);
     }
@@ -117,16 +127,18 @@ const ContractDetailsPage: React.FC = () => {
   };
 
   const handleDownload = () => {
-    toaster.notify({ 
-      title: 'Download started', 
-      description: `Downloading contract details`, 
-      variant: 'success' 
+    toaster.notify({
+      title: "Download started",
+      description: `Downloading contract details`,
+      variant: "success",
     });
   };
 
   const handleRaiseDispute = () => {
     if (!contract) return;
-    router.push(`/portal/disputes/create?contract=${contract.id}&project=${encodeURIComponent(contract.project_title || '')}&party=${encodeURIComponent(contract.client_name || '')}`);
+    router.push(
+      `/disputes/create?contract=${contract.id}&project=${encodeURIComponent(contract.project_title || "")}&party=${encodeURIComponent(contract.client_name || "")}`,
+    );
   };
 
   // Parse milestones
@@ -137,13 +149,16 @@ const ContractDetailsPage: React.FC = () => {
   }, [contract]);
 
   const totalMilestones = milestones.length;
-  const completedMilestones = milestones.filter(m => m.status?.toLowerCase() === 'completed').length;
-  const progressPercentage = totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
+  const completedMilestones = milestones.filter(
+    (m) => m.status?.toLowerCase() === "completed",
+  ).length;
+  const progressPercentage =
+    totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
 
   // Parse terms
   const terms = useMemo(() => {
     if (!contract?.terms) return null;
-    if (typeof contract.terms === 'string') {
+    if (typeof contract.terms === "string") {
       try {
         return JSON.parse(contract.terms);
       } catch {
@@ -166,8 +181,11 @@ const ContractDetailsPage: React.FC = () => {
     return (
       <div className={cn(styles.container, styles.errorState)}>
         <h2>Error Loading Contract</h2>
-        <p>{error || 'Contract not found'}</p>
-        <Button variant="primary" onClick={() => router.push('/portal/freelancer/contracts')}>
+        <p>{error || "Contract not found"}</p>
+        <Button
+          variant="primary"
+          onClick={() => router.push("/portal/freelancer/contracts")}
+        >
           Back to Contracts
         </Button>
       </div>
@@ -175,30 +193,43 @@ const ContractDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className={cn(styles.container, resolvedTheme && styles[resolvedTheme])}>
+    <div
+      className={cn(styles.container, resolvedTheme && styles[resolvedTheme])}
+    >
       <header className={styles.header}>
-        <Button 
-          variant="secondary" 
-          onClick={handleBack} 
+        <Button
+          variant="secondary"
+          onClick={handleBack}
           aria-label="Back to contracts"
           title="Back to contracts"
         >
           <ArrowLeft size={16} /> Back
         </Button>
-        
+
         <div className={styles.headerActions}>
-          {contract && !['disputed', 'cancelled', 'terminated'].includes(contract.status.toLowerCase()) && (
-            <Button 
-              variant="danger" 
-              onClick={handleRaiseDispute}
-              aria-label="Raise a dispute"
-              title="Raise a dispute"
+          {contract && (
+            <Button
+              variant="primary"
+              onClick={() => router.push(`/contracts/${params.id}/workroom`)}
             >
-              <AlertTriangle size={16} /> Raise Dispute
+              Workroom
             </Button>
           )}
-          <Button 
-            variant="secondary" 
+          {contract &&
+            !["disputed", "cancelled", "terminated"].includes(
+              contract.status.toLowerCase(),
+            ) && (
+              <Button
+                variant="danger"
+                onClick={handleRaiseDispute}
+                aria-label="Raise a dispute"
+                title="Raise a dispute"
+              >
+                <AlertTriangle size={16} /> Raise Dispute
+              </Button>
+            )}
+          <Button
+            variant="secondary"
             onClick={handleDownload}
             aria-label="Download contract"
             title="Download contract"
@@ -211,19 +242,25 @@ const ContractDetailsPage: React.FC = () => {
       <main className={styles.main}>
         <div className={styles.contractHeader}>
           <div>
-            <h1 className={styles.title}>{contract.project_title || `Project #${contract.project_id}`}</h1>
-            <p className={styles.client}>for {contract.client_name || `Client #${contract.client_id}`}</p>
+            <h1 className={styles.title}>
+              {contract.project_title || `Project #${contract.project_id}`}
+            </h1>
+            <p className={styles.client}>
+              for {contract.client_name || `Client #${contract.client_id}`}
+            </p>
           </div>
           <div className={styles.contractMeta}>
             <div className={styles.metaItem}>
               <span className={styles.metaLabel}>Status</span>
               <Badge variant={getStatusBadgeVariant(contract.status)}>
-                {contract.status.replace('_', ' ')}
+                {contract.status.replace("_", " ")}
               </Badge>
             </div>
             <div className={styles.metaItem}>
               <span className={styles.metaLabel}>Value</span>
-              <span className={styles.metaValue}>${contract.total_amount.toLocaleString()}</span>
+              <span className={styles.metaValue}>
+                ${contract.total_amount.toLocaleString()}
+              </span>
             </div>
             <div className={styles.metaItem}>
               <span className={styles.metaLabel}>Contract ID</span>
@@ -236,11 +273,13 @@ const ContractDetailsPage: React.FC = () => {
           <div className={styles.progressSection}>
             <div className={styles.progressHeader}>
               <h2 className={styles.sectionTitle}>Project Progress</h2>
-              <span className={styles.progressText}>{completedMilestones}/{totalMilestones} milestones completed</span>
+              <span className={styles.progressText}>
+                {completedMilestones}/{totalMilestones} milestones completed
+              </span>
             </div>
             <div className={styles.progressBar}>
-              <div 
-                className={styles.progressFill} 
+              <div
+                className={styles.progressFill}
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
@@ -288,13 +327,17 @@ const ContractDetailsPage: React.FC = () => {
               {terms.revisionPolicy && (
                 <div className={styles.termItem}>
                   <h3 className={styles.termTitle}>Revision Policy</h3>
-                  <p className={styles.termDescription}>{terms.revisionPolicy}</p>
+                  <p className={styles.termDescription}>
+                    {terms.revisionPolicy}
+                  </p>
                 </div>
               )}
               {terms.cancellationPolicy && (
                 <div className={styles.termItem}>
                   <h3 className={styles.termTitle}>Cancellation Policy</h3>
-                  <p className={styles.termDescription}>{terms.cancellationPolicy}</p>
+                  <p className={styles.termDescription}>
+                    {terms.cancellationPolicy}
+                  </p>
                 </div>
               )}
               {terms.general && (
@@ -313,13 +356,17 @@ const ContractDetailsPage: React.FC = () => {
             <div className={styles.timelineItem}>
               <span className={styles.timelineLabel}>Start Date</span>
               <span className={styles.timelineValue}>
-                {contract.start_date ? new Date(contract.start_date).toLocaleDateString() : 'Not set'}
+                {contract.start_date
+                  ? new Date(contract.start_date).toLocaleDateString()
+                  : "Not set"}
               </span>
             </div>
             <div className={styles.timelineItem}>
               <span className={styles.timelineLabel}>End Date</span>
               <span className={styles.timelineValue}>
-                {contract.end_date ? new Date(contract.end_date).toLocaleDateString() : 'Not set'}
+                {contract.end_date
+                  ? new Date(contract.end_date).toLocaleDateString()
+                  : "Not set"}
               </span>
             </div>
           </div>

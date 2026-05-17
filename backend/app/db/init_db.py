@@ -1,7 +1,14 @@
-# @AI-HINT: Database initialization - LEGACY/DEAD CODE with Turso HTTP
-# Since MegiLance uses Turso HTTP API exclusively, engine is always None
-# and this function returns immediately. Tables are managed via turso_schema.sql.
-# Kept for SQLAlchemy model registration side-effects (imports).
+"""Legacy database initialization — kept for reference only.
+
+All runtime database initialization now happens via the Turso HTTP API
+in main.py's lifespan handler. The SQLAlchemy engine is always None in
+production, so init_db() is effectively dead code. This module is
+preserved solely for its model-import side effects, which ensure all
+SQLAlchemy ORM models are registered with Base.metadata.
+
+See turso_schema.sql for the canonical table definitions.
+"""
+
 import logging
 from sqlalchemy import Engine, inspect
 from app.db.base import Base

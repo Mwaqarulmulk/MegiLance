@@ -1,0 +1,271 @@
+/* @AI-HINT: ContractDetail dark theme — colors only. No layout rules. */
+
+.page {
+    background: var(--bg-primary-dark);
+    color: var(--text-primary-dark);
+}
+
+.contractTitle {
+    color: var(--text-primary-dark);
+}
+
+.metaChip {
+    background: var(--bg-tertiary-dark);
+    color: var(--text-secondary-dark);
+}
+
+/* ─── Status badge variants ─── */
+.statusActive {
+    background: rgba(39, 174, 96, 0.2);
+    color: #4cdc8a;
+}
+
+.statusCompleted {
+    background: rgba(69, 115, 223, 0.2);
+    color: var(--ml-blue-light);
+}
+
+.statusPending {
+    background: rgba(242, 201, 76, 0.15);
+    color: var(--ml-yellow);
+}
+
+.statusCancelled {
+    background: rgba(232, 17, 35, 0.2);
+    color: var(--ml-red-light);
+}
+
+.statusDefault {
+    background: var(--bg-tertiary-dark);
+    color: var(--text-secondary-dark);
+}
+
+/* ─── Tabs ─── */
+.tabs {
+    border-bottom-color: var(--border-dark);
+}
+
+.tab {
+    background: transparent;
+    color: var(--text-secondary-dark);
+}
+
+.tab:hover {
+    background: var(--bg-tertiary-dark);
+    color: var(--text-primary-dark);
+}
+
+.tabActive {
+    background: var(--ml-blue);
+    color: #ffffff;
+}
+
+/* ─── Cards ─── */
+.card {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+}
+
+.cardTitle {
+    color: var(--text-primary-dark);
+}
+
+/* ─── Party cards ─── */
+.partyCard {
+    background: var(--bg-tertiary-dark);
+}
+
+.partyAvatar {
+    background: var(--ml-blue-dark);
+    color: #ffffff;
+}
+
+.partyLabel {
+    color: var(--text-tertiary-dark);
+}
+
+.partyName {
+    color: var(--text-primary-dark);
+}
+
+/* ─── Stats ─── */
+.statBox {
+    background: var(--bg-tertiary-dark);
+    border: 1px solid var(--border-dark);
+}
+
+.statValue {
+    color: var(--ml-blue-light);
+}
+
+.statLabel {
+    color: var(--text-secondary-dark);
+}
+
+/* ─── Milestones ─── */
+.milestone {
+    background: var(--bg-tertiary-dark);
+}
+
+.milestoneName {
+    color: var(--text-primary-dark);
+}
+
+.milestoneAmount {
+    color: var(--text-secondary-dark);
+}
+
+.milestoneBadgeCompleted {
+    background: rgba(39, 174, 96, 0.2);
+    color: #4cdc8a;
+}
+
+.milestoneBadgeActive {
+    background: rgba(69, 115, 223, 0.2);
+    color: var(--ml-blue-light);
+}
+
+.milestoneBadgePending {
+    background: rgba(242, 201, 76, 0.15);
+    color: var(--ml-yellow);
+}
+
+/* ─── Description ─── */
+.description {
+    color: var(--text-secondary-dark);
+}
+
+/* ─── Skeleton ─── */
+.skeleton {
+    background: var(--bg-tertiary-dark);
+}
+
+/* ─── Empty state ─── */
+.emptyState {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+}
+
+.emptyIcon {
+    background: var(--bg-tertiary-dark);
+    color: var(--text-tertiary-dark);
+}
+
+.emptyTitle {
+    color: var(--text-primary-dark);
+}
+
+.emptySubtitle {
+    color: var(--text-secondary-dark);
+}
+
+/* ─── Divider ─── */
+.sectionDivider {
+    background: var(--border-dark);
+}
+
+/* ─── Action bar ─── */
+.actionBar {
+    background: rgba(69, 115, 223, 0.1);
+    border: 1px solid rgba(69, 115, 223, 0.25);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* ─── Acknowledge box ─── */
+.acknowledgeBox {
+    background: rgba(69, 115, 223, 0.1);
+    border-color: var(--ml-blue);
+}
+
+.acknowledgeText {
+    color: var(--ml-blue-light);
+}
+
+/* ─── Milestone management card ─── */
+.milestoneCard {
+    background: var(--bg-tertiary-dark);
+    border: 1px solid var(--border-dark);
+}
+
+/* ─── Milestone form ─── */
+.milestoneForm {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--border-dark);
+}
+
+.milestoneInput {
+    background: var(--bg-secondary-dark);
+    border-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+
+.milestoneInput::placeholder {
+    color: var(--text-tertiary-dark);
+}
+
+.milestoneTextarea {
+    background: var(--bg-secondary-dark);
+    border-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+
+.milestoneTextarea::placeholder {
+    color: var(--text-tertiary-dark);
+}
+
+/* ─── Empty text ─── */
+.emptyText {
+    color: var(--text-tertiary-dark);
+}
+
+/* ─── Dispute modal ─── */
+.disputeModal {
+    background: #1a1a2e;
+    border-color: #2a2a3e;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.disputeModalHeader {
+    border-bottom-color: #2a2a3e;
+    color: #ffffff;
+}
+
+.disputeModalTitle {
+    color: #ffffff;
+}
+
+.modalClose {
+    color: var(--text-secondary-dark);
+}
+
+.disputeModalFooter {
+    border-top-color: #2a2a3e;
+}
+
+.formLabel {
+    color: var(--text-primary-dark);
+}
+
+.formSelect {
+    background: var(--bg-secondary-dark);
+    border-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+
+.formTextarea {
+    background: var(--bg-secondary-dark);
+    border-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+
+/* ─── Escrow section (P1-4) ─── */
+.escrowSection {
+    background: rgba(255, 152, 0, 0.08);
+    border-color: var(--ml-accent);
+}
+
+.escrowStatus {
+    background: rgba(255, 152, 0, 0.18);
+    color: #fbbf24;
+}

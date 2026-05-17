@@ -1,79 +1,90 @@
-/* AI-HINT: Light theme overrides for portal Search page. */
+/* @AI-HINT: Search page light theme colors */
 
-.themeWrapper {
-  background: var(--bg-secondary-light);
-  color: var(--text-primary-light);
+.pageTitle {
+    color: #1a1a2e;
 }
 
-.subtitle {
-  color: var(--color-text-secondary-light);
+.pageSubtitle {
+    color: #64748b;
 }
 
-.input,
-.select {
-  background: var(--bg-primary-light);
-  border: 1.5px solid var(--border-light);
-  color: var(--text-primary-light);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+.searchInput {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #1a1a2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.input::placeholder {
-  color: var(--text-tertiary-light);
+.searchInput::placeholder {
+    color: #94a3b8;
 }
 
-.input:hover,
-.select:hover {
-  border-color: #cbd5e1;
+.searchIcon {
+    color: #94a3b8;
 }
 
-.input:focus,
-.select:focus {
-  border-color: var(--ml-blue);
-  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.12);
+.tabs {
+    border-bottom-color: #e2e8f0;
 }
 
-.chip {
-  background: var(--bg-primary-light);
-  border: 1.5px solid var(--border-light);
-  color: var(--text-secondary-light);
+.tab {
+    color: #64748b;
 }
 
-.chip:hover {
-  background: var(--bg-tertiary-light);
-  border-color: #cbd5e1;
-  color: var(--text-primary-light);
+.tab:hover {
+    color: #1a1a2e;
+    background: #f8fafc;
 }
 
-.chip[aria-pressed="true"] {
-  background: rgba(69, 115, 223, 0.08);
-  border-color: var(--ml-blue);
-  color: var(--ml-blue);
+.tabActive {
+    color: #4573df;
+}
+
+.resultsCount {
+    color: #64748b;
 }
 
 .card {
-  background: var(--bg-primary-light);
-  border: 1.5px solid var(--border-light);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+}
+
+.cardAvatar {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.cardName {
+    color: #1a1a2e;
 }
 
 .cardTitle {
-  color: var(--text-primary-light);
+    color: #64748b;
 }
 
-.cardMeta {
-  color: var(--text-tertiary-light);
+.cardDescription {
+    color: #64748b;
 }
 
-.loadingState {
-  color: var(--ml-blue);
+.cardMetaItem {
+    color: #64748b;
 }
 
-.spinner {
-  border-color: var(--border-light);
-  border-top-color: var(--ml-blue);
+.tag {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.emptyTitle {
+    color: #1a1a2e;
+}
+
+.emptyDescription {
+    color: #64748b;
 }

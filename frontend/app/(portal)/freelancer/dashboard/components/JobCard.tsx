@@ -1,12 +1,12 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { useTheme } from 'next-themes';
-import { Clock } from 'lucide-react'
-import Link from 'next/link';
-import Button from '@/app/components/atoms/Button/Button';
-import commonStyles from './JobCard.common.module.css';
-import lightStyles from './JobCard.light.module.css';
-import darkStyles from './JobCard.dark.module.css';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { Clock, Sparkles } from "lucide-react";
+import Link from "next/link";
+import Button from "@/app/components/atoms/Button/Button";
+import commonStyles from "./JobCard.common.module.css";
+import lightStyles from "./JobCard.light.module.css";
+import darkStyles from "./JobCard.dark.module.css";
 
 interface Job {
   id: string | number;
@@ -15,6 +15,8 @@ interface Job {
   budget?: number;
   skills?: string[];
   postedTime?: string | Date;
+  /** AI match score 0–100. When present, shows an AI-match badge. */
+  matchScore?: number;
 }
 
 interface JobCardProps {
@@ -23,36 +25,80 @@ interface JobCardProps {
 
 const JobCard: React.FC<JobCardProps> = ({ job }) => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.card, themeStyles.card)}>
       <div className={commonStyles.header}>
         <div className={commonStyles.titleWrapper}>
-          <h3 className={cn(commonStyles.title, themeStyles.title)}>{job.title}</h3>
-          <span className={cn(commonStyles.client, themeStyles.client)}>{job.clientName}</span>
+          <h3 className={cn(commonStyles.title, themeStyles.title)}>
+            {job.title}
+          </h3>
+          <span className={cn(commonStyles.client, themeStyles.client)}>
+            {job.clientName}
+          </span>
         </div>
-        <div className={cn(commonStyles.budget, themeStyles.budget)}>
-          ${job.budget?.toLocaleString()}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: 4,
+          }}
+        >
+          <div className={cn(commonStyles.budget, themeStyles.budget)}>
+            {job.budget != null ? `$${job.budget.toLocaleString()}` : "—"}
+          </div>
+          {job.matchScore != null && (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 3,
+                padding: "2px 8px",
+                borderRadius: 20,
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                background: "linear-gradient(135deg, #4573df, #7c3aed)",
+                color: "#fff",
+                whiteSpace: "nowrap",
+              }}
+              title={`AI match score: ${job.matchScore}%`}
+            >
+              <Sparkles size={10} aria-hidden="true" />
+              {job.matchScore}% match
+            </span>
+          )}
         </div>
       </div>
-      
+
       <div className={commonStyles.tags}>
         {job.skills?.slice(0, 3).map((skill: string) => (
-          <span key={skill} className={cn(commonStyles.tag, themeStyles.tag)}>{skill}</span>
+          <span key={skill} className={cn(commonStyles.tag, themeStyles.tag)}>
+            {skill}
+          </span>
         ))}
         {(job.skills?.length ?? 0) > 3 && (
-          <span className={cn(commonStyles.tag, themeStyles.tag)}>+{(job.skills?.length ?? 0) - 3} more</span>
+          <span className={cn(commonStyles.tag, themeStyles.tag)}>
+            +{(job.skills?.length ?? 0) - 3} more
+          </span>
         )}
       </div>
 
       <div className={commonStyles.footer}>
         <div className={cn(commonStyles.meta, themeStyles.meta)}>
           <Clock size={14} />
-          <span>Posted {job.postedTime ? new Date(job.postedTime).toLocaleDateString() : 'N/A'}</span>
+          <span>
+            Posted{" "}
+            {job.postedTime
+              ? new Date(job.postedTime).toLocaleDateString()
+              : "N/A"}
+          </span>
         </div>
         <Link href={`/jobs/${job.id}`}>
-          <Button variant="outline" size="sm">View Job</Button>
+          <Button variant="outline" size="sm">
+            View Job
+          </Button>
         </Link>
       </div>
     </div>

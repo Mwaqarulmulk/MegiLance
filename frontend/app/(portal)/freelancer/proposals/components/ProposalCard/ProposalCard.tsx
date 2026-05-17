@@ -14,6 +14,7 @@ import darkStyles from './ProposalCard.dark.module.css';
 
 export interface Proposal {
   id: string;
+  projectId: string;
   jobTitle: string;
   clientName: string;
   status: 'Draft' | 'Submitted' | 'Interview' | 'Rejected';
@@ -25,9 +26,9 @@ export interface Proposal {
 
 export interface ProposalCardProps {
   proposal: Proposal;
-  onView: (id: string) => void;
-  onEdit: (id: string) => void;
-  onWithdraw: (id: string) => void;
+  onView: (id: string, projectId: string) => void;
+  onEdit: (id: string, projectId: string) => void;
+  onWithdraw: (id: string, projectId: string) => void;
 }
 
 const statusVariantMap: { [key in Proposal['status']]: 'default' | 'success' | 'danger' | 'secondary' | 'warning' } = {
@@ -98,14 +99,14 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onView, onEdit, o
       <div className={cn(commonStyles.cardFooter, styles.cardFooter)}>
         <Badge variant={statusVariantMap[status]} className={commonStyles.statusBadge}>{status}</Badge>
         <div className={cn(commonStyles.actions, styles.actions)}>
-          <Button variant="ghost" size="sm" onClick={() => onView(id)} aria-label={`View proposal for ${jobTitle}`}>
+          <Button variant="ghost" size="sm" onClick={() => onView(id, proposal.projectId)} aria-label={`View proposal for ${jobTitle}`}>
             <Eye size={16} />
           </Button>
-          <Button variant="secondary" size="sm" onClick={() => onEdit(id)} aria-label={`Edit proposal for ${jobTitle}`}>
+          <Button variant="secondary" size="sm" onClick={() => onEdit(id, proposal.projectId)} aria-label={`Edit proposal for ${jobTitle}`}>
             <Edit3 size={16} />
           </Button>
           {(status === 'Submitted' || status === 'Draft') && (
-            <Button variant="danger" size="sm" onClick={() => onWithdraw(id)} aria-label={`Withdraw proposal for ${jobTitle}`}>
+            <Button variant="danger" size="sm" onClick={() => onWithdraw(id, proposal.projectId)} aria-label={`Withdraw proposal for ${jobTitle}`}>
               <Trash2 size={16} />
             </Button>
           )}

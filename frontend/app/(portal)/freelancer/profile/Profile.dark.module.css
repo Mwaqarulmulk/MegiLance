@@ -1,211 +1,353 @@
 ﻿/* @AI-HINT: Dark theme styles for the enhanced Profile page with sections, arrays, social, share modal. */
 
 .profileContainer {
-  background: linear-gradient(135deg, #0a0a0f 0%, #111118 100%);
+    background: linear-gradient(135deg, #0a0a0f 0%, #111118 100%);
 }
 
 .loadingState {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
-.header, .actions {
-  border-color: rgba(255, 255, 255, 0.08);
+.header,
+.actions {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .name {
-  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, var(--text-tertiary-dark) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #e2e8f0 50%,
+        var(--text-tertiary-dark) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .title {
-  color: #7fa3f0;
+    color: #7fa3f0;
 }
 
 .tagline {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .rank {
-  background: linear-gradient(135deg, rgba(69, 115, 223, 0.15), rgba(69, 115, 223, 0.05));
-  color: #7fa3f0;
-  border-color: rgba(69, 115, 223, 0.3);
-  box-shadow: 0 0 16px rgba(69, 115, 223, 0.1);
+    background: linear-gradient(
+        135deg,
+        rgba(69, 115, 223, 0.15),
+        rgba(69, 115, 223, 0.05)
+    );
+    color: #7fa3f0;
+    border-color: rgba(69, 115, 223, 0.3);
+    box-shadow: 0 0 16px rgba(69, 115, 223, 0.1);
 }
 
 .metaBadge {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-tertiary-dark);
-  border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-tertiary-dark);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Section Nav */
 .navBtn {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .navBtn:hover {
-  background: rgba(69, 115, 223, 0.08);
-  color: #7fa3f0;
+    background: rgba(69, 115, 223, 0.08);
+    color: #7fa3f0;
 }
 
 .navBtnActive {
-  background: rgba(69, 115, 223, 0.15);
-  color: #7fa3f0;
-  border-color: rgba(69, 115, 223, 0.3);
-  box-shadow: 0 0 8px rgba(69, 115, 223, 0.1);
+    background: rgba(69, 115, 223, 0.15);
+    color: #7fa3f0;
+    border-color: rgba(69, 115, 223, 0.3);
+    box-shadow: 0 0 8px rgba(69, 115, 223, 0.1);
 }
 
 .status {
-  background: rgba(69, 115, 223, 0.12);
-  color: #7fa3f0;
-  border: 1px solid rgba(69, 115, 223, 0.25);
+    background: rgba(69, 115, 223, 0.12);
+    color: #7fa3f0;
+    border: 1px solid rgba(69, 115, 223, 0.25);
 }
 
 .sectionTitle {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 .sectionDescription {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .fieldLabel {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 .skillsInfo {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 /* Array cards */
 .arrayCard {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .arrayCardTitle {
-  color: #7fa3f0;
+    color: #7fa3f0;
 }
 
 .removeBtn {
-  color: #f87171;
+    color: #f87171;
 }
 
 .emptyArrayState {
-  background: rgba(255, 255, 255, 0.02);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: var(--text-tertiary-dark);
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-tertiary-dark);
 }
 
 /* Media cards */
 .mediaCard {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .mediaCardContent h3 {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 /* Settings */
 .settingRow {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .settingRow h3 {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 .settingRow p {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .toggleSwitch {
-  background: #475569;
+    background: #475569;
 }
 
 .toggleInput:checked + .toggleSwitch {
-  background: #7fa3f0;
+    background: #7fa3f0;
 }
 
 /* Share */
 .shareSection {
-  background: rgba(69, 115, 223, 0.06);
-  border-color: rgba(69, 115, 223, 0.2);
+    background: rgba(69, 115, 223, 0.06);
+    border-color: rgba(69, 115, 223, 0.2);
 }
 
 .shareTitle {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 .shareDesc {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .shareUrlInput {
-  background: rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #f5f7fa;
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #f5f7fa;
 }
 
 .shareHints {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-tertiary-dark);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-tertiary-dark);
 }
 
 /* Modal */
 .modalOverlay {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
 }
 
 .shareModal {
-  background: #1a1a24;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    background: #1a1a24;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .shareTabBar {
-  border-bottom-color: var(--border-dark);
+    border-bottom-color: var(--border-dark);
 }
 
 .shareTabBtn {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .shareTabBtn:hover {
-  color: var(--text-primary-dark);
+    color: var(--text-primary-dark);
 }
 
 .shareTabBtnActive {
-  color: #5b8aef;
-  border-bottom-color: #5b8aef;
+    color: #5b8aef;
+    border-bottom-color: #5b8aef;
 }
 
 .shareModalHeader {
-  border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .shareModalHeader h2 {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 .closeBtn {
-  color: var(--text-tertiary-dark);
+    color: var(--text-tertiary-dark);
 }
 
 .closeBtn:hover {
-  color: #f5f7fa;
+    color: #f5f7fa;
 }
 
 .errors {
-  background: rgba(232, 17, 35, 0.12);
-  border: 1px solid rgba(232, 17, 35, 0.3);
+    background: rgba(232, 17, 35, 0.12);
+    border: 1px solid rgba(232, 17, 35, 0.3);
 }
 
 .errorText {
-  color: #f87171;
+    color: #f87171;
+}
+
+/* =========================================================
+   AVATAR / UPLOAD — dark theme
+   ========================================================= */
+
+.avatarCircle {
+    border-color: var(--border-dark);
+}
+
+.uploadBtn {
+    border-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+
+.uploadHelpText {
+    color: var(--text-tertiary-dark);
+}
+
+/* =========================================================
+   HEADER BADGE VARIANTS — dark theme
+   ========================================================= */
+
+/* Availability — available */
+.metaBadgeAvailable {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* Availability — busy */
+.metaBadgeBusy {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Availability — away */
+.metaBadgeAway {
+    background: rgba(107, 114, 128, 0.15);
+    color: #9ca3af;
+    border-color: rgba(107, 114, 128, 0.4);
+}
+
+/* Job Success Score badge */
+.metaBadgeJSS {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* =========================================================
+   PORTFOLIO — dark theme
+   ========================================================= */
+
+.portfolioCard {
+    border-color: var(--border-dark);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.portfolioCardFeatured {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: #6366f1;
+}
+
+.portfolioFeaturedBadge {
+    background: var(--color-primary-dark, #60a5fa);
+}
+
+.portfolioProjectTitle {
+    color: var(--text-primary-dark);
+}
+
+.featuredLabel {
+    color: var(--text-tertiary-dark);
+}
+
+.portfolioRemoveBtn {
+    color: #f87171;
+}
+
+.portfolioLinkPrimary {
+    color: #818cf8;
+}
+
+.portfolioLinkMuted {
+    color: var(--text-tertiary-dark);
+}
+
+.addProjectBtn {
+    border-color: var(--border-dark);
+    color: var(--text-tertiary-dark);
+}
+
+.addProjectBtn:hover {
+    border-color: #7fa3f0;
+    color: #7fa3f0;
+}
+
+/* =========================================================
+   STATS & BADGES — dark theme
+   ========================================================= */
+
+.statCard {
+    border-color: var(--border-dark);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.statValue {
+    color: var(--text-primary-dark);
+}
+
+.statLabel {
+    color: var(--text-primary-dark);
+}
+
+.statDesc {
+    color: var(--text-tertiary-dark);
+}
+
+.sellerLevelHeading {
+    color: var(--text-primary-dark);
+}
+
+.levelUpBox {
+    border-color: var(--border-dark);
+    background: rgba(99, 102, 241, 0.06);
+    color: var(--text-tertiary-dark);
+}
+
+.levelUpBox strong {
+    color: var(--text-primary-dark);
 }
