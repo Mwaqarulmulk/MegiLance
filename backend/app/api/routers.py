@@ -287,7 +287,7 @@ api_router.include_router(
 api_router.include_router(teams.router, prefix="/teams", tags=["teams"])
 
 # Audit Trail - Compliance and security logging
-api_router.include_router(audit.router, prefix="/audit", tags=["audit"])
+api_router.include_router(audit.router, prefix="/audit-trail", tags=["audit"])
 
 # Export/Import - Data portability and GDPR compliance
 api_router.include_router(
@@ -361,7 +361,7 @@ api_router.include_router(
 )
 
 # Email Templates - Customizable email templates
-api_router.include_router(email_templates.router, tags=["email-templates"])
+api_router.include_router(email_templates.router, prefix="/email-templates", tags=["email-templates"])
 
 # Integrations Hub - Third-party service integrations
 api_router.include_router(integrations.router, tags=["integrations"])
@@ -397,7 +397,7 @@ api_router.include_router(portfolio_builder.router, tags=["portfolio-builder"])
 api_router.include_router(compliance.router, tags=["compliance"])
 
 # Contact Form - Customer inquiries
-api_router.include_router(contact.router, tags=["contact"])
+api_router.include_router(contact.router, prefix="/contact", tags=["contact"])
 
 # Learning Center - Tutorials and courses
 api_router.include_router(learning_center.router, tags=["learning-center"])
@@ -431,16 +431,16 @@ api_router.include_router(user_feedback.router, tags=["user-feedback"])
 api_router.include_router(data_analytics_export.router, tags=["data-export"])
 
 # Availability Calendar - Freelancer scheduling
-api_router.include_router(availability_calendar.router, tags=["availability"])
+api_router.include_router(availability_calendar.router, prefix="/availability", tags=["availability"])
 
 # Review Responses - Business owner replies
 api_router.include_router(review_responses.router, tags=["review-responses"])
 
 # Rate Cards - Freelancer pricing structures
-api_router.include_router(rate_cards.router, tags=["rate-cards"])
+api_router.include_router(rate_cards.router, prefix="/rate-cards", tags=["rate-cards"])
 
 # Proposal Templates - Reusable proposal templates
-api_router.include_router(proposal_templates.router, tags=["proposal-templates"])
+api_router.include_router(proposal_templates.router, prefix="/proposal-templates", tags=["proposal-templates"])
 
 # Notes & Tags - Organization and metadata
 api_router.include_router(notes_tags.router, tags=["notes-tags"])

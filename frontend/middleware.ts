@@ -93,6 +93,16 @@ export function middleware(request: NextRequest) {
     "/escrow",
     "/reviews",
     "/video-calls",
+    "/workroom",
+    "/notifications",
+    "/favorites",
+    "/browse-talent",
+    "/complete-profile",
+    "/disputes",
+    "/payments",
+    "/refunds",
+    "/audit-logs",
+    "/profile",
   ];
 
   const isProtectedPath = protectedPaths.some((path) => {
