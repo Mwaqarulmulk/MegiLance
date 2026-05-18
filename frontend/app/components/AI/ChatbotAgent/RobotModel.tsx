@@ -1,10 +1,21 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, Component } from 'react';
 import { useTheme } from 'next-themes';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, Environment } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import { MessageCircle } from 'lucide-react';
+
+class ThreeErrorBoundary extends Component<{ children: React.ReactNode; fallback: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
+}
 
 interface RobotModelProps {
   size?: number;
@@ -51,14 +62,16 @@ export default function RobotModel({ size = 100 }: RobotModelProps) {
       borderRadius: '50%',
       pointerEvents: 'none'
     }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ width: size, height: size, pointerEvents: 'none' }}>
-        <ambientLight intensity={resolvedTheme === 'dark' ? 0.5 : 1} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <Environment preset="city" />
-        <React.Suspense fallback={null}>
-          <InnerRobot />
-        </React.Suspense>
-      </Canvas>
+      <ThreeErrorBoundary fallback={<MessageCircle size={size * 0.5} style={{ opacity: 0.6 }} />}>
+        <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ width: size, height: size, pointerEvents: 'none' }}>
+          <ambientLight intensity={resolvedTheme === 'dark' ? 0.5 : 1} />
+          <directionalLight position={[10, 10, 5]} intensity={1} />
+          <pointLight position={[-10, -10, -5]} intensity={0.3} />
+          <React.Suspense fallback={null}>
+            <InnerRobot />
+          </React.Suspense>
+        </Canvas>
+      </ThreeErrorBoundary>
     </div>
   );
 }
