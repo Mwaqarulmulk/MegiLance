@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useMounted } from '@/app/hooks/useMounted';
 import { MessageSquare, DollarSign, FileText, Brain, Shield, TrendingUp, ArrowRight, Sparkles } from 'lucide-react';
 import commonStyles from './AIToolsHub.common.module.css';
 import lightStyles from './AIToolsHub.light.module.css';
@@ -20,7 +21,8 @@ const tools = [
 
 const AIToolsHub: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   return (
     <section className={cn(commonStyles.section, themeStyles.section)}>

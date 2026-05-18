@@ -4,13 +4,13 @@ import BlogPostClient from './BlogPostClient';
 import { buildArticleMeta, BASE_URL } from '@/lib/seo';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 async function getPost(slug: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
   try {
-    const res = await fetch(`${API_URL}/blog/${slug}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/v1/blog/${slug}`, { cache: 'no-store' });
     if (!res.ok) return null;
     return res.json();
   } catch (error) {
@@ -19,7 +19,8 @@ async function getPost(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getPost(params.slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
 
   if (!post) {
     return {
@@ -37,7 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  const post = await getPost(params.slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
 
   if (!post) {
     notFound();

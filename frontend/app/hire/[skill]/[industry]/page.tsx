@@ -159,9 +159,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 async function getFreelancers(skillSlug: string, industrySlug: string) {
   try {
     // Use internal Docker network URL if available, otherwise localhost
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
     const res = await fetch(
-      `${baseUrl}/api/skills/freelancers/match?skill_slug=${skillSlug}&industry_slug=${industrySlug}&limit=6`,
+      `${baseUrl}/api/v1/skills/freelancers/match?skill_slug=${skillSlug}&industry_slug=${industrySlug}&limit=6`,
       { next: { revalidate: 3600 } }
     );
     if (!res.ok) return [];

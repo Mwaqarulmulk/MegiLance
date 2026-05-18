@@ -9,6 +9,7 @@ import {
   CheckCircle2, Cloud, FileText, Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useMounted } from '@/app/hooks/useMounted';
 
 import AIShowcaseCard from './AIShowcaseCard';
 import { LottieAnimation, aiSparkleAnimation } from '@/app/components/Animations/LottieAnimation';
@@ -118,7 +119,8 @@ const BackgroundGrid = () => (
 
 const TechLogos = () => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.techStack, themeStyles.techStack)}>
@@ -149,7 +151,8 @@ const TechLogos = () => {
 // --- Main Component ---
 const AIShowcase: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   return (
     <section className={cn(commonStyles.aiShowcase, themeStyles.aiShowcase)}>

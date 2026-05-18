@@ -3,10 +3,10 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
+import { useMounted } from '@/app/hooks/useMounted';
 import { cn } from '@/lib/utils';
 import { useClientData } from '@/hooks/useClient';
-import { refundsApi } from '@/lib/api';
-import { DollarSign, Search, Download, TrendingUp, TrendingDown, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X, Wallet } from 'lucide-react';
+import { DollarSign, Search, Download, TrendingUp, TrendingDown, AlertTriangle, SearchX, FileText, RefreshCw, Lock, CheckCircle, AlertCircle, Calendar, X, Wallet } from 'lucide-react';
 
 import PaymentCard, { PaymentCardProps } from '@/app/components/organisms/PaymentCard/PaymentCard';
 import DashboardWidget from '@/app/components/molecules/DashboardWidget/DashboardWidget';
@@ -16,8 +16,7 @@ import Button from '@/app/components/atoms/Button/Button';
 import Pagination from '@/app/components/molecules/Pagination/Pagination';
 import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
 import Modal from '@/app/components/organisms/Modal/Modal';
-import { walletAnimation } from '@/app/components/Animations/LottieAnimation';
-import ErrorBanner from '@/app/components/molecules/ErrorBanner/ErrorBanner';
+import { walletAnimation, errorAlertAnimation } from '@/app/components/Animations/LottieAnimation';
 import Trend from '@/app/components/molecules/Trend/Trend';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
@@ -28,22 +27,16 @@ import light from './Payments.light.module.css';
 import dark from './Payments.dark.module.css';
 
 // Data transformation
-const toNumber = (value: unknown): number => {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-  if (typeof value === 'string') return Number(value.replace(/[$,]/g, '')) || 0;
-  return 0;
-};
-
 const transformPaymentData = (payments: any[]): (PaymentCardProps & { escrowStatus?: string; verified?: boolean; refundable?: boolean; taxYear?: number })[] => {
   if (!Array.isArray(payments)) return [];
   return payments.map(p => ({
-    id: String(p.id),
+    id: p.id,
     date: p.date || new Date().toISOString(),
     project: p.project || 'Untitled Project',
     projectId: p.projectId || `proj_${p.id}`,
     freelancerName: p.freelancer || 'Unknown Freelancer',
     freelancerAvatarUrl: p.freelancerAvatarUrl,
-    amount: toNumber(p.amount),
+    amount: typeof p.amount === 'string' ? Number(p.amount.replace(/[$,]/g, '')) || 0 : Number(p.amount) || 0,
     status: p.status || 'Pending',
     escrowStatus: p.escrowStatus || (p.status === 'Completed' ? 'Released' : 'Held'),
     verified: p.verified || p.status === 'Completed',
@@ -68,7 +61,8 @@ const SORT_OPTIONS = [
 
 const Payments: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const mounted = useMounted();
+  const themed = (mounted && resolvedTheme === 'dark') ? dark : light;
   const { payments: rawPayments, loading, error } = useClientData();
   const payments = useMemo(() => transformPaymentData(rawPayments || []), [rawPayments]);
 
@@ -84,9 +78,6 @@ const Payments: React.FC = () => {
   const [refundRequest, setRefundRequest] = useState<{ paymentId: string; reason: string } | null>(null);
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [refundReason, setRefundReason] = useState('');
-  const [refundSubmitting, setRefundSubmitting] = useState(false);
-  const [refundError, setRefundError] = useState<string | null>(null);
-  const [refundSuccess, setRefundSuccess] = useState<string | null>(null);
 
   // Compute year options dynamically
   const yearOptions = useMemo(() => {
@@ -158,36 +149,14 @@ const Payments: React.FC = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   // Refund handler
-  const closeRefundModal = useCallback(() => {
-    if (refundSubmitting) return;
-    setShowRefundModal(false);
-    setRefundRequest(null);
-    setRefundReason('');
-    setRefundError(null);
-  }, [refundSubmitting]);
-
-  const handleRefundRequest = useCallback(async () => {
-    if (!refundRequest || !refundReason.trim()) return;
-
-    const paymentId = Number(refundRequest.paymentId);
-    if (!Number.isFinite(paymentId) || paymentId <= 0) {
-      setRefundError('This payment cannot be refunded because its payment ID is invalid.');
-      return;
-    }
-
-    setRefundSubmitting(true);
-    setRefundError(null);
-    setRefundSuccess(null);
-    try {
-      await refundsApi.request({ payment_id: paymentId, reason: refundReason.trim() });
+  const handleRefundRequest = useCallback(() => {
+    if (refundRequest && refundReason.trim()) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Refund request submitted:', { paymentId: refundRequest.paymentId, reason: refundReason });
+      }
       setShowRefundModal(false);
       setRefundRequest(null);
       setRefundReason('');
-      setRefundSuccess('Refund request submitted. You can track the review status in your payment history.');
-    } catch (err) {
-      setRefundError(err instanceof Error ? err.message : 'Unable to submit refund request. Please try again.');
-    } finally {
-      setRefundSubmitting(false);
     }
   }, [refundRequest, refundReason]);
 
@@ -224,18 +193,7 @@ const Payments: React.FC = () => {
   }, [kpis, filteredPayments]);
 
   if (error) {
-    return (
-      <PageTransition>
-        <div className={cn(common.page, themed.theme)}>
-          <ErrorBanner
-            title="Failed to load payments"
-            message="There was an issue retrieving your payment history. Please try again."
-            onRetry={() => window.location.reload()}
-            showGoHome={false}
-          />
-        </div>
-      </PageTransition>
-    );
+    return <EmptyState title="Error Loading Payments" description="There was an issue retrieving your payment history. Please try again later." icon={<AlertTriangle size={48} />} animationData={errorAlertAnimation} animationWidth={120} animationHeight={120} />;
   }
 
   return (
@@ -296,15 +254,6 @@ const Payments: React.FC = () => {
             </div>
           </div>
         </ScrollReveal>
-
-        {refundSuccess && (
-          <div role="status" className={cn(common.selectionBar, common.selectionBarVisible)}>
-            <span>{refundSuccess}</span>
-            <Button variant="ghost" size="sm" onClick={() => setRefundSuccess(null)}>
-              Dismiss
-            </Button>
-          </div>
-        )}
 
         {/* Date Range Filter */}
         <ScrollReveal delay={0.25}>
@@ -387,7 +336,7 @@ const Payments: React.FC = () => {
                           size="sm"
                           variant="ghost"
                           className={common.refundBtn}
-                          onClick={() => { setRefundRequest({ paymentId: payment.id, reason: '' }); setRefundError(null); setRefundSuccess(null); setShowRefundModal(true); }}
+                          onClick={() => { setRefundRequest({ paymentId: payment.id, reason: '' }); setShowRefundModal(true); }}
                         >
                           <RefreshCw size={14} /> Request Refund
                         </Button>
@@ -426,7 +375,7 @@ const Payments: React.FC = () => {
         {showRefundModal && (
           <Modal
             isOpen={showRefundModal}
-            onClose={closeRefundModal}
+            onClose={() => { setShowRefundModal(false); setRefundRequest(null); setRefundReason(''); }}
             title="Request Refund"
           >
             <div className={common.refundModal}>
@@ -439,19 +388,13 @@ const Payments: React.FC = () => {
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
                 rows={4}
-                disabled={refundSubmitting}
               />
-              {refundError && (
-                <p role="alert" className={common.refundModalText}>
-                  {refundError}
-                </p>
-              )}
               <div className={common.refundModalActions}>
-                <Button variant="secondary" onClick={closeRefundModal} disabled={refundSubmitting}>
+                <Button variant="secondary" onClick={() => { setShowRefundModal(false); setRefundRequest(null); setRefundReason(''); }}>
                   Cancel
                 </Button>
-                <Button variant="primary" onClick={handleRefundRequest} disabled={!refundReason.trim() || refundSubmitting}>
-                  {refundSubmitting ? 'Submitting...' : 'Submit Refund Request'}
+                <Button variant="primary" onClick={handleRefundRequest} disabled={!refundReason.trim()}>
+                  Submit Refund Request
                 </Button>
               </div>
             </div>

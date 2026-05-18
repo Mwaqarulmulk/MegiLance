@@ -5,18 +5,19 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/app/components/molecules/Toast/use-toast";
+import { useMounted } from "@/app/hooks/useMounted";
 import commonStyles from "./AIMatching.common.module.css";
 import lightStyles from "./AIMatching.light.module.css";
 import darkStyles from "./AIMatching.dark.module.css";
 
 export default function AiMatchingPage() {
   const { resolvedTheme } = useTheme();
+  const mounted = useMounted();
   const router = useRouter();
   const { toast } = useToast();
   const [query, setQuery] = useState("");
 
-  if (!resolvedTheme) return null;
-  const t = resolvedTheme === "light" ? lightStyles : darkStyles;
+  const t = (mounted && resolvedTheme === "dark") ? darkStyles : lightStyles;
 
   const handleMatch = () => {
     if (!query.trim()) {

@@ -10,6 +10,7 @@ import { motion, useInView } from 'framer-motion';
 import TestimonialCard from './TestimonialCard';
 import type { Testimonial } from './TestimonialCard';
 import SectionGlobe from '@/app/components/Animations/SectionGlobe/SectionGlobe';
+import { useMounted } from '@/app/hooks/useMounted';
 import commonStyles from './Testimonials.common.module.css';
 import lightStyles from './Testimonials.light.module.css';
 import darkStyles from './Testimonials.dark.module.css';
@@ -43,7 +44,8 @@ const itemVariants = {
 
 const Testimonials: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 

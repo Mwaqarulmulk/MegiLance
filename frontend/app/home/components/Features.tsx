@@ -9,6 +9,7 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import FeatureCard from './FeatureCard';
 import { LottieAnimation, aiSparkleAnimation } from '../../components/Animations/LottieAnimation';
 import SectionGlobe from '../../components/Animations/SectionGlobe/SectionGlobe';
+import { useMounted } from '@/app/hooks/useMounted';
 import commonStyles from './Features.common.module.css';
 import lightStyles from './Features.light.module.css';
 import darkStyles from './Features.dark.module.css';
@@ -65,7 +66,8 @@ const itemVariants = {
 
 const Features: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   const [heroFeature, ...secondaryFeatures] = featuresData;
   const sectionRef = useRef<HTMLDivElement>(null);

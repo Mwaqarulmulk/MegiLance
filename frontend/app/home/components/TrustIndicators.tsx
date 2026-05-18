@@ -4,6 +4,7 @@
 import React, { useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useMounted } from '@/app/hooks/useMounted';
 import { Shield, Award, Users, Zap, Star } from 'lucide-react'
 import useAnimatedCounter from '@/hooks/useAnimatedCounter';
 
@@ -42,7 +43,8 @@ const securityBadges: SecurityBadge[] = [
 
 const TrustIndicators: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const styles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.trustContainer, styles.trustContainer)}>

@@ -42,16 +42,14 @@ export function ReferralsClient() {
 
   const fetchData = async () => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      
       // Fetch stats
-      const statsRes = await fetch(`${baseUrl}/api/v1/referrals/stats`);
+      const statsRes = await fetch('/api/v1/referrals/stats');
       if (statsRes.ok) {
         setStats(await statsRes.json());
       }
 
       // Fetch list
-      const listRes = await fetch(`${baseUrl}/api/v1/referrals`);
+      const listRes = await fetch('/api/v1/referrals');
       if (listRes.ok) {
         setReferrals(await listRes.json());
       }
@@ -72,8 +70,7 @@ export function ReferralsClient() {
     setMessage(null);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const res = await fetch(`${baseUrl}/api/v1/referrals/invite`, {
+      const res = await fetch('/api/v1/referrals/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: inviteEmail }),

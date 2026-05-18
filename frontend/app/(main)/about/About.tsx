@@ -18,13 +18,15 @@ import {
   DollarSign,
   Lock,
 } from 'lucide-react';
+import { useMounted } from '@/app/hooks/useMounted';
 import common from './About.common.module.css';
 import light from './About.light.module.css';
 import dark from './About.dark.module.css';
 
 const About: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const t = resolvedTheme === 'dark' ? dark : light;
+  const mounted = useMounted();
+  const t = (mounted && resolvedTheme === 'dark') ? dark : light;
   const styles = {
     root: cn(common.root, t.root),
     hero: cn(common.hero, t.hero),

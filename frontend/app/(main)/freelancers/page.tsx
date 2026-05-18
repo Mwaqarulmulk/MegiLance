@@ -6,7 +6,7 @@ import commonStyles from './Freelancers.common.module.css';
 import lightStyles from './Freelancers.light.module.css';
 import darkStyles from './Freelancers.dark.module.css';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 async function fetchFreelancers(query = '', page = 1, pageSize = 20) {
   try {

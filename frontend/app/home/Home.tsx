@@ -15,13 +15,15 @@ import HowItWorks from './components/HowItWorks';
 import Testimonials from './components/Testimonials';
 import { ScrollReveal } from '../components/Animations/ScrollReveal';
 
+import { useMounted } from '@/app/hooks/useMounted';
 import commonStyles from './Home.common.module.css';
 import lightStyles from './Home.light.module.css';
 import darkStyles from './Home.dark.module.css';
 
 const Home: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mounted = useMounted();
+  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.homePage, themeStyles.homePage)}>
