@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from typing import Optional
 import logging
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,16 @@ class ChatMessage(BaseModel):
 class ChatFeedback(BaseModel):
     rating: int
     feedback: Optional[str] = None
+
+
+@router.post("/start")
+async def start_chatbot_conversation(current_user=Depends(get_current_user)):
+    conversation_id = str(uuid.uuid4())
+    return {
+        "conversation_id": conversation_id,
+        "message": "Hello! I'm MegiLance AI. How can I help you today?",
+        "status": "initialized",
+    }
 
 
 @router.post("/chat")

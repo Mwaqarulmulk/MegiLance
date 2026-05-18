@@ -72,6 +72,41 @@ async def create_skill(request: SkillCreate, current_user=Depends(require_admin)
     return {"message": "Skill created", "skill_id": result.get("last_insert_rowid")}
 
 
+@router.get("/freelancers/match")
+async def match_freelancers_by_skill(
+    skill_slug: str = Query(...),
+    industry_slug: Optional[str] = None,
+    limit: int = Query(6, ge=1, le=50),
+):
+    skill_keyword = skill_slug.replace("-", " ").split()[0].lower()
+    result = execute_query(
+        """SELECT u.id, u.name, u.profile_image_url AS avatar,
+                  u.hourly_rate AS rate, u.headline,
+                  COALESCE((SELECT AVG(r.rating) FROM reviews r WHERE r.reviewed_user_id = u.id), 0.0) AS rating,
+                  COALESCE((SELECT COUNT(*) FROM contracts c WHERE c.freelancer_id = u.id AND c.status = 'completed'), 0) AS completedJobs
+           FROM users u
+           WHERE u.user_type = 'freelancer'
+           AND u.is_active = 1
+           AND (LOWER(COALESCE(u.skills, '')) LIKE ? OR LOWER(COALESCE(u.headline, '')) LIKE ?)
+           ORDER BY rating DESC, completedJobs DESC
+           LIMIT ?""",
+        [f"%{skill_keyword}%", f"%{skill_keyword}%", limit],
+    )
+    rows = parse_rows(result)
+    return [
+        {
+            "id": r.get("id"),
+            "name": r.get("name", ""),
+            "avatar": r.get("avatar"),
+            "rate": float(r.get("rate") or 0),
+            "headline": r.get("headline", ""),
+            "rating": round(float(r.get("rating") or 0), 1),
+            "completedJobs": int(r.get("completedJobs") or 0),
+        }
+        for r in (rows or [])
+    ]
+
+
 @router.get("/{skill_id}/questions")
 async def get_skill_questions(skill_id: int, level: str = Query("intermediate")):
     questions = [
