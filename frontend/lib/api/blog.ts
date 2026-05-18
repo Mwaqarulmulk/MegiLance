@@ -1,12 +1,8 @@
 import { BlogPostCardProps } from '@/app/components/Public/BlogPostCard/BlogPostCard';
 
-// Build API URL with proper fallback for production
-const envUrl = process.env.NEXT_PUBLIC_API_URL;
-const API_URL = envUrl 
-  ? (envUrl.endsWith('/api') ? envUrl : `${envUrl}/api`)
-  : (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
-    ? '/api' 
-    : 'http://localhost:8000/api');
+// NEXT_PUBLIC_API_URL already includes /api/v1 suffix — use it directly.
+// Fallback to relative /api/v1 so browser requests route through the ingress.
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/+$/, '');
 
 export interface BlogPost {
   id: string;
