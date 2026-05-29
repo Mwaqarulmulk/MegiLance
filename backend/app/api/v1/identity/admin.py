@@ -87,8 +87,45 @@ async def update_user(user_id: int, request: AdminUserUpdate, current_user=Depen
 
 @router.delete("/users/{user_id}")
 async def delete_user(user_id: int, current_user=Depends(require_admin)):
-    execute_query("DELETE FROM users WHERE id = ?", [user_id])
-    return {"message": "User deleted"}
+    """Soft-delete a user and clean up related data. Prevents self-deletion."""
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+
+    # Check user exists
+    user_result = execute_query("SELECT id, email, name FROM users WHERE id = ?", [user_id])
+    if not user_result or not user_result.get("rows"):
+        raise HTTPException(status_code=404, detail="User not found")
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Soft-delete: deactivate instead of hard delete to preserve referential integrity
+    execute_query(
+        "UPDATE users SET is_active = 0, email = CONCAT(email, '_deleted_', ?), updated_at = ? WHERE id = ?",
+        [str(user_id), now, user_id],
+    )
+
+    # Cancel any active contracts
+    execute_query(
+        "UPDATE contracts SET status = 'cancelled', updated_at = ? WHERE (client_id = ? OR freelancer_id = ?) AND status IN ('pending', 'active')",
+        [now, user_id, user_id],
+    )
+
+    # Withdraw any open proposals
+    execute_query(
+        "UPDATE proposals SET status = 'withdrawn', updated_at = ? WHERE freelancer_id = ? AND status IN ('submitted', 'pending')",
+        [now, user_id],
+    )
+
+    # Cancel open disputes
+    execute_query(
+        "UPDATE disputes SET status = 'closed', updated_at = ? WHERE (claimant_id = ? OR respondent_id = ?) AND status IN ('open', 'in_review')",
+        [now, user_id, user_id],
+    )
+
+    # Log the action
+    logger.info(f"admin_user_deleted admin={current_user.id} target_user={user_id}")
+
+    return {"message": "User deactivated successfully", "user_id": user_id}
 
 
 @router.get("/stats")

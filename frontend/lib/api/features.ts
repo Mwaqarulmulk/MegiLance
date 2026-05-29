@@ -262,13 +262,7 @@ export const proposalTemplatesApi = {
 };
 
 export const gamificationApi = {
-  getMyRank: async () => {
-    try {
-      return await apiFetch('/gamification/my-rank');
-    } catch {
-      return { rank: 'Silver', percentile: 50, points: 1250, level: 3, _isMock: true };
-    }
-  },
+  getMyRank: () => apiFetch('/gamification/my-rank'),
   getBadges: () => apiFetch('/gamification/badges'),
   getLeaderboard: (limit = 10) => apiFetch(`/gamification/leaderboard?limit=${limit}`),
   getAchievements: () => apiFetch('/gamification/achievements'),

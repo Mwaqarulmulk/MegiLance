@@ -26,21 +26,24 @@ class DisputeUpdate(BaseModel):
     resolution_amount: Optional[float] = None
 
 
-class Dispute(DisputeBase):
-    """Schema for dispute response"""
+class Dispute(BaseModel):
+    """Schema for dispute response — matches the disputes table columns"""
     id: int
     contract_id: int
-    raised_by: Optional[int] = None
-    raised_by_id: Optional[int] = None
+    claimant_id: int
+    respondent_id: Optional[int] = None
+    dispute_type: str
+    title: Optional[str] = None
+    description: str
+    evidence: Optional[str] = None
     status: str
     assigned_to: Optional[int] = None
-    assigned_to_id: Optional[int] = None
-    title: Optional[str] = None
-    created_at: datetime
-    resolved_at: Optional[datetime] = None
     resolution: Optional[str] = None
     resolution_amount: Optional[float] = None
-    updated_at: datetime
+    admin_notes: Optional[str] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    resolved_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 

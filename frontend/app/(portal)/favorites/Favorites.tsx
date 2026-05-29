@@ -85,11 +85,11 @@ const Favorites: React.FC = () => {
   const getItemUrl = (favorite: Favorite) => {
     switch (favorite.target_type) {
       case 'project':
-        return `/portal/projects/${favorite.target_id}`;
+        return `/projects/${favorite.target_id}`;
       case 'freelancer':
-        return `/portal/freelancers/${favorite.target_id}`;
+        return `/browse-talent/${favorite.target_id}`;
       case 'client':
-        return `/portal/clients/${favorite.target_id}`;
+        return `/browse-talent/${favorite.target_id}`;
       default:
         return '#';
     }

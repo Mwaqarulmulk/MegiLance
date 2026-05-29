@@ -131,7 +131,9 @@ export function useDashboardData(options?: {
 
       const projectsPromise = userRole === 'client'
         ? api.portal.client.getProjects().catch(() => ({ projects: [] }))
-        : api.portal.freelancer.getProjects().catch(() => ({ projects: [] }));
+        : userRole === 'admin'
+          ? api.admin.getProjects ? api.admin.getProjects().catch(() => ({ projects: [] })) : Promise.resolve({ projects: [] })
+          : api.portal.freelancer.getProjects().catch(() => ({ projects: [] }));
 
       const [statsRes, projectsRes, activityRes, unreadRes] = await Promise.all([
         statsPromise,

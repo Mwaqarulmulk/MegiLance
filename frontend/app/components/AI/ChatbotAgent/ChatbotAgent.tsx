@@ -128,7 +128,7 @@ export default function ChatbotAgent() {
           break;
       }
     } catch(e) {
-      console.log('Audio not supported or permitted yet', e);
+      // Audio not supported or permitted
     }
   }, []);
 

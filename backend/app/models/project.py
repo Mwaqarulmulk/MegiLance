@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from .proposal import Proposal
     from .project_tag import ProjectTag
     from .talent_invitation import TalentInvitation
+    from .contract import Contract
 
 class ProjectCategory(enum.Enum):
     """Project category enumeration"""
@@ -68,5 +69,6 @@ class Project(Base):
     # Relationships
     client: Mapped["User"] = relationship("User", foreign_keys=[client_id])
     proposals: Mapped[List["Proposal"]] = relationship("Proposal", back_populates="project")
+    contracts: Mapped[List["Contract"]] = relationship("Contract", back_populates="project")
     project_tags: Mapped[List["ProjectTag"]] = relationship("ProjectTag", back_populates="project")
     invitations: Mapped[List["TalentInvitation"]] = relationship("TalentInvitation", back_populates="project", cascade="all, delete-orphan")

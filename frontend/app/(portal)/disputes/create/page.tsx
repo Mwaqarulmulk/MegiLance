@@ -1,24 +1,18 @@
+"use client";
 // @AI-HINT: Route page for dispute resolution wizard
-import { Metadata } from 'next';
+import { useSearchParams } from 'next/navigation';
 import DisputeWizard from '@/src/components/wizards/DisputeWizard';
 import commonStyles from './CreateDispute.common.module.css';
+import { useAuth } from '@/hooks/useAuth';
 
-export const metadata: Metadata = {
-  title: 'File Dispute - MegiLance',
-  description: 'Submit a dispute for resolution'
-};
+export default function CreateDisputePage() {
+  const searchParams = useSearchParams();
+  const { user } = useAuth();
 
-export default function CreateDisputePage({
-  searchParams
-}: {
-  searchParams: { contract?: string; project?: string; party?: string }
-}) {
-  const contractId = searchParams.contract || '';
-  const projectName = searchParams.project;
-  const otherPartyName = searchParams.party;
-
-  // Get user ID from session (replace with actual auth)
-  const userId = 'current-user-id';
+  const contractId = searchParams.get('contract') || '';
+  const projectName = searchParams.get('project') || undefined;
+  const otherPartyName = searchParams.get('party') || undefined;
+  const userId = String(user?.id || '');
 
   if (!contractId) {
     return (

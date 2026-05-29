@@ -430,7 +430,8 @@ export default function RateAdvisor() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      setTimeout(() => { setResult(data); setLoading(false); }, 2000);
+      setResult(data);
+      setLoading(false);
     } catch { setLoading(false); }
   };
 

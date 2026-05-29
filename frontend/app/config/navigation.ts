@@ -271,13 +271,30 @@ export const profileMenuItems: ProfileMenuItem[] = [
   { label: "Notifications", href: "/notifications", icon: "FaBell" },
   {
     label: "Logout",
-    onClick: () => {
+    onClick: async () => {
       if (typeof window !== "undefined") {
-        // Clear all auth data and redirect
-        window.localStorage.removeItem("auth_token");
-        window.localStorage.removeItem("refresh_token");
-        window.localStorage.removeItem("user");
-        window.localStorage.removeItem("portal_area");
+        try {
+          // Notify backend to blacklist the token
+          const token = localStorage.getItem("auth_token");
+          if (token) {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/auth/logout`, {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` },
+            }).catch(() => {});
+          }
+        } catch {
+          // Continue with logout even if backend call fails
+        }
+        // Clear all auth data
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("portal_area");
+        localStorage.removeItem("ml_user_role");
+        // Broadcast to other tabs
+        try {
+          window.dispatchEvent(new StorageEvent('storage', { key: 'auth_token', newValue: null }));
+        } catch (e) { console.warn('Logout error:', e); }
         window.location.href = "/login";
       }
     },

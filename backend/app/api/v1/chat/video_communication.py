@@ -103,22 +103,46 @@ async def update_video_call(call_id: int, request: VideoCallUpdate, current_user
 @router.post("/{call_id}/join")
 async def join_video_call(call_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
-        "SELECT id, room_url, status FROM video_calls WHERE id = ?",
+        "SELECT id, host_id, room_url, status FROM video_calls WHERE id = ?",
         [call_id],
     )
     rows = parse_rows(result)
     if not rows:
         raise HTTPException(status_code=404, detail="Video call not found")
 
+    call = rows[0]
+
+    # Check if user is a participant (host or invited)
+    is_host = call["host_id"] == current_user.id
+    if not is_host:
+        participant_result = execute_query(
+            "SELECT id FROM video_call_participants WHERE call_id = ? AND user_id = ?",
+            [call_id, current_user.id],
+        )
+        if not participant_result or not participant_result.get("rows"):
+            raise HTTPException(status_code=403, detail="You are not invited to this video call")
+
     execute_query(
         "UPDATE video_call_participants SET status = 'joined' WHERE call_id = ? AND user_id = ?",
         [call_id, current_user.id],
     )
-    return {"room_url": rows[0]["room_url"], "status": rows[0]["status"]}
+    return {"room_url": call["room_url"], "status": call["status"]}
 
 
 @router.post("/{call_id}/end")
 async def end_video_call(call_id: int, current_user=Depends(get_current_user)):
+    # Only the host can end a video call
+    result = execute_query(
+        "SELECT id, host_id FROM video_calls WHERE id = ?",
+        [call_id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Video call not found")
+
+    if rows[0]["host_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the host can end a video call")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE video_calls SET status = 'ended', updated_at = ? WHERE id = ?",

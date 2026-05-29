@@ -42,34 +42,24 @@ export function clearDraft() {
 }
 
 export async function submitJob(input: CreateJobInput): Promise<CreateJobResult> {
-  // Get token from localStorage
-  const token = typeof window !== 'undefined' ? getAuthToken() : null;
+  const { apiFetch } = await import('@/lib/api/core');
   
-  // Send the job data to the real backend
-  const response = await fetch('/api/client/jobs', {
+  const result = await apiFetch('/projects', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-    },
     body: JSON.stringify({
       title: input.title,
       category: input.category,
-      budgetType: input.budgetType,
-      budget: input.budget,
-      description: input.description,
-      skills: input.skills,
-      timeline: input.timeline
+      budget_type: input.budgetType === 'Fixed' ? 'fixed' : 'hourly',
+      budget_min: input.budgetType === 'Fixed' ? input.budget : null,
+      budget_max: input.budgetType === 'Fixed' ? input.budget : null,
+      skills: Array.isArray(input.skills) ? input.skills.join(',') : input.skills,
+      estimated_duration: input.timeline,
+      description: input.description || '',
+      experience_level: 'intermediate',
     }),
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to submit job');
-  }
-  
-  const result = await response.json();
-  // In a real app, we'd persist server-side. For now, mark draft submitted and clear.
+  }) as { project_id?: number; id?: number };
+
   saveDraft({ status: 'submitted', updatedAt: nowISO() });
   clearDraft();
-  return result;
+  return { id: String(result.project_id || result.id || 0), message: 'Job posted successfully.' };
 }

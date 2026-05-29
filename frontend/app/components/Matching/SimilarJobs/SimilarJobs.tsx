@@ -35,7 +35,6 @@ export default function SimilarJobs({ projectId, description, limit = 3 }: Simil
       
       setLoading(true);
       try {
-        // Try to fetch from API
         const response: any = await (api.matching as any).findJobs?.({ 
             project_id: projectId, 
             description, 
@@ -44,64 +43,9 @@ export default function SimilarJobs({ projectId, description, limit = 3 }: Simil
         
         if (response && response.matches && response.matches.length > 0) {
              setJobs(response.matches);
-        } else {
-            // Fallback to mock data for demo purposes if no matches found (likely empty DB)
-             setJobs([
-                {
-                    id: '1',
-                    title: 'E-commerce Website Redesign',
-                    budget_min: 3000,
-                    budget_max: 5000,
-                    skills: ['React', 'Next.js', 'Tailwind CSS'],
-                    match_score: 0.95
-                },
-                {
-                    id: '2',
-                    title: 'SaaS Dashboard Development',
-                    budget_min: 4000,
-                    budget_max: 7000,
-                    skills: ['Vue.js', 'Firebase', 'Chart.js'],
-                    match_score: 0.88
-                },
-                {
-                    id: '3',
-                    title: 'Corporate Landing Page',
-                    budget_min: 1500,
-                    budget_max: 2500,
-                    skills: ['HTML', 'CSS', 'JavaScript'],
-                    match_score: 0.82
-                }
-            ]);
         }
-       
       } catch {
-         // Fallback to mock data on error
-         setJobs([
-            {
-                id: '1',
-                title: 'E-commerce Website Redesign',
-                budget_min: 3000,
-                budget_max: 5000,
-                skills: ['React', 'Next.js', 'Tailwind CSS'],
-                match_score: 0.95
-            },
-            {
-                id: '2',
-                title: 'SaaS Dashboard Development',
-                budget_min: 4000,
-                budget_max: 7000,
-                skills: ['Vue.js', 'Firebase', 'Chart.js'],
-                match_score: 0.88
-            },
-            {
-                id: '3',
-                title: 'Corporate Landing Page',
-                budget_min: 1500,
-                budget_max: 2500,
-                skills: ['HTML', 'CSS', 'JavaScript'],
-                match_score: 0.82
-            }
-        ]);
+         // Leave jobs empty on error — no mock fallback
       } finally {
         setLoading(false);
       }

@@ -65,36 +65,38 @@ export default function ProjectAICopilot({ onApply }: ProjectAICopilotProps) {
 
     setLoading(true);
     try {
-      // Call the AI endpoint
       const response = await api.aiWriting.generateProjectDescription({
         project_type: prompt,
-        key_features: [], // Let AI infer
+        key_features: [],
         tone: 'professional'
       });
 
-      // Parse the response to extract structured data
-      // Since the current API returns a text block, we might need to parse it or update the API
-      // For now, we'll simulate the structured extraction from the text content
-      // In a real implementation, the API should return JSON
-      
       const content = response.content;
-      
-      // Simple heuristic parsing (this would be better done on backend)
-      const titleMatch = content.match(/# (.*)/);
-      const title = titleMatch ? titleMatch[1] : 'Generated Project';
-      
-      // Mocking the structured return for now as the backend returns text
-      // Ideally we update backend to return structured JSON
-      const mockStructuredData: GeneratedData = {
-        title: title,
-        description: content,
-        skills: ['React', 'Node.js', 'TypeScript'], // Mocked inference
-        category: 'WEB_DEVELOPMENT',
-        budgetMin: '50000',
-        budgetMax: '100000'
-      };
 
-      setGeneratedData(mockStructuredData);
+      // Parse structured data from the AI response text
+      const titleMatch = content.match(/(?:^|\n)# (.+)/m);
+      const title = titleMatch ? titleMatch[1].trim() : 'Generated Project';
+
+      const skillsMatch = content.match(/(?:skills?|technologies|tech stack)[:\s]*\n?((?:[-•]\s*.+\n?)+)/i);
+      const skills = skillsMatch
+        ? skillsMatch[1].split('\n').map((s: string) => s.replace(/^[-•]\s*/, '').trim()).filter(Boolean)
+        : [];
+
+      const categoryMatch = content.match(/(?:category|type)[:\s]*(.+)/i);
+      const category = categoryMatch ? categoryMatch[1].trim().toUpperCase().replace(/\s+/g, '_') : undefined;
+
+      const budgetMatch = content.match(/(?:budget|estimated? cost)[:\s]*[\$₹]?([\d,]+)(?:\s*[-–to]+\s*[\$₹]?([\d,]+))?/i);
+      const budgetMin = budgetMatch ? budgetMatch[1].replace(/,/g, '') : undefined;
+      const budgetMax = budgetMatch && budgetMatch[2] ? budgetMatch[2].replace(/,/g, '') : undefined;
+
+      setGeneratedData({
+        title,
+        description: content,
+        skills: skills.length > 0 ? skills : undefined,
+        category,
+        budgetMin,
+        budgetMax,
+      });
     } catch {
       setGeneratedData(null);
     } finally {

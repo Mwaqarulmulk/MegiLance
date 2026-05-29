@@ -4,71 +4,80 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { FileText, ShieldCheck, UserCheck, Save, CheckCircle } from 'lucide-react';
+import { FileText, ShieldCheck, UserCheck, Save, CheckCircle, AlertCircle } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
 import Textarea from '@/app/components/atoms/Textarea/Textarea';
+import { legalDocsApi } from '@/lib/api';
 
 import commonStyles from './AdminPolicyEditor.common.module.css';
 import lightStyles from './AdminPolicyEditor.light.module.css';
 import darkStyles from './AdminPolicyEditor.dark.module.css';
 
-// Mock policy content
-const mockPolicies = {
-  terms: {
-    title: 'Terms of Service',
-    icon: FileText,
-    content: `Welcome to MegiLance... By using our services, you agree to these terms...`,
-  },
-  privacy: {
-    title: 'Privacy Policy',
-    icon: ShieldCheck,
-    content: `Your privacy is important to us... We collect data to improve our services...`,
-  },
-  kyc: {
-    title: 'KYC Policy',
-    icon: UserCheck,
-    content: `Know Your Customer (KYC) guidelines require us to verify the identity of our users...`,
-  },
-};
+const policyConfig = {
+  terms: { title: 'Terms of Service', icon: FileText },
+  privacy: { title: 'Privacy Policy', icon: ShieldCheck },
+  kyc: { title: 'KYC Policy', icon: UserCheck },
+} as const;
 
-type PolicyType = keyof typeof mockPolicies;
+type PolicyType = keyof typeof policyConfig;
 
 const AdminPolicyEditor: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [selectedPolicy, setSelectedPolicy] = useState<PolicyType>('terms');
   const [content, setContent] = useState('');
+  const [originalContent, setOriginalContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
   useEffect(() => {
-    setContent(mockPolicies[selectedPolicy].content);
+    const fetchPolicy = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const doc = await legalDocsApi.getDocument(selectedPolicy);
+        const docContent = (doc as any)?.content || '';
+        setContent(docContent);
+        setOriginalContent(docContent);
+      } catch (err) {
+        setError('Failed to load policy document');
+        setContent('');
+        setOriginalContent('');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPolicy();
   }, [selectedPolicy]);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // DEFERRED: Requires backend admin policy CRUD API endpoint
-      // await api.admin.updatePolicy(selectedPolicy, content);
+      // DEFERRED: Requires backend admin policy update endpoint
+      // await legalDocsApi.updateDocument(selectedPolicy, { content });
       await new Promise(resolve => setTimeout(resolve, 1500));
-      mockPolicies[selectedPolicy].content = content;
+      setOriginalContent(content);
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
-    } catch (error) {
-      // Handle save error
+    } catch (err) {
+      setError('Failed to save policy document');
     } finally {
       setIsSaving(false);
     }
   };
+
+  const hasChanges = content !== originalContent;
 
   return (
     <div className={cn(commonStyles.editorLayout, themeStyles.editorLayout)}>
       <aside className={cn(commonStyles.sidebar, themeStyles.sidebar)}>
         <h2 className={cn(commonStyles.sidebarTitle, themeStyles.sidebarTitle)}>Policies</h2>
         <nav className={commonStyles.policyNav}>
-          {Object.keys(mockPolicies).map((key) => {
-            const policy = mockPolicies[key as PolicyType];
+          {Object.keys(policyConfig).map((key) => {
+            const policy = policyConfig[key as PolicyType];
             const Icon = policy.icon;
             return (
               <button
@@ -90,7 +99,7 @@ const AdminPolicyEditor: React.FC = () => {
       </aside>
       <main className={commonStyles.mainContent}>
         <div className={cn(commonStyles.editorHeader, themeStyles.editorHeader)}>
-          <h1 className={cn(commonStyles.editorTitle, themeStyles.editorTitle)}>{mockPolicies[selectedPolicy].title}</h1>
+          <h1 className={cn(commonStyles.editorTitle, themeStyles.editorTitle)}>{policyConfig[selectedPolicy].title}</h1>
           <div className={commonStyles.editorActions}>
             {isSaved && (
               <div className={cn(commonStyles.saveConfirmation, themeStyles.saveConfirmation)}>
@@ -98,17 +107,26 @@ const AdminPolicyEditor: React.FC = () => {
                 <span>Saved!</span>
               </div>
             )}
-            <Button variant="primary" onClick={handleSave} disabled={isSaving} iconBefore={isSaving ? undefined : <Save size={16} />}>
+            <Button variant="primary" onClick={handleSave} disabled={isSaving || !hasChanges} iconBefore={isSaving ? undefined : <Save size={16} />}>
               {isSaving ? 'Saving...' : 'Save Policy'}
             </Button>
           </div>
         </div>
-        <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className={cn(commonStyles.editorTextarea, themeStyles.editorTextarea)}
-          wrapperClassName={commonStyles.editorTextareaWrapper}
-        />
+        {loading && <div className="p-8 text-center">Loading policy...</div>}
+        {error && (
+          <div className="p-8 text-center text-red-500 flex items-center justify-center gap-2">
+            <AlertCircle size={18} />
+            <span>{error}</span>
+          </div>
+        )}
+        {!loading && !error && (
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className={cn(commonStyles.editorTextarea, themeStyles.editorTextarea)}
+            wrapperClassName={commonStyles.editorTextareaWrapper}
+          />
+        )}
       </main>
     </div>
   );

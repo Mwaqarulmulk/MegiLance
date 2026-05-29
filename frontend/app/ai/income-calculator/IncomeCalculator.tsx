@@ -378,7 +378,8 @@ export default function IncomeCalculator() {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       const data = await res.json();
-      setTimeout(() => { setResult(data); setLoading(false); }, 2200);
+      setResult(data);
+      setLoading(false);
     } catch { setLoading(false); }
   };
 

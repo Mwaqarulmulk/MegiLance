@@ -1,7 +1,7 @@
 // @AI-HINT: AI Copilot for generating proposals
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Bot, Sparkles, X, Check } from 'lucide-react';
@@ -29,6 +29,25 @@ export default function ProposalAICopilot({
   const [loading, setLoading] = useState(false);
   const [tone, setTone] = useState('professional');
   const [generatedContent, setGeneratedContent] = useState('');
+  const [userSkills, setUserSkills] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const { apiFetch } = await import('@/lib/api/core');
+        const response: any = await apiFetch('/skills');
+        const skills = Array.isArray(response?.items)
+          ? response.items.map((s: any) => typeof s === 'string' ? s : s.name || s.skill || '')
+          : Array.isArray(response)
+            ? response.map((s: any) => typeof s === 'string' ? s : s.name || s.skill || '')
+            : [];
+        setUserSkills(skills.filter(Boolean));
+      } catch {
+        // Skills unavailable, continue without them
+      }
+    };
+    fetchSkills();
+  }, []);
 
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
   const styles = {
@@ -43,12 +62,10 @@ export default function ProposalAICopilot({
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      // In a real app, we would get user skills/experience from their profile
-      // For now, we'll mock them or let the backend handle it if it has access to current_user
       const response = await api.aiWriting.generateProposal({
         project_title: projectTitle,
         project_description: projectDescription,
-        user_skills: ['React', 'Next.js', 'TypeScript'], // This should come from user profile
+        user_skills: userSkills,
         tone: tone
       });
 

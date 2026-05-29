@@ -12,7 +12,7 @@ class PaymentBase(BaseModel):
     amount: float = Field(gt=0, description="Payment amount")
     currency: str = "USD"
     status: Optional[str] = "pending"
-    transaction_hash: Optional[str] = None
+    blockchain_tx_hash: Optional[str] = None
     description: Optional[str] = None
 
 
@@ -38,7 +38,7 @@ class PaymentCreate(BaseModel):
 
 class PaymentUpdate(BaseModel):
     status: Optional[str] = Field(default=None, description="New payment status")
-    transaction_hash: Optional[str] = Field(
+    blockchain_tx_hash: Optional[str] = Field(
         default=None, description="Blockchain transaction hash"
     )
     description: Optional[str] = Field(default=None, description="Updated description")
@@ -47,10 +47,8 @@ class PaymentUpdate(BaseModel):
 class PaymentRead(PaymentBase):
     id: int
     contract_id: Optional[int]
-    from_user_id: int
-    to_user_id: int
-    stripe_client_secret: Optional[str] = None
-    stripe_payment_id: Optional[str] = None
+    from_user_id: Optional[int] = None
+    to_user_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
 

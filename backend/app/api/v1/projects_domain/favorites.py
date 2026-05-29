@@ -37,6 +37,23 @@ async def list_favorites(current_user=Depends(get_current_user)):
 
 @router.post("/")
 async def add_favorite(request: FavoriteCreate, current_user=Depends(get_current_user)):
+    # Check for duplicate
+    conditions = ["user_id = ?"]
+    params = [current_user.id]
+    if request.project_id:
+        conditions.append("project_id = ?")
+        params.append(request.project_id)
+    if request.freelancer_id:
+        conditions.append("freelancer_id = ?")
+        params.append(request.freelancer_id)
+
+    existing = execute_query(
+        f"SELECT id FROM favorites WHERE {' AND '.join(conditions)}",
+        params,
+    )
+    if existing and parse_rows(existing):
+        raise HTTPException(status_code=409, detail="Already in favorites")
+
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO favorites (user_id, project_id, freelancer_id, created_at) VALUES (?, ?, ?, ?)",

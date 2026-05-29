@@ -1,5 +1,5 @@
 # @AI-HINT: Scope change request model for contract modification proposals
-from sqlalchemy import String, Float, DateTime, Text, ForeignKey
+from sqlalchemy import String, Numeric, DateTime, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
@@ -19,8 +19,8 @@ class ScopeChangeRequest(Base):
     description: Mapped[str] = mapped_column(Text)
     reason: Mapped[str] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="pending") # pending, approved, rejected, cancelled
-    old_amount: Mapped[float] = mapped_column(Float, nullable=True)
-    new_amount: Mapped[float] = mapped_column(Float, nullable=True)
+    old_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=True)
+    new_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=True)
     old_deadline: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     new_deadline: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))

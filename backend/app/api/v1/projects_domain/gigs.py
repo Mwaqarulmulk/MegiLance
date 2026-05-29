@@ -350,6 +350,11 @@ def create_order(order_data: dict, current_user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Gig not found")
 
     gig = parse_rows(gig_result)[0]
+
+    # Prevent seller from buying their own gig
+    if gig["seller_id"] == user_id:
+        raise HTTPException(status_code=400, detail="You cannot order your own gig")
+
     price = gig.get(f"{package}_price", 0)
     delivery_days = gig.get(f"{package}_delivery_days", 3)
 
@@ -386,6 +391,21 @@ def get_orders(current_user=Depends(get_current_user)):
 def deliver_order(order_id: int, delivery_data: dict, current_user=Depends(get_current_user)):
     """Submit delivery for an order"""
     user_id = current_user.get("user_id")
+
+    # Verify the user is the seller for this order
+    order_result = execute_query(
+        "SELECT id, seller_id, status FROM gig_orders WHERE id = ?",
+        [order_id],
+    )
+    if not order_result or not order_result.get("rows"):
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order = parse_rows(order_result)[0]
+    if order["seller_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Only the seller can deliver this order")
+    if order["status"] not in ("pending", "active", "revision_requested"):
+        raise HTTPException(status_code=400, detail=f"Cannot deliver order in '{order['status']}' status")
+
     result = execute_query(
         """INSERT INTO gig_deliveries (order_id, seller_id, delivery_message, files, created_at)
            VALUES (?, ?, ?, ?, ?)""",
@@ -393,13 +413,30 @@ def deliver_order(order_id: int, delivery_data: dict, current_user=Depends(get_c
          json.dumps(delivery_data.get("files", [])),
          datetime.now(timezone.utc).isoformat()]
     )
-    execute_query("UPDATE gig_orders SET status = 'delivered' WHERE id = ?", [order_id])
+    execute_query("UPDATE gig_orders SET status = 'delivered', delivered_at = ? WHERE id = ?",
+                  [datetime.now(timezone.utc).isoformat(), order_id])
     return {"status": "delivered"}
 
 
 @router.post("/orders/{order_id}/accept")
 def accept_delivery(order_id: int, current_user=Depends(get_current_user)):
     """Accept a delivery"""
+    user_id = current_user.get("user_id")
+
+    # Verify the user is the buyer for this order
+    order_result = execute_query(
+        "SELECT id, buyer_id, status FROM gig_orders WHERE id = ?",
+        [order_id],
+    )
+    if not order_result or not order_result.get("rows"):
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order = parse_rows(order_result)[0]
+    if order["buyer_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Only the buyer can accept a delivery")
+    if order["status"] != "delivered":
+        raise HTTPException(status_code=400, detail="Order must be in 'delivered' status to accept")
+
     execute_query("UPDATE gig_orders SET status = 'completed', completed_at = ? WHERE id = ?",
                   [datetime.now(timezone.utc).isoformat(), order_id])
     return {"status": "completed"}
@@ -408,10 +445,26 @@ def accept_delivery(order_id: int, current_user=Depends(get_current_user)):
 @router.post("/orders/{order_id}/revision")
 def request_revision(order_id: int, revision_data: dict, current_user=Depends(get_current_user)):
     """Request a revision"""
+    user_id = current_user.get("user_id")
+
+    # Verify the user is the buyer for this order
+    order_result = execute_query(
+        "SELECT id, buyer_id, status FROM gig_orders WHERE id = ?",
+        [order_id],
+    )
+    if not order_result or not order_result.get("rows"):
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order = parse_rows(order_result)[0]
+    if order["buyer_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Only the buyer can request a revision")
+    if order["status"] != "delivered":
+        raise HTTPException(status_code=400, detail="Order must be in 'delivered' status to request revision")
+
     execute_query(
         """INSERT INTO gig_revisions (order_id, buyer_id, revision_message, created_at)
            VALUES (?, ?, ?, ?)""",
-        [order_id, current_user.get("user_id"),
+        [order_id, user_id,
          revision_data.get("message", ""), datetime.now(timezone.utc).isoformat()]
     )
     execute_query("UPDATE gig_orders SET status = 'revision_requested' WHERE id = ?", [order_id])

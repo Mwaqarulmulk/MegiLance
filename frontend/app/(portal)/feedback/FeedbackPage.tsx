@@ -106,8 +106,7 @@ export default function FeedbackPage() {
       });
       setSubmitted(true);
     } catch (err: any) {
-      // Even if API fails, show success (feedback stored locally in UX)
-      setSubmitted(true);
+      setError(err?.message || 'Failed to submit feedback. Please try again.');
     } finally {
       setSubmitting(false);
     }

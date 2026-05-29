@@ -103,7 +103,7 @@ from .v1.identity import admin, api_keys, auth, social_login, users, verificatio
 from .v1.payments_domain import (
     escrow,
     invoices,
-    multicurrency,
+    multi_currency,
     pakistan_payments,
     payout_methods,
     payments,
@@ -462,7 +462,7 @@ api_router.include_router(video_communication.router)
 
 # Multi-Currency Payments
 api_router.include_router(
-    multicurrency.router, prefix="/multicurrency", tags=["multicurrency"]
+    multi_currency.router, prefix="/multicurrency", tags=["multicurrency"]
 )
 
 # Advanced AI - ML-powered features

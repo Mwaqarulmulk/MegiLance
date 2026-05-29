@@ -336,6 +336,8 @@ async def freelancer_withdraw(data: dict, current_user=Depends(get_current_user)
     amount = data.get("amount", 0)
     if amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
+    if amount > 50000:
+        raise HTTPException(status_code=400, detail="Maximum single withdrawal is $50,000")
 
     balance = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
     rows = parse_rows(balance)
@@ -345,10 +347,12 @@ async def freelancer_withdraw(data: dict, current_user=Depends(get_current_user)
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
     now = datetime.now(timezone.utc).isoformat()
+
+    # Create pending withdrawal transaction (balance deducted immediately for withdrawals)
     execute_query("UPDATE users SET account_balance = account_balance - ? WHERE id = ?", [amount, current_user.id])
     execute_query(
-        "INSERT INTO wallet_transactions (user_id, type, amount, description, created_at) VALUES (?, 'withdrawal', ?, ?, ?)",
+        "INSERT INTO wallet_transactions (user_id, type, amount, description, status, created_at) VALUES (?, 'withdrawal', ?, ?, 'pending', ?)",
         [current_user.id, amount, f"Withdrawal of ${amount}", now],
     )
 
-    return {"message": "Withdrawal processed", "amount": amount}
+    return {"message": "Withdrawal processed", "amount": amount, "status": "pending"}

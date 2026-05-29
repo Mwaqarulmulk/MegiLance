@@ -115,8 +115,9 @@ export default function ProjectProposalsPage() {
           p.id === proposalId ? { ...p, status: "accepted" } : p,
         ),
       );
-    } catch {
-      // silently handle
+    } catch (e) {
+      console.error("Failed to accept proposal:", e);
+      alert("Failed to accept proposal. Please try again.");
     } finally {
       setAccepting(null);
     }
@@ -131,8 +132,9 @@ export default function ProjectProposalsPage() {
           p.id === proposalId ? { ...p, status: "rejected" } : p,
         ),
       );
-    } catch {
-      // silently handle
+    } catch (e) {
+      console.error("Failed to reject proposal:", e);
+      alert("Failed to reject proposal. Please try again.");
     } finally {
       setRejecting(null);
     }

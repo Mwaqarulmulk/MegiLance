@@ -70,23 +70,30 @@ async def list_transactions(
 
 @router.post("/deposit")
 async def deposit(request: DepositRequest, current_user=Depends(get_current_user)):
+    """Initiate a deposit. Balance is only updated after payment gateway confirmation."""
     if request.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
+    if request.amount > 10000:
+        raise HTTPException(status_code=400, detail="Maximum single deposit is $10,000")
 
     now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-        [request.amount, current_user.id],
-    )
-    execute_query(
-        """INSERT INTO wallet_transactions (user_id, type, amount, description, status, created_at)
-           VALUES (?, 'deposit', ?, ?, 'completed', ?)""",
-        [current_user.id, request.amount, f"Deposit via {request.method}", now],
+
+    # Create a pending payment (balance NOT modified yet)
+    result = execute_query(
+        """INSERT INTO payments (client_id, amount, currency, payment_method, status, description, created_at, updated_at)
+           VALUES (?, ?, 'USD', ?, 'pending', ?, ?, ?)""",
+        [current_user.id, request.amount, request.method, f"Deposit via {request.method}", now, now],
     )
 
-    result = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
-    rows = parse_rows(result)
-    return {"message": "Deposit successful", "balance": rows[0]["account_balance"] if rows else 0}
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to initiate deposit")
+
+    return {
+        "message": "Deposit initiated — complete payment to add funds",
+        "payment_id": result.get("last_insert_rowid"),
+        "amount": request.amount,
+        "status": "pending",
+    }
 
 
 @router.post("/withdraw")

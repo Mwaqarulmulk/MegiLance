@@ -120,7 +120,7 @@ const UserDisputeDetailsPage: React.FC = () => {
       <div className={cn(styles.container, styles.errorState)}>
         <h2>Error Loading Dispute</h2>
         <p>{error || 'Dispute not found'}</p>
-        <Button variant="primary" onClick={() => router.push('/portal/dashboard')}>
+        <Button variant="primary" onClick={() => router.push('/client/dashboard')}>
           Back to Dashboard
         </Button>
       </div>

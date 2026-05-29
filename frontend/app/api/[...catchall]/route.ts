@@ -19,7 +19,6 @@ async function handler(request: NextRequest) {
   
   // Build the backend URL
   const backendUrl = `${BACKEND_URL}${path}${search}`;
-  console.log(`[PROXY] Forwarding ${request.method} ${request.url} to ${backendUrl}`);
   
   // Forward headers, excluding host
   const headers = new Headers();

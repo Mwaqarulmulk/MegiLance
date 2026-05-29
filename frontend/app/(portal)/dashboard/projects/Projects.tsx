@@ -18,6 +18,7 @@ interface Project {
   status: 'In Progress' | 'Review' | 'Completed' | 'Overdue';
   progress: number;
   budget: string;
+  skills?: string[];
 }
 
 const STATUSES = ['All', 'In Progress', 'Review', 'Completed', 'Overdue'] as const;
@@ -40,6 +41,7 @@ const Projects: React.FC = () => {
       status: p.status,
       progress: p.progress,
       budget: p.budget || '$0',
+      skills: (p as any).skills || [],
     }));
   }, [data]);
 
@@ -111,8 +113,16 @@ const Projects: React.FC = () => {
                   </svg>
                 </div>
                 <div className={common.chips}>
-                  <span className={cn(common.chip, themed.chip)}>Design</span>
-                  <span className={cn(common.chip, themed.chip)}>Frontend</span>
+                  {p.skills && p.skills.length > 0 ? (
+                    p.skills.slice(0, 3).map((skill, i) => (
+                      <span key={i} className={cn(common.chip, themed.chip)}>{skill}</span>
+                    ))
+                  ) : (
+                    <>
+                      <span className={cn(common.chip, themed.chip)}>Project</span>
+                      <span className={cn(common.chip, themed.chip)}>{p.status}</span>
+                    </>
+                  )}
                 </div>
                 <div className={common.actions}>
                   <button className={cn(common.button, themed.button)} aria-label={`Open ${p.title}`}>Open</button>

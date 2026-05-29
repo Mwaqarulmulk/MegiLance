@@ -334,15 +334,8 @@ const AdminDashboard: React.FC = () => {
             percentage: Math.round((g.count / totalUsers) * 100),
           })));
         } else {
-          // Show mock data if API fails or returns no data
-          setGeoData([
-            { country: 'United States', code: 'US', users: 1234, revenue: 0, percentage: 35 },
-            { country: 'United Kingdom', code: 'GB', users: 892, revenue: 0, percentage: 25 },
-            { country: 'Canada', code: 'CA', users: 567, revenue: 0, percentage: 16 },
-            { country: 'Germany', code: 'DE', users: 445, revenue: 0, percentage: 13 },
-            { country: 'Australia', code: 'AU', users: 278, revenue: 0, percentage: 8 },
-            { country: 'India', code: 'IN', users: 109, revenue: 0, percentage: 3 },
-          ]);
+          // No geo data available from API — show empty state
+          setGeoData([]);
         }
 
         if (fraudRes && Array.isArray(fraudRes)) {
@@ -356,15 +349,8 @@ const AdminDashboard: React.FC = () => {
           })));
         }
       } catch {
-        // Graceful degradation with mock geo data
-        setGeoData([
-          { country: 'United States', code: 'US', users: 1234, revenue: 0, percentage: 35 },
-          { country: 'United Kingdom', code: 'GB', users: 892, revenue: 0, percentage: 25 },
-          { country: 'Canada', code: 'CA', users: 567, revenue: 0, percentage: 16 },
-          { country: 'Germany', code: 'DE', users: 445, revenue: 0, percentage: 13 },
-          { country: 'Australia', code: 'AU', users: 278, revenue: 0, percentage: 8 },
-          { country: 'India', code: 'IN', users: 109, revenue: 0, percentage: 3 },
-        ]);
+        // Graceful degradation — show empty state instead of fake data
+        setGeoData([]);
       }
     }
     loadExtras();

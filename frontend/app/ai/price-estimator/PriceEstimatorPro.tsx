@@ -405,13 +405,6 @@ export default function PriceEstimatorPro() {
     setResult(null);
     setError(null);
 
-    // Animate processing steps
-    const timers = [
-      setTimeout(() => setProcessingStep(1), 600),
-      setTimeout(() => setProcessingStep(2), 1400),
-      setTimeout(() => setProcessingStep(3), 2200),
-    ];
-
     try {
       const body = {
         category: selectedCategory,
@@ -441,13 +434,10 @@ export default function PriceEstimatorPro() {
       }
 
       const data: EstimateResult = await res.json();
-      // Min delay so the processing animation is visible
-      await new Promise(r => setTimeout(r, 800));
       setResult(data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Estimation failed');
     } finally {
-      timers.forEach(clearTimeout);
       setLoadingEstimate(false);
     }
   }, [selectedCategory, selectedService, experienceLevel, region, urgency, qualityTier, scope, estimatedHours, description, features, teamSize, clientCountry, freelancerCountry]);

@@ -361,10 +361,10 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
           <span className={themeStyles.contractId}>Contract #{contractId}</span>
         </div>
         <div className={commonStyles.headerActions}>
-          <Button variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" onClick={() => alert('Invite member feature coming soon')}>
             Invite Member
           </Button>
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={() => alert('Activity log feature coming soon')}>
             Activity Log
           </Button>
           <Button
@@ -433,7 +433,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               {activeTab === "kanban" && (
                 <div className={commonStyles.kanbanContainer}>
                   <div className={commonStyles.kanbanHeader}>
-                    <Button variant="primary" size="sm">
+                    <Button variant="primary" size="sm" onClick={() => alert('Add task feature coming soon')}>
                       + Add Task
                     </Button>
                   </div>
@@ -514,7 +514,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               {activeTab === "files" && (
                 <div className={commonStyles.filesContainer}>
                   <div className={commonStyles.filesHeader}>
-                    <Button variant="primary" size="sm">
+                    <Button variant="primary" size="sm" onClick={() => alert('File upload feature coming soon')}>
                       📤 Upload File
                     </Button>
                   </div>
@@ -547,7 +547,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
                           </p>
                         </div>
                         <div className={commonStyles.fileActions}>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={() => alert('Download feature coming soon')}>
                             Download
                           </Button>
                         </div>
@@ -561,7 +561,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               {activeTab === "discussions" && (
                 <div className={commonStyles.discussionsContainer}>
                   <div className={commonStyles.discussionsHeader}>
-                    <Button variant="primary" size="sm">
+                    <Button variant="primary" size="sm" onClick={() => alert('New discussion feature coming soon')}>
                       + New Discussion
                     </Button>
                   </div>

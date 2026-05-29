@@ -50,7 +50,7 @@ def _project_from_row(row: list) -> dict:
         "budget_min": float(_get_val(row, 5) or 0),
         "budget_max": float(_get_val(row, 6) or 0),
         "skills": _safe_str(_get_val(row, 7)),
-        "duration": _safe_str(_get_val(row, 8)),
+        "estimated_duration": _safe_str(_get_val(row, 8)),
         "experience_level": _safe_str(_get_val(row, 9)),
         "status": _safe_str(_get_val(row, 10)),
         "client_id": _safe_str(_get_val(row, 11)),
@@ -82,7 +82,7 @@ async def list_projects(
 
     sql = f"""
         SELECT p.id, p.title, p.description, p.category, p.budget_type,
-               p.budget_min, p.budget_max, p.skills, p.duration, p.experience_level,
+               p.budget_min, p.budget_max, p.skills, p.estimated_duration, p.experience_level,
                p.status, p.client_id, p.created_at, p.updated_at,
                (SELECT COUNT(*) FROM proposals pr WHERE pr.project_id = p.id) as proposals_count,
                u.name as client_name
@@ -118,7 +118,7 @@ async def list_projects(
 async def my_projects(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT p.id, p.title, p.description, p.category, p.budget_type,
-                  p.budget_min, p.budget_max, p.skills, p.duration, p.experience_level,
+                  p.budget_min, p.budget_max, p.skills, p.estimated_duration, p.experience_level,
                   p.status, p.client_id, p.created_at, p.updated_at,
                   (SELECT COUNT(*) FROM proposals pr WHERE pr.project_id = p.id) as proposals_count,
                   u.name as client_name
@@ -136,7 +136,7 @@ async def my_projects(current_user=Depends(get_current_user)):
 async def get_project(project_id: str):
     result = execute_query(
         """SELECT p.id, p.title, p.description, p.category, p.budget_type,
-                  p.budget_min, p.budget_max, p.skills, p.duration, p.experience_level,
+                  p.budget_min, p.budget_max, p.skills, p.estimated_duration, p.experience_level,
                   p.status, p.client_id, p.created_at, p.updated_at,
                   (SELECT COUNT(*) FROM proposals pr WHERE pr.project_id = p.id) as proposals_count,
                   u.name as client_name

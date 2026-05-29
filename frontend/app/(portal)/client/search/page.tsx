@@ -165,7 +165,11 @@ export default function ClientSearchPage() {
   }, [sortedFreelancers, currentPage]);
 
   const toggleFavorite = useCallback((id: string) => {
-    setFavorites(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    setFavorites(prev => {
+      const n = new Set(prev);
+      if (n.has(id)) { n.delete(id); } else { n.add(id); }
+      return n;
+    });
   }, []);
 
   const clearFilters = useCallback(() => {

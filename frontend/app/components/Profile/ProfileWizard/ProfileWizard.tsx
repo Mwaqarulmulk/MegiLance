@@ -359,7 +359,7 @@ export default function ProfileWizard() {
       } as unknown as Record<string, unknown>);
       try {
         localStorage.setItem("onboarding_complete", "true");
-      } catch {}
+      } catch (e) { console.error('Profile save error:', e); }
       setCompleted(true);
     } catch (error: any) {
       setErrors({ general: error.message || "Failed to save profile" });

@@ -37,16 +37,39 @@ def list_freelancers(
     """List/search freelancers with filtering and pagination"""
     offset = (page - 1) * page_size
 
+    # Build WHERE clause and params for the search service
+    conditions = ["u.user_type = 'freelancer'"]
+    params: list = []
+
+    if search:
+        conditions.append("(u.name LIKE ? OR u.bio LIKE ? OR u.skills LIKE ?)")
+        params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
+    if min_rate is not None:
+        conditions.append("u.hourly_rate >= ?")
+        params.append(min_rate)
+    if max_rate is not None:
+        conditions.append("u.hourly_rate <= ?")
+        params.append(max_rate)
+    if category:
+        conditions.append("u.industry_focus LIKE ?")
+        params.append(f"%{category}%")
+    if experience_level:
+        conditions.append("u.experience_level = ?")
+        params.append(experience_level)
+    if availability:
+        conditions.append("u.availability_status = ?")
+        params.append(availability)
+
+    where_clause = " AND ".join(conditions)
+
+    # Append LIMIT and OFFSET to params (search service expects them at end)
+    sort_key = sort_by or "newest"
+    params.extend([page_size, offset])
+
     result = search_freelancers_advanced(
-        query=search or "",
-        min_rate=min_rate,
-        max_rate=max_rate,
-        category=category,
-        experience_level=experience_level,
-        availability=availability,
-        sort_by=sort_by or "newest",
-        limit=page_size,
-        offset=offset,
+        where_clause=where_clause,
+        params=params,
+        sort=sort_key,
     )
 
     items = result.get("items", [])
@@ -65,7 +88,7 @@ def list_freelancers(
 
     return {
         "items": items,
-        "total": result.get("total", 0),
+        "total": result.get("total_count", 0),
         "page": page,
         "page_size": page_size,
         "facets": result.get("facets", {}),

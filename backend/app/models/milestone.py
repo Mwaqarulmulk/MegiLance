@@ -1,6 +1,6 @@
 # @AI-HINT: Milestone model for contract payment phases with submission and approval tracking
 """Milestone models for MegiLance platform"""
-from sqlalchemy import String, Integer, Text, Float, DateTime, ForeignKey
+from sqlalchemy import String, Integer, Text, Numeric, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
@@ -31,7 +31,7 @@ class Milestone(Base):
     contract_id: Mapped[int] = mapped_column(ForeignKey("contracts.id"), index=True)
     title: Mapped[str] = mapped_column(String(255))
     description: Mapped[str] = mapped_column(Text)
-    amount: Mapped[float] = mapped_column(Float)
+    amount: Mapped[float] = mapped_column(Numeric(12, 2))
     due_date: Mapped[datetime] = mapped_column(DateTime)
     status: Mapped[str] = mapped_column(String(20), default=MilestoneStatus.PENDING.value, index=True)
     deliverables: Mapped[str] = mapped_column(Text, nullable=True)  # JSON string

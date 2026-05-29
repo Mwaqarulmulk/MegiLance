@@ -1,166 +1,144 @@
-# @AI-HINT: Database seeding script - populates demo/development data for users, projects, skills
+# @AI-HINT: Database seeding script — populates demo/development data using Turso HTTP API
 import logging
-from app.db.session import engine
-from app.db.base import Base
-from app.models.user import User
-from app.models.project import Project
-from app.models.proposal import Proposal
-from app.models.portfolio import PortfolioItem
-from app.core.security import get_password_hash
+import json
 from datetime import datetime, timezone
+from app.db.turso_http import execute_query, parse_rows
+from app.core.security import get_password_hash
+
 logger = logging.getLogger(__name__)
 
+
 def seed_database():
-    # Create tables
-    Base.metadata.create_all(bind=engine)
-    
-    # Create a session
-    from app.db.session import SessionLocal
-    db = SessionLocal()
-    
-    try:
-        # Check if data already exists
-        if db.query(User).first():
-            logger.info("Database already seeded. Skipping...")
-            return
-        
-        # Create sample users
-        freelancer1 = User(
-            email="freelancer1@example.com",
-            hashed_password=get_password_hash("password123"),
-            is_active=True,
-            name="Alice Johnson",
-            user_type="Freelancer",
-            bio="Experienced full-stack developer with 5+ years of experience in React, Node.js, and Python.",
-            skills="React,Node.js,Python,PostgreSQL,MongoDB",
-            hourly_rate=50.0,
-            profile_image_url="/avatars/alice.png",
-            location="San Francisco, CA",
-            joined_at=datetime.now(timezone.utc)
+    """Seed the database with demo data using Turso HTTP API."""
+    # Check if data already exists
+    existing = execute_query("SELECT COUNT(*) as cnt FROM users")
+    rows = parse_rows(existing) if existing else []
+    count = rows[0].get("cnt", 0) if rows else 0
+
+    if count > 0:
+        logger.info(f"Database already has {count} users. Skipping seed.")
+        return
+
+    now = datetime.now(timezone.utc).isoformat()
+    logger.info("Seeding database with demo data...")
+
+    # Create sample users
+    users = [
+        {
+            "email": "freelancer1@example.com",
+            "name": "Alice Johnson",
+            "user_type": "freelancer",
+            "role": "freelancer",
+            "bio": "Experienced full-stack developer with 5+ years of experience in React, Node.js, and Python.",
+            "skills": json.dumps(["React", "Node.js", "Python", "PostgreSQL", "MongoDB"]),
+            "hourly_rate": 50.0,
+            "location": "San Francisco, CA",
+            "headline": "Full-Stack Developer | React & Node.js Expert",
+        },
+        {
+            "email": "freelancer2@example.com",
+            "name": "Bob Smith",
+            "user_type": "freelancer",
+            "role": "freelancer",
+            "bio": "UI/UX designer with expertise in creating beautiful and functional user interfaces.",
+            "skills": json.dumps(["UI/UX", "Design", "Figma", "Adobe XD", "Prototyping"]),
+            "hourly_rate": 45.0,
+            "location": "New York, NY",
+            "headline": "UI/UX Designer | Creating Delightful Experiences",
+        },
+        {
+            "email": "client1@example.com",
+            "name": "Tech Corp",
+            "user_type": "client",
+            "role": "client",
+            "bio": "Innovative tech company looking for talented freelancers.",
+            "skills": json.dumps([]),
+            "hourly_rate": 0,
+            "location": "Los Angeles, CA",
+            "headline": "Building the Future of Technology",
+        },
+    ]
+
+    user_ids = []
+    for u in users:
+        result = execute_query(
+            """INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified,
+                      name, user_type, role, bio, skills, hourly_rate, location, headline,
+                      profile_data, two_factor_enabled, account_balance, joined_at, created_at, updated_at)
+               VALUES (?, ?, 1, 0, 1, ?, ?, ?, ?, ?, ?, ?, ?, '{}', 0, 0, ?, ?, ?)""",
+            [
+                u["email"],
+                get_password_hash("password123"),
+                u["name"],
+                u["user_type"],
+                u["role"],
+                u["bio"],
+                u["skills"],
+                u["hourly_rate"],
+                u["location"],
+                u["headline"],
+                now,
+                now,
+                now,
+            ],
         )
-        
-        freelancer2 = User(
-            email="freelancer2@example.com",
-            hashed_password=get_password_hash("password123"),
-            is_active=True,
-            name="Bob Smith",
-            user_type="Freelancer",
-            bio="UI/UX designer with expertise in creating beautiful and functional user interfaces.",
-            skills="UI/UX,Design,Figma,Adobe XD,Prototyping",
-            hourly_rate=45.0,
-            profile_image_url="/avatars/bob.jpg",
-            location="New York, NY",
-            joined_at=datetime.now(timezone.utc)
+        if result:
+            id_result = execute_query("SELECT last_insert_rowid() as id")
+            id_rows = parse_rows(id_result) if id_result else []
+            user_ids.append(id_rows[0]["id"] if id_rows else 0)
+
+    if len(user_ids) < 3:
+        logger.error("Failed to create seed users")
+        return
+
+    freelancer1_id, freelancer2_id, client1_id = user_ids[0], user_ids[1], user_ids[2]
+
+    # Create sample projects
+    projects = [
+        {
+            "title": "E-commerce Website Development",
+            "description": "Build a modern e-commerce website with React frontend and Node.js backend.",
+            "category": "Web Development",
+            "budget_type": "fixed",
+            "budget_min": 5000.0,
+            "budget_max": 10000.0,
+            "experience_level": "intermediate",
+            "estimated_duration": "1-4 weeks",
+            "skills": json.dumps(["React", "Node.js", "PostgreSQL", "Stripe"]),
+            "client_id": client1_id,
+        },
+        {
+            "title": "Mobile App UI Design",
+            "description": "Design a beautiful and intuitive UI for our new mobile application.",
+            "category": "Design & Creative",
+            "budget_type": "fixed",
+            "budget_min": 2000.0,
+            "budget_max": 4000.0,
+            "experience_level": "entry",
+            "estimated_duration": "Less than 1 week",
+            "skills": json.dumps(["UI/UX", "Figma", "Prototyping"]),
+            "client_id": client1_id,
+        },
+    ]
+
+    project_ids = []
+    for p in projects:
+        result = execute_query(
+            """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
+                      experience_level, estimated_duration, skills, client_id, status, proposals_count, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', 0, ?, ?)""",
+            [p["title"], p["description"], p["category"], p["budget_type"],
+             p["budget_min"], p["budget_max"], p["experience_level"],
+             p["estimated_duration"], p["skills"], p["client_id"], now, now],
         )
-        
-        client1 = User(
-            email="client1@example.com",
-            hashed_password=get_password_hash("password123"),
-            is_active=True,
-            name="Tech Corp",
-            user_type="Client",
-            bio="Innovative tech company looking for talented freelancers to help build our products.",
-            location="Los Angeles, CA",
-            joined_at=datetime.now(timezone.utc)
-        )
-        
-        db.add_all([freelancer1, freelancer2, client1])
-        db.commit()
-        
-        # Create sample projects
-        project1 = Project(
-            title="E-commerce Website Development",
-            description="Build a modern e-commerce website with React frontend and Node.js backend.",
-            category="Web Development",
-            budget_type="Fixed",
-            budget_min=5000.0,
-            budget_max=10000.0,
-            experience_level="Intermediate",
-            estimated_duration="1-4 weeks",
-            skills="React,Node.js,PostgreSQL,Stripe",
-            client_id=client1.id,
-            status="open",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)
-        )
-        
-        project2 = Project(
-            title="Mobile App UI Design",
-            description="Design a beautiful and intuitive UI for our new mobile application.",
-            category="UI/UX Design",
-            budget_type="Fixed",
-            budget_min=2000.0,
-            budget_max=4000.0,
-            experience_level="Entry",
-            estimated_duration="Less than 1 week",
-            skills="UI/UX,Figma,Prototyping",
-            client_id=client1.id,
-            status="open",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)
-        )
-        
-        db.add_all([project1, project2])
-        db.commit()
-        
-        # Create sample proposals
-        proposal1 = Proposal(
-            project_id=project1.id,
-            freelancer_id=freelancer1.id,
-            cover_letter="I'm excited to work on this e-commerce project. With my 5+ years of experience in React and Node.js, I can deliver a high-quality solution.",
-            estimated_hours=120,
-            hourly_rate=50.0,
-            availability="1-2_weeks",
-            status="submitted",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)
-        )
-        
-        proposal2 = Proposal(
-            project_id=project1.id,
-            freelancer_id=freelancer2.id,
-            cover_letter="As a UI/UX designer, I can help create an intuitive and beautiful user interface for your e-commerce website.",
-            estimated_hours=80,
-            hourly_rate=45.0,
-            availability="immediate",
-            status="submitted",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)
-        )
-        
-        db.add_all([proposal1, proposal2])
-        db.commit()
-        
-        # Create sample portfolio items
-        portfolio1 = PortfolioItem(
-            freelancer_id=freelancer1.id,
-            title="E-commerce Platform",
-            description="A full-featured e-commerce platform built with React and Node.js.",
-            image_url="/portfolio/ecommerce.jpg",
-            project_url="https://example-ecommerce.com",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)
-        )
-        
-        portfolio2 = PortfolioItem(
-            freelancer_id=freelancer1.id,
-            title="Task Management App",
-            description="A productivity app for managing tasks and projects.",
-            image_url="/portfolio/taskapp.jpg",
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)
-        )
-        
-        db.add_all([portfolio1, portfolio2])
-        db.commit()
-        
-        logger.info("Database seeded successfully!")
-        
-    except Exception as e:
-        logger.info(f"Error seeding database: {e}")
-        db.rollback()
-    finally:
-        db.close()
+        if result:
+            id_result = execute_query("SELECT last_insert_rowid() as id")
+            id_rows = parse_rows(id_result) if id_result else []
+            project_ids.append(id_rows[0]["id"] if id_rows else 0)
+
+    logger.info(f"Database seeded: {len(users)} users, {len(projects)} projects")
+    logger.info("Default password for all demo accounts: password123")
+
 
 if __name__ == "__main__":
     seed_database()

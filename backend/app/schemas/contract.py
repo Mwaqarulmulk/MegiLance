@@ -28,6 +28,7 @@ class ContractBase(BaseModel):
 class ContractCreate(BaseModel):
     project_id: int
     freelancer_id: int
+    client_id: int
     amount: float = Field(gt=0)
     currency: str = "USD"
     contract_type: ContractType = ContractType.FIXED

@@ -109,23 +109,56 @@ async def match_freelancers_by_skill(
 
 @router.get("/{skill_id}/questions")
 async def get_skill_questions(skill_id: int, level: str = Query("intermediate")):
-    questions = [
-        {"id": 1, "skill_id": skill_id, "question": f"What is the primary use of this skill?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_answer": "Option A", "level": level},
-        {"id": 2, "skill_id": skill_id, "question": f"Which of the following best describes this skill?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_answer": "Option B", "level": level},
-        {"id": 3, "skill_id": skill_id, "question": f"How would you apply this skill in a project?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_answer": "Option C", "level": level},
-    ]
-    return {"questions": questions, "skill_id": skill_id, "level": level}
+    """Get assessment questions for a skill from the database."""
+    # Fetch questions from the database
+    result = execute_query(
+        """SELECT id, skill_id, question, options, correct_answer, level, difficulty
+           FROM skill_questions
+           WHERE skill_id = ? AND (level = ? OR level IS NULL)
+           ORDER BY RANDOM()
+           LIMIT 10""",
+        [skill_id, level],
+    )
+    rows = parse_rows(result)
+
+    if not rows:
+        # Return a clear empty state instead of dummy data
+        return {
+            "questions": [],
+            "skill_id": skill_id,
+            "level": level,
+            "message": "No assessment questions available for this skill yet.",
+        }
+
+    # Parse JSON options field
+    import json
+    for q in rows:
+        if isinstance(q.get("options"), str):
+            try:
+                q["options"] = json.loads(q["options"])
+            except (json.JSONDecodeError, TypeError):
+                q["options"] = []
+
+    return {"questions": rows, "skill_id": skill_id, "level": level}
 
 
 @router.post("/assessments")
 async def submit_assessment(request: SkillAssessmentSubmission, current_user=Depends(get_current_user)):
+    """Submit a skill assessment and calculate the score."""
     now = datetime.now(timezone.utc).isoformat()
     total_questions = len(request.answers)
     correct_answers = 0
 
+    # Validate answers against stored correct answers
     for answer in request.answers:
-        if answer.answer.startswith("Option"):
-            correct_answers += 1
+        result = execute_query(
+            "SELECT correct_answer FROM skill_questions WHERE id = ?",
+            [answer.question_id],
+        )
+        rows = parse_rows(result)
+        if rows and rows[0].get("correct_answer"):
+            if answer.answer.strip().lower() == rows[0]["correct_answer"].strip().lower():
+                correct_answers += 1
 
     score = (correct_answers / total_questions * 100) if total_questions > 0 else 0
     passed = score >= 70
@@ -141,7 +174,14 @@ async def submit_assessment(request: SkillAssessmentSubmission, current_user=Dep
             [current_user.id, request.skill_id, request.level, now],
         )
 
-    return {"message": "Assessment completed", "score": score, "passed": passed, "assessment_id": result.get("last_insert_rowid")}
+    return {
+        "message": "Assessment completed",
+        "score": round(score, 1),
+        "passed": passed,
+        "correct_answers": correct_answers,
+        "total_questions": total_questions,
+        "assessment_id": result.get("last_insert_rowid"),
+    }
 
 
 @router.get("/me/skills")

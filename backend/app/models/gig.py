@@ -1,7 +1,7 @@
 # @AI-HINT: Gig model for Fiverr-style service packages - freelancers create fixed-price offerings with Basic/Standard/Premium tiers
 """Gig model for service marketplace functionality."""
 
-from sqlalchemy import String, Integer, Float, DateTime, Text, ForeignKey, Boolean
+from sqlalchemy import String, Integer, Numeric, DateTime, Text, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
@@ -63,7 +63,7 @@ class Gig(Base):
     # Basic Package
     basic_title: Mapped[str] = mapped_column(String(100), default="Basic")
     basic_description: Mapped[str] = mapped_column(Text, nullable=True)
-    basic_price: Mapped[float] = mapped_column(Float, default=5.0)
+    basic_price: Mapped[float] = mapped_column(Numeric(12, 2), default=5.0)
     basic_delivery_days: Mapped[int] = mapped_column(Integer, default=7)
     basic_revisions: Mapped[int] = mapped_column(Integer, default=1)
     basic_features: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array
@@ -71,7 +71,7 @@ class Gig(Base):
     # Standard Package
     standard_title: Mapped[str] = mapped_column(String(100), default="Standard")
     standard_description: Mapped[str] = mapped_column(Text, nullable=True)
-    standard_price: Mapped[float] = mapped_column(Float, default=25.0)
+    standard_price: Mapped[float] = mapped_column(Numeric(12, 2), default=25.0)
     standard_delivery_days: Mapped[int] = mapped_column(Integer, default=5)
     standard_revisions: Mapped[int] = mapped_column(Integer, default=3)
     standard_features: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array
@@ -79,7 +79,7 @@ class Gig(Base):
     # Premium Package
     premium_title: Mapped[str] = mapped_column(String(100), default="Premium")
     premium_description: Mapped[str] = mapped_column(Text, nullable=True)
-    premium_price: Mapped[float] = mapped_column(Float, default=75.0)
+    premium_price: Mapped[float] = mapped_column(Numeric(12, 2), default=75.0)
     premium_delivery_days: Mapped[int] = mapped_column(Integer, default=3)
     premium_revisions: Mapped[int] = mapped_column(Integer, default=5)
     premium_features: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array
@@ -104,7 +104,7 @@ class Gig(Base):
     cancelled_orders: Mapped[int] = mapped_column(Integer, default=0)
     
     # Ratings
-    average_rating: Mapped[float] = mapped_column(Float, default=0.0)
+    average_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0.0)
     total_reviews: Mapped[int] = mapped_column(Integer, default=0)
     rating_breakdown: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON: {"5": 10, "4": 5, ...}
     
@@ -116,7 +116,7 @@ class Gig(Base):
     
     # Response & Delivery Metrics
     average_response_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # In hours
-    on_time_delivery_rate: Mapped[float] = mapped_column(Float, default=100.0)
+    on_time_delivery_rate: Mapped[float] = mapped_column(Numeric(5, 2), default=100.0)
     
     # SEO
     meta_title: Mapped[Optional[str]] = mapped_column(String(70), nullable=True)

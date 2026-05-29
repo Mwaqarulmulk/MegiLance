@@ -90,12 +90,13 @@ async def create_contract(request: ContractCreate, current_user=Depends(get_curr
         raise HTTPException(status_code=404, detail="Freelancer not found")
 
     result = execute_query(
-        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_type,
-                  currency, description, terms, milestones, status, start_date, end_date,
+        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_amount,
+                  contract_type, currency, description, terms, milestones, status, start_date, end_date,
                   created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)""",
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)""",
         [
             request.project_id, request.freelancer_id, current_user.id, request.amount,
+            request.amount,  # contract_amount = amount (legacy alias kept in sync)
             request.contract_type, request.currency, request.description or "",
             request.terms or "", request.milestones or "",
             request.start_date or now, request.end_date or "",

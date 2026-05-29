@@ -496,7 +496,8 @@ export default function ContractBuilder() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      setTimeout(() => { setResult(data); setLoading(false); }, 2400);
+      setResult(data);
+      setLoading(false);
     } catch {
       setLoading(false);
     }

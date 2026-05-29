@@ -1,35 +1,92 @@
 // @AI-HINT: This page allows users to find their referral link and track their rewards.
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { referralApi } from '@/lib/api';
 import Button from '@/app/components/atoms/Button/Button';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
+import { Loader2, AlertCircle } from 'lucide-react';
 import commonStyles from './ReferralPage.common.module.css';
 import lightStyles from './ReferralPage.light.module.css';
 import darkStyles from './ReferralPage.dark.module.css';
 
-// @AI-HINT: Mock data. In a real app, this would be fetched for the logged-in user.
-const referralData = {
-  referralLink: 'https://megilance.io/join/user123xyz',
-  rewardsEarned: 150.75, // Example in platform tokens
-  successfulReferrals: 3,
-};
+interface ReferralData {
+  referralLink: string;
+  rewardsEarned: number;
+  successfulReferrals: number;
+}
 
 const ReferralPage: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [copied, setCopied] = useState(false);
+  const [referralData, setReferralData] = useState<ReferralData>({ referralLink: '', rewardsEarned: 0, successfulReferrals: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [codeRes, statsRes] = await Promise.allSettled([
+          referralApi.getMyCode(),
+          referralApi.getStats(),
+        ]);
+
+        const link = codeRes.status === 'fulfilled'
+          ? ((codeRes.value as Record<string, unknown>).referral_link as string) || ((codeRes.value as Record<string, unknown>).link as string) || ''
+          : '';
+        const stats = statsRes.status === 'fulfilled' ? (statsRes.value as Record<string, unknown>) : {};
+
+        setReferralData({
+          referralLink: link,
+          rewardsEarned: (stats.rewards_earned as number) || (stats.rewardsEarned as number) || 0,
+          successfulReferrals: (stats.successful_referrals as number) || (stats.successfulReferrals as number) || 0,
+        });
+      } catch {
+        setError('Failed to load referral data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleCopyLink = () => {
+    if (!referralData.referralLink) return;
     navigator.clipboard.writeText(referralData.referralLink).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setCopied(false), 2000);
     });
   };
+
+  if (loading) {
+    return (
+      <PageTransition className={cn(commonStyles.container, themeStyles.container)}>
+        <div className={cn(commonStyles.header)}>
+          <Loader2 size={32} className="animate-spin" />
+          <p>Loading referral data...</p>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageTransition className={cn(commonStyles.container, themeStyles.container)}>
+        <div className={cn(commonStyles.header)}>
+          <AlertCircle size={32} />
+          <p>{error}</p>
+          <Button variant="primary" size="sm" onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </PageTransition>
+    );
+  }
 
   return (
     <PageTransition className={cn(commonStyles.container, themeStyles.container)}>

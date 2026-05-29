@@ -3,7 +3,9 @@
 
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
+from zoneinfo import ZoneInfo
 import logging
+from app.db.turso_http import execute_query, parse_rows
 logger = logging.getLogger(__name__)
 
 
@@ -74,15 +76,24 @@ class TimezoneService:
         self,
         user_id: int
     ) -> Dict[str, Any]:
-        """Get user's timezone preference."""
+        """Get user's timezone preference from the database."""
+        result = execute_query(
+            "SELECT timezone FROM users WHERE id = ?",
+            [user_id]
+        )
+        rows = parse_rows(result)
+        tz = rows[0].get("timezone") if rows else None
+        if not tz:
+            tz = "UTC"
+
         return {
             "user_id": user_id,
-            "timezone": "America/New_York",
+            "timezone": tz,
             "auto_detect": True,
             "date_format": "MM/DD/YYYY",
             "time_format": "12h",
             "week_start": "sunday",
-            "updated_at": "2024-01-15T00:00:00"
+            "updated_at": datetime.now(timezone.utc).isoformat()
         }
     
     async def set_user_timezone(
@@ -94,7 +105,13 @@ class TimezoneService:
         time_format: str = "12h",
         week_start: str = "sunday"
     ) -> Dict[str, Any]:
-        """Set user's timezone preference."""
+        """Set user's timezone preference in the database."""
+        now = datetime.now(ZoneInfo(timezone)).isoformat() if timezone else datetime.now(timezone.utc).isoformat()
+        execute_query(
+            "UPDATE users SET timezone = ?, updated_at = ? WHERE id = ?",
+            [timezone, now, user_id]
+        )
+
         return {
             "user_id": user_id,
             "timezone": timezone,
@@ -102,7 +119,7 @@ class TimezoneService:
             "date_format": date_format,
             "time_format": time_format,
             "week_start": week_start,
-            "updated_at": datetime.now(timezone.utc).isoformat()
+            "updated_at": now
         }
     
     # Time Conversion
@@ -112,16 +129,18 @@ class TimezoneService:
         from_timezone: str,
         to_timezone: str
     ) -> Dict[str, Any]:
-        """Convert time between timezones."""
-        # In production, use pytz or zoneinfo
-        # Mock conversion
+        """Convert time between timezones using zoneinfo."""
+        dt = time if time.tzinfo is not None else time.replace(tzinfo=ZoneInfo(from_timezone))
+        from_tz = ZoneInfo(from_timezone)
+        to_tz = ZoneInfo(to_timezone)
+        converted = dt.astimezone(to_tz)
         return {
             "original": {
-                "time": time.isoformat(),
+                "time": dt.isoformat(),
                 "timezone": from_timezone
             },
             "converted": {
-                "time": time.isoformat(),  # Would be converted
+                "time": converted.isoformat(),
                 "timezone": to_timezone
             }
         }

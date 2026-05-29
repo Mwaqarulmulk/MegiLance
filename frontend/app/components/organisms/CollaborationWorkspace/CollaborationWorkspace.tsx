@@ -39,18 +39,9 @@ export default function CollaborationWorkspace({ projectId, currentUser, initial
   const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
 
   useEffect(() => {
-    // Mock initial messages
-    setMessages([
-      { id: '1', sender: 'Alex Client', text: 'Hey, I opened the workspace.', timestamp: new Date(Date.now() - 60000), isSelf: false },
-      { id: '2', sender: currentUser.name, text: 'Awesome, let me pull up the mockups.', timestamp: new Date(Date.now() - 30000), isSelf: true }
-    ]);
-  }, [currentUser.name]);
-
-  useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isChatOpen]);
 
-  // Simple Canvas Drawing Mock logic
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -91,17 +82,6 @@ export default function CollaborationWorkspace({ projectId, currentUser, initial
       isSelf: true
     }]);
     setNewMessage('');
-    
-    // Mock response
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        sender: 'Alex Client',
-        text: 'Makes sense. Let me check the code.',
-        timestamp: new Date(),
-        isSelf: false
-      }]);
-    }, 2000);
   };
 
   return (

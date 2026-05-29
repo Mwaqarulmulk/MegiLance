@@ -115,19 +115,69 @@ async def update_invoice(invoice_id: int, request: InvoiceUpdate, current_user=D
 
 @router.post("/{invoice_id}/send")
 async def send_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+    """Send an invoice — only the freelancer who created it can send."""
+    result = execute_query(
+        "SELECT id, freelancer_id, client_id, status FROM invoices WHERE id = ?",
+        [invoice_id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+
+    invoice = rows[0]
+    if invoice["freelancer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the invoice creator can send it")
+    if invoice["status"] not in ("draft", "updated"):
+        raise HTTPException(status_code=400, detail=f"Cannot send invoice in '{invoice['status']}' status")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE invoices SET status = 'sent', updated_at = ? WHERE id = ?",
         [now, invoice_id],
     )
+
+    # In production, send email notification to client here
+    logger.info(f"invoice_sent invoice={invoice_id} freelancer={current_user.id} client={invoice['client_id']}")
+
     return {"message": "Invoice sent"}
 
 
 @router.post("/{invoice_id}/pay")
 async def pay_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+    """Pay an invoice — only the client who received it can mark as paid."""
+    result = execute_query(
+        "SELECT id, freelancer_id, client_id, status, amount FROM invoices WHERE id = ?",
+        [invoice_id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+
+    invoice = rows[0]
+    if invoice["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the client can pay an invoice")
+    if invoice["status"] not in ("sent", "overdue"):
+        raise HTTPException(status_code=400, detail=f"Cannot pay invoice in '{invoice['status']}' status")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE invoices SET status = 'paid', updated_at = ? WHERE id = ?",
         [now, invoice_id],
     )
+
+    # Create payment record
+    execute_query(
+        """INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, description, created_at, updated_at)
+           VALUES ((SELECT contract_id FROM invoices WHERE id = ?), ?, ?, ?, 'USD', 'invoice', 'completed', ?, ?, ?)""",
+        [invoice_id, current_user.id, invoice["freelancer_id"], invoice["amount"], f"Invoice #{invoice_id} payment", now, now],
+    )
+
+    # Update freelancer balance
+    execute_query(
+        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+        [invoice["amount"], invoice["freelancer_id"]],
+    )
+
+    logger.info(f"invoice_paid invoice={invoice_id} client={current_user.id} amount={invoice['amount']}")
+
     return {"message": "Invoice marked as paid"}

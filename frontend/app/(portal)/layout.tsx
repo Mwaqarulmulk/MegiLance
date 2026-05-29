@@ -82,22 +82,11 @@ export default function PortalLayout({
       return;
     }
 
-    // ml_user_role: set only at login time, never overwritten by AppLayout.
-    // This is the authoritative source for the user's intended portal area.
-    // portal_area is NOT used here because AppLayout overwrites it on every
-    // navigation to match the URL — making it useless for role enforcement.
-    let loginRole: string | null = null;
-    try {
-      loginRole = window.localStorage.getItem("ml_user_role");
-    } catch {
-      /* ignore */
-    }
-
+    // SECURITY: Use API-provided role as the source of truth, NOT localStorage.
+    // localStorage ml_user_role can be tampered with by users to escalate privileges.
+    // The API response (user.role / user.user_type) is the authoritative role.
     const apiRole = (user!.user_type || user!.role || "client").toLowerCase();
-    const role =
-      loginRole && ["admin", "freelancer", "client"].includes(loginRole)
-        ? loginRole
-        : apiRole;
+    const role = ["admin", "freelancer", "client"].includes(apiRole) ? apiRole : "client";
 
     // Strict portal-area access: each role stays in their own area.
     if (pathname?.startsWith("/admin") && role !== "admin") {
@@ -157,11 +146,14 @@ export default function PortalLayout({
     return null;
   }
 
-  const user =
-    hookUser ||
-    (typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("user") || "null")
-      : null);
+  let user: typeof hookUser = hookUser;
+  if (!user && typeof window !== "undefined") {
+    try {
+      user = JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      // Malformed JSON in localStorage — ignore
+    }
+  }
 
   const themeStyles =
     mounted && resolvedTheme === "dark" ? darkStyles : lightStyles;

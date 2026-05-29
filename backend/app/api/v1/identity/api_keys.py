@@ -5,6 +5,7 @@ from typing import Optional
 from datetime import datetime, timezone
 import logging
 import secrets
+import hashlib
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +13,11 @@ from app.core.security import get_current_user, require_admin
 from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
+
+
+def _hash_api_key(key: str) -> str:
+    """Hash an API key using SHA-256 for secure storage."""
+    return hashlib.sha256(key.encode()).hexdigest()
 
 
 class ApiKeyCreate(BaseModel):
@@ -37,11 +43,12 @@ async def list_api_keys(current_user=Depends(get_current_user)):
 async def create_api_key(request: ApiKeyCreate, current_user=Depends(get_current_user)):
     key = f"ml_{secrets.token_urlsafe(32)}"
     key_prefix = key[:8]
+    key_hash = _hash_api_key(key)
     now = datetime.now(timezone.utc).isoformat()
 
     result = execute_query(
         "INSERT INTO api_keys (user_id, name, key_hash, key_prefix, permissions, is_active, created_at) VALUES (?, ?, ?, ?, ?, 1, ?)",
-        [current_user.id, request.name, key, key_prefix, request.permissions or "read", now],
+        [current_user.id, request.name, key_hash, key_prefix, request.permissions or "read", now],
     )
 
     return {"message": "API key created", "key": key, "key_id": result.get("last_insert_rowid")}

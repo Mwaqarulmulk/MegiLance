@@ -82,13 +82,14 @@ const TalentShowcasePage: React.FC = () => {
       case 'match':
         results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
         break;
-      case 'rate':
+      case 'rate': {
         const getRate = (hourlyRate: string) => {
           const match = hourlyRate.match(/\$(\d+)/);
           return match ? parseInt(match[1]) : 0;
         };
         results.sort((a, b) => getRate(b.hourlyRate) - getRate(a.hourlyRate));
         break;
+      }
     }
 
     return results;

@@ -456,7 +456,8 @@ export default function ProposalWriter() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      setTimeout(() => { setResult(data); setLoading(false); }, 2200);
+      setResult(data);
+      setLoading(false);
     } catch { setLoading(false); }
   };
 

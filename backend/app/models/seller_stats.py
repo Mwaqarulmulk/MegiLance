@@ -1,7 +1,7 @@
 # @AI-HINT: Seller Level/Tier model for automatic progression based on performance (Bronze → Platinum)
 """Seller Level model for reputation tiers."""
 
-from sqlalchemy import String, Integer, Float, DateTime, ForeignKey, Boolean
+from sqlalchemy import String, Integer, Numeric, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
@@ -144,39 +144,39 @@ class SellerStats(Base):
     pending_orders: Mapped[int] = mapped_column(Integer, default=0)
     
     # Earnings
-    total_earnings: Mapped[float] = mapped_column(Float, default=0.0)
-    earnings_this_month: Mapped[float] = mapped_column(Float, default=0.0)
-    earnings_last_month: Mapped[float] = mapped_column(Float, default=0.0)
-    average_order_value: Mapped[float] = mapped_column(Float, default=0.0)
+    total_earnings: Mapped[float] = mapped_column(Numeric(12, 2), default=0.0)
+    earnings_this_month: Mapped[float] = mapped_column(Numeric(12, 2), default=0.0)
+    earnings_last_month: Mapped[float] = mapped_column(Numeric(12, 2), default=0.0)
+    average_order_value: Mapped[float] = mapped_column(Numeric(12, 2), default=0.0)
     
     # Ratings
-    average_rating: Mapped[float] = mapped_column(Float, default=0.0)
+    average_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0.0)
     total_reviews: Mapped[int] = mapped_column(Integer, default=0)
     five_star_reviews: Mapped[int] = mapped_column(Integer, default=0)
     one_star_reviews: Mapped[int] = mapped_column(Integer, default=0)
     
     # Rating Breakdown
-    communication_rating: Mapped[float] = mapped_column(Float, default=0.0)
-    service_rating: Mapped[float] = mapped_column(Float, default=0.0)
-    delivery_rating: Mapped[float] = mapped_column(Float, default=0.0)
-    recommendation_rating: Mapped[float] = mapped_column(Float, default=0.0)
+    communication_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0.0)
+    service_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0.0)
+    delivery_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0.0)
+    recommendation_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0.0)
     
     # Response Metrics
-    response_rate: Mapped[float] = mapped_column(Float, default=100.0)  # Percentage
-    average_response_time_hours: Mapped[float] = mapped_column(Float, default=0.0)
+    response_rate: Mapped[float] = mapped_column(Numeric(5, 2), default=100.0)  # Percentage
+    average_response_time_hours: Mapped[float] = mapped_column(Numeric(5, 2), default=0.0)
     messages_received: Mapped[int] = mapped_column(Integer, default=0)
     messages_responded: Mapped[int] = mapped_column(Integer, default=0)
     
     # Delivery Metrics
-    on_time_delivery_rate: Mapped[float] = mapped_column(Float, default=100.0)  # Percentage
+    on_time_delivery_rate: Mapped[float] = mapped_column(Numeric(5, 2), default=100.0)  # Percentage
     
     # Job Success Score (JSS) - Upwork-style composite score
-    job_success_score: Mapped[float] = mapped_column(Float, default=0.0)
+    job_success_score: Mapped[float] = mapped_column(Numeric(5, 2), default=0.0)
     jss_last_calculated: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
     # Repeat Clients
     repeat_clients: Mapped[int] = mapped_column(Integer, default=0)
-    repeat_client_rate: Mapped[float] = mapped_column(Float, default=0.0)
+    repeat_client_rate: Mapped[float] = mapped_column(Numeric(5, 2), default=0.0)
     unique_clients: Mapped[int] = mapped_column(Integer, default=0)
     
     # Disputes

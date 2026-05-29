@@ -77,16 +77,6 @@ export default function ReviewSentimentDashboard() {
     { label: 'Negative', value: data.negative_reviews, color: '#e81123' },
   ];
 
-  // Mock trend data for now as backend doesn't provide it yet
-  const trendData = [
-    { label: 'Jan', value: 65 },
-    { label: 'Feb', value: 68 },
-    { label: 'Mar', value: 75 },
-    { label: 'Apr', value: 72 },
-    { label: 'May', value: 78 },
-    { label: 'Jun', value: 81 },
-  ];
-
   return (
     <div className={cn(commonStyles.dashboardContainer, themeStyles.dashboardContainer)}>
       <header className={commonStyles.dashboardHeader}>
@@ -124,12 +114,6 @@ export default function ReviewSentimentDashboard() {
       </div>
 
       <div className={commonStyles.chartsGrid}>
-        <Card className={cn(commonStyles.chartCard, themeStyles.chartCard)}>
-          <h3 className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>Sentiment Trend</h3>
-          <div className={commonStyles.chartPlaceholder}>
-             <BarChart data={trendData} />
-          </div>
-        </Card>
         <Card className={cn(commonStyles.chartCard, themeStyles.chartCard)}>
           <h3 className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>Sentiment Distribution</h3>
            <div className={commonStyles.chartPlaceholder}>

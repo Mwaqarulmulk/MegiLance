@@ -111,13 +111,21 @@ async def create_dispute(request: DisputeCreate, current_user=Depends(get_curren
 
 @router.put("/{dispute_id}")
 async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id, status FROM disputes WHERE id = ?",
+    # Verify user is claimant, respondent, or admin
+    dispute_result = execute_query(
+        "SELECT id, claimant_id, respondent_id FROM disputes WHERE id = ?",
         [dispute_id],
     )
-    rows = parse_rows(result)
+    rows = parse_rows(dispute_result)
     if not rows:
         raise HTTPException(status_code=404, detail="Dispute not found")
+
+    dispute = rows[0]
+    is_party = dispute["claimant_id"] == current_user.id or dispute["respondent_id"] == current_user.id
+    is_admin = getattr(current_user, "role", "") == "admin"
+
+    if not is_party and not is_admin:
+        raise HTTPException(status_code=403, detail="Only dispute parties or admins can update")
 
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
@@ -133,6 +141,10 @@ async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=D
 
 @router.post("/{dispute_id}/assign")
 async def assign_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
+    # Only admins can assign disputes
+    if getattr(current_user, "role", "") != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can assign disputes")
+
     admin_id = data.get("admin_id")
     if not admin_id:
         raise HTTPException(status_code=400, detail="admin_id is required")
@@ -147,6 +159,10 @@ async def assign_dispute(dispute_id: int, data: dict, current_user=Depends(get_c
 
 @router.post("/{dispute_id}/resolve")
 async def resolve_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
+    # Only admins can resolve disputes
+    if getattr(current_user, "role", "") != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can resolve disputes")
+
     resolution = data.get("resolution", "")
     contract_status = data.get("contract_status")
 
@@ -166,10 +182,23 @@ async def resolve_dispute(dispute_id: int, data: dict, current_user=Depends(get_
 
 
 @router.post("/{dispute_id}/evidence")
-async def upload_evidence(dispute_id: int, current_user=Depends(get_current_user)):
+async def upload_evidence(dispute_id: int, evidence_url: str, current_user=Depends(get_current_user)):
+    # Verify user is a party to the dispute
+    dispute_result = execute_query(
+        "SELECT id, claimant_id, respondent_id FROM disputes WHERE id = ?",
+        [dispute_id],
+    )
+    rows = parse_rows(dispute_result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Dispute not found")
+
+    dispute = rows[0]
+    if dispute["claimant_id"] != current_user.id and dispute["respondent_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only dispute parties can upload evidence")
+
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO dispute_evidence (dispute_id, user_id, evidence_url, created_at) VALUES (?, ?, ?, ?)",
-        [dispute_id, current_user.id, "/uploads/evidence/evidence_file", now],
+        [dispute_id, current_user.id, evidence_url, now],
     )
     return {"message": "Evidence uploaded", "evidence_id": result.get("last_insert_rowid")}

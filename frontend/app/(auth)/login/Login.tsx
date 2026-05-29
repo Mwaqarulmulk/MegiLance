@@ -354,7 +354,7 @@ const Login: React.FC = () => {
         {/* Floating 3D Objects - REMOVED */}
 
         <div className={styles.brandingSlot}>
-          <AuthBrandingPanel roleConfig={{ brandIcon: User, brandTitle: "Client", brandText: "Login to find top talent." }} />
+          <AuthBrandingPanel roleConfig={roleConfig[selectedRole]} />
         </div>
         <div className={styles.formPanel}>
           <StaggerContainer className={styles.formContainer}>

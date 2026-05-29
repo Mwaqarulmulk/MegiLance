@@ -27,9 +27,35 @@ class MilestoneUpdate(BaseModel):
     due_date: Optional[str] = None
     status: Optional[str] = None
 
+class MilestoneSubmit(BaseModel):
+    deliverables: Optional[str] = None
+    submission_notes: Optional[str] = None
+
+class MilestoneApprove(BaseModel):
+    approval_notes: Optional[str] = None
+
+class MilestoneReject(BaseModel):
+    rejection_notes: Optional[str] = None
+
+
+def _verify_contract_access(contract_id: int, user_id: int) -> dict:
+    """Verify user has access to the contract and return contract info."""
+    result = execute_query(
+        "SELECT id, client_id, freelancer_id FROM contracts WHERE id = ?",
+        [contract_id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    contract = rows[0]
+    if contract["client_id"] != user_id and contract["freelancer_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    return contract
+
 
 @router.get("/")
 async def list_milestones(contract_id: int = Query(...), current_user=Depends(get_current_user)):
+    _verify_contract_access(contract_id, current_user.id)
     result = execute_query(
         """SELECT m.id, m.contract_id, m.title, m.description, m.amount, m.status,
                   m.due_date, m.deliverables, m.submission_notes, m.approval_notes,
@@ -52,11 +78,15 @@ async def get_milestone(milestone_id: int, current_user=Depends(get_current_user
     rows = parse_rows(result)
     if not rows:
         raise HTTPException(status_code=404, detail="Milestone not found")
+
+    _verify_contract_access(rows[0]["contract_id"], current_user.id)
     return rows[0]
 
 
 @router.post("/")
 async def create_milestone(request: MilestoneCreate, current_user=Depends(get_current_user)):
+    _verify_contract_access(request.contract_id, current_user.id)
+
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         """INSERT INTO milestones (contract_id, title, description, amount, status, due_date, created_at, updated_at)
@@ -70,6 +100,13 @@ async def create_milestone(request: MilestoneCreate, current_user=Depends(get_cu
 
 @router.patch("/{milestone_id}")
 async def update_milestone(milestone_id: int, request: MilestoneUpdate, current_user=Depends(get_current_user)):
+    result = execute_query("SELECT contract_id FROM milestones WHERE id = ?", [milestone_id])
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+
+    _verify_contract_access(rows[0]["contract_id"], current_user.id)
+
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -84,35 +121,79 @@ async def update_milestone(milestone_id: int, request: MilestoneUpdate, current_
 
 @router.delete("/{milestone_id}")
 async def delete_milestone(milestone_id: int, current_user=Depends(get_current_user)):
+    result = execute_query("SELECT contract_id FROM milestones WHERE id = ?", [milestone_id])
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+
+    _verify_contract_access(rows[0]["contract_id"], current_user.id)
     execute_query("DELETE FROM milestones WHERE id = ?", [milestone_id])
     return {"message": "Milestone deleted"}
 
 
 @router.post("/{milestone_id}/submit")
-async def submit_milestone(milestone_id: int, request: dict, current_user=Depends(get_current_user)):
+async def submit_milestone(milestone_id: int, request: MilestoneSubmit, current_user=Depends(get_current_user)):
+    result = execute_query("SELECT contract_id, status FROM milestones WHERE id = ?", [milestone_id])
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+
+    _verify_contract_access(rows[0]["contract_id"], current_user.id)
+
+    if rows[0]["status"] not in ("pending", "in_progress", "rejected"):
+        raise HTTPException(status_code=400, detail=f"Cannot submit milestone in '{rows[0]['status']}' status")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
-        "UPDATE milestones SET status = 'submitted', deliverables = ?, submission_notes = ?, updated_at = ? WHERE id = ?",
-        [request.get("deliverables", ""), request.get("submission_notes", ""), now, milestone_id],
+        "UPDATE milestones SET status = 'submitted', deliverables = ?, submission_notes = ?, submitted_at = ?, updated_at = ? WHERE id = ?",
+        [request.deliverables or "", request.submission_notes or "", now, now, milestone_id],
     )
     return {"message": "Milestone submitted for review"}
 
 
 @router.post("/{milestone_id}/approve")
-async def approve_milestone(milestone_id: int, request: dict, current_user=Depends(get_current_user)):
+async def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user=Depends(get_current_user)):
+    result = execute_query("SELECT contract_id, status FROM milestones WHERE id = ?", [milestone_id])
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+
+    contract = _verify_contract_access(rows[0]["contract_id"], current_user.id)
+
+    # Only client can approve
+    if contract["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the client can approve milestones")
+
+    if rows[0]["status"] != "submitted":
+        raise HTTPException(status_code=400, detail=f"Cannot approve milestone in '{rows[0]['status']}' status")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
-        "UPDATE milestones SET status = 'approved', approval_notes = ?, updated_at = ? WHERE id = ?",
-        [request.get("approval_notes", ""), now, milestone_id],
+        "UPDATE milestones SET status = 'approved', approval_notes = ?, approved_at = ?, updated_at = ? WHERE id = ?",
+        [request.approval_notes or "", now, now, milestone_id],
     )
     return {"message": "Milestone approved"}
 
 
 @router.post("/{milestone_id}/reject")
-async def reject_milestone(milestone_id: int, request: dict, current_user=Depends(get_current_user)):
+async def reject_milestone(milestone_id: int, request: MilestoneReject, current_user=Depends(get_current_user)):
+    result = execute_query("SELECT contract_id, status FROM milestones WHERE id = ?", [milestone_id])
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+
+    contract = _verify_contract_access(rows[0]["contract_id"], current_user.id)
+
+    # Only client can reject
+    if contract["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the client can reject milestones")
+
+    if rows[0]["status"] != "submitted":
+        raise HTTPException(status_code=400, detail=f"Cannot reject milestone in '{rows[0]['status']}' status")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE milestones SET status = 'rejected', rejection_notes = ?, updated_at = ? WHERE id = ?",
-        [request.get("rejection_notes", ""), now, milestone_id],
+        [request.rejection_notes or "", now, milestone_id],
     )
     return {"message": "Milestone rejected"}

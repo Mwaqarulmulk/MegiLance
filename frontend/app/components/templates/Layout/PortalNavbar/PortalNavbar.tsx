@@ -127,12 +127,6 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + K for search
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.querySelector(`.${commonStyles.searchInput}`) as HTMLInputElement;
-        searchInput?.focus();
-      }
       // Escape to close dropdowns
       if (e.key === 'Escape') {
         setShowNotifications(false);

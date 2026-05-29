@@ -40,14 +40,10 @@ export function clearHireDraft() {
 }
 
 export async function submitHire(input: CreateHireInput): Promise<CreateHireResult> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || localStorage.getItem('token') : null;
+  const { apiFetch } = await import('@/lib/api/core');
   
-  const response = await fetch('/api/contracts/direct', {
+  const result = await apiFetch('/contracts/direct', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
     body: JSON.stringify({
       freelancer_id: parseInt(input.freelancerId, 10),
       title: input.title,
@@ -56,15 +52,9 @@ export async function submitHire(input: CreateHireInput): Promise<CreateHireResu
       rate: input.rate,
       start_date: input.startDate || null,
     }),
-  });
+  }) as { contract_id?: number; id?: number };
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || 'Failed to submit hire request');
-  }
-
-  const result = await response.json();
   saveHireDraft({ status: 'submitted', updatedAt: nowISO() });
   clearHireDraft();
-  return { id: result.id, message: 'Hire request sent successfully.' };
+  return { id: String(result.contract_id || result.id || 0), message: 'Hire request sent successfully.' };
 }

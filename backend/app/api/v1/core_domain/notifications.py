@@ -118,16 +118,6 @@ async def mark_all_read(current_user=Depends(get_current_user)):
     return {"message": "All notifications marked as read"}
 
 
-@router.get("/unread/count")
-async def unread_count(current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0",
-        [current_user.id],
-    )
-    rows = parse_rows(result)
-    return {"unread_count": rows[0]["count"] if rows else 0}
-
-
 @router.delete("/{notification_id}")
 async def delete_notification(notification_id: int, current_user=Depends(get_current_user)):
     result = execute_query(

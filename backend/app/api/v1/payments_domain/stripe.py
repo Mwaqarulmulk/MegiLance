@@ -129,20 +129,33 @@ async def stripe_webhook(request: Request):
 
 @router.get("/payment-methods")
 async def list_payment_methods(current_user=Depends(get_current_user)):
+    """List saved payment methods for the current user."""
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
         return {"payment_methods": []}
+
+    # Get the Stripe customer ID from user profile
+    user_result = execute_query(
+        "SELECT stripe_customer_id FROM users WHERE id = ?",
+        [current_user.id],
+    )
+    rows = parse_rows(user_result)
+    stripe_customer_id = rows[0].get("stripe_customer_id") if rows else None
+
+    if not stripe_customer_id:
+        return {"payment_methods": [], "message": "No Stripe customer ID on file"}
 
     try:
         import stripe
         stripe.api_key = settings.STRIPE_SECRET_KEY
         methods = stripe.Customer.list_payment_methods(
-            settings.STRIPE_PUBLISHABLE_KEY or "",
+            stripe_customer_id,
             type="card",
         )
-        return {"payment_methods": [{"id": m.id, "brand": m.card.brand, "last4": m.card.last4} for m in methods.data]}
-    except Exception:
-        return {"payment_methods": []}
+        return {"payment_methods": [{"id": m.id, "brand": m.card.brand, "last4": m.card.last4, "exp_month": m.card.exp_month, "exp_year": m.card.exp_year} for m in methods.data]}
+    except Exception as e:
+        logger.error(f"stripe_list_methods_error user={current_user.id} error={e}")
+        return {"payment_methods": [], "message": "Failed to load payment methods"}
 
 
 @router.get("/transactions")

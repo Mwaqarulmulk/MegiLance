@@ -1,15 +1,16 @@
 // @AI-HINT: Portal Community page. Theme-aware, accessible, animated discussion hub with threads, categories, trending, and rich composer.
 'use client';
 
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api/core';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
 import Button from '@/app/components/atoms/Button/Button';
 import {
   Search, MessageSquare, ThumbsUp, TrendingUp, Clock, Users,
   Hash, Flame, Star, Send, Plus, Filter, ChevronRight,
-  Eye, BookmarkPlus, Pin, Award,
+  Eye, BookmarkPlus, Pin, Award, Loader2, AlertCircle,
 } from 'lucide-react';
 import common from './Community.common.module.css';
 import light from './Community.light.module.css';
@@ -39,61 +40,23 @@ interface Category {
   count: number;
 }
 
+interface CommunityStats {
+  threadCount: number;
+  memberCount: number;
+  replyCount: number;
+  activeToday: number;
+}
+
 const SORTS = ['Latest', 'Most Replies', 'Most Liked', 'Trending'] as const;
 
-const CATEGORIES: Category[] = [
-  { id: 'all', label: 'All Topics', icon: <MessageSquare size={16} />, count: 0 },
-  { id: 'general', label: 'General', icon: <Hash size={16} />, count: 42 },
-  { id: 'tips', label: 'Tips & Tricks', icon: <Star size={16} />, count: 28 },
-  { id: 'showcase', label: 'Showcase', icon: <Award size={16} />, count: 15 },
-  { id: 'help', label: 'Help & Support', icon: <Users size={16} />, count: 33 },
-  { id: 'feedback', label: 'Feedback', icon: <ThumbsUp size={16} />, count: 19 },
-];
-
-const initialThreads: Thread[] = [
-  {
-    id: 1, title: 'How to structure complex Next.js dashboards?', author: 'Ava Chen',
-    authorLevel: 'Expert', time: '1h ago', replies: 12, views: 234, likes: 18,
-    tags: ['Next.js', 'Architecture'], category: 'tips', isPinned: true,
-    preview: 'I\'ve been working on a large-scale dashboard and wanted to share some patterns that work well...',
-  },
-  {
-    id: 2, title: 'Best practices for theme-aware CSS modules', author: 'Liam Parker',
-    authorLevel: 'Pro', time: '4h ago', replies: 7, views: 156, likes: 11,
-    tags: ['CSS', 'Theming'], category: 'tips',
-    preview: 'After building multiple themed components, here are the patterns I found most reliable...',
-  },
-  {
-    id: 3, title: 'Improving accessibility for live regions', author: 'Mia Johnson',
-    authorLevel: 'Contributor', time: '1d ago', replies: 3, views: 89, likes: 6,
-    tags: ['Accessibility', 'ARIA'], category: 'help',
-    preview: 'I\'m struggling with aria-live regions in React. How do you handle dynamic content announcements?',
-  },
-  {
-    id: 4, title: 'Smooth intersection animations tips', author: 'Noah Williams',
-    authorLevel: 'Expert', time: '2d ago', replies: 15, views: 312, likes: 24,
-    tags: ['Animation', 'UX'], category: 'tips', isHot: true,
-    preview: 'Let me share some techniques for buttery-smooth scroll-triggered animations using IntersectionObserver...',
-  },
-  {
-    id: 5, title: 'My first freelance project on MegiLance!', author: 'Sarah Kim',
-    authorLevel: 'New', time: '3d ago', replies: 22, views: 445, likes: 38,
-    tags: ['Success Story', 'Freelancing'], category: 'showcase', isHot: true,
-    preview: 'Just completed my first project and wanted to share my experience with the community...',
-  },
-  {
-    id: 6, title: 'Feature request: Dark mode for invoices', author: 'James Rivera',
-    authorLevel: 'Pro', time: '5d ago', replies: 8, views: 102, likes: 14,
-    tags: ['Feature Request', 'Dark Mode'], category: 'feedback',
-    preview: 'It would be great if the invoice PDF export also respected the user\'s theme preference...',
-  },
-  {
-    id: 7, title: 'Need help with contract milestones', author: 'Emily Zhang',
-    authorLevel: 'Contributor', time: '6d ago', replies: 5, views: 67, likes: 3,
-    tags: ['Contracts', 'Help'], category: 'help',
-    preview: 'How do you usually break down a large project into milestones? Looking for advice from experienced freelancers.',
-  },
-];
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  all: <MessageSquare size={16} />,
+  general: <Hash size={16} />,
+  tips: <Star size={16} />,
+  showcase: <Award size={16} />,
+  help: <Users size={16} />,
+  feedback: <ThumbsUp size={16} />,
+};
 
 const TRENDING_TAGS = ['React', 'TypeScript', 'AI Tools', 'Remote Work', 'Web3', 'Design Systems', 'FreelanceTips'];
 
@@ -110,15 +73,55 @@ const Community: React.FC = () => {
   const [likedThreads, setLikedThreads] = useState<Set<number>>(new Set());
   const [bookmarked, setBookmarked] = useState<Set<number>>(new Set());
 
-  const threads = useMemo(() => {
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [stats, setStats] = useState<CommunityStats>({ threadCount: 0, memberCount: 0, replyCount: 0, activeToday: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [threadsRes, categoriesRes, statsRes] = await Promise.allSettled([
+          apiFetch<Thread[]>('/community/posts'),
+          apiFetch<{ id: string; label: string; count: number }[]>('/community/hubs'),
+          apiFetch<CommunityStats>('/community/stats'),
+        ]);
+
+        if (threadsRes.status === 'fulfilled') {
+          setThreads(threadsRes.value);
+        }
+        if (categoriesRes.status === 'fulfilled') {
+          setCategories([
+            { id: 'all', label: 'All Topics', icon: <MessageSquare size={16} />, count: 0 },
+            ...categoriesRes.value.map((c) => ({
+              ...c,
+              icon: CATEGORY_ICONS[c.id] || <Hash size={16} />,
+            })),
+          ]);
+        }
+        if (statsRes.status === 'fulfilled') {
+          setStats(statsRes.value);
+        }
+      } catch {
+        setError('Failed to load community data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredThreads = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let filtered = initialThreads.filter(t => {
+    let filtered = threads.filter(t => {
       const matchesQuery = !q || t.title.toLowerCase().includes(q) || t.tags.some(tag => tag.toLowerCase().includes(q)) || t.author.toLowerCase().includes(q);
       const matchesCategory = category === 'all' || t.category === category;
       return matchesQuery && matchesCategory;
     });
 
-    // Pinned first, then sort
     const pinned = filtered.filter(t => t.isPinned);
     const unpinned = filtered.filter(t => !t.isPinned);
 
@@ -132,7 +135,7 @@ const Community: React.FC = () => {
     });
 
     return [...pinned, ...sorted];
-  }, [query, sort, category]);
+  }, [query, sort, category, threads]);
 
   const toggleLike = useCallback((threadId: number) => {
     setLikedThreads(prev => {
@@ -151,6 +154,34 @@ const Community: React.FC = () => {
       return next;
     });
   }, []);
+
+  if (loading) {
+    return (
+      <PageTransition>
+        <main className={cn(common.page, themed.themeWrapper)}>
+          <div className={cn(common.container, common.emptyState)}>
+            <Loader2 size={40} className={common.loadingSpinner} />
+            <p>Loading community...</p>
+          </div>
+        </main>
+      </PageTransition>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageTransition>
+        <main className={cn(common.page, themed.themeWrapper)}>
+          <div className={cn(common.container, common.emptyState)}>
+            <AlertCircle size={40} />
+            <h3>Something went wrong</h3>
+            <p>{error}</p>
+            <Button variant="primary" size="sm" onClick={() => window.location.reload()}>Retry</Button>
+          </div>
+        </main>
+      </PageTransition>
+    );
+  }
 
   const onPost = (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,14 +241,14 @@ const Community: React.FC = () => {
               <div className={common.stat}>
                 <MessageSquare size={18} />
                 <div>
-                  <span className={cn(common.statValue, themed.statValue)}>{initialThreads.length}</span>
+                  <span className={cn(common.statValue, themed.statValue)}>{stats.threadCount || filteredThreads.length}</span>
                   <span className={cn(common.statLabel, themed.statLabel)}>Threads</span>
                 </div>
               </div>
               <div className={common.stat}>
                 <Users size={18} />
                 <div>
-                  <span className={cn(common.statValue, themed.statValue)}>156</span>
+                  <span className={cn(common.statValue, themed.statValue)}>{stats.memberCount}</span>
                   <span className={cn(common.statLabel, themed.statLabel)}>Members</span>
                 </div>
               </div>
@@ -225,7 +256,7 @@ const Community: React.FC = () => {
                 <MessageSquare size={18} />
                 <div>
                   <span className={cn(common.statValue, themed.statValue)}>
-                    {initialThreads.reduce((acc, t) => acc + t.replies, 0)}
+                    {stats.replyCount || filteredThreads.reduce((acc, t) => acc + t.replies, 0)}
                   </span>
                   <span className={cn(common.statLabel, themed.statLabel)}>Replies</span>
                 </div>
@@ -233,7 +264,7 @@ const Community: React.FC = () => {
               <div className={common.stat}>
                 <TrendingUp size={18} />
                 <div>
-                  <span className={cn(common.statValue, themed.statValue)}>12</span>
+                  <span className={cn(common.statValue, themed.statValue)}>{stats.activeToday}</span>
                   <span className={cn(common.statLabel, themed.statLabel)}>Active Today</span>
                 </div>
               </div>
@@ -248,7 +279,7 @@ const Community: React.FC = () => {
                 <div className={cn(common.sideCard, themed.sideCard)}>
                   <h3 className={cn(common.sideCardTitle, themed.sideCardTitle)}>Categories</h3>
                   <nav className={common.categoryList} aria-label="Thread categories">
-                    {CATEGORIES.map(cat => (
+                    {categories.map(cat => (
                       <button
                         key={cat.id}
                         onClick={() => setCategory(cat.id)}
@@ -351,7 +382,7 @@ const Community: React.FC = () => {
                 )}
 
                 {/* Thread List */}
-                {threads.length === 0 ? (
+                {filteredThreads.length === 0 ? (
                   <div className={cn(common.emptyState, themed.emptyState)}>
                     <MessageSquare size={40} />
                     <h3>No threads found</h3>
@@ -359,7 +390,7 @@ const Community: React.FC = () => {
                   </div>
                 ) : (
                   <StaggerContainer className={common.threadList}>
-                    {threads.map((t) => (
+                    {filteredThreads.map((t) => (
                       <article
                         key={t.id}
                         tabIndex={0}

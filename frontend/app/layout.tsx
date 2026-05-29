@@ -186,7 +186,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   }
                   document.documentElement.classList.add(theme);
                   document.documentElement.style.colorScheme = theme;
-                } catch (e) {}
+                } catch (e) { console.warn('Layout error:', e); }
               })();
             `,
           }}
