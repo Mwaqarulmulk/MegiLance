@@ -81,7 +81,7 @@ class EmailVerifyRequest(BaseModel):
 
 @router.post("/login")
 @auth_rate_limit()
-async def login(req: Request, body: LoginRequest):
+async def login(request: Request, body: LoginRequest):
     user = authenticate_user(body.email, body.password)
     if not user:
         raise HTTPException(
@@ -122,7 +122,7 @@ async def login(req: Request, body: LoginRequest):
 
 @router.post("/register")
 @auth_rate_limit()
-async def register(req: Request, body: RegisterRequest):
+async def register(request: Request, body: RegisterRequest):
     if check_email_exists(body.email):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -419,7 +419,7 @@ async def refresh_token(request: Request):
 
 @router.post("/forgot-password")
 @password_reset_rate_limit()
-async def forgot_password(req: Request, body: PasswordResetRequest):
+async def forgot_password(request: Request, body: PasswordResetRequest):
     user = get_user_for_password_reset(body.email)
     if not user:
         return {"message": "If the email exists, a reset link has been sent"}
@@ -464,7 +464,7 @@ async def forgot_password(req: Request, body: PasswordResetRequest):
 
 @router.post("/reset-password")
 @password_reset_rate_limit()
-async def reset_password(req: Request, body: PasswordResetConfirm):
+async def reset_password(request: Request, body: PasswordResetConfirm):
     from app.db.turso_http import execute_query as eq, parse_rows as pr
     import json as _json
     from datetime import timezone as _tz

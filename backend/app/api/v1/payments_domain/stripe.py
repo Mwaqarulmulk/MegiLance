@@ -31,7 +31,7 @@ class CreateCheckoutSession(BaseModel):
 
 @router.post("/create-payment-intent")
 @api_rate_limit()
-async def create_payment_intent(req: Request, body: CreatePaymentIntent, current_user=Depends(get_current_user)):
+async def create_payment_intent(request: Request, body: CreatePaymentIntent, current_user=Depends(get_current_user)):
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
         return {
@@ -64,7 +64,7 @@ async def create_payment_intent(req: Request, body: CreatePaymentIntent, current
 
 @router.post("/create-checkout-session")
 @api_rate_limit()
-async def create_checkout_session(req: Request, body: CreateCheckoutSession, current_user=Depends(get_current_user)):
+async def create_checkout_session(request: Request, body: CreateCheckoutSession, current_user=Depends(get_current_user)):
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
         return {
