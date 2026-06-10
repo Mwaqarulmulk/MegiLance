@@ -55,7 +55,7 @@ def list_gigs(
 ):
     """List published gigs with filtering and pagination"""
     offset = (page - 1) * page_size
-    conditions = ["g.status = 'published'"]
+    conditions = ["g.status = 'active'"]
     params: list = []
 
     if category_id:
@@ -127,7 +127,7 @@ def get_gig_by_slug(slug: str):
                   u.created_at as seller_member_since
            FROM gigs g
            JOIN users u ON g.seller_id = u.id
-           WHERE g.slug = ? AND g.status = 'published'""",
+           WHERE g.slug = ? AND g.status = 'active'""",
         [slug]
     )
 
@@ -290,8 +290,8 @@ def publish_gig(gig_id: int, current_user=Depends(get_current_user)):
     if not owner or not owner.get("rows") or parse_rows(owner)[0].get("seller_id") != user_id:
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    execute_query("UPDATE gigs SET status = 'published' WHERE id = ?", [gig_id])
-    return {"status": "published"}
+    execute_query("UPDATE gigs SET status = 'active' WHERE id = ?", [gig_id])
+    return {"status": "active"}
 
 
 @router.post("/{gig_id}/pause")
@@ -343,7 +343,7 @@ def create_order(order_data: dict, current_user=Depends(get_current_user)):
     package = order_data.get("package", "basic")
 
     gig_result = execute_query(
-        "SELECT * FROM gigs WHERE id = ? AND status = 'published'",
+        "SELECT * FROM gigs WHERE id = ? AND status = 'active'",
         [gig_id]
     )
     if not gig_result or not gig_result.get("rows"):

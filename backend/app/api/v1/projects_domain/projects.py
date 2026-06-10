@@ -40,7 +40,26 @@ class ProjectUpdate(BaseModel):
     status: Optional[str] = None
 
 
-def _project_from_row(row: list) -> dict:
+def _project_from_row(row) -> dict:
+    if isinstance(row, dict):
+        return {
+            "id": _safe_str(row.get("id")),
+            "title": _safe_str(row.get("title")),
+            "description": _safe_str(row.get("description")),
+            "category": _safe_str(row.get("category")),
+            "budget_type": _safe_str(row.get("budget_type")),
+            "budget_min": float(row.get("budget_min") or 0),
+            "budget_max": float(row.get("budget_max") or 0),
+            "skills": _safe_str(row.get("skills")),
+            "estimated_duration": _safe_str(row.get("estimated_duration")),
+            "experience_level": _safe_str(row.get("experience_level")),
+            "status": _safe_str(row.get("status")),
+            "client_id": _safe_str(row.get("client_id")),
+            "created_at": parse_date(row.get("created_at")),
+            "updated_at": parse_date(row.get("updated_at")),
+            "proposals_count": int(row.get("proposals_count") or 0),
+            "client_name": _safe_str(row.get("client_name")),
+        }
     return {
         "id": _safe_str(_get_val(row, 0)),
         "title": _safe_str(_get_val(row, 1)),

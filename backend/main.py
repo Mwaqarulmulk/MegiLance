@@ -565,13 +565,13 @@ def health_ready():
             settings, "aws_bucket_name", None
         ):
             status_dict["components"]["storage"] = "configured"
+        elif getattr(settings, "upload_dir", None):
+            status_dict["components"]["storage"] = "local"
         else:
             status_dict["components"]["storage"] = "missing_configuration"
 
         # Check SMTP configuration
-        if getattr(settings, "smtp_server", None) and getattr(
-            settings, "smtp_username", None
-        ):
+        if getattr(settings, "SMTP_USER", None) or getattr(settings, "RESEND_API_KEY", None):
             status_dict["components"]["email"] = "configured"
         else:
             status_dict["components"]["email"] = "missing_configuration"
