@@ -1,7 +1,7 @@
 # Simplified Dockerfile for MegiLance backend with Turso (libSQL)
 # Security-hardened production build
 # Build context: repo root (when using dockerfile_path: backend/Dockerfile)
-FROM python:3.13-slim AS builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # Final production image
-FROM python:3.13-slim
+FROM python:3.12-slim
 
 # Security: Disable Python bytecode and buffering
 ENV PYTHONDONTWRITEBYTECODE=1 \

@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 from app.core.security import get_current_user
 from app.db.turso_http import execute_query, parse_rows
 from app.core.config import get_settings
+from app.core.rate_limit import api_rate_limit, strict_rate_limit
 
 router = APIRouter()
 
@@ -29,6 +30,7 @@ class CreateCheckoutSession(BaseModel):
 
 
 @router.post("/create-payment-intent")
+@api_rate_limit()
 async def create_payment_intent(request: CreatePaymentIntent, current_user=Depends(get_current_user)):
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
@@ -56,11 +58,12 @@ async def create_payment_intent(request: CreatePaymentIntent, current_user=Depen
             "currency": request.currency,
         }
     except Exception as e:
-        logger.error(f"Stripe error: {e}")
-        raise HTTPException(status_code=500, detail=f"Payment processing failed: {str(e)}")
+        logger.error(f"stripe_create_payment_intent_error user={current_user.id} error={e}")
+        raise HTTPException(status_code=500, detail="Payment processing failed. Please try again.")
 
 
 @router.post("/create-checkout-session")
+@api_rate_limit()
 async def create_checkout_session(request: CreateCheckoutSession, current_user=Depends(get_current_user)):
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
@@ -90,8 +93,8 @@ async def create_checkout_session(request: CreateCheckoutSession, current_user=D
         )
         return {"url": session.url, "session_id": session.id}
     except Exception as e:
-        logger.error(f"Stripe checkout error: {e}")
-        raise HTTPException(status_code=500, detail=f"Checkout failed: {str(e)}")
+        logger.error(f"stripe_checkout_error user={current_user.id} error={e}")
+        raise HTTPException(status_code=500, detail="Checkout failed. Please try again.")
 
 
 @router.post("/webhook")
@@ -101,14 +104,18 @@ async def stripe_webhook(request: Request):
     sig_header = request.headers.get("stripe-signature")
 
     if not settings.STRIPE_WEBHOOK_SECRET or not settings.STRIPE_SECRET_KEY:
-        return {"received": True, "mode": "mock"}
+        logger.warning("stripe_webhook_called_without_config: Rejecting — Stripe not configured")
+        raise HTTPException(status_code=400, detail="Stripe webhook not configured")
 
     try:
         import stripe
         stripe.api_key = settings.STRIPE_SECRET_KEY
         event = stripe.Webhook.construct_event(payload, sig_header, settings.STRIPE_WEBHOOK_SECRET)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid payload")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.error(f"stripe_webhook_signature_verification_failed: {e}")
+        raise HTTPException(status_code=400, detail="Invalid signature")
 
     if event.type == "payment_intent.succeeded":
         intent = event.data.object

@@ -2,6 +2,7 @@
 
 import json
 import logging
+import mimetypes
 import os
 import sys
 import time
@@ -74,8 +75,6 @@ logger.setLevel(logging.INFO)
 logger.handlers = [handler]
 logger.propagate = False
 
-settings = get_settings()
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -124,8 +123,8 @@ async def lifespan(app: FastAPI):
             for idx_sql in indexes:
                 try:
                     execute_query(idx_sql)
-                except Exception:
-                    pass  # Table may not exist yet
+                except Exception as e:
+                    logger.debug(f"startup.index_skip: {e}")
             logger.info("startup.indexes_ensured")
         except Exception as e:
             logger.warning(f"startup.indexes_warning: {e}")
@@ -496,16 +495,11 @@ async def general_exception_handler(request, exc):
     return JSONResponse(
         status_code=500,
         content={
-            "detail": str(exc),
+            "detail": str(exc)[:200],  # Limit error detail length even in dev
             "error_type": type(exc).__name__,
             "request_id": request_id,
         },
     )
-
-
-@app.get("/")
-def root():
-    return {"message": "Welcome to the MegiLance API!", "version": "2.0.0"}
 
 
 @app.get("/api")
@@ -522,8 +516,6 @@ def api_root():
 @app.head("/api/v1/health")
 @app.get("/health")
 @app.head("/health")
-@app.get("/")
-@app.head("/")
 async def do_health_check():
     return {"status": "ok"}
 
@@ -623,8 +615,6 @@ def health_metrics():
     }
 
 
-import mimetypes
-import os
 from pathlib import Path
 
 from fastapi.responses import FileResponse
@@ -659,8 +649,12 @@ _INLINE_MIME_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 async def serve_upload(file_path: str):
     """Serve uploaded files with proper Content-Disposition and security headers."""
     resolved = (_UPLOADS_BASE / file_path).resolve()
-    # Prevent path traversal
-    if not str(resolved).startswith(str(_UPLOADS_BASE)) or not resolved.is_file():
+    # Prevent path traversal — use is_relative_to for cross-platform safety
+    try:
+        resolved.relative_to(_UPLOADS_BASE)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="File not found")
+    if not resolved.is_file():
         raise HTTPException(status_code=404, detail="File not found")
 
     content_type, _ = mimetypes.guess_type(str(resolved))

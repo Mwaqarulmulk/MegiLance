@@ -6,6 +6,7 @@ from sqlalchemy import String, Numeric, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -21,7 +22,7 @@ class Refund(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     payment_id: Mapped[int] = mapped_column(ForeignKey("payments.id"), index=True)
-    amount: Mapped[float] = mapped_column(Numeric(12, 2))
+    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     reason: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending, approved, rejected, processed
     requested_by: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)

@@ -100,19 +100,21 @@ async def deposit(request: DepositRequest, current_user=Depends(get_current_user
 async def withdraw(request: WithdrawRequest, current_user=Depends(get_current_user)):
     if request.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
+    if request.amount > 10000:
+        raise HTTPException(status_code=400, detail="Maximum single withdrawal is $10,000")
 
-    result = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
-    rows = parse_rows(result)
-    balance = rows[0]["account_balance"] if rows else 0
+    # Atomic balance check and deduction using a single UPDATE with WHERE clause
+    # This prevents TOCTOU race conditions — the UPDATE only succeeds if balance >= amount
+    now = datetime.now(timezone.utc).isoformat()
+    update_result = execute_query(
+        "UPDATE users SET account_balance = account_balance - ? WHERE id = ? AND account_balance >= ?",
+        [request.amount, current_user.id, request.amount],
+    )
 
-    if balance < request.amount:
+    # Check if the update actually affected a row (balance was sufficient)
+    if not update_result or update_result.get("rows_affected", 0) == 0:
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE users SET account_balance = account_balance - ? WHERE id = ?",
-        [request.amount, current_user.id],
-    )
     execute_query(
         """INSERT INTO wallet_transactions (user_id, type, amount, description, status, created_at)
            VALUES (?, 'withdrawal', ?, ?, 'pending', ?)""",

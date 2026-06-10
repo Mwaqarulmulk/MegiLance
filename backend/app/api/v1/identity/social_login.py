@@ -26,6 +26,16 @@ router = APIRouter()
 _oauth_states: dict[str, dict] = {}
 _STATE_TTL = 600  # 10 minutes
 
+# Allowed redirect URIs — prevent open redirect attacks
+ALLOWED_REDIRECT_URIS = {
+    "http://localhost:3000",
+    "http://localhost:3000/callback",
+    "https://megilance.com",
+    "https://megilance.com/callback",
+    "https://www.megilance.com",
+    "https://www.megilance.com/callback",
+}
+
 
 class SocialAuthStart(BaseModel):
     provider: str
@@ -83,6 +93,11 @@ async def start_social_auth(request: SocialAuthStart):
     settings = get_settings()
     provider = request.provider.lower()
 
+    # Validate redirect_uri against whitelist to prevent open redirect
+    redirect_uri = request.redirect_uri or "http://localhost:3000/callback"
+    if not any(redirect_uri.startswith(allowed) for allowed in ALLOWED_REDIRECT_URIS):
+        raise HTTPException(status_code=400, detail="Invalid redirect_uri — must be an allowed domain")
+
     # Generate CSRF state
     state = _generate_oauth_state(provider)
 
@@ -92,7 +107,7 @@ async def start_social_auth(request: SocialAuthStart):
         auth_url = (
             f"https://accounts.google.com/o/oauth2/v2/auth"
             f"?client_id={settings.GOOGLE_CLIENT_ID}"
-            f"&redirect_uri={request.redirect_uri or 'http://localhost:3000/callback'}"
+            f"&redirect_uri={redirect_uri}"
             f"&response_type=code&scope=email%20profile&state={state}"
         )
     elif provider == "github":
@@ -101,7 +116,7 @@ async def start_social_auth(request: SocialAuthStart):
         auth_url = (
             f"https://github.com/login/oauth/authorize"
             f"?client_id={settings.GITHUB_CLIENT_ID}"
-            f"&redirect_uri={request.redirect_uri or 'http://localhost:3000/callback'}"
+            f"&redirect_uri={redirect_uri}"
             f"&scope=user:email&state={state}"
         )
     elif provider == "linkedin":
@@ -110,7 +125,7 @@ async def start_social_auth(request: SocialAuthStart):
         auth_url = (
             f"https://www.linkedin.com/oauth/v2/authorization"
             f"?response_type=code&client_id={settings.LINKEDIN_CLIENT_ID}"
-            f"&redirect_uri={request.redirect_uri or 'http://localhost:3000/callback'}"
+            f"&redirect_uri={redirect_uri}"
             f"&state={state}&scope=openid%20profile%20email"
         )
     else:

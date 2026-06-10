@@ -172,8 +172,30 @@ async def delete_block(block_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/bookings")
-async def get_bookings(current_user=Depends(get_current_user)):
-    return {"bookings": []}
+async def get_bookings(
+    status: Optional[str] = None,
+    current_user=Depends(get_current_user),
+):
+    """List bookings (contracts) for the current user."""
+    where = "WHERE (c.client_id = ? OR c.freelancer_id = ?)"
+    params = [current_user.id, current_user.id]
+    if status:
+        where += " AND c.status = ?"
+        params.append(status)
+
+    result = execute_query(
+        f"""SELECT c.id, c.project_id, c.client_id, c.freelancer_id, c.amount,
+                   c.status, c.created_at, c.updated_at,
+                   p.title as project_title
+            FROM contracts c
+            LEFT JOIN projects p ON c.project_id = p.id
+            {where}
+            ORDER BY c.created_at DESC
+            LIMIT 50""",
+        params,
+    )
+    rows = parse_rows(result)
+    return {"bookings": rows if rows else []}
 
 
 @router.get("/sync-status")

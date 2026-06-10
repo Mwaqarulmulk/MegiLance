@@ -41,24 +41,24 @@ jobs:
       run: |
         cd backend
         echo "=== Checking for known vulnerabilities ==="
-        safety check --json || true
+        safety check --json || echo "WARNING: safety check had issues"
 
         echo "=== Running Bandit security scan ==="
-        bandit -r app/ -ll || true
+        bandit -r app/ -ll || echo "WARNING: bandit found issues"
 
     - name: Run linting
       run: |
         cd backend
         pip install flake8 black isort
         echo "=== Black formatting check ==="
-        black --check app/ --diff || true
+        black --check app/ --diff
         echo "=== Import sorting ==="
-        isort --check-only app/ || true
+        isort --check-only app/
 
     - name: Run tests
       run: |
         cd backend
-        pytest tests/ -v --cov=app --cov-report=xml --cov-report=term-missing || true
+        pytest tests/ -v --cov=app --cov-report=xml --cov-report=term-missing
 
     - name: Upload coverage
       uses: codecov/codecov-action@v4
@@ -90,12 +90,12 @@ jobs:
     - name: Run linting
       run: |
         cd frontend
-        npm run lint || true
+        npm run lint
 
     - name: Run tests
       run: |
         cd frontend
-        npm test -- --coverage --watchAll=false || true
+        npm test -- --coverage --watchAll=false
 
     - name: Build
       env:
@@ -211,7 +211,7 @@ jobs:
       run: |
         pip install safety
         cd backend
-        safety check --json || true
+        safety check --json || echo "WARNING: safety check had issues"
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
@@ -223,5 +223,5 @@ jobs:
     - name: Check Node dependencies
       run: |
         cd frontend
-        npm audit || true
+        npm audit || echo "WARNING: npm audit had issues"
 

@@ -65,7 +65,7 @@ export const metadata: Metadata = {
       { url: '/icons/icon-192x192.png', sizes: '180x180', type: 'image/png' },
     ],
   },
-  authors: [{ name: 'MegiLance Team', url: 'https://megilance.com' }],
+  authors: [{ name: 'MegiLance Team', url: 'https://megilance.site' }],
   creator: 'MegiLance',
   publisher: 'MegiLance',
   applicationName: 'MegiLance',

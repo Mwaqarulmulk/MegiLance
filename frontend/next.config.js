@@ -67,6 +67,9 @@ const nextConfig = {
   // React Strict Mode: catches bugs early (Vercel best practice)
   reactStrictMode: true,
   
+  // Standalone output for Docker/DO deployment
+  output: 'standalone',
+  
   // Strip console.log and console.debug from production builds (security + performance)
   // console.warn and console.error are preserved for monitoring
   compiler: {
@@ -182,15 +185,6 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
-        headers: [
-          // Disable Cloudflare caching for HTML pages to prevent Server Action ID mismatch on new deployments
-          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0' },
-          { key: 'Pragma', value: 'no-cache' },
-          { key: 'Expires', value: '0' },
-        ],
-      },
-      {
         source: '/api/:path*',
         headers: [
           { key: 'Cache-Control', value: 'no-store, max-age=0' },
@@ -263,14 +257,9 @@ const nextConfig = {
     ];
   },
   
-  // Rewrites for local development
+  // Rewrites — none needed; API proxy is handled by app/api/[...catchall]/route.ts
   async rewrites() {
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000'}/api/v1/:path*`,
-      },
-    ];
+    return [];
   },
   
   async redirects() {
@@ -281,12 +270,6 @@ const nextConfig = {
         permanent: false,
       },
       // Redirect www to non-www
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'www.megilance.com' }],
-        destination: 'https://megilance.com/:path*',
-        permanent: true,
-      },
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.megilance.site' }],

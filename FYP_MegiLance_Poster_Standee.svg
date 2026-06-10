@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1728 4320" width="24in" height="60in">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F19" />
+      <stop offset="50%" stop-color="#1A1F35" />
+      <stop offset="100%" stop-color="#0B0F19" />
+    </linearGradient>
+    <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4573df" />
+      <stop offset="100%" stop-color="#8a2be2" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="15" stdDeviation="25" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1728" height="4320" fill="url(#bg-grad)" />
+  
+  <!-- Subtle Grid Pattern -->
+  <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.04"/>
+  </pattern>
+  <rect width="1728" height="4320" fill="url(#grid)" />
+
+  <!-- Top Accent Line -->
+  <rect width="1728" height="30" fill="url(#accent-grad)" />
+
+  <!-- HEADER SECTION -->
+  <g transform="translate(0, 150)">
+    <!-- Comsats Logo Placeholder Frame -->
+    <rect x="150" y="0" width="250" height="250" rx="30" fill="#ffffff" fill-opacity="0.1" filter="url(#shadow)" />
+    <text x="275" y="140" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="30" font-weight="600" text-anchor="middle" opacity="0.8">COMSATS</text>
+    <text x="275" y="180" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="20" text-anchor="middle" opacity="0.6">[Insert Logo]</text>
+    
+    <text x="480" y="130" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="140" font-weight="800" filter="url(#glow)">MegiLance</text>
+    <text x="485" y="190" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="45" font-weight="400">Next-Generation AI-Powered Freelancing Platform</text>
+    <rect x="485" y="240" width="300" height="8" rx="4" fill="url(#accent-grad)" />
+  </g>
+
+  <!-- PROBLEM STATEMENT SECTION -->
+  <g transform="translate(150, 650)">
+    <rect x="0" y="0" width="670" height="500" rx="40" fill="#151b2b" stroke="#2d3748" stroke-width="2" filter="url(#shadow)"/>
+    <text x="60" y="100" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="60" font-weight="700">The Problem</text>
+    <circle cx="90" cy="180" r="15" fill="#e53e3e" />
+    <text x="130" y="195" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="36">Exorbitant Platform Fees (20%+)</text>
+    
+    <circle cx="90" cy="280" r="15" fill="#e53e3e" />
+    <text x="130" y="295" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="36">Inefficient Matching &amp; Fake Skills</text>
+    
+    <circle cx="90" cy="380" r="15" fill="#e53e3e" />
+    <text x="130" y="395" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="36">Delayed Payments &amp; Disputes</text>
+  </g>
+
+  <!-- OBJECTIVES SECTION -->
+  <g transform="translate(908, 650)">
+    <rect x="0" y="0" width="670" height="500" rx="40" fill="#151b2b" stroke="#2d3748" stroke-width="2" filter="url(#shadow)"/>
+    <text x="60" y="100" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="60" font-weight="700">Our Objective</text>
+    <circle cx="90" cy="180" r="15" fill="#48bb78" />
+    <text x="130" y="195" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="36">Near-zero Fees (Turso Edge DB)</text>
+    
+    <circle cx="90" cy="280" r="15" fill="#48bb78" />
+    <text x="130" y="295" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="36">AI-Driven Smart Matching &amp; Ranking</text>
+    
+    <circle cx="90" cy="380" r="15" fill="#48bb78" />
+    <text x="130" y="395" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="36">Secure Escrow via Stripe &amp; Crypto</text>
+  </g>
+
+  <!-- CORE INNOVATIONS (BENTO BOX) SECTION -->
+  <g transform="translate(150, 1250)">
+    <text x="0" y="0" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="80" font-weight="800">Core Innovations</text>
+    
+    <!-- AI Services -->
+    <rect x="0" y="80" width="700" height="350" rx="40" fill="#1c2336" stroke="#4573df" stroke-width="3" filter="url(#shadow)"/>
+    <text x="60" y="170" fill="#4573df" font-family="Poppins, Arial, sans-serif" font-size="50" font-weight="700">AI Services Layer</text>
+    <text x="60" y="240" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="32">✦ Talent Ranking &amp; Scoring</text>
+    <text x="60" y="310" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="32">✦ Price Forecasting Engine</text>
+    <text x="60" y="380" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="32">✦ NLP Malicious Review Detection</text>
+    
+    <!-- Edb / Realtime -->
+    <rect x="740" y="80" width="688" height="350" rx="40" fill="#1c2336" stroke="#8a2be2" stroke-width="3" filter="url(#shadow)"/>
+    <text x="800" y="170" fill="#8a2be2" font-family="Poppins, Arial, sans-serif" font-size="50" font-weight="700">Edge &amp; Real-time</text>
+    <text x="800" y="240" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="32">✦ Turso LibSQL at the Edge</text>
+    <text x="800" y="310" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="32">✦ Redis+Socket.io Real-time Chat</text>
+    <text x="800" y="380" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="32">✦ Fast API Async Background Tasks</text>
+  </g>
+
+  <!-- ARCHITECTURE DIAGRAM -->
+  <g transform="translate(150, 1850)">
+    <rect x="0" y="0" width="1428" height="1000" rx="40" fill="#0B0F19" stroke="#2d3748" stroke-width="2" filter="url(#shadow)"/>
+    <text x="714" y="120" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="70" font-weight="800" text-anchor="middle">System Architecture</text>
+    
+    <!-- Client Layer -->
+    <rect x="150" y="250" width="300" height="150" rx="20" fill="#2d3748" />
+    <text x="300" y="320" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="700" text-anchor="middle">User Client</text>
+    <text x="300" y="370" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="24" text-anchor="middle">Freelancer / Client / Admin</text>
+    
+    <!-- NextJS Layer -->
+    <rect x="564" y="250" width="300" height="150" rx="20" fill="#2d3748" />
+    <text x="714" y="320" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="700" text-anchor="middle">Next.js 16</text>
+    <text x="714" y="370" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="24" text-anchor="middle">App Router / SSR</text>
+
+    <!-- FastAPI Layer -->
+    <rect x="564" y="550" width="300" height="150" rx="20" fill="#2b6cb0" />
+    <text x="714" y="620" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="700" text-anchor="middle">FastAPI</text>
+    <text x="714" y="670" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="24" text-anchor="middle">Python 3.11 Backend</text>
+
+    <!-- DB Layer -->
+    <rect x="978" y="550" width="300" height="150" rx="20" fill="#ecc94b" />
+    <text x="1128" y="620" fill="#1a202c" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="700" text-anchor="middle">Turso</text>
+    <text x="1128" y="670" fill="#2d3748" font-family="Inter, Arial, sans-serif" font-size="24" text-anchor="middle">Distributed LibSQL DB</text>
+
+    <!-- AI Models Layer -->
+    <rect x="564" y="800" width="300" height="120" rx="20" fill="#805ad5" />
+    <text x="714" y="870" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="700" text-anchor="middle">AI Services</text>
+
+    <!-- Paths/Arrows -->
+    <path d="M 450 325 L 544 325" fill="none" stroke="#4a5568" stroke-width="8" marker-end="url(#arrow)" />
+    <path d="M 714 400 L 714 534" fill="none" stroke="#4a5568" stroke-width="8" marker-end="url(#arrow)" />
+    <path d="M 864 625 L 958 625" fill="none" stroke="#4a5568" stroke-width="8" marker-end="url(#arrow)" />
+    <path d="M 714 700 L 714 784" fill="none" stroke="#4a5568" stroke-width="8" marker-end="url(#arrow)" />
+    <path d="M 714 784 L 714 700" fill="none" stroke="#4a5568" stroke-width="8" marker-end="url(#arrow)" /> <!-- Bi-directional AI -->
+
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,6 L9,3 z" fill="#4a5568" />
+      </marker>
+    </defs>
+  </g>
+
+  <!-- METHODOLOGY / WORKFLOW -->
+  <g transform="translate(150, 2950)">
+    <text x="0" y="0" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="80" font-weight="800">Platform Features</text>
+
+    <rect x="0" y="80" width="450" height="400" rx="30" fill="#151b2b" stroke="#2d3748" stroke-width="2" />
+    <text x="225" y="160" fill="#4573df" font-family="Poppins, Arial, sans-serif" font-size="120" font-weight="bold" text-anchor="middle">1</text>
+    <text x="225" y="240" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle">Multi-Role Support</text>
+    <text x="225" y="300" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">Clients post projects.</text>
+    <text x="225" y="340" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">Freelancers bid &amp; work.</text>
+
+    <rect x="489" y="80" width="450" height="400" rx="30" fill="#151b2b" stroke="#2d3748" stroke-width="2" />
+    <text x="714" y="160" fill="#48bb78" font-family="Poppins, Arial, sans-serif" font-size="120" font-weight="bold" text-anchor="middle">2</text>
+    <text x="714" y="240" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle">Escrow &amp; Crypto</text>
+    <text x="714" y="300" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">100% secure payments.</text>
+    <text x="714" y="340" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">Crypto-to-fiat support.</text>
+
+    <rect x="978" y="80" width="450" height="400" rx="30" fill="#151b2b" stroke="#2d3748" stroke-width="2" />
+    <text x="1203" y="160" fill="#8a2be2" font-family="Poppins, Arial, sans-serif" font-size="120" font-weight="bold" text-anchor="middle">3</text>
+    <text x="1203" y="240" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle">Smart Dispute</text>
+    <text x="1203" y="300" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">Admin arbitration</text>
+    <text x="1203" y="340" fill="#a0aec0" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">backed by AI chat logs.</text>
+  </g>
+
+  <!-- TECH STACK LOGOS (TEXT/ICONS) -->
+  <g transform="translate(150, 3600)">
+    <text x="0" y="0" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="80" font-weight="800">Technologies</text>
+    <rect x="0" y="80" width="1428" height="200" rx="40" fill="#151b2b" stroke="#2d3748" stroke-width="2" />
+    <text x="714" y="195" fill="#e2e8f0" font-family="Poppins, Arial, sans-serif" font-size="45" font-weight="600" text-anchor="middle" letter-spacing="2">NEXT.JS 16 • FASTAPI • PYTHON • TURSO • TAILWIND • REDIS</text>
+  </g>
+
+  <!-- FOOTER -->
+  <g transform="translate(0, 4100)">
+    <rect x="0" y="0" width="1728" height="220" fill="url(#accent-grad)" />
+    <!-- Replace these variables if actual names are provided, otherwise generic -->
+    <text x="150" y="110" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="45" font-weight="700">Project By:</text>
+    <text x="150" y="160" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="35" opacity="0.9">Ghulam Mujtaba [FYP Student]</text>
+    
+    <text x="1578" y="110" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="45" font-weight="700" text-anchor="end">Supervised By:</text>
+    <text x="1578" y="160" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="35" opacity="0.9" text-anchor="end">Mr. Shahrukh Naeem</text>
+
+    <text x="864" y="110" fill="#ffffff" font-family="Poppins, Arial, sans-serif" font-size="30" font-weight="600" text-anchor="middle" opacity="0.8">COMSATS University Islamabad, Lahore Campus</text>
+    <text x="864" y="160" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="30" text-anchor="middle" opacity="0.8">megilance.site</text>
+  </g>
+</svg>

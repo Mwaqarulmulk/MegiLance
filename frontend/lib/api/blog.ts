@@ -1,8 +1,12 @@
 import { BlogPostCardProps } from '@/app/components/Public/BlogPostCard/BlogPostCard';
 
-// NEXT_PUBLIC_API_URL already includes /api/v1 suffix — use it directly.
-// Fallback to relative /api/v1 so browser requests route through the ingress.
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/+$/, '');
+// Always use /api/v1 for backend API calls.
+// NEXT_PUBLIC_API_URL may be "https://api.megilance.site/api" (without v1),
+// so we normalise to always include /api/v1.
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+const API_URL = rawApiUrl.includes('/api/v1')
+  ? rawApiUrl.replace(/\/+$/, '')
+  : `${rawApiUrl.replace(/\/+$/, '')}/api/v1`;
 
 export interface BlogPost {
   id: string;

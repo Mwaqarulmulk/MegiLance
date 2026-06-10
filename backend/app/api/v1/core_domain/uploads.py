@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, s
 from typing import Optional
 import os
 import uuid
+import re
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,28 @@ ALLOWED_DOC_TYPES = {"application/pdf", "application/msword", "application/vnd.o
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 
+def _sanitize_extension(filename: str) -> str:
+    """Extract file extension safely — only allows alphanumeric, max 10 chars."""
+    if not filename or "." not in filename:
+        return "jpg"
+    ext = filename.rsplit(".", 1)[-1].lower()
+    # Only allow alphanumeric extensions, max 10 chars
+    ext = re.sub(r'[^a-z0-9]', '', ext)[:10]
+    return ext if ext and len(ext) <= 10 else "bin"
+
+
+def _safe_path(base_dir: str, filename: str) -> str:
+    """Build a safe file path, ensuring no path traversal."""
+    safe_name = f"{uuid.uuid4().hex[:8]}.{_sanitize_extension(filename)}"
+    full_path = os.path.join(base_dir, safe_name)
+    # Verify resolved path stays within base_dir
+    resolved = os.path.realpath(full_path)
+    base_resolved = os.path.realpath(base_dir)
+    if not resolved.startswith(base_resolved):
+        raise HTTPException(status_code=400, detail="Invalid file path")
+    return full_path
+
+
 @router.post("/avatar")
 async def upload_avatar(
     file: UploadFile = File(...),
@@ -31,16 +54,14 @@ async def upload_avatar(
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File too large (max 10MB)")
 
-    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
-    filename = f"avatar_{current_user.id}_{uuid.uuid4().hex[:8]}.{ext}"
-    filepath = os.path.join(UPLOAD_DIR, "avatars")
-    os.makedirs(filepath, exist_ok=True)
-    full_path = os.path.join(filepath, filename)
+    avatar_dir = os.path.join(UPLOAD_DIR, "avatars")
+    os.makedirs(avatar_dir, exist_ok=True)
+    full_path = _safe_path(avatar_dir, file.filename)
 
     with open(full_path, "wb") as f:
         f.write(contents)
 
-    url = f"/uploads/avatars/{filename}"
+    url = f"/uploads/avatars/{os.path.basename(full_path)}"
     return {"message": "Avatar uploaded", "url": url, "file_url": url, "path": url}
 
 
@@ -56,16 +77,14 @@ async def upload_document(
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File too large (max 10MB)")
 
-    ext = file.filename.split(".")[-1] if "." in file.filename else "pdf"
-    filename = f"doc_{current_user.id}_{uuid.uuid4().hex[:8]}.{ext}"
-    filepath = os.path.join(UPLOAD_DIR, "documents")
-    os.makedirs(filepath, exist_ok=True)
-    full_path = os.path.join(filepath, filename)
+    doc_dir = os.path.join(UPLOAD_DIR, "documents")
+    os.makedirs(doc_dir, exist_ok=True)
+    full_path = _safe_path(doc_dir, file.filename)
 
     with open(full_path, "wb") as f:
         f.write(contents)
 
-    url = f"/uploads/documents/{filename}"
+    url = f"/uploads/documents/{os.path.basename(full_path)}"
     return {"message": "Document uploaded", "url": url, "file_url": url}
 
 
@@ -79,14 +98,14 @@ async def upload_project_file(
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File too large (max 10MB)")
 
-    ext = file.filename.split(".")[-1] if "." in file.filename else "bin"
-    filename = f"project_{project_id}_{uuid.uuid4().hex[:8]}.{ext}"
-    filepath = os.path.join(UPLOAD_DIR, "projects", project_id)
-    os.makedirs(filepath, exist_ok=True)
-    full_path = os.path.join(filepath, filename)
+    # Sanitize project_id — only allow alphanumeric and hyphens
+    safe_project_id = re.sub(r'[^a-zA-Z0-9\-]', '', project_id)[:50]
+    project_dir = os.path.join(UPLOAD_DIR, "projects", safe_project_id)
+    os.makedirs(project_dir, exist_ok=True)
+    full_path = _safe_path(project_dir, file.filename)
 
     with open(full_path, "wb") as f:
         f.write(contents)
 
-    url = f"/uploads/projects/{project_id}/{filename}"
+    url = f"/uploads/projects/{safe_project_id}/{os.path.basename(full_path)}"
     return {"message": "File uploaded", "url": url, "file_url": url}

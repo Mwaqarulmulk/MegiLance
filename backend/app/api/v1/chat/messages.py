@@ -1,4 +1,4 @@
-# @AI-HINT: Messages router — conversations, send/receive messages
+# @AI-HINT: Messages router — conversations, send/receive messages with real-time WebSocket broadcasting
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel
 from typing import Optional
@@ -21,6 +21,14 @@ from app.services.messages_service import (
     sanitize_content,
     find_existing_conversation,
 )
+
+# Import WebSocket manager for real-time broadcasting
+try:
+    from app.core.websocket import websocket_manager
+    _ws_available = True
+except Exception:
+    _ws_available = False
+    logger.warning("WebSocket manager not available — real-time messaging disabled")
 
 router = APIRouter()
 
@@ -95,7 +103,7 @@ async def create_conversation(request: ConversationCreate, current_user=Depends(
 
     if request.initial_message:
         content = sanitize_content(request.initial_message)
-        create_message_record(
+        msg_id = create_message_record(
             conversation_id=conv_id,
             sender_id=current_user.id,
             receiver_id=request.freelancer_id,
@@ -105,6 +113,30 @@ async def create_conversation(request: ConversationCreate, current_user=Depends(
             now=now,
         )
         update_conversation_fields(conv_id, "last_message_at = ?, updated_at = ?", [now, now])
+
+        # Broadcast initial message via WebSocket
+        if _ws_available and msg_id:
+            try:
+                import asyncio
+                message_payload = {
+                    "id": msg_id,
+                    "conversation_id": conv_id,
+                    "sender_id": current_user.id,
+                    "receiver_id": request.freelancer_id,
+                    "content": content,
+                    "message_type": "text",
+                    "is_read": False,
+                    "sent_at": now,
+                    "created_at": now,
+                }
+                asyncio.create_task(
+                    websocket_manager.broadcast_to_chat(str(conv_id), "new_message", message_payload)
+                )
+                asyncio.create_task(
+                    websocket_manager.send_message_notification(str(request.freelancer_id), message_payload)
+                )
+            except Exception as e:
+                logger.warning("WebSocket broadcast failed for initial message: %s", e)
 
     return {"conversation_id": conv_id, "message": "Conversation created"}
 
@@ -184,6 +216,36 @@ async def send_message(
         raise HTTPException(status_code=500, detail="Failed to send message")
 
     update_conversation_fields(conversation_id, "last_message_at = ?, updated_at = ?", [now, now])
+
+    # Broadcast message via WebSocket for real-time delivery
+    if _ws_available:
+        try:
+            import asyncio
+            message_payload = {
+                "id": msg_id,
+                "conversation_id": conversation_id,
+                "sender_id": current_user.id,
+                "receiver_id": receiver_id,
+                "content": content,
+                "message_type": request.message_type,
+                "attachment_url": request.attachment_url,
+                "is_read": False,
+                "sent_at": now,
+                "created_at": now,
+                "sender_name": getattr(current_user, "name", None),
+            }
+            # Broadcast to the chat room (all participants in the conversation)
+            asyncio.create_task(
+                websocket_manager.broadcast_to_chat(
+                    str(conversation_id), "new_message", message_payload
+                )
+            )
+            # Also send a notification to the receiver specifically
+            asyncio.create_task(
+                websocket_manager.send_message_notification(str(receiver_id), message_payload)
+            )
+        except Exception as e:
+            logger.warning("WebSocket broadcast failed for message %s: %s", msg_id, e)
 
     return {"message_id": msg_id, "message": "Message sent successfully"}
 

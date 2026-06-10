@@ -17,7 +17,7 @@ ingress:
       preserve_path_prefix: true
     match:
       path:
-        prefix: /api/v1
+        prefix: /api
   - component:
       name: ai-service
       preserve_path_prefix: true
@@ -59,14 +59,14 @@ services:
     scope: RUN_AND_BUILD_TIME
     value: libsql://megilance-db-megilance.aws-ap-south-1.turso.io
   - key: TURSO_AUTH_TOKEN
-    scope: RUN_AND_BUILD_TIME
-    value: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjUyMjY1NTksImlkIjoiZGVmMGE2NzYtMGZiNC00MDAzLTkyNmItMDhlYzA4NjY4MWFkIiwicmlkIjoiYTliOGUwMzctZGQwNi00NTRiLTlmYzgtNGFmMzcxYTg0ODdiIn0.qt4d8AZ587-_i6QWt8f2oUCXuN2w4w0m6YvveN_BSVRFJVH1GM9DL8TuxQfzptpt7HiGBlvGsnbq7zwRrYCyDA
+    scope: RUN_TIME
+    value: ${TURSO_AUTH_TOKEN}
   - key: SECRET_KEY
-    scope: RUN_AND_BUILD_TIME
-    value: megilance-prod-secret-key-2026-super-secure-minimum-256bits-long-key-value-here-12345
+    scope: RUN_TIME
+    value: ${SECRET_KEY}
   - key: JWT_SECRET_KEY
-    scope: RUN_AND_BUILD_TIME
-    value: megilance-prod-secret-key-2026-super-secure-minimum-256bits-long-key-value-here-12345
+    scope: RUN_TIME
+    value: ${JWT_SECRET_KEY}
   - key: JWT_ALGORITHM
     scope: RUN_AND_BUILD_TIME
     value: HS256
@@ -95,20 +95,20 @@ services:
     scope: RUN_AND_BUILD_TIME
     value: "10485760"
   - key: GOOGLE_CLIENT_ID
-    scope: RUN_AND_BUILD_TIME
-    value: 334576604932-n9g48l5qrtcblunb1jkin7161bdokmpg.apps.googleusercontent.com
+    scope: RUN_TIME
+    value: ${GOOGLE_CLIENT_ID}
   - key: GOOGLE_CLIENT_SECRET
-    scope: RUN_AND_BUILD_TIME
-    value: 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
+    scope: RUN_TIME
+    value: ${GOOGLE_CLIENT_SECRET}
   - key: GITHUB_CLIENT_ID
-    scope: RUN_AND_BUILD_TIME
-    value: Ov23ctGBUJFmDM3FHRCO
+    scope: RUN_TIME
+    value: ${GITHUB_CLIENT_ID}
   - key: GITHUB_CLIENT_SECRET
-    scope: RUN_AND_BUILD_TIME
-    value: f952f535dbda3c20d99d5cbf2f1167c9aad7cdd6
+    scope: RUN_TIME
+    value: ${GITHUB_CLIENT_SECRET}
   - key: RESEND_API_KEY
-    scope: RUN_AND_BUILD_TIME
-    value: re_92qAZqKU_Fq8eENUhpJbmYHX3Z3RcU9iR
+    scope: RUN_TIME
+    value: ${RESEND_API_KEY}
   - key: FROM_EMAIL
     scope: RUN_AND_BUILD_TIME
     value: onboarding@resend.dev
@@ -125,11 +125,11 @@ services:
     scope: RUN_AND_BUILD_TIME
     value: "10.0"
   - key: MOCK_PAYMENTS_ENABLED
-    scope: RUN_AND_BUILD_TIME
-    value: "true"
+    scope: RUN_TIME
+    value: "false"
   - key: CRYPTO_USE_TESTNET
-    scope: RUN_AND_BUILD_TIME
-    value: "true"
+    scope: RUN_TIME
+    value: "false"
   - key: USDC_RECEIVING_ADDRESS_POLYGON
     scope: RUN_AND_BUILD_TIME
     value: 0x228d599d4c7e89194b94e9d65b1b4114870a4c34
@@ -145,7 +145,7 @@ services:
   github:
     branch: main
     deploy_on_push: true
-    repo: umair-fa22/MegiLance
+    repo: ghulam-mujtaba5/MegiLance
   http_port: 8000
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-2gb
@@ -154,7 +154,7 @@ services:
   github:
     branch: main
     deploy_on_push: true
-    repo: umair-fa22/MegiLance
+    repo: ghulam-mujtaba5/MegiLance
   http_port: 8001
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-1gb-fixed
@@ -179,8 +179,8 @@ services:
     scope: RUN_AND_BUILD_TIME
     value: wss://api.megilance.site
   - key: NEXT_PUBLIC_SHOW_DEMO_LOGIN
-    scope: RUN_AND_BUILD_TIME
-    value: "true"
+    scope: RUN_TIME
+    value: "false"
   - key: NEXTAUTH_URL
     scope: RUN_AND_BUILD_TIME
     value: https://www.megilance.site
@@ -193,7 +193,7 @@ services:
   github:
     branch: main
     deploy_on_push: true
-    repo: umair-fa22/MegiLance
+    repo: ghulam-mujtaba5/MegiLance
   http_port: 3000
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-1gb-fixed

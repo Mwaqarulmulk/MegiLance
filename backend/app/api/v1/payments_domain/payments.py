@@ -113,27 +113,6 @@ async def create_payment(request: PaymentCreate, current_user=Depends(get_curren
     return {"message": "Payment initiated", "payment_id": result.get("last_insert_rowid")}
 
 
-@router.post("/{payment_id}/complete")
-async def complete_payment(payment_id: int, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id, status, client_id FROM payments WHERE id = ?",
-        [payment_id],
-    )
-    rows = parse_rows(result)
-    if not rows:
-        raise HTTPException(status_code=404, detail="Payment not found")
-
-    if rows[0]["client_id"] != current_user.id:
-        raise HTTPException(status_code=403, detail="Access denied")
-
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE payments SET status = 'completed', updated_at = ? WHERE id = ?",
-        [now, payment_id],
-    )
-    return {"message": "Payment completed"}
-
-
 @router.post("/add-funds")
 async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_user)):
     """Initiate adding funds via a payment gateway. In production, this should

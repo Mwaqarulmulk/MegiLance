@@ -3,6 +3,7 @@
    go in CSS Modules. */
 
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 /* Global popup config removed to rely on custom 3-file CSS modules */
 
@@ -378,7 +379,7 @@ This project follows strict CSS Module architecture:
 
 /* Accessibility: Global Focus Styles */
 *:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--ml-blue);
   outline-offset: 2px;
 }
 

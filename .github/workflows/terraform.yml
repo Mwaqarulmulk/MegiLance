@@ -2,6 +2,12 @@ name: Terraform Plan & Apply
 
 on:
   workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Apply Terraform changes (default: plan only)'
+        required: false
+        default: 'false'
+        type: boolean
   push:
     branches: [ main ]
 
@@ -61,8 +67,10 @@ jobs:
           TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
         run: terraform plan -out=tfplan
 
+      # Terraform Apply is ONLY triggered manually via workflow_dispatch
+      # To apply: go to Actions -> Terraform Plan & Apply -> Run workflow -> check "apply"
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.apply == 'true'
         working-directory: infra/terraform
         env:
           TF_VAR_aws_region: ${{ env.AWS_REGION }}

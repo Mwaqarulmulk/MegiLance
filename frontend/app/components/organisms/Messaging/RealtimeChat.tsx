@@ -156,10 +156,11 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
             metadata: msg.attachments ? { attachment_url: msg.attachments.url, attachment_name: msg.attachments.name } : undefined,
           })).reverse());
         } else {
-          setMessages(buildDemoMessages());
+          // Empty conversation — no demo data
+          setMessages([]);
         }
       } catch {
-        if (!cancelled) setMessages(buildDemoMessages());
+        if (!cancelled) setMessages([]);
       } finally {
         if (!cancelled) setLoadingHistory(false);
       }

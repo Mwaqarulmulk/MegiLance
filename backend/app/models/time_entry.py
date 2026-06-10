@@ -2,10 +2,11 @@
 """
 Time entry model for tracking freelancer work hours
 """
-from sqlalchemy import String, Integer, Float, DateTime, Text, ForeignKey, Boolean
+from sqlalchemy import String, Integer, Numeric, DateTime, Text, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -27,8 +28,8 @@ class TimeEntry(Base):
     duration_minutes: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # Calculated when stopped
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     billable: Mapped[bool] = mapped_column(Boolean, default=True)
-    hourly_rate: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    amount: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Calculated: (duration/60) * hourly_rate
+    hourly_rate: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(12, 2), nullable=True)  # Calculated: (duration/60) * hourly_rate
     status: Mapped[str] = mapped_column(String(20), default="draft", index=True)  # draft, submitted, approved, rejected, invoiced
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

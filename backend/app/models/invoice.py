@@ -2,10 +2,11 @@
 """
 Invoice model for billing and payment tracking
 """
-from sqlalchemy import String, Float, DateTime, Text, ForeignKey
+from sqlalchemy import String, Numeric, DateTime, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -25,9 +26,9 @@ class Invoice(Base):
     contract_id: Mapped[int] = mapped_column(ForeignKey("contracts.id"), index=True)
     from_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)  # Freelancer
     to_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)  # Client
-    subtotal: Mapped[float] = mapped_column(Float)
-    tax: Mapped[float] = mapped_column(Float, default=0.0)
-    total: Mapped[float] = mapped_column(Float)
+    subtotal: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    tax: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=0.0)
+    total: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     due_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     paid_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending, paid, overdue, cancelled

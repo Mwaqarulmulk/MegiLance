@@ -122,7 +122,8 @@ async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=D
 
     dispute = rows[0]
     is_party = dispute["claimant_id"] == current_user.id or dispute["respondent_id"] == current_user.id
-    is_admin = getattr(current_user, "role", "") == "admin"
+    user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
+    is_admin = user_role == "admin"
 
     if not is_party and not is_admin:
         raise HTTPException(status_code=403, detail="Only dispute parties or admins can update")
@@ -141,8 +142,9 @@ async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=D
 
 @router.post("/{dispute_id}/assign")
 async def assign_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
-    # Only admins can assign disputes
-    if getattr(current_user, "role", "") != "admin":
+    # Only admins can assign disputes — use explicit role check
+    user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
+    if user_role != "admin":
         raise HTTPException(status_code=403, detail="Only admins can assign disputes")
 
     admin_id = data.get("admin_id")
@@ -159,8 +161,9 @@ async def assign_dispute(dispute_id: int, data: dict, current_user=Depends(get_c
 
 @router.post("/{dispute_id}/resolve")
 async def resolve_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
-    # Only admins can resolve disputes
-    if getattr(current_user, "role", "") != "admin":
+    # Only admins can resolve disputes — use explicit role check
+    user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
+    if user_role != "admin":
         raise HTTPException(status_code=403, detail="Only admins can resolve disputes")
 
     resolution = data.get("resolution", "")

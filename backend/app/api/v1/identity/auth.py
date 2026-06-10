@@ -35,6 +35,7 @@ from app.services.auth_service import (
 )
 from app.services.email_service import email_service
 from app.db.turso_http import execute_query as eq, parse_rows as pr
+from app.core.rate_limit import auth_rate_limit, password_reset_rate_limit, email_rate_limit
 
 router = APIRouter()
 
@@ -79,6 +80,7 @@ class EmailVerifyRequest(BaseModel):
 # === Login ===
 
 @router.post("/login")
+@auth_rate_limit()
 async def login(request: LoginRequest):
     user = authenticate_user(request.email, request.password)
     if not user:
@@ -119,6 +121,7 @@ async def login(request: LoginRequest):
 # === Register ===
 
 @router.post("/register")
+@auth_rate_limit()
 async def register(request: RegisterRequest):
     if check_email_exists(request.email):
         raise HTTPException(
@@ -415,6 +418,7 @@ async def refresh_token(request: Request):
 # === Forgot Password ===
 
 @router.post("/forgot-password")
+@password_reset_rate_limit()
 async def forgot_password(request: PasswordResetRequest):
     user = get_user_for_password_reset(request.email)
     if not user:
@@ -423,11 +427,21 @@ async def forgot_password(request: PasswordResetRequest):
     reset_token = secrets.token_urlsafe(32)
     now = datetime.now(timezone.utc).isoformat()
 
+    # Merge into existing profile_data instead of overwriting
+    import json as _json
+    existing_profile = {}
+    raw_pd = user.get("profile_data")
+    if raw_pd:
+        try:
+            existing_profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
+        except Exception:
+            existing_profile = {}
+    existing_profile["reset_token"] = reset_token
+    from datetime import timedelta
+    existing_profile["reset_token_expires"] = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+
     update_user_fields(user["id"], {
-        "profile_data": str({
-            "reset_token": reset_token,
-            "reset_token_expires": (datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0) + __import__('datetime').timedelta(hours=24)).isoformat(),
-        })
+        "profile_data": _json.dumps(existing_profile)
     })
 
     try:
@@ -449,21 +463,49 @@ async def forgot_password(request: PasswordResetRequest):
 # === Reset Password ===
 
 @router.post("/reset-password")
+@password_reset_rate_limit()
 async def reset_password(request: PasswordResetConfirm):
     from app.db.turso_http import execute_query as eq, parse_rows as pr
+    import json as _json
+    from datetime import timezone as _tz
 
-    result = eq(
-        "SELECT id, email, name, profile_data FROM users WHERE profile_data LIKE ?",
-        [f"%{request.token}%"],
-    )
+    # Fetch all users with profile_data and match token in Python (avoids SQL LIKE injection)
+    result = eq("SELECT id, email, name, profile_data FROM users WHERE profile_data IS NOT NULL AND profile_data != ''", [])
     rows = pr(result)
-    if not rows:
+
+    user = None
+    for row in rows:
+        raw_pd = row.get("profile_data")
+        if not raw_pd:
+            continue
+        try:
+            profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
+        except Exception:
+            continue
+        if not isinstance(profile, dict):
+            continue
+        stored_token = profile.get("reset_token")
+        expires_str = profile.get("reset_token_expires")
+        if stored_token != request.token:
+            continue
+        # Check expiry
+        if expires_str:
+            try:
+                from datetime import datetime as _dt
+                expires = _dt.fromisoformat(expires_str)
+                if _dt.now(_tz.utc) > expires:
+                    continue
+            except Exception:
+                pass
+        user = row
+        break
+
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid or expired reset token",
         )
 
-    user = rows[0]
     is_valid, errors = validate_password_strength(request.new_password)
     if not is_valid:
         raise HTTPException(
@@ -474,6 +516,16 @@ async def reset_password(request: PasswordResetConfirm):
     hashed = get_password_hash(request.new_password)
     update_user_fields(user["id"], {"hashed_password": hashed})
 
+    # Clear the reset token from profile_data
+    raw_pd = user.get("profile_data", "{}")
+    try:
+        profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else {}
+    except Exception:
+        profile = {}
+    profile.pop("reset_token", None)
+    profile.pop("reset_token_expires", None)
+    update_user_fields(user["id"], {"profile_data": _json.dumps(profile)})
+
     return {"message": "Password reset successfully"}
 
 
@@ -482,19 +534,46 @@ async def reset_password(request: PasswordResetConfirm):
 @router.post("/verify-email")
 async def verify_email(request: EmailVerifyRequest):
     from app.db.turso_http import execute_query as eq, parse_rows as pr
+    import json as _json
 
-    result = eq(
-        "SELECT id FROM users WHERE profile_data LIKE ?",
-        [f"%{request.token}%"],
-    )
+    # Fetch users with profile_data and match token in Python (avoids SQL LIKE injection)
+    result = eq("SELECT id, profile_data FROM users WHERE profile_data IS NOT NULL AND profile_data != ''", [])
     rows = pr(result)
-    if not rows:
+
+    matched_user_id = None
+    for row in rows:
+        raw_pd = row.get("profile_data")
+        if not raw_pd:
+            continue
+        try:
+            profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
+        except Exception:
+            continue
+        if not isinstance(profile, dict):
+            continue
+        if profile.get("verification_token") == request.token:
+            matched_user_id = row["id"]
+            break
+
+    if not matched_user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid or expired verification token",
         )
 
-    update_user_fields(rows[0]["id"], {"email_verified": 1})
+    update_user_fields(matched_user_id, {"email_verified": 1})
+
+    # Clear the verification token
+    user_result = eq("SELECT profile_data FROM users WHERE id = ?", [matched_user_id])
+    user_rows = pr(user_result)
+    if user_rows:
+        raw_pd = user_rows[0].get("profile_data", "{}")
+        try:
+            profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else {}
+        except Exception:
+            profile = {}
+        profile.pop("verification_token", None)
+        update_user_fields(matched_user_id, {"profile_data": _json.dumps(profile)})
 
     return {"message": "Email verified successfully"}
 
@@ -502,6 +581,7 @@ async def verify_email(request: EmailVerifyRequest):
 # === Resend Verification ===
 
 @router.post("/resend-verification")
+@email_rate_limit()
 async def resend_verification(request: Request):
     try:
         body = await request.json()
@@ -520,10 +600,19 @@ async def resend_verification(request: Request):
         return {"message": "Email already verified"}
 
     verification_token = secrets.token_urlsafe(32)
+    # Merge into existing profile_data instead of overwriting
+    import json as _json
+    existing_profile = {}
+    raw_pd = user.get("profile_data")
+    if raw_pd:
+        try:
+            existing_profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
+        except Exception:
+            existing_profile = {}
+    existing_profile["verification_token"] = verification_token
+
     update_user_fields(user["id"], {
-        "profile_data": str({
-            "verification_token": verification_token,
-        })
+        "profile_data": _json.dumps(existing_profile)
     })
 
     try:

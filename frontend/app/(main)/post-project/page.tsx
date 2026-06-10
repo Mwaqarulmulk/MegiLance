@@ -1,14 +1,11 @@
-// @AI-HINT: Post Project directory
-import React from 'react';
-import commonStyles from './PostProject.common.module.css';
+import PostProjectClient from './PostProjectClient';
+
+const faqs = [
+  { question: "Is it really free to post?", answer: "Yes. Posting projects on MegiLance is completely free with no hidden fees." },
+  { question: "How fast will I get proposals?", answer: "Most projects receive proposals within 1-2 hours thanks to AI-powered matching." },
+  { question: "What if I'm not satisfied?", answer: "Our escrow system protects your payment. If work doesn't meet milestones, you can request revisions or escalate to dispute resolution." },
+];
 
 export default function PostProjectPage() {
-  return (
-    <main className={commonStyles.container} style={{ minHeight: '100vh', background: '#f8fafc', padding: '4rem 2rem' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', background: 'white', borderRadius: '24px', padding: '3rem' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', textAlign: 'center' }}>Let's get started</h1>
-        <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '3rem' }}>Match with the right talent.</p>
-      </div>
-    </main>
-  );
+  return <PostProjectClient faqs={faqs} />;
 }

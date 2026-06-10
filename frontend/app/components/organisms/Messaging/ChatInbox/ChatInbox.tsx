@@ -98,11 +98,10 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
         }));
         setConversations(mapped);
         if (mapped.length > 0) { setActive(mapped[0].id); onConversationSelect?.(mapped[0]); }
-      } catch {
+      } catch (err) {
         if (!cancelled) {
-          setConversations(DEMO_CONVERSATIONS);
-          setActive(DEMO_CONVERSATIONS[0].id);
-          onConversationSelect?.(DEMO_CONVERSATIONS[0]);
+          // Show empty state instead of demo data — real conversations load from API
+          setConversations([]);
         }
       } finally {
         if (!cancelled) setLoading(false);

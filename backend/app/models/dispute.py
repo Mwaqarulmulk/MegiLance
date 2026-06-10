@@ -4,6 +4,7 @@ from sqlalchemy import String, Text, DateTime, ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Optional, TYPE_CHECKING
 import logging
 import enum
@@ -48,7 +49,7 @@ class Dispute(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     resolved_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     resolution: Mapped[str] = mapped_column(Text, nullable=True)
-    resolution_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=True)
+    resolution_amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships

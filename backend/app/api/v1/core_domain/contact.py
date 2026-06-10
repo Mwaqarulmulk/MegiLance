@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from app.db.turso_http import execute_query
+from app.core.rate_limit import public_rate_limit
 
 router = APIRouter()
 
@@ -37,6 +38,7 @@ class ContactForm(BaseModel):
 
 @router.post("")
 @router.post("/")
+@public_rate_limit()
 async def submit_contact(body: ContactForm):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()

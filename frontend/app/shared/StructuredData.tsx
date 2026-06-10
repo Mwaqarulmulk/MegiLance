@@ -6,8 +6,8 @@ const org = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'MegiLance',
-  url: 'https://megilance.com',
-  logo: 'https://megilance.com/logo-icon.svg',
+  url: 'https://megilance.site',
+  logo: 'https://megilance.site/icon.svg',
   sameAs: [
     'https://twitter.com/megilance'
   ]
@@ -17,10 +17,10 @@ const website = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'MegiLance',
-  url: 'https://megilance.com',
+  url: 'https://megilance.site',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://megilance.com/search?q={search_term_string}',
+    target: 'https://megilance.site/search?q={search_term_string}',
     'query-input': 'required name=search_term_string'
   }
 };
