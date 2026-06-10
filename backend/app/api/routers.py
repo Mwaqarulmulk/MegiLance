@@ -318,7 +318,7 @@ api_router.include_router(referrals.router, prefix="/referrals", tags=["referral
 api_router.include_router(moderation.router, prefix="/moderation", tags=["moderation"])
 
 # Newsletter - Email subscription
-api_router.include_router(newsletter.router, tags=["newsletter"])
+api_router.include_router(newsletter.router, prefix="/newsletter", tags=["newsletter"])
 
 # Bulk Operations - Batch processing
 
@@ -394,7 +394,7 @@ api_router.include_router(backup_restore.router, tags=["backup-restore"])
 api_router.include_router(portfolio_builder.router, tags=["portfolio-builder"])
 
 # Compliance Center - GDPR and regulatory compliance
-api_router.include_router(compliance.router, tags=["compliance"])
+api_router.include_router(compliance.router, prefix="/compliance", tags=["compliance"])
 
 # Contact Form - Customer inquiries
 api_router.include_router(contact.router, prefix="/contact", tags=["contact"])
@@ -443,7 +443,7 @@ api_router.include_router(rate_cards.router, prefix="/rate-cards", tags=["rate-c
 api_router.include_router(proposal_templates.router, prefix="/proposal-templates", tags=["proposal-templates"])
 
 # Notes & Tags - Organization and metadata
-api_router.include_router(notes_tags.router, tags=["notes-tags"])
+api_router.include_router(notes_tags.router, prefix="/notes-tags", tags=["notes-tags"])
 
 # Custom Statuses - Workflow customization
 api_router.include_router(custom_statuses.router, tags=["custom-statuses"])

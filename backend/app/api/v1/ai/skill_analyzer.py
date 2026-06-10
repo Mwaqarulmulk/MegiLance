@@ -197,6 +197,126 @@ def _learning_path(user_skills: List[str], target_skills: List[str]) -> dict:
     }
 
 
+@router.get("/skills")
+def list_skill_categories():
+    """Return all skill categories with their skills for the frontend UI."""
+    categories = []
+    for cat_key, skill_list in SKILL_CATEGORIES.items():
+        categories.append({
+            "key": cat_key,
+            "label": cat_key.replace("_", " ").title(),
+            "skills": [{"key": s, "label": s} for s in skill_list],
+        })
+    return categories
+
+
+from pydantic import BaseModel as _BaseModel
+
+class AnalyzeRequest(_BaseModel):
+    skills: List[str] = []
+    experience_level: str = "intermediate"
+    target_role: Optional[str] = None
+
+
+@router.post("/analyze")
+def analyze_skills(req: AnalyzeRequest, current_user=Depends(get_current_user)):
+    """Full skill analysis: profile score, gaps, synergies, recommendations."""
+    user_skills = req.skills
+    if not user_skills:
+        # Fall back to DB
+        result = execute_query("SELECT skills FROM users WHERE id = ?", [current_user.id])
+        rows = parse_rows(result) if result else []
+        if rows:
+            try:
+                user_skills = json.loads(rows[0].get("skills", "[]") or "[]")
+            except Exception:
+                pass
+
+    skill_count = len(user_skills)
+
+    # Profile score
+    base_score = min(60, skill_count * 6)
+    exp_bonus = {"entry": 0, "intermediate": 10, "expert": 20}.get(req.experience_level, 10)
+    profile_score = min(100, base_score + exp_bonus)
+    level = "expert" if profile_score > 80 else "advanced" if profile_score > 60 else "intermediate" if profile_score > 40 else "beginner"
+
+    # Skill details
+    skills_analyzed = []
+    for skill in user_skills:
+        cat = _get_skill_category(skill)
+        skills_analyzed.append({
+            "skill": skill,
+            "category": cat or "general",
+            "proficiency": req.experience_level,
+            "market_demand": "high" if cat in ("frontend", "backend", "data") else "medium",
+        })
+
+    # Synergies
+    synergies = []
+    synergy_pairs = [
+        (["React", "TypeScript", "Next.js"], "Full-stack React development"),
+        (["Python", "FastAPI", "Django"], "Python backend development"),
+        (["Docker", "Kubernetes", "AWS"], "Cloud infrastructure"),
+        (["Figma", "UI/UX"], "Design-to-development"),
+    ]
+    user_set = set(user_skills)
+    for pair_skills, label in synergy_pairs:
+        matched = [s for s in pair_skills if s in user_set]
+        if len(matched) >= 2:
+            synergies.append({"skills": matched, "synergy": label, "strength": len(matched) / len(pair_skills)})
+
+    # Gaps from market data
+    gaps_data = _analyze_skill_gaps(user_skills, req.target_role)
+    skill_gaps = gaps_data.get("skill_gaps", [])[:5]
+
+    # Recommendations
+    recommendations = []
+    if skill_gaps:
+        for g in skill_gaps[:3]:
+            recommendations.append({
+                "type": "skill_gap",
+                "skill": g["skill"],
+                "detail": f"High demand ({g['demand']} projects) with low competition",
+                "priority": "high" if g.get("opportunity_score", 0) > 2 else "medium",
+            })
+    if skill_count < 5:
+        recommendations.append({"type": "profile", "skill": "Portfolio", "detail": "Add more skills to improve discoverability", "priority": "high"})
+
+    # Estimated rate
+    avg_rate_result = execute_query(
+        "SELECT AVG(hourly_rate) as avg, MIN(hourly_rate) as min_r, MAX(hourly_rate) as max_r "
+        "FROM users WHERE user_type = 'freelancer' AND is_active = 1 AND hourly_rate > 0"
+    )
+    avg_rows = parse_rows(avg_rate_result) if avg_rate_result else []
+    if avg_rows and avg_rows[0].get("avg"):
+        avg = float(avg_rows[0]["avg"])
+        hourly_rate = round(avg * (1 + skill_count * 0.05), 2)
+    else:
+        hourly_rate = 35.0
+
+    return {
+        "profile_score": {"score": profile_score, "level": level, "label": f"{level.title()} Profile"},
+        "skill_count": skill_count,
+        "skills_analyzed": skills_analyzed,
+        "synergies": synergies,
+        "skill_gaps": skill_gaps,
+        "recommendations": recommendations,
+        "estimated_rate": {
+            "hourly_rate": hourly_rate,
+            "range_low": round(hourly_rate * 0.7, 2),
+            "range_high": round(hourly_rate * 1.4, 2),
+            "currency": "USD",
+        },
+        "regional_context": {},
+        "unknown_skills": [s for s in user_skills if _get_skill_category(s) is None],
+        "meta": {
+            "experience_level": req.experience_level,
+            "target_role": req.target_role,
+            "data_version": "1.0",
+        },
+    }
+
+
 @router.get("/gaps/{user_id}")
 async def skill_gaps(user_id: int, current_user=Depends(get_current_user)):
     """Analyze skill gaps for a freelancer."""
