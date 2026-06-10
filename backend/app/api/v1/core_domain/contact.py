@@ -1,5 +1,5 @@
 # @AI-HINT: Contact Form router — customer inquiry submissions
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime, timezone
@@ -39,7 +39,7 @@ class ContactForm(BaseModel):
 @router.post("")
 @router.post("/")
 @public_rate_limit()
-async def submit_contact(body: ContactForm):
+async def submit_contact(request: Request, body: ContactForm):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(

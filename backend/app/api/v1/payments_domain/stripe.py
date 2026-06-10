@@ -31,14 +31,14 @@ class CreateCheckoutSession(BaseModel):
 
 @router.post("/create-payment-intent")
 @api_rate_limit()
-async def create_payment_intent(request: CreatePaymentIntent, current_user=Depends(get_current_user)):
+async def create_payment_intent(req: Request, body: CreatePaymentIntent, current_user=Depends(get_current_user)):
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
         return {
             "mode": "mock",
             "client_secret": f"pi_mock_{current_user.id}_{int(datetime.now(timezone.utc).timestamp())}",
-            "amount": request.amount,
-            "currency": request.currency,
+            "amount": body.amount,
+            "currency": body.currency,
             "message": "Stripe not configured — using mock payment intent",
         }
 
@@ -46,16 +46,16 @@ async def create_payment_intent(request: CreatePaymentIntent, current_user=Depen
         import stripe
         stripe.api_key = settings.STRIPE_SECRET_KEY
         intent = stripe.PaymentIntent.create(
-            amount=int(request.amount * 100),
-            currency=request.currency,
-            description=request.description or f"Payment by user {current_user.id}",
-            metadata={"user_id": str(current_user.id), "contract_id": str(request.contract_id or "")},
+            amount=int(body.amount * 100),
+            currency=body.currency,
+            description=body.description or f"Payment by user {current_user.id}",
+            metadata={"user_id": str(current_user.id), "contract_id": str(body.contract_id or "")},
         )
         return {
             "client_secret": intent.client_secret,
             "payment_intent_id": intent.id,
-            "amount": request.amount,
-            "currency": request.currency,
+            "amount": body.amount,
+            "currency": body.currency,
         }
     except Exception as e:
         logger.error(f"stripe_create_payment_intent_error user={current_user.id} error={e}")
@@ -64,12 +64,12 @@ async def create_payment_intent(request: CreatePaymentIntent, current_user=Depen
 
 @router.post("/create-checkout-session")
 @api_rate_limit()
-async def create_checkout_session(request: CreateCheckoutSession, current_user=Depends(get_current_user)):
+async def create_checkout_session(req: Request, body: CreateCheckoutSession, current_user=Depends(get_current_user)):
     settings = get_settings()
     if not settings.STRIPE_SECRET_KEY:
         return {
             "mode": "mock",
-            "url": f"{request.success_url}?session_id=mock_{current_user.id}",
+            "url": f"{body.success_url}?session_id=mock_{current_user.id}",
             "message": "Stripe not configured — using mock checkout",
         }
 
@@ -80,15 +80,15 @@ async def create_checkout_session(request: CreateCheckoutSession, current_user=D
             payment_method_types=["card"],
             line_items=[{
                 "price_data": {
-                    "currency": request.currency,
-                    "product_data": {"name": request.description or "Payment"},
-                    "unit_amount": int(request.amount * 100),
+                    "currency": body.currency,
+                    "product_data": {"name": body.description or "Payment"},
+                    "unit_amount": int(body.amount * 100),
                 },
                 "quantity": 1,
             }],
             mode="payment",
-            success_url=request.success_url,
-            cancel_url=request.cancel_url,
+            success_url=body.success_url,
+            cancel_url=body.cancel_url,
             metadata={"user_id": str(current_user.id)},
         )
         return {"url": session.url, "session_id": session.id}

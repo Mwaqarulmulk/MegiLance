@@ -81,8 +81,8 @@ class EmailVerifyRequest(BaseModel):
 
 @router.post("/login")
 @auth_rate_limit()
-async def login(request: LoginRequest):
-    user = authenticate_user(request.email, request.password)
+async def login(req: Request, body: LoginRequest):
+    user = authenticate_user(body.email, body.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -122,23 +122,23 @@ async def login(request: LoginRequest):
 
 @router.post("/register")
 @auth_rate_limit()
-async def register(request: RegisterRequest):
-    if check_email_exists(request.email):
+async def register(req: Request, body: RegisterRequest):
+    if check_email_exists(body.email):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
         )
 
-    is_valid, errors = validate_password_strength(request.password)
+    is_valid, errors = validate_password_strength(body.password)
     if not is_valid:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=errors,
         )
 
-    hashed_password = get_password_hash(request.password)
+    hashed_password = get_password_hash(body.password)
     now = datetime.now(timezone.utc).isoformat()
-    user_type = request.user_type or request.role
+    user_type = body.user_type or body.role
 
     profile_data = {
         "user_type": user_type,
@@ -150,16 +150,16 @@ async def register(request: RegisterRequest):
     }
 
     result = insert_user(
-        email=request.email,
+        email=body.email,
         hashed_password=hashed_password,
         is_active=True,
-        name=request.name,
+        name=body.name,
         user_type=user_type,
-        bio=request.bio,
-        skills=request.skills,
-        hourly_rate=request.hourly_rate,
-        profile_image_url=request.profile_image_url,
-        location=request.location,
+        bio=body.bio,
+        skills=body.skills,
+        hourly_rate=body.hourly_rate,
+        profile_image_url=body.profile_image_url,
+        location=body.location,
         profile_data_json=str(profile_data),
         now=now,
     )
@@ -170,7 +170,7 @@ async def register(request: RegisterRequest):
             detail="Failed to create user",
         )
 
-    user = auth_get_user_by_email(request.email)
+    user = auth_get_user_by_email(body.email)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -181,9 +181,9 @@ async def register(request: RegisterRequest):
         subject=user["email"],
         custom_claims={
             "user_id": user["id"],
-            "role": user.get("role", request.user_type),
-            "user_type": request.user_type,
-            "name": request.name,
+            "role": user.get("role", body.user_type),
+            "user_type": body.user_type,
+            "name": body.name,
         },
     )
     refresh_token = create_refresh_token(
@@ -199,8 +199,8 @@ async def register(request: RegisterRequest):
             "id": user["id"],
             "email": user["email"],
             "name": user["name"],
-            "role": user.get("role", request.user_type),
-            "user_type": request.user_type,
+            "role": user.get("role", body.user_type),
+            "user_type": body.user_type,
         },
     }
 
@@ -419,8 +419,8 @@ async def refresh_token(request: Request):
 
 @router.post("/forgot-password")
 @password_reset_rate_limit()
-async def forgot_password(request: PasswordResetRequest):
-    user = get_user_for_password_reset(request.email)
+async def forgot_password(req: Request, body: PasswordResetRequest):
+    user = get_user_for_password_reset(body.email)
     if not user:
         return {"message": "If the email exists, a reset link has been sent"}
 
@@ -446,7 +446,7 @@ async def forgot_password(request: PasswordResetRequest):
 
     try:
         email_service.send_email(
-            to_email=request.email,
+            to_email=body.email,
             subject="Password Reset — MegiLance",
             template_name="password_reset",
             context={
@@ -464,7 +464,7 @@ async def forgot_password(request: PasswordResetRequest):
 
 @router.post("/reset-password")
 @password_reset_rate_limit()
-async def reset_password(request: PasswordResetConfirm):
+async def reset_password(req: Request, body: PasswordResetConfirm):
     from app.db.turso_http import execute_query as eq, parse_rows as pr
     import json as _json
     from datetime import timezone as _tz
@@ -486,7 +486,7 @@ async def reset_password(request: PasswordResetConfirm):
             continue
         stored_token = profile.get("reset_token")
         expires_str = profile.get("reset_token_expires")
-        if stored_token != request.token:
+        if stored_token != body.token:
             continue
         # Check expiry
         if expires_str:
@@ -506,14 +506,14 @@ async def reset_password(request: PasswordResetConfirm):
             detail="Invalid or expired reset token",
         )
 
-    is_valid, errors = validate_password_strength(request.new_password)
+    is_valid, errors = validate_password_strength(body.new_password)
     if not is_valid:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=errors,
         )
 
-    hashed = get_password_hash(request.new_password)
+    hashed = get_password_hash(body.new_password)
     update_user_fields(user["id"], {"hashed_password": hashed})
 
     # Clear the reset token from profile_data
