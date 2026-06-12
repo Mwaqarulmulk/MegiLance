@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import commonStyles from './Features.common.module.css';
 
 const features = [
@@ -53,6 +54,18 @@ export default function FeaturesPage() {
   return (
     <main className={commonStyles.container}>
       <header className={commonStyles.header}>
+        {/* How It Works full-page visual — 4-step flow with AI Deal Engine */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
+          <Image
+            src="/images/sections/how-it-works-page.png"
+            alt="How MegiLance works — 4 steps: Project Intake, AI Match, Smart Contract Escrow, Collaborate and Get Paid"
+            width={1100}
+            height={520}
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1100px"
+            style={{ width: '100%', maxWidth: '1100px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.12)' }}
+          />
+        </div>
         <h1 className={commonStyles.title}>Platform Features</h1>
         <p className={commonStyles.subtitle}>
           Everything you need to hire, manage, and pay freelancers — powered by AI.
@@ -67,6 +80,32 @@ export default function FeaturesPage() {
             <p className={commonStyles.cardDesc}>{f.description}</p>
           </article>
         ))}
+      </section>
+
+      {/* Security + Smart Escrow visuals */}
+      <section style={{ padding: '3rem 2rem', display: 'flex', gap: '3rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ textAlign: 'center' }}>
+          <Image
+            src="/images/sections/security.png"
+            alt="MegiLance security — end-to-end encryption, verified profiles, secure payments, and blockchain trust"
+            width={480}
+            height={400}
+            sizes="(max-width: 640px) 100vw, 480px"
+            style={{ width: '100%', maxWidth: '480px', height: 'auto' }}
+          />
+          <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Enterprise-Grade Security</p>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <Image
+            src="/images/hero/smart-escrow-hero.png"
+            alt="Smart Contract Escrow — funds locked securely until milestones approved, then released to freelancer"
+            width={440}
+            height={400}
+            sizes="(max-width: 640px) 100vw, 440px"
+            style={{ width: '100%', maxWidth: '440px', height: 'auto' }}
+          />
+          <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Smart Contract Escrow</p>
+        </div>
       </section>
 
       <section className={commonStyles.cta}>

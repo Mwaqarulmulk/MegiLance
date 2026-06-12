@@ -21,6 +21,8 @@ from app.services.proposals_service import (
     create_proposal,
     create_draft_proposal,
     get_draft_proposals,
+    get_proposal_with_project_details,
+    accept_proposal as accept_proposal_service,
 )
 
 router = APIRouter()
@@ -168,17 +170,26 @@ async def accept_proposal(proposal_id: int, current_user=Depends(get_current_use
     if client_id != current_user.id:
         raise HTTPException(status_code=403, detail="Only the project owner can accept proposals")
 
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE proposals SET status = 'accepted', updated_at = ? WHERE id = ?",
-        [now, proposal_id],
-    )
-    execute_query(
-        "UPDATE proposals SET status = 'rejected', updated_at = ? WHERE project_id = ? AND id != ? AND status = 'submitted'",
-        [now, proposal["project_id"], proposal_id],
-    )
+    if proposal["status"] not in ("submitted", "shortlisted"):
+        raise HTTPException(status_code=400, detail=f"Cannot accept proposal with status '{proposal['status']}'")
 
-    return {"message": "Proposal accepted successfully", "proposal_id": proposal_id}
+    full_proposal = get_proposal_with_project_details(proposal_id)
+    if not full_proposal:
+        raise HTTPException(status_code=404, detail="Proposal data not found")
+
+    if full_proposal.get("_project_client_id") != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can accept proposals")
+
+    result = accept_proposal_service(proposal_id, full_proposal, current_user.id)
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to accept proposal")
+
+    return {
+        "message": "Proposal accepted — contract and escrow created",
+        "proposal_id": proposal_id,
+        "project_id": proposal["project_id"],
+        "freelancer_id": proposal["freelancer_id"],
+    }
 
 
 @router.post("/{proposal_id}/reject")

@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { Search, TrendingUp, Sparkles, BookOpen, ArrowRight, Mail } from 'lucide-react';
 import Link from 'next/link';
@@ -156,7 +157,16 @@ const BlogPage: React.FC = () => {
                 />
               </div>
             </div>
-            <HeroIllustration />
+            {/* Blog hero visual — MegiLance blog with magnifying glass and article cards */}
+            <Image
+              src="/images/hero/blogs-hero.png"
+              alt="MegiLance Blog — insights, guides, and updates to help you build smarter with AI"
+              width={480}
+              height={400}
+              priority
+              sizes="(max-width: 640px) 280px, 480px"
+              style={{ width: '100%', maxWidth: '480px', height: 'auto', objectFit: 'contain', flexShrink: 0 }}
+            />
           </section>
         </ScrollReveal>
 

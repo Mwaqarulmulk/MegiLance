@@ -4,11 +4,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
-import { StatusIllustration } from '@/app/components/Illustrations/Illustrations';
-import illustrationStyles from '@/app/components/Illustrations/Illustrations.common.module.css';
 import { 
   CheckCircle, XCircle, AlertCircle, Clock, RefreshCw, 
   Database, Server, MessageSquare, Brain, CreditCard,
@@ -198,7 +197,15 @@ const Status: React.FC = () => {
                     Real-time status of MegiLance services
                   </p>
                 </div>
-                <StatusIllustration className={illustrationStyles.heroIllustrationSmall} />
+                {/* System status lighthouse visual — shows all platform components: DB, API, Security, Infrastructure, etc. */}
+                <Image
+                  src="/images/hero/status-hero.png"
+                  alt="MegiLance system status — operational lighthouse monitoring database, application, security, infrastructure, API services, and user experience"
+                  width={400}
+                  height={360}
+                  sizes="(max-width: 768px) 280px, 400px"
+                  style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain', flexShrink: 0 }}
+                />
               </div>
               
               {/* Hero Status Banner */}

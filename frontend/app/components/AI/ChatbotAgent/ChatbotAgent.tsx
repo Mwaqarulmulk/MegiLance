@@ -4,10 +4,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import { MessageSquare, X, Send, Sparkles, Zap, HelpCircle, FileText, Pickaxe, Maximize2, Minimize2, Paperclip, Command } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import RobotModel from './RobotModel';
 import commonStyles from './ChatbotAgent.common.module.css';
 import lightStyles from './ChatbotAgent.light.module.css';
 import darkStyles from './ChatbotAgent.dark.module.css';
@@ -533,7 +533,7 @@ export default function ChatbotAgent() {
           aria-label="Loading chat"
           disabled
         >
-          <RobotModel size={28} />
+          <Image src="/images/sections/chatbot-mascot.png" alt="MegiBot" width={48} height={48} style={{ width: 48, height: 48, objectFit: 'contain' }} />
         </button>
       </div>
     );
@@ -556,9 +556,13 @@ export default function ChatbotAgent() {
           <div className={cn(commonStyles.chatbotAgentHeader, themeStyles.chatbotAgentHeader)}>
             <div className={commonStyles.headerLeft}>
               <div className={cn(commonStyles.aiAvatar, themeStyles.aiAvatar)}>
-                  <div style={{ marginLeft: '-1px', marginTop: '1px' }}>
-                    <RobotModel size={32} />
-                  </div>
+                  <Image
+                    src="/images/sections/chatbot-mascot.png"
+                    alt="MegiBot AI assistant"
+                    width={36}
+                    height={36}
+                    style={{ width: 36, height: 36, objectFit: 'contain' }}
+                  />
                 <div className={cn(commonStyles.aiAvatarPulse, themeStyles.aiAvatarPulse)} />
               </div>
               <div className={commonStyles.headerInfo}>
@@ -791,9 +795,13 @@ export default function ChatbotAgent() {
               transition={{ duration: 0.3, type: 'spring' }}
               className={commonStyles.flexCenter}
             >
-              <div style={{ pointerEvents: 'none', marginLeft: '-2px', marginTop: '2px' }}>
-                <RobotModel size={140} />
-              </div>
+              <Image
+                src="/images/sections/chatbot-mascot.png"
+                alt="MegiBot — click to chat"
+                width={72}
+                height={72}
+                style={{ width: 72, height: 72, objectFit: 'contain', pointerEvents: 'none' }}
+              />
             </motion.div>
           )}
         </AnimatePresence>

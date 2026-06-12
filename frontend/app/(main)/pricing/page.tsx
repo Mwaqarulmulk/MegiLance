@@ -1,11 +1,23 @@
 // @AI-HINT: Pricing directory - Memberships and platform fees
 import React from 'react';
+import Image from 'next/image';
 import commonStyles from './Pricing.common.module.css';
 
 export default function PricingPage() {
   return (
     <main className={commonStyles.container}>
       <header className={commonStyles.header} style={{ textAlign: 'center', padding: '6rem 2rem 4rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+          <Image
+            src="/images/hero/pricing-hero.png"
+            alt="MegiLance Simple Pricing — No hidden fees, flat rates, cancel anytime"
+            width={420}
+            height={420}
+            priority
+            sizes="(max-width: 640px) 280px, 420px"
+            style={{ width: '100%', maxWidth: '420px', height: 'auto' }}
+          />
+        </div>
         <h1 className={commonStyles.title} style={{ fontSize: '3.5rem', marginBottom: '1.5rem', color: '#0f172a' }}>Transparent Pricing</h1>
         <p className={commonStyles.subtitle} style={{ fontSize: '1.25rem', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
           No hidden fees. Simple flat rates and memberships designed to help you succeed.

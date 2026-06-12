@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import commonStyles from './WhyHire.common.module.css';
 
@@ -39,6 +40,25 @@ export default function WhyHirePage() {
   return (
     <main className={commonStyles.container}>
       <header className={commonStyles.header}>
+        <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '3rem' }}>
+          <Image
+            src="/images/hero/freelancer-dashboard.png"
+            alt="MegiLance freelancer dashboard — AI matched projects, milestone payments, earnings tracking, and portfolio highlights"
+            width={520}
+            height={380}
+            priority
+            sizes="(max-width: 768px) 100vw, 520px"
+            style={{ width: '100%', maxWidth: '520px', height: 'auto', borderRadius: '16px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.15)' }}
+          />
+          <Image
+            src="/images/sections/testimonials.png"
+            alt="What MegiLance users say — 10K+ happy clients, 25K+ skilled freelancers, 98% satisfaction rate, 4.9/5 average rating"
+            width={480}
+            height={320}
+            sizes="(max-width: 768px) 100vw, 480px"
+            style={{ width: '100%', maxWidth: '480px', height: 'auto', objectFit: 'contain' }}
+          />
+        </div>
         <h1 className={commonStyles.title}>Why Hire on MegiLance?</h1>
         <p className={commonStyles.subtitle}>
           We handle compliance, escrow, and finding the top 1% so you can focus on building.

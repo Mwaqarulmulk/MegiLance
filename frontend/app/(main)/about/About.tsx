@@ -1,6 +1,7 @@
 // @AI-HINT: Clean About page with mission, problem/solution, team details.
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -8,8 +9,6 @@ import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
-import { AboutIllustration } from '@/app/components/Illustrations/Illustrations';
-import illustrationStyles from '@/app/components/Illustrations/Illustrations.common.module.css';
 import { 
   Globe, 
   Shield, 
@@ -69,12 +68,21 @@ const About: React.FC = () => {
               <div className={common.heroContent}>
                 <h1 id="about-title" className={styles.title}>About MegiLance</h1>
                 <p className={styles.subtitle}>
-                  A hybrid decentralized freelancing platform that integrates Artificial Intelligence 
-                  for smart matching and Blockchain technology for secure, trustless transactions. Built to 
+                  A hybrid decentralized freelancing platform that integrates Artificial Intelligence
+                  for smart matching and Blockchain technology for secure, trustless transactions. Built to
                   empower freelancers worldwide with fair pay and low-cost payments.
                 </p>
               </div>
-              <AboutIllustration className={illustrationStyles.heroIllustration} />
+              {/* Brand illustration — Our Story, Mission, Vision, AI+Blockchain, Secure Trust, Fair Pay, Global Freelancing */}
+              <Image
+                src="/images/hero/about-hero.png"
+                alt="MegiLance platform values — Our Story, Our Mission, Our Vision, AI and Blockchain, Secure Trust, Fair Pay, Global Freelancing"
+                width={520}
+                height={400}
+                priority
+                sizes="(max-width: 768px) 100vw, 520px"
+                style={{ width: '100%', maxWidth: '520px', height: 'auto', objectFit: 'contain' }}
+              />
             </div>
           </ScrollReveal>
         </header>
@@ -189,6 +197,17 @@ const About: React.FC = () => {
             <div className={styles.sectionHeader}>
               <h2 id="team-title" className={styles.sectionTitle}>Our Team</h2>
               <span aria-hidden="true" className={styles.sectionNote}>The people building the future of freelancing</span>
+            </div>
+            {/* Team collaboration visual — Project Manager, Frontend Dev, Backend Dev, UX/UI Designer, QA/Operations */}
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
+              <Image
+                src="/images/sections/team.png"
+                alt="MegiLance team — Project Manager, Frontend Developer, UX/UI Designer, Backend Developer, and QA/Operations working on the platform"
+                width={680}
+                height={520}
+                sizes="(max-width: 768px) 100vw, 680px"
+                style={{ width: '100%', maxWidth: '680px', height: 'auto', objectFit: 'contain' }}
+              />
             </div>
           </ScrollReveal>
           <StaggerContainer className={styles.valuesGrid}>

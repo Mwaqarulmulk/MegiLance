@@ -1,6 +1,7 @@
 // @AI-HINT: Clients directory - for companies looking to hire talent — fully theme-aware via 3-file CSS module system
 "use client";
 import React from "react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,18 @@ export default function ClientsPage() {
   return (
     <main className={cn(commonStyles.container, t.container)}>
       <header className={cn(commonStyles.hero, t.hero)}>
+        {/* Client Workspace screenshot */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+          <Image
+            src="/images/hero/client-workspace.png"
+            alt="MegiLance Client Workspace — manage projects, track progress, communicate with freelancers"
+            width={900}
+            height={540}
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
+            style={{ width: '100%', maxWidth: '900px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.15)' }}
+          />
+        </div>
         <h1 className={commonStyles.heroTitle}>
           Hire the top 1% of freelance talent.
         </h1>
@@ -80,6 +93,28 @@ export default function ClientsPage() {
               Milestone-based tracking available.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Client Trust Visual */}
+      <section style={{ padding: '2rem', textAlign: 'center', background: 'transparent' }}>
+        <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+          <Image
+            src="/images/sections/client-trust.png"
+            alt="Trusted by global clients — 100+ happy clients, from startups to enterprises"
+            width={460}
+            height={380}
+            sizes="(max-width: 640px) 100vw, 460px"
+            style={{ width: '100%', maxWidth: '460px', height: 'auto' }}
+          />
+          <Image
+            src="/images/sections/client-manage.png"
+            alt="Find and manage clients — connect with trusted clients and manage projects professionally"
+            width={420}
+            height={360}
+            sizes="(max-width: 640px) 100vw, 420px"
+            style={{ width: '100%', maxWidth: '420px', height: 'auto' }}
+          />
         </div>
       </section>
 

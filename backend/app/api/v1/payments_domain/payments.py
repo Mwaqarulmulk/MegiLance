@@ -14,6 +14,42 @@ from app.services.db_utils import get_val as _get_val, safe_str as _safe_str
 router = APIRouter()
 
 
+def calculate_tiered_fee(amount: float, lifetime_billing: float = 0) -> dict:
+    """
+    Calculate platform fee based on cumulative billing between client and freelancer.
+    Tiered structure rewards repeat business:
+      - First $500: 5%
+      - $501-$5000: 4%
+      - $5001-$25000: 3%
+      - $25000+: 2.5%
+    """
+    tiers = [
+        (500, 0.05),
+        (5000, 0.04),
+        (25000, 0.03),
+        (float("inf"), 0.025),
+    ]
+    remaining = amount
+    fee = 0.0
+    prev_limit = 0
+
+    for limit, rate in tiers:
+        tier_capacity = limit - prev_limit
+        taxable = min(remaining, tier_capacity)
+        if taxable <= 0:
+            break
+        fee += taxable * rate
+        remaining -= taxable
+        prev_limit = limit
+
+    effective_rate = round((fee / amount) * 100, 2) if amount > 0 else 0
+    return {
+        "platform_fee": round(fee, 2),
+        "effective_rate": effective_rate,
+        "lifetime_billing": lifetime_billing,
+    }
+
+
 class PaymentCreate(BaseModel):
     contract_id: int
     amount: float
@@ -152,9 +188,10 @@ async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_u
 @router.post("/{payment_id}/complete")
 async def complete_payment(payment_id: int, current_user=Depends(get_current_user)):
     """Mark a payment as completed. In production, this should only be called
-    by the payment webhook handler after verifying the payment with the gateway."""
+    by the payment webhook handler after verifying the payment with the gateway.
+    For now, this serves as a manual confirmation for demo/development purposes."""
     result = execute_query(
-        "SELECT id, status, client_id, amount FROM payments WHERE id = ?",
+        "SELECT id, status, client_id, amount, currency FROM payments WHERE id = ?",
         [payment_id],
     )
     rows = parse_rows(result)
@@ -169,21 +206,19 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
         raise HTTPException(status_code=400, detail="Payment already completed")
 
     now = datetime.now(timezone.utc).isoformat()
+    currency = payment.get("currency") or "USD"
 
-    # Only update payment status — balance is updated by the payment gateway webhook
     execute_query(
         "UPDATE payments SET status = 'completed', updated_at = ? WHERE id = ?",
         [now, payment_id],
     )
 
-    # Record wallet transaction
     execute_query(
-        """INSERT INTO wallet_transactions (user_id, type, amount, description, status, created_at)
-           VALUES (?, 'deposit', ?, ?, 'completed', ?)""",
-        [current_user.id, payment["amount"], f"Payment #{payment_id} completed", now],
+        """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, created_at)
+           VALUES (?, 'deposit', ?, ?, ?, 'completed', ?)""",
+        [current_user.id, payment["amount"], currency, f"Payment #{payment_id} completed", now],
     )
 
-    # Update user balance
     execute_query(
         "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
         [payment["amount"], current_user.id],

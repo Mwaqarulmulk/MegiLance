@@ -191,3 +191,44 @@ def get_current_user_profile(
                 user[field] = []
 
     return user
+
+
+@router.post("/onboarding-complete")
+async def complete_onboarding(data: dict, current_user=Depends(get_current_user)):
+    """Save onboarding wizard data for a new freelancer."""
+    user_id = current_user.get("user_id") or current_user.get("id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat()
+
+    title = data.get("title", "")
+    bio = data.get("bio", "")
+    skills = data.get("skills", [])
+    experience_level = data.get("experience_level", "")
+    hourly_rate = data.get("hourly_rate", 0)
+
+    updates = {"updated_at": now}
+    if title:
+        updates["headline"] = title
+    if bio:
+        updates["bio"] = bio
+    if skills:
+        updates["skills"] = json.dumps(skills) if isinstance(skills, list) else skills
+    if experience_level:
+        updates["experience_level"] = experience_level
+    if hourly_rate:
+        updates["hourly_rate"] = hourly_rate
+
+    updates["onboarding_completed"] = 1
+
+    set_parts = [f"{k} = ?" for k in updates]
+    values = list(updates.values()) + [user_id]
+
+    execute_query(
+        f"UPDATE users SET {', '.join(set_parts)} WHERE id = ?",
+        values,
+    )
+
+    return {"message": "Onboarding completed successfully"}

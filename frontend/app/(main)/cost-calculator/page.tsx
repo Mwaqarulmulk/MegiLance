@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import commonStyles from './CostCalculator.common.module.css';
 
 const skillRates: Record<string, number> = {
@@ -32,6 +33,17 @@ export default function CostCalculatorPage() {
   return (
     <main className={commonStyles.container}>
       <header className={commonStyles.header}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+          <Image
+            src="/images/sections/ai-price-estimator.png"
+            alt="MegiLance AI Pricing Engine — get accurate project cost estimates with market rate data, confidence scores, and instant AI analysis"
+            width={420}
+            height={380}
+            priority
+            sizes="(max-width: 640px) 280px, 420px"
+            style={{ width: '100%', maxWidth: '420px', height: 'auto', objectFit: 'contain' }}
+          />
+        </div>
         <h1 className={commonStyles.title}>Cost Calculator</h1>
         <p className={commonStyles.subtitle}>
           Estimate your project cost instantly using real market rates.

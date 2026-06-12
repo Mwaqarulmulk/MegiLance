@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -68,6 +69,18 @@ const AIToolsHub: React.FC = () => {
             Explore All AI Tools
             <ArrowRight size={15} />
           </Link>
+        </div>
+
+        {/* AI Hub Visual — shows all 8 AI tools radiating from center */}
+        <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+          <Image
+            src="/images/hero/ai-hub-hero.png"
+            alt="MegiLance AI Hub — 8 AI-powered tools including chatbot, price estimator, fraud detection, smart matching, and proposal generator"
+            width={680}
+            height={680}
+            sizes="(max-width: 640px) 320px, (max-width: 1024px) 480px, 680px"
+            style={{ width: '100%', maxWidth: '680px', height: 'auto', display: 'inline-block' }}
+          />
         </div>
       </div>
     </section>

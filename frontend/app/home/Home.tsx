@@ -3,6 +3,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
@@ -33,6 +34,25 @@ const Home: React.FC = () => {
             <ScrollReveal width="100%" direction="none" duration={0.8}>
               <Hero />
             </ScrollReveal>
+          </section>
+
+          {/* Platform Visual Showcase — AI Deal Engine */}
+          <section className={commonStyles.homeSection} aria-label="Platform AI deal engine visualization">
+            <div className={commonStyles.sectionContainer}>
+              <ScrollReveal width="100%" direction="up" delay={0.2}>
+                <div style={{ textAlign: 'center', padding: '0 1rem 1rem' }}>
+                  <Image
+                    src="/images/hero/homepage-hero.png"
+                    alt="MegiLance AI Deal Engine — AI-powered matching connects projects with top freelancers through smart contract escrow"
+                    width={1100}
+                    height={580}
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1100px"
+                    style={{ width: '100%', height: 'auto', maxWidth: '1100px', borderRadius: '24px', boxShadow: '0 25px 60px -12px rgba(0,0,0,0.15)', display: 'inline-block' }}
+                  />
+                </div>
+              </ScrollReveal>
+            </div>
           </section>
 
           {/* Trust Indicators */}

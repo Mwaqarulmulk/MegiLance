@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Image from 'next/image';
 import commonStyles from './FAQ.common.module.css';
 
 const faqs = [
@@ -51,6 +52,17 @@ export default function FaqPage() {
   return (
     <main className={commonStyles.container}>
       <header className={commonStyles.header}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+          <Image
+            src="/images/hero/faq-hero-v2.png"
+            alt="MegiLance FAQ — clear answers, trusted support, always here to help"
+            width={420}
+            height={340}
+            priority
+            sizes="(max-width: 640px) 280px, 420px"
+            style={{ width: '100%', maxWidth: '420px', height: 'auto', objectFit: 'contain' }}
+          />
+        </div>
         <h1 className={commonStyles.title}>Frequently Asked Questions</h1>
         <p className={commonStyles.subtitle}>
           Everything you need to know about MegiLance.

@@ -236,15 +236,38 @@ async def submit_proposal(data: dict, current_user=Depends(get_current_user)):
     project_id = data.get("project_id")
     cover_letter = data.get("cover_letter", "")
     bid_amount = data.get("bid_amount", 0)
-    delivery_time = data.get("delivery_time", 7)
+    estimated_hours = data.get("estimated_hours") or data.get("delivery_time", 0)
+    hourly_rate = data.get("hourly_rate", 0)
+    availability = data.get("availability", "")
+    attachments = data.get("attachments", "")
 
     if not project_id:
         raise HTTPException(status_code=400, detail="project_id is required")
+    if not cover_letter.strip():
+        raise HTTPException(status_code=400, detail="cover_letter is required")
+
+    # Validate project exists and is open
+    proj_result = execute_query("SELECT id, status FROM projects WHERE id = ?", [project_id])
+    if not proj_result or not proj_result.get("rows"):
+        raise HTTPException(status_code=404, detail="Project not found")
+    proj_status = proj_result["rows"][0][1]
+    if proj_status != "open":
+        raise HTTPException(status_code=400, detail="Project is not accepting proposals")
+
+    # Check for duplicate proposal
+    dup_result = execute_query(
+        "SELECT id FROM proposals WHERE project_id = ? AND freelancer_id = ? AND is_draft = 0",
+        [project_id, current_user.id],
+    )
+    if dup_result and dup_result.get("rows"):
+        raise HTTPException(status_code=409, detail="You already submitted a proposal for this project")
 
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
-        "INSERT INTO proposals (freelancer_id, project_id, cover_letter, bid_amount, delivery_time, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?)",
-        [current_user.id, project_id, cover_letter, bid_amount, delivery_time, now],
+        """INSERT INTO proposals (freelancer_id, project_id, cover_letter, bid_amount,
+           estimated_hours, hourly_rate, availability, attachments, status, is_draft, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'submitted', 0, ?, ?)""",
+        [current_user.id, project_id, cover_letter, bid_amount, estimated_hours, hourly_rate, availability, attachments, now, now],
     )
     return {"message": "Proposal submitted", "proposal_id": result.get("last_insert_rowid")}
 

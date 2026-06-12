@@ -1,5 +1,6 @@
 // @AI-HINT: Freelancers Page - fetches real data from backend API
 import React, { Suspense } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Star, MapPin, Briefcase } from 'lucide-react';
 import commonStyles from './Freelancers.common.module.css';
@@ -51,9 +52,20 @@ export default async function FreelancersPage(props: { searchParams?: Promise<{ 
   return (
     <main className={commonStyles.freelancers}>
       <header className={commonStyles.pageHeader}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+          <Image
+            src="/images/hero/talent-hero.png"
+            alt="MegiLance Talent Directory — browse AI-ranked verified freelancers with real-time availability and transparent rates"
+            width={900}
+            height={540}
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
+            style={{ width: '100%', maxWidth: '900px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.15)' }}
+          />
+        </div>
         <h1 className={commonStyles.pageTitle}>Find Top Freelance Talent</h1>
         <p className={commonStyles.pageSubtitle}>Discover the perfect match for your next project with our AI-powered matchmaking algorithm.</p>
-        
+
         <form action="/freelancers" method="GET" className={commonStyles.searchForm}>
           <input type="search" name="q" defaultValue={q} placeholder="Search skills, names, or expertise..." className={commonStyles.searchInput} />
           <button type="submit" className={commonStyles.searchSubmit}>Search</button>

@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { Search, ClipboardList, Users, FileSignature } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -95,22 +96,37 @@ const HowItWorks: React.FC = () => {
           </p>
         </motion.div>
         
-        <motion.div variants={itemVariants} className={cn(commonStyles.timeline)}>
-          {steps.map((step, index) => (
-            <motion.div 
-              key={step.title}
-              whileHover={{ scale: 1.03, y: -5 }}
-              transition={{ type: "spring" as const, stiffness: 400, damping: 15 }}
-            >
-              <StepCard
-                stepNumber={index + 1}
-                icon={step.icon}
-                title={step.title}
-                description={step.description}
-                type={index % 2 === 0 ? 'client' : 'freelancer'}
-              />
+        {/* Process visual: vertical stack showing Project Brief → AI Match → Escrow → Payment */}
+        <motion.div variants={itemVariants} style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <div style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center' }}>
+            <Image
+              src="/images/sections/how-it-works-home.png"
+              alt="How MegiLance works: Project Brief → AI Matching → Smart Contract Escrow → Milestone Payment"
+              width={260}
+              height={520}
+              sizes="(max-width: 768px) 200px, 260px"
+              style={{ width: '100%', maxWidth: '260px', height: 'auto', objectFit: 'contain' }}
+            />
+          </div>
+          <div style={{ flex: '1 1 300px' }}>
+            <motion.div variants={itemVariants} className={cn(commonStyles.timeline)}>
+              {steps.map((step, index) => (
+                <motion.div
+                  key={step.title}
+                  whileHover={{ scale: 1.03, y: -5 }}
+                  transition={{ type: "spring" as const, stiffness: 400, damping: 15 }}
+                >
+                  <StepCard
+                    stepNumber={index + 1}
+                    icon={step.icon}
+                    title={step.title}
+                    description={step.description}
+                    type={index % 2 === 0 ? 'client' : 'freelancer'}
+                  />
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
+          </div>
         </motion.div>
       </motion.div>
     </section>
