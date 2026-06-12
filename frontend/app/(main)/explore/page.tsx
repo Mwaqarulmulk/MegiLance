@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'Explore MegiLance | Discover Top Freelancers, Open Gigs & Projects',
+  description: 'Explore the MegiLance platform. Browse top-rated freelancers, active service gigs, open projects, and trending skills. Find your perfect project match using AI-powered search.',
+  path: '/explore',
+  keywords: getKeywordsForPage(['transactional', 'informational'], [
+    'explore freelancers', 'browse open projects', 'discover freelance talent',
+    'find freelance gigs', 'search freelance marketplace', 'explore gig services',
+    'trending freelance skills', 'open remote projects',
+  ]),
+});
+
 // @AI-HINT: Explore directory - comprehensive search across all platform entities
 import React, { Suspense } from 'react';
 import Link from 'next/link';

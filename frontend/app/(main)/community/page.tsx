@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'MegiLance Community | Connect, Learn & Grow with Freelancers Worldwide',
+  description: 'Join the MegiLance community of 50,000+ freelancers and clients. Q&A forums, expert playbooks, office hours, networking events, and resources for remote professionals.',
+  path: '/community',
+  keywords: getKeywordsForPage(['brand', 'informational'], [
+    'freelance community', 'freelancer forum', 'online freelance network',
+    'remote work community', 'megilance community hub', 'freelancer resources',
+    'freelance Q&A forum', 'connect with freelancers',
+  ]),
+});
+
 // @AI-HINT: Community directory - events, forums and resources
 import React from 'react';
 import commonStyles from './Community.common.module.css';

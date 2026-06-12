@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'Why Hire on MegiLance | AI Matching, 5% Fee & Verified Talent',
+  description: 'Discover why 10,000+ businesses hire on MegiLance. AI-powered matching, flat 5% service fee, secure milestone escrow, verified freelancer profiles, fraud detection, and 24/7 support.',
+  path: '/why-hire',
+  keywords: getKeywordsForPage(['transactional', 'features', 'longTail'], [
+    'why use megilance', 'best place to hire freelancers', 'hire verified freelancers',
+    'advantages of megilance', 'better freelance platform', 'why hire freelancers online',
+    'benefits of ai freelance matching', 'secure freelance hiring platform',
+  ]),
+});
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';

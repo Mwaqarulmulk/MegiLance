@@ -1,3 +1,16 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'Freelance Service Categories | Browse All Skills & Expertise — MegiLance',
+  description: 'Browse all freelance service categories on MegiLance: web development, UI/UX design, content writing, digital marketing, AI/ML, data science, and 50+ more skill areas. Find your expert today.',
+  path: '/categories',
+  keywords: getKeywordsForPage(['transactional', 'industry', 'technology'], [
+    'freelance categories', 'hire by skill category', 'browse freelance services',
+    'freelance skill directory', 'find freelancers by category', 'all freelance skills',
+  ]),
+});
+
 // @AI-HINT: Categories directory - browse jobs/gigs by macro-categories
 import React from 'react';
 import commonStyles from './Categories.common.module.css';

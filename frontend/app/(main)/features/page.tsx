@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'MegiLance Platform Features | AI Matching, Escrow, Real-time Chat & Analytics',
+  description: 'Discover MegiLance\'s powerful features: ML-powered talent matching, secure milestone escrow, real-time Socket.IO chat, smart analytics, fraud detection, multi-currency payments, and a mobile PWA.',
+  path: '/features',
+  keywords: getKeywordsForPage(['features', 'transactional'], [
+    'AI powered freelance features', 'milestone escrow freelancing', 'real time chat freelance platform',
+    'freelance platform with analytics', 'multi currency freelance payments',
+    'mobile freelance app', 'fraud detection freelancing', 'secure freelance contracts',
+  ]),
+});
+
 import React from 'react';
 import Image from 'next/image';
 import commonStyles from './Features.common.module.css';

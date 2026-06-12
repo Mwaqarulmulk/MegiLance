@@ -1,3 +1,18 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'Free Freelancer Tools | Cost Calculator, Rate Estimator & AI Tools — MegiLance',
+  description: 'Free AI-powered freelancer tools by MegiLance: project cost calculator, rate estimator, proposal templates, invoice generator, portfolio analyzer, and skill gap analysis. Boost your earnings.',
+  path: '/tools',
+  keywords: getKeywordsForPage(['features', 'longTail'], [
+    'free freelancer tools', 'online freelance tools', 'freelance rate calculator',
+    'freelance proposal generator', 'invoice maker for freelancers',
+    'portfolio analyzer tool', 'skill gap analyzer freelance',
+    'AI tools for freelancers', 'productivity tools for remote workers',
+  ]),
+});
+
 import React from 'react';
 import Link from 'next/link';
 import commonStyles from './Tools.common.module.css';

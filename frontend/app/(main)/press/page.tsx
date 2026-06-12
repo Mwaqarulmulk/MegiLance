@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'MegiLance Press & Media | News, Press Kit & Brand Assets',
+  description: 'MegiLance press resources: company news, recent media coverage, downloadable press kit, brand assets, logo files, and spokesperson contact. Read the story of AI-powered freelancing.',
+  path: '/press',
+  keywords: [
+    'megilance press', 'megilance media kit', 'megilance news',
+    'freelance platform press release', 'megilance brand assets',
+    'megilance logo download', 'AI freelancing news', 'megilance coverage',
+  ],
+});
+
 // @AI-HINT: Press directory
 import React from 'react';
 import commonStyles from './Press.common.module.css';

@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'MegiLance Enterprise | Custom Talent Solutions for Large Teams & Agencies',
+  description: 'Scale hiring with MegiLance Enterprise. Dedicated account managers, custom workflows, bulk hiring, white-label options, premium SLA, and volume pricing. Built for teams of 50+.',
+  path: '/enterprise',
+  keywords: getKeywordsForPage(['transactional', 'features'], [
+    'enterprise freelance platform', 'bulk hiring freelancers', 'enterprise talent solutions',
+    'white label freelance marketplace', 'large team hiring platform',
+    'custom freelance workflows', 'enterprise talent management', 'managed freelance sourcing',
+  ]),
+});
+
 // @AI-HINT: Enterprise directory - tailored solutions for large teams
 import React from 'react';
 import commonStyles from './Enterprise.common.module.css';

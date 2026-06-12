@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'Freelance Jobs Online | Find Remote Work & Projects — MegiLance',
+  description: 'Find the best freelance jobs online on MegiLance. Hundreds of remote projects in web development, design, writing, data science, and more. Get AI-matched to jobs that fit your exact skills.',
+  path: '/jobs',
+  keywords: getKeywordsForPage(['transactional', 'longTail'], [
+    'freelance jobs online', 'remote freelance projects', 'find freelance work',
+    'get freelance jobs', 'remote work for developers', 'online project work',
+    'best freelance job boards', 'AI matched freelance jobs', 'freelance jobs for beginners',
+  ]),
+});
+
 // @AI-HINT: Jobs directory - custom client projects
 import React, { Suspense } from 'react';
 import commonStyles from './Jobs.common.module.css';

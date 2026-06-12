@@ -96,17 +96,70 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'LinkedInBot',
         allow: '/',
       },
-      // ── Block AI scrapers from training data ──
+      // ── AI assistants that drive referral traffic — ALLOW ──
+      // ChatGPT browsing (via Bing) cites and links to sites — allow for discoverability
       {
         userAgent: 'GPTBot',
-        disallow: '/',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/_next/', '/settings/', '/messages/'],
       },
+      // ChatGPT real-time browsing — drives direct citation traffic
+      {
+        userAgent: 'ChatGPT-User',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // Perplexity — top AI search engine, significant referral source
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+      },
+      // Apple — Spotlight, Siri, Safari Reader
+      {
+        userAgent: 'Applebot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // Claude (Anthropic) — web browsing for AI responses
+      {
+        userAgent: 'anthropic-ai',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+      },
+      // ClaudeBot — Anthropic web crawler
+      {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+      },
+      // Google Gemini / Bard crawler
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+      },
+      // Cohere — AI training crawler
+      {
+        userAgent: 'cohere-ai',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+      },
+      // ── Block bulk scrapers used ONLY for raw training data (no search/referral value) ──
       {
         userAgent: 'CCBot',
         disallow: '/',
       },
       {
-        userAgent: 'anthropic-ai',
+        userAgent: 'omgili',
+        disallow: '/',
+      },
+      {
+        userAgent: 'omgilibot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'Bytespider',
         disallow: '/',
       },
     ],

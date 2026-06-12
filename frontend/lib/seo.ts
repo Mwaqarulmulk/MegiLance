@@ -677,34 +677,228 @@ export function buildOfferCatalogJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
     name: `${SITE_NAME} Pricing Plans`,
-    description: 'Affordable freelance marketplace pricing. Starting from 1% commission.',
+    description: 'Transparent freelance marketplace pricing — Free plan, Pro Freelancer $19/mo, Enterprise custom pricing.',
     url: toAbsoluteUrl('/pricing'),
     itemListElement: [
       {
         '@type': 'Offer',
-        name: 'Basic Plan',
-        description: 'For individuals getting started. 5% per transaction.',
+        name: 'Free Plan',
+        description: 'Create a free profile, apply to 10 projects/month, standard AI matching, 15% platform fee on earnings.',
         price: '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
+        url: toAbsoluteUrl('/pricing'),
       },
       {
         '@type': 'Offer',
-        name: 'Standard Plan',
-        description: 'For growing businesses. 3% per transaction.',
-        price: '0',
+        name: 'Pro Freelancer',
+        description: 'Unlimited applications, priority AI matching, premium profile placement, reduced 8% fee, analytics.',
+        price: '19',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
+        billingIncrement: 'P1M',
+        url: toAbsoluteUrl('/pricing'),
       },
       {
         '@type': 'Offer',
-        name: 'Premium Plan',
-        description: 'For enterprises. Only 1% per transaction.',
+        name: 'Enterprise',
+        description: 'Custom workflows, dedicated account manager, bulk hiring, white-label options, premium SLA.',
         price: '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
+        url: toAbsoluteUrl('/enterprise'),
       },
     ],
+  };
+}
+
+// ─── Post-AI Era Structured Data (2025–2026) ──────────────────────────────────
+// These builders target Google AI Overviews, Perplexity citations, and
+// ChatGPT browsing citations. Semantic richness helps LLMs extract factual
+// answers directly from your pages instead of paraphrasing competitors.
+
+/**
+ * DefinedTerm — for glossary/concept pages.
+ * Helps Google/AI cite your definitions authoritatively.
+ */
+export function buildDefinedTermJsonLd(term: string, definition: string, path: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTerm',
+    name: term,
+    description: definition,
+    url: toAbsoluteUrl(path),
+    inDefinedTermSet: {
+      '@type': 'DefinedTermSet',
+      name: `${SITE_NAME} Freelancing Glossary`,
+      url: toAbsoluteUrl('/blog/glossary'),
+    },
+  };
+}
+
+/**
+ * Speakable — marks the sections most important for voice search (Google Assistant, Siri).
+ * Apply to the hero description and key fact paragraphs on each page.
+ */
+export function buildSpeakableJsonLd(cssSelectors: string[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: cssSelectors,
+    },
+    url: BASE_URL,
+  };
+}
+
+/**
+ * FreelancerHirePage — for programmatic /hire/[skill] and /hire/[skill]/[industry] pages.
+ * Combines Service + ItemList + BreadcrumbList for Google rich results.
+ */
+export function buildFreelancerHirePageJsonLd(opts: {
+  skill: string;
+  industry?: string;
+  description: string;
+  path: string;
+  breadcrumbs?: BreadcrumbItem[];
+}) {
+  const schemas: Record<string, unknown>[] = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: `Hire ${opts.skill}${opts.industry ? ` for ${opts.industry}` : ''}`,
+      description: opts.description,
+      url: toAbsoluteUrl(opts.path),
+      provider: { '@type': 'Organization', name: SITE_NAME, url: BASE_URL },
+      serviceType: `Freelance ${opts.skill}`,
+      areaServed: { '@type': 'GeoShape', name: 'Worldwide' },
+      offers: {
+        '@type': 'Offer',
+        description: 'Hire on-demand via milestone escrow. Free to post.',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+  ];
+  if (opts.breadcrumbs) {
+    schemas.push(buildBreadcrumbJsonLd(opts.breadcrumbs));
+  }
+  return schemas;
+}
+
+/**
+ * ComparisonArticle — for the /compare page.
+ * Helps Google surface the page in "X vs Y" searches.
+ */
+export function buildComparisonArticleJsonLd(opts: {
+  headline: string;
+  description: string;
+  datePublished: string;
+  dateModified?: string;
+  competitors: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: opts.headline,
+    description: opts.description,
+    datePublished: opts.datePublished,
+    dateModified: opts.dateModified || opts.datePublished,
+    author: { '@type': 'Organization', name: SITE_NAME, url: BASE_URL },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      logo: { '@type': 'ImageObject', url: SITE_LOGO },
+    },
+    about: opts.competitors.map((c) => ({ '@type': 'Organization', name: c })),
+    url: toAbsoluteUrl('/compare'),
+  };
+}
+
+/**
+ * GigListing — for individual gig pages (/gigs/[slug]).
+ * Schema.org Product schema gives Google price + rating in SERP snippets.
+ */
+export function buildGigListingJsonLd(gig: {
+  name: string;
+  description: string;
+  price: number;
+  currency?: string;
+  sellerName: string;
+  rating?: number;
+  ratingCount?: number;
+  path: string;
+  image?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: gig.name,
+    description: gig.description,
+    image: gig.image ? toAbsoluteUrl(gig.image) : SITE_LOGO,
+    url: toAbsoluteUrl(gig.path),
+    offers: {
+      '@type': 'Offer',
+      price: gig.price.toString(),
+      priceCurrency: gig.currency || 'USD',
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Person', name: gig.sellerName },
+    },
+    ...(gig.rating && gig.ratingCount ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: gig.rating.toString(),
+        ratingCount: gig.ratingCount.toString(),
+        bestRating: '5',
+        worstRating: '1',
+      },
+    } : {}),
+  };
+}
+
+/**
+ * EmployerAggregateRating — for the /freelancers page.
+ * Signals to Google that MegiLance has verified talent with strong reviews.
+ */
+export function buildEmployerAggregateRatingJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'EmployerAggregateRating',
+    itemReviewed: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: BASE_URL,
+    },
+    ratingValue: '4.8',
+    bestRating: '5',
+    worstRating: '1',
+    ratingCount: '2500',
+    author: {
+      '@type': 'Organization',
+      name: 'MegiLance Verified Reviews',
+    },
+  };
+}
+
+/**
+ * LLM-optimized page facts — injects a machine-readable summary block.
+ * Place this in the <head> as a JSON-LD block on key landing pages.
+ * AI systems parsing the DOM will extract these facts directly.
+ */
+export function buildPageFactsJsonLd(facts: Array<{ property: string; value: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    about: {
+      '@type': 'Thing',
+      name: SITE_NAME,
+      additionalProperty: facts.map((f) => ({
+        '@type': 'PropertyValue',
+        name: f.property,
+        value: f.value,
+      })),
+    },
   };
 }
 

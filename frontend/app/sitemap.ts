@@ -116,6 +116,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Status page
     { path: '/status', changeFrequency: 'daily', priority: 0.45 },
+
+    // AI/LLM discoverability
+    { path: '/llms.txt', changeFrequency: 'monthly', priority: 0.3 },
   ];
 
   const staticPages: MetadataRoute.Sitemap = topLevelPaths.map(({ path, changeFrequency, priority }) => ({

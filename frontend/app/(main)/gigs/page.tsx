@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+
+export const metadata: Metadata = buildMeta({
+  title: 'Browse Freelance Gigs | Buy Ready-Made Services Starting at $10 — MegiLance',
+  description: 'Browse and buy freelance gig packages on MegiLance. Find web design, logo design, content writing, SEO, video editing, and 100+ service gigs with fixed pricing and fast delivery.',
+  path: '/gigs',
+  keywords: getKeywordsForPage(['transactional', 'industry'], [
+    'freelance gigs online', 'buy freelance services', 'fixed price freelance packages',
+    'fiverr alternative gigs', 'hire for fixed price', 'cheap freelance gigs',
+    'gig marketplace', 'ready made freelance services',
+  ]),
+});
+
 // @AI-HINT: Gigs directory - fetches real gigs from backend API
 import React, { Suspense } from 'react';
 import Link from 'next/link';
