@@ -28,7 +28,7 @@ class ReviewResponse(BaseModel):
     response: str
 
 
-@router.get("/")
+@router.get("")
 async def list_reviews(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -90,7 +90,7 @@ async def get_review(review_id: int, current_user=Depends(get_current_user)):
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_review(request: ReviewCreate, current_user=Depends(get_current_user)):
     contract_result = execute_query(
         "SELECT id, client_id, freelancer_id, status FROM contracts WHERE id = ?",

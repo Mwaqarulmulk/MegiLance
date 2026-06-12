@@ -53,7 +53,7 @@ def _verify_contract_access(contract_id: int, user_id: int) -> dict:
     return contract
 
 
-@router.get("/")
+@router.get("")
 async def list_milestones(contract_id: int = Query(...), current_user=Depends(get_current_user)):
     _verify_contract_access(contract_id, current_user.id)
     result = execute_query(
@@ -83,7 +83,7 @@ async def get_milestone(milestone_id: int, current_user=Depends(get_current_user
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_milestone(request: MilestoneCreate, current_user=Depends(get_current_user)):
     _verify_contract_access(request.contract_id, current_user.id)
 

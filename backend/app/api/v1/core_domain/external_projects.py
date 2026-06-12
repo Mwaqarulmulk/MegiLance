@@ -13,7 +13,7 @@ from app.db.turso_http import execute_query, parse_rows
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def list_external_projects(
     query: Optional[str] = None,
     category: Optional[str] = None,

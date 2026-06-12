@@ -191,6 +191,966 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"startup.milestone_columns_warning: {e}")
 
+        # Ensure gamification tables exist
+        try:
+            now = __import__("datetime").datetime.utcnow().isoformat()
+            execute_query("""CREATE TABLE IF NOT EXISTS badges (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                description TEXT,
+                icon TEXT,
+                points INTEGER NOT NULL DEFAULT 0,
+                tier TEXT NOT NULL DEFAULT 'bronze',
+                created_at TEXT NOT NULL
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS user_badges (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                badge_id INTEGER NOT NULL,
+                earned_at TEXT NOT NULL,
+                UNIQUE(user_id, badge_id),
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(badge_id) REFERENCES badges(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_user_badges_user_id ON user_badges(user_id)")
+            execute_query("""CREATE TABLE IF NOT EXISTS achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                description TEXT,
+                xp INTEGER NOT NULL DEFAULT 0,
+                category TEXT,
+                created_at TEXT NOT NULL
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS user_achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                achievement_id INTEGER NOT NULL,
+                unlocked_at TEXT NOT NULL,
+                UNIQUE(user_id, achievement_id),
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(achievement_id) REFERENCES achievements(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_user_achievements_user_id ON user_achievements(user_id)")
+            # Seed default badges if none exist
+            cnt = execute_query("SELECT COUNT(*) as c FROM badges")
+            if cnt and cnt.get("rows") and (cnt["rows"][0][0].get("value", 0) if isinstance(cnt["rows"][0][0], dict) else cnt["rows"][0][0]) == 0:
+                default_badges = [
+                    ("First Contract", "Complete your first contract", "🏆", 100, "bronze"),
+                    ("Five Star", "Receive a 5-star review", "⭐", 200, "silver"),
+                    ("Top Earner", "Earn over $1,000 total", "💰", 500, "gold"),
+                    ("Speed Demon", "Deliver a project early", "⚡", 150, "silver"),
+                    ("Reliable Pro", "Complete 10 contracts", "🎯", 1000, "gold"),
+                ]
+                for name, desc, icon, pts, tier in default_badges:
+                    try:
+                        execute_query("INSERT OR IGNORE INTO badges (name, description, icon, points, tier, created_at) VALUES (?, ?, ?, ?, ?, ?)", [name, desc, icon, pts, tier, now])
+                    except Exception:
+                        pass
+            # Seed default achievements if none exist
+            cnt = execute_query("SELECT COUNT(*) as c FROM achievements")
+            if cnt and cnt.get("rows") and (cnt["rows"][0][0].get("value", 0) if isinstance(cnt["rows"][0][0], dict) else cnt["rows"][0][0]) == 0:
+                default_achievements = [
+                    ("Profile Complete", "Fill out all profile fields", 50, "profile"),
+                    ("First Proposal", "Submit your first proposal", 75, "projects"),
+                    ("Community Member", "Create your first community post", 25, "community"),
+                    ("Contract Winner", "Win your first project bid", 200, "projects"),
+                    ("Reviewed", "Receive your first review", 100, "reputation"),
+                ]
+                for name, desc, xp, cat in default_achievements:
+                    try:
+                        execute_query("INSERT OR IGNORE INTO achievements (name, description, xp, category, created_at) VALUES (?, ?, ?, ?, ?)", [name, desc, xp, cat, now])
+                    except Exception:
+                        pass
+            logger.info("startup.gamification_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.gamification_tables_warning: {e}")
+
+        # Ensure community tables exist
+        try:
+            now = __import__("datetime").datetime.utcnow().isoformat()
+            execute_query("""CREATE TABLE IF NOT EXISTS community_hubs (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                icon TEXT,
+                member_count INTEGER NOT NULL DEFAULT 0,
+                post_count INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS community_posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                hub_id TEXT NOT NULL DEFAULT 'general',
+                post_type TEXT NOT NULL DEFAULT 'discussion',
+                author_id INTEGER NOT NULL,
+                likes_count INTEGER NOT NULL DEFAULT 0,
+                comments_count INTEGER NOT NULL DEFAULT 0,
+                views_count INTEGER NOT NULL DEFAULT 0,
+                is_pinned INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT,
+                FOREIGN KEY(author_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_community_posts_hub_id ON community_posts(hub_id)")
+            execute_query("""CREATE TABLE IF NOT EXISTS community_post_likes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                post_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                UNIQUE(post_id, user_id),
+                FOREIGN KEY(post_id) REFERENCES community_posts(id),
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS community_post_comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                post_id INTEGER NOT NULL,
+                author_id INTEGER NOT NULL,
+                content TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(post_id) REFERENCES community_posts(id),
+                FOREIGN KEY(author_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_community_post_comments_post_id ON community_post_comments(post_id)")
+            # Seed default hubs if none exist
+            cnt = execute_query("SELECT COUNT(*) as c FROM community_hubs")
+            if cnt and cnt.get("rows") and (cnt["rows"][0][0].get("value", 0) if isinstance(cnt["rows"][0][0], dict) else cnt["rows"][0][0]) == 0:
+                default_hubs = [
+                    ("general", "General", "General discussions about freelancing and MegiLance", "💬"),
+                    ("tips", "Tips & Tricks", "Share your best freelancing tips and advice", "💡"),
+                    ("showcase", "Showcase", "Show off your work and portfolio", "🎨"),
+                    ("jobs", "Job Board", "Share and discuss job opportunities", "📋"),
+                    ("tech", "Tech Talk", "Discuss technology, tools, and development", "💻"),
+                ]
+                for hid, name, desc, icon in default_hubs:
+                    try:
+                        execute_query("INSERT OR IGNORE INTO community_hubs (id, name, description, icon, member_count, post_count, created_at) VALUES (?, ?, ?, ?, 0, 0, ?)", [hid, name, desc, icon, now])
+                    except Exception:
+                        pass
+            logger.info("startup.community_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.community_tables_warning: {e}")
+
+        # Ensure gig marketplace tables exist
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS gigs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                seller_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                slug TEXT NOT NULL UNIQUE,
+                description TEXT,
+                category_id INTEGER,
+                subcategory TEXT,
+                tags TEXT,
+                basic_price REAL NOT NULL DEFAULT 0,
+                standard_price REAL,
+                premium_price REAL,
+                basic_delivery_days INTEGER NOT NULL DEFAULT 3,
+                standard_delivery_days INTEGER,
+                premium_delivery_days INTEGER,
+                basic_revisions INTEGER NOT NULL DEFAULT 1,
+                standard_revisions INTEGER,
+                premium_revisions INTEGER,
+                basic_description TEXT,
+                standard_description TEXT,
+                premium_description TEXT,
+                images TEXT,
+                requirements TEXT,
+                status TEXT NOT NULL DEFAULT 'draft',
+                orders_count INTEGER NOT NULL DEFAULT 0,
+                average_rating REAL NOT NULL DEFAULT 0,
+                reviews_count INTEGER NOT NULL DEFAULT 0,
+                impressions_count INTEGER NOT NULL DEFAULT 0,
+                clicks_count INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(seller_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_gigs_seller_id ON gigs(seller_id)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_gigs_status ON gigs(status)")
+            execute_query("""CREATE TABLE IF NOT EXISTS gig_faqs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                gig_id INTEGER NOT NULL,
+                question TEXT NOT NULL,
+                answer TEXT NOT NULL,
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY(gig_id) REFERENCES gigs(id) ON DELETE CASCADE
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS gig_orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                gig_id INTEGER NOT NULL,
+                buyer_id INTEGER NOT NULL,
+                seller_id INTEGER NOT NULL,
+                package_type TEXT NOT NULL DEFAULT 'basic',
+                price REAL NOT NULL,
+                delivery_days INTEGER NOT NULL,
+                revisions INTEGER NOT NULL DEFAULT 1,
+                requirements TEXT,
+                status TEXT NOT NULL DEFAULT 'pending',
+                due_date TEXT,
+                completed_at TEXT,
+                cancelled_at TEXT,
+                cancel_reason TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(gig_id) REFERENCES gigs(id),
+                FOREIGN KEY(buyer_id) REFERENCES users(id),
+                FOREIGN KEY(seller_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_gig_orders_buyer_id ON gig_orders(buyer_id)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_gig_orders_seller_id ON gig_orders(seller_id)")
+            execute_query("""CREATE TABLE IF NOT EXISTS gig_deliveries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_id INTEGER NOT NULL,
+                message TEXT,
+                attachments TEXT,
+                revision_number INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(order_id) REFERENCES gig_orders(id) ON DELETE CASCADE
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS gig_revisions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_id INTEGER NOT NULL,
+                requested_by INTEGER NOT NULL,
+                message TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(order_id) REFERENCES gig_orders(id) ON DELETE CASCADE,
+                FOREIGN KEY(requested_by) REFERENCES users(id)
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS gig_reviews (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                gig_id INTEGER NOT NULL,
+                order_id INTEGER NOT NULL UNIQUE,
+                reviewer_id INTEGER NOT NULL,
+                rating REAL NOT NULL,
+                comment TEXT,
+                seller_response TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(gig_id) REFERENCES gigs(id),
+                FOREIGN KEY(order_id) REFERENCES gig_orders(id),
+                FOREIGN KEY(reviewer_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_gig_reviews_gig_id ON gig_reviews(gig_id)")
+            logger.info("startup.gig_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.gig_tables_warning: {e}")
+
+        # Ensure external projects tables exist
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS external_projects (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                company TEXT,
+                company_logo TEXT,
+                description TEXT,
+                description_plain TEXT,
+                category TEXT,
+                source TEXT NOT NULL,
+                source_id TEXT,
+                project_type TEXT,
+                experience_level TEXT,
+                budget_min REAL,
+                budget_max REAL,
+                budget_currency TEXT DEFAULT 'USD',
+                location TEXT,
+                apply_url TEXT,
+                trust_score REAL DEFAULT 0.5,
+                is_verified INTEGER DEFAULT 0,
+                tags TEXT,
+                views_count INTEGER NOT NULL DEFAULT 0,
+                clicks_count INTEGER NOT NULL DEFAULT 0,
+                scraped_at TEXT NOT NULL,
+                posted_at TEXT,
+                expires_at TEXT
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_external_projects_source ON external_projects(source)")
+            execute_query("""CREATE TABLE IF NOT EXISTS external_project_saves (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                project_id INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, project_id),
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS external_project_clicks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id INTEGER NOT NULL,
+                user_id INTEGER,
+                ip_address TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS external_project_flags (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                reason TEXT,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, project_id),
+                FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS scrape_jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                started_at TEXT,
+                completed_at TEXT,
+                projects_scraped INTEGER DEFAULT 0,
+                error_message TEXT,
+                created_at TEXT NOT NULL
+            )""")
+            logger.info("startup.external_projects_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.external_projects_tables_warning: {e}")
+
+        # Ensure advanced referral tables exist
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS referral_campaigns (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT,
+                reward_amount REAL NOT NULL DEFAULT 0,
+                reward_type TEXT NOT NULL DEFAULT 'fixed',
+                max_referrals INTEGER,
+                starts_at TEXT,
+                ends_at TEXT,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS referral_milestones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER,
+                referrals_required INTEGER NOT NULL,
+                reward_amount REAL NOT NULL,
+                reward_description TEXT,
+                FOREIGN KEY(campaign_id) REFERENCES referral_campaigns(id) ON DELETE CASCADE
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS referral_milestone_achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                milestone_id INTEGER NOT NULL,
+                achieved_at TEXT NOT NULL,
+                UNIQUE(user_id, milestone_id),
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(milestone_id) REFERENCES referral_milestones(id)
+            )""")
+            logger.info("startup.referral_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.referral_tables_warning: {e}")
+
+        # Ensure token blacklist table exists
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS token_blacklist (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                jti TEXT NOT NULL UNIQUE,
+                user_id INTEGER,
+                expires_at TEXT NOT NULL,
+                blacklisted_at TEXT NOT NULL
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_token_blacklist_jti ON token_blacklist(jti)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_token_blacklist_expires_at ON token_blacklist(expires_at)")
+            logger.info("startup.token_blacklist_table_ensured")
+        except Exception as e:
+            logger.warning(f"startup.token_blacklist_table_warning: {e}")
+
+        # Ensure supplementary tables exist (fraud alerts, notifications prefs, api keys, etc.)
+        _supplementary_tables = [
+            ("""CREATE TABLE IF NOT EXISTS fraud_alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                alert_type TEXT NOT NULL,
+                severity TEXT NOT NULL DEFAULT 'low',
+                description TEXT,
+                metadata TEXT,
+                is_resolved INTEGER DEFAULT 0,
+                resolved_by INTEGER,
+                resolved_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "fraud_alerts"),
+            ("""CREATE TABLE IF NOT EXISTS notification_preferences (
+                user_id INTEGER PRIMARY KEY,
+                email_notifications INTEGER DEFAULT 1,
+                push_notifications INTEGER DEFAULT 1,
+                proposal_alerts INTEGER DEFAULT 1,
+                project_alerts INTEGER DEFAULT 1,
+                message_alerts INTEGER DEFAULT 1,
+                payment_alerts INTEGER DEFAULT 1,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "notification_preferences"),
+            ("""CREATE TABLE IF NOT EXISTS api_keys (
+                id TEXT PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                key_hash TEXT NOT NULL,
+                key_preview TEXT NOT NULL,
+                permissions TEXT,
+                status TEXT NOT NULL DEFAULT 'active',
+                last_used_at TEXT,
+                expires_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "api_keys"),
+            ("""CREATE TABLE IF NOT EXISTS webhooks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                url TEXT NOT NULL,
+                secret TEXT,
+                events TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "webhooks"),
+            ("""CREATE TABLE IF NOT EXISTS webhook_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                webhook_id INTEGER NOT NULL,
+                event_type TEXT NOT NULL,
+                payload TEXT,
+                status TEXT DEFAULT 'pending',
+                attempts INTEGER DEFAULT 0,
+                last_attempt_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(webhook_id) REFERENCES webhooks(id) ON DELETE CASCADE
+            )""", "webhook_events"),
+            ("""CREATE TABLE IF NOT EXISTS activity_feed (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                actor_id INTEGER,
+                activity_type TEXT NOT NULL,
+                entity_type TEXT,
+                entity_id INTEGER,
+                description TEXT,
+                metadata TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "activity_feed"),
+            ("""CREATE TABLE IF NOT EXISTS availability_settings (
+                user_id INTEGER PRIMARY KEY,
+                timezone TEXT DEFAULT 'UTC',
+                is_available INTEGER DEFAULT 1,
+                weekly_hours INTEGER DEFAULT 40,
+                hourly_rate REAL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "availability_settings"),
+            ("""CREATE TABLE IF NOT EXISTS availability_weekly_pattern (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                day_of_week INTEGER NOT NULL,
+                start_time TEXT NOT NULL,
+                end_time TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "availability_weekly_pattern"),
+            ("""CREATE TABLE IF NOT EXISTS availability_blocks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                start_date TEXT NOT NULL,
+                end_date TEXT NOT NULL,
+                reason TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "availability_blocks"),
+            ("""CREATE TABLE IF NOT EXISTS branding_config (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                key TEXT NOT NULL,
+                value TEXT,
+                updated_at TEXT NOT NULL
+            )""", "branding_config"),
+            ("""CREATE TABLE IF NOT EXISTS feature_flags (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                description TEXT,
+                is_enabled INTEGER DEFAULT 0,
+                rollout_percentage INTEGER DEFAULT 0,
+                conditions TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )""", "feature_flags"),
+            ("""CREATE TABLE IF NOT EXISTS email_templates (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                subject TEXT NOT NULL,
+                body_html TEXT NOT NULL,
+                body_text TEXT,
+                variables TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )""", "email_templates"),
+            ("""CREATE TABLE IF NOT EXISTS integrations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                provider TEXT NOT NULL,
+                provider_id TEXT,
+                access_token TEXT,
+                refresh_token TEXT,
+                token_expires_at TEXT,
+                metadata TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "integrations"),
+            ("""CREATE TABLE IF NOT EXISTS job_alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                keywords TEXT,
+                category TEXT,
+                min_budget REAL,
+                max_budget REAL,
+                skills TEXT,
+                is_active INTEGER DEFAULT 1,
+                last_sent_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "job_alerts"),
+            ("""CREATE TABLE IF NOT EXISTS payout_methods (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                method_type TEXT NOT NULL,
+                is_default INTEGER DEFAULT 0,
+                details TEXT,
+                is_verified INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "payout_methods"),
+            ("""CREATE TABLE IF NOT EXISTS phone_verifications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                phone_number TEXT NOT NULL,
+                code TEXT NOT NULL,
+                is_verified INTEGER DEFAULT 0,
+                expires_at TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "phone_verifications"),
+            ("""CREATE TABLE IF NOT EXISTS portfolio_showcase (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT,
+                media_urls TEXT,
+                skills TEXT,
+                project_url TEXT,
+                likes_count INTEGER DEFAULT 0,
+                is_featured INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "portfolio_showcase"),
+            ("""CREATE TABLE IF NOT EXISTS proposal_templates (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                content TEXT NOT NULL,
+                tags TEXT,
+                is_default INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "proposal_templates"),
+            ("""CREATE TABLE IF NOT EXISTS rate_cards (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                service_name TEXT NOT NULL,
+                description TEXT,
+                rate REAL NOT NULL,
+                rate_type TEXT DEFAULT 'hourly',
+                currency TEXT DEFAULT 'USD',
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "rate_cards"),
+            ("""CREATE TABLE IF NOT EXISTS saved_searches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                query TEXT,
+                filters TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "saved_searches"),
+            ("""CREATE TABLE IF NOT EXISTS skill_questions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                skill TEXT NOT NULL,
+                question TEXT NOT NULL,
+                options TEXT NOT NULL,
+                correct_answer TEXT NOT NULL,
+                difficulty TEXT DEFAULT 'medium',
+                created_at TEXT NOT NULL
+            )""", "skill_questions"),
+            ("""CREATE TABLE IF NOT EXISTS subscriptions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                plan TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'active',
+                amount REAL NOT NULL,
+                currency TEXT DEFAULT 'USD',
+                billing_cycle TEXT DEFAULT 'monthly',
+                current_period_start TEXT,
+                current_period_end TEXT,
+                cancelled_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "subscriptions"),
+            ("""CREATE TABLE IF NOT EXISTS subscription_invoices (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                subscription_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                amount REAL NOT NULL,
+                status TEXT DEFAULT 'pending',
+                paid_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(subscription_id) REFERENCES subscriptions(id),
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "subscription_invoices"),
+            ("""CREATE TABLE IF NOT EXISTS support_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ticket_id INTEGER NOT NULL,
+                sender_id INTEGER NOT NULL,
+                content TEXT NOT NULL,
+                is_internal INTEGER DEFAULT 0,
+                attachments TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(ticket_id) REFERENCES support_tickets(id),
+                FOREIGN KEY(sender_id) REFERENCES users(id)
+            )""", "support_messages"),
+            ("""CREATE TABLE IF NOT EXISTS teams (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT,
+                owner_id INTEGER NOT NULL,
+                avatar_url TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(owner_id) REFERENCES users(id)
+            )""", "teams"),
+            ("""CREATE TABLE IF NOT EXISTS team_members (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                team_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                role TEXT DEFAULT 'member',
+                joined_at TEXT NOT NULL,
+                UNIQUE(team_id, user_id),
+                FOREIGN KEY(team_id) REFERENCES teams(id) ON DELETE CASCADE,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "team_members"),
+            ("""CREATE TABLE IF NOT EXISTS team_invitations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                team_id INTEGER NOT NULL,
+                email TEXT NOT NULL,
+                role TEXT DEFAULT 'member',
+                token TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(team_id) REFERENCES teams(id) ON DELETE CASCADE
+            )""", "team_invitations"),
+            ("""CREATE TABLE IF NOT EXISTS video_calls (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                room_id TEXT NOT NULL UNIQUE,
+                host_id INTEGER NOT NULL,
+                title TEXT,
+                status TEXT DEFAULT 'waiting',
+                started_at TEXT,
+                ended_at TEXT,
+                recording_url TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(host_id) REFERENCES users(id)
+            )""", "video_calls"),
+            ("""CREATE TABLE IF NOT EXISTS video_call_participants (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                call_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                joined_at TEXT,
+                left_at TEXT,
+                FOREIGN KEY(call_id) REFERENCES video_calls(id) ON DELETE CASCADE,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "video_call_participants"),
+            ("""CREATE TABLE IF NOT EXISTS workflows (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                trigger_type TEXT NOT NULL,
+                trigger_config TEXT,
+                actions TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "workflows"),
+            ("""CREATE TABLE IF NOT EXISTS workflow_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                workflow_id INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                triggered_at TEXT NOT NULL,
+                completed_at TEXT,
+                error TEXT,
+                metadata TEXT,
+                FOREIGN KEY(workflow_id) REFERENCES workflows(id) ON DELETE CASCADE
+            )""", "workflow_logs"),
+            ("""CREATE TABLE IF NOT EXISTS legal_documents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                document_type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                version TEXT NOT NULL,
+                is_active INTEGER DEFAULT 1,
+                effective_date TEXT,
+                created_at TEXT NOT NULL
+            )""", "legal_documents"),
+            ("""CREATE TABLE IF NOT EXISTS legal_acceptances (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                document_id INTEGER NOT NULL,
+                accepted_at TEXT NOT NULL,
+                ip_address TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(document_id) REFERENCES legal_documents(id)
+            )""", "legal_acceptances"),
+            ("""CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL UNIQUE,
+                name TEXT,
+                is_active INTEGER DEFAULT 1,
+                subscribed_at TEXT NOT NULL,
+                unsubscribed_at TEXT
+            )""", "newsletter_subscribers"),
+            ("""CREATE TABLE IF NOT EXISTS organizations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT,
+                owner_id INTEGER NOT NULL,
+                logo_url TEXT,
+                website TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(owner_id) REFERENCES users(id)
+            )""", "organizations"),
+            ("""CREATE TABLE IF NOT EXISTS organization_members (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                org_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                role TEXT DEFAULT 'member',
+                joined_at TEXT NOT NULL,
+                UNIQUE(org_id, user_id),
+                FOREIGN KEY(org_id) REFERENCES organizations(id) ON DELETE CASCADE,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "organization_members"),
+            ("""CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                entity_type TEXT NOT NULL,
+                entity_id INTEGER NOT NULL,
+                author_id INTEGER NOT NULL,
+                content TEXT NOT NULL,
+                parent_id INTEGER,
+                likes_count INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT,
+                FOREIGN KEY(author_id) REFERENCES users(id)
+            )""", "comments"),
+            ("""CREATE TABLE IF NOT EXISTS review_responses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                review_id INTEGER NOT NULL UNIQUE,
+                responder_id INTEGER NOT NULL,
+                content TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(review_id) REFERENCES reviews(id),
+                FOREIGN KEY(responder_id) REFERENCES users(id)
+            )""", "review_responses"),
+            ("""CREATE TABLE IF NOT EXISTS feedback_votes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                entity_type TEXT NOT NULL,
+                entity_id INTEGER NOT NULL,
+                vote INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, entity_type, entity_id)
+            )""", "feedback_votes"),
+            ("""CREATE TABLE IF NOT EXISTS user_feedback (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                feedback_type TEXT NOT NULL,
+                content TEXT NOT NULL,
+                rating INTEGER,
+                page_url TEXT,
+                created_at TEXT NOT NULL
+            )""", "user_feedback"),
+            ("""CREATE TABLE IF NOT EXISTS user_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                author_id INTEGER NOT NULL,
+                target_user_id INTEGER NOT NULL,
+                content TEXT NOT NULL,
+                is_private INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(author_id) REFERENCES users(id),
+                FOREIGN KEY(target_user_id) REFERENCES users(id)
+            )""", "user_notes"),
+            ("""CREATE TABLE IF NOT EXISTS user_tags (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                tag TEXT NOT NULL,
+                added_by INTEGER,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "user_tags"),
+            ("""CREATE TABLE IF NOT EXISTS file_versions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                entity_type TEXT NOT NULL,
+                entity_id INTEGER NOT NULL,
+                file_url TEXT NOT NULL,
+                file_name TEXT,
+                file_size INTEGER,
+                version INTEGER DEFAULT 1,
+                uploaded_by INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(uploaded_by) REFERENCES users(id)
+            )""", "file_versions"),
+            ("""CREATE TABLE IF NOT EXISTS flagged_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                entity_type TEXT NOT NULL,
+                entity_id INTEGER NOT NULL,
+                flagged_by INTEGER NOT NULL,
+                reason TEXT,
+                status TEXT DEFAULT 'pending',
+                reviewed_by INTEGER,
+                reviewed_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(flagged_by) REFERENCES users(id)
+            )""", "flagged_items"),
+            ("""CREATE TABLE IF NOT EXISTS contact_submissions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                subject TEXT,
+                message TEXT NOT NULL,
+                status TEXT DEFAULT 'new',
+                created_at TEXT NOT NULL
+            )""", "contact_submissions"),
+            ("""CREATE TABLE IF NOT EXISTS compliance_rules (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT,
+                rule_type TEXT NOT NULL,
+                conditions TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL
+            )""", "compliance_rules"),
+            ("""CREATE TABLE IF NOT EXISTS compliance_reports (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                rule_id INTEGER,
+                status TEXT DEFAULT 'pending',
+                details TEXT,
+                created_at TEXT NOT NULL
+            )""", "compliance_reports"),
+            ("""CREATE TABLE IF NOT EXISTS dispute_evidence (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                dispute_id INTEGER NOT NULL,
+                submitted_by INTEGER NOT NULL,
+                evidence_type TEXT NOT NULL,
+                content TEXT,
+                file_url TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(dispute_id) REFERENCES disputes(id),
+                FOREIGN KEY(submitted_by) REFERENCES users(id)
+            )""", "dispute_evidence"),
+            ("""CREATE TABLE IF NOT EXISTS audit_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                event_type TEXT NOT NULL,
+                entity_type TEXT,
+                entity_id INTEGER,
+                description TEXT,
+                ip_address TEXT,
+                metadata TEXT,
+                created_at TEXT NOT NULL
+            )""", "audit_events"),
+            ("""CREATE TABLE IF NOT EXISTS communication_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender_id INTEGER,
+                recipient_id INTEGER,
+                channel TEXT NOT NULL,
+                subject TEXT,
+                content TEXT,
+                status TEXT DEFAULT 'sent',
+                created_at TEXT NOT NULL
+            )""", "communication_log"),
+            ("""CREATE TABLE IF NOT EXISTS skill_assessments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                skill TEXT NOT NULL,
+                score INTEGER NOT NULL,
+                passed INTEGER DEFAULT 0,
+                answers TEXT,
+                completed_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "skill_assessments"),
+            ("""CREATE TABLE IF NOT EXISTS knowledge_articles (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                category TEXT,
+                slug TEXT UNIQUE,
+                author_id INTEGER,
+                is_published INTEGER DEFAULT 0,
+                views_count INTEGER DEFAULT 0,
+                helpful_count INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )""", "knowledge_articles"),
+            ("""CREATE TABLE IF NOT EXISTS article_ratings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                article_id INTEGER NOT NULL,
+                user_id INTEGER,
+                is_helpful INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(article_id) REFERENCES knowledge_articles(id) ON DELETE CASCADE
+            )""", "article_ratings"),
+            ("""CREATE TABLE IF NOT EXISTS templates (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                template_type TEXT NOT NULL,
+                name TEXT NOT NULL,
+                content TEXT NOT NULL,
+                variables TEXT,
+                is_global INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )""", "templates"),
+            ("""CREATE TABLE IF NOT EXISTS data_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                request_type TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                processed_at TEXT,
+                download_url TEXT,
+                expires_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "data_requests"),
+            ("""CREATE TABLE IF NOT EXISTS data_retention_policies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                entity_type TEXT NOT NULL UNIQUE,
+                retention_days INTEGER NOT NULL,
+                description TEXT,
+                updated_at TEXT NOT NULL
+            )""", "data_retention_policies"),
+        ]
+        _failed_tables = []
+        for ddl, table_name in _supplementary_tables:
+            try:
+                execute_query(ddl)
+            except Exception as te:
+                _failed_tables.append(table_name)
+                logger.debug(f"startup.table_skip {table_name}: {te}")
+        if _failed_tables:
+            logger.warning(f"startup.supplementary_tables_partial_failure: {_failed_tables}")
+        else:
+            logger.info("startup.supplementary_tables_initialized")
+
     except Exception as e:
         logger.error(f"startup.database_failed error={e}")
         # Always fail fast if DB is unreachable to prevent healthy-looking broken app

@@ -30,7 +30,7 @@ class EscrowRelease(BaseModel):
     notes: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_escrow(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),

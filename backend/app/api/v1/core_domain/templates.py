@@ -25,7 +25,7 @@ class TemplateUpdate(BaseModel):
     category: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_templates(
     template_type: Optional[str] = None,
     current_user=Depends(get_current_user),
@@ -56,7 +56,7 @@ async def get_template(template_id: int, current_user=Depends(get_current_user))
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_template(request: TemplateCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

@@ -31,7 +31,7 @@ class SavedSearchUpdate(BaseModel):
     alert_frequency: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def get_saved_searches(
     category: Optional[str] = None,
     alerts_only: bool = False,
@@ -66,7 +66,7 @@ async def get_saved_search(search_id: int, current_user=Depends(get_current_user
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_saved_search(request: SavedSearchCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     import json

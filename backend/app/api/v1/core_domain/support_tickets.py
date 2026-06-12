@@ -23,7 +23,7 @@ class TicketReply(BaseModel):
     message: str
 
 
-@router.get("/")
+@router.get("")
 async def list_tickets(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -71,7 +71,7 @@ async def get_ticket(ticket_id: int, current_user=Depends(get_current_user)):
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_ticket(request: TicketCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

@@ -67,7 +67,7 @@ class PaymentIntentRequest(BaseModel):
     description: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_payments(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -117,7 +117,7 @@ async def get_payment(payment_id: int, current_user=Depends(get_current_user)):
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_payment(request: PaymentCreate, current_user=Depends(get_current_user)):
     contract_result = execute_query(
         "SELECT id, client_id, freelancer_id, amount FROM contracts WHERE id = ?",

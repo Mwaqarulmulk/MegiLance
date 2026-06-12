@@ -140,7 +140,7 @@ api_router.include_router(
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(skills.router, prefix="/skills", tags=["skills"])
 api_router.include_router(job_alerts.router, prefix="/job-alerts", tags=["job-alerts"])
-api_router.include_router(admin.router, prefix="", tags=["admin"])  # Admin endpoints
+api_router.include_router(admin.router, prefix="/admin", tags=["admin"])  # Admin endpoints
 
 # Project workflow
 api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
@@ -169,18 +169,18 @@ api_router.include_router(wallet.router, prefix="/wallet", tags=["wallet"])
 
 
 # Time tracking, invoices, and escrow
-api_router.include_router(time_entries.router, prefix="", tags=["time-tracking"])
-api_router.include_router(invoices.router, prefix="", tags=["invoices"])
+api_router.include_router(time_entries.router, prefix="/time-entries", tags=["time-tracking"])
+api_router.include_router(invoices.router, prefix="/invoices", tags=["invoices"])
 api_router.include_router(escrow.router, prefix="/escrow", tags=["escrow"])
 
 # Categories, tags, and favorites
-api_router.include_router(categories.router, prefix="", tags=["categories"])
-api_router.include_router(tags.router, prefix="", tags=["tags"])
-api_router.include_router(favorites.router, prefix="", tags=["favorites"])
+api_router.include_router(categories.router, prefix="/categories", tags=["categories"])
+api_router.include_router(tags.router, prefix="/tags", tags=["tags"])
+api_router.include_router(favorites.router, prefix="/favorites", tags=["favorites"])
 
 # Support and refunds
 api_router.include_router(support_tickets.router, prefix="/support-tickets", tags=["support"])
-api_router.include_router(refunds.router, prefix="", tags=["refunds"])
+api_router.include_router(refunds.router, prefix="/refunds", tags=["refunds"])
 
 # Search functionality
 api_router.include_router(search.router, prefix="", tags=["search"])
@@ -194,7 +194,7 @@ api_router.include_router(
 )
 
 # AI-powered matching
-api_router.include_router(ai_matching.router, prefix="", tags=["ai-matching"])
+api_router.include_router(ai_matching.router, prefix="/matching", tags=["ai-matching"])
 
 # Gamification
 api_router.include_router(gamification.router, prefix="", tags=["gamification"])
@@ -350,10 +350,10 @@ api_router.include_router(
 )
 
 # Templates - Reusable project/proposal/contract templates
-api_router.include_router(templates.router, tags=["templates"])
+api_router.include_router(templates.router, prefix="/templates", tags=["templates"])
 
 # Organizations - Multi-tenant workspace management
-api_router.include_router(organizations.router, tags=["organizations"])
+api_router.include_router(organizations.router, prefix="/organizations", tags=["organizations"])
 
 # Notification Preferences - Granular notification settings
 api_router.include_router(
@@ -364,7 +364,7 @@ api_router.include_router(
 api_router.include_router(email_templates.router, prefix="/email-templates", tags=["email-templates"])
 
 # Integrations Hub - Third-party service integrations
-api_router.include_router(integrations.router, tags=["integrations"])
+api_router.include_router(integrations.router, prefix="/integrations", tags=["integrations"])
 
 # Mobile Push Notifications - FCM/APNs
 api_router.include_router(push_notifications.router, tags=["push-notifications"])
@@ -412,19 +412,19 @@ api_router.include_router(analytics_dashboard.router, tags=["analytics-dashboard
 api_router.include_router(marketplace.router, tags=["marketplace"])
 
 # Subscription & Billing - Premium plans and payments
-api_router.include_router(subscription_billing.router, tags=["subscriptions"])
+api_router.include_router(subscription_billing.router, prefix="/subscriptions", tags=["subscriptions"])
 
 # Legal Document Center - NDAs, contracts, e-signatures
-api_router.include_router(legal_documents.router, tags=["legal-documents"])
+api_router.include_router(legal_documents.router, prefix="/legal-documents", tags=["legal-documents"])
 
 # Knowledge Base & FAQ - Help center
-api_router.include_router(knowledge_base.router, tags=["knowledge-base"])
+api_router.include_router(knowledge_base.router, prefix="/knowledge-base", tags=["knowledge-base"])
 
 # Workflow Automation - Triggers and automated actions
-api_router.include_router(workflow_automation.router, tags=["workflows"])
+api_router.include_router(workflow_automation.router, prefix="/workflows", tags=["workflows"])
 
 # User Feedback - NPS surveys and feature requests
-api_router.include_router(user_feedback.router, tags=["user-feedback"])
+api_router.include_router(user_feedback.router, prefix="/user-feedback", tags=["user-feedback"])
 
 
 # Data Analytics Export - BI and reporting exports
@@ -458,7 +458,7 @@ api_router.include_router(
 )
 
 # Video Communication - WebRTC calls, screen sharing, whiteboard
-api_router.include_router(video_communication.router)
+api_router.include_router(video_communication.router, prefix="/video-comms", tags=["video-comms"])
 
 # Multi-Currency Payments
 api_router.include_router(
@@ -528,7 +528,7 @@ api_router.include_router(
 # EXTERNAL PROJECT SCRAPER - Aggregate freelance projects from RemoteOK, Jobicy, Arbeitnow
 # ============================================================================
 api_router.include_router(
-    external_projects.router, prefix="", tags=["external-projects"]
+    external_projects.router, prefix="/external-projects", tags=["external-projects"]
 )
 
 # Communication - SMS, email, push notifications

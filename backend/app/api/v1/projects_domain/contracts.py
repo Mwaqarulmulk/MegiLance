@@ -38,7 +38,7 @@ class ContractComplete(BaseModel):
     completion_notes: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_contracts(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -67,7 +67,7 @@ async def get_contract(contract_id: str, current_user=Depends(get_current_user))
     return contract
 
 
-@router.post("/")
+@router.post("")
 async def create_contract(request: ContractCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
 

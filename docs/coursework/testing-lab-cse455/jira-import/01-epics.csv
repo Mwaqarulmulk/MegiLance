@@ -1,7 +1,0 @@
-Summary,Issue Type,Issue key,Parent,Description,Priority,Labels,Story Points,Sprint,Status,Assignee
-User Authentication System,Epic,UPM-1,,"Implement complete user authentication including registration, login, password reset, email verification, and session management with JWT tokens.",Highest,"authentication,security,critical",40,Sprint 1,To Do,
-User Profile Management,Epic,UPM-2,,"Allow users to view and edit their profiles, upload avatars, manage skills, portfolios, and professional information.",High,"profile,core-feature",34,Sprint 2,To Do,
-Account Settings & Preferences,Epic,UPM-3,,"Comprehensive account settings including notification preferences, privacy settings, language/locale, and account management.",High,"settings,preferences",26,Sprint 3,To Do,
-Security & Compliance Features,Epic,UPM-4,,"Implement security measures including 2FA, session management, audit logging, and compliance with security best practices.",Highest,"security,compliance,critical",30,Sprint 3,To Do,
-UI/UX Enhancement & Accessibility,Epic,UPM-5,,"Enhance user interface with responsive design, dark mode, accessibility features, and improved user experience.",Medium,"ui,ux,accessibility",21,Sprint 4,To Do,
-Quality Assurance & Testing,Epic,UPM-6,,"Comprehensive testing including unit tests, integration tests, E2E tests, and security testing for all profile features.",High,"testing,qa,quality",26,Sprint 5,To Do,

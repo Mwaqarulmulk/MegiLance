@@ -21,7 +21,7 @@ class CategoryCreate(BaseModel):
     parent_id: Optional[int] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_categories(active_only: bool = True):
     where = "WHERE is_active = 1" if active_only else ""
     result = execute_query(
@@ -52,7 +52,7 @@ async def get_category_tree():
     return {"tree": tree}
 
 
-@router.post("/")
+@router.post("")
 async def create_category(request: CategoryCreate, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

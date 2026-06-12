@@ -5,7 +5,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { MessageSquare, X, Send, Sparkles, Zap, HelpCircle, FileText, Pickaxe, Maximize2, Minimize2, Paperclip, Command } from 'lucide-react';
+
+const RobotModel = dynamic(() => import('./RobotModel'), { ssr: false, loading: () => null });
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import commonStyles from './ChatbotAgent.common.module.css';

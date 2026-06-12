@@ -22,7 +22,7 @@ class PortfolioCreate(BaseModel):
     skills: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_portfolio(user_id: Optional[int] = None, current_user=Depends(get_current_user)):
     uid = user_id or current_user.id
     result = execute_query(
@@ -42,7 +42,7 @@ async def get_portfolio_item(item_id: int, current_user=Depends(get_current_user
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_portfolio_item(request: PortfolioCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

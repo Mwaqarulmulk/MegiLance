@@ -25,7 +25,7 @@ class WorkflowUpdate(BaseModel):
     actions: Optional[list[dict]] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_workflows(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, name, trigger, actions, is_active, created_at, updated_at FROM workflows WHERE user_id = ? ORDER BY created_at DESC",
@@ -47,7 +47,7 @@ async def get_workflow(workflow_id: int, current_user=Depends(get_current_user))
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_workflow(request: WorkflowCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     import json

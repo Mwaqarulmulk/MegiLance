@@ -23,7 +23,7 @@ class RefundUpdate(BaseModel):
     admin_notes: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_refunds(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -56,7 +56,7 @@ async def list_refunds(
     return {"items": rows if rows else [], "total": len(rows) if rows else 0, "page": page}
 
 
-@router.post("/")
+@router.post("")
 async def create_refund(request: RefundCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

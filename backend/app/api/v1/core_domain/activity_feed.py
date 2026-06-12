@@ -12,7 +12,7 @@ from app.db.turso_http import execute_query, parse_rows
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def get_activity_feed(
     type_filter: Optional[str] = None,
     page: int = Query(1, ge=1),

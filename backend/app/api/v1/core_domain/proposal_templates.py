@@ -41,7 +41,6 @@ def _ensure_table():
 
 
 @router.get("")
-@router.get("/")
 async def list_templates(
     category: Optional[str] = None,
     skip: int = Query(0, ge=0),

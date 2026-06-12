@@ -24,7 +24,7 @@ class InvoiceUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_invoices(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -72,7 +72,7 @@ async def get_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_invoice(request: InvoiceCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     invoice_number = f"INV-{int(datetime.now(timezone.utc).timestamp())}"

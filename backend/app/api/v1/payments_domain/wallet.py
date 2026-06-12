@@ -22,7 +22,7 @@ class WithdrawRequest(BaseModel):
     method: str = "bank_transfer"
 
 
-@router.get("/")
+@router.get("")
 async def get_wallet(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT account_balance FROM users WHERE id = ?",

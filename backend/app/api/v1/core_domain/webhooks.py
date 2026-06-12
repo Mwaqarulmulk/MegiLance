@@ -25,7 +25,7 @@ class WebhookUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_webhooks(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, url, events, is_active, secret, created_at, updated_at FROM webhooks WHERE user_id = ? ORDER BY created_at DESC",
@@ -49,7 +49,7 @@ async def get_available_events():
     }
 
 
-@router.post("/")
+@router.post("")
 async def create_webhook(request: WebhookCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     secret = request.secret or secrets.token_urlsafe(32)
@@ -86,7 +86,7 @@ async def delete_webhook(webhook_id: int, current_user=Depends(get_current_user)
     return {"message": "Webhook deleted"}
 
 
-@router.get("/events")
+@router.get("/delivery-history")
 async def list_webhook_events(
     webhook_id: int,
     page: int = Query(1, ge=1),
@@ -95,7 +95,7 @@ async def list_webhook_events(
 ):
     offset = (page - 1) * page_size
     result = execute_query(
-        "SELECT id, webhook_id, event_type, payload, status, delivered_at, created_at FROM webhook_events WHERE webhook_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        "SELECT id, webhook_id, event_type, payload, status, attempts, last_attempt_at, created_at FROM webhook_events WHERE webhook_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
         [webhook_id, page_size, offset],
     )
     rows = parse_rows(result)

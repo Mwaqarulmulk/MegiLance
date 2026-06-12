@@ -32,7 +32,7 @@ class EmailTemplateUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_templates(
     include_inactive: bool = Query(False),
     current_user=Depends(require_admin),
@@ -71,7 +71,7 @@ async def get_template(template_id: int, current_user=Depends(require_admin)):
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_template(request: EmailTemplateCreate, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     import json

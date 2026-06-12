@@ -22,7 +22,7 @@ class TeamInvite(BaseModel):
     role: str = "member"
 
 
-@router.get("/")
+@router.get("")
 async def list_teams(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT t.id, t.name, t.description, t.owner_id, t.created_at,
@@ -38,7 +38,7 @@ async def list_teams(current_user=Depends(get_current_user)):
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_team(request: TeamCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

@@ -23,7 +23,7 @@ class JobAlertCreate(BaseModel):
     email_notifications: bool = True
 
 
-@router.get("/")
+@router.get("")
 async def list_job_alerts(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, user_id, title, keywords, category, budget_min, budget_max, location, email_notifications, created_at, updated_at FROM job_alerts WHERE user_id = ? ORDER BY created_at DESC",
@@ -33,7 +33,7 @@ async def list_job_alerts(current_user=Depends(get_current_user)):
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_job_alert(request: JobAlertCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

@@ -47,7 +47,7 @@ class ProposalUpdate(BaseModel):
     attachments: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_my_proposals(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -78,7 +78,7 @@ async def get_proposal(proposal_id: int, current_user=Depends(get_current_user))
     return proposal
 
 
-@router.post("/")
+@router.post("")
 async def create_proposal_endpoint(request: ProposalCreate, current_user=Depends(get_current_user)):
     if not project_exists(request.project_id):
         raise HTTPException(status_code=404, detail="Project not found")

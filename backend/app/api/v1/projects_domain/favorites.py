@@ -18,7 +18,7 @@ class FavoriteCreate(BaseModel):
     freelancer_id: Optional[int] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_favorites(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT f.id, f.project_id, f.freelancer_id, f.created_at,
@@ -35,7 +35,7 @@ async def list_favorites(current_user=Depends(get_current_user)):
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def add_favorite(request: FavoriteCreate, current_user=Depends(get_current_user)):
     # Check for duplicate
     conditions = ["user_id = ?"]

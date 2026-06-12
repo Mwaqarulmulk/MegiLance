@@ -33,7 +33,6 @@ def _ensure_table():
 
 
 @router.get("")
-@router.get("/")
 async def list_rate_cards(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(

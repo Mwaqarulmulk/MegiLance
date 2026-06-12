@@ -37,7 +37,7 @@ class SkillAssessmentSubmission(BaseModel):
     answers: list[SkillAssessmentAnswer]
 
 
-@router.get("/")
+@router.get("")
 async def list_skills(
     category: Optional[str] = None,
     search: Optional[str] = None,
@@ -62,7 +62,7 @@ async def list_skills(
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_skill(request: SkillCreate, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

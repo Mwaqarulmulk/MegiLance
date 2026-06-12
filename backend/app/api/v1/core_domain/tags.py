@@ -13,7 +13,7 @@ from app.db.turso_http import execute_query, parse_rows
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def list_tags(search: Optional[str] = None, limit: int = Query(50, ge=1)):
     where = ""
     params: list = [limit]
@@ -32,7 +32,7 @@ async def get_popular_tags(limit: int = Query(20, ge=1)):
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_tag(name: str, tag_type: str = "skill", current_user=Depends(get_current_user)):
     from urllib.parse import quote
     slug = name.lower().replace(" ", "-")

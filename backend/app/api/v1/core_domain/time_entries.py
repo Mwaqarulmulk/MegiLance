@@ -26,7 +26,7 @@ class TimeEntryUpdate(BaseModel):
     status: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_time_entries(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
@@ -67,7 +67,7 @@ async def list_time_entries(
     return {"items": rows if rows else [], "total": len(rows) if rows else 0, "page": page}
 
 
-@router.post("/")
+@router.post("")
 async def create_time_entry(request: TimeEntryCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

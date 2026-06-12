@@ -37,7 +37,6 @@ class ContactForm(BaseModel):
 
 
 @router.post("")
-@router.post("/")
 @public_rate_limit()
 async def submit_contact(request: Request, body: ContactForm):
     _ensure_table()

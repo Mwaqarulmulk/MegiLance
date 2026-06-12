@@ -122,7 +122,7 @@ async def get_current_subscription(current_user=Depends(get_current_user)):
     }
 
 
-@router.post("/")
+@router.post("")
 async def create_subscription(request: SubscriptionCreate, current_user=Depends(get_current_user)):
     """Create a new subscription"""
     if request.plan_id not in PLANS:

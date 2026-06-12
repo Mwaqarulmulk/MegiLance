@@ -40,7 +40,7 @@ def _slugify(text: str) -> str:
 
 # ==================== GIGS CRUD ====================
 
-@router.get("/")
+@router.get("")
 def list_gigs(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
@@ -176,7 +176,7 @@ def get_gig(gig_id: int, current_user=Depends(get_current_user)):
     return gig
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_gig(
     gig_data: dict,
     current_user=Depends(get_current_user)

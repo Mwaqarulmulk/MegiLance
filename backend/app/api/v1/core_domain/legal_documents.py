@@ -18,7 +18,7 @@ LEGAL_DOCS = {
 }
 
 
-@router.get("/")
+@router.get("")
 async def get_documents():
     return {"documents": [{"doc_type": k, **v} for k, v in LEGAL_DOCS.items()]}
 

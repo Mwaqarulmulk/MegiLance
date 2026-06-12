@@ -25,7 +25,7 @@ class DisputeUpdate(BaseModel):
     admin_notes: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_disputes(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -75,7 +75,7 @@ async def get_dispute(dispute_id: int, current_user=Depends(get_current_user)):
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_dispute(request: DisputeCreate, current_user=Depends(get_current_user)):
     contract_result = execute_query(
         "SELECT id, client_id, freelancer_id FROM contracts WHERE id = ?",

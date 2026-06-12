@@ -25,7 +25,7 @@ class VideoCallUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_video_calls(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -47,7 +47,7 @@ async def list_video_calls(
     return {"items": rows if rows else [], "total": len(rows) if rows else 0, "page": page}
 
 
-@router.post("/")
+@router.post("")
 async def create_video_call(request: VideoCallCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     room_id = secrets.token_urlsafe(16)

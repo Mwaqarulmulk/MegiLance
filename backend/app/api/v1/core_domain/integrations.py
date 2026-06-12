@@ -22,7 +22,7 @@ class IntegrationUpdate(BaseModel):
     settings: Optional[dict] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_integrations(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, provider, is_active, settings, connected_at, updated_at FROM integrations WHERE user_id = ? ORDER BY connected_at DESC",

@@ -10,7 +10,7 @@ from app.core.websocket import websocket_manager
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def websocket_status():
     """Get WebSocket/Socket.IO connection status and info"""
     return {

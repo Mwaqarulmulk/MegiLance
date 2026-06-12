@@ -539,11 +539,371 @@ CREATE TABLE project_embeddings (
 
 -- User Embeddings table for AI matching
 CREATE TABLE user_embeddings (
-	user_id INTEGER NOT NULL, 
-	embedding_vector BLOB, 
-	model_version VARCHAR(50), 
-	updated_at DATETIME NOT NULL, 
-	PRIMARY KEY (user_id), 
+	user_id INTEGER NOT NULL,
+	embedding_vector BLOB,
+	model_version VARCHAR(50),
+	updated_at DATETIME NOT NULL,
+	PRIMARY KEY (user_id),
 	FOREIGN KEY(user_id) REFERENCES users (id)
 );
+
+-- Gamification: Badges
+CREATE TABLE IF NOT EXISTS badges (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL UNIQUE,
+	description TEXT,
+	icon TEXT,
+	points INTEGER NOT NULL DEFAULT 0,
+	tier TEXT NOT NULL DEFAULT 'bronze',
+	created_at TEXT NOT NULL
+);
+
+-- Gamification: User Badges (earned badges per user)
+CREATE TABLE IF NOT EXISTS user_badges (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	badge_id INTEGER NOT NULL,
+	earned_at TEXT NOT NULL,
+	UNIQUE(user_id, badge_id),
+	FOREIGN KEY(user_id) REFERENCES users(id),
+	FOREIGN KEY(badge_id) REFERENCES badges(id)
+);
+CREATE INDEX IF NOT EXISTS idx_user_badges_user_id ON user_badges(user_id);
+
+-- Gamification: Achievements
+CREATE TABLE IF NOT EXISTS achievements (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL UNIQUE,
+	description TEXT,
+	xp INTEGER NOT NULL DEFAULT 0,
+	category TEXT,
+	created_at TEXT NOT NULL
+);
+
+-- Gamification: User Achievements (unlocked achievements per user)
+CREATE TABLE IF NOT EXISTS user_achievements (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	achievement_id INTEGER NOT NULL,
+	unlocked_at TEXT NOT NULL,
+	UNIQUE(user_id, achievement_id),
+	FOREIGN KEY(user_id) REFERENCES users(id),
+	FOREIGN KEY(achievement_id) REFERENCES achievements(id)
+);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_user_id ON user_achievements(user_id);
+
+-- Community: Hubs (topic groups)
+CREATE TABLE IF NOT EXISTS community_hubs (
+	id TEXT PRIMARY KEY,
+	name TEXT NOT NULL,
+	description TEXT,
+	icon TEXT,
+	member_count INTEGER NOT NULL DEFAULT 0,
+	post_count INTEGER NOT NULL DEFAULT 0,
+	created_at TEXT NOT NULL
+);
+
+-- Community: Posts
+CREATE TABLE IF NOT EXISTS community_posts (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	title TEXT NOT NULL,
+	content TEXT NOT NULL,
+	hub_id TEXT NOT NULL DEFAULT 'general',
+	post_type TEXT NOT NULL DEFAULT 'discussion',
+	author_id INTEGER NOT NULL,
+	likes_count INTEGER NOT NULL DEFAULT 0,
+	comments_count INTEGER NOT NULL DEFAULT 0,
+	views_count INTEGER NOT NULL DEFAULT 0,
+	is_pinned INTEGER NOT NULL DEFAULT 0,
+	created_at TEXT NOT NULL,
+	updated_at TEXT,
+	FOREIGN KEY(author_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_community_posts_hub_id ON community_posts(hub_id);
+CREATE INDEX IF NOT EXISTS idx_community_posts_author_id ON community_posts(author_id);
+
+-- Community: Post Likes
+CREATE TABLE IF NOT EXISTS community_post_likes (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	post_id INTEGER NOT NULL,
+	user_id INTEGER NOT NULL,
+	created_at TEXT NOT NULL,
+	UNIQUE(post_id, user_id),
+	FOREIGN KEY(post_id) REFERENCES community_posts(id),
+	FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- Community: Post Comments
+CREATE TABLE IF NOT EXISTS community_post_comments (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	post_id INTEGER NOT NULL,
+	author_id INTEGER NOT NULL,
+	content TEXT NOT NULL,
+	created_at TEXT NOT NULL,
+	FOREIGN KEY(post_id) REFERENCES community_posts(id),
+	FOREIGN KEY(author_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_community_post_comments_post_id ON community_post_comments(post_id);
+
+-- Gig Marketplace: Gigs
+CREATE TABLE IF NOT EXISTS gigs (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	seller_id INTEGER NOT NULL,
+	title TEXT NOT NULL,
+	slug TEXT NOT NULL UNIQUE,
+	description TEXT,
+	category_id INTEGER,
+	subcategory TEXT,
+	tags TEXT,
+	basic_price REAL NOT NULL DEFAULT 0,
+	standard_price REAL,
+	premium_price REAL,
+	basic_delivery_days INTEGER NOT NULL DEFAULT 3,
+	standard_delivery_days INTEGER,
+	premium_delivery_days INTEGER,
+	basic_revisions INTEGER NOT NULL DEFAULT 1,
+	standard_revisions INTEGER,
+	premium_revisions INTEGER,
+	basic_description TEXT,
+	standard_description TEXT,
+	premium_description TEXT,
+	images TEXT,
+	requirements TEXT,
+	status TEXT NOT NULL DEFAULT 'draft',
+	orders_count INTEGER NOT NULL DEFAULT 0,
+	average_rating REAL NOT NULL DEFAULT 0,
+	reviews_count INTEGER NOT NULL DEFAULT 0,
+	impressions_count INTEGER NOT NULL DEFAULT 0,
+	clicks_count INTEGER NOT NULL DEFAULT 0,
+	created_at TEXT NOT NULL,
+	updated_at TEXT NOT NULL,
+	FOREIGN KEY(seller_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_gigs_seller_id ON gigs(seller_id);
+CREATE INDEX IF NOT EXISTS idx_gigs_status ON gigs(status);
+CREATE INDEX IF NOT EXISTS idx_gigs_category_id ON gigs(category_id);
+
+-- Gig Marketplace: Gig FAQs
+CREATE TABLE IF NOT EXISTS gig_faqs (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	gig_id INTEGER NOT NULL,
+	question TEXT NOT NULL,
+	answer TEXT NOT NULL,
+	sort_order INTEGER NOT NULL DEFAULT 0,
+	FOREIGN KEY(gig_id) REFERENCES gigs(id) ON DELETE CASCADE
+);
+
+-- Gig Marketplace: Gig Orders
+CREATE TABLE IF NOT EXISTS gig_orders (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	gig_id INTEGER NOT NULL,
+	buyer_id INTEGER NOT NULL,
+	seller_id INTEGER NOT NULL,
+	package_type TEXT NOT NULL DEFAULT 'basic',
+	price REAL NOT NULL,
+	delivery_days INTEGER NOT NULL,
+	revisions INTEGER NOT NULL DEFAULT 1,
+	requirements TEXT,
+	status TEXT NOT NULL DEFAULT 'pending',
+	due_date TEXT,
+	completed_at TEXT,
+	cancelled_at TEXT,
+	cancel_reason TEXT,
+	created_at TEXT NOT NULL,
+	updated_at TEXT NOT NULL,
+	FOREIGN KEY(gig_id) REFERENCES gigs(id),
+	FOREIGN KEY(buyer_id) REFERENCES users(id),
+	FOREIGN KEY(seller_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_gig_orders_gig_id ON gig_orders(gig_id);
+CREATE INDEX IF NOT EXISTS idx_gig_orders_buyer_id ON gig_orders(buyer_id);
+CREATE INDEX IF NOT EXISTS idx_gig_orders_seller_id ON gig_orders(seller_id);
+
+-- Gig Marketplace: Gig Deliveries
+CREATE TABLE IF NOT EXISTS gig_deliveries (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	order_id INTEGER NOT NULL,
+	message TEXT,
+	attachments TEXT,
+	revision_number INTEGER NOT NULL DEFAULT 1,
+	created_at TEXT NOT NULL,
+	FOREIGN KEY(order_id) REFERENCES gig_orders(id) ON DELETE CASCADE
+);
+
+-- Gig Marketplace: Gig Revisions
+CREATE TABLE IF NOT EXISTS gig_revisions (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	order_id INTEGER NOT NULL,
+	requested_by INTEGER NOT NULL,
+	message TEXT,
+	created_at TEXT NOT NULL,
+	FOREIGN KEY(order_id) REFERENCES gig_orders(id) ON DELETE CASCADE,
+	FOREIGN KEY(requested_by) REFERENCES users(id)
+);
+
+-- Gig Marketplace: Gig Reviews
+CREATE TABLE IF NOT EXISTS gig_reviews (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	gig_id INTEGER NOT NULL,
+	order_id INTEGER NOT NULL UNIQUE,
+	reviewer_id INTEGER NOT NULL,
+	rating REAL NOT NULL,
+	comment TEXT,
+	seller_response TEXT,
+	created_at TEXT NOT NULL,
+	FOREIGN KEY(gig_id) REFERENCES gigs(id),
+	FOREIGN KEY(order_id) REFERENCES gig_orders(id),
+	FOREIGN KEY(reviewer_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_gig_reviews_gig_id ON gig_reviews(gig_id);
+
+-- External Projects (aggregated from external job boards)
+CREATE TABLE IF NOT EXISTS external_projects (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	title TEXT NOT NULL,
+	company TEXT,
+	company_logo TEXT,
+	description TEXT,
+	description_plain TEXT,
+	category TEXT,
+	source TEXT NOT NULL,
+	source_id TEXT,
+	project_type TEXT,
+	experience_level TEXT,
+	budget_min REAL,
+	budget_max REAL,
+	budget_currency TEXT DEFAULT 'USD',
+	location TEXT,
+	apply_url TEXT,
+	trust_score REAL DEFAULT 0.5,
+	is_verified INTEGER DEFAULT 0,
+	tags TEXT,
+	views_count INTEGER NOT NULL DEFAULT 0,
+	clicks_count INTEGER NOT NULL DEFAULT 0,
+	scraped_at TEXT NOT NULL,
+	posted_at TEXT,
+	expires_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_external_projects_source ON external_projects(source);
+CREATE INDEX IF NOT EXISTS idx_external_projects_category ON external_projects(category);
+
+-- External Project Saves (user bookmarks)
+CREATE TABLE IF NOT EXISTS external_project_saves (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	project_id INTEGER NOT NULL,
+	created_at TEXT NOT NULL,
+	UNIQUE(user_id, project_id),
+	FOREIGN KEY(user_id) REFERENCES users(id),
+	FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE
+);
+
+-- External Project Clicks (tracking)
+CREATE TABLE IF NOT EXISTS external_project_clicks (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	project_id INTEGER NOT NULL,
+	user_id INTEGER,
+	ip_address TEXT,
+	created_at TEXT NOT NULL,
+	FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE
+);
+
+-- External Project Flags (user reports)
+CREATE TABLE IF NOT EXISTS external_project_flags (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	project_id INTEGER NOT NULL,
+	user_id INTEGER NOT NULL,
+	reason TEXT,
+	created_at TEXT NOT NULL,
+	UNIQUE(user_id, project_id),
+	FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE,
+	FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- Scrape Jobs (scheduled scraping tasks)
+CREATE TABLE IF NOT EXISTS scrape_jobs (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	source TEXT NOT NULL,
+	status TEXT NOT NULL DEFAULT 'pending',
+	started_at TEXT,
+	completed_at TEXT,
+	projects_scraped INTEGER DEFAULT 0,
+	error_message TEXT,
+	created_at TEXT NOT NULL
+);
+
+-- Referral Campaigns (advanced referral system)
+CREATE TABLE IF NOT EXISTS referral_campaigns (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	description TEXT,
+	reward_amount REAL NOT NULL DEFAULT 0,
+	reward_type TEXT NOT NULL DEFAULT 'fixed',
+	max_referrals INTEGER,
+	starts_at TEXT,
+	ends_at TEXT,
+	is_active INTEGER NOT NULL DEFAULT 1,
+	created_at TEXT NOT NULL
+);
+
+-- Referral Milestones
+CREATE TABLE IF NOT EXISTS referral_milestones (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	campaign_id INTEGER,
+	referrals_required INTEGER NOT NULL,
+	reward_amount REAL NOT NULL,
+	reward_description TEXT,
+	FOREIGN KEY(campaign_id) REFERENCES referral_campaigns(id) ON DELETE CASCADE
+);
+
+-- Referral Milestone Achievements (user progress)
+CREATE TABLE IF NOT EXISTS referral_milestone_achievements (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	milestone_id INTEGER NOT NULL,
+	achieved_at TEXT NOT NULL,
+	UNIQUE(user_id, milestone_id),
+	FOREIGN KEY(user_id) REFERENCES users(id),
+	FOREIGN KEY(milestone_id) REFERENCES referral_milestones(id)
+);
+
+-- Wallet Balances
+CREATE TABLE IF NOT EXISTS wallet_balances (
+	user_id INTEGER PRIMARY KEY,
+	available REAL DEFAULT 0,
+	pending REAL DEFAULT 0,
+	escrow REAL DEFAULT 0,
+	currency TEXT DEFAULT 'USD',
+	updated_at TEXT,
+	FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- Wallet Transactions
+CREATE TABLE IF NOT EXISTS wallet_transactions (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	type TEXT NOT NULL,
+	amount REAL NOT NULL,
+	currency TEXT DEFAULT 'USD',
+	status TEXT DEFAULT 'pending',
+	description TEXT,
+	reference_id TEXT,
+	metadata TEXT,
+	created_at TEXT,
+	completed_at TEXT,
+	FOREIGN KEY(user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user_id ON wallet_transactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_wallet_transactions_status ON wallet_transactions(status);
+
+-- Token Blacklist (for JWT invalidation)
+CREATE TABLE IF NOT EXISTS token_blacklist (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	jti TEXT NOT NULL UNIQUE,
+	user_id INTEGER,
+	expires_at TEXT NOT NULL,
+	blacklisted_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_token_blacklist_jti ON token_blacklist(jti);
+CREATE INDEX IF NOT EXISTS idx_token_blacklist_expires_at ON token_blacklist(expires_at);
 

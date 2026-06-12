@@ -23,7 +23,7 @@ class CommentUpdate(BaseModel):
     content: str
 
 
-@router.get("/")
+@router.get("")
 async def list_comments(
     entity_type: str = Query(...),
     entity_id: int = Query(...),
@@ -57,7 +57,7 @@ async def list_comments(
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_comment(request: CommentCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

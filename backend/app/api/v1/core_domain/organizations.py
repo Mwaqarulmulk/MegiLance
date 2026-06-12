@@ -26,7 +26,7 @@ class OrganizationUpdate(BaseModel):
     industry: Optional[str] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_organizations(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT o.id, o.name, o.description, o.website, o.industry, o.owner_id, o.created_at,
@@ -41,7 +41,7 @@ async def list_organizations(current_user=Depends(get_current_user)):
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_organization(request: OrganizationCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(

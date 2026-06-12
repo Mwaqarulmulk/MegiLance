@@ -26,7 +26,7 @@ class PayoutMethodUpdate(BaseModel):
     is_default: Optional[bool] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_payout_methods(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, method_type, name, details, is_default, created_at, updated_at FROM payout_methods WHERE user_id = ? ORDER BY is_default DESC, created_at DESC",
@@ -48,7 +48,7 @@ async def get_payout_method(method_id: int, current_user=Depends(get_current_use
     return rows[0]
 
 
-@router.post("/")
+@router.post("")
 async def create_payout_method(request: PayoutMethodCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     import json

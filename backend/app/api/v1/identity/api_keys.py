@@ -29,7 +29,7 @@ class ApiKeyUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_api_keys(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, name, key_prefix, permissions, is_active, last_used_at, created_at FROM api_keys WHERE user_id = ? ORDER BY created_at DESC",
@@ -39,7 +39,7 @@ async def list_api_keys(current_user=Depends(get_current_user)):
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
-@router.post("/")
+@router.post("")
 async def create_api_key(request: ApiKeyCreate, current_user=Depends(get_current_user)):
     key = f"ml_{secrets.token_urlsafe(32)}"
     key_prefix = key[:8]

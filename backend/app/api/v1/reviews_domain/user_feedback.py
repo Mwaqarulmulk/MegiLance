@@ -27,7 +27,7 @@ class FeedbackUpdate(BaseModel):
     admin_response: Optional[str] = None
 
 
-@router.post("/")
+@router.post("")
 async def submit_feedback(request: FeedbackCreate, current_user=Depends(get_current_user)):
     """Submit user feedback (NPS, feature request, bug report, etc.)"""
     if request.feedback_type not in ("nps", "feature_request", "bug_report", "general"):
@@ -68,7 +68,7 @@ async def submit_feedback(request: FeedbackCreate, current_user=Depends(get_curr
     }
 
 
-@router.get("/")
+@router.get("")
 async def list_feedback(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),

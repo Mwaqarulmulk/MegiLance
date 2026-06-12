@@ -25,7 +25,7 @@ class FeedbackUpdate(BaseModel):
     admin_response: Optional[str] = None
 
 
-@router.post("/")
+@router.post("")
 async def submit_feedback(request: FeedbackSubmit, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
@@ -35,7 +35,7 @@ async def submit_feedback(request: FeedbackSubmit, current_user=Depends(get_curr
     return {"message": "Feedback submitted", "feedback_id": result.get("last_insert_rowid")}
 
 
-@router.get("/")
+@router.get("")
 async def list_feedback(
     type_filter: Optional[str] = None,
     status_filter: Optional[str] = None,
