@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Freelancer Guide to Smart Contract Escrow",
+  "description": "Learn smart contract escrow for freelancers with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "smart contract escrow for freelancers",
+    "freelance escrow",
+    "blockchain payment",
+    "payment protection"
+  ],
+  "url": "https://megilance.site/blog/freelancer-guide-to-smart-contract-escrow",
+  "datePublished": "2026-08-23",
+  "dateModified": "2026-08-23",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/freelancer-guide-to-smart-contract-escrow"
+}

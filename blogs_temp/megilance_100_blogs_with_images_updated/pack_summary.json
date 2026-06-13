@@ -1,0 +1,22 @@
+{
+  "created_for": "MegiLance FYP project",
+  "site": "https://megilance.site",
+  "article_count": 100,
+  "format": [
+    "MDX",
+    "HTML",
+    "JSON-LD",
+    "CSV"
+  ],
+  "total_words": 92719,
+  "categories": [
+    "AI Freelancing",
+    "Client Hiring",
+    "Escrow and Security",
+    "Freelancer Growth",
+    "Global Freelancing",
+    "Guides and Comparisons",
+    "Platform Strategy",
+    "Pricing and Proposals"
+  ]
+}

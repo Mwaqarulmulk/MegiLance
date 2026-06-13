@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "What Is Freelance Escrow and How Does It Protect Both Sides",
+  "description": "Learn freelance escrow with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer freelancing.",
+  "keywords": [
+    "freelance escrow",
+    "escrow payment",
+    "client protection",
+    "freelancer protection"
+  ],
+  "url": "https://megilance.site/blog/what-is-freelance-escrow-and-how-does-it-protect-both-sides",
+  "datePublished": "2026-10-08",
+  "dateModified": "2026-10-08",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/what-is-freelance-escrow-and-how-does-it-protect-both-sides"
+}

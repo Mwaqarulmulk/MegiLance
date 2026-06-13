@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How to Structure Milestones for Secure Freelance Payments",
+  "description": "Learn freelance milestone structure with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "freelance milestone structure",
+    "project milestones",
+    "escrow release schedule",
+    "freelance contract"
+  ],
+  "url": "https://megilance.site/blog/how-to-structure-milestones-for-secure-freelance-payments",
+  "datePublished": "2026-10-30",
+  "dateModified": "2026-10-30",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/how-to-structure-milestones-for-secure-freelance-payments"
+}

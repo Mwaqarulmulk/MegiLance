@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How to Create a Fair Freelance Quote",
+  "description": "Learn fair freelance quote with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer freelancing.",
+  "keywords": [
+    "fair freelance quote",
+    "freelance quote template",
+    "project estimate",
+    "fair pricing"
+  ],
+  "url": "https://megilance.site/blog/how-to-create-a-fair-freelance-quote",
+  "datePublished": "2026-11-25",
+  "dateModified": "2026-11-25",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/how-to-create-a-fair-freelance-quote"
+}

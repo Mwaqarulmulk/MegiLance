@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Proposal Pricing Mistakes Freelancers Should Avoid",
+  "description": "Learn freelance proposal pricing mistakes with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "freelance proposal pricing mistakes",
+    "proposal pricing",
+    "freelance bidding",
+    "project quote"
+  ],
+  "url": "https://megilance.site/blog/proposal-pricing-mistakes-freelancers-should-avoid",
+  "datePublished": "2026-11-23",
+  "dateModified": "2026-11-23",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/proposal-pricing-mistakes-freelancers-should-avoid"
+}

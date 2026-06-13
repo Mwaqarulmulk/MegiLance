@@ -16,6 +16,7 @@ from .v1.core_domain import (
     activity_feed,
     admin_fraud_alerts,
     analytics,
+    mongo_blogs,
     analytics_dashboard,
     analytics_pro,
     assessments,
@@ -498,6 +499,9 @@ api_router.include_router(
 
 # Blog & News
 api_router.include_router(blog.router, prefix="/blog", tags=["blog"])
+
+# MongoDB-backed SEO blog articles (100 articles with full backlinking)
+api_router.include_router(mongo_blogs.router, prefix="/blogs-mongo", tags=["blogs-mongo"])
 
 # Public clients showcase (no auth required)
 

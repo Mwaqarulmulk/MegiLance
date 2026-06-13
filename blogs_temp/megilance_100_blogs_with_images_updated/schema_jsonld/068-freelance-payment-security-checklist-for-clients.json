@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Freelance Payment Security Checklist for Clients",
+  "description": "Learn freelance payment security checklist with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "freelance payment security checklist",
+    "secure payments",
+    "escrow checklist",
+    "hire freelancer safely"
+  ],
+  "url": "https://megilance.site/blog/freelance-payment-security-checklist-for-clients",
+  "datePublished": "2026-11-01",
+  "dateModified": "2026-11-01",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/freelance-payment-security-checklist-for-clients"
+}

@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Why Hybrid Web2 and Web3 Security Works for Freelancing",
+  "description": "Learn Web2 Web3 freelance security with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "Web2 Web3 freelance security",
+    "hybrid marketplace security",
+    "blockchain escrow",
+    "fast web app security"
+  ],
+  "url": "https://megilance.site/blog/why-hybrid-web2-and-web3-security-works-for-freelancing",
+  "datePublished": "2026-11-05",
+  "dateModified": "2026-11-05",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/why-hybrid-web2-and-web3-security-works-for-freelancing"
+}

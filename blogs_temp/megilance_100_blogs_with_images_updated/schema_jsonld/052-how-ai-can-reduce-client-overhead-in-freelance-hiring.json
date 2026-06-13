@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How AI Can Reduce Client Overhead in Freelance Hiring",
+  "description": "Learn AI reduce hiring overhead with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer freelancing.",
+  "keywords": [
+    "AI reduce hiring overhead",
+    "AI hiring automation",
+    "freelance screening",
+    "client productivity"
+  ],
+  "url": "https://megilance.site/blog/how-ai-can-reduce-client-overhead-in-freelance-hiring",
+  "datePublished": "2026-09-30",
+  "dateModified": "2026-09-30",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/how-ai-can-reduce-client-overhead-in-freelance-hiring"
+}

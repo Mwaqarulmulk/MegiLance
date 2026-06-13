@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How to Set a Realistic Budget for a Freelance Project",
+  "description": "Learn freelance project budget with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer freelancing.",
+  "keywords": [
+    "freelance project budget",
+    "freelance price estimate",
+    "project cost calculator",
+    "freelancer rates"
+  ],
+  "url": "https://megilance.site/blog/how-to-set-a-realistic-budget-for-a-freelance-project",
+  "datePublished": "2026-07-20",
+  "dateModified": "2026-07-20",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/how-to-set-a-realistic-budget-for-a-freelance-project"
+}

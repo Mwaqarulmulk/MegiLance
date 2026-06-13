@@ -112,3 +112,103 @@ export const blogApi = {
     if (!res.ok) throw new Error('Failed to delete post');
   },
 };
+
+// ── MongoDB-backed SEO blog API ────────────────────────────────────────────────
+
+export interface MongoBlog {
+  id: string;
+  slug: string;
+  title: string;
+  seo_title: string;
+  meta_description: string;
+  focus_keyword: string;
+  secondary_keywords: string[];
+  category: string;
+  target_audience: string;
+  search_intent: string;
+  content?: string;
+  excerpt: string;
+  canonical_url: string;
+  featured_image_url: string;
+  featured_image_webp_url: string;
+  featured_image_alt: string;
+  schema_jsonld?: string;
+  internal_links: { url: string; text: string }[];
+  related_blog_slugs: string[];
+  related_blogs?: MongoBlog[];
+  word_count: number;
+  reading_time_minutes: number;
+  status: string;
+  published_date: string;
+  view_count: number;
+  seo_score: number;
+  created_at: string;
+}
+
+export interface MongoBlogListResponse {
+  items: MongoBlog[];
+  total: number;
+  skip: number;
+  limit: number;
+  pages: number;
+}
+
+export const mongoBlogApi = {
+  getAll: async (limit = 10, skip = 0, category?: string, keyword?: string): Promise<MongoBlogListResponse> => {
+    try {
+      const params = new URLSearchParams({ limit: String(limit), skip: String(skip) });
+      if (category) params.append('category', category);
+      if (keyword) params.append('keyword', keyword);
+      const res = await fetch(`${API_URL}/blogs-mongo?${params}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch mongo blogs');
+      return res.json();
+    } catch (e) {
+      console.error('MongoBlog API error:', e);
+      return { items: [], total: 0, skip, limit, pages: 0 };
+    }
+  },
+
+  getBySlug: async (slug: string): Promise<MongoBlog | null> => {
+    try {
+      const res = await fetch(`${API_URL}/blogs-mongo/${slug}`, { cache: 'no-store' });
+      if (!res.ok) return null;
+      return res.json();
+    } catch (e) {
+      console.error('MongoBlog API error:', e);
+      return null;
+    }
+  },
+
+  search: async (q: string, limit = 10, skip = 0): Promise<MongoBlogListResponse> => {
+    try {
+      const res = await fetch(`${API_URL}/blogs-mongo/search/query?q=${encodeURIComponent(q)}&limit=${limit}&skip=${skip}`);
+      if (!res.ok) throw new Error('Search failed');
+      return res.json();
+    } catch (e) {
+      console.error('MongoBlog search error:', e);
+      return { items: [], total: 0, skip, limit, pages: 0 };
+    }
+  },
+
+  getCategories: async (): Promise<{ categories: { name: string; count: number }[]; total: number }> => {
+    try {
+      const res = await fetch(`${API_URL}/blogs-mongo/categories/list`);
+      if (!res.ok) throw new Error('Failed to fetch categories');
+      return res.json();
+    } catch (e) {
+      console.error('MongoBlog categories error:', e);
+      return { categories: [], total: 0 };
+    }
+  },
+
+  getStats: async () => {
+    try {
+      const res = await fetch(`${API_URL}/blogs-mongo/stats/overview`);
+      if (!res.ok) throw new Error('Failed to fetch stats');
+      return res.json();
+    } catch (e) {
+      console.error('MongoBlog stats error:', e);
+      return null;
+    }
+  },
+};

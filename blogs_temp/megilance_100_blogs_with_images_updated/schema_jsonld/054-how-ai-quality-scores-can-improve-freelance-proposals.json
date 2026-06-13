@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How AI Quality Scores Can Improve Freelance Proposals",
+  "description": "Learn AI proposal quality score with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer freelancing.",
+  "keywords": [
+    "AI proposal quality score",
+    "proposal quality",
+    "freelance proposal checklist",
+    "proposal optimization"
+  ],
+  "url": "https://megilance.site/blog/how-ai-quality-scores-can-improve-freelance-proposals",
+  "datePublished": "2026-10-04",
+  "dateModified": "2026-10-04",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/how-ai-quality-scores-can-improve-freelance-proposals"
+}

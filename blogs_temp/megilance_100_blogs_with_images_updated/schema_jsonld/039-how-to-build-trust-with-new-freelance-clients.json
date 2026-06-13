@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How to Build Trust With New Freelance Clients",
+  "description": "Learn build trust with freelance clients with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "build trust with freelance clients",
+    "freelancer trust",
+    "client communication",
+    "verified credentials"
+  ],
+  "url": "https://megilance.site/blog/how-to-build-trust-with-new-freelance-clients",
+  "datePublished": "2026-09-04",
+  "dateModified": "2026-09-04",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/how-to-build-trust-with-new-freelance-clients"
+}

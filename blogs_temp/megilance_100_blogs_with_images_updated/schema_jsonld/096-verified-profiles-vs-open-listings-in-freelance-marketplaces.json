@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Verified Profiles vs Open Listings in Freelance Marketplaces",
+  "description": "Learn verified profiles freelance marketplace with practical steps, examples, and how MegiLance uses AI matching, escrow, and transparent pricing for safer",
+  "keywords": [
+    "verified profiles freelance marketplace",
+    "verified freelancers",
+    "open marketplace",
+    "freelancer screening"
+  ],
+  "url": "https://megilance.site/blog/verified-profiles-vs-open-listings-in-freelance-marketplaces",
+  "datePublished": "2026-12-27",
+  "dateModified": "2026-12-27",
+  "author": {
+    "@type": "Organization",
+    "name": "MegiLance"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MegiLance",
+    "url": "https://megilance.site"
+  },
+  "mainEntityOfPage": "https://megilance.site/blog/verified-profiles-vs-open-listings-in-freelance-marketplaces"
+}
