@@ -374,7 +374,7 @@ api_router.include_router(push_notifications.router, tags=["push-notifications"]
 api_router.include_router(invoice_tax.router, tags=["invoice-tax"])
 
 # Contract Builder - Visual contract creation
-api_router.include_router(contract_builder.router, tags=["contract-builder"])
+api_router.include_router(contract_builder.router, prefix="/contract-builder", tags=["contract-builder"])
 
 # Skill Graph - Skill relationships and endorsements
 api_router.include_router(skill_graph.router, tags=["skill-graph"])
