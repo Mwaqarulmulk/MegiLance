@@ -435,7 +435,7 @@ api_router.include_router(data_analytics_export.router, tags=["data-export"])
 api_router.include_router(availability_calendar.router, prefix="/availability", tags=["availability"])
 
 # Review Responses - Business owner replies
-api_router.include_router(review_responses.router, tags=["review-responses"])
+api_router.include_router(review_responses.router, prefix="/review-responses", tags=["review-responses"])
 
 # Rate Cards - Freelancer pricing structures
 api_router.include_router(rate_cards.router, prefix="/rate-cards", tags=["rate-cards"])
