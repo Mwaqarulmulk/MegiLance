@@ -1,10 +1,12 @@
 # --- Root ignore for MegiLance monorepo ---
+
 # Node / Next.js
 node_modules/
 .next/
 out/
 dist/
 build/
+
 # Logs
 *.log
 npm-debug.log*
@@ -12,7 +14,6 @@ yarn-debug.log*
 pnpm-debug.log*
 
 # Dependency / lock artifacts
-# NOTE: package-lock.json SHOULD be committed for reproducible builds
 pnpm-lock.yaml
 yarn.lock
 
@@ -40,6 +41,8 @@ __pycache__/
 .venv/
 venv/
 .venv_py312/
+.venv_py*/
+.venv*/
 .env/
 
 # Coverage & test
@@ -98,6 +101,12 @@ missing_css.txt
 modernize_b64.txt
 ts_err.txt
 ts_out.txt
+lint_output.txt
+my_eslint_err.txt
+frontend_build_output.txt
+tsc_errors.txt
+tsc_diagnostics.txt
+clean_build_log*.txt
 
 # Sensitive tokens
 *_token.txt
@@ -106,15 +115,39 @@ ts_out.txt
 # Temp files
 ts_errors.txt
 *.cache
+temp.txt
+temp.json
+out.txt
 
 # Screenshots (dev artifacts)
 screenshots/
 
-# Playwright MCP
+# Playwright MCP / Reports
 .playwright-mcp/
+playwright-report/
+test-results/
 
 # Infer Tooling
 infer-out/
 infer-*/
 Infer_Submission.md
 sample.c
+
+# Archives (should not be in repo)
+*.zip
+*.tar.gz
+*.rar
+
+# Large binary assets (use CDN/storage instead)
+public/images/robot_extracted/
+public/assets/chatbot/robot/
+
+# Debug scripts
+frontend_output.html
+run_tsc.js
+show.ps1
+
+# Academic / non-code files
+*.pdf
+*.docx
+*.svg

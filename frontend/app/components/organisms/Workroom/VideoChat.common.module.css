@@ -13,7 +13,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2px;
-  background-color: #000;
+  background-color: var(--neutral-950, #000);
 }
 
 .videoPlaceholder {
@@ -78,5 +78,5 @@
 }
 
 .endCallBtn:hover {
-  background-color: #c50f1d;
+  background-color: var(--ml-red-dark, #c50f1d);
 }

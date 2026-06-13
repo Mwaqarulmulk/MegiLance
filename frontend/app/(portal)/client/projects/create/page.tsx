@@ -97,7 +97,7 @@ export default function CreateProjectPage() {
         budget_max: Number(formData.budget_max),
         skills: formData.skills.split(',').map(s => s.trim()).filter(Boolean)
       });
-      router.push('/portal/client/projects');
+      router.push('/client/projects');
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to create project:', error);

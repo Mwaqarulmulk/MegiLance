@@ -2,7 +2,7 @@
 /* AI-HINT: Light theme for the redesigned premium dashboard. */
 
 .dashboardLayout {
-  background-color: #f9fafb; /* A clean, almost white background */
+  background-color: var(--bg-secondary-light); /* A clean, almost white background */
 }
 
 .Dashboard {

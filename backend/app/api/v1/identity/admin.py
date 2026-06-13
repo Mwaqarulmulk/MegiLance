@@ -71,9 +71,15 @@ async def get_user(user_id: int, current_user=Depends(require_admin)):
 
 @router.put("/users/{user_id}")
 async def update_user(user_id: int, request: AdminUserUpdate, current_user=Depends(require_admin)):
+    _ALLOWED_ADMIN_USER_COLUMNS = frozenset({"is_active", "role", "email_verified"})
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
+
+    # Validate column names against allowlist
+    for k in updates:
+        if k not in _ALLOWED_ADMIN_USER_COLUMNS:
+            raise HTTPException(status_code=400, detail=f"Invalid field: {k}")
 
     for k, v in updates.items():
         if isinstance(v, bool):
@@ -118,8 +124,8 @@ async def delete_user(user_id: int, current_user=Depends(require_admin)):
 
     # Cancel open disputes
     execute_query(
-        "UPDATE disputes SET status = 'closed', updated_at = ? WHERE (claimant_id = ? OR respondent_id = ?) AND status IN ('open', 'in_review')",
-        [now, user_id, user_id],
+        "UPDATE disputes SET status = 'closed', updated_at = ? WHERE raised_by = ? AND status IN ('open', 'in_review')",
+        [now, user_id],
     )
 
     # Log the action

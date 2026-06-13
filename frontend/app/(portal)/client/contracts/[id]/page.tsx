@@ -107,7 +107,7 @@ export default function ContractDetail({ params }: ContractDetailProps) {
             </Button>
             <Button
               variant="primary"
-              onClick={() => router.push(`/contracts/${contract?.id}/workroom`)}
+              onClick={() => router.push(`/client/contracts/${contract?.id}/workroom`)}
             >
               Go To Workroom
             </Button>

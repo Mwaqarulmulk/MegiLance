@@ -28,26 +28,31 @@ interface DisputeEvidence {
 
 interface Dispute {
   id: number;
-  title: string;
+  contract_id: number;
+  raised_by: number;
+  dispute_type: string;
   description: string;
   status: string;
-  contract_id: number;
-  raised_by_id: number;
+  assigned_to?: number;
   created_at: string;
   updated_at: string;
   resolution?: string;
   resolved_at?: string;
-  resolved_by_id?: number;
   evidence?: DisputeEvidence[];
+}
+
+function formatDisputeType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status.toLowerCase()) {
     case 'open': return 'danger';
-    case 'in_progress': return 'warning';
+    case 'in_review': return 'warning';
     case 'resolved': return 'success';
     case 'closed': return 'secondary';
-    default: return 'info';
+    case 'escalated': return 'info';
+    default: return 'secondary';
   }
 };
 
@@ -59,9 +64,9 @@ const DisputeDetailsPage: React.FC = () => {
   const [dispute, setDispute] = useState<Dispute | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [resolutionNote, setResolutionNote] = useState('');
-  const [contractAction, setContractAction] = useState('active'); // Default to resuming contract
+  const [contractAction, setContractAction] = useState('active');
   const [submitting, setSubmitting] = useState(false);
 
   const styles = useMemo(() => {
@@ -100,7 +105,7 @@ const DisputeDetailsPage: React.FC = () => {
     try {
       await api.disputes.resolve(dispute.id, resolutionNote, contractAction);
       toaster.notify({ title: 'Success', description: 'Dispute resolved successfully', variant: 'success' });
-      fetchDispute(); // Refresh data
+      fetchDispute();
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to resolve dispute';
       if (process.env.NODE_ENV === 'development') {
@@ -130,7 +135,7 @@ const DisputeDetailsPage: React.FC = () => {
       <div className={cn(styles.container, styles.errorState)}>
         <h2>Error Loading Dispute</h2>
         <p>{error || 'Dispute not found'}</p>
-        <Button variant="primary" onClick={() => router.push('/portal/admin/disputes')}>
+        <Button variant="primary" onClick={() => router.push('/admin/disputes')}>
           Back to Disputes
         </Button>
       </div>
@@ -142,8 +147,8 @@ const DisputeDetailsPage: React.FC = () => {
   return (
     <PageTransition>
       <div className={cn(styles.container)}>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={handleBack}
           iconBefore={<ArrowLeft size={16} />}
         >
@@ -153,13 +158,14 @@ const DisputeDetailsPage: React.FC = () => {
         <ScrollReveal>
           <header className={styles.header}>
             <div>
-              <h1 className={styles.title}>{dispute.title}</h1>
+              <h1 className={styles.title}>{formatDisputeType(dispute.dispute_type)}</h1>
               <div className={styles.meta}>
                 <Badge variant={getStatusBadgeVariant(dispute.status)}>
                   {dispute.status.replace('_', ' ')}
                 </Badge>
                 <span>Dispute #{dispute.id}</span>
                 <span>Contract #{dispute.contract_id}</span>
+                <span>Filed by: User #{dispute.raised_by}</span>
                 <span>Created: {new Date(dispute.created_at).toLocaleDateString()}</span>
               </div>
             </div>
@@ -182,9 +188,9 @@ const DisputeDetailsPage: React.FC = () => {
                   <div key={index} className={styles.evidenceItem}>
                     <FileText size={28} className={styles.evidenceIcon} />
                     <span className={styles.evidenceName}>{item.filename || `Evidence ${index + 1}`}</span>
-                    <Button 
-                      variant="link" 
-                      size="sm" 
+                    <Button
+                      variant="link"
+                      size="sm"
                       onClick={() => window.open(item.url, '_blank')}
                     >
                       View
@@ -201,7 +207,6 @@ const DisputeDetailsPage: React.FC = () => {
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>Resolution</h2>
               <div className={styles.resolutionDetails}>
-                <p><strong>Resolved By:</strong> Admin #{dispute.resolved_by_id}</p>
                 <p><strong>Resolved At:</strong> {dispute.resolved_at ? new Date(dispute.resolved_at).toLocaleString() : 'N/A'}</p>
                 <div className={styles.resolutionNote}>
                   <strong>Resolution Note:</strong>
@@ -216,16 +221,16 @@ const DisputeDetailsPage: React.FC = () => {
               <h2 className={styles.sectionTitle}>Resolve Dispute</h2>
               <div className={styles.resolutionForm}>
                 <div className={styles.formGroup}>
-                  <Textarea 
+                  <Textarea
                     value={resolutionNote}
                     onChange={(e) => setResolutionNote(e.target.value)}
                     placeholder="Explain the resolution decision..."
                     rows={5}
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
-                  <Select 
+                  <Select
                     value={contractAction}
                     onChange={(e) => setContractAction(e.target.value)}
                     options={[
@@ -237,8 +242,8 @@ const DisputeDetailsPage: React.FC = () => {
                 </div>
 
                 <div className={styles.actions}>
-                  <Button 
-                    variant="primary" 
+                  <Button
+                    variant="primary"
                     onClick={handleResolve}
                     isLoading={submitting}
                     disabled={submitting}

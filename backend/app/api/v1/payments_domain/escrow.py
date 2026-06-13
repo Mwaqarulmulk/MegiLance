@@ -117,13 +117,29 @@ async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=De
         raise HTTPException(status_code=400, detail="Invalid release amount")
 
     now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE escrow SET released_amount = released_amount + ?, status = 'released', notes = ?, updated_at = ? WHERE id = ?",
-        [release_amount, request.notes or "", now, escrow_id],
+
+    # Atomic escrow update: only release if funds remain
+    update_result = execute_query(
+        "UPDATE escrow SET released_amount = released_amount + ?, status = CASE WHEN released_amount + ? >= amount THEN 'released' ELSE status END, notes = ?, updated_at = ? WHERE id = ? AND amount - released_amount >= ?",
+        [release_amount, release_amount, request.notes or "", now, escrow_id, release_amount],
     )
 
-    freelancer_balance = get_user_balance(parties["freelancer_id"])
-    update_user_balance(parties["freelancer_id"], freelancer_balance + release_amount)
+    # Check if update actually happened (rows affected)
+    if isinstance(update_result, dict) and update_result.get("rows_affected", 0) == 0:
+        raise HTTPException(status_code=400, detail="Insufficient escrow funds or already fully released")
+
+    # Atomic balance credit: use WHERE clause to prevent negative balance
+    execute_query(
+        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+        [release_amount, parties["freelancer_id"]],
+    )
+
+    # Log the escrow transaction
+    execute_query(
+        """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
+           VALUES (?, 'escrow_release', ?, 'USD', ?, 'completed', ?, ?)""",
+        [parties["freelancer_id"], release_amount, f"Escrow #{escrow_id} released", escrow_id, now],
+    )
 
     return {"message": "Escrow released successfully", "amount": release_amount}
 
@@ -155,7 +171,17 @@ async def refund_escrow(escrow_id: int, current_user=Depends(get_current_user)):
         [now, escrow_id],
     )
 
-    client_balance = get_user_balance(current_user.id)
-    update_user_balance(current_user.id, client_balance + refund_amount)
+    # Atomic balance credit
+    execute_query(
+        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+        [refund_amount, current_user.id],
+    )
+
+    # Log the refund transaction
+    execute_query(
+        """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
+           VALUES (?, 'escrow_refund', ?, 'USD', ?, 'completed', ?, ?)""",
+        [current_user.id, refund_amount, f"Escrow #{escrow_id} refunded", escrow_id, now],
+    )
 
     return {"message": "Escrow refunded successfully", "amount": refund_amount}

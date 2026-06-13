@@ -103,6 +103,12 @@ export function middleware(request: NextRequest) {
     "/refunds",
     "/audit-logs",
     "/profile",
+    "/projects",
+    "/search",
+    "/help",
+    "/feedback",
+    "/earnings",
+    "/reports",
   ];
 
   const isProtectedPath = protectedPaths.some((path) => {

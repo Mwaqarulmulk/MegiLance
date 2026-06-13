@@ -14,6 +14,7 @@ from app.core.security import (
     validate_password_strength,
     decode_token,
     add_token_to_blacklist,
+    invalidate_user_cache,
 )
 from app.db.turso_http import execute_query, parse_rows
 
@@ -29,7 +30,7 @@ class SessionRevoke(BaseModel):
 
 
 @router.post("/change-password")
-async def change_password(request: PasswordChange, current_user=Depends(get_current_user)):
+async def change_password(request: Request, body: PasswordChange, current_user=Depends(get_current_user)):
     if not verify_password(request.current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Current password is incorrect")
 
@@ -43,7 +44,27 @@ async def change_password(request: PasswordChange, current_user=Depends(get_curr
         "UPDATE users SET hashed_password = ?, last_password_changed = ?, updated_at = ? WHERE id = ?",
         [hashed, now, now, current_user.id],
     )
-    return {"message": "Password changed successfully"}
+
+    # Invalidate the current access token
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    if token:
+        try:
+            payload = decode_token(token)
+            exp = payload.get("exp")
+            if exp:
+                expiry = datetime.fromtimestamp(exp, tz=timezone.utc)
+                add_token_to_blacklist(token, expiry, reason="password_change")
+        except Exception:
+            pass
+
+    # Invalidate ALL refresh tokens for this user by deleting sessions
+    execute_query("DELETE FROM user_sessions WHERE user_id = ?", [current_user.id])
+
+    # Clear user cache so fresh data is fetched
+    invalidate_user_cache(current_user.email)
+
+    logger.info(f"Password changed for user {current_user.id}, all tokens invalidated")
+    return {"message": "Password changed successfully. Please login again."}
 
 
 @router.get("/sessions")

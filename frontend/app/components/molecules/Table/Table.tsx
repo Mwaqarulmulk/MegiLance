@@ -211,7 +211,7 @@ const Table: React.FC<TableProps> = ({
                   }
                 } : undefined}
                 tabIndex={col.sortable ? 0 : undefined}
-                role={col.sortable ? 'columnheader button' : 'columnheader'}
+                role="columnheader"
                 aria-label={getSortAriaLabel(col)}
               >
                 <span className={commonStyles.thContent}>
@@ -251,7 +251,6 @@ const Table: React.FC<TableProps> = ({
                   }
                 } : undefined}
                 tabIndex={onRowClick ? 0 : undefined}
-                role={onRowClick ? 'button' : undefined}
               >
                 {columns.map((col) => (
                   <td 

@@ -209,7 +209,7 @@ export default function ClientProposalsPage() {
         response?.contract_id ?? response?.contract?.id ?? null;
       setTimeout(() => {
         if (contractId) {
-          router.push(`/contracts/${contractId}`);
+          router.push(`/client/contracts/${contractId}`);
         } else {
           router.push("/client/contracts");
         }

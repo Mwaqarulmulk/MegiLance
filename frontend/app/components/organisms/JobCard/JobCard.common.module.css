@@ -149,6 +149,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-2, 8px);
+  flex-wrap: wrap;
+}
+
+.actions > * {
+  min-height: 36px;
 }
 
 .saveButton {
@@ -198,6 +203,21 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+
+  .budgetWrapper {
+    text-align: left;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3, 12px);
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: 374px) {
@@ -208,5 +228,15 @@
 
   .card:hover {
     transform: translateY(-2px);
+  }
+
+  .meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2, 8px);
+  }
+
+  .actions {
+    gap: var(--space-1, 4px);
   }
 }

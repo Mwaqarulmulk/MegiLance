@@ -337,33 +337,33 @@
 }
 
 .pending {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light, #fef3c7);
   color: #92400e;
 }
 
 .active {
-  background-color: #dbeafe;
+  background-color: var(--color-primary-light, #dbeafe);
   color: #1e40af;
 }
 
 .submitted {
-  background-color: #fed7aa;
+  background-color: var(--color-warning-light, #fed7aa);
   color: #c2410c;
   border: 1px solid #fdba74;
 }
 
 .approved {
-  background-color: #d1fae5;
+  background-color: var(--color-success-light, #d1fae5);
   color: #065f46;
 }
 
 .paid {
-  background-color: #a7f3d0;
+  background-color: var(--color-success-light, #a7f3d0);
   color: #064e3b;
 }
 
 .rejected {
-  background-color: #fecaca;
+  background-color: var(--color-error-light, #fecaca);
   color: #991b1b;
 }
 

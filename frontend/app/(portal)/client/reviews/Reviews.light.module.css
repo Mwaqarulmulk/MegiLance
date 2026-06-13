@@ -1,6 +1,6 @@
 /* @AI-HINT: Reviews light theme — colors only */
 
-.container { background: #f8f9fb; color: #1a1a2e; }
+.container { background: var(--bg-primary-light); color: var(--text-primary-light); }
 .header { border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; }
 .title { color: #1a1a2e; }
 .subtitle { color: #6b7280; }

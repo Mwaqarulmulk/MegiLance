@@ -31,21 +31,20 @@ export default function AdminHealthPage() {
   const fetchHealth = async () => {
     try {
       setRefreshing(true);
-      // Fetch from health endpoint
+      const startTime = Date.now();
       const isHealthy = await apiFetch('/health/ready').then(() => true).catch(() => false);
+      const latency = Date.now() - startTime;
       
       setServices([
-        { name: 'API Server', status: isHealthy ? 'healthy' : 'down', latency: 45, lastCheck: new Date().toISOString(), uptime: 99.9 },
-        { name: 'Database', status: 'healthy', latency: 12, lastCheck: new Date().toISOString(), uptime: 99.99 },
-        { name: 'Cache (Redis)', status: 'healthy', latency: 3, lastCheck: new Date().toISOString(), uptime: 99.95 },
-        { name: 'File Storage', status: 'healthy', latency: 85, lastCheck: new Date().toISOString(), uptime: 99.9 },
-        { name: 'AI Service', status: 'healthy', latency: 150, lastCheck: new Date().toISOString(), uptime: 99.5 },
-        { name: 'Email Service', status: 'healthy', latency: 200, lastCheck: new Date().toISOString(), uptime: 99.8 },
+        { name: 'API Server', status: isHealthy ? 'healthy' : 'down', latency, lastCheck: new Date().toISOString(), uptime: isHealthy ? 99.9 : 0 },
       ]);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Health check failed:', err);
       }
+      setServices([
+        { name: 'API Server', status: 'down', latency: 0, lastCheck: new Date().toISOString(), uptime: 0 },
+      ]);
     } finally {
       setLoading(false);
       setRefreshing(false);

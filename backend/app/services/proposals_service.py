@@ -372,6 +372,7 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
     """
     Accept a proposal: update statuses, reject others, create contract.
     Returns updated proposal dict.
+    Raises RuntimeError if contract/escrow creation fails (prevents inconsistent state).
     """
     now = datetime.now(timezone.utc).isoformat()
     project_id = proposal["project_id"]
@@ -412,8 +413,8 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
         )
         if lb_result and lb_result.get("rows"):
             lifetime_billing = float(lb_result["rows"][0][0] or 0)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(f"Failed to fetch lifetime billing for fee calc: {e}")
 
     from app.api.v1.payments_domain.payments import calculate_tiered_fee
     fee_info = calculate_tiered_fee(contract_amount, lifetime_billing)
@@ -449,9 +450,13 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
                 [contract_id, client_id, freelancer_id, contract_amount, 0, now, now]
             )
             logger.info(f"Contract {contract_id} and escrow created for project {project_id} on proposal {proposal_id} acceptance")
+        else:
+            raise RuntimeError(f"Contract INSERT succeeded but contract not found for project {project_id}, freelancer {freelancer_id}")
 
     except Exception as e:
         logger.error(f"Contract/Escrow creation error on proposal {proposal_id}: {str(e)}")
+        # Re-raise to prevent proposal from staying "accepted" without a contract
+        raise RuntimeError(f"Failed to create contract/escrow for proposal {proposal_id}: {str(e)}")
 
     return get_proposal_raw(proposal_id)
 

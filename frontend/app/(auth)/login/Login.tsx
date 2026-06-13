@@ -375,19 +375,21 @@ const Login: React.FC = () => {
               </p>
             </StaggerItem>
 
-            <StaggerItem className={styles.roleSelector}>
+            <StaggerItem className={styles.roleSelector} role="radiogroup" aria-label="Select account type">
               {(["freelancer", "client", "admin"] as UserRole[]).map((role) => {
                 const RoleIcon = roleConfig[role].icon;
                 return (
                   <button
                     key={role}
                     type="button"
+                    role="radio"
                     className={cn(
                       styles.roleButton,
                       selectedRole === role && styles.roleButtonSelected,
                     )}
                     onClick={() => setSelectedRole(role)}
-                    aria-pressed={selectedRole === role}
+                    aria-checked={selectedRole === role}
+                    tabIndex={selectedRole === role ? 0 : -1}
                   >
                     <RoleIcon size={16} className={styles.roleIcon} />
                     {roleConfig[role].label}

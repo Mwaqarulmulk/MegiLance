@@ -80,8 +80,8 @@ class Settings(BaseSettings):
     session_absolute_timeout_hours: int = 24  # Force re-login after this many hours
 
     # CSRF Protection
-    # CSRF handled by SameSite=Lax cookies + CORS. Token-based CSRF middleware planned for v2.
-    csrf_enabled: bool = False
+    # Enabled in production; uses SameSite=Lax + CSRF token for state-changing requests
+    csrf_enabled: bool = True
     csrf_header_name: str = "X-CSRF-Token"
 
     # Audit Logging

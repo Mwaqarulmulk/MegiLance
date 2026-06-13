@@ -6,15 +6,15 @@
 .searchBar { background: var(--bg-primary-light); border-color: var(--border-light); }
 .searchBar:focus-within { border-color: var(--ml-blue); }
 .searchInput { color: #1a1a2e; }
-.mobileFilterBtn { border-color: var(--border-light); color: #374151; background: #fff; }
+.mobileFilterBtn { border-color: var(--border-light); color: #374151; background: var(--bg-primary-light); }
 .filterBadge { background: var(--ml-blue); color: #fff; }
 
-.categoryPill { background: #fff; border-color: var(--border-light); color: #4b5563; }
+.categoryPill { background: var(--bg-primary-light); border-color: var(--border-light); color: #4b5563; }
 .categoryPill:hover { border-color: var(--ml-blue); color: var(--ml-blue); }
 .categoryPillActive { background: var(--ml-blue); border-color: var(--ml-blue); color: #fff; }
 
 .sidebar { }
-.sidebarCard { background: #fff; border: 1px solid var(--border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.sidebarCard { background: var(--bg-primary-light); border: 1px solid var(--border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .sidebarTitle { color: #111827; }
 .filterLabel { color: var(--color-text-secondary-light); }
 .filterOption { color: #374151; }
@@ -28,7 +28,7 @@
 
 .toolbar { }
 .resultCount { color: #4b5563; }
-.sortSelect { border-color: var(--border-light); color: #374151; background: #fff; }
+.sortSelect { border-color: var(--border-light); color: #374151; background: var(--bg-primary-light); }
 .viewToggle { border-color: var(--border-light); }
 .viewBtn { color: var(--text-tertiary-light); }
 .viewBtnActive { background: var(--bg-tertiary-light); color: #111827; }
@@ -62,7 +62,7 @@
 /* Proposals count */
 .proposalsCount { color: var(--color-text-secondary-light); }
 
-.skeletonCard { background: #fff; border: 1px solid var(--border-light); }
+.skeletonCard { background: var(--bg-primary-light); border: 1px solid var(--border-light); }
 .skeletonLine { background: linear-gradient(90deg, var(--bg-tertiary-light) 25%, var(--border-light) 50%, var(--bg-tertiary-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
 .skeletonTag { background: var(--bg-tertiary-light); }
 
@@ -73,8 +73,8 @@
 .pageBtn:hover:not(:disabled) { background: var(--bg-tertiary-light); }
 .pageBtnActive { background: var(--ml-blue); color: #fff; border-color: var(--ml-blue); }
 
-.mobilePanel { background: #fff; }
+.mobilePanel { background: var(--bg-primary-light); }
 .mobilePanelHeader { border-color: var(--border-light); }
-.mobilePanelFooter { border-color: var(--border-light); background: #fafafa; }
+.mobilePanelFooter { border-color: var(--border-light); background: var(--bg-secondary-light); }
 
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }

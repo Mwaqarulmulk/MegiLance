@@ -252,7 +252,7 @@
 }
 
 .uploadButton:hover {
-  background: #3559b8;
+  background: var(--ml-blue-dark, #3559b8);
 }
 
 .uploadHint {
@@ -305,7 +305,7 @@
 }
 
 .removeButton:hover {
-  background: #c00e1f;
+  background: var(--ml-red-dark, #c00e1f);
 }
 
 /* Contact Grid */

@@ -1,6 +1,6 @@
 /* @AI-HINT: Clients page light theme — colors only */
 .container {
-    background: #ffffff;
+    background: var(--bg-primary-light);
     color: #0f172a;
 }
 .hero {
@@ -35,7 +35,7 @@
     color: #64748b;
 }
 .ctaSection {
-    background: #f8fafc;
+    background: var(--bg-secondary-light);
 }
 .ctaTitle {
     color: #0f172a;

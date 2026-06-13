@@ -1,7 +1,7 @@
-// @AI-HINT: Reusable DataTable component with sorting, pagination, and theming
+// @AI-HINT: Reusable DataTable component with sorting, pagination, theming, and mobile card view
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ export interface Column<T> {
   header: string;
   sortable?: boolean;
   render?: (row: T) => React.ReactNode;
+  hideOnMobile?: boolean;
 }
 
 interface DataTableProps<T> {
@@ -24,9 +25,22 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
 }
 
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
+
 export function DataTable<T>({ columns, data, keyExtractor, onRowClick }: DataTableProps<T>) {
   const { resolvedTheme } = useTheme();
   const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isMobile = useIsMobile();
 
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
@@ -49,6 +63,39 @@ export function DataTable<T>({ columns, data, keyExtractor, onRowClick }: DataTa
         return 0;
       })
     : data;
+
+  const visibleColumns = isMobile
+    ? columns.filter(col => !col.hideOnMobile)
+    : columns;
+
+  if (isMobile) {
+    return (
+      <div className={cn(commonStyles.mobileCardList, themeStyles.wrapper)}>
+        {sortedData.map(row => (
+          <motion.div
+            key={keyExtractor(row)}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring" as const }}
+            className={cn(commonStyles.mobileCard, themeStyles.mobileCard, onRowClick && commonStyles.clickable)}
+            onClick={() => onRowClick?.(row)}
+            role={onRowClick ? "button" : undefined}
+            tabIndex={onRowClick ? 0 : undefined}
+          >
+            {visibleColumns.map((col, idx) => (
+              <div key={col.key} className={cn(commonStyles.mobileCardField, idx === 0 && commonStyles.mobileCardFieldFirst)}>
+                <span className={cn(commonStyles.mobileCardLabel, themeStyles.mobileCardLabel)}>{col.header}</span>
+                <div className={cn(commonStyles.mobileCardValue, themeStyles.mobileCardValue)}>
+                  {col.render ? col.render(row) : (row as any)[col.key]}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className={cn(commonStyles.wrapper, themeStyles.wrapper)}>

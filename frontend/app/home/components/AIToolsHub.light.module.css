@@ -1,8 +1,8 @@
-.section { background: linear-gradient(to bottom, var(--surface-f5f7fa, #f5f7fa), var(--background-ffffff, #fff)); }
+.section { background: transparent; }
 .badge { background: rgba(69, 115, 223, 0.1); color: #4573df; }
 .title { color: var(--text-primary-23272f, #23272f); }
 .subtitle { color: var(--text-secondary-333333, #5a6a7a); }
-.card { background: #ffffff; border-color: var(--border-e0e0e0, #e8edf2); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05); }
+.card { background: var(--bg-primary-light); border-color: var(--border-e0e0e0, #e8edf2); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05); }
 .card:hover { border-color: #4573df; box-shadow: 0 6px 20px rgba(69, 115, 223, 0.12); }
 .cardLabel { color: var(--text-primary-23272f, #23272f); }
 .cardDesc { color: var(--text-secondary-333333, #6b7280); }

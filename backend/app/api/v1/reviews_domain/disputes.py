@@ -1,207 +1,192 @@
-# @AI-HINT: Disputes router — file, list, resolve disputes
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel
+# @AI-HINT: Disputes router — file, list, resolve disputes. Delegates to disputes_service for data access.
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
 from typing import Optional
-from datetime import datetime, timezone
 import logging
 
 logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user
-from app.db.turso_http import execute_query, parse_rows, parse_date
+from app.schemas.dispute import DisputeCreate, DisputeUpdate, Dispute, DisputeList
+from app.services import disputes_service
 
 router = APIRouter()
 
 
-class DisputeCreate(BaseModel):
-    contract_id: int
-    dispute_type: str = "other"
-    title: str
-    description: str
-
-class DisputeUpdate(BaseModel):
-    status: Optional[str] = None
-    resolution: Optional[str] = None
-    admin_notes: Optional[str] = None
-
-
-@router.get("")
+@router.get("", response_model=DisputeList)
 async def list_disputes(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
+    dispute_type: Optional[str] = None,
+    contract_id: Optional[int] = None,
+    raised_by_me: bool = False,
     current_user=Depends(get_current_user),
 ):
-    where = "WHERE d.claimant_id = ? OR d.respondent_id = ?"
-    params = [current_user.id, current_user.id]
+    user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
+    user_type = "admin" if user_role == "admin" else "user"
+    skip = (page - 1) * page_size
 
-    if status_filter:
-        where += " AND d.status = ?"
-        params.append(status_filter)
-
-    offset = (page - 1) * page_size
-    params.extend([page_size, offset])
-
-    result = execute_query(
-        f"""SELECT d.id, d.contract_id, d.claimant_id, d.respondent_id, d.dispute_type,
-                   d.title, d.description, d.status, d.resolution, d.admin_notes,
-                   d.created_at, d.updated_at,
-                   c.project_id, pr.title as project_title
-            FROM disputes d
-            LEFT JOIN contracts c ON d.contract_id = c.id
-            LEFT JOIN projects pr ON c.project_id = pr.id
-            {where}
-            ORDER BY d.created_at DESC
-            LIMIT ? OFFSET ?""",
-        params,
+    result = disputes_service.list_disputes(
+        user_type=user_type,
+        user_id=current_user.id,
+        contract_id=contract_id,
+        status_filter=status_filter,
+        dispute_type=dispute_type,
+        raised_by_me=raised_by_me,
+        skip=skip,
+        limit=page_size,
     )
-    rows = parse_rows(result)
-    return {"items": rows if rows else [], "total": len(rows) if rows else 0, "page": page}
+    return DisputeList(total=result["total"], disputes=result["disputes"])
 
 
-@router.get("/{dispute_id}")
+@router.get("/{dispute_id}", response_model=Dispute)
 async def get_dispute(dispute_id: int, current_user=Depends(get_current_user)):
-    result = execute_query(
-        """SELECT d.id, d.contract_id, d.claimant_id, d.respondent_id, d.dispute_type,
-                  d.title, d.description, d.status, d.resolution, d.admin_notes,
-                  d.created_at, d.updated_at
-           FROM disputes d
-           WHERE d.id = ? AND (d.claimant_id = ? OR d.respondent_id = ?)""",
-        [dispute_id, current_user.id, current_user.id],
-    )
-    rows = parse_rows(result)
-    if not rows:
-        raise HTTPException(status_code=404, detail="Dispute not found")
-    return rows[0]
-
-
-@router.post("")
-async def create_dispute(request: DisputeCreate, current_user=Depends(get_current_user)):
-    contract_result = execute_query(
-        "SELECT id, client_id, freelancer_id FROM contracts WHERE id = ?",
-        [request.contract_id],
-    )
-    contract_rows = parse_rows(contract_result)
-    if not contract_rows:
-        raise HTTPException(status_code=404, detail="Contract not found")
-
-    contract = contract_rows[0]
-    if contract["client_id"] != current_user.id and contract["freelancer_id"] != current_user.id:
-        raise HTTPException(status_code=403, detail="Only contract parties can file disputes")
-
-    respondent_id = contract["freelancer_id"] if contract["client_id"] == current_user.id else contract["client_id"]
-
-    now = datetime.now(timezone.utc).isoformat()
-    result = execute_query(
-        """INSERT INTO disputes (contract_id, claimant_id, respondent_id, dispute_type, title,
-                  description, status, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, 'open', ?, ?)""",
-        [
-            request.contract_id, current_user.id, respondent_id,
-            request.dispute_type, request.title, request.description,
-            now, now,
-        ],
-    )
-
-    if not result:
-        raise HTTPException(status_code=500, detail="Failed to create dispute")
-
-    return {"message": "Dispute filed successfully", "dispute_id": result.get("last_insert_rowid")}
-
-
-@router.put("/{dispute_id}")
-async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=Depends(get_current_user)):
-    # Verify user is claimant, respondent, or admin
-    dispute_result = execute_query(
-        "SELECT id, claimant_id, respondent_id FROM disputes WHERE id = ?",
-        [dispute_id],
-    )
-    rows = parse_rows(dispute_result)
-    if not rows:
+    dispute = disputes_service.get_dispute_by_id(dispute_id)
+    if not dispute:
         raise HTTPException(status_code=404, detail="Dispute not found")
 
-    dispute = rows[0]
-    is_party = dispute["claimant_id"] == current_user.id or dispute["respondent_id"] == current_user.id
     user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
     is_admin = user_role == "admin"
+    is_party = dispute["raised_by"] == current_user.id
 
-    if not is_party and not is_admin:
-        raise HTTPException(status_code=403, detail="Only dispute parties or admins can update")
+    if not is_admin and not is_party:
+        parties = disputes_service.get_contract_client_freelancer(dispute["contract_id"])
+        if parties and current_user.id not in (parties["client_id"], parties["freelancer_id"]):
+            raise HTTPException(status_code=403, detail="Not authorized to view this dispute")
+
+    return dispute
+
+
+@router.post("", response_model=Dispute, status_code=status.HTTP_201_CREATED)
+async def create_dispute(request: DisputeCreate, current_user=Depends(get_current_user)):
+    parties = disputes_service.get_contract_client_freelancer(request.contract_id)
+    if not parties:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    if current_user.id != parties["client_id"] and current_user.id != parties["freelancer_id"]:
+        raise HTTPException(status_code=403, detail="Only contract parties can file disputes")
+
+    dispute = disputes_service.create_dispute(
+        contract_id=request.contract_id,
+        raised_by=current_user.id,
+        dispute_type=request.dispute_type,
+        description=request.description,
+    )
+    if not dispute:
+        raise HTTPException(status_code=500, detail="Failed to create dispute")
+    return dispute
+
+
+@router.put("/{dispute_id}", response_model=Dispute)
+async def update_dispute(dispute_id: int, request: DisputeUpdate, current_user=Depends(get_current_user)):
+    dispute = disputes_service.get_dispute_by_id(dispute_id)
+    if not dispute:
+        raise HTTPException(status_code=404, detail="Dispute not found")
+
+    user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
+    is_admin = user_role == "admin"
+    is_party = dispute["raised_by"] == current_user.id
+
+    if not is_admin and not is_party:
+        parties = disputes_service.get_contract_client_freelancer(dispute["contract_id"])
+        if parties and current_user.id not in (parties["client_id"], parties["freelancer_id"]):
+            raise HTTPException(status_code=403, detail="Not authorized to update this dispute")
 
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
 
-    set_parts = [f"{k} = ?" for k in updates]
-    set_parts.append("updated_at = ?")
-    values = list(updates.values()) + [datetime.now(timezone.utc).isoformat(), dispute_id]
-
-    execute_query(f"UPDATE disputes SET {', '.join(set_parts)} WHERE id = ?", values)
-    return {"message": "Dispute updated successfully"}
+    disputes_service.update_dispute(dispute_id, updates)
+    return disputes_service.get_dispute_by_id(dispute_id)
 
 
 @router.post("/{dispute_id}/assign")
 async def assign_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
-    # Only admins can assign disputes — use explicit role check
     user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
     if user_role != "admin":
         raise HTTPException(status_code=403, detail="Only admins can assign disputes")
+
+    if not disputes_service.dispute_exists(dispute_id):
+        raise HTTPException(status_code=404, detail="Dispute not found")
 
     admin_id = data.get("admin_id")
     if not admin_id:
         raise HTTPException(status_code=400, detail="admin_id is required")
 
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE disputes SET assigned_to = ?, status = 'under_review', updated_at = ? WHERE id = ?",
-        [admin_id, now, dispute_id],
-    )
+    disputes_service.assign_dispute(dispute_id, admin_id)
     return {"message": "Dispute assigned to admin"}
 
 
 @router.post("/{dispute_id}/resolve")
 async def resolve_dispute(dispute_id: int, data: dict, current_user=Depends(get_current_user)):
-    # Only admins can resolve disputes — use explicit role check
     user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
     if user_role != "admin":
         raise HTTPException(status_code=403, detail="Only admins can resolve disputes")
 
+    dispute = disputes_service.get_dispute_by_id(dispute_id)
+    if not dispute:
+        raise HTTPException(status_code=404, detail="Dispute not found")
+
     resolution = data.get("resolution", "")
     contract_status = data.get("contract_status")
 
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE disputes SET status = 'resolved', resolution = ?, updated_at = ? WHERE id = ?",
-        [resolution, now, dispute_id],
-    )
+    disputes_service.resolve_dispute(dispute_id, resolution)
 
     if contract_status:
-        execute_query(
-            "UPDATE contracts SET status = ? WHERE id = (SELECT contract_id FROM disputes WHERE id = ?)",
-            [contract_status, dispute_id],
+        disputes_service.update_contract_status(dispute["contract_id"], contract_status)
+
+    # Notify the dispute filer
+    try:
+        disputes_service.send_notification(
+            dispute["raised_by"],
+            "DISPUTE_RESOLVED",
+            "Dispute Resolved",
+            f"Your dispute #{dispute_id} has been resolved.",
+            {"dispute_id": dispute_id, "resolution": resolution},
+            "medium",
+            f"/disputes/{dispute_id}",
         )
+    except Exception as e:
+        logger.warning(f"Failed to notify dispute filer: {e}")
 
     return {"message": "Dispute resolved"}
 
 
 @router.post("/{dispute_id}/evidence")
-async def upload_evidence(dispute_id: int, evidence_url: str, current_user=Depends(get_current_user)):
-    # Verify user is a party to the dispute
-    dispute_result = execute_query(
-        "SELECT id, claimant_id, respondent_id FROM disputes WHERE id = ?",
-        [dispute_id],
-    )
-    rows = parse_rows(dispute_result)
-    if not rows:
+async def upload_evidence(dispute_id: int, file: UploadFile = File(...), current_user=Depends(get_current_user)):
+    dispute = disputes_service.get_dispute_by_id(dispute_id)
+    if not dispute:
         raise HTTPException(status_code=404, detail="Dispute not found")
 
-    dispute = rows[0]
-    if dispute["claimant_id"] != current_user.id and dispute["respondent_id"] != current_user.id:
-        raise HTTPException(status_code=403, detail="Only dispute parties can upload evidence")
+    user_role = getattr(current_user, "role", None) or getattr(current_user, "user_type", None)
+    is_admin = user_role == "admin"
+    is_party = dispute["raised_by"] == current_user.id
 
-    now = datetime.now(timezone.utc).isoformat()
-    result = execute_query(
-        "INSERT INTO dispute_evidence (dispute_id, user_id, evidence_url, created_at) VALUES (?, ?, ?, ?)",
-        [dispute_id, current_user.id, evidence_url, now],
-    )
-    return {"message": "Evidence uploaded", "evidence_id": result.get("last_insert_rowid")}
+    if not is_admin and not is_party:
+        parties = disputes_service.get_contract_client_freelancer(dispute["contract_id"])
+        if parties and current_user.id not in (parties["client_id"], parties["freelancer_id"]):
+            raise HTTPException(status_code=403, detail="Only dispute parties can upload evidence")
+
+    file_content = await file.read()
+    file_url = f"evidence/{dispute_id}/{file.filename}"
+
+    evidence_data = {
+        "filename": file.filename,
+        "url": file_url,
+        "uploaded_by": current_user.id,
+        "uploaded_at": str(dispute["created_at"]),
+        "size": len(file_content),
+    }
+
+    existing_evidence = dispute.get("evidence") or "[]"
+    try:
+        evidence_list = __import__("json").loads(existing_evidence)
+        if not isinstance(evidence_list, list):
+            evidence_list = []
+    except (ValueError, TypeError):
+        evidence_list = []
+
+    evidence_list.append(evidence_data)
+    disputes_service.update_dispute_evidence(dispute_id, __import__("json").dumps(evidence_list))
+
+    return {"message": "Evidence uploaded successfully", "evidence": evidence_data}

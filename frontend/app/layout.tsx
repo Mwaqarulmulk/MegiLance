@@ -140,7 +140,6 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  userScalable: true,
   viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
@@ -173,7 +172,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script {...jsonLdScriptProps(navJsonLd)} />
         <script {...jsonLdScriptProps(ratingJsonLd)} />
         
-        {/* Theme initialization - prevent flash */}
+        {/* Theme initialization - prevent flash of unstyled content */}
         <script
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
@@ -181,24 +180,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               (function() {
                 try {
                   var theme = localStorage.getItem('megilance-theme');
-                  if (!theme) {
+                  if (!theme || theme === 'system') {
                     theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                   }
+                  document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(theme);
                   document.documentElement.style.colorScheme = theme;
-                } catch (e) { console.warn('Layout error:', e); }
-              })();
-            `,
-          }}
-        />
-        {/* Mobile sidebar fix - inject style to override Turbopack phantom animation */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var s = document.createElement('style');
-                s.textContent = '@media(max-width:768px){aside[class*="sidebar"]:not([class*="sidebarNav"]){display:none!important;animation:none!important}aside[class*="sidebar"][class*="sidebarMobileOpen"]{display:flex!important;animation:none!important;transform:translateX(0)!important;position:fixed!important;z-index:1000!important}aside[class*="sidebarMobileOpen"] aside{display:block!important}}';
-                document.head.appendChild(s);
+                } catch (e) {}
               })();
             `,
           }}

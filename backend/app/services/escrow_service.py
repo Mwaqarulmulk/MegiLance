@@ -5,8 +5,11 @@ Handles escrow creation, listing, release, refund, and balance checks via Turso.
 """
 from datetime import datetime, timezone
 from typing import List, Optional
+import logging
 
 from app.db.turso_http import execute_query, to_str, parse_date
+
+logger = logging.getLogger(__name__)
 
 
 def _row_to_escrow(row) -> dict:
@@ -56,7 +59,7 @@ def update_user_balance(user_id: int, new_balance: float):
 
 
 def fund_pending_escrow(contract_id: int, client_id: int, amount: float, notes: Optional[str]) -> Optional[dict]:
-    """Fund a pending escrow record and update balance."""
+    """Fund a pending escrow record and update balance atomically."""
     now = datetime.now(timezone.utc).isoformat()
     
     result = execute_query("SELECT id, amount, status FROM escrow WHERE contract_id = ? AND client_id = ? ORDER BY id DESC LIMIT 1", [contract_id, client_id])
@@ -67,13 +70,24 @@ def fund_pending_escrow(contract_id: int, client_id: int, amount: float, notes: 
     
     # Deduct balance
     balance = get_user_balance(client_id)
-    update_user_balance(client_id, balance - amount)
+    new_balance = balance - amount
     
-    # Update escrow and contract
-    execute_query("UPDATE escrow SET status = 'funded', notes = ?, updated_at = ? WHERE id = ?", [notes, now, escrow_id])
+    if new_balance < 0:
+        raise ValueError("Insufficient balance to fund escrow")
     
-    # Important: Also mark the contract as 'active' when funded 
-    execute_query("UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?", [now, contract_id])
+    # Atomic batch: balance deduction + escrow update + contract activation
+    from app.db.turso_http import get_turso_http
+    client = get_turso_http()
+    statements = [
+        {"q": "UPDATE users SET account_balance = ? WHERE id = ?", "params": [new_balance, client_id]},
+        {"q": "UPDATE escrow SET status = 'funded', notes = ?, updated_at = ? WHERE id = ?", "params": [notes, now, escrow_id]},
+        {"q": "UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?", "params": [now, contract_id]},
+    ]
+    try:
+        client.execute_many(statements)
+    except Exception as e:
+        logger.error(f"Atomic escrow fund failed: {e}")
+        raise ValueError("Failed to fund escrow — transaction rolled back")
     
     updated = execute_query(f"SELECT {ESCROW_SELECT_COLS} FROM escrow WHERE id = ?", [escrow_id])
     return _row_to_escrow(updated["rows"][0]) if updated and updated.get("rows") else None
@@ -81,16 +95,34 @@ def fund_pending_escrow(contract_id: int, client_id: int, amount: float, notes: 
 
 def create_escrow(contract_id: int, client_id: int, amount: float,
                   expires_at: Optional[str], notes: Optional[str]) -> dict:
-    """Insert a new escrow record, deduct client balance, and return the created escrow."""
+    """Insert a new escrow record, deduct client balance atomically, and return the created escrow."""
     now = datetime.now(timezone.utc).isoformat()
-    execute_query("""
-        INSERT INTO escrow (contract_id, client_id, amount, released_amount, status, expires_at, notes, created_at, updated_at)
-        VALUES (?, ?, ?, 0.0, 'active', ?, ?, ?, ?)
-    """, [contract_id, client_id, amount, expires_at, notes, now, now])
-
+    
     balance = get_user_balance(client_id)
-    update_user_balance(client_id, balance - amount)
-
+    new_balance = balance - amount
+    
+    if new_balance < 0:
+        raise ValueError("Insufficient balance to create escrow")
+    
+    # Atomic batch: insert escrow + deduct balance
+    from app.db.turso_http import get_turso_http
+    client = get_turso_http()
+    statements = [
+        {
+            "q": "INSERT INTO escrow (contract_id, client_id, amount, released_amount, status, expires_at, notes, created_at, updated_at) VALUES (?, ?, ?, 0.0, 'active', ?, ?, ?, ?)",
+            "params": [contract_id, client_id, amount, expires_at, notes, now, now],
+        },
+        {
+            "q": "UPDATE users SET account_balance = ? WHERE id = ?",
+            "params": [new_balance, client_id],
+        },
+    ]
+    try:
+        client.execute_many(statements)
+    except Exception as e:
+        logger.error(f"Atomic escrow creation failed: {e}")
+        raise ValueError("Failed to create escrow — transaction rolled back")
+    
     result = execute_query(f"""
         SELECT {ESCROW_SELECT_COLS}
         FROM escrow WHERE contract_id = ? AND client_id = ? ORDER BY id DESC LIMIT 1
@@ -213,31 +245,47 @@ def get_freelancer_id_for_contract(contract_id: int) -> Optional[int]:
 
 def release_escrow_funds(escrow_id: int, release_amount: float,
                          freelancer_id: int, current_released: float, total_amount: float):
-    """Transfer funds from escrow to freelancer."""
+    """Transfer funds from escrow to freelancer atomically."""
     freelancer_balance = get_user_balance(freelancer_id)
     new_freelancer_balance = freelancer_balance + release_amount
     new_released = current_released + release_amount
     new_status = "released" if new_released >= total_amount else "active"
     now = datetime.now(timezone.utc).isoformat()
 
-    update_user_balance(freelancer_id, new_freelancer_balance)
-    execute_query("""
-        UPDATE escrow SET released_amount = ?, status = ?, updated_at = ? WHERE id = ?
-    """, [new_released, new_status, now, escrow_id])
+    # Atomic batch: credit freelancer + update escrow
+    from app.db.turso_http import get_turso_http
+    client = get_turso_http()
+    statements = [
+        {"q": "UPDATE users SET account_balance = ? WHERE id = ?", "params": [new_freelancer_balance, freelancer_id]},
+        {"q": "UPDATE escrow SET released_amount = ?, status = ?, updated_at = ? WHERE id = ?", "params": [new_released, new_status, now, escrow_id]},
+    ]
+    try:
+        client.execute_many(statements)
+    except Exception as e:
+        logger.error(f"Atomic escrow release failed: {e}")
+        raise ValueError("Failed to release escrow funds — transaction rolled back")
 
 
 def refund_escrow_funds(escrow_id: int, refund_amount: float,
                         client_id: int, current_released: float):
-    """Refund escrow funds back to client."""
+    """Refund escrow funds back to client atomically."""
     client_balance = get_user_balance(client_id)
     new_client_balance = client_balance + refund_amount
     new_released = current_released + refund_amount
     now = datetime.now(timezone.utc).isoformat()
 
-    update_user_balance(client_id, new_client_balance)
-    execute_query("""
-        UPDATE escrow SET released_amount = ?, status = 'refunded', updated_at = ? WHERE id = ?
-    """, [new_released, now, escrow_id])
+    # Atomic batch: credit client + update escrow
+    from app.db.turso_http import get_turso_http
+    client = get_turso_http()
+    statements = [
+        {"q": "UPDATE users SET account_balance = ? WHERE id = ?", "params": [new_client_balance, client_id]},
+        {"q": "UPDATE escrow SET released_amount = ?, status = 'refunded', updated_at = ? WHERE id = ?", "params": [new_released, now, escrow_id]},
+    ]
+    try:
+        client.execute_many(statements)
+    except Exception as e:
+        logger.error(f"Atomic escrow refund failed: {e}")
+        raise ValueError("Failed to refund escrow — transaction rolled back")
 
 
 def get_escrow_ownership(escrow_id: int) -> Optional[dict]:

@@ -145,6 +145,15 @@ const Profile: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
+  // Revoke object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (profileImageUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(profileImageUrl);
+      }
+    };
+  }, [profileImageUrl]);
+
   // Professional fields
   const [skills, setSkills] = useState("");
   const [hourlyRate, setHourlyRate] = useState<number | string>(0);

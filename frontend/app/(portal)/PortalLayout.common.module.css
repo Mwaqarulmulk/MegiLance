@@ -1,4 +1,4 @@
-/* @AI-HINT: PortalLayout common styles — email verification banner layout & structure */
+/* @AI-HINT: PortalLayout common styles — email verification banner & onboarding layout */
 
 .verifyBanner {
   position: sticky;
@@ -28,6 +28,7 @@
   font-size: 0.8125rem;
   white-space: nowrap;
   transition: opacity 0.15s;
+  min-height: 32px;
 }
 
 .verifyResendBtn:disabled {
@@ -44,8 +45,95 @@
   font-size: 1.1rem;
   line-height: 1;
   font-weight: 700;
+  min-height: 32px;
+  min-width: 32px;
 }
 
 .verifyDismissBtn:hover {
   opacity: 0.75;
+}
+
+/* Onboarding Banner */
+.onboardingBanner {
+  position: sticky;
+  z-index: 9998;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  border-bottom: 1px solid transparent;
+}
+
+.onboardingBannerBelowVerify {
+  top: 48px;
+}
+
+.onboardingBannerText {
+  flex: 1;
+}
+
+.onboardingBannerBtn {
+  padding: 4px 14px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  min-height: 32px;
+}
+
+.onboardingBannerBtn:hover {
+  opacity: 0.9;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .verifyBanner {
+    padding: 8px 12px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .verifyBannerText {
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  .verifyResendBtn {
+    width: 100%;
+    padding: 8px 12px;
+    min-height: 40px;
+  }
+
+  .verifyDismissBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .onboardingBanner {
+    padding: 8px 12px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .onboardingBannerText {
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  .onboardingBannerBtn {
+    width: 100%;
+    padding: 8px 12px;
+    text-align: center;
+    min-height: 40px;
+  }
 }

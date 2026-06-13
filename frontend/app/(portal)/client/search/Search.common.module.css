@@ -81,7 +81,7 @@
 .avatarWrapper { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
 .avatar { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, var(--ml-blue,#4573df), #6b8cff); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.25rem; font-weight: 700; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
-.onlineDot { position: absolute; bottom: 2px; right: 2px; width: 11px; height: 11px; border-radius: 50%; background: #22c55e; border: 2px solid; }
+.onlineDot { position: absolute; bottom: 2px; right: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--color-success, #22c55e); border: 2px solid; }
 .cardTopMeta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .topRatedBadge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
 .favoriteBtn { background: none; border: none; cursor: pointer; padding: 4px; opacity: 0.35; transition: opacity 0.2s, color 0.2s, transform 0.15s; }
@@ -105,9 +105,9 @@
 .jssLabel { font-size: 0.75rem; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
 .jssTrack { flex: 1; height: 5px; border-radius: 3px; overflow: hidden; }
 .jssFill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-.jssHigh { background: #22c55e; }
-.jssMid { background: #f59e0b; }
-.jssLow { background: #ef4444; }
+.jssHigh { background: var(--color-success, #22c55e); }
+.jssMid { background: var(--color-warning, #f59e0b); }
+.jssLow { background: var(--color-error, #ef4444); }
 
 .responseTime { font-size: 0.775rem; display: flex; align-items: center; gap: 5px; margin-bottom: 0.625rem; opacity: 0.65; }
 

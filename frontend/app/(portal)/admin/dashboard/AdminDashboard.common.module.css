@@ -102,7 +102,7 @@
   border-radius: 9px;
   font-size: 0.6875rem;
   font-weight: 700;
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   color: #fff;
   padding: 0 4px;
 }
@@ -397,9 +397,9 @@
   flex-shrink: 0;
 }
 
-.statusDot_healthy { background: #16a34a; box-shadow: 0 0 6px rgba(22,163,74,0.4); }
-.statusDot_degraded { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,0.4); }
-.statusDot_down { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+.statusDot_healthy { background: var(--ml-green, #16a34a); box-shadow: 0 0 6px rgba(22,163,74,0.4); }
+.statusDot_degraded { background: var(--color-warning, #f59e0b); box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+.statusDot_down { background: var(--color-error, #ef4444); box-shadow: 0 0 6px rgba(239,68,68,0.4); }
 
 .statusDotLabel { font-size: 0.8125rem; font-weight: 500; flex: 1; }
 .statusDotValue { font-size: 0.75rem; font-weight: 600; }
@@ -512,7 +512,7 @@
   border-radius: 10px;
   font-size: 0.6875rem;
   font-weight: 700;
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   color: #fff;
   padding: 0 5px;
 }
@@ -538,10 +538,10 @@
   align-self: stretch;
 }
 
-.severity_critical { background: #ef4444; }
+.severity_critical { background: var(--color-error, #ef4444); }
 .severity_high { background: #f97316; }
-.severity_medium { background: #f59e0b; }
-.severity_low { background: #6b7280; }
+.severity_medium { background: var(--color-warning, #f59e0b); }
+.severity_low { background: var(--neutral-500, #6b7280); }
 
 .alertBody { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
 .alertMsg { font-size: 0.8125rem; font-weight: 500; }

@@ -98,7 +98,7 @@
 }
 
 .Dashboard--dark .Dashboard-section-action:hover {
-  background: #323943;
+  background: var(--bg-secondary-dark);
   color: #7dd3fc;
 }
 

@@ -41,7 +41,7 @@
 .ctaCard { background: linear-gradient(135deg, var(--brand) 0%, #6b4cff 100%); border-radius: 20px; padding: 48px; text-align: center; color: white; }
 .ctaTitle { font-size: 1.75rem; font-weight: 700; margin: 0 0 12px 0; }
 .ctaDesc { color: rgba(255,255,255,0.9); margin: 0 0 24px 0; font-size: 1.1rem; }
-.ctaButton { background: white !important; color: var(--brand) !important; }
+.ctaButton { background: var(--bg-primary, white) !important; color: var(--brand) !important; }
 
 /* Buttons */
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 10px; border: 1px solid transparent; text-decoration: none; font-weight: 600; cursor: pointer; transition: transform 0.2s ease,

@@ -134,7 +134,8 @@ export default function ClientSearchPage() {
         is_top_rated: f.is_top_rated || (f.rating >= 4.8 && (f.completed_jobs || 0) >= 10),
         response_time: f.response_time,
       })));
-    } catch {
+    } catch (err) {
+      console.error('Failed to load freelancers:', err);
       setFreelancers([]);
     } finally {
       setLoading(false);

@@ -119,6 +119,8 @@ async def lifespan(app: FastAPI):
                 "CREATE INDEX IF NOT EXISTS idx_milestones_contract_id ON milestones(contract_id)",
                 "CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id)",
                 "CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id)",
+                "CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users(password_reset_token)",
+                "CREATE INDEX IF NOT EXISTS idx_users_verify_token ON users(email_verification_token)",
             ]
             for idx_sql in indexes:
                 try:
@@ -168,6 +170,25 @@ async def lifespan(app: FastAPI):
             logger.info("startup.contract_columns_ensured")
         except Exception as e:
             logger.warning(f"startup.contract_columns_warning: {e}")
+
+        # Ensure auth token columns exist on users table (reset, verification)
+        try:
+            auth_cols = [
+                ("password_reset_token", "TEXT"),
+                ("password_reset_expires", "TEXT"),
+                ("email_verification_token", "TEXT"),
+            ]
+            existing_res = execute_query("PRAGMA table_info(users)")
+            existing_cols = set()
+            if existing_res and existing_res.get("rows"):
+                for row in existing_res["rows"]:
+                    existing_cols.add(row[1]["value"])
+            for col_name, col_type in auth_cols:
+                if col_name not in existing_cols:
+                    execute_query(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
+            logger.info("startup.auth_columns_ensured")
+        except Exception as e:
+            logger.warning(f"startup.auth_columns_warning: {e}")
 
         # Ensure milestone columns exist (submission_notes, approval_notes) (P0-3)
         try:
@@ -1046,6 +1067,24 @@ async def lifespan(app: FastAPI):
                 details TEXT,
                 created_at TEXT NOT NULL
             )""", "compliance_reports"),
+            ("""CREATE TABLE IF NOT EXISTS disputes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                contract_id INTEGER NOT NULL,
+                raised_by INTEGER NOT NULL,
+                dispute_type VARCHAR(50) NOT NULL,
+                description TEXT NOT NULL,
+                evidence TEXT,
+                status VARCHAR(20) NOT NULL DEFAULT 'open',
+                assigned_to INTEGER,
+                created_at DATETIME NOT NULL,
+                resolved_at DATETIME,
+                resolution TEXT,
+                resolution_amount NUMERIC(12,2),
+                updated_at DATETIME NOT NULL,
+                FOREIGN KEY(contract_id) REFERENCES contracts(id),
+                FOREIGN KEY(raised_by) REFERENCES users(id),
+                FOREIGN KEY(assigned_to) REFERENCES users(id)
+            )""", "disputes"),
             ("""CREATE TABLE IF NOT EXISTS dispute_evidence (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 dispute_id INTEGER NOT NULL,

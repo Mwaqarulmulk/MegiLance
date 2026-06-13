@@ -465,6 +465,6 @@
 .matchScoreBar { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px 8px 0 0; font-size: 0.78rem; font-weight: 600; }
 .matchTrack { flex: 1; height: 4px; border-radius: 2px; overflow: hidden; }
 .matchFill { height: 100%; border-radius: 2px; }
-.matchHigh { background: #22c55e; }
-.matchMid { background: #f59e0b; }
-.matchLow { background: #6b8de6; }
+.matchHigh { background: var(--color-success, #22c55e); }
+.matchMid { background: var(--color-warning, #f59e0b); }
+.matchLow { background: var(--color-primary-light, #6b8de6); }

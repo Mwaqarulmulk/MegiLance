@@ -186,6 +186,10 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
 
+    // Generate a stable ID for the combobox if none provided
+    const generatedId = React.useId();
+    const comboboxId = id || generatedId;
+
     const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
     // Flatten and filter options
@@ -390,6 +394,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
         return (
           <div
             key={option.value}
+            id={`${comboboxId}-option-${index}`}
             className={cn(
               commonStyles.option,
               themeStyles.option,
@@ -399,6 +404,9 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
               isHighlighted && themeStyles.optionHighlighted,
               option.disabled && commonStyles.optionDisabled
             )}
+            role="option"
+            aria-selected={isSelected}
+            aria-disabled={option.disabled}
             onClick={() => handleSelect(option)}
             onMouseEnter={() => setHighlightedIndex(index)}
           >
@@ -410,6 +418,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
       return (
         <div
           key={option.value}
+          id={`${comboboxId}-option-${index}`}
           className={cn(
             commonStyles.option,
             themeStyles.option,
@@ -482,7 +491,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
       >
         {label && (
           <label
-            htmlFor={id}
+            htmlFor={comboboxId}
             className={cn(commonStyles.label, themeStyles.label)}
           >
             {label}
@@ -492,11 +501,14 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
 
         <div
           ref={ref}
-          id={id}
+          id={comboboxId}
           role="combobox"
           aria-expanded={isOpen}
           aria-haspopup="listbox"
           aria-disabled={disabled}
+          aria-required={required || undefined}
+          aria-controls={isOpen ? `${comboboxId}-listbox` : undefined}
+          aria-activedescendant={isOpen && highlightedIndex >= 0 ? `${comboboxId}-option-${highlightedIndex}` : undefined}
           tabIndex={disabled ? -1 : 0}
           className={cn(
             commonStyles.trigger,
@@ -559,7 +571,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
             >
               {searchable && (
                 <div className={cn(commonStyles.searchContainer, themeStyles.searchContainer)}>
-                  <Search size={16} className={cn(commonStyles.searchIcon, themeStyles.searchIcon)} />
+                  <Search size={16} className={cn(commonStyles.searchIcon, themeStyles.searchIcon)} aria-hidden="true" />
                   <input
                     ref={inputRef}
                     type="text"
@@ -569,6 +581,8 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
                     onChange={handleSearchChange}
                     onClick={(e) => e.stopPropagation()}
                     autoFocus={autoFocus}
+                    aria-label={searchPlaceholder || 'Search options'}
+                    role="searchbox"
                   />
                   {searchQuery && (
                     <button
@@ -578,6 +592,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
                         e.stopPropagation();
                         setSearchQuery('');
                       }}
+                      aria-label="Clear search"
                     >
                       <X size={14} />
                     </button>
@@ -587,6 +602,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
 
               <div
                 ref={listRef}
+                id={`${comboboxId}-listbox`}
                 className={commonStyles.optionsList}
                 role="listbox"
                 aria-multiselectable={multiple}
@@ -644,6 +660,7 @@ const SmartSelect = forwardRef<HTMLDivElement, SmartSelectProps>(
         {/* Helper/Error text */}
         {(helperText || error) && (
           <div
+            role={error ? 'alert' : undefined}
             className={cn(
               commonStyles.helperText,
               error ? themeStyles.errorText : themeStyles.helperText

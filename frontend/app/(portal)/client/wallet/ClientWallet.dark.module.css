@@ -1,6 +1,6 @@
 /* @AI-HINT: ClientWallet dark theme — colors only */
 
-.container { background: #0f1117; color: #e5e7eb; }
+.container { background: var(--bg-primary-dark); color: var(--text-primary-dark); }
 .header { border-bottom: 1px solid #23263a; padding-bottom: 1rem; }
 .title { color: #f3f4f6; }
 .subtitle { color: #9ca3af; }

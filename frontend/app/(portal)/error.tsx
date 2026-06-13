@@ -2,7 +2,7 @@
 // Next.js error.js convention - catches runtime errors in the portal
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { RefreshCw, Home } from 'lucide-react';
 import { LottieAnimation, errorAlertAnimation } from '@/app/components/Animations/LottieAnimation';
 
@@ -18,6 +18,12 @@ export default function PortalError({
       console.error('Portal error:', error);
     }
   }, [error]);
+
+  const dashboardHref = useMemo(() => {
+    if (typeof window === 'undefined') return '/client/dashboard';
+    const role = localStorage.getItem('ml_user_role') || 'client';
+    return `/${role}/dashboard`;
+  }, []);
 
   return (
     <div
@@ -62,7 +68,7 @@ export default function PortalError({
             Try again
           </button>
           <a
-            href="/client/dashboard"
+            href={dashboardHref}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             <Home className="w-4 h-4" aria-hidden="true" />

@@ -110,11 +110,11 @@
 }
 
 /* Status Colors Base */
-.status-blue { color: #1d4ed8; background-color: #dbeafe; }
-.status-green { color: #15803d; background-color: #dcfce7; }
-.status-yellow { color: #a16207; background-color: #fef9c3; }
-.status-red { color: #b91c1c; background-color: #fee2e2; }
-.status-gray { color: #374151; background-color: #f3f4f6; }
+.status-blue { color: #1d4ed8; background-color: var(--color-primary-light, #dbeafe); }
+.status-green { color: #15803d; background-color: var(--color-success-light, #dcfce7); }
+.status-yellow { color: #a16207; background-color: var(--color-warning-light, #fef9c3); }
+.status-red { color: #b91c1c; background-color: var(--color-error-light, #fee2e2); }
+.status-gray { color: #374151; background-color: var(--bg-hover, #f3f4f6); }
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {

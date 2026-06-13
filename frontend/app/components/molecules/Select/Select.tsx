@@ -49,7 +49,13 @@ const Select: React.FC<SelectProps> = ({
   }, [resolvedTheme]);
 
   if (!resolvedTheme) {
-    return null;
+    // Render a placeholder that matches the select dimensions to prevent CLS
+    return (
+      <div className={cn(commonStyles.container, fullWidth && commonStyles.fullWidth, className)}>
+        {label && <div className={cn(commonStyles.label, lightStyles.label)} style={{ height: '1.25rem', marginBottom: '0.375rem' }} />}
+        <div className={cn(commonStyles.select, lightStyles.select, commonStyles['sizeMD'])} style={{ minHeight: '2.5rem' }} />
+      </div>
+    );
   }
 
   const hasError = !!error;

@@ -54,7 +54,7 @@
     opacity 0.2s ease; }
 .primary { background: var(--brand); color: white; box-shadow: 0 4px 12px rgba(69, 115, 223, 0.3); }
 .primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(69, 115, 223, 0.4); }
-.contactCard .primary { background: white; color: var(--brand); }
+.contactCard .primary { background: var(--bg-primary, white); color: var(--brand); }
 .secondary { background: var(--surface-2); color: inherit; border: 1px solid var(--border); }
 .secondary:hover { transform: translateY(-2px); box-shadow: var(--elevation-sm); }
 

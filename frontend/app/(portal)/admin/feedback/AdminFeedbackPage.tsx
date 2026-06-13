@@ -26,6 +26,7 @@ import {
   Users,
 } from 'lucide-react';
 import api from '@/lib/api';
+import { userFeedbackApi } from '@/lib/api';
 
 type FeedbackType = 'bug_report' | 'feature_request' | 'general' | 'improvement' | 'complaint' | string;
 type FeedbackStatus = 'open' | 'in_review' | 'resolved' | 'closed' | string;
@@ -102,7 +103,7 @@ function formatDate(dateStr: string) {
 export default function AdminFeedbackPage() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
-  const [items, setItems] = useState<FeedbackItem[]>(DEMO_ITEMS);
+  const [items, setItems] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<FeedbackType | 'all'>('all');
   const [filterStatus, setFilterStatus] = useState<FeedbackStatus | 'all'>('all');
@@ -112,12 +113,12 @@ export default function AdminFeedbackPage() {
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await (api as any).get('/feedback?limit=100');
+      const data = await userFeedbackApi.list() as any;
       if (Array.isArray(data)) setItems(data);
       else if (data?.items) setItems(data.items);
-      else setItems(DEMO_ITEMS);
+      else setItems([]);
     } catch {
-      setItems(DEMO_ITEMS);
+      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -128,7 +129,7 @@ export default function AdminFeedbackPage() {
   const updateStatus = async (id: string | number, status: FeedbackStatus) => {
     setUpdatingStatus(id);
     try {
-      await (api as any).patch(`/feedback/${id}/status`, { status });
+      await userFeedbackApi.update(id, { status });
       setItems(prev => prev.map(i => i.id === id ? { ...i, status } : i));
       if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
     } catch { /* silent */ } finally {

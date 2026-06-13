@@ -1,6 +1,6 @@
 /* @AI-HINT: About page light theme — colors only */
 .root {
-    background: #ffffff;
+    background: var(--bg-primary-light);
     color: #0f172a;
 }
 .title {
@@ -16,7 +16,7 @@
     color: #64748b;
 }
 .card {
-    background: #f8fafc;
+    background: var(--bg-secondary-light);
     border: 1px solid #e2e8f0;
 }
 .card:hover {
@@ -29,7 +29,7 @@
     color: #475569;
 }
 .valueItem {
-    background: #f8fafc;
+    background: var(--bg-secondary-light);
     border: 1px solid #e2e8f0;
 }
 .valueTitle {
@@ -39,7 +39,7 @@
     color: #475569;
 }
 .cta {
-    background: #f8fafc;
+    background: var(--bg-secondary-light);
     border: 1px solid #e2e8f0;
 }
 .ctaBtn {

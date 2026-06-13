@@ -1,5 +1,5 @@
 .hero {
-  background: white;
+  background: var(--bg-primary-light);
   color: var(--text-primary-light);
 }
 
@@ -48,7 +48,7 @@
 }
 
 .ctaSecondary {
-  background: #ffffff;
+  background: var(--bg-primary-light);
   color: var(--text-primary-light);
   border-color: var(--border-light);
 }

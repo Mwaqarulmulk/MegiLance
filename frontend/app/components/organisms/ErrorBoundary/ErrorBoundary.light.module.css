@@ -1,5 +1,5 @@
 /* @AI-HINT: Light theme styles for ErrorBoundary fallback */
-.container { background: #fff8f8; color: var(--text-primary-light); border-color: #fde2e2; }
+.container { background: var(--bg-primary-light); color: var(--text-primary-light); border-color: var(--border-light); }
 .icon { color: #dc2626; }
 .title { color: var(--text-primary-light); }
 .message { color: var(--text-secondary-light); }

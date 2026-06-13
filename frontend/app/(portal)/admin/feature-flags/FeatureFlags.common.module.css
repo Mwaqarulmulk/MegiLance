@@ -129,10 +129,10 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--bg-primary, #fff);
   transition: left 0.25s;
 }
-.toggleOff { background: #ccc; }
+.toggleOff { background: var(--neutral-300, #ccc); }
 .toggleOff .toggleKnob { left: 3px; }
 .toggleOn { background: var(--color-success, var(--ml-green)); }
 .toggleOn .toggleKnob { left: 23px; }
@@ -156,7 +156,7 @@
   width: 100px;
   height: 6px;
   border-radius: 3px;
-  background: #e0e0e0;
+  background: var(--surface-tertiary, #e0e0e0);
   overflow: hidden;
   display: inline-block;
   vertical-align: middle;
@@ -178,7 +178,7 @@
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  background: #fee2e2;
+  background: var(--color-error-light, #fee2e2);
   color: #991b1b;
 }
 @media (max-width: 768px) {

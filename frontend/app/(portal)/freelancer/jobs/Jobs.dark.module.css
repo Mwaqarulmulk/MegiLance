@@ -148,7 +148,7 @@
 .filterChip { color: #94a3b8; border-color: #2a2d3e; }
 .filterChip:hover { background: rgba(255,255,255,0.06); border-color: #3a3d4e; }
 .filterChipActive { background: rgba(107,141,230,0.12); border-color: #6b8de6; color: #6b8de6; }
-.budgetInput { background: #0f1419; border-color: #2a2d3e; color: #e2e8f0; }
+.budgetInput { background: var(--bg-primary-dark); border-color: #2a2d3e; color: #e2e8f0; }
 .budgetInput::placeholder { color: #475569; }
 .clearBtn { color: #f87171; }
 

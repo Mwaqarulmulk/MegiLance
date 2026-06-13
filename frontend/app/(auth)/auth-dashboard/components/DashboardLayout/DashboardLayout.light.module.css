@@ -1,5 +1,5 @@
 .dashboardLayout {
-  background-color: #f5f7fa; /* A light, neutral background */
+  background-color: var(--bg-secondary-light); /* A light, neutral background */
 }
 
 .mainContent {

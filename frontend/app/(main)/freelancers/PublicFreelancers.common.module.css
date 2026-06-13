@@ -497,9 +497,9 @@
 .jssLabel { font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
 .jssTrack { flex: 1; height: 4px; border-radius: 2px; overflow: hidden; }
 .jssFill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
-.jssHigh { background: #22c55e; }
-.jssMid { background: #f59e0b; }
-.jssLow { background: #6b8de6; }
+.jssHigh { background: var(--color-success, #22c55e); }
+.jssMid { background: var(--color-warning, #f59e0b); }
+.jssLow { background: var(--color-primary-light, #6b8de6); }
 .reviewCount { font-size: 0.75rem; opacity: 0.6; margin-left: 2px; }
 .projectsLine { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; margin-top: 0.5rem; flex-wrap: wrap; }
 

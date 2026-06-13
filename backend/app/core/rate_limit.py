@@ -24,16 +24,25 @@ def get_real_client_ip(request: Request) -> str:
 
 import os
 
-# Disable rate limiting in test environments so fixtures can create many users quickly
-_testing = os.getenv("TESTING", "").lower() in ("1", "true", "yes")
+# Rate limiting is ALWAYS enabled except during pytest unit tests.
+# NEVER disable rate limiting via environment variables in deployed environments.
+_testing = os.getenv("PYTEST_CURRENT_TEST") is not None
+
+# Determine storage backend: use Redis if configured, otherwise in-memory
+_redis_host = os.getenv("REDIS_HOST") or os.getenv("redis_host")
+_redis_port = os.getenv("REDIS_PORT") or os.getenv("redis_port")
+if _redis_host and _redis_port:
+    _storage_uri = f"redis://{_redis_host}:{_redis_port}"
+else:
+    _storage_uri = "memory://"
 
 # Initialize limiter
 # Uses real client IP as the key for rate limiting
 limiter = Limiter(
     key_func=get_real_client_ip,
     default_limits=["200/minute"],  # Global default: 200 requests per minute
-    storage_uri="memory://",  # In-memory storage (use Redis in production)
-    enabled=not _testing,  # Disabled when TESTING=1
+    storage_uri=_storage_uri,  # Redis in production, memory in dev
+    enabled=not _testing,  # Disabled ONLY during pytest
     headers_enabled=True,  # Include X-RateLimit-* response headers
 )
 

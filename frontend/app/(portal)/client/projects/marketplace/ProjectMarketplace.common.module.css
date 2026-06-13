@@ -141,7 +141,7 @@
   left: 0;
   margin-top: 0.5rem;
   padding: 0.75rem;
-  background: white;
+  background: var(--bg-primary, white);
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -240,17 +240,17 @@
 }
 
 .levelEntry {
-  background: #dbeafe;
+  background: var(--color-primary-light, #dbeafe);
   color: #0c4a6e;
 }
 
 .levelIntermediate {
-  background: #fef3c7;
+  background: var(--color-warning-light, #fef3c7);
   color: #78350f;
 }
 
 .levelExpert {
-  background: #dcfce7;
+  background: var(--color-success-light, #dcfce7);
   color: #15803d;
 }
 

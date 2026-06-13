@@ -226,7 +226,7 @@ const Dashboard: React.FC = () => {
       proposalsSent: analytics?.pendingProposals || 0,
       profileViews: analytics?.profileViews || 0,
       inquiryRate: Math.round(((analytics?.profileViews || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.profileViews || 1) : 0) * 100),
-      winRate: Math.round(((analytics?.pendingProposals || 1) > 0 ? (analytics?.activeProjects || 0) / (analytics?.pendingProposals || 1) : 0) * 100),
+      winRate: Math.round(((analytics?.pendingProposals || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.pendingProposals || 1) : 0) * 100),
       completionRate: sellerStats?.completionRate ?? 100,
       responseRate: sellerStats?.responseRate ?? 100,
       onTimeRate: sellerStats?.onTimeDeliveryRate ?? 100,

@@ -222,17 +222,17 @@
 
 /* Status Colors */
 .online .dot {
-  background: #22c55e;
+  background: var(--color-success, #22c55e);
   box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
 
 .degraded .dot {
-  background: #f59e0b;
+  background: var(--color-warning, #f59e0b);
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
 }
 
 .offline .dot {
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 

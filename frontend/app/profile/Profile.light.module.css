@@ -80,7 +80,7 @@
 
 /* Share Modal Light Theme */
 .shareModal {
-  background: #fff;
+  background: var(--bg-primary-light);
   border: 1px solid var(--border-light);
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
 }

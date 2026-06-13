@@ -18,7 +18,7 @@
 
 .roleCard {
   border-color: var(--border-light);
-  background: #f9fafb;
+  background: var(--bg-secondary-light);
 }
 
 .roleCard:hover {

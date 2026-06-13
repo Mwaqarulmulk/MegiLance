@@ -28,12 +28,12 @@
 }
 
 .welcomeBannerPrimaryAction {
-    background: #f8fff9;
+    background: #ffffff;
     color: #196f3f;
 }
 
 .welcomeBannerPrimaryAction:hover {
-    background: #eaffef;
+    background: #e8f5e9;
 }
 
 .welcomeBannerDismissAction {

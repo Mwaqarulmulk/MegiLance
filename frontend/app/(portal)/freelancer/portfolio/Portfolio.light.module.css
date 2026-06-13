@@ -1,6 +1,6 @@
 /* @AI-HINT: Portfolio Showcase page - light theme */
 
-.container { background: #f9fafb; }
+.container { background: var(--bg-primary-light); }
 .title { color: #111827; }
 .subtitle { color: var(--color-text-secondary-light); }
 

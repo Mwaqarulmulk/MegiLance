@@ -24,11 +24,11 @@ interface DisputeEvidence {
 
 interface Dispute {
   id: number;
-  title: string;
+  contract_id: number;
+  raised_by: number;
+  dispute_type: string;
   description: string;
   status: string;
-  contract_id: number;
-  raised_by_id: number;
   created_at: string;
   updated_at: string;
   resolution?: string;
@@ -36,13 +36,18 @@ interface Dispute {
   evidence?: DisputeEvidence[];
 }
 
+function formatDisputeType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
 const getStatusBadgeVariant = (status: string) => {
   switch (status.toLowerCase()) {
     case 'open': return 'danger';
-    case 'in_progress': return 'warning';
+    case 'in_review': return 'warning';
     case 'resolved': return 'success';
     case 'closed': return 'secondary';
-    default: return 'info';
+    case 'escalated': return 'info';
+    default: return 'secondary';
   }
 };
 
@@ -66,7 +71,7 @@ const UserDisputeDetailsPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await (api.disputes as any).get?.(Number(params.id));
+      const data = await api.disputes.get(Number(params.id)) as Dispute;
       setDispute(data);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
@@ -84,13 +89,13 @@ const UserDisputeDetailsPage: React.FC = () => {
 
   const handleUploadEvidence = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0 || !dispute) return;
-    
+
     const file = e.target.files[0];
     setUploading(true);
     try {
-      await (api.disputes as any).uploadEvidence?.(dispute.id, file);
+      await api.disputes.uploadEvidence(dispute.id, file);
       toaster.notify({ title: 'Success', description: 'Evidence uploaded successfully', variant: 'success' });
-      fetchDispute(); // Refresh data
+      fetchDispute();
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to upload evidence';
       if (process.env.NODE_ENV === 'development') {
@@ -131,9 +136,9 @@ const UserDisputeDetailsPage: React.FC = () => {
 
   return (
     <div className={cn(styles.container)}>
-      <Button 
-        variant="ghost" 
-        onClick={handleBack} 
+      <Button
+        variant="ghost"
+        onClick={handleBack}
         className="mb-4"
       >
         <ArrowLeft size={16} /> Back
@@ -141,7 +146,7 @@ const UserDisputeDetailsPage: React.FC = () => {
 
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>{dispute.title}</h1>
+          <h1 className={styles.title}>{formatDisputeType(dispute.dispute_type)}</h1>
           <div className={styles.meta}>
             <Badge variant={getStatusBadgeVariant(dispute.status) as any}>
               {dispute.status.replace('_', ' ')}
@@ -158,8 +163,8 @@ const UserDisputeDetailsPage: React.FC = () => {
         <div>
           <strong>Status: {dispute.status.replace('_', ' ')}</strong>
           <p>
-            {isResolved 
-              ? 'This dispute has been resolved. Please check the resolution details below.' 
+            {isResolved
+              ? 'This dispute has been resolved. Please check the resolution details below.'
               : 'Our support team is reviewing your dispute. You will be notified of any updates.'}
           </p>
         </div>
@@ -183,9 +188,9 @@ const UserDisputeDetailsPage: React.FC = () => {
                 disabled={uploading}
               />
               <label htmlFor="evidence-upload">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   as="span"
                   isLoading={uploading}
                 >
@@ -195,16 +200,16 @@ const UserDisputeDetailsPage: React.FC = () => {
             </div>
           )}
         </div>
-        
+
         {dispute.evidence && dispute.evidence.length > 0 ? (
           <div className={styles.evidenceList}>
           {dispute.evidence.map((item: DisputeEvidence, index: number) => (
               <div key={index} className={styles.evidenceItem}>
                 <FileText className={styles.evidenceIcon} />
                 <span className={styles.evidenceName}>{item.filename || `Evidence ${index + 1}`}</span>
-                <Button 
-                  variant="link" 
-                  size="sm" 
+                <Button
+                  variant="link"
+                  size="sm"
                   onClick={() => window.open(item.url, '_blank')}
                 >
                   View

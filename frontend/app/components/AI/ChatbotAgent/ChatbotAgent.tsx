@@ -4,7 +4,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { MessageSquare, X, Send, Sparkles, Zap, HelpCircle, FileText, Pickaxe, Maximize2, Minimize2, Paperclip, Command } from 'lucide-react';
 
@@ -536,7 +535,7 @@ export default function ChatbotAgent() {
           aria-label="Loading chat"
           disabled
         >
-          <Image src="/images/sections/chatbot-mascot.png" alt="MegiBot" width={48} height={48} style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <RobotModel size={48} />
         </button>
       </div>
     );
@@ -559,13 +558,7 @@ export default function ChatbotAgent() {
           <div className={cn(commonStyles.chatbotAgentHeader, themeStyles.chatbotAgentHeader)}>
             <div className={commonStyles.headerLeft}>
               <div className={cn(commonStyles.aiAvatar, themeStyles.aiAvatar)}>
-                  <Image
-                    src="/images/sections/chatbot-mascot.png"
-                    alt="MegiBot AI assistant"
-                    width={36}
-                    height={36}
-                    style={{ width: 36, height: 36, objectFit: 'contain' }}
-                  />
+                  <RobotModel size={36} />
                 <div className={cn(commonStyles.aiAvatarPulse, themeStyles.aiAvatarPulse)} />
               </div>
               <div className={commonStyles.headerInfo}>
@@ -798,13 +791,7 @@ export default function ChatbotAgent() {
               transition={{ duration: 0.3, type: 'spring' }}
               className={commonStyles.flexCenter}
             >
-              <Image
-                src="/images/sections/chatbot-mascot.png"
-                alt="MegiBot — click to chat"
-                width={72}
-                height={72}
-                style={{ width: 72, height: 72, objectFit: 'contain', pointerEvents: 'none' }}
-              />
+              <RobotModel size={72} />
             </motion.div>
           )}
         </AnimatePresence>

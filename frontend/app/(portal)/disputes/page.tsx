@@ -13,6 +13,7 @@ import Loading from '@/app/components/atoms/Loading/Loading';
 interface Dispute {
   id: number;
   contract_id: number;
+  raised_by: number;
   dispute_type: string;
   description: string;
   status: string;
@@ -23,13 +24,21 @@ function statusVariant(status: string) {
   switch (status.toLowerCase()) {
     case 'open':
       return 'danger';
-    case 'in_progress':
+    case 'in_review':
       return 'warning';
     case 'resolved':
       return 'success';
+    case 'closed':
+      return 'secondary';
+    case 'escalated':
+      return 'info';
     default:
       return 'secondary';
   }
+}
+
+function formatDisputeType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 export default function DisputesPage() {
@@ -59,7 +68,7 @@ export default function DisputesPage() {
 
   const counts = useMemo(() => ({
     open: disputes.filter(d => d.status === 'open').length,
-    inProgress: disputes.filter(d => d.status === 'in_progress').length,
+    inReview: disputes.filter(d => d.status === 'in_review').length,
     resolved: disputes.filter(d => ['resolved', 'closed'].includes(d.status)).length,
   }), [disputes]);
 
@@ -92,8 +101,8 @@ export default function DisputesPage() {
           <div className="text-sm text-slate-500">Open</div>
         </div>
         <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-800">
-          <div className="text-2xl font-semibold">{counts.inProgress}</div>
-          <div className="text-sm text-slate-500">In review</div>
+          <div className="text-2xl font-semibold">{counts.inReview}</div>
+          <div className="text-sm text-slate-500">In Review</div>
         </div>
         <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-800">
           <div className="text-2xl font-semibold">{counts.resolved}</div>
@@ -126,11 +135,12 @@ export default function DisputesPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">Contract #{dispute.contract_id}</span>
+                    <span className="font-semibold">{formatDisputeType(dispute.dispute_type)}</span>
                     <Badge variant={statusVariant(dispute.status) as any}>
                       {dispute.status.replace('_', ' ')}
                     </Badge>
                   </div>
+                  <p className="mt-1 text-xs text-slate-400">Contract #{dispute.contract_id}</p>
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">
                     {dispute.description}
                   </p>

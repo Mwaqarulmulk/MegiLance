@@ -1,5 +1,5 @@
 # @AI-HINT: Auth router — login, register, logout, 2FA, password reset, email verification
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime, timezone
@@ -33,6 +33,7 @@ from app.services.auth_service import (
     update_backup_codes,
     check_email_available,
 )
+from app.core.config import get_settings
 from app.services.email_service import email_service
 from app.db.turso_http import execute_query as eq, parse_rows as pr
 from app.core.rate_limit import auth_rate_limit, password_reset_rate_limit, email_rate_limit
@@ -81,7 +82,7 @@ class EmailVerifyRequest(BaseModel):
 
 @router.post("/login")
 @auth_rate_limit()
-async def login(request: Request, body: LoginRequest):
+async def login(request: Request, body: LoginRequest, response: Response):
     user = authenticate_user(body.email, body.password)
     if not user:
         raise HTTPException(
@@ -103,6 +104,18 @@ async def login(request: Request, body: LoginRequest):
         custom_claims={"user_id": user.id},
     )
 
+    # Set auth_token as httpOnly cookie for middleware auth protection
+    _settings = get_settings()
+    response.set_cookie(
+        key="auth_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        secure=_settings.environment == "production",
+        max_age=3600,  # 1 hour
+        path="/",
+    )
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -122,7 +135,7 @@ async def login(request: Request, body: LoginRequest):
 
 @router.post("/register")
 @auth_rate_limit()
-async def register(request: Request, body: RegisterRequest):
+async def register(request: Request, body: RegisterRequest, response: Response):
     if check_email_exists(body.email):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -189,6 +202,18 @@ async def register(request: Request, body: RegisterRequest):
     refresh_token = create_refresh_token(
         subject=user["email"],
         custom_claims={"user_id": user["id"]},
+    )
+
+    # Set auth_token as httpOnly cookie for middleware auth protection
+    _settings = get_settings()
+    response.set_cookie(
+        key="auth_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        secure=_settings.environment == "production",
+        max_age=3600,
+        path="/",
     )
 
     return {
@@ -323,7 +348,7 @@ async def update_me(
 # === Logout ===
 
 @router.post("/logout")
-async def logout(request: Request, current_user=Depends(get_current_user)):
+async def logout(request: Request, current_user=Depends(get_current_user), response: Response = None):
     token = request.headers.get("Authorization", "").replace("Bearer ", "")
     if token:
         try:
@@ -335,13 +360,18 @@ async def logout(request: Request, current_user=Depends(get_current_user)):
         except Exception:
             pass
 
+    # Clear auth cookies
+    if response:
+        response.delete_cookie(key="auth_token", path="/")
+        response.delete_cookie(key="refresh_token", path="/")
+
     return {"message": "Logged out successfully"}
 
 
 # === Refresh Token ===
 
 @router.post("/refresh")
-async def refresh_token(request: Request):
+async def refresh_token(request: Request, response: Response):
     try:
         body = await request.json()
     except Exception:
@@ -401,6 +431,18 @@ async def refresh_token(request: Request):
             custom_claims={"user_id": user.id},
         )
 
+        # Refresh the auth_token cookie
+        _settings = get_settings()
+        response.set_cookie(
+            key="auth_token",
+            value=new_access,
+            httponly=True,
+            samesite="lax",
+            secure=_settings.environment == "production",
+            max_age=3600,
+            path="/",
+        )
+
         return {
             "access_token": new_access,
             "refresh_token": new_refresh,
@@ -425,23 +467,12 @@ async def forgot_password(request: Request, body: PasswordResetRequest):
         return {"message": "If the email exists, a reset link has been sent"}
 
     reset_token = secrets.token_urlsafe(32)
-    now = datetime.now(timezone.utc).isoformat()
-
-    # Merge into existing profile_data instead of overwriting
-    import json as _json
-    existing_profile = {}
-    raw_pd = user.get("profile_data")
-    if raw_pd:
-        try:
-            existing_profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
-        except Exception:
-            existing_profile = {}
-    existing_profile["reset_token"] = reset_token
     from datetime import timedelta
-    existing_profile["reset_token_expires"] = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    expires = datetime.now(timezone.utc) + timedelta(hours=1)
 
     update_user_fields(user["id"], {
-        "profile_data": _json.dumps(existing_profile)
+        "password_reset_token": reset_token,
+        "password_reset_expires": expires.isoformat(),
     })
 
     try:
@@ -465,34 +496,25 @@ async def forgot_password(request: Request, body: PasswordResetRequest):
 @router.post("/reset-password")
 @password_reset_rate_limit()
 async def reset_password(request: Request, body: PasswordResetConfirm):
-    from app.db.turso_http import execute_query as eq, parse_rows as pr
-    import json as _json
-    from datetime import timezone as _tz
+    if not body.token or len(body.token) < 20:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token",
+        )
 
-    # Fetch all users with profile_data and match token in Python (avoids SQL LIKE injection)
-    result = eq("SELECT id, email, name, profile_data FROM users WHERE profile_data IS NOT NULL AND profile_data != ''", [])
+    result = eq(
+        "SELECT id, email, name FROM users WHERE password_reset_token = ?",
+        [body.token],
+    )
     rows = pr(result)
 
     user = None
     for row in rows:
-        raw_pd = row.get("profile_data")
-        if not raw_pd:
-            continue
-        try:
-            profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
-        except Exception:
-            continue
-        if not isinstance(profile, dict):
-            continue
-        stored_token = profile.get("reset_token")
-        expires_str = profile.get("reset_token_expires")
-        if stored_token != body.token:
-            continue
-        # Check expiry
+        expires_str = row.get("password_reset_expires")
         if expires_str:
             try:
-                from datetime import datetime as _dt
-                expires = _dt.fromisoformat(expires_str)
+                from datetime import datetime as _dt, timezone as _tz
+                expires = _dt.fromisoformat(expires_str) if isinstance(expires_str, str) else expires_str
                 if _dt.now(_tz.utc) > expires:
                     continue
             except Exception:
@@ -514,18 +536,13 @@ async def reset_password(request: Request, body: PasswordResetConfirm):
         )
 
     hashed = get_password_hash(body.new_password)
-    update_user_fields(user["id"], {"hashed_password": hashed})
+    update_user_fields(user["id"], {
+        "hashed_password": hashed,
+        "password_reset_token": "",
+        "password_reset_expires": "",
+    })
 
-    # Clear the reset token from profile_data
-    raw_pd = user.get("profile_data", "{}")
-    try:
-        profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else {}
-    except Exception:
-        profile = {}
-    profile.pop("reset_token", None)
-    profile.pop("reset_token_expires", None)
-    update_user_fields(user["id"], {"profile_data": _json.dumps(profile)})
-
+    logger.info(f"Password reset completed for user {user['id']}")
     return {"message": "Password reset successfully"}
 
 
@@ -534,46 +551,24 @@ async def reset_password(request: Request, body: PasswordResetConfirm):
 @router.post("/verify-email")
 async def verify_email(request: EmailVerifyRequest):
     from app.db.turso_http import execute_query as eq, parse_rows as pr
-    import json as _json
 
-    # Fetch users with profile_data and match token in Python (avoids SQL LIKE injection)
-    result = eq("SELECT id, profile_data FROM users WHERE profile_data IS NOT NULL AND profile_data != ''", [])
+    result = eq(
+        "SELECT id FROM users WHERE email_verification_token = ?",
+        [request.token],
+    )
     rows = pr(result)
 
-    matched_user_id = None
-    for row in rows:
-        raw_pd = row.get("profile_data")
-        if not raw_pd:
-            continue
-        try:
-            profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
-        except Exception:
-            continue
-        if not isinstance(profile, dict):
-            continue
-        if profile.get("verification_token") == request.token:
-            matched_user_id = row["id"]
-            break
-
-    if not matched_user_id:
+    if not rows:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid or expired verification token",
         )
 
-    update_user_fields(matched_user_id, {"email_verified": 1})
-
-    # Clear the verification token
-    user_result = eq("SELECT profile_data FROM users WHERE id = ?", [matched_user_id])
-    user_rows = pr(user_result)
-    if user_rows:
-        raw_pd = user_rows[0].get("profile_data", "{}")
-        try:
-            profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else {}
-        except Exception:
-            profile = {}
-        profile.pop("verification_token", None)
-        update_user_fields(matched_user_id, {"profile_data": _json.dumps(profile)})
+    matched_user_id = rows[0]["id"]
+    update_user_fields(matched_user_id, {
+        "email_verified": 1,
+        "email_verification_token": "",
+    })
 
     return {"message": "Email verified successfully"}
 
@@ -600,19 +595,8 @@ async def resend_verification(request: Request):
         return {"message": "Email already verified"}
 
     verification_token = secrets.token_urlsafe(32)
-    # Merge into existing profile_data instead of overwriting
-    import json as _json
-    existing_profile = {}
-    raw_pd = user.get("profile_data")
-    if raw_pd:
-        try:
-            existing_profile = _json.loads(raw_pd) if isinstance(raw_pd, str) else raw_pd
-        except Exception:
-            existing_profile = {}
-    existing_profile["verification_token"] = verification_token
-
     update_user_fields(user["id"], {
-        "profile_data": _json.dumps(existing_profile)
+        "email_verification_token": verification_token,
     })
 
     try:

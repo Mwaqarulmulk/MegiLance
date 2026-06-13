@@ -46,7 +46,8 @@ import {
   Activity,
   Heart,
   Globe,
-  Flag
+  Flag,
+  PenTool
 } from 'lucide-react';
 import {
   clientNavItems,
@@ -92,6 +93,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Mail: <Mail size={18} />,
   Home: <Home size={18} />,
   Flag: <Flag size={18} />,
+  PenTool: <PenTool size={18} />,
 };
 
 // Define the structure for a navigation item
@@ -202,9 +204,8 @@ export default function SidebarNav({
   );
 
   return (
-    <aside className={sidebarClasses}>
-      <nav className={styles.sidebarNavNav}>
-        <ul className={styles.sidebarNavList}>
+    <div className={sidebarClasses} role={isCollapsed ? 'tooltip' : undefined}>
+      <ul className={styles.sidebarNavList}>
           {navItemsWithBadges.map((item) => {
             const isDirectActive = pathname === item.href || pathname.startsWith(item.href + '/');
             const isChildActive = item.submenu?.some(
@@ -299,7 +300,6 @@ export default function SidebarNav({
             );
           })}
         </ul>
-      </nav>
-    </aside>
+    </div>
   );
 };

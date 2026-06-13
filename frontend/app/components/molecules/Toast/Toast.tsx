@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
 import commonStyles from './Toast.common.module.css';
 import lightStyles from './Toast.light.module.css';
@@ -99,7 +100,7 @@ const Toast: React.FC<ToastProps> = ({
           aria-label="Close"
           onClick={onClose}
         >
-          ×
+          <X size={14} aria-hidden="true" />
         </button>
       )}
     </>

@@ -9,7 +9,7 @@
 }
 
 .statCard {
-  background: #1a1f2e;
+  background: var(--bg-secondary-dark);
   border: 1px solid var(--bg-secondary-dark);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
@@ -23,12 +23,12 @@
 }
 
 .filters {
-  background: #1a1f2e;
+  background: var(--bg-secondary-dark);
   border: 1px solid var(--bg-secondary-dark);
 }
 
 .searchInput {
-  background: #0f1419;
+  background: var(--bg-primary-dark);
   color: var(--color-text-primary-dark);
   border-color: var(--bg-secondary-dark);
 }
@@ -39,7 +39,7 @@
 }
 
 .filterSelect {
-  background: #0f1419;
+  background: var(--bg-primary-dark);
   color: var(--color-text-primary-dark);
   border-color: var(--bg-secondary-dark);
 }
@@ -53,7 +53,7 @@
 }
 
 .projectCard {
-  background: #1a1f2e;
+  background: var(--bg-secondary-dark);
   border: 1px solid var(--bg-secondary-dark);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
@@ -75,7 +75,7 @@
 }
 
 .pageBtn {
-  background: #0f1419;
+  background: var(--bg-primary-dark);
   color: var(--color-text-primary-dark);
   border-color: var(--bg-secondary-dark);
 }

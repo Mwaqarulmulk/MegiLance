@@ -1,5 +1,5 @@
 /* @AI-HINT: Dark theme for Admin Moderation */
-.container { background: #0f1419; }
+.container { background: var(--bg-primary-dark); }
 .title { color: var(--color-text-primary-dark); }
 .subtitle { color: var(--text-tertiary-dark); }
 .statCard { background: #1a1f2e; border: 1px solid var(--bg-secondary-dark); }

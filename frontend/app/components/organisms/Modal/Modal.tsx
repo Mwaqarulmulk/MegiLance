@@ -164,6 +164,7 @@ const Modal: React.FC<ModalProps> = ({
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? modalTitleId : undefined}
+            aria-label={!title ? 'Dialog' : undefined}
             aria-describedby={description ? modalDescId : undefined}
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}

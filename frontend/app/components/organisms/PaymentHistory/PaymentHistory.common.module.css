@@ -259,22 +259,22 @@
 }
 
 .statusCompleted {
-  background-color: #d4edda;
+  background-color: var(--color-success-light, #d4edda);
   color: #155724;
 }
 
 .statusPending {
-  background-color: #fff3cd;
+  background-color: var(--color-warning-light, #fff3cd);
   color: #856404;
 }
 
 .statusFailed {
-  background-color: #f8d7da;
+  background-color: var(--color-error-light, #f8d7da);
   color: #721c24;
 }
 
 .statusCancelled {
-  background-color: #e2e3e5;
+  background-color: var(--surface-tertiary, #e2e3e5);
   color: #383d41;
 }
 

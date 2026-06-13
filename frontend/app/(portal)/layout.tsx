@@ -5,6 +5,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import AppLayout from "../components/templates/AppLayout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
@@ -181,7 +182,7 @@ export default function PortalLayout({
               ⚠️ <strong>Please verify your email address.</strong> Check your
               inbox for a verification link.
               {resendMessage && (
-                <span style={{ marginLeft: 8, fontStyle: "italic" }}>
+                <span className="ml-2 italic">
                   {resendMessage}
                 </span>
               )}
@@ -216,43 +217,29 @@ export default function PortalLayout({
         {needsOnboarding && (
           <div
             role="alert"
-            style={{
-              position: "sticky",
-              top: showVerifyBanner ? "48px" : 0,
-              zIndex: 9998,
-              background: "#EBF5FF",
-              borderBottom: "1px solid #BFDBFE",
-              padding: "10px 20px",
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              fontSize: "0.875rem",
-              color: "#1E40AF",
-            }}
+            className={cn(
+              commonStyles.onboardingBanner,
+              themeStyles.onboardingBanner,
+              showVerifyBanner && commonStyles.onboardingBannerBelowVerify
+            )}
           >
-            <span style={{ flex: 1 }}>
+            <span className={commonStyles.onboardingBannerText}>
               👋 <strong>Complete your profile</strong> to start using MegiLance
               — post projects, submit proposals, and more.
             </span>
-            <a
+            <Link
               href={
                 hookUser?.user_type === "client"
                   ? "/onboarding/client"
                   : "/onboarding"
               }
-              style={{
-                padding: "4px 14px",
-                borderRadius: "6px",
-                background: "#1E40AF",
-                color: "white",
-                fontWeight: 600,
-                fontSize: "0.8125rem",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-              }}
+              className={cn(
+                commonStyles.onboardingBannerBtn,
+                themeStyles.onboardingBannerBtn
+              )}
             >
               Complete Profile →
-            </a>
+            </Link>
           </div>
         )}
 

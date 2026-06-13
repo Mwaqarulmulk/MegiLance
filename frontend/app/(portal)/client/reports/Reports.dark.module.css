@@ -1,5 +1,5 @@
 /* @AI-HINT: Dark theme for Client Reports page */
-.container { background: #0f1419; }
+.container { background: var(--bg-primary-dark); }
 .title { color: var(--color-text-primary-dark); }
 .subtitle { color: var(--text-tertiary-dark); }
 .dateSelect { background: #1a1f2e; color: var(--color-text-primary-dark); border-color: var(--bg-secondary-dark); }

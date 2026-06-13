@@ -1,7 +1,7 @@
 // @AI-HINT: Freelancer Contracts component - data table with virtual scrolling, column visibility, selection, export, density toggle, and API integration for managing smart contracts.
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -80,57 +80,52 @@ const Contracts = () => {
   const [retryCount, setRetryCount] = useState(0);
 
   // Fetch contracts from API with retry logic
-  const fetchContracts = useEffect(() => {
-    let cancelled = false;
+  const doFetch = useCallback(async () => {
+    setFetchLoading(true);
+    setFetchError(null);
     
-    const doFetch = async () => {
-      setFetchLoading(true);
-      setFetchError(null);
+    try {
+      const data = await api.contracts.list();
       
-      try {
-        const data = await api.contracts.list();
-        if (cancelled) return;
-        
-        const items = (data as any)?.items || (Array.isArray(data) ? data : []);
-        
-        // Validate contract data structure
-        const mapped: ContractData[] = items.map((c: any) => ({
-          id: c?.id ?? c?.contract_id ?? 0,
-          projectTitle: c?.job_title || c?.project_title || c?.title || 'Untitled',
-          clientName: c?.client_name || c?.client || '—',
-          value: typeof c?.amount === 'number' ? c.amount 
-            : typeof c?.contract_amount === 'number' ? c.contract_amount 
-            : typeof c?.value === 'number' ? c.value 
-            : 0,
-          status: c?.status || 'Active',
-          contractAddress: c?.contract_address || c?.escrow_address || '—',
-        })).filter((c: ContractData) => Number(c.id) > 0);
-        
-        setContracts(mapped);
-      } catch (err: any) {
-        if (cancelled) return;
-        
-        // Retry up to 3 times with exponential backoff
-        if (retryCount < 3) {
-          const delay = Math.pow(2, retryCount) * 1000;
-          setRetryCount(prev => prev + 1);
-          setTimeout(() => doFetch(), delay);
-          return;
-        }
-        
-        setFetchError(err?.message || 'Failed to load contracts. Please try again.');
-        setContracts([]);
-      } finally {
-        if (!cancelled) {
-          setFetchLoading(false);
-        }
+      const items = (data as any)?.items || (Array.isArray(data) ? data : []);
+      
+      // Validate contract data structure
+      const mapped: ContractData[] = items.map((c: any) => ({
+        id: c?.id ?? c?.contract_id ?? 0,
+        projectTitle: c?.job_title || c?.project_title || c?.title || 'Untitled',
+        clientName: c?.client_name || c?.client || '—',
+        value: typeof c?.amount === 'number' ? c.amount 
+          : typeof c?.contract_amount === 'number' ? c.contract_amount 
+          : typeof c?.value === 'number' ? c.value 
+          : 0,
+        status: c?.status || 'Active',
+        contractAddress: c?.contract_address || c?.escrow_address || '—',
+      })).filter((c: ContractData) => Number(c.id) > 0);
+      
+      setContracts(mapped);
+    } catch (err: any) {
+      // Retry up to 3 times with exponential backoff
+      if (retryCount < 3) {
+        const delay = Math.pow(2, retryCount) * 1000;
+        setRetryCount(prev => prev + 1);
+        setTimeout(() => doFetch(), delay);
+        return;
       }
-    };
-    
-    doFetch();
-    
-    return () => { cancelled = true; };
+      
+      setFetchError(err?.message || 'Failed to load contracts. Please try again.');
+      setContracts([]);
+    } finally {
+      setFetchLoading(false);
+    }
   }, [retryCount]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!cancelled) {
+      doFetch();
+    }
+    return () => { cancelled = true; };
+  }, [doFetch]);
 
   const [query, setQuery] = usePersistedState<string>('freelancer:contracts:q', '');
   const [sortKey, setSortKey] = usePersistedState<'projectTitle' | 'clientName' | 'value' | 'status'>('freelancer:contracts:sortKey', 'projectTitle');
@@ -143,7 +138,6 @@ const Contracts = () => {
   const [actionType, setActionType] = useState<'extend' | 'dispute' | null>(null);
   const [actionTargetId, setActionTargetId] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const rowHeight = density === 'compact' ? 40 : 48;
 
@@ -193,13 +187,6 @@ const Contracts = () => {
     const start = (pageSafe - 1) * pageSize;
     return sorted.slice(start, start + pageSize);
   }, [sorted, pageSafe, pageSize]);
-
-  // Loading skeleton trigger on control changes
-  useEffect(() => {
-    setLoading(true);
-    const t = setTimeout(() => setLoading(false), 120);
-    return () => clearTimeout(t);
-  }, [query, sortKey, sortDir, page, pageSize]);
 
   // Column visibility
   const allColumns = ['projectTitle', 'clientName', 'value', 'status', 'contract', 'actions'] as const;
@@ -494,7 +481,7 @@ const Contracts = () => {
                     {show('actions') && <th scope="col">Actions</th>}
                   </tr>
                 </thead>
-                {loading ? (
+                {fetchLoading ? (
                   <tbody>
                     <tr>
                       <td colSpan={1 + allColumns.length}>

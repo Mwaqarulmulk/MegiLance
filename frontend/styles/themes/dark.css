@@ -1,61 +1,48 @@
-/* @AI-HINT: Defines the global color variables for the dark theme. These variables are scoped to the `.dark` class. When this class is applied to the `<html>` element by the `ThemeProvider`, these variables override the default light theme styles defined in `light.css`. */
-
+/* @AI-HINT: Dark theme semantic color variables */
 .dark {
-  /* Brand & Accent Colors (often remain the same for brand consistency) */
-  --primary-4573df: var(--ml-blue-light);
-  --accent-ff9800: var(--ml-orange);
+  /* Brand & Accent Colors */
+  --primary: var(--ml-blue-light);
+  --accent: var(--ml-orange);
 
   /* Semantic Colors */
-  --success-27AE60: var(--ml-green-light);
-  --error-e81123: var(--ml-red-light);
-  --warning-f2c94c: var(--ml-yellow);
+  --success: var(--ml-green-light);
+  --error: var(--ml-red-light);
+  --warning: var(--ml-yellow);
 
   /* UI Surfaces & Backgrounds */
-  --background-1d2127: var(--neutral-900);
-  --surface-272b32: var(--neutral-800); /* For cards, forms, etc. */
-  --surface-alt-2c323a: var(--neutral-700); /* A slightly different dark for variation */
-  --container-dark-2c323a: var(--neutral-700); /* This is already a dark color, so it's consistent */
-  --border-3a414a: var(--neutral-700); /* A subtle border for dark mode */
+  --background: var(--neutral-900);
+  --surface: var(--neutral-800);
+  --surface-alt: var(--neutral-700);
+  --container-dark: var(--neutral-700);
+  --border: var(--neutral-700);
 
   /* Text Colors */
-  --text-primary-f5f7fa: var(--neutral-50);
-  --text-secondary-a9b1bd: var(--neutral-400);
-  --text-on-primary-ffffff: #ffffff;
-  --text-on-accent-ffffff: #ffffff;
-  --text-on-dark-f5f7fa: var(--neutral-50);
+  --text-primary: var(--neutral-50);
+  --text-secondary: var(--neutral-400);
+  --text-on-primary: #ffffff;
+  --text-on-accent: #ffffff;
+  --text-on-dark: var(--neutral-50);
 
-  /* Extended Brand Palette (remain the same) */
-  --brand-indigo-3c3c88: #3C3C88;
-  --brand-electric-blue-2f80ed: #2F80ED;
+  /* Extended Brand Palette */
+  --brand-indigo: #3C3C88;
+  --brand-electric-blue: #2F80ED;
 
-  /* Abstracted Theme Variables (for component use) */
-  --primary: var(--primary-4573df);
-  --accent: var(--accent-ff9800);
-  --success: var(--success-27AE60);
-  --error: var(--error-e81123);
-  --warning: var(--warning-f2c94c);
-  --background: var(--background-1d2127);
-  --surface: var(--surface-272b32);
-  --surface-alt: var(--surface-alt-2c323a);
-  --container-dark: var(--container-dark-2c323a);
-  --border: var(--border-3a414a);
-  --text-primary: var(--text-primary-f5f7fa);
-  --text-secondary: var(--text-secondary-a9b1bd);
-  --text-on-primary: var(--text-on-primary-ffffff);
-  --text-on-accent: var(--text-on-accent-ffffff);
-  --text-on-dark: var(--text-on-dark-f5f7fa);
-  --brand-indigo: var(--brand-indigo-3c3c88);
-  --brand-electric-blue: var(--brand-electric-blue-2f80ed);
+  /* Legacy aliases for backward compatibility */
+  --primary-4573df: var(--primary);
+  --accent-ff9800: var(--accent);
+  --success-27AE60: var(--success);
+  --error-e81123: var(--error);
+  --warning-f2c94c: var(--warning);
+  --background-1d2127: var(--background);
+  --surface-272b32: var(--surface);
+  --surface-alt-2c323a: var(--surface-alt);
+  --container-dark-2c323a: var(--container-dark);
+  --border-3a414a: var(--border);
+  --text-primary-f5f7fa: var(--text-primary);
+  --text-secondary-a9b1bd: var(--text-secondary);
+  --text-on-primary-ffffff: var(--text-on-primary);
+  --text-on-accent-ffffff: var(--text-on-accent);
+  --text-on-dark-f5f7fa: var(--text-on-dark);
+  --brand-indigo-3c3c88: var(--brand-indigo);
+  --brand-electric-blue-2f80ed: var(--brand-electric-blue);
 }
-
-
-/*
-❌ DO NOT use this file (`themes/dark.css`) for any styles.
-
-All theming and style overrides must be handled at the component level using .common.css, .light.css, and .dark.css files for each component.
-
-Reason:
-Using this file causes style collisions, theming issues, and interferes with AI agent workflows.
-
-⚠️ AI Agents: Avoid writing or modifying styles in this file.
-*/

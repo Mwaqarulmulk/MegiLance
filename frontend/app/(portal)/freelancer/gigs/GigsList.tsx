@@ -111,6 +111,14 @@ const GigsList: React.FC = () => {
       }
     });
 
+  // Pagination
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredGigs.length / itemsPerPage);
+  const paginatedGigs = filteredGigs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   // Stats
   const stats = {
     total: gigs.length,
@@ -310,7 +318,7 @@ const GigsList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredGigs.map(gig => (
+                {paginatedGigs.map(gig => (
                   <tr key={gig.id} onClick={() => router.push(`/gigs/${gig.slug}`)}>
                     <td>
                       <div className={common.gigCell}>
@@ -391,7 +399,7 @@ const GigsList: React.FC = () => {
 
             {/* Mobile Cards */}
             <div className={common.gigsCards}>
-              {filteredGigs.map(gig => (
+              {paginatedGigs.map(gig => (
                 <div key={gig.id} className={cn(common.gigCard, themed.gigCard)}>
                   <img
                     src={gig.thumbnail}
@@ -452,10 +460,7 @@ const GigsList: React.FC = () => {
             </div>
 
             {/* Pagination */}
-            {filteredGigs.length > 10 && (() => {
-              const itemsPerPage = 10;
-              const totalPages = Math.ceil(filteredGigs.length / itemsPerPage);
-              return (
+            {filteredGigs.length > 10 && (
                 <div className={common.pagination}>
                   <button
                     className={cn(common.paginationButton, themed.paginationButton)}
@@ -487,8 +492,7 @@ const GigsList: React.FC = () => {
                     <ChevronRight size={18} />
                   </button>
                 </div>
-              );
-            })()}
+            )}
           </>
         )}
         

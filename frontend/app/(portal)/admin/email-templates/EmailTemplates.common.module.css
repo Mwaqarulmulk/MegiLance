@@ -190,7 +190,7 @@
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  background: #fee2e2;
+  background: var(--color-error-light, #fee2e2);
   color: #991b1b;
 }
 @media (max-width: 768px) {

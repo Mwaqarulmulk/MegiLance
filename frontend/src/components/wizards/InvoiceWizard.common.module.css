@@ -131,7 +131,7 @@
 }
 
 .addButton:hover {
-  background: #3562c6;
+  background: var(--ml-blue-dark, #3562c6);
 }
 
 .lineItemsTable {
@@ -220,7 +220,7 @@
 }
 
 .removeButton:hover {
-  background: #fff5f5;
+  background: var(--color-error-light, #fff5f5);
   border-color: var(--color-error, #e81123);
 }
 
@@ -323,7 +323,7 @@
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 6px;
-  background: #eff6ff;
+  background: var(--color-primary-light, #eff6ff);
   border: 1px solid #bfdbfe;
 }
 
@@ -368,7 +368,7 @@
 
 .previewInvoice {
   padding: 2rem;
-  background: white;
+  background: var(--bg-primary, white);
   border-radius: 6px;
   border: 1px solid #e2e8f0;
 }
@@ -431,7 +431,7 @@
 .previewItems th {
   text-align: left;
   padding: 0.75rem;
-  background: #f7fafc;
+  background: var(--surface-primary, #f7fafc);
   border-bottom: 2px solid #cbd5e0;
   font-weight: 600;
 }

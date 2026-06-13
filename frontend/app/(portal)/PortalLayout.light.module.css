@@ -1,4 +1,4 @@
-/* @AI-HINT: PortalLayout light theme — email verification banner colors */
+/* @AI-HINT: PortalLayout light theme — email verification & onboarding banner colors */
 
 .verifyBanner {
   background: #FFF3CD;
@@ -12,4 +12,15 @@
 
 .verifyDismissBtn {
   color: #856404;
+}
+
+.onboardingBanner {
+  background: #EBF5FF;
+  border-color: #BFDBFE;
+  color: #1E40AF;
+}
+
+.onboardingBannerBtn {
+  background: #1E40AF;
+  color: white;
 }

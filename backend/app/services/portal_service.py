@@ -10,7 +10,9 @@ from app.services.db_utils import get_val as _get_val, safe_str as _safe_str
 logger = logging.getLogger(__name__)
 
 # Simple TTL cache for dashboard stats (avoids repeated slow Turso queries)
+import threading
 _stats_cache: dict = {}
+_stats_cache_lock = threading.Lock()
 STATS_CACHE_TTL = 120  # seconds
 
 
@@ -36,13 +38,25 @@ def _batch_scalar_queries(queries: list[dict]) -> list:
         return [None] * len(queries)
 
 
+def _invalidate_stats_cache(prefix: str = ""):
+    """Invalidate cached stats. Pass a prefix to invalidate specific user caches."""
+    with _stats_cache_lock:
+        if prefix:
+            keys_to_remove = [k for k in _stats_cache if k.startswith(prefix)]
+            for k in keys_to_remove:
+                del _stats_cache[k]
+        else:
+            _stats_cache.clear()
+
+
 
 # ==================== Client Dashboard ====================
 
 def get_client_stats(client_id: int) -> dict:
     """Get all client dashboard statistics in a single batched HTTP request."""
     cache_key = f"client_stats_{client_id}"
-    cached = _stats_cache.get(cache_key)
+    with _stats_cache_lock:
+        cached = _stats_cache.get(cache_key)
     if cached and time.time() - cached["ts"] < STATS_CACHE_TTL:
         return cached["data"]
 
@@ -65,7 +79,8 @@ def get_client_stats(client_id: int) -> dict:
         "active_freelancers": int(values[4] or 0),
         "pending_proposals": int(values[5] or 0),
     }
-    _stats_cache[cache_key] = {"ts": time.time(), "data": result}
+    with _stats_cache_lock:
+        _stats_cache[cache_key] = {"ts": time.time(), "data": result}
     return result
 
 
@@ -124,6 +139,9 @@ def create_project(client_id: int, title: str, description: str, budget_min: flo
 
     if not result:
         return None
+
+    # Invalidate client stats cache after project creation
+    _invalidate_stats_cache(f"client_stats_{client_id}")
 
     get_result = execute_query(
         "SELECT id, title, status FROM projects WHERE client_id = ? ORDER BY id DESC LIMIT 1",
@@ -268,7 +286,8 @@ def get_wallet_payments(user_id: int, direction: str) -> dict:
 def get_freelancer_stats(freelancer_id: int) -> dict:
     """Get all freelancer dashboard statistics in a single batched HTTP request."""
     cache_key = f"freelancer_stats_{freelancer_id}"
-    cached = _stats_cache.get(cache_key)
+    with _stats_cache_lock:
+        cached = _stats_cache.get(cache_key)
     if cached and time.time() - cached["ts"] < STATS_CACHE_TTL:
         return cached["data"]
 
@@ -300,7 +319,8 @@ def get_freelancer_stats(freelancer_id: int) -> dict:
         "success_rate": round(success_rate, 2),
         "average_rating": avg_rating
     }
-    _stats_cache[cache_key] = {"ts": time.time(), "data": result}
+    with _stats_cache_lock:
+        _stats_cache[cache_key] = {"ts": time.time(), "data": result}
     return result
 
 
@@ -427,6 +447,12 @@ def create_proposal(project_id: int, freelancer_id: int, cover_letter: str,
     if not result:
         return None
 
+    # Invalidate freelancer stats cache after proposal creation
+    _invalidate_stats_cache(f"freelancer_stats_{freelancer_id}")
+
+    if not result:
+        return None
+
     get_result = execute_query(
         "SELECT id FROM proposals WHERE project_id = ? AND freelancer_id = ? ORDER BY id DESC LIMIT 1",
         [project_id, freelancer_id]
@@ -505,7 +531,7 @@ def create_withdrawal(freelancer_id: int, amount: float, now: str) -> bool:
            status, description, platform_fee, freelancer_amount, created_at, updated_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         [freelancer_id, freelancer_id, amount, "withdrawal", "bank_transfer",
-         "pending", "Withdrawal of ", 0, amount, now, now]
+         "pending", f"Withdrawal of ${amount:.2f}", 0, amount, now, now]
     )
     return bool(result)
 
@@ -528,7 +554,7 @@ def list_all_freelancers(limit: int, skip: int) -> dict:
         total = int(_get_val(count_result["rows"][0], 0) or 0)
 
     result = execute_query(
-        """SELECT id, name, email, bio, hourly_rate, location, skills
+        """SELECT id, name, bio, hourly_rate, location, skills
            FROM users
            WHERE user_type = 'Freelancer' AND is_active = 1
            LIMIT ? OFFSET ?""",
@@ -541,11 +567,10 @@ def list_all_freelancers(limit: int, skip: int) -> dict:
             freelancers.append({
                 "id": int(_get_val(row, 0) or 0),
                 "name": _safe_str(_get_val(row, 1)),
-                "email": _safe_str(_get_val(row, 2)),
-                "bio": _safe_str(_get_val(row, 3)),
-                "hourly_rate": float(_get_val(row, 4) or 0),
-                "location": _safe_str(_get_val(row, 5)),
-                "skills": _safe_str(_get_val(row, 6))
+                "bio": _safe_str(_get_val(row, 2)),
+                "hourly_rate": float(_get_val(row, 3) or 0),
+                "location": _safe_str(_get_val(row, 4)),
+                "skills": _safe_str(_get_val(row, 5))
             })
 
     return {"total": total, "freelancers": freelancers}

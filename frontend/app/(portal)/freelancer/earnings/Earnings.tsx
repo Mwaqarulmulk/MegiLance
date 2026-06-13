@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
@@ -38,6 +39,7 @@ interface EarningTransaction {
 
 export default function Earnings() {
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
 
   // Data state
   const [earningsData, setEarningsData] = useState<any>(null);
@@ -314,7 +316,7 @@ export default function Earnings() {
             <Button variant="outline" size="sm" onClick={exportCSV}>
               <Download size={16} /> Export
             </Button>
-            <Button variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={() => router.push('/freelancer/withdraw')}>
               <Wallet size={16} /> Withdraw
             </Button>
           </div>

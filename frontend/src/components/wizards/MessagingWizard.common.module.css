@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ebf4ff;
+  background: var(--color-primary-light, #ebf4ff);
 }
 
 .recipientAvatar img {
@@ -153,7 +153,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: #ebf4ff;
+  background: var(--color-primary-light, #ebf4ff);
 }
 
 .recipientType svg {
@@ -173,7 +173,7 @@
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 6px;
-  background: #eff6ff;
+  background: var(--color-primary-light, #eff6ff);
   border: 1px solid #bfdbfe;
 }
 
@@ -242,7 +242,7 @@
 .templateNotice {
   padding: 1rem;
   border-radius: 6px;
-  background: #f0fff4;
+  background: var(--color-success-light, #f0fff4);
   border: 1px solid #86efac;
   text-align: center;
   font-size: 0.9rem;
@@ -285,7 +285,7 @@
 .tipBox {
   padding: 1rem;
   border-radius: 6px;
-  background: #fef3c7;
+  background: var(--color-warning-light, #fef3c7);
   border: 1px solid #fbbf24;
   font-size: 0.9rem;
   line-height: 1.5;
@@ -316,7 +316,7 @@
 }
 
 .uploadButton:hover {
-  background: #3562c6;
+  background: var(--ml-blue-dark, #3562c6);
 }
 
 /* Attachment list */
@@ -349,7 +349,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 6px;
-  background: #eff6ff;
+  background: var(--color-primary-light, #eff6ff);
 }
 
 .attachmentIcon svg {
@@ -413,7 +413,7 @@
 
 .previewMessage {
   padding: 1rem;
-  background: #f7fafc;
+  background: var(--surface-primary, #f7fafc);
   border-radius: 6px;
   white-space: pre-wrap;
   font-size: 0.9rem;

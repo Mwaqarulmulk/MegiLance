@@ -176,17 +176,17 @@
 }
 
 .priorityLow {
-  background-color: #f0fdf4;
+  background-color: var(--color-success-light, #f0fdf4);
   color: #16a34a;
 }
 
 .priorityMedium {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light, #fef3c7);
   color: #d97706;
 }
 
 .priorityHigh {
-  background-color: #fee2e2;
+  background-color: var(--color-error-light, #fee2e2);
   color: #dc2626;
 }
 
@@ -196,22 +196,22 @@
 }
 
 .statusNew {
-  background-color: #dbeafe;
+  background-color: var(--color-primary-light, #dbeafe);
   color: #2563eb;
 }
 
 .statusInreview {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light, #fef3c7);
   color: #d97706;
 }
 
 .statusAddressed {
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
 }
 
 .statusClosed {
-  background-color: #f3f4f6;
+  background-color: var(--bg-hover, #f3f4f6);
   color: #6b7280;
 }
 

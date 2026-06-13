@@ -68,9 +68,15 @@ async def create_refund(request: RefundCreate, current_user=Depends(get_current_
 
 @router.put("/{refund_id}")
 async def update_refund(refund_id: int, request: RefundUpdate, current_user=Depends(require_admin)):
+    _ALLOWED_REFUND_COLUMNS = frozenset({"status", "admin_notes"})
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
+
+    # Validate column names against allowlist
+    for k in updates:
+        if k not in _ALLOWED_REFUND_COLUMNS:
+            raise HTTPException(status_code=400, detail=f"Invalid field: {k}")
 
     set_parts = [f"{k} = ?" for k in updates]
     set_parts.append("updated_at = ?")

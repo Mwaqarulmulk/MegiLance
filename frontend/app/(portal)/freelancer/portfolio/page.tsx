@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { portfolioApi as _portfolioApi } from '@/lib/api';
+import { portfolioApi as _portfolioApi, portfolioShowcaseApi } from '@/lib/api';
 import Button from '@/app/components/atoms/Button/Button';
 import Input from '@/app/components/atoms/Input/Input';
 import Select from '@/app/components/molecules/Select/Select';
@@ -213,6 +213,9 @@ export default function PortfolioShowcasePage() {
 
     try {
       setSaving(true);
+      await portfolioShowcaseApi.updateLayout({
+        layout: settings.layout,
+      });
       setShowSettingsModal(false);
       showToast('Settings saved');
     } catch (error) {

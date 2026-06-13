@@ -2,9 +2,11 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations'
 import { useAdminData } from '@/hooks/useAdmin';
 import common from './AdminProjects.common.module.css';
@@ -33,6 +35,8 @@ const statusDotClass = (status: ProjectRow['status']) => {
 };
 
 const AdminProjects: React.FC = () => {
+  const router = useRouter();
+  const toaster = useToaster();
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === 'dark' ? dark : light;
   const { projects, loading, error } = useAdminData();
@@ -199,8 +203,23 @@ const AdminProjects: React.FC = () => {
                     <td className={themed.td + ' ' + common.td}>{p.updated}</td>
                     <td className={themed.td + ' ' + common.td}>
                       <div className={common.rowActions}>
-                        <button type="button" className={cn(common.button, themed.button, 'secondary')}>Open</button>
-                        <button type="button" className={cn(common.button, themed.button)}>Assign</button>
+                        <button 
+                          type="button" 
+                          className={cn(common.button, themed.button, 'secondary')}
+                          onClick={() => router.push(`/admin/projects/${p.id}`)}
+                        >
+                          Open
+                        </button>
+                        <button 
+                          type="button" 
+                          className={cn(common.button, themed.button)}
+                          onClick={() => {
+                            // TODO: Open assign modal
+                            toaster?.notify?.({ title: 'Assign', description: `Assign project #${p.id}`, variant: 'info' });
+                          }}
+                        >
+                          Assign
+                        </button>
                       </div>
                     </td>
                   </tr>

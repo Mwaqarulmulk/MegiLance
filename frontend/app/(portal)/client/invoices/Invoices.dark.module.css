@@ -1,6 +1,6 @@
 /* @AI-HINT: Dark theme colors for Client Invoices page */
 .container {
-  background: #0f1419;
+  background: var(--bg-primary-dark);
 }
 
 .title {
@@ -12,7 +12,7 @@
 }
 
 .statCard {
-  background: #1a1f2e;
+  background: var(--bg-secondary-dark);
   border: 1px solid var(--bg-secondary-dark);
 }
 
@@ -21,24 +21,24 @@
 }
 
 .filters {
-  background: #1a1f2e;
+  background: var(--bg-secondary-dark);
   border: 1px solid var(--bg-secondary-dark);
 }
 
 .searchInput {
-  background: #0f1419;
+  background: var(--bg-primary-dark);
   color: var(--color-text-primary-dark);
   border-color: var(--bg-secondary-dark);
 }
 
 .filterSelect {
-  background: #0f1419;
+  background: var(--bg-primary-dark);
   color: var(--color-text-primary-dark);
   border-color: var(--bg-secondary-dark);
 }
 
 .tableWrapper {
-  background: #1a1f2e;
+  background: var(--bg-secondary-dark);
   border: 1px solid var(--bg-secondary-dark);
 }
 

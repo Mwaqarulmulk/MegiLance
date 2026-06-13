@@ -15,7 +15,6 @@ class DisputeBase(BaseModel):
 class DisputeCreate(DisputeBase):
     """Schema for creating a dispute"""
     contract_id: int
-    title: Optional[str] = None
 
 
 class DisputeUpdate(BaseModel):
@@ -30,17 +29,14 @@ class Dispute(BaseModel):
     """Schema for dispute response — matches the disputes table columns"""
     id: int
     contract_id: int
-    claimant_id: int
-    respondent_id: Optional[int] = None
+    raised_by: int
     dispute_type: str
-    title: Optional[str] = None
     description: str
     evidence: Optional[str] = None
     status: str
     assigned_to: Optional[int] = None
     resolution: Optional[str] = None
     resolution_amount: Optional[float] = None
-    admin_notes: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     resolved_at: Optional[datetime] = None

@@ -12,7 +12,7 @@
 
 /* Toolbar */
 .toolbar { background: var(--bg-primary-dark); border: 1px solid #2a2d3e; }
-.searchInput { background: #0f1117; color: var(--text-primary-dark); border-color: #2a2d3e; }
+.searchInput { background: var(--bg-primary-dark); color: var(--text-primary-dark); border-color: #2a2d3e; }
 .searchIcon { color: #6b7280; }
 .filterTab { background: transparent; color: var(--text-tertiary-dark); }
 .filterTab:hover { background: #2a2d3e; color: var(--text-secondary-dark); }

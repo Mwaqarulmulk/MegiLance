@@ -75,12 +75,31 @@ const AccountSettingsPage = () => {
     try {
         if (section === 'Profile') {
             await api.auth.updateProfile({
-                full_name: fullName,
+                name: fullName,
                 title: professionalTitle,
-                bio: bio
+                bio: bio,
+                headline: professionalTitle,
             });
+        } else if (section === 'Notification') {
+            await api.users.updateNotificationPreferences({
+                preferences: {
+                    jobs: { enabled: jobNotifications },
+                    messages: { enabled: messageNotifications },
+                    payments: { enabled: paymentNotifications },
+                    marketing: { enabled: marketingNotifications },
+                },
+                digest: {
+                    frequency: 'daily',
+                    quietHoursStart: '22:00',
+                    quietHoursEnd: '08:00',
+                },
+            });
+        } else {
+            // Privacy and Security sections - no backend endpoint yet
+            toaster.notify({ title: 'Info', description: `${section} settings will be available soon.`, variant: 'info' });
+            setIsSaving(false);
+            return;
         }
-        // Handle other sections if backend supports them
         
         toaster.notify({ title: 'Saved', description: `${section} settings updated successfully!`, variant: 'success' });
     } catch (error) {

@@ -1,6 +1,6 @@
 /* @AI-HINT: Public freelancer profile page — light theme */
 
-.page { background: #f8fafc; color: #111827; }
+.page { background: var(--bg-primary-light); color: var(--text-primary-light); }
 
 .card { background: #fff; border-color: #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 

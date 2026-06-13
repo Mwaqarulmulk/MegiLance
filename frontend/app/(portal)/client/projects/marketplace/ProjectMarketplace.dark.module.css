@@ -1,21 +1,21 @@
 .page {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   color: #e2e8f0;
 }
 
 .header {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   border-bottom-color: #334155;
 }
 
 .searchSection {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   border-bottom-color: #334155;
   --bg-secondary: #1e293b;
 }
 
 .searchInput {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   color: #e2e8f0;
   border-color: #334155;
 }
@@ -30,7 +30,7 @@
 }
 
 .select {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   color: #e2e8f0;
   border-color: #334155;
 }
@@ -40,24 +40,24 @@
 }
 
 .filterButton {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   color: #e2e8f0;
   border-color: #334155;
 }
 
 .filterButton:hover {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   border-color: #475569;
 }
 
 .skillFilter[open] .filterButton,
 .levelFilter[open] .filterButton {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
 }
 
 .skillOptions,
 .levelOptions {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   color: #e2e8f0;
   border-color: #334155;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -74,7 +74,7 @@
 }
 
 .card {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   border-color: #334155;
   color: #e2e8f0;
 }

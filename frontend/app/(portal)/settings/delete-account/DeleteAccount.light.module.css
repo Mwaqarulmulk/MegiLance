@@ -1,8 +1,8 @@
 /* @AI-HINT: Delete account page — light theme */
 
-.page { background: #f8fafc; }
+.page { background: var(--bg-primary-light); }
 
-.card { background: #fff; border-color: #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.card { background: var(--bg-primary-light); border-color: #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 
 .warningBanner { background: #fef2f2; border-color: #fecaca; }
 .warningTitle { color: #991b1b; }

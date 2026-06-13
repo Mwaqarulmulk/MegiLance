@@ -21,7 +21,7 @@
 }
 
 .tooltip {
-  background-color: white;
+  background-color: var(--bg-primary-light);
   border: 1px solid rgba(229, 231, 235, 0.7);
 }
 

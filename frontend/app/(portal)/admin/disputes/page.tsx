@@ -22,24 +22,29 @@ import darkStyles from './AdminDisputes.dark.module.css';
 
 interface Dispute {
   id: number;
-  title: string;
+  contract_id: number;
+  raised_by: number;
+  dispute_type: string;
   description: string;
   status: string;
-  contract_id: number;
-  raised_by_id: number;
+  assigned_to?: number;
   created_at: string;
   updated_at: string;
   resolution?: string;
   resolved_at?: string;
-  resolved_by_id?: number;
+}
+
+function formatDisputeType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 const getStatusConfig = (status: string) => {
   const map: Record<string, { variant: 'danger' | 'warning' | 'success' | 'secondary' | 'primary'; icon: React.ReactNode; label: string }> = {
     open: { variant: 'danger', icon: <AlertTriangle size={14} />, label: 'Open' },
-    in_progress: { variant: 'warning', icon: <Clock size={14} />, label: 'In Progress' },
+    in_review: { variant: 'warning', icon: <Clock size={14} />, label: 'In Review' },
     resolved: { variant: 'success', icon: <CheckCircle size={14} />, label: 'Resolved' },
     closed: { variant: 'secondary', icon: <XCircle size={14} />, label: 'Closed' },
+    escalated: { variant: 'primary', icon: <Shield size={14} />, label: 'Escalated' },
   };
   return map[status.toLowerCase()] || { variant: 'primary' as const, icon: <FileText size={14} />, label: status };
 };
@@ -78,14 +83,14 @@ export default function AdminDisputesPage() {
   const stats = useMemo(() => ({
     total: disputes.length,
     open: disputes.filter(d => d.status === 'open').length,
-    inProgress: disputes.filter(d => d.status === 'in_progress').length,
+    inReview: disputes.filter(d => d.status === 'in_review').length,
     resolved: disputes.filter(d => d.status === 'resolved' || d.status === 'closed').length,
   }), [disputes]);
 
   const filteredDisputes = useMemo(() => {
     return disputes.filter(d => {
       if (filterStatus !== 'all' && d.status !== filterStatus) return false;
-      if (searchQuery && !d.title.toLowerCase().includes(searchQuery.toLowerCase()) && !d.description?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (searchQuery && !formatDisputeType(d.dispute_type).toLowerCase().includes(searchQuery.toLowerCase()) && !d.description?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
   }, [disputes, filterStatus, searchQuery]);
@@ -131,8 +136,8 @@ export default function AdminDisputesPage() {
                 <Clock size={20} />
               </div>
               <div className={commonStyles.statContent}>
-                <span className={cn(commonStyles.statValue, themeStyles.statValue)}>{stats.inProgress}</span>
-                <span className={cn(commonStyles.statLabel, themeStyles.statLabel)}>In Progress</span>
+                <span className={cn(commonStyles.statValue, themeStyles.statValue)}>{stats.inReview}</span>
+                <span className={cn(commonStyles.statLabel, themeStyles.statLabel)}>In Review</span>
               </div>
             </div>
             <div className={cn(commonStyles.statCard, themeStyles.statCard)}>
@@ -164,7 +169,7 @@ export default function AdminDisputesPage() {
               {[
                 { key: 'all', label: 'All' },
                 { key: 'open', label: 'Open', count: stats.open },
-                { key: 'in_progress', label: 'In Progress', count: stats.inProgress },
+                { key: 'in_review', label: 'In Review', count: stats.inReview },
                 { key: 'resolved', label: 'Resolved' },
                 { key: 'closed', label: 'Closed' },
               ].map(f => (
@@ -200,7 +205,7 @@ export default function AdminDisputesPage() {
                     <div className={commonStyles.disputeTop}>
                       <div className={commonStyles.disputeTitle}>
                         <span className={cn(commonStyles.disputeId, themeStyles.disputeId)}>#{dispute.id}</span>
-                        <h3 className={cn(commonStyles.disputeName, themeStyles.disputeName)}>{dispute.title}</h3>
+                        <h3 className={cn(commonStyles.disputeName, themeStyles.disputeName)}>{formatDisputeType(dispute.dispute_type)}</h3>
                       </div>
                       <Badge variant={statusConfig.variant}>
                         {statusConfig.icon}
@@ -235,8 +240,8 @@ export default function AdminDisputesPage() {
           <Modal isOpen onClose={() => setSelectedDispute(null)} title={`Dispute #${selectedDispute.id}`}>
             <div className={commonStyles.detailGrid}>
               <div className={commonStyles.detailRow}>
-                <span className={cn(commonStyles.detailLabel, themeStyles.detailLabel)}>Title</span>
-                <span className={cn(commonStyles.detailValue, themeStyles.detailValue)}>{selectedDispute.title}</span>
+                <span className={cn(commonStyles.detailLabel, themeStyles.detailLabel)}>Type</span>
+                <span className={cn(commonStyles.detailValue, themeStyles.detailValue)}>{formatDisputeType(selectedDispute.dispute_type)}</span>
               </div>
               <div className={commonStyles.detailRow}>
                 <span className={cn(commonStyles.detailLabel, themeStyles.detailLabel)}>Status</span>

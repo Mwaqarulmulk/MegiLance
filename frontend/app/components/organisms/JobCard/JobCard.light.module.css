@@ -1,6 +1,6 @@
 ﻿/* JobCard.light.module.css */
 .card {
-  background: #fff;
+  background: var(--bg-primary-light);
   border: 1px solid #e9ecef;
 }
 

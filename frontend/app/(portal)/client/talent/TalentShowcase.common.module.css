@@ -137,7 +137,7 @@
   left: 0;
   margin-top: 0.5rem;
   padding: 0.75rem;
-  background: white;
+  background: var(--bg-primary, white);
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -238,7 +238,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
-  background: #10b981;
+  background: var(--ml-green, #10b981);
   color: white;
   font-size: 0.75rem;
   font-weight: 600;

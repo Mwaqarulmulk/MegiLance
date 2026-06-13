@@ -161,7 +161,7 @@
 }
 
 .uploadButton:hover {
-  background: #3562ce;
+  background: var(--ml-blue-dark, #3562ce);
 }
 
 .uploadedFile {

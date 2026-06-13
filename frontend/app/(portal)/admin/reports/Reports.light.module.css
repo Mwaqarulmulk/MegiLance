@@ -1,5 +1,5 @@
 /* Light Theme - Admin Reports */
-.container { background: #fff; }
+.container { background: var(--bg-primary-light); }
 .title { color: #1a1a1a; }
 .subtitle { color: var(--color-text-secondary-light); }
 .statCard { background: #fff; border: 1px solid var(--border-light); }

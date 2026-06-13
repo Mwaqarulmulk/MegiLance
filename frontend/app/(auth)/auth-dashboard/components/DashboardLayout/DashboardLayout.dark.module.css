@@ -1,5 +1,5 @@
 ﻿.dashboardLayout {
-  background-color: #1d2127; /* A deep dark background */
+  background-color: var(--bg-secondary-dark); /* A deep dark background */
 }
 
 .mainContent {

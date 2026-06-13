@@ -170,7 +170,7 @@
   height: 20px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
+  background-color: var(--bg-primary, white);
   border-radius: 50%;
   transition: transform 0.3s ease,
     box-shadow 0.3s ease,
@@ -333,12 +333,12 @@
 }
 
 .logSuccess {
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
 }
 
 .logFailed {
-  background-color: #fee2e2;
+  background-color: var(--color-error-light, #fee2e2);
   color: #dc2626;
 }
 

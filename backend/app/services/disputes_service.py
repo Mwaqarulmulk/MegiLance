@@ -12,10 +12,15 @@ logger = logging.getLogger(__name__)
 from app.db.turso_http import execute_query, to_str, parse_date
 
 
+DISPUTE_SELECT_COLS = ("id, contract_id, raised_by, dispute_type, description, "
+                       "status, assigned_to, resolution, created_at, updated_at, "
+                       "evidence, resolved_at, resolution_amount")
+
+
 def _row_to_dispute(row) -> dict:
-    """Convert Turso row to dispute dict"""
-    raised_by_id = int(row[2].get("value")) if row[2].get("type") != "null" else None
-    assigned_to_id = int(row[6].get("value")) if row[6].get("type") != "null" else None
+    """Convert Turso row to dispute dict using actual DB columns."""
+    raised_by = int(row[2].get("value")) if row[2].get("type") != "null" else None
+    assigned_to = int(row[6].get("value")) if row[6].get("type") != "null" else None
     dispute_type = to_str(row[3])
     description = to_str(row[4])
     evidence_value = to_str(row[10]) if len(row) > 10 else None
@@ -34,26 +39,19 @@ def _row_to_dispute(row) -> dict:
     dispute = {
         "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
         "contract_id": int(row[1].get("value")) if row[1].get("type") != "null" else None,
-        "raised_by_id": raised_by_id,
-        "raised_by": raised_by_id,
+        "raised_by": raised_by,
         "dispute_type": dispute_type,
-        "title": dispute_type.replace("_", " ").title() if dispute_type else "Dispute",
         "description": description,
         "status": to_str(row[5]) or "open",
-        "assigned_to_id": assigned_to_id,
-        "assigned_to": assigned_to_id,
+        "assigned_to": assigned_to,
         "resolution": to_str(row[7]),
         "created_at": parse_date(row[8]),
         "updated_at": parse_date(row[9]),
-        "resolved_at": None,
-        "resolution_amount": None,
+        "resolved_at": parse_date(row[11]) if len(row) > 11 else None,
+        "resolution_amount": float(row[12].get("value")) if len(row) > 12 and row[12].get("type") != "null" else None,
         "evidence": evidence,
     }
     return dispute
-
-
-DISPUTE_SELECT_COLS = ("id, contract_id, raised_by_id, dispute_type, description, "
-                       "status, assigned_to_id, resolution, created_at, updated_at, evidence")
 
 
 def send_notification(user_id: int, notification_type: str, title: str,
@@ -92,23 +90,58 @@ def get_contract_client_freelancer(contract_id: int) -> Optional[dict]:
     }
 
 
-def create_dispute(contract_id: int, raised_by_id: int, dispute_type: str, description: str) -> Optional[dict]:
-    """Create a dispute and mark contract as disputed."""
+def create_dispute(contract_id: int, raised_by: int, dispute_type: str, description: str) -> Optional[dict]:
+    """Create a dispute, mark contract as disputed, and notify parties."""
     now = datetime.now(timezone.utc).isoformat()
     execute_query("""
-        INSERT INTO disputes (contract_id, raised_by_id, dispute_type, description, status, created_at, updated_at)
+        INSERT INTO disputes (contract_id, raised_by, dispute_type, description, status, created_at, updated_at)
         VALUES (?, ?, ?, ?, 'open', ?, ?)
-    """, [contract_id, raised_by_id, dispute_type, description, now, now])
+    """, [contract_id, raised_by, dispute_type, description, now, now])
 
     execute_query("UPDATE contracts SET status = 'disputed', updated_at = ? WHERE id = ?", [now, contract_id])
 
     result = execute_query(f"""
         SELECT {DISPUTE_SELECT_COLS}
-        FROM disputes WHERE contract_id = ? AND raised_by_id = ? ORDER BY id DESC LIMIT 1
-    """, [contract_id, raised_by_id])
+        FROM disputes WHERE contract_id = ? AND raised_by = ? ORDER BY id DESC LIMIT 1
+    """, [contract_id, raised_by])
     if not result or not result.get("rows"):
         return None
-    return _row_to_dispute(result["rows"][0])
+
+    dispute = _row_to_dispute(result["rows"][0])
+
+    # Notify the other party and admins
+    parties = get_contract_client_freelancer(contract_id)
+    if parties:
+        other_party = parties["freelancer_id"] if parties["client_id"] == raised_by else parties["client_id"]
+        try:
+            send_notification(
+                other_party,
+                "DISPUTE_CREATED",
+                "New Dispute Filed",
+                f"A dispute has been filed on contract #{contract_id}.",
+                {"dispute_id": dispute["id"], "contract_id": contract_id},
+                "high",
+                f"/disputes/{dispute['id']}",
+            )
+        except Exception as e:
+            logger.warning(f"Failed to notify dispute party: {e}")
+
+    admin_ids = get_admin_user_ids()
+    for admin_id in admin_ids:
+        try:
+            send_notification(
+                admin_id,
+                "DISPUTE_CREATED",
+                "New Dispute Requires Review",
+                f"A dispute has been filed on contract #{contract_id} and requires admin review.",
+                {"dispute_id": dispute["id"], "contract_id": contract_id},
+                "high",
+                f"/admin/disputes/{dispute['id']}",
+            )
+        except Exception as e:
+            logger.warning(f"Failed to notify admin {admin_id}: {e}")
+
+    return dispute
 
 
 def get_admin_user_ids() -> List[int]:
@@ -140,7 +173,7 @@ def list_disputes(user_type: str, user_id: int, contract_id: Optional[int],
             return {"total": 0, "disputes": []}
         placeholders = ",".join(["?" for _ in contract_ids])
         sql = f"SELECT {DISPUTE_SELECT_COLS} FROM disputes WHERE contract_id IN ({placeholders})"
-        params = list(contract_ids)
+        params: list = list(contract_ids)
     else:
         sql = f"SELECT {DISPUTE_SELECT_COLS} FROM disputes WHERE 1=1"
         params = []
@@ -155,7 +188,7 @@ def list_disputes(user_type: str, user_id: int, contract_id: Optional[int],
         sql += " AND dispute_type = ?"
         params.append(dispute_type)
     if raised_by_me:
-        sql += " AND raised_by_id = ?"
+        sql += " AND raised_by = ?"
         params.append(user_id)
 
     count_sql = sql.replace(f"SELECT {DISPUTE_SELECT_COLS}", "SELECT COUNT(*)")
@@ -226,10 +259,10 @@ def get_user_type(user_id: int) -> Optional[str]:
 
 
 def assign_dispute(dispute_id: int, admin_id: int):
-    """Assign a dispute to an admin and set status to in_progress."""
+    """Assign a dispute to an admin and set status to in_review."""
     now = datetime.now(timezone.utc).isoformat()
     execute_query("""
-        UPDATE disputes SET assigned_to_id = ?, status = 'in_progress', updated_at = ? WHERE id = ?
+        UPDATE disputes SET assigned_to = ?, status = 'in_review', updated_at = ? WHERE id = ?
     """, [admin_id, now, dispute_id])
 
 
@@ -237,8 +270,8 @@ def resolve_dispute(dispute_id: int, resolution: str):
     """Mark dispute as resolved."""
     now = datetime.now(timezone.utc).isoformat()
     execute_query("""
-        UPDATE disputes SET status = 'resolved', resolution = ?, updated_at = ? WHERE id = ?
-    """, [resolution, now, dispute_id])
+        UPDATE disputes SET status = 'resolved', resolution = ?, resolved_at = ?, updated_at = ? WHERE id = ?
+    """, [resolution, now, now, dispute_id])
 
 
 def update_contract_status(contract_id: int, new_status: str):
@@ -265,3 +298,18 @@ def update_dispute_evidence(dispute_id: int, evidence_json: str):
     now = datetime.now(timezone.utc).isoformat()
     execute_query("UPDATE disputes SET evidence = ?, updated_at = ? WHERE id = ?",
                   [evidence_json, now, dispute_id])
+
+
+def get_dispute_parties(dispute_id: int) -> Optional[dict]:
+    """Get the raised_by user and the other party for a dispute."""
+    dispute = get_dispute_by_id(dispute_id)
+    if not dispute:
+        return None
+    parties = get_contract_client_freelancer(dispute["contract_id"])
+    if not parties:
+        return None
+    return {
+        "raised_by": dispute["raised_by"],
+        "other_party": parties["freelancer_id"] if parties["client_id"] == dispute["raised_by"] else parties["client_id"],
+        "contract_id": dispute["contract_id"],
+    }

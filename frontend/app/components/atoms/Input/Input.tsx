@@ -77,7 +77,13 @@ const Input: React.FC<InputProps> = ({
   }, []);
   
   if (!mounted) {
-    return null; // Don't render until theme is resolved and mounted
+    // Render a placeholder that matches the input dimensions to prevent CLS
+    return (
+      <div className={cn(commonStyles.wrapper, fullWidth && commonStyles.fullWidth, wrapperClassName)} style={{ minHeight: '2.5rem' }}>
+        {label && <div className={cn(commonStyles.label, lightStyles.label)} style={{ height: '1.25rem', marginBottom: '0.375rem' }} />}
+        <div className={cn(commonStyles.inputGroup, lightStyles.inputGroup)} style={{ minHeight: '2.5rem' }} />
+      </div>
+    );
   }
   
   const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
@@ -288,6 +294,7 @@ const Input: React.FC<InputProps> = ({
         {hasError && typeof error === 'string' && (
           <motion.p 
             id={errorId} 
+            role="alert"
             className={cn(commonStyles.errorMessage, themeStyles.errorMessage)}
             initial={{ opacity: 0, y: -5, height: 0 }}
             animate={{ opacity: 1, y: 0, height: 'auto' }}

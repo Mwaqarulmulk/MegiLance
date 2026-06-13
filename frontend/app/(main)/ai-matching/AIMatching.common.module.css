@@ -65,7 +65,7 @@
 }
 
 .searchBtn {
-    background: #4573df;
+    background: var(--ml-blue, #4573df);
     color: #ffffff;
     border: none;
     padding: 0 2rem;

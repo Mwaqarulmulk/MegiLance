@@ -87,12 +87,12 @@
 }
 
 .statusActive {
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
 }
 
 .statusCanceled {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light, #fef3c7);
   color: #d97706;
 }
 
@@ -247,7 +247,7 @@
   font-size: 0.6875rem;
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
   font-weight: 600;
 }
@@ -645,17 +645,17 @@
 }
 
 .statusPaid {
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
 }
 
 .statusPending {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light, #fef3c7);
   color: #d97706;
 }
 
 .statusFailed {
-  background-color: #fee2e2;
+  background-color: var(--color-error-light, #fee2e2);
   color: #dc2626;
 }
 

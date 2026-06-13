@@ -329,7 +329,7 @@ const ClientDashboard: React.FC = () => {
     },
     {
       label: "Find Talent",
-      href: "/browse-talent",
+      href: "/client/search",
       icon: Search,
       color: "success" as const,
       desc: "Browse all freelancers",
@@ -385,7 +385,7 @@ const ClientDashboard: React.FC = () => {
     },
     {
       label: "Talent Pool",
-      href: "/client/browse-talent",
+      href: "/client/search",
       icon: Users,
       color: "success" as const,
       desc: "Browse all freelancers",
@@ -731,25 +731,25 @@ const ClientDashboard: React.FC = () => {
                       {
                         label: "Projects Posted",
                         value: metrics.totalProjects,
-                        color: "#4573df",
+                        color: "var(--color-primary, #4573df)",
                         max: Math.max(metrics.totalProjects, 1),
                       },
                       {
                         label: "Proposals Received",
                         value: metrics.pendingProposals,
-                        color: "#9b59b6",
+                        color: "var(--ml-purple, #9b59b6)",
                         max: Math.max(metrics.totalProjects, 1),
                       },
                       {
                         label: "Active Projects",
                         value: metrics.activeProjects,
-                        color: "#27AE60",
+                        color: "var(--ml-green, #27AE60)",
                         max: Math.max(metrics.totalProjects, 1),
                       },
                       {
                         label: "Completed",
                         value: metrics.completedProjects,
-                        color: "#10b981",
+                        color: "var(--ml-teal, #10b981)",
                         max: Math.max(metrics.totalProjects, 1),
                       },
                     ].map((step) => (

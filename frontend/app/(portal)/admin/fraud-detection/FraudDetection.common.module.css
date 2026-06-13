@@ -178,57 +178,57 @@
 }
 
 .riskCritical {
-  background-color: #fef2f2;
+  background-color: var(--color-error-light, #fef2f2);
   color: #dc2626;
 }
 
 .riskHigh {
-  background-color: #fff7ed;
+  background-color: var(--color-warning-light, #fff7ed);
   color: #ea580c;
 }
 
 .riskMedium {
-  background-color: #fefce8;
+  background-color: var(--color-warning-light, #fefce8);
   color: #ca8a04;
 }
 
 .riskLow {
-  background-color: #f0fdf4;
+  background-color: var(--color-success-light, #f0fdf4);
   color: #16a34a;
 }
 
 .statusPending {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light, #fef3c7);
   color: #d97706;
 }
 
 .statusReviewed {
-  background-color: #dbeafe;
+  background-color: var(--color-primary-light, #dbeafe);
   color: #2563eb;
 }
 
 .statusCleared {
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
 }
 
 .statusBlocked {
-  background-color: #fee2e2;
+  background-color: var(--color-error-light, #fee2e2);
   color: #dc2626;
 }
 
 .statusActive {
-  background-color: #fee2e2;
+  background-color: var(--color-error-light, #fee2e2);
   color: #dc2626;
 }
 
 .statusResolved {
-  background-color: #dcfce7;
+  background-color: var(--color-success-light, #dcfce7);
   color: #16a34a;
 }
 
 .statusDismissed {
-  background-color: #f3f4f6;
+  background-color: var(--bg-hover, #f3f4f6);
   color: #6b7280;
 }
 

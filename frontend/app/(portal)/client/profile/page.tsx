@@ -9,6 +9,7 @@ import Input from '@/app/components/atoms/Input/Input';
 import Textarea from '@/app/components/atoms/Textarea/Textarea';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
+import { apiFetch } from '@/lib/api/core';
 import {
   Building2, Globe, Users, Mail, Phone, MapPin, Link2,
   CreditCard, Shield, Save, User, Briefcase, Settings
@@ -84,27 +85,21 @@ export default function ClientProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('auth_token');
-      const res = await fetch('/api/v1/users/me', {
-        headers: { Authorization: `Bearer ${token || ''}` },
+      const data = await apiFetch<any>('/users/me');
+      setProfile({
+        name: data.name || '',
+        company_name: data.company_name || '',
+        industry: data.industry || '',
+        company_size: data.company_size || '',
+        bio: data.bio || '',
+        headline: data.headline || '',
+        location: data.location || '',
+        website: data.website_url || '',
+        phone: data.phone || '',
+        linkedin_url: data.linkedin_url || '',
+        twitter_url: data.twitter_url || '',
+        profile_image_url: data.profile_image_url || '',
       });
-      if (res.ok) {
-        const data = await res.json();
-        setProfile({
-          name: data.name || '',
-          company_name: data.company_name || '',
-          industry: data.industry || '',
-          company_size: data.company_size || '',
-          bio: data.bio || '',
-          headline: data.headline || '',
-          location: data.location || '',
-          website: data.website_url || '',
-          phone: data.phone || '',
-          linkedin_url: data.linkedin_url || '',
-          twitter_url: data.twitter_url || '',
-          profile_image_url: data.profile_image_url || '',
-        });
-      }
     } catch (error) {
       console.error('Failed to load profile:', error);
     } finally {
@@ -115,13 +110,8 @@ export default function ClientProfilePage() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const token = localStorage.getItem('auth_token');
-      const res = await fetch('/api/v1/auth/me', {
+      await apiFetch('/users/me/complete-profile', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token || ''}`,
-        },
         body: JSON.stringify({
           name: profile.name,
           bio: profile.bio,
@@ -136,11 +126,7 @@ export default function ClientProfilePage() {
           phone: profile.phone,
         }),
       });
-      if (res.ok) {
-        showToast('Profile saved successfully');
-      } else {
-        showToast('Failed to save profile', 'error');
-      }
+      showToast('Profile saved successfully');
     } catch (error) {
       showToast('Failed to save profile', 'error');
     } finally {

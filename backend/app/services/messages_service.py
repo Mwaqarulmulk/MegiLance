@@ -130,28 +130,47 @@ def get_conversation_participants(conversation_id: int) -> Optional[dict]:
 def list_conversations_for_user(user_id: int, status_filter: Optional[str],
                                 archived: Optional[bool], limit: int, skip: int) -> List[dict]:
     """Get all conversations for a user with enrichment (contact info, last message, unread)."""
-    where_clauses = ["(client_id = ? OR freelancer_id = ?)"]
+    where_clauses = ["(c.client_id = ? OR c.freelancer_id = ?)"]
     params: list = [user_id, user_id]
 
     if status_filter:
-        where_clauses.append("status = ?")
+        where_clauses.append("c.status = ?")
         params.append(status_filter.lower())
 
     if archived is not None:
-        where_clauses.append("is_archived = ?")
+        where_clauses.append("c.is_archived = ?")
         params.append(1 if archived else 0)
 
     where_sql = " AND ".join(where_clauses)
     params.extend([limit, skip])
 
+    # Optimized query with JOINs to avoid N+1
     result = execute_query(
-        f"""SELECT id, client_id, freelancer_id, project_id, status, is_archived,
-                   last_message_at, created_at, updated_at
-            FROM conversations
+        f"""SELECT c.id, c.client_id, c.freelancer_id, c.project_id, c.status, c.is_archived,
+                   c.last_message_at, c.created_at, c.updated_at,
+                   other_user.name as contact_name,
+                   other_user.profile_image_url as avatar,
+                   last_msg.content as last_message_content,
+                   last_msg.message_type as last_message_type,
+                   (SELECT COUNT(*) FROM messages m
+                    WHERE m.conversation_id = c.id
+                    AND m.receiver_id = ?
+                    AND m.is_read = 0
+                    AND m.is_deleted = 0) as unread_count
+            FROM conversations c
+            LEFT JOIN users other_user ON other_user.id = CASE
+                WHEN c.client_id = ? THEN c.freelancer_id
+                ELSE c.client_id
+            END
+            LEFT JOIN messages last_msg ON last_msg.id = (
+                SELECT m2.id FROM messages m2
+                WHERE m2.conversation_id = c.id AND m2.is_deleted = 0
+                ORDER BY m2.sent_at DESC LIMIT 1
+            )
             WHERE {where_sql}
-            ORDER BY last_message_at DESC
+            ORDER BY c.last_message_at DESC
             LIMIT ? OFFSET ?""",
-        params
+        [user_id, user_id, user_id] + params
     )
 
     if not result:
@@ -164,20 +183,12 @@ def list_conversations_for_user(user_id: int, status_filter: Optional[str],
         conv = row
         conv["is_archived"] = bool(conv.get("is_archived"))
 
-        other_user_id = conv["freelancer_id"] if conv["client_id"] == user_id else conv["client_id"]
-
-        user_info = get_user_public_info(other_user_id)
-        if user_info:
-            conv["contact_name"] = user_info.get("name", "Unknown")
-            conv["avatar"] = user_info.get("profile_image_url")
-
-        last_msg = _get_last_message_preview(conv["id"])
-        if last_msg:
-            content = last_msg.get("content", "")
-            conv["last_message"] = content[:100] + "..." if len(content) > 100 else content
-            conv["last_message_type"] = last_msg.get("message_type", "text")
-
-        conv["unread_count"] = _count_unread_in_conversation(conv["id"], user_id)
+        # Truncate last message for preview
+        content = conv.get("last_message_content") or ""
+        if len(content) > 100:
+            conv["last_message"] = content[:100] + "..."
+        else:
+            conv["last_message"] = content
 
         conversations.append(conv)
 
@@ -264,12 +275,16 @@ def fetch_conversation_messages(conversation_id: int, limit: int, skip: int) -> 
 
 
 def mark_messages_read(message_ids: List[int], now: str):
-    """Mark multiple messages as read."""
-    for msg_id in message_ids:
-        execute_query(
-            "UPDATE messages SET is_read = 1, read_at = ? WHERE id = ?",
-            [now, msg_id]
-        )
+    """Mark multiple messages as read using a single batched UPDATE."""
+    if not message_ids:
+        return
+
+    # Use parameterized IN clause for safe batch update
+    placeholders = ",".join(["?" for _ in message_ids])
+    execute_query(
+        f"UPDATE messages SET is_read = 1, read_at = ? WHERE id IN ({placeholders})",
+        [now] + message_ids
+    )
 
 
 def get_message_by_id(message_id: int) -> Optional[dict]:

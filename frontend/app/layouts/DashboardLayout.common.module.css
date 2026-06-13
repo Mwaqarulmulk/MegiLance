@@ -14,7 +14,22 @@
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
-  .content {
+  .main {
     padding: 1rem;
+    padding-bottom: calc(1rem + 72px);
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 0.75rem;
+    padding-bottom: calc(0.75rem + 72px);
+  }
+}
+
+@media (max-width: 380px) {
+  .main {
+    padding: 0.5rem;
+    padding-bottom: calc(0.5rem + 64px);
   }
 }

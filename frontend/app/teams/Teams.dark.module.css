@@ -23,7 +23,7 @@
 .capChip:hover { background: rgba(69,115,223,0.15); border-color: #6b8de6; color: #6b8de6; }
 
 .ctaBox { background: linear-gradient(135deg, var(--ml-blue) 0%, #2563eb 100%); border-color: transparent; color: #fff; }
-.button { background: #fff; color: var(--ml-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.button { background: var(--bg-primary-light); color: var(--ml-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .button:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
 .buttonSecondary { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
 .buttonSecondary:hover { background: rgba(255,255,255,0.1); }

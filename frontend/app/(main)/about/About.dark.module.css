@@ -1,6 +1,6 @@
 /* @AI-HINT: About page dark theme — colors only */
 .root {
-    background: #0f172a;
+    background: var(--bg-primary-dark);
     color: #f1f5f9;
 }
 .title {

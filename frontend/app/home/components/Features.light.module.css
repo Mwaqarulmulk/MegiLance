@@ -1,7 +1,7 @@
 /* @AI-HINT: Light theme styles for the Features section. */
 
 .featuresSection {
-  background: linear-gradient(180deg, var(--bg-secondary-light) 0%, var(--bg-primary-light) 100%);
+  background: transparent;
 }
 
 .tagline {

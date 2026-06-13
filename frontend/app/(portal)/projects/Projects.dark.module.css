@@ -1,21 +1,21 @@
 /* @AI-HINT: Portal Projects page - dark theme */
-.page { color: var(--text-primary-dark, #e2e8f0); background: #0f1419; }
+.page { color: var(--text-primary-dark, #e2e8f0); background: var(--bg-primary-dark); }
 .pageSubtitle { color: #94a3b8; }
 .sortWrapper { background: var(--bg-primary-dark, #1a1f2e); border-color: #2a2d3e; color: #94a3b8; }
 .sortSelect { color: var(--text-secondary-dark, #cbd5e1); }
 .mobileFilterBtn { color: #94a3b8; border-color: #2a2d3e; }
 .mobileFilterBtn:hover { background: rgba(255,255,255,0.06); }
 
-.categoryBar { background: #1a1f2e; border-color: #2a2d3e; }
+.categoryBar { background: var(--bg-secondary-dark); border-color: #2a2d3e; }
 .categoryPill { color: #94a3b8; border-color: #2a2d3e; }
 .categoryPill:hover { background: rgba(255,255,255,0.06); border-color: #3a3d4e; }
 .categoryPillActive { background: rgba(107,141,230,0.12); border-color: #6b8de6; color: #6b8de6; }
 
 .sidebar { }
-.sidebarCard { background: #1a1f2e; border-color: #2a2d3e; }
+.sidebarCard { background: var(--bg-secondary-dark); border-color: #2a2d3e; }
 .sidebarTitle { color: var(--text-primary-dark, #e2e8f0); }
 
-.searchBar { background: #1a1f2e; border-color: #2a2d3e; }
+.searchBar { background: var(--bg-secondary-dark); border-color: #2a2d3e; }
 .searchIcon { color: #475569; }
 .searchInput { color: var(--text-primary-dark, #e2e8f0); }
 .searchInput::placeholder { color: #475569; }
@@ -32,7 +32,7 @@
 .filterChipActive { background: rgba(107,141,230,0.12); border-color: #6b8de6; color: #6b8de6; }
 .clearAllBtn { color: #f87171; }
 
-.projectCard { background: #1a1f2e; border-color: #2a2d3e; }
+.projectCard { background: var(--bg-secondary-dark); border-color: #2a2d3e; }
 .projectCard:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.35); border-color: #3a3d4e; }
 .categoryChip { background: rgba(107,141,230,0.1); border-color: rgba(107,141,230,0.2); color: #6b8de6; }
 .budgetDisplay { color: #34d399; }
@@ -51,7 +51,7 @@
 .pageBtn:hover:not(:disabled) { background: rgba(255,255,255,0.06); border-color: #3a3d4e; }
 .pageBtnActive { background: #6b8de6; color: #fff; border-color: #6b8de6; }
 
-.mobilePanel { background: #1a1f2e; }
+.mobilePanel { background: var(--bg-secondary-dark); }
 .mobilePanelHeader { border-bottom-color: #2a2d3e; color: var(--text-primary-dark, #e2e8f0); }
 .mobilePanelHeader button { color: #94a3b8; }
 .mobilePanelFooter { border-top-color: #2a2d3e; }

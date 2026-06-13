@@ -1,61 +1,48 @@
-/* @AI-HINT: Defines the global color variables for the light theme. These variables are applied to the `:root` selector, making them the default for the application. They are overridden by `dark.css` when the `.dark` class is applied to the `<html>` element. */
-
+/* @AI-HINT: Light theme semantic color variables */
 :root {
   /* Brand & Accent Colors */
-  --primary-4573df: var(--ml-blue);
-  --accent-ff9800: var(--ml-orange);
+  --primary: var(--ml-blue);
+  --accent: var(--ml-orange);
 
   /* Semantic Colors */
-  --success-27AE60: var(--ml-green);
-  --error-e81123: var(--ml-red);
-  --warning-f2c94c: var(--ml-yellow);
+  --success: var(--ml-green);
+  --error: var(--ml-red);
+  --warning: var(--ml-yellow);
 
   /* UI Surfaces & Backgrounds */
-  --background-ffffff: #ffffff;
-  --surface-f5f7fa: var(--neutral-50); /* For cards, forms, light containers */
-  --surface-alt-f4f6f8: var(--neutral-100); /* A slightly different gray for variation */
-  --container-dark-2c323a: var(--neutral-800); /* For dark elements in light mode, e.g., modals */
-  --border-e0e0e0: var(--neutral-200); /* A light border color */
+  --background: #ffffff;
+  --surface: var(--neutral-50);
+  --surface-alt: var(--neutral-100);
+  --container-dark: var(--neutral-800);
+  --border: var(--neutral-200);
 
   /* Text Colors */
-  --text-primary-23272f: var(--neutral-900);
-  --text-secondary-333333: var(--neutral-600);
-  --text-on-primary-ffffff: #ffffff;
-  --text-on-accent-ffffff: #ffffff;
-  --text-on-dark-ffffff: #ffffff;
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-600);
+  --text-on-primary: #ffffff;
+  --text-on-accent: #ffffff;
+  --text-on-dark: #ffffff;
 
-  /* Extended Brand Palette (for specific use cases) */
-  --brand-indigo-3c3c88: #3C3C88;
-  --brand-electric-blue-2f80ed: #2F80ED;
+  /* Extended Brand Palette */
+  --brand-indigo: #3C3C88;
+  --brand-electric-blue: #2F80ED;
 
-  /* Abstracted Theme Variables (for component use) */
-  --primary: var(--primary-4573df);
-  --accent: var(--accent-ff9800);
-  --success: var(--success-27AE60);
-  --error: var(--error-e81123);
-  --warning: var(--warning-f2c94c);
-  --background: var(--background-ffffff);
-  --surface: var(--surface-f5f7fa);
-  --surface-alt: var(--surface-alt-f4f6f8);
-  --container-dark: var(--container-dark-2c323a);
-  --border: var(--border-e0e0e0);
-  --text-primary: var(--text-primary-23272f);
-  --text-secondary: var(--text-secondary-333333);
-  --text-on-primary: var(--text-on-primary-ffffff);
-  --text-on-accent: var(--text-on-accent-ffffff);
-  --text-on-dark: var(--text-on-dark-ffffff);
-  --brand-indigo: var(--brand-indigo-3c3c88);
-  --brand-electric-blue: var(--brand-electric-blue-2f80ed);
+  /* Legacy aliases for backward compatibility */
+  --primary-4573df: var(--primary);
+  --accent-ff9800: var(--accent);
+  --success-27AE60: var(--success);
+  --error-e81123: var(--error);
+  --warning-f2c94c: var(--warning);
+  --background-ffffff: var(--background);
+  --surface-f5f7fa: var(--surface);
+  --surface-alt-f4f6f8: var(--surface-alt);
+  --container-dark-2c323a: var(--container-dark);
+  --border-e0e0e0: var(--border);
+  --text-primary-23272f: var(--text-primary);
+  --text-secondary-333333: var(--text-secondary);
+  --text-on-primary-ffffff: var(--text-on-primary);
+  --text-on-accent-ffffff: var(--text-on-accent);
+  --text-on-dark-ffffff: var(--text-on-dark);
+  --brand-indigo-3c3c88: var(--brand-indigo);
+  --brand-electric-blue-2f80ed: var(--brand-electric-blue);
 }
-
-
-/*
-❌ DO NOT use this file (`themes/light.css`) for any styles.
-
-All theming and style overrides must be handled at the component level using .common.css, .light.css, and .dark.css files for each component.
-
-Reason:
-Using this file causes style collisions, theming issues, and interferes with AI agent workflows.
-
-⚠️ AI Agents: Avoid writing or modifying styles in this file.
-*/

@@ -1,5 +1,5 @@
 .hero {
-  background: #09090b;
+  background: var(--bg-primary-dark);
   color: var(--text-primary-dark);
 }
 

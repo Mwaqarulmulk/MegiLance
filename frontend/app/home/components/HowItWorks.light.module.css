@@ -1,7 +1,7 @@
 /* @AI-HINT: Light theme styles for the How It Works section. */
 
 .howItWorks {
-  background: linear-gradient(180deg, var(--bg-primary-light) 0%, var(--bg-secondary-light) 100%);
+  background: transparent;
 }
 
 .tagline {

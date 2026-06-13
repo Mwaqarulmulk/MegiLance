@@ -33,6 +33,8 @@ interface UserData {
   avatar?: string;
   avatar_url?: string;
   notificationCount?: number;
+  user_type?: string;
+  role?: string;
 }
 
 const DEFAULT_USER: UserData = {
@@ -92,11 +94,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const area: 'client' | 'freelancer' | 'admin' = useMemo(() => {
     if (!pathname) return 'client';
+    // For role-specific routes, use the pathname prefix
     if (pathname.startsWith('/client')) return 'client';
     if (pathname.startsWith('/freelancer')) return 'freelancer';
     if (pathname.startsWith('/admin')) return 'admin';
+    // For shared routes, use the user's actual role
+    const userRole = (user?.user_type || user?.role || localStorage.getItem('ml_user_role') || 'client').toLowerCase();
+    if (['admin', 'freelancer', 'client'].includes(userRole)) return userRole as 'client' | 'freelancer' | 'admin';
     return 'client';
-  }, [pathname]);
+  }, [pathname, user]);
 
   // Announce route changes to screen readers
   const [routeAnnouncement, setRouteAnnouncement] = useState('');

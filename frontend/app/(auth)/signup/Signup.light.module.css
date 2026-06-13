@@ -4,8 +4,8 @@
   /* Branding Panel */
   --branding-panel-bg: #f0f4ff; /* A very light, inviting blue */
   --brand-icon-color: var(--ml-blue);
-  --brand-title-color: #1a2b4d; /* Darker blue for contrast */
-  --brand-text-color: #4a5568; /* Slate gray */
+  --brand-title-color: var(--text-primary-light); /* Darker blue for contrast */
+  --brand-text-color: var(--text-secondary-light); /* Slate gray */
 
   /* Form Panel */
   --form-bg-color: var(--bg-primary-light);

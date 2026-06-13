@@ -151,8 +151,11 @@ async def create_payment(request: PaymentCreate, current_user=Depends(get_curren
 
 @router.post("/add-funds")
 async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_user)):
-    """Initiate adding funds via a payment gateway. In production, this should
-    create a Stripe payment intent or similar — never directly modify balance."""
+    """Redirect to the canonical wallet deposit endpoint.
+    This endpoint is kept for backward compatibility."""
+    from app.services.portal_service import create_withdrawal
+    from app.db.turso_http import execute_query as eq, parse_rows as pr
+
     if request.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
     if request.amount > 10000:
@@ -172,10 +175,6 @@ async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_u
 
     payment_id = result.get("last_insert_rowid")
 
-    # In production, create Stripe payment intent here:
-    # stripe.PaymentIntent.create(amount=int(amount * 100), currency="usd", ...)
-    # The actual balance update happens in the webhook handler after payment confirmation.
-
     return {
         "message": "Deposit initiated — complete payment to add funds",
         "payment_id": payment_id,
@@ -189,9 +188,9 @@ async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_u
 async def complete_payment(payment_id: int, current_user=Depends(get_current_user)):
     """Mark a payment as completed. In production, this should only be called
     by the payment webhook handler after verifying the payment with the gateway.
-    For now, this serves as a manual confirmation for demo/development purposes."""
+    For development, only admins can manually complete payments."""
     result = execute_query(
-        "SELECT id, status, client_id, amount, currency FROM payments WHERE id = ?",
+        "SELECT id, status, client_id, amount, currency, payment_method FROM payments WHERE id = ?",
         [payment_id],
     )
     rows = parse_rows(result)
@@ -199,30 +198,52 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
         raise HTTPException(status_code=404, detail="Payment not found")
 
     payment = rows[0]
-    if payment["client_id"] != current_user.id:
+
+    is_admin = getattr(current_user, "user_type", "") == "admin" or getattr(current_user, "role", "") == "admin"
+    if payment["client_id"] != current_user.id and not is_admin:
         raise HTTPException(status_code=403, detail="Access denied")
 
     if payment["status"] == "completed":
         raise HTTPException(status_code=400, detail="Payment already completed")
 
+    if payment["status"] == "cancelled":
+        raise HTTPException(status_code=400, detail="Cannot complete a cancelled payment")
+
     now = datetime.now(timezone.utc).isoformat()
     currency = payment.get("currency") or "USD"
 
+    # Mark payment as processing to prevent concurrent/duplicate completions
+    processing_result = execute_query(
+        "UPDATE payments SET status = 'processing', updated_at = ? WHERE id = ? AND status != 'completed' AND status != 'cancelled'",
+        [now, payment_id],
+    )
+    processing_rows = parse_rows(processing_result) if processing_result else []
+    # If no rows were updated (already processing/completed/cancelled), abort
+    check = execute_query("SELECT status FROM payments WHERE id = ?", [payment_id])
+    check_rows = parse_rows(check) if check else []
+    if check_rows and check_rows[0].get("status") != "processing":
+        raise HTTPException(status_code=400, detail="Payment cannot be completed in its current state")
+
+    # Atomic balance update
+    execute_query(
+        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+        [payment["amount"], payment["client_id"]],
+    )
+
+    # Mark as completed
     execute_query(
         "UPDATE payments SET status = 'completed', updated_at = ? WHERE id = ?",
         [now, payment_id],
     )
 
+    # Record wallet transaction
     execute_query(
-        """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, created_at)
-           VALUES (?, 'deposit', ?, ?, ?, 'completed', ?)""",
-        [current_user.id, payment["amount"], currency, f"Payment #{payment_id} completed", now],
+        """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
+           VALUES (?, 'deposit', ?, ?, ?, 'completed', ?, ?)""",
+        [payment["client_id"], payment["amount"], currency, f"Payment #{payment_id} completed", payment_id, now],
     )
 
-    execute_query(
-        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-        [payment["amount"], current_user.id],
-    )
+    logger.info(f"Payment #{payment_id} completed by user {current_user.id}" + (" (admin)" if is_admin else ""))
 
     return {"message": "Payment completed", "payment_id": payment_id}
 

@@ -73,6 +73,7 @@ export const freelancerNavItems: NavItem[] = [
   },
   { label: "Proposals", href: "/freelancer/proposals", icon: "FileText" },
   { label: "Contracts", href: "/freelancer/contracts", icon: "FolderGit2" },
+  { label: "Disputes", href: "/freelancer/disputes", icon: "Gavel" },
   {
     label: "Messages",
     href: "/freelancer/messages",
@@ -144,6 +145,7 @@ export const clientNavItems: NavItem[] = [
   },
   { label: "Proposals", href: "/client/proposals", icon: "FileText" },
   { label: "Contracts", href: "/client/contracts", icon: "FolderGit2" },
+  { label: "Disputes", href: "/client/disputes", icon: "Gavel" },
   {
     label: "Messages",
     href: "/client/messages",
@@ -164,7 +166,7 @@ export const clientNavItems: NavItem[] = [
     icon: "Search",
     section: "Hiring",
   },
-  { label: "Browse Freelancers", href: "/freelancers", icon: "Users" },
+  { label: "Browse Freelancers", href: "/client/search", icon: "Users" },
   {
     label: "AI Tools",
     href: "/ai",
@@ -305,9 +307,9 @@ export const profileMenuItems: ProfileMenuItem[] = [
 // Quick access links for different user types
 export const quickAccessLinks = {
   freelancer: [
-    { label: "Find Jobs", href: "/jobs" },
-    { label: "My Proposals", href: "/freelancer/my-jobs" },
-    { label: "Earnings", href: "/freelancer/wallet" },
+    { label: "Find Jobs", href: "/freelancer/jobs" },
+    { label: "My Proposals", href: "/freelancer/proposals" },
+    { label: "Earnings", href: "/freelancer/earnings" },
     { label: "Messages", href: "/freelancer/messages" },
   ],
   client: [
@@ -318,8 +320,8 @@ export const quickAccessLinks = {
   ],
   admin: [
     { label: "User Management", href: "/admin/users" },
-    { label: "System Health", href: "/admin/ai-monitoring" },
-    { label: "Support Queue", href: "/admin/support" },
+    { label: "System Health", href: "/admin/health" },
+    { label: "Support Queue", href: "/admin/disputes" },
     { label: "Audit Logs", href: "/admin/audit" },
   ],
 };

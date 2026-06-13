@@ -89,8 +89,14 @@ async def list_projects(
     search: Optional[str] = None,
 ):
     offset = (page - 1) * page_size
-    where = "WHERE p.status = 'open'"
+    where = "WHERE 1=1"
     params: list = []
+
+    if status:
+        where += " AND p.status = ?"
+        params.append(status)
+    else:
+        where += " AND p.status = 'open'"
 
     if category:
         where += " AND p.category = ?"
@@ -198,6 +204,11 @@ async def create_project(request: ProjectCreate, current_user=Depends(get_curren
 
 @router.put("/{project_id}")
 async def update_project(project_id: str, request: ProjectUpdate, current_user=Depends(get_current_user)):
+    _ALLOWED_PROJECT_COLUMNS = frozenset({
+        "title", "description", "category", "budget_type",
+        "budget_min", "budget_max", "skills", "duration",
+        "experience_level", "status",
+    })
     result = execute_query(
         "SELECT id FROM projects WHERE id = ? AND client_id = ?",
         [project_id, current_user.id],
@@ -208,6 +219,11 @@ async def update_project(project_id: str, request: ProjectUpdate, current_user=D
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
+
+    # Validate column names against allowlist
+    for k in updates:
+        if k not in _ALLOWED_PROJECT_COLUMNS:
+            raise HTTPException(status_code=400, detail=f"Invalid field: {k}")
 
     set_parts = [f"{k} = ?" for k in updates]
     set_parts.append("updated_at = ?")

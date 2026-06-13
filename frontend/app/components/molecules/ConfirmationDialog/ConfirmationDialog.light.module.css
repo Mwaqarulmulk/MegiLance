@@ -1,6 +1,6 @@
 /* ConfirmationDialog light theme */
 .dialog {
-  background-color: #ffffff;
+  background-color: var(--bg-primary-light);
   border: 1px solid #e5e7eb;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }

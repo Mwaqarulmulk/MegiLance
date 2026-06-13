@@ -40,14 +40,41 @@ class WebSocketManager:
         
         @self.sio.event
         async def connect(sid, environ, auth):
-            """Handle client connection"""
-            logger.info(f"Client connected: {sid}")
+            """Handle client connection with JWT validation"""
+            logger.info(f"Client connect attempt: {sid}")
             
-            # Extract user_id from auth
-            user_id = auth.get('user_id') if auth else None
-            if user_id:
-                await self.add_user_connection(sid, str(user_id))
+            # Validate JWT token from auth dict
+            token = auth.get('token') if auth else None
+            user_id = None
             
+            if token:
+                try:
+                    from app.core.security import decode_token, is_token_blacklisted
+                    if is_token_blacklisted(token):
+                        logger.warning(f"WebSocket rejected: blacklisted token from {sid}")
+                        raise socketio.exceptions.ConnectionRefusedError("Token revoked")
+                    payload = decode_token(token)
+                    if payload.get("type") != "access":
+                        logger.warning(f"WebSocket rejected: invalid token type from {sid}")
+                        raise socketio.exceptions.ConnectionRefusedError("Invalid token type")
+                    user_id = str(payload.get("user_id") or payload.get("sub"))
+                    if not user_id:
+                        logger.warning(f"WebSocket rejected: no user_id in token from {sid}")
+                        raise socketio.exceptions.ConnectionRefusedError("Invalid token")
+                except Exception as e:
+                    logger.warning(f"WebSocket auth failed for {sid}: {e}")
+                    raise socketio.exceptions.ConnectionRefusedError("Authentication failed")
+            else:
+                # Fallback: check user_id in auth (for backward compatibility, but log warning)
+                user_id = auth.get('user_id') if auth else None
+                if user_id:
+                    logger.warning(f"WebSocket connected without token validation: user_id={user_id}, sid={sid}")
+                else:
+                    logger.warning(f"WebSocket rejected: no token or user_id from {sid}")
+                    raise socketio.exceptions.ConnectionRefusedError("Authentication required")
+            
+            await self.add_user_connection(sid, str(user_id))
+            logger.info(f"Client authenticated and connected: {sid} as user {user_id}")
             return True
         
         @self.sio.event

@@ -1,6 +1,6 @@
 /* @AI-HINT: Clients page dark theme — colors only */
 .container {
-    background: #0f172a;
+    background: var(--bg-primary-dark);
     color: #f1f5f9;
 }
 .hero {
@@ -23,7 +23,7 @@
 }
 .featureCard {
     border: 1px solid #334155;
-    background: #1e293b;
+    background: var(--bg-secondary-dark);
 }
 .featureCard:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
@@ -35,7 +35,7 @@
     color: #94a3b8;
 }
 .ctaSection {
-    background: #1e293b;
+    background: var(--bg-secondary-dark);
 }
 .ctaTitle {
     color: #f1f5f9;

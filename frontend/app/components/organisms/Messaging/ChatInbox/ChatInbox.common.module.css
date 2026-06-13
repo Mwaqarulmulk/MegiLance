@@ -34,7 +34,7 @@
 }
 
 .unreadBadge {
-  background: #e81123;
+  background: var(--ml-red, #e81123);
   color: white;
   font-size: 0.75rem;
   font-weight: 700;
@@ -138,8 +138,8 @@
   border: 2px solid var(--bg-primary);
 }
 
-.onlineDotGreen { background: #22c55e; }
-.onlineDotGray { background: #9ca3af; }
+.onlineDotGreen { background: var(--color-success, #22c55e); }
+.onlineDotGray { background: var(--neutral-400, #9ca3af); }
 
 .details {
   flex: 1;

@@ -212,7 +212,11 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
     for (let i = 1; i < segments.length; i++) {
       const seg = segments[i];
       if (seg === 'dashboard') continue; // Already added
-      const label = seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' ');
+      const label = seg
+        .replace(/-/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
       const href = '/' + segments.slice(0, i + 1).join('/');
       crumbs.push({ label, href });
     }
@@ -297,7 +301,7 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
 
         {/* Enhanced Search */}
         <div className={cn(commonStyles.searchContainer, styles.searchContainer)} ref={searchRef}>
-          <Search size={18} className={commonStyles.searchIcon} />
+          <Search size={18} className={commonStyles.searchIcon} aria-hidden="true" />
           <input 
             type="text" 
             placeholder="Search... (Ctrl+K)" 
@@ -314,6 +318,7 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
                 router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
               }
             }}
+            aria-label="Search navigation"
           />
           {searchQuery && (
             <button 
@@ -481,10 +486,20 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
                           styles.notificationItem,
                           !notif.read && commonStyles.unread
                         )}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => {
                           markAsRead(notif.id);
                           if (notif.actionUrl) router.push(notif.actionUrl);
                           setShowNotifications(false);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            markAsRead(notif.id);
+                            if (notif.actionUrl) router.push(notif.actionUrl);
+                            setShowNotifications(false);
+                          }
                         }}
                       >
                         <div className={commonStyles.notificationIcon}>

@@ -1,7 +1,7 @@
 /* @AI-HINT: Dark theme styles for AIShowcase. */
 
 .aiShowcase {
-  background: linear-gradient(180deg, var(--bg-primary-dark) 0%, var(--bg-secondary-dark) 100%);
+  background: transparent;
 }
 
 .badge {
@@ -14,7 +14,7 @@
   background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background-clip: text.
 }
 
 .subtitle {

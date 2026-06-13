@@ -706,14 +706,13 @@ export default function DisputeWizard({
         dispute_type: disputeData.disputeType === 'other'
           ? (disputeData.customType || 'other')
           : disputeData.disputeType,
-        title: disputeData.title,
         description: descriptionParts,
       }) as any;
 
       if (result?.id && disputeData.evidence.length > 0) {
         await Promise.all(
           disputeData.evidence.map(evidence =>
-            (api.disputes as any).uploadEvidence(result.id, evidence.file)
+            api.disputes.uploadEvidence(result.id, evidence.file)
           )
         );
       }

@@ -38,6 +38,7 @@ export default function CurrencySettingsPage() {
     show_original_price: true,
   });
   const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [convertAmount, setConvertAmount] = useState('100');
   const [convertFrom, setConvertFrom] = useState('USD');
@@ -80,8 +81,10 @@ export default function CurrencySettingsPage() {
   const handleSaveSettings = async () => {
     try {
       setSaving(true);
+      setSaveSuccess(false);
       await multiCurrencyApi.updateSettings(settings);
-      // Show success message
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to save settings:', error);
@@ -229,6 +232,9 @@ export default function CurrencySettingsPage() {
           >
             {saving ? 'Saving...' : 'Save Preferences'}
           </button>
+          {saveSuccess && (
+            <p className="mt-2 text-sm text-green-600 dark:text-green-400">Settings saved successfully!</p>
+          )}
         </div>
 
         {/* Converter */}

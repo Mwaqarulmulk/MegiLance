@@ -1,5 +1,5 @@
 /* Light Theme - Notifications */
-.container { background: #fff; }
+.container { background: var(--bg-primary-light); }
 .title { color: #1a1a1a; }
 .subtitle { color: var(--color-text-secondary-light); }
 .filterBtn { background: var(--bg-tertiary-light); color: #374151; }
@@ -7,7 +7,7 @@
 .filterBtnActive { background: var(--ml-blue) !important; color: #fff !important; }
 .filterCount { background: var(--border-light); color: #374151; }
 .filterBtnActive .filterCount { background: rgba(255,255,255,0.25); color: #fff; }
-.notifItem { background: #fff; border-color: var(--border-light); }
+.notifItem { background: var(--bg-primary-light); border-color: var(--border-light); }
 .notifItem:hover { background: #f9fafb; }
 .unread { background: #f0f4ff; border-color: #d1ddfb; }
 .unread:hover { background: #e8eeff; }

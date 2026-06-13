@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 from app.core.security import (
     create_access_token,
     create_refresh_token,
+    get_password_hash,
     get_user_by_email,
     get_user_by_id,
     get_current_user,
@@ -196,9 +197,12 @@ async def complete_social_auth(request: SocialAuthComplete):
 
     if not user:
         try:
+            # Generate a random unguessable password hash for social-login users
+            # This prevents brute-force attacks on accounts that only use OAuth
+            _social_password_hash = get_password_hash(secrets.token_urlsafe(32))
             execute_query(
-                "INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified, name, user_type, role, bio, skills, hourly_rate, profile_image_url, location, profile_data, two_factor_enabled, account_balance, joined_at, created_at, updated_at) VALUES (?, '', 1, 0, 1, ?, 'client', 'client', '', '', 0, '', '', '{}', 0, 0, ?, ?, ?)",
-                [email, name or email, now, now, now],
+                "INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified, name, user_type, role, bio, skills, hourly_rate, profile_image_url, location, profile_data, two_factor_enabled, account_balance, joined_at, created_at, updated_at) VALUES (?, ?, 1, 0, 1, ?, 'client', 'client', '', '', 0, '', '', '{}', 0, 0, ?, ?, ?)",
+                [email, _social_password_hash, name or email, now, now, now],
             )
             user = get_user_by_email(email)
         except Exception as e:

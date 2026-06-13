@@ -101,7 +101,7 @@
 }
 
 @media (max-width: 374px) {
-  .tab {
+  .tabsTab {
     font-size: 0.8125rem;
     padding: 0.5rem 0.75rem;
   }

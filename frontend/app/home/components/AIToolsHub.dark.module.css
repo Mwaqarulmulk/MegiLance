@@ -1,4 +1,4 @@
-.section { background: linear-gradient(to bottom, var(--surface-272b32, #23282f), var(--background-1d2127, #1d2127)); }
+.section { background: transparent; }
 .badge { background: rgba(69, 115, 223, 0.15); color: #7da4f5; }
 .title { color: var(--text-primary-f5f7fa, #f0f3f8); }
 .subtitle { color: var(--text-secondary-a9b1bd, #9ca8b8); }

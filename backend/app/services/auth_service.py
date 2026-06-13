@@ -114,6 +114,7 @@ _ALLOWED_USER_COLUMNS = frozenset({
     "profile_image_url", "location", "profile_data",
     "two_factor_enabled", "two_factor_secret", "two_factor_backup_codes",
     "account_balance", "phone", "company", "website", "updated_at",
+    "password_reset_token", "password_reset_expires", "email_verification_token",
     # Enhanced profile fields
     "tagline", "headline", "experience_level", "years_of_experience",
     "languages", "timezone", "availability_status", "education", "certifications",

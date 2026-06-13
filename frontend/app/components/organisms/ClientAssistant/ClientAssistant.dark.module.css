@@ -14,7 +14,7 @@
 /* ─── Chat Panel ─────────────────────────────────────────────────────────── */
 
 .chatPanel {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   border: 1px solid #334155;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -53,7 +53,7 @@
 /* ─── Messages Area ──────────────────────────────────────────────────────── */
 
 .messagesArea {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
 }
 
 /* ─── Bot Avatar ─────────────────────────────────────────────────────────── */
@@ -71,7 +71,7 @@
 }
 
 .botBubble {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   color: #e2e8f0;
   border: 1px solid #334155;
 }
@@ -85,7 +85,7 @@
 /* ─── Tool Cards ─────────────────────────────────────────────────────────── */
 
 .toolCard {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   border: 1px solid #334155;
   color: #e2e8f0;
 }
@@ -107,7 +107,7 @@
 /* ─── Freelancer Card ────────────────────────────────────────────────────── */
 
 .freelancerCard {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   border: 1px solid #334155;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -154,7 +154,7 @@
 /* ─── Phase Row ──────────────────────────────────────────────────────────── */
 
 .phaseRow {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
 }
 
 .phaseCost {
@@ -171,7 +171,7 @@
 /* ─── Rate Table ─────────────────────────────────────────────────────────── */
 
 .rateTableRow {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
 }
 
 .rateRole {
@@ -185,7 +185,7 @@
 /* ─── Milestone ──────────────────────────────────────────────────────────── */
 
 .milestoneRow {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
 }
 
 .milestoneNumber {
@@ -208,7 +208,7 @@
 /* ─── Action Buttons ─────────────────────────────────────────────────────── */
 
 .actionBtnSecondary {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   color: #93c5fd;
   border: 1px solid #334155;
 }
@@ -229,12 +229,12 @@
 /* ─── Input Row ──────────────────────────────────────────────────────────── */
 
 .inputRow {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   border-top: 1px solid #334155;
 }
 
 .inputField {
-  background: #1e293b;
+  background: var(--bg-secondary-dark);
   color: #e2e8f0;
   border: 1px solid #334155;
 }
@@ -258,7 +258,7 @@
 /* ─── Footer ─────────────────────────────────────────────────────────────── */
 
 .panelFooter {
-  background: #0f172a;
+  background: var(--bg-primary-dark);
   color: #475569;
   border-top: 1px solid #1e293b;
 }

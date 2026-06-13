@@ -1,6 +1,6 @@
 /* @AI-HINT: Proposals list page — light theme */
 
-.page { background: #f8fafc; color: #111827; }
+.page { background: var(--bg-primary-light); color: var(--text-primary-light); }
 
 .pageTitle { color: #111827; }
 .pageSub { color: #6b7280; }

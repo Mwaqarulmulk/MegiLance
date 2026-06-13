@@ -5,7 +5,7 @@
 .iconBadge { background: rgba(69, 115, 223, 0.1); color: var(--ml-blue); }
 .headline { color: #1a1a2e; }
 .subtext { color: #666; }
-.input { background: #fff; border-color: #dde3ed; color: #1a1a2e; }
+.input { background: var(--bg-primary-light); border-color: #dde3ed; color: #1a1a2e; }
 .input:focus { border-color: var(--ml-blue); box-shadow: 0 0 0 3px rgba(69,115,223,0.1); }
 .inputGroup { background: transparent; }
 .error { color: #e53935; }

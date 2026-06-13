@@ -1,5 +1,5 @@
 /* @AI-HINT: Admin Integrations - light theme */
-.container { background: #f8f9fa; }
+.container { background: var(--bg-primary-light); }
 .title { color: #1a1a2e; }
 .subtitle { color: var(--color-text-secondary-light); }
 .tabs { border-color: #e0e0e0; }

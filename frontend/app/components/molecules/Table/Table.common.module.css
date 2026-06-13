@@ -50,7 +50,8 @@
 .tableTh,
 .tableTd {
   padding: 1rem 1.5rem;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   transition: background-color 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -152,6 +153,27 @@
 @media (max-width: 768px) {
   .tableContainer {
     border-radius: 0.5rem;
+  }
+
+  .table {
+    font-size: 0.8125rem;
+  }
+
+  .tableTh,
+  .tableTd {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tableContainer {
+    border-radius: 0.375rem;
+  }
+
+  .tableTh,
+  .tableTd {
+    padding: 0.5rem;
+    font-size: 0.75rem;
   }
 }
 

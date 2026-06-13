@@ -101,9 +101,15 @@ async def create_invoice(request: InvoiceCreate, current_user=Depends(get_curren
 
 @router.put("/{invoice_id}")
 async def update_invoice(invoice_id: int, request: InvoiceUpdate, current_user=Depends(get_current_user)):
+    _ALLOWED_INVOICE_COLUMNS = frozenset({"status", "notes"})
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
+
+    # Validate column names against allowlist
+    for k in updates:
+        if k not in _ALLOWED_INVOICE_COLUMNS:
+            raise HTTPException(status_code=400, detail=f"Invalid field: {k}")
 
     set_parts = [f"{k} = ?" for k in updates]
     set_parts.append("updated_at = ?")

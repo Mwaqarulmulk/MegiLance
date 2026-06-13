@@ -168,7 +168,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #f0f0f0;
+  background: var(--surface-secondary, #f0f0f0);
   font-weight: 700;
   color: #333;
 }

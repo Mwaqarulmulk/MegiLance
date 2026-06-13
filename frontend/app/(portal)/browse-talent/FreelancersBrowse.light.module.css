@@ -1,9 +1,9 @@
 /* @AI-HINT: Freelancers browse page — light theme colors */
 
-.page    { background: #f8fafc; color: #111827; }
+.page    { background: var(--bg-primary-light); color: var(--text-primary-light); }
 
 .pageTitle { color: #111827; }
-.pageCount { color: #6b7280; }
+.pageCount { color: var(--text-secondary-light); }
 
 /* Filter bar */
 .filterBar  { background: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }

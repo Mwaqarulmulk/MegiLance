@@ -85,7 +85,7 @@
 }
 .codeHeader {
   padding: 10px;
-  background: #1e1e1e;
+  background: var(--neutral-800, #1e1e1e);
   color: #fff;
   display: flex;
   justify-content: space-between;
@@ -94,7 +94,7 @@
   flex: 1;
   padding: 20px;
   font-family: 'JetBrains Mono', monospace;
-  background: #1e1e1e;
+  background: var(--neutral-800, #1e1e1e);
   color: #d4d4d4;
   border: none;
   resize: none;

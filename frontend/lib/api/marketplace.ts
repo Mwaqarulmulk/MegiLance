@@ -137,7 +137,7 @@ export const supportTicketsApi = {
     }),
   list: (status?: string) => {
     const params = status ? `?status=${status}` : '';
-    return apiFetch(`/support-tickets/${params}`);
+    return apiFetch(`/support-tickets${params}`);
   },
   get: (ticketId: ResourceId) => apiFetch(`/support-tickets/${ticketId}`),
   reply: (ticketId: ResourceId, message: string) =>
@@ -173,7 +173,6 @@ export const disputesApi = {
     contract_id: number;
     dispute_type?: string;
     reason?: string;
-    title?: string;
     description: string;
   }) =>
     apiFetch('/disputes', {
@@ -184,7 +183,7 @@ export const disputesApi = {
         description: data.description,
       }),
     }),
-  list: (filters?: { status?: string; page?: number; page_size?: number }) => {
+  list: (filters?: { status?: string; dispute_type?: string; page?: number; page_size?: number; contract_id?: number; raised_by_me?: boolean }) => {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -197,7 +196,7 @@ export const disputesApi = {
     apiFetch(`/disputes/${disputeId}`),
   update: (disputeId: ResourceId, data: DisputeUpdateData) =>
     apiFetch(`/disputes/${disputeId}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(data),
     }),
   assign: (disputeId: ResourceId, adminId: ResourceId) =>

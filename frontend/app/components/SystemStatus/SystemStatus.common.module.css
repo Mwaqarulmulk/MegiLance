@@ -69,17 +69,17 @@
 }
 
 .statusHealthy .statusIcon {
-  background-color: #d1fae5;
+  background-color: var(--color-success-light, #d1fae5);
   color: #10b981;
 }
 
 .statusDegraded .statusIcon {
-  background-color: #fed7aa;
+  background-color: var(--color-warning-light, #fed7aa);
   color: #f59e0b;
 }
 
 .statusOffline .statusIcon {
-  background-color: #fee2e2;
+  background-color: var(--color-error-light, #fee2e2);
   color: #ef4444;
 }
 
@@ -149,12 +149,12 @@
 }
 
 .statusHealthy.serviceStatus {
-  background-color: #f0fdf4;
+  background-color: var(--color-success-light, #f0fdf4);
   border-color: #bbf7d0;
 }
 
 .statusUnhealthy.serviceStatus {
-  background-color: #fef2f2;
+  background-color: var(--color-error-light, #fef2f2);
   border-color: #fecaca;
 }
 
@@ -171,12 +171,12 @@
 }
 
 .statusHealthy .serviceIcon {
-  background-color: #86efac;
+  background-color: var(--color-success-light, #86efac);
   color: #15803d;
 }
 
 .statusUnhealthy .serviceIcon {
-  background-color: #fca5a5;
+  background-color: var(--color-error-light, #fca5a5);
   color: #991b1b;
 }
 
@@ -260,23 +260,23 @@
 }
 
 .methodGET {
-  background-color: #3b82f6;
+  background-color: var(--color-primary, #3b82f6);
 }
 
 .methodPOST {
-  background-color: #10b981;
+  background-color: var(--color-success, #10b981);
 }
 
 .methodPATCH {
-  background-color: #f59e0b;
+  background-color: var(--color-warning, #f59e0b);
 }
 
 .methodPUT {
-  background-color: #8b5cf6;
+  background-color: var(--ml-purple, #8b5cf6);
 }
 
 .methodDELETE {
-  background-color: #ef4444;
+  background-color: var(--color-error, #ef4444);
 }
 
 .path {

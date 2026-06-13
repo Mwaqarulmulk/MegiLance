@@ -1,12 +1,12 @@
 /* @AI-HINT: Compare page — light theme */
 
-.page { background: #fafbfc; color: #1a1a2e; }
+.page { background: var(--bg-secondary-light); color: #1a1a2e; }
 .hero { background: linear-gradient(135deg, #eef3ff 0%, #f0f5ff 100%); }
 .heroTitle { color: #1a1a2e; }
 .heroDesc { color: #555; }
 .badge { background: rgba(69, 115, 223, 0.1); color: var(--ml-blue); }
 
-.section { background: #fafbfc; }
+.section { background: var(--bg-secondary-light); }
 .sectionTitle { color: #1a1a2e; }
 
 .table { border: 1px solid #e8ecf0; }
@@ -17,9 +17,9 @@
 .tableCompetitor { color: #888; }
 
 .switchSection { background: #f5f7ff; }
-.switchCard { background: #fff; border: 1px solid #e8ecf0; }
+.switchCard { background: var(--bg-primary-light); border: 1px solid #e8ecf0; }
 
-.faqItem { background: #fff; border: 1px solid #e8ecf0; }
+.faqItem { background: var(--bg-primary-light); border: 1px solid #e8ecf0; }
 .faqQ { color: #1a1a2e; }
 .faqA { color: #555; }
 
