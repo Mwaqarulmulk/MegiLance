@@ -447,7 +447,7 @@ api_router.include_router(proposal_templates.router, prefix="/proposal-templates
 api_router.include_router(notes_tags.router, prefix="/notes-tags", tags=["notes-tags"])
 
 # Custom Statuses - Workflow customization
-api_router.include_router(custom_statuses.router, tags=["custom-statuses"])
+api_router.include_router(custom_statuses.router, prefix="/custom-statuses", tags=["custom-statuses"])
 
 # ========================================
 # VERSION 2.0 ADVANCED FEATURES
