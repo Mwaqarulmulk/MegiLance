@@ -43,6 +43,9 @@ python-magic==0.4.27
 # Cloud Storage (S3/Spaces/R2)
 boto3==1.42.4
 
+# MongoDB (for SEO blog articles)
+pymongo==4.10.1
+
 # AI/ML Integration
 litellm>=1.0.0
 openai>=1.0.0

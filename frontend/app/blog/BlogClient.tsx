@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 import BlogPostCard from '@/app/components/Public/BlogPostCard/BlogPostCard';
 import { cn } from '@/lib/utils';
-import { blogApi, BlogPost } from '@/lib/api/blog';
+import { mongoBlogApi, MongoBlog } from '@/lib/api/blog';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
@@ -69,7 +69,7 @@ const HeroIllustration = () => (
 const BlogPage: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<MongoBlog[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTag, setActiveTag] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,8 +77,8 @@ const BlogPage: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const data = await blogApi.getAll(true);
-        setPosts(data);
+        const data = await mongoBlogApi.getAll(20, 0);
+        setPosts(data.items);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('[Blog] Failed to fetch posts:', error);
@@ -91,17 +91,17 @@ const BlogPage: React.FC = () => {
     fetchPosts();
   }, []);
 
-  /* Derive unique tags */
+  /* Derive unique categories as tags */
   const allTags = useMemo(() => {
     const set = new Set<string>();
-    posts.forEach(p => p.tags?.forEach(t => set.add(t)));
+    posts.forEach(p => { if (p.category) set.add(p.category); });
     return Array.from(set).sort();
   }, [posts]);
 
   /* Filter posts */
   const filtered = useMemo(() => {
     let list = posts;
-    if (activeTag !== 'all') list = list.filter(p => p.tags?.includes(activeTag));
+    if (activeTag !== 'all') list = list.filter(p => p.category === activeTag);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       list = list.filter(p => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q));
@@ -111,7 +111,7 @@ const BlogPage: React.FC = () => {
 
   const featuredPost = filtered[0];
   const gridPosts = filtered.slice(1);
-  const trendingPosts = posts.filter(p => p.is_news_trend).slice(0, 4);
+  const trendingPosts = [...posts].sort((a, b) => b.view_count - a.view_count).slice(0, 4);
 
   return (
     <PageTransition>
@@ -213,12 +213,12 @@ const BlogPage: React.FC = () => {
                     slug={featuredPost.slug}
                     title={featuredPost.title}
                     excerpt={featuredPost.excerpt}
-                    imageUrl={featuredPost.image_url || '/images/blog/productivity.jpg'}
-                    author={featuredPost.author}
-                    date={new Date(featuredPost.created_at).toLocaleDateString()}
-                    views={featuredPost.views}
-                    readingTime={featuredPost.reading_time}
-                    tags={featuredPost.tags}
+                    imageUrl={featuredPost.featured_image_url || '/images/blog/productivity.jpg'}
+                    author="MegiLance"
+                    date={featuredPost.published_date ? new Date(featuredPost.published_date).toLocaleDateString() : ''}
+                    views={featuredPost.view_count}
+                    readingTime={featuredPost.reading_time_minutes}
+                    tags={featuredPost.category ? [featuredPost.category] : []}
                     isFeatured
                   />
                 </section>
@@ -243,7 +243,7 @@ const BlogPage: React.FC = () => {
                         <span className={cn(commonStyles.trendingNum, themeStyles.trendingNum)}>{String(i + 1).padStart(2, '0')}</span>
                         <div>
                           <h3 className={cn(commonStyles.trendingTitle, themeStyles.heroTitle)}>{post.title}</h3>
-                          <span className={cn(commonStyles.trendingMeta, themeStyles.heroSubtitle)}>{post.author} · {post.reading_time} min read</span>
+                          <span className={cn(commonStyles.trendingMeta, themeStyles.heroSubtitle)}>MegiLance · {post.reading_time_minutes} min read</span>
                         </div>
                       </Link>
                     ))}
@@ -260,12 +260,12 @@ const BlogPage: React.FC = () => {
                     slug={post.slug}
                     title={post.title}
                     excerpt={post.excerpt}
-                    imageUrl={post.image_url || '/images/blog/productivity.jpg'}
-                    author={post.author}
-                    date={new Date(post.created_at).toLocaleDateString()}
-                    views={post.views}
-                    readingTime={post.reading_time}
-                    tags={post.tags}
+                    imageUrl={post.featured_image_url || '/images/blog/productivity.jpg'}
+                    author="MegiLance"
+                    date={post.published_date ? new Date(post.published_date).toLocaleDateString() : ''}
+                    views={post.view_count}
+                    readingTime={post.reading_time_minutes}
+                    tags={post.category ? [post.category] : []}
                   />
                 </StaggerItem>
               ))}

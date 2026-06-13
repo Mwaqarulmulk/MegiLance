@@ -82,6 +82,10 @@ services:
   - key: LOG_LEVEL
     value: "INFO"
     scope: RUN_TIME
+  # MongoDB Atlas - Required for blog articles (set in DO dashboard)
+  - key: MONGODB_URI
+    scope: RUN_TIME
+    type: SECRET
 
 # ────────────────────────────────────────────────────────────────
 # DATABASE MIGRATIONS - Release Phase
