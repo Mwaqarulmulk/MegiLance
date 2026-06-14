@@ -3,7 +3,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useTheme } from 'next-themes';
 import { Search, ClipboardList, Users, FileSignature } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -12,7 +11,7 @@ import StepCard from './StepCard';
 import type { StepCardProps } from './StepCard';
 import { LottieAnimation, workflowAnimation } from '@/app/components/Animations/LottieAnimation';
 import SectionGlobe from '@/app/components/Animations/SectionGlobe/SectionGlobe';
-import { useMounted } from '@/app/hooks/useMounted';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 import commonStyles from './HowItWorks.common.module.css';
 import lightStyles from './HowItWorks.light.module.css';
 import darkStyles from './HowItWorks.dark.module.css';
@@ -62,9 +61,8 @@ const itemVariants = {
 };
 
 const HowItWorks: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const mounted = useMounted();
-  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <section className={cn(commonStyles.howItWorks, themeStyles.howItWorks)}>

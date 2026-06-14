@@ -32,7 +32,6 @@ def list_freelancers(
     experience_level: Optional[str] = Query(None),
     availability: Optional[str] = Query(None),
     sort_by: Optional[str] = Query(None),
-    current_user=Depends(get_current_user)
 ):
     """List/search freelancers with filtering and pagination"""
     offset = (page - 1) * page_size

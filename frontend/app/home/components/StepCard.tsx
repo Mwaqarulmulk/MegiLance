@@ -3,8 +3,8 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './StepCard.common.module.css';
 import lightStyles from './StepCard.light.module.css';
@@ -19,8 +19,8 @@ export interface StepCardProps {
 }
 
 const StepCard: React.FC<StepCardProps> = ({ icon, title, description, stepNumber, type }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.stepCard, themeStyles.stepCard, commonStyles[type])}>

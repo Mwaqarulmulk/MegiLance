@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './AnimatedBackground.common.module.css';
 import lightStyles from './AnimatedBackground.light.module.css';
 import darkStyles from './AnimatedBackground.dark.module.css';
-import { useTheme } from 'next-themes';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 interface Particle {
   x: number;
@@ -20,12 +20,12 @@ interface Particle {
 }
 
 const AnimatedBackground: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const mode = useThemeMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationFrameRef = useRef<number>(0);
   
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   useEffect(() => {
     const canvas = canvasRef.current;

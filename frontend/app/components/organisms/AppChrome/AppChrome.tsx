@@ -5,8 +5,7 @@
 import React from 'react';
 
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
-import { useMounted } from '@/app/hooks/useMounted';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import Header from '@/app/components/organisms/Header/Header';
 import PublicFooter from '@/app/components/templates/Layout/PublicFooter/PublicFooter';
@@ -25,9 +24,8 @@ import darkStyles from './AppChrome.dark.module.css';
 // Separate client component for the logic that uses hooks
 const AppChromeClient: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
-  const { resolvedTheme } = useTheme();
-  const mounted = useMounted();
-  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   /**
    * Determines if a given route should have minimal chrome.

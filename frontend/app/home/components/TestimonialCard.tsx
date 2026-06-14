@@ -3,11 +3,11 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import UserAvatar from '@/app/components/atoms/UserAvatar/UserAvatar';
 import StarRating from '@/app/components/molecules/StarRating/StarRating';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './TestimonialCard.common.module.css';
 import lightStyles from './TestimonialCard.light.module.css';
@@ -26,8 +26,8 @@ interface TestimonialCardProps {
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <div

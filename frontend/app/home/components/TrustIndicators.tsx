@@ -2,9 +2,8 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { useMounted } from '@/app/hooks/useMounted';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 import { Shield, Award, Users, Zap, Star } from 'lucide-react'
 import useAnimatedCounter from '@/hooks/useAnimatedCounter';
 
@@ -42,9 +41,8 @@ const securityBadges: SecurityBadge[] = [
 ];
 
 const TrustIndicators: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const mounted = useMounted();
-  const styles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const styles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.trustContainer, styles.trustContainer)}>

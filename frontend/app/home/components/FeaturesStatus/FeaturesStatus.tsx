@@ -3,7 +3,6 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { 
   Briefcase, Users, MessageSquare, CreditCard, Shield, 
@@ -11,6 +10,7 @@ import {
   TrendingUp, Activity, Settings, Globe, Bot, Sparkles
 } from 'lucide-react';
 import FeatureStatusPill from '@/app/components/molecules/FeatureStatusPill/FeatureStatusPill';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './FeaturesStatus.common.module.css';
 import lightStyles from './FeaturesStatus.light.module.css';
@@ -66,8 +66,8 @@ const featureCategories = [
 ];
 
 const FeaturesStatus: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   // Calculate statistics
   const totalFeatures = featureCategories.reduce((sum, cat) => sum + cat.features.length, 0);

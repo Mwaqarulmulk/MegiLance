@@ -4,7 +4,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTheme } from 'next-themes';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -13,6 +12,7 @@ import {
   Briefcase, UserCheck, ShieldAlert, Rocket
 } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
@@ -37,9 +37,8 @@ const POPULAR_CATEGORIES = [
 ];
 
 export default function Hero() {
-  const { resolvedTheme } = useTheme();
+  const mode = useThemeMode();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [demoLoggingIn, setDemoLoggingIn] = useState<string | null>(null);
   
@@ -51,9 +50,7 @@ export default function Hero() {
   // Pointer spotlight effect
   const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
-
-  useEffect(() => setMounted(true), []);
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -100,8 +97,6 @@ export default function Hero() {
   };
 
   const HeadlineText = "Find Top Talent.\nFast & Secure.";
-  
-  if (!mounted) return <div className={commonStyles.preloadSpacer} />;
 
   const Wrapper = HeroScene3D || 'div';
 

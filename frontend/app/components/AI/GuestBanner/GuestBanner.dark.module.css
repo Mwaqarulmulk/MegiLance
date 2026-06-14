@@ -1,0 +1,19 @@
+.banner { background: rgba(99, 102, 241, 0.08); }
+.bannerTitle { color: #e0e7ff; }
+.bannerDesc { color: #a5b4fc; }
+.bannerBtn { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+.bannerBtn:hover { box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4); transform: translateY(-1px); }
+.bannerBtnSecondary { background: transparent; color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+.bannerBtnSecondary:hover { background: rgba(99, 102, 241, 0.1); }
+.bannerProgress { background: rgba(99, 102, 241, 0.15); }
+.bannerProgressBar { background: linear-gradient(90deg, #6366f1, #a855f7); }
+.bannerWarning { background: rgba(234, 179, 8, 0.08); }
+.bannerWarning .bannerIcon { background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(245, 158, 11, 0.2)); color: #fbbf24; }
+.bannerWarning .bannerTitle { color: #fef3c7; }
+.bannerWarning .bannerDesc { color: #fcd34d; }
+.inline { background: rgba(99, 102, 241, 0.06); }
+.inlineContent { color: #a5b4fc; }
+.inlineBtn { background: #6366f1; color: #fff; }
+.inlineBtn:hover { background: #818cf8; }
+.toast { background: rgba(99, 102, 241, 0.1); color: #c7d2fe; }
+.toastLink { color: #a5b4fc; }

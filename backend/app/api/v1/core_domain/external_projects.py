@@ -27,7 +27,6 @@ async def list_external_projects(
     sort_order: str = Query("desc"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
-    current_user=Depends(get_current_user),
 ):
     where = "WHERE 1=1"
     params: list = []

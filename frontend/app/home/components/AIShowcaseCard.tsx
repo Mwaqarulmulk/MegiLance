@@ -2,9 +2,9 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { ArrowRight, CheckCircle2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './AIShowcaseCard.common.module.css';
 import lightStyles from './AIShowcaseCard.light.module.css';
@@ -19,8 +19,8 @@ interface AIShowcaseCardProps {
 }
 
 const AIShowcaseCard: React.FC<AIShowcaseCardProps> = ({ icon, title, description, stats, status = 'live' }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   const statusConfig = {
     live: { label: 'Live', icon: <CheckCircle2 size={12} />, className: commonStyles.statusLive },

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './FeatureCard.common.module.css';
 import lightStyles from './FeatureCard.light.module.css';
@@ -16,8 +16,8 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, variant = 'default' }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.featureCard, themeStyles.featureCard, commonStyles[variant])}>

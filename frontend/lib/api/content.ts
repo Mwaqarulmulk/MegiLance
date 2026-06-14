@@ -133,9 +133,9 @@ export const externalProjectsApi = {
       method: 'POST',
     }),
   getCategories: () =>
-    apiFetch<{ categories: { name: string; count: number }[] }>('/external-projects-categories'),
+    apiFetch<{ categories: { name: string; count: number }[] }>('/external-projects/categories'),
   getStats: () =>
-    apiFetch<{ total: number; by_source: Record<string, number>; last_scraped: string }>('/external-projects-stats'),
+    apiFetch<{ total: number; by_source: Record<string, number>; last_scraped: string }>('/external-projects/stats'),
   triggerScrape: () =>
     apiFetch<{ message: string; scraped: number }>('/external-projects/scrape', { method: 'POST' }),
   flag: (projectId: ResourceId, reason: string) =>

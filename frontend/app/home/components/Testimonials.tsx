@@ -3,14 +3,13 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { motion, useInView } from 'framer-motion';
 
 import TestimonialCard from './TestimonialCard';
 import type { Testimonial } from './TestimonialCard';
 import SectionGlobe from '@/app/components/Animations/SectionGlobe/SectionGlobe';
-import { useMounted } from '@/app/hooks/useMounted';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 import commonStyles from './Testimonials.common.module.css';
 import lightStyles from './Testimonials.light.module.css';
 import darkStyles from './Testimonials.dark.module.css';
@@ -43,9 +42,8 @@ const itemVariants = {
 };
 
 const Testimonials: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const mounted = useMounted();
-  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -2,9 +2,9 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import useAnimatedCounter from '@/hooks/useAnimatedCounter';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './StatItem.common.module.css';
 import lightStyles from './StatItem.light.module.css';
@@ -19,8 +19,8 @@ interface StatItemProps {
 }
 
 const StatItem: React.FC<StatItemProps> = ({ value, label, prefix = '', suffix = '', icon }) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const styles = mode === 'dark' ? darkStyles : lightStyles;
   const ref = useRef<HTMLDivElement>(null);
   const animatedValue = useAnimatedCounter(value, 2000, 0, ref);
 

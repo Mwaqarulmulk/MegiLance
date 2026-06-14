@@ -7,7 +7,7 @@ const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
 
 async function fetchJob(id: string) {
   try {
-    const res = await fetch(`${BACKEND}/api/projects/${id}`, {
+    const res = await fetch(`${BACKEND}/api/v1/projects/${id}`, {
       next: { revalidate: 300 },
       headers: { 'Content-Type': 'application/json' },
     });

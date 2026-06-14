@@ -4,9 +4,9 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useTheme } from 'next-themes';
 import { MapPin, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './SuccessStoryCard.common.module.css';
 import lightStyles from './SuccessStoryCard.light.module.css';
@@ -28,8 +28,8 @@ interface SuccessStoryCardProps {
 
 // --- Main Component ---
 const SuccessStoryCard: React.FC<SuccessStoryCardProps> = ({ story }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.story, themeStyles.story)}>

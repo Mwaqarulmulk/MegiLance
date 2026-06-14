@@ -2,10 +2,10 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Database, Globe, Activity, Server, Code2, Layers } from 'lucide-react'
 import { motion, useInView, useSpring, useMotionValue, useTransform } from 'framer-motion'
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './ProjectStats.common.module.css';
 import lightStyles from './ProjectStats.light.module.css';
@@ -56,8 +56,8 @@ const projectStats: StatItem[] = [
 ];
 
 const ProjectStats: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 

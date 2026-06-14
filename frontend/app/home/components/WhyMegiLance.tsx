@@ -3,7 +3,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import {
   Zap,
@@ -13,6 +12,7 @@ import {
   Check,
   ArrowRight,
 } from 'lucide-react';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './WhyMegiLance.common.module.css';
 import lightStyles from './WhyMegiLance.light.module.css';
@@ -190,8 +190,8 @@ const ValueCard: React.FC<ValueCardProps> = ({
 };
 
 const WhyMegiLance: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   return (

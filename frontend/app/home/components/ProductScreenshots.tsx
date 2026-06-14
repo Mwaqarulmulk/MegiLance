@@ -2,10 +2,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import Image from 'next/image';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './ProductScreenshots.common.module.css';
 import lightStyles from './ProductScreenshots.light.module.css';
@@ -46,8 +46,8 @@ const screenshots: Screenshot[] = [
 ];
 
 const ProductScreenshots: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const styles = mode === 'dark' ? darkStyles : lightStyles;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);

@@ -5,8 +5,8 @@
 import React, { useRef } from 'react';
 import useAnimatedCounter from '@/hooks/useAnimatedCounter';
 import { Bitcoin, ShieldCheck, Lock, Globe, ArrowLeftRight, TrendingUp } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './BlockchainShowcase.common.module.css';
 import lightStyles from './BlockchainShowcase.light.module.css';
@@ -70,8 +70,8 @@ const AnimatedStat: React.FC<{ rawValue: string; duration?: number }> = ({ rawVa
 };
 
 const BlockchainShowcase: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <section className={cn(commonStyles.blockchainShowcase, themeStyles.blockchainShowcase)}>

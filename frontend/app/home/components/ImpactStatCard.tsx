@@ -3,9 +3,9 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import useAnimatedCounter from '@/hooks/useAnimatedCounter'; // Assuming this hook exists and works
+import useAnimatedCounter from '@/hooks/useAnimatedCounter';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './ImpactStatCard.common.module.css';
 import lightStyles from './ImpactStatCard.light.module.css';
@@ -26,8 +26,8 @@ interface ImpactStatCardProps {
 // --- Main Component ---
 const ImpactStatCard: React.FC<ImpactStatCardProps> = ({ stat }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const { icon: Icon, number, label, description } = stat;
 
   // --- Animated Counter Logic ---

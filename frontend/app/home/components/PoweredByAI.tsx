@@ -3,7 +3,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import {
   BrainCircuit,
@@ -17,6 +16,7 @@ import {
   Search,
   CheckCircle2,
 } from 'lucide-react';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './PoweredByAI.common.module.css';
 import lightStyles from './PoweredByAI.light.module.css';
@@ -249,8 +249,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 };
 
 const PoweredByAI: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   return (

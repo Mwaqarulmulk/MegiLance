@@ -2,10 +2,9 @@
 
 // @AI-HINT: Dynamic Hero component for MegiLance redesign, strict 3-file CSS module.
 import React from 'react';
-import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { useMounted } from '@/app/hooks/useMounted';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
@@ -18,10 +17,9 @@ const defaultStats = [
 ];
 
 export default function Hero({ stats = defaultStats }) {
-  const { resolvedTheme } = useTheme();
-  const mounted = useMounted();
+  const mode = useThemeMode();
 
-  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
     <section className={cn(commonStyles.hero, themeStyles.hero)}>

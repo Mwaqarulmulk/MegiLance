@@ -1,0 +1,18 @@
+.banner { background: rgba(99, 102, 241, 0.04); }
+.bannerTitle { color: #1e1b4b; }
+.bannerDesc { color: #4b5563; }
+.bannerBtn { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+.bannerBtn:hover { box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); transform: translateY(-1px); }
+.bannerBtnSecondary { background: transparent; color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.3); }
+.bannerBtnSecondary:hover { background: rgba(99, 102, 241, 0.05); }
+.bannerProgress { background: rgba(99, 102, 241, 0.1); }
+.bannerProgressBar { background: linear-gradient(90deg, #6366f1, #a855f7); }
+.bannerWarning { background: rgba(234, 179, 8, 0.04); }
+.bannerWarning .bannerTitle { color: #713f12; }
+.bannerWarning .bannerDesc { color: #92400e; }
+.inline { background: rgba(99, 102, 241, 0.04); }
+.inlineContent { color: #4b5563; }
+.inlineBtn { background: #6366f1; color: #fff; }
+.inlineBtn:hover { background: #4f46e5; }
+.toast { background: rgba(99, 102, 241, 0.06); color: #4338ca; }
+.toastLink { color: #6366f1; }

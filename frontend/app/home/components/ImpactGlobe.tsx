@@ -3,8 +3,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import commonStyles from './ImpactGlobe.common.module.css';
 import lightStyles from './ImpactGlobe.light.module.css';
@@ -12,9 +12,9 @@ import darkStyles from './ImpactGlobe.dark.module.css';
 
 // --- Main Component ---
 const ImpactGlobe: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const mode = useThemeMode();
   const [isMounted, setIsMounted] = useState(false);
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = mode === 'dark' ? darkStyles : lightStyles;
 
   useEffect(() => {
     setIsMounted(true);

@@ -4,9 +4,9 @@
 
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { useTheme } from 'next-themes';
 import { Flag, Users, Globe, LineChart, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useThemeMode } from '@/app/hooks/useThemeMode';
 
 import ImpactStatCard from './ImpactStatCard';
 import SuccessStoryCard from './SuccessStoryCard';
@@ -38,8 +38,8 @@ interface SuccessStory {
 
 // --- Main Component ---
 const GlobalImpact: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [platformStats, setPlatformStats] = useState(industryStats);
 
