@@ -279,7 +279,7 @@ export const profileMenuItems: ProfileMenuItem[] = [
           // Notify backend to blacklist the token
           const token = localStorage.getItem("auth_token");
           if (token) {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/auth/logout`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/auth/logout`, {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${token}` },
             }).catch(() => {});

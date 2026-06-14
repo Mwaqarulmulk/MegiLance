@@ -1130,7 +1130,7 @@ export default function InvoicesPage() {
                   size="sm"
                   onClick={() =>
                     window.open(
-                      `/backend/api/v1/invoices/${selectedInvoice.id}/view`,
+                      `/api/v1/invoices/${selectedInvoice.id}/view`,
                       "_blank",
                     )
                   }

@@ -7,9 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { 
-  ArrowRight, Search, ShieldCheck, Zap, 
-  Code, Palette, Smartphone, BarChart3
+import {
+  ArrowRight, Search, ShieldCheck, Zap,
+  Code, Palette, Smartphone, BarChart3,
+  Briefcase, UserCheck, ShieldAlert, Rocket
 } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
 
@@ -18,7 +19,15 @@ import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
 
 // Using Optional HeroScene3D wrapper if available
-import { HeroScene3D } from '@/app/components/3D'; 
+import { HeroScene3D } from '@/app/components/3D';
+
+const SHOW_DEMO = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true';
+
+const DEMO_USERS = [
+  { role: 'client', label: 'Client Demo', icon: Briefcase, email: process.env.NEXT_PUBLIC_DEV_CLIENT_EMAIL || 'client1@example.com', password: process.env.NEXT_PUBLIC_DEV_CLIENT_PASSWORD || 'Client@123', redirect: '/portal/client/dashboard' },
+  { role: 'freelancer', label: 'Freelancer Demo', icon: UserCheck, email: process.env.NEXT_PUBLIC_DEV_FREELANCER_EMAIL || 'freelancer1@example.com', password: process.env.NEXT_PUBLIC_DEV_FREELANCER_PASSWORD || 'Freelancer@123', redirect: '/portal/freelancer/dashboard' },
+  { role: 'admin', label: 'Admin Demo', icon: ShieldAlert, email: process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL || 'admin@megilance.com', password: process.env.NEXT_PUBLIC_DEV_ADMIN_PASSWORD || 'Admin@123', redirect: '/admin' },
+] as const;
 
 const POPULAR_CATEGORIES = [
   { label: 'Web Development', icon: Code, href: '/explore?category=web-development' },
@@ -32,6 +41,7 @@ export default function Hero() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [demoLoggingIn, setDemoLoggingIn] = useState<string | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
@@ -51,6 +61,34 @@ export default function Hero() {
       router.push(`/explore?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   }, [searchQuery, router]);
+
+  const handleDemoLogin = useCallback(async (user: typeof DEMO_USERS[number]) => {
+    setDemoLoggingIn(user.role);
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+      const res = await fetch(`${apiBase}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, password: user.password }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const token = data.access_token || data.token;
+        if (token) {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('user_role', user.role);
+          router.push(user.redirect);
+          return;
+        }
+      }
+      // Fallback: go to login page with credentials pre-filled via query
+      router.push(`/login?demo=${user.role}`);
+    } catch {
+      router.push(`/login?demo=${user.role}`);
+    } finally {
+      setDemoLoggingIn(null);
+    }
+  }, [router]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -163,7 +201,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Social Proof & Metrics */}
-          <motion.div 
+          <motion.div
             className={commonStyles.metricsRow}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -179,6 +217,66 @@ export default function Hero() {
               <span className={cn(commonStyles.metricText, themeStyles.metricText)}>AI Matched under 24h</span>
             </div>
           </motion.div>
+
+          {/* Quick Demo Login — visible when NEXT_PUBLIC_SHOW_DEMO_LOGIN=true */}
+          {SHOW_DEMO && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 0.6 }}
+              style={{
+                marginTop: '2rem',
+                padding: '1rem 1.5rem',
+                borderRadius: '16px',
+                background: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                border: resolvedTheme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.08)',
+                display: 'flex',
+                flexWrap: 'wrap' as const,
+                alignItems: 'center',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginRight: '0.5rem' }}>
+                <Rocket size={16} style={{ opacity: 0.7 }} />
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, opacity: 0.7, whiteSpace: 'nowrap' as const }}>Quick Demo:</span>
+              </div>
+              {DEMO_USERS.map((u) => {
+                const Icon = u.icon;
+                const isLoading = demoLoggingIn === u.role;
+                return (
+                  <button
+                    key={u.role}
+                    onClick={() => handleDemoLogin(u)}
+                    disabled={!!demoLoggingIn}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      padding: '0.4rem 0.9rem',
+                      borderRadius: '8px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      cursor: demoLoggingIn ? 'not-allowed' : 'pointer',
+                      opacity: demoLoggingIn && !isLoading ? 0.5 : 1,
+                      border: resolvedTheme === 'dark' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.15)',
+                      background: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                      color: 'inherit',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <Icon size={14} />
+                    {isLoading ? 'Logging in…' : u.label}
+                  </button>
+                );
+              })}
+              <Link
+                href="/login"
+                style={{ fontSize: '0.75rem', opacity: 0.5, marginLeft: 'auto', textDecoration: 'underline' }}
+              >
+                Manual login →
+              </Link>
+            </motion.div>
+          )}
 
         </div>
       </motion.div>

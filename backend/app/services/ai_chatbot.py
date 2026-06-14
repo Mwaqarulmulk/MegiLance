@@ -76,46 +76,97 @@ class AIChatbotService:
             r'\b(have a nice day|take care)\b'
         ],
         ChatIntent.HELP: [
-            r'\b(help|assist|support|how do i|how can i|what is)\b',
-            r'\b(i need help|can you help|guide me)\b'
+            r'\b(help|assist|support|how do i|how can i|what is|explain|tell me)\b',
+            r'\b(i need help|can you help|guide me|show me)\b'
         ],
         ChatIntent.ACCOUNT_QUESTION: [
-            r'\b(account|profile|settings|password|email|login)\b',
-            r'\b(sign up|register|verification|verify)\b'
+            r'\b(account|profile|settings|password|email|login|sign in)\b',
+            r'\b(sign up|register|verification|verify|2fa|two.factor)\b'
         ],
         ChatIntent.PROJECT_QUESTION: [
-            r'\b(project|job|gig|contract|proposal|bid)\b',
-            r'\b(freelancer|client|hire|work)\b'
+            r'\b(project|job|gig|contract|proposal|bid|posting)\b',
+            r'\b(hire|hiring|post a job|find work|find talent)\b'
         ],
         ChatIntent.PAYMENT_QUESTION: [
-            r'\b(payment|pay|money|withdraw|deposit|escrow)\b',
-            r'\b(invoice|billing|refund|fee|commission)\b'
+            r'\b(payment|pay|money|withdraw|deposit|escrow|wallet)\b',
+            r'\b(invoice|billing|refund|fee|commission|earnings|payout)\b'
         ],
         ChatIntent.TECHNICAL_ISSUE: [
-            r'\b(error|bug|broken|not working|issue|problem)\b',
-            r'\b(crash|stuck|loading|slow|fail)\b'
+            r'\b(error|bug|broken|not working|issue|problem|glitch)\b',
+            r'\b(crash|stuck|loading|slow|fail|404|500)\b'
         ],
         ChatIntent.COMPLAINT: [
-            r'\b(complaint|complain|terrible|awful|worst)\b',
-            r'\b(unacceptable|disappointed|frustrated|angry)\b'
+            r'\b(complaint|complain|terrible|awful|worst|scam|fraud)\b',
+            r'\b(unacceptable|disappointed|frustrated|angry|cheated)\b'
         ],
         ChatIntent.FEEDBACK: [
-            r'\b(feedback|suggestion|improve|feature request)\b',
-            r'\b(would be nice|you should|recommend)\b'
+            r'\b(feedback|suggestion|improve|feature request|idea)\b',
+            r'\b(would be nice|you should|recommend|add a feature)\b'
         ],
         ChatIntent.SPEAK_TO_AGENT: [
-            r'\b(speak to|talk to|human|agent|representative)\b',
-            r'\b(real person|live support|escalate)\b'
+            r'\b(speak to|talk to|human|agent|representative|person)\b',
+            r'\b(real person|live support|escalate|manager)\b'
         ],
         ChatIntent.PROJECT_MATCHING: [
             r'\b(match|matching|projects for me|jobs for me|find projects)\b',
-            r'\b(suitable projects|relevant jobs|recommend projects)\b'
+            r'\b(suitable projects|relevant jobs|recommend projects|best projects)\b'
         ],
         ChatIntent.PROPOSAL_ASSISTANCE: [
             r'\b(proposal|write proposal|draft proposal|proposal help|cover letter)\b',
-            r'\b(write bid|bid help|draft bid)\b'
+            r'\b(write bid|bid help|draft bid|win project)\b'
         ]
     }
+
+    # Portal-specific response templates for agentic capabilities
+    CLIENT_PORTAL_GUIDE = """**As a Client on MegiLance, you can:**
+
+🔍 **Find Talent**
+- Post a project with your requirements and budget
+- Browse 10,000+ verified freelancers by skill
+- Get AI-matched freelancer recommendations
+- Use the "Find Talent" page to filter by skill, rate, and rating
+
+📋 **Manage Projects**
+- Track all proposals in your Client Dashboard
+- Use the AI Scope Planner to break down your project
+- Approve milestones to release escrow payments
+
+💳 **Payments & Escrow**
+- Fund escrow when a contract starts
+- Payment releases only when you approve work
+- Multiple payment methods: Card, PayPal, Bank Transfer
+
+📊 **Dashboard Features**
+- Active contracts & milestones tracker
+- Invoice history and payment records
+- Dispute resolution center
+- Real-time messaging with freelancers"""
+
+    FREELANCER_PORTAL_GUIDE = """**As a Freelancer on MegiLance, you can:**
+
+🎯 **Find Projects**
+- Browse open projects in your skill categories
+- View AI-matched project recommendations
+- Set job alerts for relevant opportunities
+- Use the External Projects board for off-platform gigs
+
+📝 **Submit Proposals**
+- Use the AI Proposal Writer to craft winning proposals
+- Set your rate and timeline
+- Attach portfolio items
+- Track proposal status in real-time
+
+💰 **Earnings & Payments**
+- Receive payments through escrow (safe & guaranteed)
+- Withdraw via PayPal, bank transfer, or Wise
+- Track all earnings in your Freelancer Dashboard
+- Generate professional invoices automatically
+
+⭐ **Build Your Profile**
+- Complete your profile for higher visibility
+- Get skill-verified with assessments
+- Collect client reviews for reputation building
+- Unlock seller tiers: Bronze → Silver → Gold → Platinum"""
     
     # Sentiment keywords
     SENTIMENT_KEYWORDS = {
@@ -562,94 +613,199 @@ class AIChatbotService:
             response["actions"] = [{"type": "close_conversation"}]
         
         elif intent == ChatIntent.HELP:
-            # Search FAQ
+            # Search FAQ first
             faq_results = await self.search_faq(message)
             if faq_results:
                 top_result = faq_results[0]
                 response["message"] = top_result["answer"]
                 response["faq_matched"] = top_result["id"]
-                
                 if len(faq_results) > 1:
-                    response["suggestions"] = [
-                        f["question"] for f in faq_results[1:4]
-                    ]
+                    response["suggestions"] = [f["question"] for f in faq_results[1:4]]
             else:
-                response["message"] = "I'd be happy to help! Could you tell me more about what you need assistance with?\n\nHere are some common topics:"
-                response["suggestions"] = [
-                    "Account & Profile",
-                    "Projects & Proposals",
-                    "Payments & Billing",
-                    "Technical Issues"
-                ]
-        
+                # Try AI then rich fallback
+                ai_resp = await self._generate_ai_response(message)
+                if ai_resp:
+                    response["message"] = ai_resp
+                else:
+                    response["message"] = "I'd be happy to help! Here are the most common topics I can assist with:"
+                    response["suggestions"] = [
+                        "How to post a project",
+                        "How does escrow work?",
+                        "What are the platform fees?",
+                        "How to submit a proposal",
+                    ]
+
         elif intent == ChatIntent.ACCOUNT_QUESTION:
             faq_results = await self.search_faq(message, category="account")
             if faq_results:
                 response["message"] = faq_results[0]["answer"]
                 response["faq_matched"] = faq_results[0]["id"]
             else:
-                response["message"] = "For account-related questions:\n\n• **Profile**: Update in Settings > Profile\n• **Password**: Reset via Settings > Security\n• **Verification**: Settings > Verification\n\nWhat specific account help do you need?"
-        
+                response["message"] = (
+                    "Here's a quick guide to account management:\n\n"
+                    "• **Update Profile**: Settings → Profile → Edit\n"
+                    "• **Change Password**: Settings → Security → Change Password\n"
+                    "• **Enable 2FA**: Settings → Security → Two-Factor Authentication\n"
+                    "• **Verify Identity**: Settings → Verification → Upload ID\n"
+                    "• **Forgot Password**: Click 'Forgot Password' on the login page\n\n"
+                    "Which of these do you need help with?"
+                )
+                response["suggestions"] = ["Reset my password", "Enable 2FA", "Verify my identity"]
+
         elif intent == ChatIntent.PROJECT_QUESTION:
             faq_results = await self.search_faq(message, category="projects")
             if faq_results:
                 response["message"] = faq_results[0]["answer"]
                 response["faq_matched"] = faq_results[0]["id"]
             else:
-                response["message"] = "I can help with projects! What would you like to know?\n\n• How to post a project\n• Submitting proposals\n• Managing contracts\n• Milestones and deadlines"
-        
+                msg_lower = message.lower()
+                if any(w in msg_lower for w in ["hire", "find freelancer", "client", "post project"]):
+                    response["message"] = self.CLIENT_PORTAL_GUIDE
+                    response["suggestions"] = ["Post a project", "How does escrow work?", "Find a freelancer"]
+                elif any(w in msg_lower for w in ["proposal", "bid", "apply", "find work", "freelancer"]):
+                    response["message"] = self.FREELANCER_PORTAL_GUIDE
+                    response["suggestions"] = ["How to write a good proposal", "How do payments work?", "Improve my profile"]
+                else:
+                    response["message"] = (
+                        "I can help with projects and freelancing! Are you a **Client** looking to hire, "
+                        "or a **Freelancer** looking for work?\n\n"
+                        "**For Clients:**\n• Post a project with your requirements\n• Browse AI-matched freelancers\n• Secure payments via escrow\n\n"
+                        "**For Freelancers:**\n• Browse open projects\n• Submit proposals\n• Get paid safely through escrow"
+                    )
+                    response["suggestions"] = ["I'm a client — how do I hire?", "I'm a freelancer — how do I find work?"]
+
         elif intent == ChatIntent.PAYMENT_QUESTION:
             faq_results = await self.search_faq(message, category="payments")
             if faq_results:
                 response["message"] = faq_results[0]["answer"]
                 response["faq_matched"] = faq_results[0]["id"]
             else:
-                response["message"] = "For payment questions:\n\n• **Escrow**: Secures payments until work is approved\n• **Fees**: 10% for freelancers, free for clients\n• **Withdrawals**: PayPal, bank transfer, or Wise\n\nWhat specifically would you like to know?"
-        
+                response["message"] = (
+                    "Here's how payments work on MegiLance:\n\n"
+                    "💰 **Escrow System**\n"
+                    "Client deposits payment → Freelancer completes work → Client approves → Payment released\n\n"
+                    "💳 **Payment Methods**\n"
+                    "• Credit/Debit cards (Visa, Mastercard, Amex)\n"
+                    "• PayPal\n"
+                    "• Bank Transfer\n"
+                    "• Wise (TransferWise)\n"
+                    "• USDC Crypto (Pakistan-friendly)\n\n"
+                    "📋 **Fees**\n"
+                    "• Freelancers: 10% service fee\n"
+                    "• Clients: No additional fees\n"
+                    "• Withdrawals: Free above $100, $1 flat fee below\n\n"
+                    "What payment question do you have?"
+                )
+                response["suggestions"] = ["How does escrow work?", "Withdrawal times", "Platform fees"]
+
         elif intent == ChatIntent.TECHNICAL_ISSUE:
-            response["message"] = "I'm sorry you're experiencing issues! 😔\n\nCould you please describe:\n1. What you were trying to do\n2. What error or issue you saw\n3. What device/browser you're using\n\nThis will help me assist you better, or I can create a support ticket."
+            ai_resp = await self._generate_ai_response(message)
+            if ai_resp:
+                response["message"] = ai_resp
+            else:
+                response["message"] = (
+                    "I'm sorry you're experiencing issues! 😔\n\n"
+                    "Let me help you troubleshoot. Please tell me:\n"
+                    "1. **What were you trying to do?**\n"
+                    "2. **What error or message did you see?**\n"
+                    "3. **Which browser/device are you using?**\n\n"
+                    "Common quick fixes:\n"
+                    "• Clear browser cache and cookies\n"
+                    "• Try in incognito/private mode\n"
+                    "• Check your internet connection\n"
+                    "• Try a different browser\n\n"
+                    "If the issue persists, I can create a support ticket for you."
+                )
             response["actions"] = [{"type": "offer_ticket"}]
-        
+
         elif intent == ChatIntent.COMPLAINT:
-            # Acknowledge and offer help
             if sentiment in [SentimentLevel.VERY_NEGATIVE, SentimentLevel.NEGATIVE]:
-                response["message"] = "I'm really sorry to hear you're having a difficult experience. Your feedback is important to us. 🙏\n\nWould you like me to:\n1. Help resolve your issue right now\n2. Connect you with a support specialist\n3. Create a formal complaint ticket"
+                response["message"] = (
+                    "I'm really sorry to hear you're having a difficult experience. "
+                    "Your satisfaction matters to us. 🙏\n\n"
+                    "I'd like to help resolve this right away. Would you prefer to:\n"
+                    "1. **Tell me the issue** — I'll try to solve it now\n"
+                    "2. **Speak to a support specialist** — I'll connect you immediately\n"
+                    "3. **Create a formal complaint** — Gets priority review within 24 hours\n\n"
+                    "Please share more details about what went wrong."
+                )
                 response["actions"] = [{"type": "offer_escalation"}]
             else:
-                response["message"] = "I'm sorry things aren't going smoothly. Let me try to help resolve this for you. What's the main issue you're facing?"
-        
+                response["message"] = "I'm sorry things aren't going smoothly. I'm here to help! Could you describe the main issue you're facing so I can find the best solution?"
+
         elif intent == ChatIntent.FEEDBACK:
-            response["message"] = "Thank you for your feedback! 💡 We love hearing from our users.\n\nI'll make sure this gets to our team. Is there anything specific you'd like to elaborate on?"
+            response["message"] = (
+                "Thank you for your feedback! 💡 We genuinely value input from our community.\n\n"
+                "Your suggestion will be forwarded to our product team. "
+                "We review all feedback weekly to prioritize improvements.\n\n"
+                "Is there anything specific you'd like to add or elaborate on?"
+            )
             response["actions"] = [{"type": "log_feedback"}]
-        
+
         elif intent == ChatIntent.PROJECT_MATCHING:
             if not user_id:
-                response["message"] = "I'd love to help you find matching projects! Please log in to your account so I can analyze your skills and find the best matches for you."
-                response["suggestions"] = ["How to get started", "Browse projects"]
+                response["message"] = (
+                    "I'd love to find matching projects for you! 🎯\n\n"
+                    "To get personalized project matches, please log in to your account. "
+                    "Once logged in, I can analyze your skills and recommend the best opportunities.\n\n"
+                    "Not registered yet? Sign up free at megilance.site!"
+                )
+                response["suggestions"] = ["Browse all projects", "How does matching work?"]
+                response["actions"] = [{"type": "suggest_login"}]
             else:
-                # Suggest checking the matching dashboard or call service
-                response["message"] = "I'm analyzing the latest projects against your profile... 🔍\n\nI found several projects that match your skills! You can view them in detail on your **Matching Dashboard**.\n\nWould you like me to highlight the top 3 matches here?"
-                response["suggestions"] = ["Show top matches", "Go to Dashboard"]
-                response["actions"] = [{"type": "trigger_matching"}]
+                response["message"] = (
+                    "Analyzing the latest projects against your profile... 🔍\n\n"
+                    "I found projects matching your skills! Check your **Freelancer Dashboard → Matching** tab "
+                    "to see your top matches with compatibility scores.\n\n"
+                    "Tips to improve your match score:\n"
+                    "• Add more skills to your profile\n"
+                    "• Complete your profile 100%\n"
+                    "• Set your availability status to 'Available'\n"
+                    "• Update your hourly rate to market rates"
+                )
+                response["suggestions"] = ["Open my Dashboard", "How to improve match score?"]
+                response["actions"] = [{"type": "trigger_matching", "redirect": "/portal/freelancer/dashboard"}]
 
         elif intent == ChatIntent.PROPOSAL_ASSISTANCE:
-            response["message"] = "I can help you draft a winning proposal! ✍️\n\nTo get started, please provide:\n1. The **Project ID** or **Link**\n2. Any specific highlights you want to include\n\nI'll then generate a personalized draft for you to review."
-            response["suggestions"] = ["Tips for proposals", "Show my last draft"]
-            response["actions"] = [{"type": "start_proposal_wizard"}]
+            response["message"] = (
+                "I can help you craft a winning proposal! ✍️\n\n"
+                "**Tips for a high-win-rate proposal:**\n"
+                "1. **Personalize the opening** — Reference the client's specific project\n"
+                "2. **Show relevant experience** — Link 2-3 portfolio items\n"
+                "3. **Be specific about approach** — Explain HOW you'll solve their problem\n"
+                "4. **Set a clear timeline** — Break it into milestones\n"
+                "5. **Price competitively** — Use our Rate Advisor for market data\n\n"
+                "Want me to help you draft a proposal? Share the project title and your key skills!"
+            )
+            response["suggestions"] = ["Open AI Proposal Writer", "Check market rates", "View proposal templates"]
+            response["actions"] = [{"type": "start_proposal_wizard", "redirect": "/ai/proposal-writer"}]
 
         else:
-            # Try to generate response using local AI service
+            # Try LLM AI first, then rich smart fallback
             ai_response = await self._generate_ai_response(message)
             if ai_response:
                 response["message"] = ai_response
             else:
-                # Default fallback if AI fails
-                response["message"] = "I'm not quite sure I understood that. Could you rephrase or choose from these topics?"
+                response["message"] = (
+                    "I'm your MegiLance AI assistant. Here's what I can help you with:\n\n"
+                    "**🖥️ For Clients:**\n"
+                    "• Find and hire top freelancers\n"
+                    "• Post projects and manage contracts\n"
+                    "• Escrow payments and dispute resolution\n\n"
+                    "**💼 For Freelancers:**\n"
+                    "• Find projects matching your skills\n"
+                    "• Write winning proposals\n"
+                    "• Manage earnings and portfolio\n\n"
+                    "**🤖 AI Tools (Free!):**\n"
+                    "• Price Estimator, Proposal Writer, Rate Advisor\n"
+                    "• Skill Analyzer, Scope Planner, Income Calculator\n\n"
+                    "What would you like help with?"
+                )
                 response["suggestions"] = [
-                    "Account help",
-                    "Project questions",
-                    "Payment issues",
-                    "Speak to support"
+                    "I'm a client — help me hire",
+                    "I'm a freelancer — find me projects",
+                    "Show me AI tools",
+                    "Payment questions",
                 ]
         
         return response

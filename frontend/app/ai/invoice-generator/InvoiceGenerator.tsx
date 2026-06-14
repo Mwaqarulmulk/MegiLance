@@ -16,6 +16,7 @@ import {
 import commonStyles from './InvoiceGenerator.common.module.css';
 import lightStyles from './InvoiceGenerator.light.module.css';
 import darkStyles from './InvoiceGenerator.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ============================================================================
    Types

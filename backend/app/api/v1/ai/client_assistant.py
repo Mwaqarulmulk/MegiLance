@@ -485,22 +485,161 @@ async def _run_llm_chat(
     user_id: int,
     role: str,
 ) -> dict:
-    """Run full LLM chat with tool calling. Returns structured response."""
+    """Run LLM chat with tool calling — supports Anthropic and DigitalOcean."""
     if not llm_gateway.is_active:
         return _fallback_response(user_message, role)
+
+    if llm_gateway.provider == "anthropic":
+        return await _run_anthropic_chat(user_message, history, system_prompt, tools, user_id, role)
+    return await _run_openai_chat(user_message, history, system_prompt, tools, user_id, role)
+
+
+def _openai_tools_to_anthropic(tools: list) -> list:
+    """Convert OpenAI function-calling format to Anthropic tool format."""
+    result = []
+    for t in tools:
+        fn = t.get("function", {})
+        result.append({
+            "name": fn.get("name", ""),
+            "description": fn.get("description", ""),
+            "input_schema": fn.get("parameters", {"type": "object", "properties": {}}),
+        })
+    return result
+
+
+async def _run_anthropic_chat(
+    user_message: str,
+    history: list,
+    system_prompt: str,
+    tools: list,
+    user_id: int,
+    role: str,
+) -> dict:
+    """Anthropic Claude tool-use chat implementation."""
+    import httpx
+
+    anthropic_tools = _openai_tools_to_anthropic(tools)
+    messages = []
+    for h in history[-8:]:
+        r = h.get("role", "user")
+        if r in ("user", "assistant"):
+            messages.append({"role": r, "content": h.get("content", "")})
+    messages.append({"role": "user", "content": user_message})
+
+    tool_results_for_frontend: list = []
+
+    try:
+        headers = {
+            "x-api-key": llm_gateway.anthropic_api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
+
+        # First call — may include tool use
+        payload: dict = {
+            "model": llm_gateway.anthropic_model,
+            "max_tokens": 1024,
+            "temperature": 0.7,
+            "system": system_prompt,
+            "messages": messages,
+            "tools": anthropic_tools,
+        }
+
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            resp = await client.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload)
+
+        if resp.status_code != 200:
+            logger.error(f"Anthropic assistant error {resp.status_code}: {resp.text[:200]}")
+            return _fallback_response(user_message, role)
+
+        data = resp.json()
+        content_blocks = data.get("content", [])
+        stop_reason = data.get("stop_reason", "end_turn")
+
+        tool_use_blocks = [b for b in content_blocks if b.get("type") == "tool_use"]
+
+        if stop_reason == "tool_use" and tool_use_blocks:
+            # Execute tools
+            tool_result_content = []
+            for tb in tool_use_blocks:
+                tool_name = tb.get("name", "")
+                args = tb.get("input", {})
+                result = _execute_tool(tool_name, args, user_id, role)
+                tool_results_for_frontend.append({
+                    "tool_name": tool_name,
+                    "data": result,
+                    "display_type": result.get("display_type", "text"),
+                })
+                tool_result_content.append({
+                    "type": "tool_result",
+                    "tool_use_id": tb.get("id", ""),
+                    "content": json.dumps(result),
+                })
+
+            # Second call with tool results
+            messages2 = messages + [
+                {"role": "assistant", "content": content_blocks},
+                {"role": "user", "content": tool_result_content},
+            ]
+            payload2: dict = {
+                "model": llm_gateway.anthropic_model,
+                "max_tokens": 700,
+                "temperature": 0.7,
+                "system": system_prompt,
+                "messages": messages2,
+            }
+            async with httpx.AsyncClient(timeout=30.0) as client2:
+                resp2 = await client2.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload2)
+
+            final_content = ""
+            if resp2.status_code == 200:
+                data2 = resp2.json()
+                for block in data2.get("content", []):
+                    if block.get("type") == "text":
+                        final_content += block.get("text", "")
+            if not final_content:
+                final_content = "Here's what I found for you. See the results above."
+        else:
+            final_content = ""
+            for block in content_blocks:
+                if block.get("type") == "text":
+                    final_content += block.get("text", "")
+            if not final_content:
+                return _fallback_response(user_message, role)
+
+        suggestions = _generate_suggestions(user_message, role, bool(tool_results_for_frontend))
+        action_buttons = _generate_action_buttons(user_message, role, tool_results_for_frontend)
+        return {
+            "message": final_content.strip(),
+            "tool_results": tool_results_for_frontend,
+            "suggestions": suggestions,
+            "action_buttons": action_buttons,
+        }
+
+    except Exception as e:
+        logger.error(f"Anthropic assistant error: {e}")
+        return _fallback_response(user_message, role)
+
+
+async def _run_openai_chat(
+    user_message: str,
+    history: list,
+    system_prompt: str,
+    tools: list,
+    user_id: int,
+    role: str,
+) -> dict:
+    """OpenAI-compatible (DigitalOcean) tool-use chat implementation."""
+    import httpx
 
     messages = [{"role": "system", "content": system_prompt}]
     for h in history[-8:]:
         messages.append({"role": h.get("role", "user"), "content": h.get("content", "")})
     messages.append({"role": "user", "content": user_message})
 
-    tool_results_for_frontend = []
-    suggestions = []
-    action_buttons = []
+    tool_results_for_frontend: list = []
 
     try:
-        import httpx
-        # First LLM call (with tools)
         payload = {
             "model": llm_gateway.do_model,
             "messages": messages,
@@ -513,11 +652,11 @@ async def _run_llm_chat(
             resp = await client.post(
                 f"{llm_gateway.do_api_base}/chat/completions",
                 headers={"Authorization": f"Bearer {llm_gateway.do_api_key}", "Content-Type": "application/json"},
-                json=payload
+                json=payload,
             )
 
         if resp.status_code != 200:
-            logger.error(f"LLM error {resp.status_code}: {resp.text[:200]}")
+            logger.error(f"DO LLM error {resp.status_code}: {resp.text[:200]}")
             return _fallback_response(user_message, role)
 
         data = resp.json()
@@ -525,7 +664,6 @@ async def _run_llm_chat(
         assistant_msg = choice.get("message", {})
         finish_reason = choice.get("finish_reason", "stop")
 
-        # Process tool calls
         if finish_reason == "tool_calls" and assistant_msg.get("tool_calls"):
             tool_calls = assistant_msg["tool_calls"]
             tool_messages = [assistant_msg]
@@ -537,7 +675,6 @@ async def _run_llm_chat(
                     args = json.loads(fn.get("arguments", "{}"))
                 except json.JSONDecodeError:
                     args = {}
-
                 result = _execute_tool(tool_name, args, user_id, role)
                 tool_results_for_frontend.append({
                     "tool_name": tool_name,
@@ -547,37 +684,29 @@ async def _run_llm_chat(
                 tool_messages.append({
                     "role": "tool",
                     "tool_call_id": tc.get("id", ""),
-                    "content": json.dumps(result)
+                    "content": json.dumps(result),
                 })
 
-            # Second LLM call to get final answer after tool execution
             messages2 = messages + tool_messages
-            payload2 = {
-                "model": llm_gateway.do_model,
-                "messages": messages2,
-                "max_tokens": 600,
-                "temperature": 0.7,
-            }
+            payload2 = {"model": llm_gateway.do_model, "messages": messages2, "max_tokens": 600, "temperature": 0.7}
             async with httpx.AsyncClient(timeout=30.0) as client2:
                 resp2 = await client2.post(
                     f"{llm_gateway.do_api_base}/chat/completions",
                     headers={"Authorization": f"Bearer {llm_gateway.do_api_key}", "Content-Type": "application/json"},
-                    json=payload2
+                    json=payload2,
                 )
+            final_content = ""
             if resp2.status_code == 200:
-                data2 = resp2.json()
-                final_content = data2.get("choices", [{}])[0].get("message", {}).get("content", "")
-            else:
+                final_content = resp2.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+            if not final_content:
                 final_content = "I found relevant information for you. See the results above."
         else:
             final_content = assistant_msg.get("content", "")
             if not final_content:
                 return _fallback_response(user_message, role)
 
-        # Generate smart suggestions based on role and context
         suggestions = _generate_suggestions(user_message, role, bool(tool_results_for_frontend))
         action_buttons = _generate_action_buttons(user_message, role, tool_results_for_frontend)
-
         return {
             "message": final_content,
             "tool_results": tool_results_for_frontend,
@@ -586,7 +715,7 @@ async def _run_llm_chat(
         }
 
     except Exception as e:
-        logger.error(f"LLM chat error: {e}")
+        logger.error(f"DO LLM chat error: {e}")
         return _fallback_response(user_message, role)
 
 

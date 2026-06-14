@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './ScopePlanner.common.module.css';
 import lightStyles from './ScopePlanner.light.module.css';
 import darkStyles from './ScopePlanner.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -403,6 +404,8 @@ export default function ScopePlanner() {
         <h1 className={cn(cs.title, ts.title)}>Scope & Budget Planner</h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Plan timelines, budgets, and resources for your projects</p>
       </header>
+
+      <GuestBanner toolName="Scope Planner" variant="inline" />
 
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (

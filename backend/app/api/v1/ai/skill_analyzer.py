@@ -7,7 +7,7 @@ import json
 
 logger = logging.getLogger(__name__)
 
-from app.core.security import get_current_user
+from app.core.security import get_current_user_optional
 from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
@@ -219,11 +219,11 @@ class AnalyzeRequest(_BaseModel):
 
 
 @router.post("/analyze")
-def analyze_skills(req: AnalyzeRequest, current_user=Depends(get_current_user)):
-    """Full skill analysis: profile score, gaps, synergies, recommendations."""
+def analyze_skills(req: AnalyzeRequest, current_user=Depends(get_current_user_optional)):
+    """Full skill analysis: profile score, gaps, synergies, recommendations. Guest-accessible."""
     user_skills = req.skills
-    if not user_skills:
-        # Fall back to DB
+    if not user_skills and current_user is not None:
+        # Fall back to DB only for logged-in users
         result = execute_query("SELECT skills FROM users WHERE id = ?", [current_user.id])
         rows = parse_rows(result) if result else []
         if rows:
@@ -318,8 +318,8 @@ def analyze_skills(req: AnalyzeRequest, current_user=Depends(get_current_user)):
 
 
 @router.get("/gaps/{user_id}")
-async def skill_gaps(user_id: int, current_user=Depends(get_current_user)):
-    """Analyze skill gaps for a freelancer."""
+async def skill_gaps(user_id: int, current_user=Depends(get_current_user_optional)):
+    """Analyze skill gaps for a freelancer. Guest-accessible for public profiles."""
     result = execute_query("SELECT skills FROM users WHERE id = ?", [user_id])
     rows = parse_rows(result)
     if not rows:
@@ -335,8 +335,10 @@ async def skill_gaps(user_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/gaps")
-async def my_skill_gaps(current_user=Depends(get_current_user)):
-    """Analyze skill gaps for the current user."""
+async def my_skill_gaps(current_user=Depends(get_current_user_optional)):
+    """Analyze skill gaps for the current user. Returns empty for guests."""
+    if current_user is None:
+        return {"user_id": None, "skill_gaps": [], "strengths": [], "category_coverage": {}, "total_skills": 0, "message": "Sign in to see your personal skill gaps"}
     result = execute_query("SELECT skills FROM users WHERE id = ?", [current_user.id])
     rows = parse_rows(result)
     user_skills = []
@@ -352,7 +354,7 @@ async def my_skill_gaps(current_user=Depends(get_current_user)):
 async def get_learning_path(
     user_id: int,
     target_skills: str = Query(..., description="Comma-separated target skills"),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_optional),
 ):
     """Generate a learning path to acquire target skills."""
     result = execute_query("SELECT skills FROM users WHERE id = ?", [user_id])
@@ -374,7 +376,7 @@ async def get_learning_path(
 async def compare_skills(
     skill_a: str = Query(...),
     skill_b: str = Query(...),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_optional),
 ):
     """Compare two skills by market demand and supply."""
     result = execute_query(

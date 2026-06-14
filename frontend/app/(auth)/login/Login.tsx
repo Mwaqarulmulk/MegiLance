@@ -103,6 +103,24 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
+    // Auto-trigger demo login when redirected from home page with ?demo=role
+    const demoRole = searchParams.get('demo') as UserRole | null;
+    if (demoRole && ['client', 'freelancer', 'admin'].includes(demoRole)) {
+      const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true';
+      if (SHOW_DEMO_LOGIN) {
+        const DEMO_CREDS: Record<string, { email: string; password: string }> = {
+          client: { email: process.env.NEXT_PUBLIC_DEV_CLIENT_EMAIL || 'client1@example.com', password: process.env.NEXT_PUBLIC_DEV_CLIENT_PASSWORD || 'Client@123' },
+          freelancer: { email: process.env.NEXT_PUBLIC_DEV_FREELANCER_EMAIL || 'freelancer1@example.com', password: process.env.NEXT_PUBLIC_DEV_FREELANCER_PASSWORD || 'Freelancer@123' },
+          admin: { email: process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL || 'admin@megilance.com', password: process.env.NEXT_PUBLIC_DEV_ADMIN_PASSWORD || 'Admin@123' },
+        };
+        const creds = DEMO_CREDS[demoRole];
+        if (creds) {
+          setSelectedRole(demoRole);
+          setTimeout(() => handleDevAutoLogin(creds.email, creds.password, demoRole), 300);
+        }
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const styles = React.useMemo(() => {

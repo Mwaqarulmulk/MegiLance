@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './ProposalWriter.common.module.css';
 import lightStyles from './ProposalWriter.light.module.css';
 import darkStyles from './ProposalWriter.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -473,6 +474,8 @@ export default function ProposalWriter() {
         <h1 className={cn(cs.title, ts.title)}>Proposal Writer</h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Generate winning proposals with market-data-backed pricing</p>
       </header>
+
+      <GuestBanner toolName="Proposal Writer" variant="inline" />
 
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (

@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './SkillAnalyzer.common.module.css';
 import lightStyles from './SkillAnalyzer.light.module.css';
 import darkStyles from './SkillAnalyzer.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -445,6 +446,8 @@ export default function SkillAnalyzer() {
         <h1 className={cn(cs.title, ts.title)}>Skill Analyzer</h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Analyze your skills against 2025 market demand and find high-ROI gaps</p>
       </header>
+
+      <GuestBanner toolName="Skill Analyzer" variant="inline" />
 
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (

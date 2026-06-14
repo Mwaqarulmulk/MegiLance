@@ -1190,6 +1190,56 @@ async def lifespan(app: FastAPI):
         else:
             logger.info("startup.supplementary_tables_initialized")
 
+        # Ensure chatbot tables exist (AI support system)
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS chatbot_conversations (
+                id TEXT PRIMARY KEY,
+                user_id INTEGER,
+                state TEXT NOT NULL DEFAULT 'active',
+                context TEXT DEFAULT '{}',
+                intents_detected TEXT DEFAULT '[]',
+                sentiment_history TEXT DEFAULT '[]',
+                escalated INTEGER DEFAULT 0,
+                escalated_at TEXT,
+                ticket_id TEXT,
+                closed_at TEXT,
+                resolution TEXT,
+                started_at TEXT NOT NULL,
+                last_activity TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""")
+            execute_query("""CREATE TABLE IF NOT EXISTS chatbot_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                content TEXT NOT NULL,
+                intent TEXT,
+                sentiment TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(conversation_id) REFERENCES chatbot_conversations(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_chatbot_messages_conv ON chatbot_messages(conversation_id)")
+            execute_query("""CREATE TABLE IF NOT EXISTS chatbot_tickets (
+                id TEXT PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                conversation_id TEXT,
+                subject TEXT NOT NULL,
+                description TEXT,
+                priority TEXT DEFAULT 'medium',
+                category TEXT DEFAULT 'general',
+                status TEXT DEFAULT 'open',
+                intents_detected TEXT DEFAULT '[]',
+                sentiment_summary TEXT,
+                conversation_summary TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(conversation_id) REFERENCES chatbot_conversations(id)
+            )""")
+            logger.info("startup.chatbot_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.chatbot_tables_warning: {e}")
+
     except Exception as e:
         logger.error(f"startup.database_failed error={e}")
         # Always fail fast if DB is unreachable to prevent healthy-looking broken app

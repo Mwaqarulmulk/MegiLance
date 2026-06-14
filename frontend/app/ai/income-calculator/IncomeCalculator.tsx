@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './IncomeCalculator.common.module.css';
 import lightStyles from './IncomeCalculator.light.module.css';
 import darkStyles from './IncomeCalculator.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -395,6 +396,8 @@ export default function IncomeCalculator() {
         <h1 className={cn(cs.title, ts.title)}>Income Calculator</h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Project your freelance income, taxes, and financial health</p>
       </header>
+
+      <GuestBanner toolName="Income Calculator" variant="inline" />
 
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (

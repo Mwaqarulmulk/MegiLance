@@ -1,15 +1,17 @@
-// @AI-HINT: Premium AI Chatbot page with production-ready quality UI/UX. Features glass morphism, typing indicators, suggestions, and smooth animations.
+// @AI-HINT: Premium AI Chatbot page with production-ready quality UI/UX. Guest-accessible with rate limiting.
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { getAuthToken } from '@/lib/api';
+import { getAuthToken } from '@/lib/api/core';
 import { Send, MoreVertical, Trash2, Settings, Mic, Volume2 } from 'lucide-react'
 import Button from '@/app/components/atoms/Button/Button';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
+import { useGuestUsage } from '@/app/hooks/useGuestUsage';
 
 import commonStyles from './Chatbot.common.module.css';
 import lightStyles from './Chatbot.light.module.css';
@@ -40,6 +42,7 @@ const normalizeBackendApiUrl = (baseUrl: string): string => {
 
 const Chatbot: React.FC = () => {
   const { resolvedTheme } = useTheme();
+  const { isAuthenticated, remaining, isLimitReached, trackUsage } = useGuestUsage();
   const [messages, setMessages] = useState<Message[]>([
     { 
       id: 1, 
@@ -71,7 +74,7 @@ const Chatbot: React.FC = () => {
   }, [messages, isTyping, scrollToBottom]);
 
   useEffect(() => {
-    // Start conversation
+    // Start conversation (no auth required for guests)
     const startConversation = async () => {
       try {
         const token = getAuthToken();
@@ -90,7 +93,6 @@ const Chatbot: React.FC = () => {
         if (res.ok) {
             const data = await res.json();
             setConversationId(data.conversation_id);
-            // Optionally set initial greeting from backend if provided
             if (data.response) {
                  setMessages([{ 
                     id: Date.now(), 
@@ -220,6 +222,29 @@ const Chatbot: React.FC = () => {
     const trimmedInput = input.trim();
     if (trimmedInput === '') return;
 
+    // Guest rate limiting
+    if (!isAuthenticated && isLimitReached) {
+      const botResponse: Message = { 
+        id: Date.now(), 
+        text: "You've reached the daily free limit. Sign up for unlimited access to all AI tools!", 
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botResponse]);
+      return;
+    }
+
+    if (!isAuthenticated && !trackUsage()) {
+      const botResponse: Message = { 
+        id: Date.now(), 
+        text: "Daily limit reached! Sign up for unlimited access to all AI tools.", 
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botResponse]);
+      return;
+    }
+
     const userMessage: Message = { 
       id: Date.now(), 
       text: trimmedInput, 
@@ -315,6 +340,7 @@ const Chatbot: React.FC = () => {
     <PageTransition>
       <div className={cn(commonStyles.container, themeStyles.container)}>
         <ScrollReveal>
+          <GuestBanner toolName="AI Chatbot" variant={!isAuthenticated ? 'banner' : 'toast'} />
           <div className={cn(commonStyles.chatContainer, themeStyles.chatContainer)}>
             {/* Header */}
             <header className={cn(commonStyles.header, themeStyles.header)}>

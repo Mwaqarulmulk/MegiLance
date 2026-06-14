@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './ExpenseTaxCalculator.common.module.css';
 import lightStyles from './ExpenseTaxCalculator.light.module.css';
 import darkStyles from './ExpenseTaxCalculator.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -368,6 +369,8 @@ export default function ExpenseTaxCalculator() {
         <h1 className={cn(cs.title, ts.title)}>Expense & Tax Calculator</h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Track expenses, deductions, and estimate your tax obligations</p>
       </header>
+
+      <GuestBanner toolName="Expense & Tax Calculator" variant="inline" />
 
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (

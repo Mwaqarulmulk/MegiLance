@@ -32,75 +32,23 @@ import {
 const aiFeatures = [
   {
     title: 'AI Chatbot',
-    description: 'Get instant answers to your questions about the platform, pricing, and finding freelancers. 24/7 intelligent support.',
+    description: 'Get instant answers about freelancing, pricing, and finding talent. 24/7 intelligent support powered by AI.',
     icon: MessageSquare,
     href: '/ai/chatbot',
     status: 'Live',
     color: 'blue',
-    stats: 'Instant answers'
+    stats: 'Instant answers',
+    free: true,
   },
   {
     title: 'Price Estimator',
-    description: 'Get AI-powered price estimates for your projects based on market data, complexity, and historical patterns.',
+    description: 'Get AI-powered price estimates for any project based on real market data across 10 industries and 100+ service types.',
     icon: DollarSign,
     href: '/ai/price-estimator',
     status: 'Live',
     color: 'green',
-    stats: 'Data-driven pricing'
-  },
-  {
-    title: 'Fraud Detection',
-    description: 'Multi-layer protection system that analyzes users, projects, and proposals for potential risks in real-time.',
-    icon: Shield,
-    href: '/ai/fraud-check',
-    status: 'Live',
-    color: 'red',
-    stats: 'Real-time protection'
-  },
-  {
-    title: 'Smart Matching',
-    description: 'Skill-based matching algorithm that connects you with the perfect freelancer or project using ML ranking.',
-    icon: Search,
-    href: '/explore',
-    status: 'Live',
-    color: 'purple',
-    stats: 'ML-powered matching'
-  },
-  {
-    title: 'Proposal Generator',
-    description: 'AI-powered proposal templates to help you create professional cover letters that win projects.',
-    icon: FileText,
-    href: '/portal/freelancer',
-    status: 'Live',
-    color: 'orange',
-    stats: 'Professional templates'
-  },
-  {
-    title: 'Sentiment Analysis',
-    description: 'Analyze reviews and feedback to understand client satisfaction and improve services.',
-    icon: Sparkles,
-    href: '/ai/chatbot',
-    status: 'Beta',
-    color: 'pink',
-    stats: 'In Beta'
-  },
-  {
-    title: 'Skill Analyzer',
-    description: 'Assess your skills against 2025 market demand data, discover high-ROI skill gaps, and get a personalized growth roadmap.',
-    icon: Brain,
-    href: '/ai/skill-analyzer',
-    status: 'Live',
-    color: 'blue',
-    stats: '80+ skills tracked'
-  },
-  {
-    title: 'Rate Advisor',
-    description: 'Get data-backed hourly rate recommendations with income projections and platform comparisons for your niche.',
-    icon: TrendingUp,
-    href: '/ai/rate-advisor',
-    status: 'Live',
-    color: 'green',
-    stats: '70+ countries covered'
+    stats: '100+ services',
+    free: true,
   },
   {
     title: 'Proposal Writer',
@@ -109,24 +57,105 @@ const aiFeatures = [
     href: '/ai/proposal-writer',
     status: 'Live',
     color: 'orange',
-    stats: 'AI-optimized copy'
-  }
+    stats: 'AI-optimized copy',
+    free: true,
+  },
+  {
+    title: 'Rate Advisor',
+    description: 'Get data-backed hourly rate recommendations with income projections and platform comparisons for your niche.',
+    icon: TrendingUp,
+    href: '/ai/rate-advisor',
+    status: 'Live',
+    color: 'cyan',
+    stats: '70+ countries',
+    free: true,
+  },
+  {
+    title: 'Scope Planner',
+    description: 'Plan project scope, milestones, timeline, and budget with AI-powered breakdown and risk assessment.',
+    icon: Layers,
+    href: '/ai/scope-planner',
+    status: 'Live',
+    color: 'purple',
+    stats: 'Smart planning',
+    free: true,
+  },
+  {
+    title: 'Skill Analyzer',
+    description: 'Assess your skills against market demand, discover high-ROI skill gaps, and get a personalized growth roadmap.',
+    icon: Brain,
+    href: '/ai/skill-analyzer',
+    status: 'Live',
+    color: 'indigo',
+    stats: '80+ skills',
+    free: true,
+  },
+  {
+    title: 'Income Calculator',
+    description: 'Project your freelance income, taxes, savings, and financial health with country-specific calculations.',
+    icon: BarChart3,
+    href: '/ai/income-calculator',
+    status: 'Live',
+    color: 'emerald',
+    stats: 'Tax-aware',
+    free: true,
+  },
+  {
+    title: 'Expense & Tax Calculator',
+    description: 'Plan self-employment taxes, quarterly estimates, and business deductions with country-specific rules.',
+    icon: Calculator,
+    href: '/ai/expense-calculator',
+    status: 'Live',
+    color: 'amber',
+    stats: 'Quarterly estimates',
+    free: true,
+  },
+  {
+    title: 'Invoice Generator',
+    description: 'Create professional invoices with line items, tax calculations, and multiple currency support.',
+    icon: FileText,
+    href: '/ai/invoice-generator',
+    status: 'Live',
+    color: 'rose',
+    stats: 'Multi-currency',
+    free: true,
+  },
+  {
+    title: 'Contract Builder',
+    description: 'Generate legally-sound freelance contracts with customizable clauses, IP terms, and jurisdiction support.',
+    icon: Shield,
+    href: '/ai/contract-builder',
+    status: 'Live',
+    color: 'teal',
+    stats: 'Legal clauses',
+    free: true,
+  },
+  {
+    title: 'Fraud Check',
+    description: 'Analyze project descriptions and messages for scam patterns, suspicious payment terms, and red flags.',
+    icon: Search,
+    href: '/ai/fraud-check',
+    status: 'Live',
+    color: 'red',
+    stats: 'Scam detection',
+    free: true,
+  },
 ];
 
 const capabilities = [
-  { icon: Brain, label: 'Natural Language Processing', desc: 'Understand context and intent' },
-  { icon: BarChart3, label: 'Predictive Analytics', desc: 'Forecast trends and outcomes' },
-  { icon: Users, label: 'Behavioral Analysis', desc: 'Understand user patterns' },
-  { icon: Lock, label: 'Security Intelligence', desc: 'Real-time threat detection' },
-  { icon: Globe, label: 'Multi-language Support', desc: 'Multiple languages supported' },
-  { icon: Layers, label: 'Deep Learning', desc: 'Advanced neural networks' },
+  { icon: Brain, label: 'Natural Language', desc: 'Understand your queries' },
+  { icon: BarChart3, label: 'Market Data', desc: 'Real industry pricing' },
+  { icon: Users, label: 'Skill Matching', desc: 'Personalized analysis' },
+  { icon: Lock, label: 'Privacy First', desc: 'No data stored for guests' },
+  { icon: Globe, label: 'Global Coverage', desc: '70+ countries supported' },
+  { icon: Layers, label: 'Instant Results', desc: 'Real-time AI processing' },
 ];
 
 const stats = [
-  { value: 'ML', label: 'AI-Powered Platform' },
-  { value: 'High', label: 'Uptime Reliability' },
-  { value: 'Fast', label: 'Response Time' },
-  { value: 'Multi', label: 'AI Models Integrated' },
+  { value: '11', label: 'Free AI Tools' },
+  { value: '100%', label: 'Free to Use' },
+  { value: 'Instant', label: 'No Sign-up Required' },
+  { value: 'AI', label: 'Powered by ML' },
 ];
 
 const AIHubPage = () => {
@@ -181,7 +210,7 @@ const AIHubPage = () => {
               'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6'
             )}>
               <Bot className="w-4 h-4" />
-              <span>Powered by Advanced Machine Learning</span>
+              <span>11 Free AI Tools — No Sign-up Required</span>
               <Sparkles className="w-4 h-4" />
             </div>
             
@@ -197,9 +226,9 @@ const AIHubPage = () => {
               themeStyles.heroDescription,
               'text-lg md:text-xl max-w-3xl mx-auto mb-10'
             )}>
-              Experience the future of freelancing with our suite of AI-powered tools. 
-              From intelligent matching to automated pricing, we leverage cutting-edge 
-              machine learning to transform how you work.
+              11 free AI-powered tools to supercharge your freelancing career. 
+              Estimate prices, write proposals, plan projects, analyze skills, and more — 
+              all instantly accessible, no account needed.
             </p>
 
             {/* Stats Row */}
@@ -236,27 +265,38 @@ const AIHubPage = () => {
             {/* Quick Actions */}
             <div className="flex flex-wrap justify-center gap-4">
               <Link
-                href="/ai/chatbot"
+                href="/ai/price-estimator"
                 className={cn(
                   "group inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all hover:shadow-xl hover:-translate-y-0.5",
                   commonStyles.btnPrimary,
                   themeStyles.btnPrimary
                 )}
               >
-                <MessageSquare className="w-5 h-5" />
-                <span>Try AI Chatbot</span>
+                <DollarSign className="w-5 h-5" />
+                <span>Estimate a Price</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
-                href="/ai/price-estimator"
+                href="/ai/proposal-writer"
                 className={cn(
                   'inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all',
                   commonStyles.btnSecondary,
                   themeStyles.btnSecondary
                 )}
               >
-                <DollarSign className="w-5 h-5" />
-                <span>Estimate Price</span>
+                <FileText className="w-5 h-5" />
+                <span>Write a Proposal</span>
+              </Link>
+              <Link
+                href="/ai/chatbot"
+                className={cn(
+                  'inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all',
+                  commonStyles.btnSecondary,
+                  themeStyles.btnSecondary
+                )}
+              >
+                <MessageSquare className="w-5 h-5" />
+                <span>Ask AI</span>
               </Link>
             </div>
           </motion.div>
@@ -277,14 +317,14 @@ const AIHubPage = () => {
               commonStyles.sectionTitle,
               themeStyles.sectionTitle
             )}>
-              AI-Powered Tools
+              All 11 AI Tools — 100% Free
             </h2>
             <p className={cn(
               'text-lg max-w-2xl mx-auto',
               commonStyles.sectionDesc,
               themeStyles.sectionDesc
             )}>
-              Explore our comprehensive suite of intelligent tools designed to enhance every aspect of your freelancing experience.
+              Every tool is free to use with no sign-up required. Sign up for unlimited usage and saved history.
             </p>
           </motion.div>
 
@@ -316,14 +356,25 @@ const AIHubPage = () => {
                       )}>
                         <Icon className="w-6 h-6" />
                       </div>
-                      <span className={cn(
-                        'px-3 py-1 rounded-full text-xs font-semibold',
-                        feature.status === 'Live'
-                          ? cn(commonStyles.featureStatusLive, themeStyles.featureStatusLive)
-                          : cn(commonStyles.featureStatusBeta, themeStyles.featureStatusBeta)
-                      )}>
-                        {feature.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {feature.free && (
+                          <span className={cn(
+                            'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
+                            commonStyles.featureStatusLive,
+                            themeStyles.featureStatusLive
+                          )}>
+                            Free
+                          </span>
+                        )}
+                        <span className={cn(
+                          'px-3 py-1 rounded-full text-xs font-semibold',
+                          feature.status === 'Live'
+                            ? cn(commonStyles.featureStatusLive, themeStyles.featureStatusLive)
+                            : cn(commonStyles.featureStatusBeta, themeStyles.featureStatusBeta)
+                        )}>
+                          {feature.status}
+                        </span>
+                      </div>
                     </div>
                     
                     <h3 className={cn(
@@ -470,7 +521,7 @@ const AIHubPage = () => {
                 themeStyles.ctaTag
               )}>
                 <TrendingUp className="w-4 h-4" />
-                <span>Start Your AI Journey</span>
+                <span>Start Using AI Tools Now</span>
               </div>
 
               <h2 className={cn(
@@ -478,28 +529,28 @@ const AIHubPage = () => {
                 commonStyles.ctaTitle,
                 themeStyles.ctaTitle
               )}>
-                Ready to Experience AI-Powered Freelancing?
+                All Tools Are Free — No Account Needed
               </h2>
               <p className={cn(
                 'text-lg mb-8 max-w-2xl mx-auto',
                 commonStyles.ctaDescription,
                 themeStyles.ctaDescription
               )}>
-                Join thousands of freelancers and clients who are already using our AI tools 
-                to work smarter, faster, and achieve better results.
+                Start using all 11 AI tools instantly. Sign up to unlock unlimited usage, 
+                save your history, and access premium features.
               </p>
 
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Link
-                  href="/signup"
+                  href="/ai/price-estimator"
                   className={cn(
                     "inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-xl hover:-translate-y-0.5",
                     commonStyles.btnPrimary,
                     themeStyles.btnPrimary
                   )}
                 >
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>Get Started Free</span>
+                  <DollarSign className="w-5 h-5" />
+                  <span>Try Price Estimator</span>
                 </Link>
                 <Link
                   href="/ai/chatbot"
@@ -510,7 +561,7 @@ const AIHubPage = () => {
                   )}
                 >
                   <MessageSquare className="w-5 h-5" />
-                  <span>Try AI Chatbot Now</span>
+                  <span>Chat with AI</span>
                 </Link>
               </div>
             </div>

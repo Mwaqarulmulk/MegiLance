@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './RateAdvisor.common.module.css';
 import lightStyles from './RateAdvisor.light.module.css';
 import darkStyles from './RateAdvisor.dark.module.css';
+import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -447,6 +448,8 @@ export default function RateAdvisor() {
         <h1 className={cn(cs.title, ts.title)}>Rate Advisor</h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Get personalized rate recommendations based on real market data</p>
       </header>
+
+      <GuestBanner toolName="Rate Advisor" variant="inline" />
 
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (

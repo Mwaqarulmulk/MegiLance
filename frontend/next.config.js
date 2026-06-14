@@ -57,7 +57,12 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 
-  
+  // Ensure NEXT_PUBLIC env vars are available at build time (fallback for deployments
+  // that don't read .env.production, e.g. Vercel dashboard overrides or DigitalOcean Docker)
+  env: {
+    NEXT_PUBLIC_SHOW_DEMO_LOGIN: process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN ?? 'true',
+  },
+
   // Security: Remove X-Powered-By header
   poweredByHeader: false,
   

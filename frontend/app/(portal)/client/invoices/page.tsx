@@ -297,7 +297,7 @@ export default function ClientInvoicesPage() {
                         title="View invoice"
                         onClick={() =>
                           window.open(
-                            `/backend/api/v1/invoices/${invoice.id}/view`,
+                            `/api/v1/invoices/${invoice.id}/view`,
                             "_blank",
                           )
                         }
@@ -310,7 +310,7 @@ export default function ClientInvoicesPage() {
                         title="Download PDF"
                         onClick={() =>
                           window.open(
-                            `/backend/api/v1/invoices/${invoice.id}/view`,
+                            `/api/v1/invoices/${invoice.id}/view`,
                             "_blank",
                           )
                         }

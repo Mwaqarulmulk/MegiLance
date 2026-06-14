@@ -14,5 +14,6 @@ export { default as AIPriceEstimator } from './AIPriceEstimator/AIPriceEstimator
 export { default as AIRateEstimator } from './AIRateEstimator/AIRateEstimator';
 export { default as AIProposalAssistant } from './AIProposalAssistant/AIProposalAssistant';
 export { default as AIStatusIndicator } from './AIStatusIndicator/AIStatusIndicator';
+export { default as GuestBanner } from './GuestBanner/GuestBanner';
 export type { AIConnectionStatus } from './AIStatusIndicator/AIStatusIndicator';
 
