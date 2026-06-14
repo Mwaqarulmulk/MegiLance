@@ -85,10 +85,19 @@ def create_milestone(contract_id: int, title: str, description: Optional[str],
                      amount: float, due_date: Optional[str]) -> Optional[dict]:
     """Insert a new milestone and return it."""
     now = datetime.now(timezone.utc).isoformat()
+
+    max_result = execute_query(
+        "SELECT COALESCE(MAX(order_index), -1) + 1 FROM milestones WHERE contract_id = ?",
+        [contract_id],
+    )
+    order_index = 0
+    if max_result and max_result.get("rows"):
+        order_index = to_int(max_result["rows"][0][0]) or 0
+
     insert_result = execute_query("""
-        INSERT INTO milestones (contract_id, title, description, amount, due_date, status, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)
-    """, [contract_id, title, description, amount, due_date, now, now])
+        INSERT INTO milestones (contract_id, title, description, amount, due_date, order_index, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+    """, [contract_id, title, description, amount, due_date, order_index, now, now])
     if not insert_result:
         return None
 

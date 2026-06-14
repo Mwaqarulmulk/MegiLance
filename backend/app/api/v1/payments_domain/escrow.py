@@ -38,8 +38,8 @@ async def list_escrow(
 ):
     offset = (page - 1) * page_size
     result = execute_query(
-        """SELECT e.id, e.contract_id, e.client_id, e.amount, e.released_amount,
-                  e.status, e.expires_at, e.notes, e.created_at, e.updated_at,
+        """SELECT e.id, e.contract_id, e.client_id, e.amount, e.status, e.released_amount,
+                  e.released_at, e.expires_at, e.created_at, e.updated_at,
                   c.project_id, pr.title as project_title
            FROM escrow e
            LEFT JOIN contracts c ON e.contract_id = c.id
@@ -82,7 +82,7 @@ async def fund_escrow(request: EscrowFund, current_user=Depends(get_current_user
 @router.get("/{escrow_id}")
 async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
-        "SELECT e.id, e.contract_id, e.client_id, e.amount, e.released_amount, e.status, e.expires_at, e.notes, e.created_at, e.updated_at FROM escrow e WHERE e.id = ? AND (e.client_id = ? OR EXISTS (SELECT 1 FROM contracts c WHERE c.id = e.contract_id AND c.freelancer_id = ?))",
+        "SELECT e.id, e.contract_id, e.client_id, e.amount, e.status, e.released_amount, e.released_at, e.expires_at, e.created_at, e.updated_at FROM escrow e WHERE e.id = ? AND (e.client_id = ? OR EXISTS (SELECT 1 FROM contracts c WHERE c.id = e.contract_id AND c.freelancer_id = ?))",
         [escrow_id, current_user.id, current_user.id],
     )
     rows = parse_rows(result)
@@ -120,8 +120,8 @@ async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=De
 
     # Atomic escrow update: only release if funds remain
     update_result = execute_query(
-        "UPDATE escrow SET released_amount = released_amount + ?, status = CASE WHEN released_amount + ? >= amount THEN 'released' ELSE status END, notes = ?, updated_at = ? WHERE id = ? AND amount - released_amount >= ?",
-        [release_amount, release_amount, request.notes or "", now, escrow_id, release_amount],
+        "UPDATE escrow SET released_amount = released_amount + ?, status = CASE WHEN released_amount + ? >= amount THEN 'released' ELSE status END, updated_at = ? WHERE id = ? AND amount - released_amount >= ?",
+        [release_amount, release_amount, now, escrow_id, release_amount],
     )
 
     # Check if update actually happened (rows affected)

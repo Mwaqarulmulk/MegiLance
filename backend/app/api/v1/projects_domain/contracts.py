@@ -14,6 +14,7 @@ from app.services.contracts_service import (
     query_user_contracts,
     fetch_contract_with_joins,
     contract_from_row,
+    cancel_contract,
 )
 
 router = APIRouter()
@@ -182,6 +183,25 @@ async def create_direct_contract(request: ContractDirectCreate, current_user=Dep
         raise HTTPException(status_code=500, detail="Failed to create contract")
 
     return {"message": "Direct contract created successfully", "contract_id": result.get("last_insert_rowid")}
+
+
+class ContractCancel(BaseModel):
+    reason: Optional[str] = None
+
+
+@router.post("/{contract_id}/cancel")
+async def cancel_contract_endpoint(contract_id: str, request: ContractCancel, current_user=Depends(get_current_user)):
+    raw_row = fetch_contract_with_joins(contract_id)
+    if not raw_row:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    contract = contract_from_row(raw_row)
+    if contract["client_id"] != current_user.id and contract["freelancer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    now = datetime.now(timezone.utc).isoformat()
+    cancel_contract(contract_id, now)
+    return {"message": "Contract cancelled successfully"}
 
 
 @router.delete("/{contract_id}")

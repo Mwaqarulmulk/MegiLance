@@ -172,36 +172,53 @@ class TursoHTTP:
         return result
 
     def _execute_remote(self, sql: str, params: List[Any]) -> Dict[str, Any]:
-        """Execute query against Turso HTTP API with proper timeout."""
+        """Execute query against Turso HTTP API with proper timeout.
+
+        The legacy Turso HTTP endpoint does not return last_insert_rowid for writes,
+        so for INSERT statements we append a `SELECT last_insert_rowid()` in the SAME
+        request (shared connection) and surface the id. This fixes every create endpoint
+        that relies on result["last_insert_rowid"] without changing callers.
+        """
+        is_insert = sql.strip().upper().startswith("INSERT")
+        statements = [{"q": sql, "params": params}]
+        if is_insert:
+            statements.append({"q": "SELECT last_insert_rowid()", "params": []})
+
         response = self._session.post(
             self._url,
-            json={
-                "statements": [{
-                    "q": sql,
-                    "params": params
-                }]
-            },
+            json={"statements": statements},
             timeout=30
         )
-        
+
         if response.status_code != 200:
             raise Exception(f"Turso HTTP error: {response.status_code} - {response.text[:500]}")
-        
+
         data = response.json()
         if not data or len(data) == 0:
             return {"columns": [], "rows": []}
-        
+
         result = data[0].get("results", {})
         # Check for SQL errors in the response body
         if "error" in data[0]:
             raise Exception(f"Turso SQL error: {data[0]['error']}")
         if "error" in result:
             raise Exception(f"Turso SQL error: {result['error']}")
+
+        last_id = result.get("last_insert_rowid")
+        if is_insert and len(data) > 1:
+            id_result = data[1].get("results", {})
+            id_rows = id_result.get("rows", [])
+            if id_rows and id_rows[0]:
+                try:
+                    last_id = id_rows[0][0]
+                except (IndexError, TypeError):
+                    pass
+
         return {
             "columns": result.get("columns", []),
             "rows": result.get("rows", []),
-            "rows_affected": result.get("rows_affected", 0),
-            "last_insert_rowid": result.get("last_insert_rowid"),
+            "rows_affected": result.get("rows_written", result.get("rows_affected", 0)),
+            "last_insert_rowid": last_id,
         }
     
     def execute_many(self, statements: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

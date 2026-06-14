@@ -88,10 +88,20 @@ async def create_milestone(request: MilestoneCreate, current_user=Depends(get_cu
     _verify_contract_access(request.contract_id, current_user.id)
 
     now = datetime.now(timezone.utc).isoformat()
+
+    max_result = execute_query(
+        "SELECT COALESCE(MAX(order_index), -1) + 1 FROM milestones WHERE contract_id = ?",
+        [request.contract_id],
+    )
+    order_index = 0
+    if max_result and max_result.get("rows"):
+        raw_val = max_result["rows"][0][0]
+        order_index = int(raw_val) if raw_val is not None else 0
+
     result = execute_query(
-        """INSERT INTO milestones (contract_id, title, description, amount, status, due_date, created_at, updated_at)
-           VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)""",
-        [request.contract_id, request.title, request.description or "", request.amount, request.due_date, now, now],
+        """INSERT INTO milestones (contract_id, title, description, amount, status, due_date, order_index, created_at, updated_at)
+           VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?)""",
+        [request.contract_id, request.title, request.description or "", request.amount, request.due_date, order_index, now, now],
     )
     if not result:
         raise HTTPException(status_code=500, detail="Failed to create milestone")

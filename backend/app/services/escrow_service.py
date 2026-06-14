@@ -13,22 +13,22 @@ logger = logging.getLogger(__name__)
 
 
 def _row_to_escrow(row) -> dict:
-    """Convert Turso row to escrow dict"""
+    """Convert Turso row to escrow dict. DB order: id(0), contract_id(1), client_id(2), amount(3), status(4), released_amount(5), released_at(6), expires_at(7), created_at(8), updated_at(9)"""
     return {
         "id": to_int(row[0]),
         "contract_id": to_int(row[1]),
         "client_id": to_int(row[2]),
         "amount": to_float(row[3]) or 0.0,
-        "released_amount": to_float(row[4]) or 0.0,
-        "status": to_str(row[5]) or "pending",
-        "expires_at": parse_date(row[6]),
-        "notes": to_str(row[7]),
+        "status": to_str(row[4]) or "pending",
+        "released_amount": to_float(row[5]) or 0.0,
+        "released_at": parse_date(row[6]),
+        "expires_at": parse_date(row[7]),
         "created_at": parse_date(row[8]),
         "updated_at": parse_date(row[9])
     }
 
 
-ESCROW_SELECT_COLS = "id, contract_id, client_id, amount, released_amount, status, expires_at, notes, created_at, updated_at"
+ESCROW_SELECT_COLS = "id, contract_id, client_id, amount, status, released_amount, released_at, expires_at, created_at, updated_at"
 
 
 def get_contract_parties(contract_id: int) -> Optional[dict]:
@@ -79,7 +79,7 @@ def fund_pending_escrow(contract_id: int, client_id: int, amount: float, notes: 
     client = get_turso_http()
     statements = [
         {"q": "UPDATE users SET account_balance = ? WHERE id = ?", "params": [new_balance, client_id]},
-        {"q": "UPDATE escrow SET status = 'funded', notes = ?, updated_at = ? WHERE id = ?", "params": [notes, now, escrow_id]},
+        {"q": "UPDATE escrow SET status = 'funded', updated_at = ? WHERE id = ?", "params": [now, escrow_id]},
         {"q": "UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?", "params": [now, contract_id]},
     ]
     try:
@@ -108,8 +108,8 @@ def create_escrow(contract_id: int, client_id: int, amount: float,
     client = get_turso_http()
     statements = [
         {
-            "q": "INSERT INTO escrow (contract_id, client_id, amount, released_amount, status, expires_at, notes, created_at, updated_at) VALUES (?, ?, ?, 0.0, 'active', ?, ?, ?, ?)",
-            "params": [contract_id, client_id, amount, expires_at, notes, now, now],
+            "q": "INSERT INTO escrow (contract_id, client_id, amount, released_amount, status, expires_at, created_at, updated_at) VALUES (?, ?, ?, 0.0, 'active', ?, ?, ?)",
+            "params": [contract_id, client_id, amount, expires_at, now, now],
         },
         {
             "q": "UPDATE users SET account_balance = ? WHERE id = ?",
@@ -301,8 +301,7 @@ def get_escrow_ownership(escrow_id: int) -> Optional[dict]:
 
 
 _ALLOWED_ESCROW_COLUMNS = frozenset({
-    "status", "amount", "released_amount", "description", "notes",
-    "expires_at", "released_at", "refunded_at",
+    "status", "amount", "released_amount", "expires_at", "released_at",
 })
 
 

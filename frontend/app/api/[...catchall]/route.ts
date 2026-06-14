@@ -33,6 +33,7 @@ async function handler(request: NextRequest) {
     const response = await fetch(backendUrl, {
       method: request.method,
       headers,
+      credentials: 'include',
       body: request.method !== 'GET' && request.method !== 'HEAD' 
         ? await request.text() 
         : undefined,
@@ -45,7 +46,12 @@ async function handler(request: NextRequest) {
     // Copy relevant headers from backend response
     response.headers.forEach((value, key) => {
       if (!['content-encoding', 'transfer-encoding', 'connection'].includes(key.toLowerCase())) {
-        responseHeaders.set(key, value);
+        // Use append for set-cookie to preserve multiple Set-Cookie headers
+        if (key.toLowerCase() === 'set-cookie') {
+          responseHeaders.append(key, value);
+        } else {
+          responseHeaders.set(key, value);
+        }
       }
     });
     

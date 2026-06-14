@@ -155,7 +155,7 @@ async def client_wallet(current_user=Depends(get_current_user)):
 @router.get("/freelancer/dashboard/stats")
 async def freelancer_dashboard_stats(current_user=Depends(get_current_user)):
     proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ?", [current_user.id])
-    active_proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ? AND status = 'pending'", [current_user.id])
+    active_proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ? AND status = 'submitted'", [current_user.id])
     contracts = execute_query("SELECT COUNT(*) as count FROM contracts WHERE freelancer_id = ? AND status = 'active'", [current_user.id])
     earnings = execute_query(
         "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",

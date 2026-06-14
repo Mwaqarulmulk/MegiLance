@@ -154,7 +154,8 @@ async def my_projects(current_user=Depends(get_current_user)):
         [current_user.id],
     )
     rows = parse_rows(result)
-    return [_project_from_row(r) for r in rows] if rows else []
+    projects = [_project_from_row(r) for r in rows] if rows else []
+    return {"items": projects, "total": len(projects), "page": 1, "page_size": 20, "total_pages": 1}
 
 
 @router.get("/{project_id}")
@@ -199,14 +200,25 @@ async def create_project(request: ProjectCreate, current_user=Depends(get_curren
     if result is None:
         raise HTTPException(status_code=500, detail="Failed to create project")
 
-    return {"message": "Project created successfully", "project_id": result.get("last_insert_rowid")}
+    id_result = execute_query(
+        "SELECT id FROM projects WHERE client_id = ? AND title = ? ORDER BY id DESC LIMIT 1",
+        [current_user.id, request.title],
+    )
+    project_id = None
+    if id_result and id_result.get("rows"):
+        raw = id_result["rows"][0][0]
+        if isinstance(raw, dict):
+            raw = raw.get("value")
+        project_id = int(raw) if raw else None
+
+    return {"message": "Project created successfully", "project_id": project_id}
 
 
 @router.put("/{project_id}")
 async def update_project(project_id: str, request: ProjectUpdate, current_user=Depends(get_current_user)):
     _ALLOWED_PROJECT_COLUMNS = frozenset({
         "title", "description", "category", "budget_type",
-        "budget_min", "budget_max", "skills", "duration",
+        "budget_min", "budget_max", "skills", "estimated_duration",
         "experience_level", "status",
     })
     result = execute_query(

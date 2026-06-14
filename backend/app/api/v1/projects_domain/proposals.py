@@ -23,6 +23,8 @@ from app.services.proposals_service import (
     get_draft_proposals,
     get_proposal_with_project_details,
     accept_proposal as accept_proposal_service,
+    shortlist_proposal,
+    create_counter_offer,
 )
 
 router = APIRouter()
@@ -256,6 +258,54 @@ async def reject_proposal(proposal_id: int, current_user=Depends(get_current_use
         [now, proposal_id],
     )
     return {"message": "Proposal rejected successfully"}
+
+
+@router.post("/{proposal_id}/shortlist")
+async def shortlist_proposal_endpoint(proposal_id: int, current_user=Depends(get_current_user)):
+    proposal = get_proposal_with_joins(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found")
+
+    client_id = get_project_client_id(proposal["project_id"])
+    if client_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can shortlist proposals")
+
+    updated = shortlist_proposal(proposal_id)
+    if not updated:
+        raise HTTPException(status_code=500, detail="Failed to shortlist proposal")
+
+    return {"message": "Proposal shortlisted", "proposal": updated}
+
+
+class CounterOfferCreate(BaseModel):
+    bid_amount: Optional[float] = None
+    cover_letter: Optional[str] = None
+    estimated_hours: Optional[float] = None
+    hourly_rate: Optional[float] = None
+    availability: Optional[str] = None
+
+
+@router.post("/{proposal_id}/counter-offer")
+async def create_counter_offer_endpoint(
+    proposal_id: int, request: CounterOfferCreate, current_user=Depends(get_current_user)
+):
+    proposal = get_proposal_with_joins(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found")
+
+    client_id = get_project_client_id(proposal["project_id"])
+    if client_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can create counter-offers")
+
+    counter_data = {k: v for k, v in request.model_dump().items() if v is not None}
+    if not counter_data:
+        raise HTTPException(status_code=400, detail="No fields provided for counter-offer")
+
+    updated = create_counter_offer(proposal_id, counter_data)
+    if not updated:
+        raise HTTPException(status_code=500, detail="Failed to create counter-offer")
+
+    return {"message": "Counter-offer created", "proposal": updated}
 
 
 @router.post("/{proposal_id}/withdraw")
