@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 from app.core.config import get_settings
+from app.db.turso_http import extract_value, to_int, to_str
 settings = get_settings()
 
 
@@ -220,7 +221,7 @@ class AdvancedSecurityService:
             if not result or not result.get("rows"):
                 return {"error": "MFA not configured"}
                 
-            secret = result["rows"][0][0].get("value")
+            secret = extract_value(result["rows"][0][0])
             
             import pyotp
             totp = pyotp.TOTP(secret)
@@ -255,8 +256,8 @@ class AdvancedSecurityService:
             if not result or not result.get("rows"):
                 return {"error": "MFA not configured"}
                 
-            stored_code = result["rows"][0][0].get("value")
-            expires_at = result["rows"][0][1].get("value")
+            stored_code = extract_value(result["rows"][0][0])
+            expires_at = extract_value(result["rows"][0][1])
             
             if datetime.fromisoformat(expires_at) < datetime.now(timezone.utc):
                 return {"verified": False, "error": "Code expired"}
@@ -309,7 +310,7 @@ class AdvancedSecurityService:
         """, [user_id, ip_address, user_agent])
         
         if device_result and device_result.get("rows"):
-            device_count = int(device_result["rows"][0][0].get("value", 0))
+            device_count = to_int(extract_value(device_result["rows"][0][0])) or 0
             if device_count == 0:
                 risk_factors.append({
                     "factor": "new_device",
@@ -344,7 +345,7 @@ class AdvancedSecurityService:
         """, [user_id, (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()])
         
         if failed_attempts_result and failed_attempts_result.get("rows"):
-            failed_count = int(failed_attempts_result["rows"][0][0].get("value", 0))
+            failed_count = to_int(extract_value(failed_attempts_result["rows"][0][0])) or 0
             if failed_count > 3:
                 weight = min(failed_count * 5, 30.0)
                 risk_factors.append({
@@ -447,13 +448,13 @@ class AdvancedSecurityService:
         if result and result.get("rows"):
             for row in result["rows"]:
                 sessions.append({
-                    "id": int(row[0].get("value")),
-                    "ip_address": row[1].get("value"),
-                    "user_agent": row[2].get("value"),
-                    "device_info": json.loads(row[3].get("value")) if row[3].get("value") else None,
-                    "location": json.loads(row[4].get("value")) if row[4].get("value") else None,
-                    "created_at": row[5].get("value"),
-                    "last_activity": row[6].get("value") if len(row) > 6 else None
+                    "id": to_int(row[0]),
+                    "ip_address": extract_value(row[1]),
+                    "user_agent": extract_value(row[2]),
+                    "device_info": json.loads(extract_value(row[3])) if extract_value(row[3]) else None,
+                    "location": json.loads(extract_value(row[4])) if extract_value(row[4]) else None,
+                    "created_at": extract_value(row[5]),
+                    "last_activity": extract_value(row[6]) if len(row) > 6 else None
                 })
         
         return sessions

@@ -1,0 +1,73 @@
+/* Dark Theme */
+.container {
+  background: var(--bg-primary-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.statCard {
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.statValue {
+  color: var(--text-primary-dark);
+}
+
+.statLabel {
+  color: var(--text-tertiary-dark);
+}
+
+.filterBtn {
+  background: var(--border-dark);
+  color: var(--text-secondary-dark);
+}
+
+.filterBtn:hover {
+  background: var(--border-dark);
+}
+
+.filterBtnActive {
+  background: var(--ml-blue) !important;
+  color: #fff !important;
+}
+
+.loadingState,
+.emptyState {
+  background: var(--bg-secondary-dark);
+  color: var(--text-tertiary-dark);
+}
+
+.emptyState h3 {
+  color: var(--text-primary-dark);
+}
+
+.tableWrapper {
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.th {
+  background: var(--bg-secondary-dark);
+  color: var(--text-tertiary-dark);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.td {
+  color: var(--text-secondary-dark);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.tr:hover {
+  background: var(--bg-secondary-dark);
+}
+
+.projectCell {
+  color: var(--text-primary-dark);
+}

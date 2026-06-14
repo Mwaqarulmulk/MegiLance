@@ -44,6 +44,14 @@ const AdminProjects: React.FC = () => {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('All');
 
+  // Assign modal state
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [assignProjectId, setAssignProjectId] = useState<string | null>(null);
+  const [freelancerSearch, setFreelancerSearch] = useState('');
+  const [freelancers, setFreelancers] = useState<any[]>([]);
+  const [selectedFreelancer, setSelectedFreelancer] = useState<any>(null);
+  const [assigning, setAssigning] = useState(false);
+
   const rows: ProjectRow[] = useMemo(() => {
     if (!Array.isArray(projects)) return [];
     return (projects as any[]).map((p, idx) => ({
@@ -98,6 +106,48 @@ const AdminProjects: React.FC = () => {
   }, [sorted, pageSafe, pageSize]);
 
   React.useEffect(() => { setPage(1); }, [sortKey, sortDir, query, status, pageSize]);
+
+  const openAssignModal = (projectId: string) => {
+    setAssignProjectId(projectId);
+    setAssignModalOpen(true);
+    setFreelancerSearch('');
+    setFreelancers([]);
+    setSelectedFreelancer(null);
+  };
+
+  const searchFreelancers = async () => {
+    if (!freelancerSearch.trim()) return;
+    try {
+      const response = await fetch(`/api/v1/admin/users?role=freelancer&search=${encodeURIComponent(freelancerSearch)}&page_size=10`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+      const data = await response.json();
+      setFreelancers(data?.users || data || []);
+    } catch (err) {
+      console.error('Failed to search freelancers:', err);
+    }
+  };
+
+  const handleAssign = async () => {
+    if (!assignProjectId || !selectedFreelancer) return;
+    setAssigning(true);
+    try {
+      await fetch(`/api/v1/admin/projects/${assignProjectId}/assign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify({ freelancer_id: selectedFreelancer.id })
+      });
+      toaster?.notify?.({ title: 'Assigned', description: `Freelancer assigned to project #${assignProjectId}`, variant: 'success' });
+      setAssignModalOpen(false);
+    } catch (err) {
+      toaster?.notify?.({ title: 'Error', description: 'Failed to assign freelancer', variant: 'error' });
+    } finally {
+      setAssigning(false);
+    }
+  };
 
   return (
     <PageTransition className={cn(common.page, themed.themeWrapper)}>
@@ -213,10 +263,7 @@ const AdminProjects: React.FC = () => {
                         <button 
                           type="button" 
                           className={cn(common.button, themed.button)}
-                          onClick={() => {
-                            // TODO: Open assign modal
-                            toaster?.notify?.({ title: 'Assign', description: `Assign project #${p.id}`, variant: 'info' });
-                          }}
+                          onClick={() => openAssignModal(p.id)}
                         >
                           Assign
                         </button>
@@ -251,6 +298,73 @@ const AdminProjects: React.FC = () => {
           )}
         </ScrollReveal>
       </div>
+
+      {/* Assign Freelancer Modal */}
+      {assignModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={(e) => { if (e.target === e.currentTarget) setAssignModalOpen(false); }}>
+          <div className={cn(common.container, themed.themeWrapper, 'max-w-lg w-full mx-4 rounded-xl shadow-xl')} style={{ background: 'var(--bg-primary, #fff)' }}>
+            <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--border-color, #e5e7eb)' }}>
+              <h2 className="text-lg font-semibold">Assign Freelancer to Project #{assignProjectId}</h2>
+              <button onClick={() => setAssignModalOpen(false)} className="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Search Freelancer</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className={cn(common.input, themed.input, 'flex-1')}
+                    placeholder="Search by name or email..."
+                    value={freelancerSearch}
+                    onChange={(e) => setFreelancerSearch(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && searchFreelancers()}
+                  />
+                  <button type="button" className={cn(common.button, themed.button)} onClick={searchFreelancers}>
+                    Search
+                  </button>
+                </div>
+              </div>
+              {freelancers.length > 0 && (
+                <div className="max-h-48 overflow-y-auto border rounded-lg" style={{ borderColor: 'var(--border-color, #e5e7eb)' }}>
+                  {freelancers.map((f) => (
+                    <div
+                      key={f.id}
+                      className={cn(
+                        'p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 border-b last:border-b-0',
+                        selectedFreelancer?.id === f.id && 'bg-blue-50 dark:bg-blue-900/20'
+                      )}
+                      style={{ borderColor: 'var(--border-color, #e5e7eb)' }}
+                      onClick={() => setSelectedFreelancer(f)}
+                    >
+                      <div className="font-medium">{f.name || f.email}</div>
+                      <div className="text-sm text-gray-500">{f.email}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {selectedFreelancer && (
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div className="text-sm font-medium text-green-800 dark:text-green-200">Selected:</div>
+                  <div className="font-medium">{selectedFreelancer.name || selectedFreelancer.email}</div>
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end gap-2 p-4 border-t" style={{ borderColor: 'var(--border-color, #e5e7eb)' }}>
+              <button type="button" className={cn(common.button, themed.button, 'secondary')} onClick={() => setAssignModalOpen(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={cn(common.button, themed.button)}
+                onClick={handleAssign}
+                disabled={!selectedFreelancer || assigning}
+              >
+                {assigning ? 'Assigning...' : 'Assign Freelancer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageTransition>
   );
 };

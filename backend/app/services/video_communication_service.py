@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 logger = logging.getLogger(__name__)
 
-from app.db.turso_http import execute_query
+from app.db.turso_http import execute_query, to_int, to_str, extract_value
 
 
 def create_call_record(host_id: int, participant_ids: list, room_id: str,
@@ -39,18 +39,18 @@ def create_call_record(host_id: int, participant_ids: list, room_id: str,
 
     row = result["rows"][0]
     return {
-        "call_id": int(row[0].get("value")),
-        "room_id": row[1].get("value"),
-        "host_id": int(row[2].get("value")),
-        "participant_ids": json.loads(row[3].get("value")),
-        "call_type": row[4].get("value"),
-        "status": row[5].get("value"),
+        "call_id": to_int(row[0]),
+        "room_id": to_str(row[1]),
+        "host_id": to_int(row[2]),
+        "participant_ids": json.loads(to_str(row[3]) or "[]"),
+        "call_type": to_str(row[4]),
+        "status": to_str(row[5]),
         "join_url": f"https://megilance.com/video/join/{room_id}",
-        "scheduled_at": row[6].get("value"),
+        "scheduled_at": extract_value(row[6]),
         "started_at": None,
         "ended_at": None,
         "recording_url": None,
-        "created_at": row[7].get("value")
+        "created_at": extract_value(row[7])
     }
 
 
@@ -83,11 +83,11 @@ def get_call_by_room_id(room_id: str) -> Optional[dict]:
 
     row = result["rows"][0]
     return {
-        "call_id": int(row[0].get("value")),
-        "host_id": int(row[1].get("value")),
-        "participant_ids": json.loads(row[2].get("value")),
-        "call_type": row[3].get("value"),
-        "status": row[4].get("value")
+        "call_id": to_int(row[0]),
+        "host_id": to_int(row[1]),
+        "participant_ids": json.loads(to_str(row[2]) or "[]"),
+        "call_type": to_str(row[3]),
+        "status": to_str(row[4])
     }
 
 
@@ -110,8 +110,8 @@ def get_call_host_and_start(call_id: int) -> Optional[dict]:
         return None
 
     return {
-        "host_id": int(result["rows"][0][0].get("value")),
-        "started_at": result["rows"][0][1].get("value")
+        "host_id": to_int(result["rows"][0][0]),
+        "started_at": extract_value(result["rows"][0][1])
     }
 
 
@@ -148,18 +148,18 @@ def list_user_calls(user_id: int, status: Optional[str], limit: int, offset: int
     if result and result.get("rows"):
         for row in result["rows"]:
             calls.append({
-                "call_id": int(row[0].get("value")),
-                "room_id": row[1].get("value"),
-                "host_id": int(row[2].get("value")),
-                "participant_ids": json.loads(row[3].get("value")),
-                "call_type": row[4].get("value"),
-                "status": row[5].get("value"),
-                "join_url": f"https://megilance.com/video/join/{row[1].get('value')}",
-                "scheduled_at": row[6].get("value"),
-                "started_at": row[7].get("value"),
-                "ended_at": row[8].get("value"),
-                "recording_url": row[9].get("value"),
-                "created_at": row[10].get("value")
+                "call_id": to_int(row[0]),
+                "room_id": to_str(row[1]),
+                "host_id": to_int(row[2]),
+                "participant_ids": json.loads(to_str(row[3]) or "[]"),
+                "call_type": to_str(row[4]),
+                "status": to_str(row[5]),
+                "join_url": f"https://megilance.com/video/join/{to_str(row[1])}",
+                "scheduled_at": extract_value(row[6]),
+                "started_at": extract_value(row[7]),
+                "ended_at": extract_value(row[8]),
+                "recording_url": extract_value(row[9]),
+                "created_at": extract_value(row[10])
             })
 
     return calls
@@ -175,8 +175,8 @@ def get_call_participants(call_id: int) -> Optional[dict]:
         return None
 
     return {
-        "host_id": int(result["rows"][0][0].get("value")),
-        "participant_ids": json.loads(result["rows"][0][1].get("value"))
+        "host_id": to_int(result["rows"][0][0]),
+        "participant_ids": json.loads(to_str(result["rows"][0][1]) or "[]")
     }
 
 
@@ -221,7 +221,7 @@ def get_call_host(call_id: int) -> Optional[int]:
     if not result or not result.get("rows"):
         return None
 
-    return int(result["rows"][0][0].get("value"))
+    return to_int(result["rows"][0][0])
 
 
 def save_recording_url(call_id: int, recording_url: str):
@@ -243,8 +243,8 @@ def get_user_availability_slots(user_id: int, start_date: str, end_date: str) ->
     busy_slots = []
     if result and result.get("rows"):
         for row in result["rows"]:
-            scheduled_at = row[0].get("value")
-            duration = row[1].get("value", 3600)
+            scheduled_at = extract_value(row[0])
+            duration = to_int(row[1]) or 3600
             busy_slots.append({
                 "start": scheduled_at,
                 "end": (datetime.fromisoformat(scheduled_at) + timedelta(seconds=duration)).isoformat()
@@ -274,9 +274,9 @@ def get_call_analytics(user_id: int, start_date: str) -> dict:
     if result and result.get("rows"):
         row = result["rows"][0]
         stats = {
-            "total_calls": int(row[0].get("value", 0)),
-            "total_duration_minutes": int(row[1].get("value", 0)) // 60,
-            "avg_duration_minutes": int(row[2].get("value", 0)) // 60
+            "total_calls": to_int(row[0]) or 0,
+            "total_duration_minutes": (to_int(row[1]) or 0) // 60,
+            "avg_duration_minutes": (to_int(row[2]) or 0) // 60
         }
 
     return stats

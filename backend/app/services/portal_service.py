@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Optional, List
 
-from app.db.turso_http import execute_query, parse_date, get_turso_http
+from app.db.turso_http import execute_query, parse_date, get_turso_http, extract_value
 from app.services.db_utils import get_val as _get_val, safe_str as _safe_str
 
 logger = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ def _batch_scalar_queries(queries: list[dict]) -> list:
         for result in results:
             rows = result.get("rows", [])
             if rows and len(rows[0]) > 0:
-                val = rows[0][0]
+                val = extract_value(rows[0][0])
                 values.append(val)
             else:
                 values.append(None)
@@ -391,7 +391,7 @@ def get_freelancer_contracts(freelancer_id: int, status_filter: Optional[str],
 
     params.extend([limit, skip])
     result = execute_query(
-        f"""SELECT c.id, c.project_id, c.status, c.start_date, c.end_date, c.total_amount, c.created_at,
+        f"""SELECT c.id, c.project_id, c.status, c.start_date, c.end_date, c.amount as total_amount, c.created_at,
             p.title, u.name as client_name
             FROM contracts c
             JOIN projects p ON c.project_id = p.id

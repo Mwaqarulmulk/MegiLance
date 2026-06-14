@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from app.db.turso_http import execute_query
+from app.db.turso_http import execute_query, to_float, to_int
 from app.services.db_utils import get_val as _get_val
 
 # Module-level flag — ensures DDL runs only once per process (P0-9: stops 9 DDL statements per request)
@@ -293,13 +293,9 @@ def get_wallet_analytics(user_id: int, start_date: str) -> dict:
         [user_id, start_date],
     )
 
-    total_income = 0
+    total_income = 0.0
     if income_result and income_result.get("rows"):
-        val = income_result["rows"][0][0]
-        if isinstance(val, dict):
-            total_income = float(val.get("value", 0) or 0)
-        else:
-            total_income = float(val or 0)
+        total_income = to_float(income_result["rows"][0][0]) or 0.0
 
     expense_result = execute_query(
         """
@@ -310,13 +306,9 @@ def get_wallet_analytics(user_id: int, start_date: str) -> dict:
         [user_id, start_date],
     )
 
-    total_expenses = 0
+    total_expenses = 0.0
     if expense_result and expense_result.get("rows"):
-        val = expense_result["rows"][0][0]
-        if isinstance(val, dict):
-            total_expenses = float(val.get("value", 0) or 0)
-        else:
-            total_expenses = float(val or 0)
+        total_expenses = to_float(expense_result["rows"][0][0]) or 0.0
 
     count_result = execute_query(
         """
@@ -328,11 +320,7 @@ def get_wallet_analytics(user_id: int, start_date: str) -> dict:
 
     transaction_count = 0
     if count_result and count_result.get("rows"):
-        val = count_result["rows"][0][0]
-        if isinstance(val, dict):
-            transaction_count = int(val.get("value", 0) or 0)
-        else:
-            transaction_count = int(val or 0)
+        transaction_count = to_int(count_result["rows"][0][0]) or 0
 
     return {
         "total_income": total_income,

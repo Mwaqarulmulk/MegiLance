@@ -2,20 +2,20 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from app.db.turso_http import execute_query, to_str, parse_date, parse_rows
+from app.db.turso_http import execute_query, to_str, to_int, parse_date, parse_rows
 
 
 def _row_to_ticket(row: list) -> dict:
     """Convert a database row to a support ticket dict"""
     return {
-        "id": row[0].get("value") if row[0].get("type") != "null" else None,
-        "user_id": row[1].get("value") if row[1].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "user_id": to_int(row[1]),
         "subject": to_str(row[2]),
         "description": to_str(row[3]),
         "category": to_str(row[4]),
         "priority": to_str(row[5]),
         "status": to_str(row[6]),
-        "assigned_to": row[7].get("value") if row[7].get("type") != "null" else None,
+        "assigned_to": to_int(row[7]),
         "attachments": to_str(row[8]),
         "created_at": parse_date(row[9]),
         "updated_at": parse_date(row[10])
@@ -86,7 +86,7 @@ def list_tickets(user_id, is_admin: bool, assigned_to_me: bool,
         f"SELECT COUNT(*) FROM support_tickets WHERE {where_clause}",
         params
     )
-    total = count_result["rows"][0][0].get("value", 0) if count_result and count_result.get("rows") else 0
+    total = to_int(count_result["rows"][0][0]) or 0 if count_result and count_result.get("rows") else 0
 
     offset = (page - 1) * page_size
     list_params = params + [page_size, offset]
@@ -150,8 +150,8 @@ def get_assignee_role(user_id) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "user_type": to_str(row[1]).lower() if row[1].get("type") != "null" else "",
-        "role": to_str(row[2]).lower() if row[2].get("type") != "null" else ""
+        "user_type": to_str(row[1]).lower() if to_str(row[1]) else "",
+        "role": to_str(row[2]).lower() if to_str(row[2]) else ""
     }
 
 

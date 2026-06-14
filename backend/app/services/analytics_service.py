@@ -7,22 +7,20 @@ retention metrics, period-over-period growth, and platform health scoring.
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Any
 
-from app.db.turso_http import execute_query, to_str
+from app.db.turso_http import execute_query, to_str, to_int, to_float, extract_value
 
 
 def _extract_count(result) -> int:
     """Extract a COUNT(*) scalar from a Turso result."""
     if result and result.get("rows"):
-        return result["rows"][0][0].get("value", 0) if result["rows"][0][0].get("type") != "null" else 0
+        return to_int(result["rows"][0][0]) or 0
     return 0
 
 
 def _extract_float(result) -> float:
     """Extract a single float scalar from a Turso result."""
     if result and result.get("rows"):
-        val = result["rows"][0][0]
-        if val.get("type") != "null":
-            return float(val.get("value", 0))
+        return to_float(result["rows"][0][0]) or 0.0
     return 0.0
 
 
@@ -61,9 +59,9 @@ def get_registration_trends(start_date: str, end_date: str, interval: str) -> Li
         for row in result["rows"]:
             trends.append({
                 "date": to_str(row[0]),
-                "total": row[1].get("value", 0) if row[1].get("type") != "null" else 0,
-                "clients": row[2].get("value", 0) if row[2].get("type") != "null" else 0,
-                "freelancers": row[3].get("value", 0) if row[3].get("type") != "null" else 0
+                "total": to_int(row[1]) or 0,
+                "clients": to_int(row[2]) or 0,
+                "freelancers": to_int(row[3]) or 0
             })
     return trends
 
@@ -90,7 +88,7 @@ def get_active_user_stats(days: int) -> Dict[str, Any]:
     if types_result and types_result.get("rows"):
         for row in types_result["rows"]:
             user_type = to_str(row[0]) or "unknown"
-            count = row[1].get("value", 0) if row[1].get("type") != "null" else 0
+            count = to_int(row[1]) or 0
             user_types[user_type] = count
 
     return {
@@ -120,7 +118,7 @@ def get_location_distribution() -> List[Dict[str, Any]]:
         for row in result["rows"]:
             locations.append({
                 "location": to_str(row[0]),
-                "count": row[1].get("value", 0) if row[1].get("type") != "null" else 0
+                "count": to_int(row[1]) or 0
             })
     return locations
 
@@ -136,7 +134,7 @@ def get_project_stats() -> Dict[str, Any]:
     if status_result and status_result.get("rows"):
         for row in status_result["rows"]:
             s = to_str(row[0]) or "unknown"
-            count = row[1].get("value", 0) if row[1].get("type") != "null" else 0
+            count = to_int(row[1]) or 0
             status_breakdown[s] = count
 
     avg_budget = _extract_float(execute_query(
@@ -178,10 +176,10 @@ def get_completion_rate() -> Dict[str, Any]:
     total = completed = in_progress = cancelled = 0
     if result and result.get("rows"):
         row = result["rows"][0]
-        total = row[0].get("value", 0) if row[0].get("type") != "null" else 0
-        completed = row[1].get("value", 0) if row[1].get("type") != "null" else 0
-        in_progress = row[2].get("value", 0) if row[2].get("type") != "null" else 0
-        cancelled = row[3].get("value", 0) if row[3].get("type") != "null" else 0
+        total = to_int(row[0]) or 0
+        completed = to_int(row[1]) or 0
+        in_progress = to_int(row[2]) or 0
+        cancelled = to_int(row[3]) or 0
 
     completion_rate = (completed / total * 100) if total > 0 else 0
 
@@ -211,7 +209,7 @@ def get_popular_categories(limit: int) -> List[Dict[str, Any]]:
         for row in result["rows"]:
             categories.append({
                 "category": to_str(row[0]),
-                "count": row[1].get("value", 0) if row[1].get("type") != "null" else 0
+                "count": to_int(row[1]) or 0
             })
     return categories
 
@@ -237,8 +235,8 @@ def get_revenue_stats(start_date: str, end_date: str, platform_fee_pct: float = 
 
     if result and result.get("rows"):
         for row in result["rows"]:
-            amount = float(row[0].get("value", 0)) if row[0].get("type") != "null" else 0
-            count = row[1].get("value", 0) if row[1].get("type") != "null" else 0
+            amount = to_float(row[0]) or 0
+            count = to_int(row[1]) or 0
             method = to_str(row[2]) or "unknown"
             total_revenue += amount
             transaction_count += count
@@ -306,8 +304,8 @@ def get_revenue_trends(start_date: str, end_date: str, interval: str) -> List[Di
         for row in result["rows"]:
             trends.append({
                 "date": to_str(row[0]),
-                "revenue": float(row[1].get("value", 0)) if row[1].get("type") != "null" else 0,
-                "transactions": row[2].get("value", 0) if row[2].get("type") != "null" else 0
+                "revenue": to_float(row[1]) or 0,
+                "transactions": to_int(row[2]) or 0
             })
     return trends
 
@@ -345,12 +343,12 @@ def get_top_freelancers(limit: int, sort_by: str) -> List[Dict[str, Any]]:
             first = to_str(row[1]) or ""
             last = to_str(row[2]) or ""
             freelancers.append({
-                "id": row[0].get("value") if row[0].get("type") != "null" else None,
+                "id": extract_value(row[0]),
                 "name": f"{first} {last}".strip(),
                 "email": to_str(row[3]),
-                "project_count": row[4].get("value", 0) if row[4].get("type") != "null" else 0,
-                "total_earnings": float(row[5].get("value", 0)) if row[5].get("type") != "null" else 0,
-                "average_rating": round(float(row[6].get("value", 0)), 2) if row[6].get("type") != "null" else 0
+                "project_count": to_int(row[4]) or 0,
+                "total_earnings": to_float(row[5]) or 0,
+                "average_rating": round(to_float(row[6]) or 0, 2)
             })
     return freelancers
 
@@ -368,8 +366,8 @@ def get_freelancer_success_rate(freelancer_id: int) -> Dict[str, Any]:
     submitted = accepted = 0
     if proposals_result and proposals_result.get("rows"):
         row = proposals_result["rows"][0]
-        submitted = row[0].get("value", 0) if row[0].get("type") != "null" else 0
-        accepted = row[1].get("value", 0) if row[1].get("type") != "null" else 0
+        submitted = to_int(row[0]) or 0
+        accepted = to_int(row[1]) or 0
 
     completed = _extract_count(execute_query(
         "SELECT COUNT(*) FROM contracts WHERE freelancer_id = ? AND status = 'completed'",
@@ -423,11 +421,11 @@ def get_top_clients(limit: int) -> List[Dict[str, Any]]:
             first = to_str(row[1]) or ""
             last = to_str(row[2]) or ""
             clients.append({
-                "id": row[0].get("value") if row[0].get("type") != "null" else None,
+                "id": extract_value(row[0]),
                 "name": f"{first} {last}".strip(),
                 "email": to_str(row[3]),
-                "project_count": row[4].get("value", 0) if row[4].get("type") != "null" else 0,
-                "total_spent": float(row[5].get("value", 0)) if row[5].get("type") != "null" else 0
+                "project_count": to_int(row[4]) or 0,
+                "total_spent": to_float(row[5]) or 0
             })
     return clients
 

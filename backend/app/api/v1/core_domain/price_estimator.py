@@ -9,7 +9,7 @@ import math
 
 logger = logging.getLogger(__name__)
 
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_current_user_optional
 from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
@@ -151,7 +151,8 @@ class RangeRequest(BaseModel):
 # ── Endpoints ───────────────────────────────────────────────────────────────
 
 @router.post("/estimate")
-async def estimate_price(body: EstimateRequest, current_user=Depends(get_current_user)):
+async def estimate_price(body: EstimateRequest, current_user=Depends(get_current_user_optional)):
+    # Public lead-gen tool: usable without an account (marketed as "no sign-up required").
     _ensure_table()
 
     skill = SKILL_BASE_RATES.get(body.skill_slug)
@@ -200,7 +201,7 @@ async def estimate_price(body: EstimateRequest, current_user=Depends(get_current
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "INSERT INTO price_estimates (user_id, skill_slug, industry, project_type, complexity, estimated_min, estimated_max, estimated_avg, currency, confidence_score, factors_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [current_user.id, body.skill_slug, body.industry, body.project_type, body.complexity,
+        [(current_user.id if current_user else None), body.skill_slug, body.industry, body.project_type, body.complexity,
          est_min, est_max, est_avg, body.currency, round(confidence, 2), json.dumps(factors), now]
     )
 
@@ -258,7 +259,7 @@ async def get_market_rates(skill_slug: str, industry: Optional[str] = Query(None
 
 
 @router.post("/compare")
-async def compare_pricing(body: CompareRequest, current_user=Depends(get_current_user)):
+async def compare_pricing(body: CompareRequest, current_user=Depends(get_current_user_optional)):
     _ensure_table()
 
     complexity_mult = COMPLEXITY_MULTIPLIERS.get(body.complexity, 1.0)
@@ -346,7 +347,7 @@ async def get_pricing_trends(
 
 
 @router.post("/suggest")
-async def suggest_bid(body: SuggestRequest, current_user=Depends(get_current_user)):
+async def suggest_bid(body: SuggestRequest, current_user=Depends(get_current_user_optional)):
     _ensure_table()
 
     skill = SKILL_BASE_RATES.get(body.skill_slug)
@@ -455,7 +456,7 @@ async def get_industry_rates(industry: Optional[str] = Query(None)):
 
 
 @router.post("/range")
-async def get_price_range(body: RangeRequest, current_user=Depends(get_current_user)):
+async def get_price_range(body: RangeRequest, current_user=Depends(get_current_user_optional)):
     _ensure_table()
 
     skill = SKILL_BASE_RATES.get(body.skill_slug)

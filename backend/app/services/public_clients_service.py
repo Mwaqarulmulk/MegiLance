@@ -1,7 +1,7 @@
 # @AI-HINT: Service layer for public client showcase and statistics
 # All database queries for the public-clients endpoints (no auth required)
 
-from app.db.turso_http import execute_query
+from app.db.turso_http import execute_query, to_int, to_float, extract_value
 from typing import List, Optional, Dict, Any
 
 
@@ -34,8 +34,7 @@ def fetch_featured_clients(limit: int) -> List[List]:
 def _extract_scalar(result: Optional[Dict[str, Any]]) -> Any:
     """Extract a single scalar value from a query result."""
     if result and result.get("rows"):
-        val = result["rows"][0][0]
-        return val.get("value", 0) if isinstance(val, dict) else val
+        return extract_value(result["rows"][0][0])
     return 0
 
 

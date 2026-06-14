@@ -29,7 +29,7 @@ import requests
 from datetime import datetime, timezone, timedelta
 from typing import Any
 
-from app.db.turso_http import execute_query
+from app.db.turso_http import execute_query, extract_value, to_int
 from app.core.security import get_password_hash
 
 logger = logging.getLogger(__name__)
@@ -414,8 +414,7 @@ def _ensure_source_client(source: str) -> int | None:
         [client_info["email"]],
     )
     if result and result.get("rows") and len(result["rows"]) > 0:
-        val = result["rows"][0][0]
-        return int(val.get("value") if isinstance(val, dict) else val)
+        return to_int(result["rows"][0][0])
 
     # Create the source client
     hashed = get_password_hash("LiveSource2026!")
@@ -436,8 +435,7 @@ def _ensure_source_client(source: str) -> int | None:
         [client_info["email"]],
     )
     if result and result.get("rows") and len(result["rows"]) > 0:
-        val = result["rows"][0][0]
-        return int(val.get("value") if isinstance(val, dict) else val)
+        return to_int(result["rows"][0][0])
     return None
 
 
@@ -646,14 +644,12 @@ def main():
     # Verify
     total = execute_query("SELECT COUNT(*) FROM projects WHERE status = 'open'")
     if total and total.get("rows"):
-        v = total["rows"][0][0]
-        count = int(v.get("value") if isinstance(v, dict) else v)
+        count = to_int(total["rows"][0][0]) or 0
         logger.info(f"\n  Total open projects on platform: {count}")
 
     real = execute_query("SELECT COUNT(*) FROM projects WHERE description LIKE '%APPLY HERE (REAL LINK)%'")
     if real and real.get("rows"):
-        v = real["rows"][0][0]
-        count = int(v.get("value") if isinstance(v, dict) else v)
+        count = to_int(real["rows"][0][0]) or 0
         logger.info(f"  Projects with real apply links: {count}")
 
     logger.info(f"{'=' * 70}")

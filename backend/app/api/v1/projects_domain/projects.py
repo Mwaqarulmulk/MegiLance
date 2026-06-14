@@ -186,7 +186,7 @@ async def create_project(request: ProjectCreate, current_user=Depends(get_curren
 
     result = execute_query(
         """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
-                  skills, duration, experience_level, status, client_id, created_at, updated_at)
+                  skills, estimated_duration, experience_level, status, client_id, created_at, updated_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, ?)""",
         [
             request.title, request.description, request.category, request.budget_type,
@@ -196,7 +196,7 @@ async def create_project(request: ProjectCreate, current_user=Depends(get_curren
         ],
     )
 
-    if not result or not result.get("rows"):
+    if result is None:
         raise HTTPException(status_code=500, detail="Failed to create project")
 
     return {"message": "Project created successfully", "project_id": result.get("last_insert_rowid")}

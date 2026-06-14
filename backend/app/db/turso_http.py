@@ -192,9 +192,16 @@ class TursoHTTP:
             return {"columns": [], "rows": []}
         
         result = data[0].get("results", {})
+        # Check for SQL errors in the response body
+        if "error" in data[0]:
+            raise Exception(f"Turso SQL error: {data[0]['error']}")
+        if "error" in result:
+            raise Exception(f"Turso SQL error: {result['error']}")
         return {
             "columns": result.get("columns", []),
-            "rows": result.get("rows", [])
+            "rows": result.get("rows", []),
+            "rows_affected": result.get("rows_affected", 0),
+            "last_insert_rowid": result.get("last_insert_rowid"),
         }
     
     def execute_many(self, statements: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -273,7 +280,9 @@ def execute_query(sql: str, params: List[Any] = None) -> Optional[Dict[str, Any]
             
         return {
             "cols": cols,
-            "rows": rows
+            "rows": rows,
+            "rows_affected": result.get("rows_affected", 0),
+            "last_insert_rowid": result.get("last_insert_rowid"),
         }
 
     except Exception as e:
@@ -354,6 +363,17 @@ def to_float(value: Any) -> Optional[float]:
         return float(value)
     except (ValueError, TypeError):
         return None
+
+
+def extract_value(value: Any) -> Any:
+    """Extract raw value from Turso dict format. Returns the unwrapped value."""
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        if value.get("type") == "null":
+            return None
+        return value.get("value")
+    return value
 
 
 def parse_date(value: Any) -> Optional[Any]:

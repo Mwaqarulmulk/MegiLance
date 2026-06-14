@@ -5,7 +5,7 @@ from datetime import datetime, date, timezone
 from typing import Optional
 logger = logging.getLogger(__name__)
 
-from app.db.turso_http import execute_query, to_str, parse_date, parse_rows
+from app.db.turso_http import execute_query, to_str, to_int, to_float, extract_value, parse_date, parse_rows
 
 
 def _row_to_invoice(row) -> dict:
@@ -17,19 +17,19 @@ def _row_to_invoice(row) -> dict:
         items_parsed = []
 
     return {
-        "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
+        "id": to_int(row[0]),
         "invoice_number": to_str(row[1]),
-        "contract_id": int(row[2].get("value")) if row[2].get("type") != "null" else None,
-        "from_user_id": int(row[3].get("value")) if row[3].get("type") != "null" else None,
-        "to_user_id": int(row[4].get("value")) if row[4].get("type") != "null" else None,
-        "subtotal": float(row[5].get("value")) if row[5].get("type") != "null" else 0.0,
-        "tax": float(row[6].get("value")) if row[6].get("type") != "null" else 0.0,
-        "total": float(row[7].get("value")) if row[7].get("type") != "null" else 0.0,
+        "contract_id": to_int(row[2]),
+        "from_user_id": to_int(row[3]),
+        "to_user_id": to_int(row[4]),
+        "subtotal": to_float(row[5]) or 0.0,
+        "tax": to_float(row[6]) or 0.0,
+        "total": to_float(row[7]) or 0.0,
         "due_date": parse_date(row[8]),
         "status": to_str(row[9]) or "pending",
         "notes": to_str(row[10]),
         "items": items_parsed,
-        "payment_id": int(row[12].get("value")) if row[12].get("type") != "null" else None,
+        "payment_id": to_int(row[12]),
         "paid_date": parse_date(row[13]),
         "created_at": parse_date(row[14]),
         "updated_at": parse_date(row[15])
@@ -71,8 +71,8 @@ def get_contract_freelancer(contract_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "freelancer_id": int(row[1].get("value"))
+        "id": to_int(row[0]),
+        "freelancer_id": to_int(row[1])
     }
 
 
@@ -156,7 +156,7 @@ def list_invoices(user_id: int, user_role: str, contract_id: Optional[int],
     count_result = execute_query(count_sql, params)
     total = 0
     if count_result and count_result.get("rows"):
-        total = int(count_result["rows"][0][0].get("value"))
+        total = to_int(count_result["rows"][0][0]) or 0
 
     offset = (page - 1) * page_size
     sql += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
@@ -178,8 +178,8 @@ def get_invoice_for_payment(invoice_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "to_user_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "to_user_id": to_int(row[1]),
         "status": to_str(row[2])
     }
 
@@ -194,7 +194,7 @@ def get_invoice_total(invoice_id: int) -> float:
     """Get the total amount of an invoice."""
     result = execute_query("SELECT total FROM invoices WHERE id = ?", [invoice_id])
     if result and result.get("rows"):
-        return float(result["rows"][0][0].get("value", 0))
+        return to_float(extract_value(result["rows"][0][0])) or 0.0
     return 0.0
 
 
@@ -227,8 +227,8 @@ def get_invoice_for_update(invoice_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "from_user_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "from_user_id": to_int(row[1]),
         "status": to_str(row[2])
     }
 

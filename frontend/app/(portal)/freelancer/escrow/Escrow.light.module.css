@@ -1,0 +1,73 @@
+/* Light Theme */
+.container {
+  background: #fff;
+}
+
+.title {
+  color: #1a1a1a;
+}
+
+.subtitle {
+  color: var(--color-text-secondary-light);
+}
+
+.statCard {
+  background: #fff;
+  border: 1px solid var(--border-light);
+}
+
+.statValue {
+  color: #1a1a1a;
+}
+
+.statLabel {
+  color: var(--color-text-secondary-light);
+}
+
+.filterBtn {
+  background: var(--bg-tertiary-light);
+  color: #374151;
+}
+
+.filterBtn:hover {
+  background: var(--border-light);
+}
+
+.filterBtnActive {
+  background: var(--ml-blue) !important;
+  color: #fff !important;
+}
+
+.loadingState,
+.emptyState {
+  background: #f9fafb;
+  color: var(--color-text-secondary-light);
+}
+
+.emptyState h3 {
+  color: #1a1a1a;
+}
+
+.tableWrapper {
+  background: #fff;
+  border: 1px solid var(--border-light);
+}
+
+.th {
+  background: #f9fafb;
+  color: var(--color-text-secondary-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.td {
+  color: #374151;
+  border-bottom: 1px solid var(--bg-tertiary-light);
+}
+
+.tr:hover {
+  background: #f9fafb;
+}
+
+.projectCell {
+  color: #1a1a1a;
+}

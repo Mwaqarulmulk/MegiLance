@@ -2,18 +2,18 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from app.db.turso_http import execute_query, to_str, parse_date
+from app.db.turso_http import execute_query, to_str, to_int, to_float, parse_date
 
 
 def _row_to_refund(row) -> dict:
     """Convert Turso row to refund dict"""
     return {
-        "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
-        "payment_id": int(row[1].get("value")) if row[1].get("type") != "null" else None,
-        "amount": float(row[2].get("value")) if row[2].get("type") != "null" else 0.0,
+        "id": to_int(row[0]),
+        "payment_id": to_int(row[1]),
+        "amount": to_float(row[2]) or 0.0,
         "reason": to_str(row[3]),
-        "requested_by": int(row[4].get("value")) if row[4].get("type") != "null" else None,
-        "approved_by": int(row[5].get("value")) if row[5].get("type") != "null" else None,
+        "requested_by": to_int(row[4]),
+        "approved_by": to_int(row[5]),
         "status": to_str(row[6]) or "pending",
         "processed_at": parse_date(row[7]),
         "created_at": parse_date(row[8]),
@@ -31,9 +31,9 @@ def get_payment_for_refund(payment_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "from_user_id": int(row[1].get("value")),
-        "amount": float(row[2].get("value")) if row[2].get("type") != "null" else 0.0,
+        "id": to_int(row[0]),
+        "from_user_id": to_int(row[1]),
+        "amount": to_float(row[2]) or 0.0,
         "status": to_str(row[3])
     }
 
@@ -82,7 +82,7 @@ def list_refunds(user_id: int, is_admin: bool, status_filter: Optional[str],
     count_result = execute_query(count_sql, params)
     total = 0
     if count_result and count_result.get("rows"):
-        total = int(count_result["rows"][0][0].get("value"))
+        total = to_int(count_result["rows"][0][0]) or 0
 
     offset = (page - 1) * page_size
     sql += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
@@ -112,8 +112,8 @@ def get_refund_for_update(refund_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "requested_by": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "requested_by": to_int(row[1]),
         "status": to_str(row[2])
     }
 
@@ -172,10 +172,10 @@ def get_refund_for_processing(refund_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "payment_id": int(row[1].get("value")),
-        "amount": float(row[2].get("value")) if row[2].get("type") != "null" else 0.0,
-        "requested_by": int(row[3].get("value")),
+        "id": to_int(row[0]),
+        "payment_id": to_int(row[1]),
+        "amount": to_float(row[2]) or 0.0,
+        "requested_by": to_int(row[3]),
         "status": to_str(row[4])
     }
 
@@ -184,7 +184,7 @@ def get_user_balance(user_id: int) -> float:
     """Get user's account_balance."""
     result = execute_query("SELECT account_balance FROM users WHERE id = ?", [user_id])
     if result and result.get("rows"):
-        return float(result["rows"][0][0].get("value")) if result["rows"][0][0].get("type") != "null" else 0.0
+        return to_float(result["rows"][0][0]) or 0.0
     return 0.0
 
 

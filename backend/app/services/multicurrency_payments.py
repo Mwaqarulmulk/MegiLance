@@ -13,6 +13,7 @@ import json
 logger = logging.getLogger(__name__)
 
 from app.core.config import get_settings
+from app.db.turso_http import extract_value, to_int, to_float
 
 settings = get_settings()
 
@@ -220,7 +221,7 @@ class MultiCurrencyPaymentService:
         """, [from_currency, to_currency])
         
         if result and result.get("rows"):
-            return Decimal(str(result["rows"][0][0].get("value")))
+            return Decimal(str(extract_value(result["rows"][0][0]) or 0))
         
         # Ultimate fallback - assume 1:1 if same currency
         if from_currency == to_currency:
@@ -289,7 +290,7 @@ class MultiCurrencyPaymentService:
         
         recipient_currency = "USD"  # Default
         if recipient_result and recipient_result.get("rows"):
-            recipient_currency = recipient_result["rows"][0][0].get("value", "USD")
+            recipient_currency = extract_value(recipient_result["rows"][0][0]) or "USD"
         
         # Convert currency if needed
         final_amount = payment.amount
@@ -534,9 +535,9 @@ class MultiCurrencyPaymentService:
         if not freelancer_result or not freelancer_result.get("rows"):
             return {"error": "Freelancer not found"}
         
-        hourly_rate = Decimal(str(freelancer_result["rows"][0][0].get("value", 50)))
-        experience_level = freelancer_result["rows"][0][1].get("value", "intermediate")
-        location = freelancer_result["rows"][0][2].get("value", "Unknown")
+        hourly_rate = Decimal(str(extract_value(freelancer_result["rows"][0][0]) or 50))
+        experience_level = extract_value(freelancer_result["rows"][0][1]) or "intermediate"
+        location = extract_value(freelancer_result["rows"][0][2]) or "Unknown"
         
         # Get project data
         project_result = execute_query("""
@@ -546,7 +547,7 @@ class MultiCurrencyPaymentService:
         if not project_result or not project_result.get("rows"):
             return {"error": "Project not found"}
         
-        budget = Decimal(str(project_result["rows"][0][0].get("value", 1000)))
+        budget = Decimal(str(extract_value(project_result["rows"][0][0]) or 1000))
         
         # Calculate market rate for skills
         market_rate = await self._calculate_market_rate(project_id)
@@ -612,7 +613,7 @@ class MultiCurrencyPaymentService:
         """, [project_id])
         
         if result and result.get("rows"):
-            avg_budget = result["rows"][0][0].get("value")
+            avg_budget = extract_value(result["rows"][0][0])
             if avg_budget:
                 return Decimal(str(avg_budget))
         
@@ -664,7 +665,7 @@ class MultiCurrencyPaymentService:
         if not balance_result or not balance_result.get("rows"):
             return {"error": "User not found"}
         
-        balance = Decimal(str(balance_result["rows"][0][0].get("value", 0)))
+        balance = Decimal(str(extract_value(balance_result["rows"][0][0]) or 0))
         
         if balance < amount:
             return {"error": "Insufficient balance"}

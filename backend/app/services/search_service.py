@@ -116,6 +116,9 @@ PROJECT_SORT_MAP = {
 }
 
 FREELANCER_SORT_MAP = {
+    # Default public ranking: complete, rated, experienced profiles surface first
+    "relevance": "(CASE WHEN u.hourly_rate > 0 THEN 1 ELSE 0 END) DESC, "
+                 "avg_rating DESC, review_count DESC, completed_projects DESC, u.created_at DESC",
     "newest": "u.created_at DESC",
     "rate_high": "u.hourly_rate DESC",
     "rate_low": "u.hourly_rate ASC",

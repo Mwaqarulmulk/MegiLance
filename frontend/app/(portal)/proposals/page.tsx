@@ -3,30 +3,31 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAuthToken } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import Loading from '@/app/components/atoms/Loading/Loading';
 
 export default function ProposalsRedirect() {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    const authToken = getAuthToken();
-    const portalArea = localStorage.getItem('portal_area') || 'freelancer';
-    
-    if (!authToken) {
+    if (isLoading) return;
+
+    if (!user) {
       router.replace('/login');
       return;
     }
 
-    // Redirect based on role
-    if (portalArea.toLowerCase() === 'client') {
+    // Redirect based on authenticated role
+    const role = user.role?.toLowerCase();
+    if (role === 'client') {
       router.replace('/client/projects');
-    } else if (portalArea.toLowerCase() === 'admin') {
+    } else if (role === 'admin') {
       router.replace('/admin/dashboard');
     } else {
       router.replace('/freelancer/proposals');
     }
-  }, [router]);
+  }, [user, isLoading, router]);
 
   return <Loading text="Redirecting to proposals..." />;
 }

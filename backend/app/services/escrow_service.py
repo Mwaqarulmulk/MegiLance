@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 import logging
 
-from app.db.turso_http import execute_query, to_str, parse_date
+from app.db.turso_http import execute_query, to_str, to_int, to_float, extract_value, parse_date
 
 logger = logging.getLogger(__name__)
 
@@ -15,11 +15,11 @@ logger = logging.getLogger(__name__)
 def _row_to_escrow(row) -> dict:
     """Convert Turso row to escrow dict"""
     return {
-        "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
-        "contract_id": int(row[1].get("value")) if row[1].get("type") != "null" else None,
-        "client_id": int(row[2].get("value")) if row[2].get("type") != "null" else None,
-        "amount": float(row[3].get("value")) if row[3].get("type") != "null" else 0.0,
-        "released_amount": float(row[4].get("value")) if row[4].get("type") != "null" else 0.0,
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
+        "client_id": to_int(row[2]),
+        "amount": to_float(row[3]) or 0.0,
+        "released_amount": to_float(row[4]) or 0.0,
         "status": to_str(row[5]) or "pending",
         "expires_at": parse_date(row[6]),
         "notes": to_str(row[7]),
@@ -38,9 +38,9 @@ def get_contract_parties(contract_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "client_id": int(row[1].get("value")),
-        "freelancer_id": int(row[2].get("value")) if row[2].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "client_id": to_int(row[1]),
+        "freelancer_id": to_int(row[2]),
     }
 
 
@@ -48,8 +48,7 @@ def get_user_balance(user_id: int) -> float:
     """Get user's account balance."""
     result = execute_query("SELECT account_balance FROM users WHERE id = ?", [user_id])
     if result and result.get("rows"):
-        val = result["rows"][0][0]
-        return float(val.get("value")) if val.get("type") != "null" else 0.0
+        return to_float(result["rows"][0][0]) or 0.0
     return 0.0
 
 
@@ -66,7 +65,7 @@ def fund_pending_escrow(contract_id: int, client_id: int, amount: float, notes: 
     if not result or not result.get("rows"):
         return None
         
-    escrow_id = int(result["rows"][0][0])
+    escrow_id = to_int(result["rows"][0][0])
     
     # Deduct balance
     balance = get_user_balance(client_id)
@@ -146,7 +145,7 @@ def get_freelancer_contract_ids(user_id: int) -> List[int]:
     result = execute_query("SELECT id FROM contracts WHERE freelancer_id = ?", [user_id])
     if not result or not result.get("rows"):
         return []
-    return [int(r[0].get("value")) for r in result["rows"]]
+    return [to_int(r[0]) for r in result["rows"]]
 
 
 def list_escrows(user_id: int, user_role: str, contract_id: Optional[int],
@@ -192,8 +191,8 @@ def get_escrow_balance_data(contract_id: int) -> dict:
     has_active = False
     if result and result.get("rows"):
         for row in result["rows"]:
-            amount = float(row[0].get("value")) if row[0].get("type") != "null" else 0.0
-            released = float(row[1].get("value")) if row[1].get("type") != "null" else 0.0
+            amount = to_float(row[0]) or 0.0
+            released = to_float(row[1]) or 0.0
             st = to_str(row[2])
             if st in ["active", "released"]:
                 total_funded += amount
@@ -226,11 +225,11 @@ def get_escrow_core(escrow_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "contract_id": int(row[1].get("value")),
-        "client_id": int(row[2].get("value")),
-        "amount": float(row[3].get("value")) if row[3].get("type") != "null" else 0.0,
-        "released_amount": float(row[4].get("value")) if row[4].get("type") != "null" else 0.0,
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
+        "client_id": to_int(row[2]),
+        "amount": to_float(row[3]) or 0.0,
+        "released_amount": to_float(row[4]) or 0.0,
         "status": to_str(row[5]),
     }
 
@@ -240,7 +239,7 @@ def get_freelancer_id_for_contract(contract_id: int) -> Optional[int]:
     result = execute_query("SELECT freelancer_id FROM contracts WHERE id = ?", [contract_id])
     if not result or not result.get("rows"):
         return None
-    return int(result["rows"][0][0].get("value"))
+    return to_int(result["rows"][0][0])
 
 
 def release_escrow_funds(escrow_id: int, release_amount: float,
@@ -295,8 +294,8 @@ def get_escrow_ownership(escrow_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "client_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "client_id": to_int(row[1]),
         "status": to_str(row[2]),
     }
 

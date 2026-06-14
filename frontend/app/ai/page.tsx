@@ -26,7 +26,8 @@ import {
   Layers,
   TrendingUp,
   CheckCircle2,
-  Brain
+  Brain,
+  Calculator
 } from 'lucide-react';
 
 const aiFeatures = [

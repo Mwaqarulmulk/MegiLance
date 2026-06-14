@@ -13,6 +13,16 @@ import darkStyles from "./Workroom.dark.module.css";
 type TabType = "kanban" | "files" | "discussions";
 type TaskStatus = "todo" | "in_progress" | "review" | "done";
 
+interface Activity {
+  id: number;
+  activity_type: string;
+  entity_type: string;
+  entity_id: number;
+  description: string;
+  user_name: string;
+  created_at: string;
+}
+
 interface Task {
   id: number;
   title: string;
@@ -100,6 +110,33 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
   const [disputeError, setDisputeError] = useState<string | null>(null);
   const [disputeSuccess, setDisputeSuccess] = useState(false);
   const [milestones, setMilestones] = useState<any[]>([]);
+
+  // Task creation modal
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [taskColumn, setTaskColumn] = useState<string>("todo");
+  const [taskPriority, setTaskPriority] = useState<string>("medium");
+  const [taskDueDate, setTaskDueDate] = useState("");
+  const [taskSubmitting, setTaskSubmitting] = useState(false);
+  const [taskError, setTaskError] = useState<string | null>(null);
+
+  // File upload
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Discussion creation modal
+  const [showDiscussionModal, setShowDiscussionModal] = useState(false);
+  const [discussionTitle, setDiscussionTitle] = useState("");
+  const [discussionContent, setDiscussionContent] = useState("");
+  const [discussionSubmitting, setDiscussionSubmitting] = useState(false);
+  const [discussionError, setDiscussionError] = useState<string | null>(null);
+
+  // Activity log
+  const [showActivityLog, setShowActivityLog] = useState(false);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loadingActivity, setLoadingActivity] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -248,6 +285,150 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
     }
   }, [mounted, fetchData]);
 
+  const handleCreateTask = async () => {
+    if (!taskTitle.trim()) {
+      setTaskError("Task title is required");
+      return;
+    }
+    setTaskSubmitting(true);
+    setTaskError(null);
+    try {
+      const newTask = await workroomApi.createTask(contractId, {
+        title: taskTitle.trim(),
+        description: taskDescription.trim() || undefined,
+        column: taskColumn,
+        priority: taskPriority,
+        due_date: taskDueDate || undefined,
+      }) as any;
+      if (newTask) {
+        setTasks((prev) => [
+          ...prev,
+          {
+            id: newTask.id,
+            title: newTask.title,
+            description: newTask.description || "",
+            status: (newTask.column_name || taskColumn) as TaskStatus,
+            priority: (newTask.priority || taskPriority) as "low" | "medium" | "high",
+            assignee_name: newTask.assignee_name || null,
+            due_date: newTask.due_date || null,
+            created_at: newTask.created_at,
+          },
+        ]);
+      }
+      setShowTaskModal(false);
+      setTaskTitle("");
+      setTaskDescription("");
+      setTaskColumn("todo");
+      setTaskPriority("medium");
+      setTaskDueDate("");
+    } catch (err: any) {
+      setTaskError(err?.message || "Failed to create task");
+    } finally {
+      setTaskSubmitting(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingFile(true);
+    setUploadError(null);
+    try {
+      const uploaded = await workroomApi.uploadFile(contractId, file) as any;
+      if (uploaded) {
+        setFiles((prev) => [
+          ...prev,
+          {
+            id: uploaded.id,
+            filename: uploaded.original_name || uploaded.filename || file.name,
+            file_size: uploaded.file_size || file.size,
+            file_type: uploaded.content_type || uploaded.file_type || file.type,
+            uploaded_by_name: uploaded.uploaded_by_name || "You",
+            created_at: uploaded.created_at || new Date().toISOString(),
+          },
+        ]);
+      }
+    } catch (err: any) {
+      setUploadError(err?.message || "Failed to upload file");
+    } finally {
+      setUploadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDownloadFile = async (fileId: number, filename: string) => {
+    try {
+      const result = await workroomApi.downloadFile(fileId) as any;
+      if (result?.download_url) {
+        window.open(result.download_url, "_blank");
+      } else {
+        const blob = new Blob([result]);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err: any) {
+      setUploadError(err?.message || "Failed to download file");
+    }
+  };
+
+  const handleCreateDiscussion = async () => {
+    if (!discussionTitle.trim() || !discussionContent.trim()) {
+      setDiscussionError("Title and content are required");
+      return;
+    }
+    setDiscussionSubmitting(true);
+    setDiscussionError(null);
+    try {
+      const newDisc = await workroomApi.createDiscussion(contractId, {
+        title: discussionTitle.trim(),
+        content: discussionContent.trim(),
+      }) as any;
+      if (newDisc) {
+        setDiscussions((prev) => [
+          ...prev,
+          {
+            id: newDisc.id,
+            title: newDisc.title,
+            content: newDisc.content,
+            author_name: newDisc.author_name || "You",
+            reply_count: 0,
+            created_at: newDisc.created_at,
+            is_resolved: false,
+          },
+        ]);
+      }
+      setShowDiscussionModal(false);
+      setDiscussionTitle("");
+      setDiscussionContent("");
+    } catch (err: any) {
+      setDiscussionError(err?.message || "Failed to create discussion");
+    } finally {
+      setDiscussionSubmitting(false);
+    }
+  };
+
+  const loadActivity = async () => {
+    setLoadingActivity(true);
+    try {
+      const data = await workroomApi.getActivity(contractId) as any;
+      setActivities(Array.isArray(data) ? data : data?.items || []);
+    } catch (err) {
+      console.error("Failed to load activity:", err);
+    } finally {
+      setLoadingActivity(false);
+    }
+  };
+
+  const handleInviteMember = () => {
+    alert("Invite member feature will be available soon. You can share the contract link with team members.");
+  };
+
   const handleSubmitDispute = async () => {
     if (disputeDescription.trim().length < 50) {
       setDisputeError(
@@ -361,10 +542,10 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
           <span className={themeStyles.contractId}>Contract #{contractId}</span>
         </div>
         <div className={commonStyles.headerActions}>
-          <Button variant="secondary" size="sm" onClick={() => alert('Invite member feature coming soon')}>
+          <Button variant="secondary" size="sm" onClick={handleInviteMember}>
             Invite Member
           </Button>
-          <Button variant="primary" size="sm" onClick={() => alert('Activity log feature coming soon')}>
+          <Button variant="primary" size="sm" onClick={() => { setShowActivityLog(true); loadActivity(); }}>
             Activity Log
           </Button>
           <Button
@@ -433,7 +614,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               {activeTab === "kanban" && (
                 <div className={commonStyles.kanbanContainer}>
                   <div className={commonStyles.kanbanHeader}>
-                    <Button variant="primary" size="sm" onClick={() => alert('Add task feature coming soon')}>
+                    <Button variant="primary" size="sm" onClick={() => setShowTaskModal(true)}>
                       + Add Task
                     </Button>
                   </div>
@@ -514,9 +695,23 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               {activeTab === "files" && (
                 <div className={commonStyles.filesContainer}>
                   <div className={commonStyles.filesHeader}>
-                    <Button variant="primary" size="sm" onClick={() => alert('File upload feature coming soon')}>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      isLoading={uploadingFile}
+                    >
                       📤 Upload File
                     </Button>
+                    {uploadError && (
+                      <span className="text-sm text-red-500 ml-2">{uploadError}</span>
+                    )}
                   </div>
                   <div className={commonStyles.fileList}>
                     {files.map((file) => (
@@ -547,7 +742,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
                           </p>
                         </div>
                         <div className={commonStyles.fileActions}>
-                          <Button variant="ghost" size="sm" onClick={() => alert('Download feature coming soon')}>
+                          <Button variant="ghost" size="sm" onClick={() => handleDownloadFile(file.id, file.filename)}>
                             Download
                           </Button>
                         </div>
@@ -561,7 +756,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               {activeTab === "discussions" && (
                 <div className={commonStyles.discussionsContainer}>
                   <div className={commonStyles.discussionsHeader}>
-                    <Button variant="primary" size="sm" onClick={() => alert('New discussion feature coming soon')}>
+                    <Button variant="primary" size="sm" onClick={() => setShowDiscussionModal(true)}>
                       + New Discussion
                     </Button>
                   </div>
@@ -815,6 +1010,203 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
               >
                 Submit Dispute
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Task Creation Modal ── */}
+      {showTaskModal && (
+        <div
+          className={commonStyles.disputeOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="task-modal-title"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowTaskModal(false); }}
+        >
+          <div className={cn(commonStyles.disputeModal, themeStyles.disputeModal)}>
+            <div className={cn(commonStyles.disputeModalHeader, themeStyles.disputeModalHeader)}>
+              <h2 id="task-modal-title" className={cn(commonStyles.disputeModalTitle, themeStyles.disputeModalTitle)}>
+                + Create New Task
+              </h2>
+              <button className={cn(commonStyles.disputeCloseBtn, themeStyles.disputeCloseBtn)} onClick={() => setShowTaskModal(false)} aria-label="Close">
+                ✕
+              </button>
+            </div>
+            <div className={commonStyles.disputeModalBody}>
+              <div>
+                <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Title *</label>
+                <input
+                  type="text"
+                  className={cn(commonStyles.disputeSelect, themeStyles.disputeSelect)}
+                  placeholder="Task title"
+                  value={taskTitle}
+                  onChange={(e) => { setTaskTitle(e.target.value); if (taskError) setTaskError(null); }}
+                />
+              </div>
+              <div>
+                <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Description</label>
+                <textarea
+                  className={cn(commonStyles.disputeTextarea, themeStyles.disputeTextarea)}
+                  placeholder="Task description (optional)"
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Column</label>
+                  <select
+                    className={cn(commonStyles.disputeSelect, themeStyles.disputeSelect)}
+                    value={taskColumn}
+                    onChange={(e) => setTaskColumn(e.target.value)}
+                  >
+                    <option value="todo">To Do</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="review">In Review</option>
+                    <option value="done">Done</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Priority</label>
+                  <select
+                    className={cn(commonStyles.disputeSelect, themeStyles.disputeSelect)}
+                    value={taskPriority}
+                    onChange={(e) => setTaskPriority(e.target.value)}
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Due Date</label>
+                <input
+                  type="date"
+                  className={cn(commonStyles.disputeSelect, themeStyles.disputeSelect)}
+                  value={taskDueDate}
+                  onChange={(e) => setTaskDueDate(e.target.value)}
+                />
+              </div>
+              {taskError && (
+                <div className={cn(commonStyles.disputeError, themeStyles.disputeError)} role="alert">{taskError}</div>
+              )}
+            </div>
+            <div className={cn(commonStyles.disputeModalFooter, themeStyles.disputeModalFooter)}>
+              <Button variant="ghost" size="sm" onClick={() => setShowTaskModal(false)}>Cancel</Button>
+              <Button variant="primary" size="sm" isLoading={taskSubmitting} onClick={handleCreateTask}>Create Task</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Discussion Creation Modal ── */}
+      {showDiscussionModal && (
+        <div
+          className={commonStyles.disputeOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="discussion-modal-title"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowDiscussionModal(false); }}
+        >
+          <div className={cn(commonStyles.disputeModal, themeStyles.disputeModal)}>
+            <div className={cn(commonStyles.disputeModalHeader, themeStyles.disputeModalHeader)}>
+              <h2 id="discussion-modal-title" className={cn(commonStyles.disputeModalTitle, themeStyles.disputeModalTitle)}>
+                + New Discussion
+              </h2>
+              <button className={cn(commonStyles.disputeCloseBtn, themeStyles.disputeCloseBtn)} onClick={() => setShowDiscussionModal(false)} aria-label="Close">
+                ✕
+              </button>
+            </div>
+            <div className={commonStyles.disputeModalBody}>
+              <div>
+                <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Title *</label>
+                <input
+                  type="text"
+                  className={cn(commonStyles.disputeSelect, themeStyles.disputeSelect)}
+                  placeholder="Discussion title"
+                  value={discussionTitle}
+                  onChange={(e) => { setDiscussionTitle(e.target.value); if (discussionError) setDiscussionError(null); }}
+                />
+              </div>
+              <div>
+                <label className={cn(commonStyles.disputeLabel, themeStyles.disputeLabel)}>Content *</label>
+                <textarea
+                  className={cn(commonStyles.disputeTextarea, themeStyles.disputeTextarea)}
+                  placeholder="Describe the topic..."
+                  value={discussionContent}
+                  onChange={(e) => { setDiscussionContent(e.target.value); if (discussionError) setDiscussionError(null); }}
+                  rows={5}
+                />
+              </div>
+              {discussionError && (
+                <div className={cn(commonStyles.disputeError, themeStyles.disputeError)} role="alert">{discussionError}</div>
+              )}
+            </div>
+            <div className={cn(commonStyles.disputeModalFooter, themeStyles.disputeModalFooter)}>
+              <Button variant="ghost" size="sm" onClick={() => setShowDiscussionModal(false)}>Cancel</Button>
+              <Button variant="primary" size="sm" isLoading={discussionSubmitting} onClick={handleCreateDiscussion}>Create Discussion</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Activity Log Panel ── */}
+      {showActivityLog && (
+        <div
+          className={commonStyles.disputeOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="activity-modal-title"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowActivityLog(false); }}
+        >
+          <div className={cn(commonStyles.disputeModal, themeStyles.disputeModal)} style={{ maxHeight: "80vh" }}>
+            <div className={cn(commonStyles.disputeModalHeader, themeStyles.disputeModalHeader)}>
+              <h2 id="activity-modal-title" className={cn(commonStyles.disputeModalTitle, themeStyles.disputeModalTitle)}>
+                Activity Log
+              </h2>
+              <button className={cn(commonStyles.disputeCloseBtn, themeStyles.disputeCloseBtn)} onClick={() => setShowActivityLog(false)} aria-label="Close">
+                ✕
+              </button>
+            </div>
+            <div className={commonStyles.disputeModalBody} style={{ overflowY: "auto", maxHeight: "calc(80vh - 120px)" }}>
+              {loadingActivity ? (
+                <div className={commonStyles.loadingContainer}>
+                  <div className={commonStyles.loadingSpinner}></div>
+                </div>
+              ) : activities.length === 0 ? (
+                <p className="text-center text-slate-500 py-8">No activity recorded yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {activities.map((activity) => (
+                    <div
+                      key={activity.id}
+                      className={cn(
+                        "border rounded-lg p-3 text-sm",
+                        themeStyles.fileCard
+                      )}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className="font-medium">{activity.user_name}</span>
+                          <span className="ml-2 text-slate-500">{activity.activity_type.replace(/_/g, " ")}</span>
+                        </div>
+                        <span className="text-xs text-slate-400">
+                          {new Date(activity.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {activity.description && (
+                        <p className="mt-1 text-slate-600 dark:text-slate-400">{activity.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className={cn(commonStyles.disputeModalFooter, themeStyles.disputeModalFooter)}>
+              <Button variant="ghost" size="sm" onClick={() => setShowActivityLog(false)}>Close</Button>
             </div>
           </div>
         </div>

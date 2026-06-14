@@ -196,7 +196,7 @@ def create_gig(
             basic_title, basic_description, basic_price, basic_delivery_days, basic_revisions,
             standard_title, standard_description, standard_price, standard_delivery_days, standard_revisions,
             premium_title, premium_description, premium_price, premium_delivery_days, premium_revisions,
-            tags, images, thumbnail_url, status, average_rating, total_reviews, orders_count)
+            tags, images, thumbnail_url, status, rating_average, rating_count, orders_completed)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, 0, 0)""",
         [
             user_id,

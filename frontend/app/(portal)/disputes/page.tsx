@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, FileText, Plus, RefreshCw } from 'lucide-react';
 import api from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import Button from '@/app/components/atoms/Button/Button';
 import Badge from '@/app/components/atoms/Badge/Badge';
 import Loading from '@/app/components/atoms/Loading/Loading';
@@ -43,10 +44,12 @@ function formatDisputeType(type: string) {
 
 export default function DisputesPage() {
   const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [disputes, setDisputes] = useState<Dispute[]>([]);
-  const [contractsPath, setContractsPath] = useState('/client/contracts');
+
+  const contractsPath = user?.role === 'freelancer' ? '/freelancer/contracts' : '/client/contracts';
 
   const loadDisputes = async () => {
     setLoading(true);
@@ -62,9 +65,9 @@ export default function DisputesPage() {
   };
 
   useEffect(() => {
-    setContractsPath(localStorage.getItem('ml_user_role') === 'freelancer' ? '/freelancer/contracts' : '/client/contracts');
+    if (authLoading) return;
     loadDisputes();
-  }, [router]);
+  }, [authLoading]);
 
   const counts = useMemo(() => ({
     open: disputes.filter(d => d.status === 'open').length,

@@ -9,17 +9,17 @@ from datetime import datetime, timezone
 from typing import List, Optional
 logger = logging.getLogger(__name__)
 
-from app.db.turso_http import execute_query, to_str, parse_date
+from app.db.turso_http import execute_query, to_str, to_int, to_float, parse_date
 
 
 def _row_to_milestone(row) -> dict:
     """Convert Turso row to milestone dict"""
     return {
-        "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
-        "contract_id": int(row[1].get("value")) if row[1].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
         "title": to_str(row[2]),
         "description": to_str(row[3]),
-        "amount": float(row[4].get("value")) if row[4].get("type") != "null" else 0.0,
+        "amount": to_float(row[4]) or 0.0,
         "due_date": parse_date(row[5]),
         "status": to_str(row[6]) or "pending",
         "deliverables": to_str(row[7]),
@@ -55,9 +55,9 @@ def get_contract_parties(contract_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "client_id": int(row[1].get("value")),
-        "freelancer_id": int(row[2].get("value")),
+        "id": to_int(row[0]),
+        "client_id": to_int(row[1]),
+        "freelancer_id": to_int(row[2]),
     }
 
 
@@ -68,8 +68,8 @@ def get_contract_client_freelancer(contract_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "client_id": int(row[0].get("value")),
-        "freelancer_id": int(row[1].get("value")),
+        "client_id": to_int(row[0]),
+        "freelancer_id": to_int(row[1]),
     }
 
 
@@ -78,7 +78,7 @@ def get_contract_client_id(contract_id: int) -> Optional[int]:
     result = execute_query("SELECT client_id FROM contracts WHERE id = ?", [contract_id])
     if not result or not result.get("rows"):
         return None
-    return int(result["rows"][0][0].get("value"))
+    return to_int(result["rows"][0][0])
 
 
 def create_milestone(contract_id: int, title: str, description: Optional[str],
@@ -133,8 +133,8 @@ def get_milestone_core(milestone_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "contract_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
         "status": to_str(row[2]),
     }
 
@@ -148,10 +148,10 @@ def get_milestone_for_approval(milestone_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "contract_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
         "status": to_str(row[2]),
-        "amount": float(row[3].get("value")) if row[3].get("type") != "null" else 0.0,
+        "amount": to_float(row[3]) or 0.0,
         "title": to_str(row[4]),
     }
 
@@ -209,7 +209,7 @@ def create_payment_record(contract_id: int, milestone_id: int, client_id: int,
     result = execute_query("SELECT id FROM payments WHERE milestone_id = ? ORDER BY id DESC LIMIT 1",
                            [milestone_id])
     if result and result.get("rows"):
-        return int(result["rows"][0][0].get("value"))
+        return to_int(result["rows"][0][0])
     return None
 
 
@@ -235,8 +235,8 @@ def check_and_complete_contract(contract_id: int):
     )
     if result and result.get("rows"):
         row = result["rows"][0]
-        total = int(row[0].get("value", 0))
-        approved = int(row[1].get("value", 0))
+        total = to_int(row[0]) or 0
+        approved = to_int(row[1]) or 0
         if total > 0 and total == approved:
             now = datetime.now(timezone.utc).isoformat()
             execute_query(

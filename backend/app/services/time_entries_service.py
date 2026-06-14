@@ -9,7 +9,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
 
-from app.db.turso_http import execute_query, to_str, parse_date, parse_rows
+from app.db.turso_http import execute_query, to_str, to_int, to_float, parse_date, parse_rows
 
 logger = logging.getLogger(__name__)
 
@@ -17,16 +17,16 @@ logger = logging.getLogger(__name__)
 def row_to_time_entry(row: list) -> dict:
     """Convert a database row to a time entry dict"""
     return {
-        "id": row[0].get("value") if row[0].get("type") != "null" else None,
-        "user_id": row[1].get("value") if row[1].get("type") != "null" else None,
-        "contract_id": row[2].get("value") if row[2].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "user_id": to_int(row[1]),
+        "contract_id": to_int(row[2]),
         "description": to_str(row[3]),
         "start_time": parse_date(row[4]),
         "end_time": parse_date(row[5]),
-        "duration_minutes": row[6].get("value") if row[6].get("type") != "null" else None,
-        "hourly_rate": float(row[7].get("value")) if row[7].get("type") != "null" else None,
-        "amount": float(row[8].get("value")) if row[8].get("type") != "null" else None,
-        "billable": bool(row[9].get("value")) if row[9].get("type") != "null" else True,
+        "duration_minutes": to_int(row[6]),
+        "hourly_rate": to_float(row[7]),
+        "amount": to_float(row[8]),
+        "billable": bool(to_int(row[9])) if row[9].get("type") != "null" else True,
         "status": to_str(row[10]) or "draft",
         "created_at": parse_date(row[11]),
         "updated_at": parse_date(row[12])
@@ -61,7 +61,7 @@ def get_contract_freelancer_id(contract_id: int) -> Optional[int]:
     if not result or not result.get("rows"):
         return None
     row = result["rows"][0]
-    return row[1].get("value") if row[1].get("type") != "null" else None
+    return to_int(row[1])
 
 
 def has_active_time_entry(user_id: int, contract_id: int) -> bool:
@@ -77,9 +77,7 @@ def get_user_hourly_rate(user_id: int) -> Optional[float]:
     """Get user's hourly rate from users table."""
     result = execute_query("SELECT hourly_rate FROM users WHERE id = ?", [user_id])
     if result and result.get("rows"):
-        val = result["rows"][0][0]
-        if val.get("type") != "null":
-            return float(val.get("value"))
+        return to_float(result["rows"][0][0])
     return None
 
 
@@ -93,9 +91,9 @@ def get_contract_access_info(contract_id: int) -> Optional[Dict[str, Any]]:
         return None
     row = result["rows"][0]
     return {
-        "id": row[0].get("value") if row[0].get("type") != "null" else None,
-        "client_id": row[1].get("value") if row[1].get("type") != "null" else None,
-        "freelancer_id": row[2].get("value") if row[2].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "client_id": to_int(row[1]),
+        "freelancer_id": to_int(row[2]),
     }
 
 
@@ -104,8 +102,7 @@ def get_contract_client_id(contract_id: int) -> Optional[int]:
     result = execute_query("SELECT client_id FROM contracts WHERE id = ?", [contract_id])
     if not result or not result.get("rows"):
         return None
-    val = result["rows"][0][0]
-    return val.get("value") if val.get("type") != "null" else None
+    return to_int(result["rows"][0][0])
 
 
 def get_client_contract_ids(client_id: int) -> List[int]:
@@ -115,7 +112,7 @@ def get_client_contract_ids(client_id: int) -> List[int]:
     )
     if not result or not result.get("rows"):
         return []
-    return [r[0].get("value") for r in result["rows"]]
+    return [to_int(r[0]) for r in result["rows"]]
 
 
 # === Time entry CRUD ===
@@ -235,11 +232,11 @@ def get_time_summary(contract_id: int) -> Dict[str, Any]:
 
     row = result["rows"][0]
     return {
-        "entry_count": row[0].get("value", 0) if row[0].get("type") != "null" else 0,
-        "total_minutes": row[1].get("value", 0) if row[1].get("type") != "null" else 0,
-        "total_amount": float(row[2].get("value", 0)) if row[2].get("type") != "null" else 0,
-        "billable_minutes": row[3].get("value", 0) if row[3].get("type") != "null" else 0,
-        "billable_amount": float(row[4].get("value", 0)) if row[4].get("type") != "null" else 0,
+        "entry_count": to_int(row[0]) or 0,
+        "total_minutes": to_int(row[1]) or 0,
+        "total_amount": to_float(row[2]) or 0,
+        "billable_minutes": to_int(row[3]) or 0,
+        "billable_amount": to_float(row[4]) or 0,
     }
 
 
@@ -307,8 +304,8 @@ def get_entry_for_delete(entry_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": row[0].get("value") if row[0].get("type") != "null" else None,
-        "user_id": row[1].get("value") if row[1].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "user_id": to_int(row[1]),
         "status": to_str(row[2]) or "draft"
     }
 
@@ -331,9 +328,9 @@ def get_entries_for_submit(entry_ids: List[int]) -> List[dict]:
     entries = []
     for row in result["rows"]:
         entries.append({
-            "id": row[0].get("value"),
-            "user_id": row[1].get("value"),
-            "contract_id": row[2].get("value"),
+            "id": to_int(row[0]),
+            "user_id": to_int(row[1]),
+            "contract_id": to_int(row[2]),
             "status": to_str(row[3])
         })
     return entries
@@ -361,11 +358,11 @@ def get_entries_for_review(entry_ids: List[int]) -> List[dict]:
     entries = []
     for row in result["rows"]:
         entries.append({
-            "id": row[0].get("value"),
-            "contract_id": row[1].get("value"),
+            "id": to_int(row[0]),
+            "contract_id": to_int(row[1]),
             "status": to_str(row[2]),
-            "amount": float(row[3].get("value")) if row[3].get("type") != "null" else 0.0,
-            "user_id": row[4].get("value")
+            "amount": to_float(row[3]) or 0.0,
+            "user_id": to_int(row[4])
         })
     return entries
 

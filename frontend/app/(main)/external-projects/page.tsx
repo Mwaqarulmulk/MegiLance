@@ -246,11 +246,14 @@ async function ExternalProjectsList({ projects }: { projects: any[] }) {
 
             {skills.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                {skills.slice(0, 5).map((s: string) => (
-                  <span key={s} style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 500, background: '#f1f5f9', color: '#475569' }}>
-                    {typeof s === 'string' ? s : s.name || String(s)}
-                  </span>
-                ))}
+                {skills.slice(0, 5).map((s: any, i: number) => {
+                  const label = typeof s === 'string' ? s : (s?.name || String(s));
+                  return (
+                    <span key={label || i} style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 500, background: '#f1f5f9', color: '#475569' }}>
+                      {label}
+                    </span>
+                  );
+                })}
               </div>
             )}
 

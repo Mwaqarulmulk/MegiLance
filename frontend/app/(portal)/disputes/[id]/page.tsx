@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { useRouter, useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import api from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Loader2, FileText, Info, Upload } from 'lucide-react';
 
 import Button from '@/app/components/atoms/Button/Button';
@@ -55,11 +56,14 @@ const UserDisputeDetailsPage: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
   const params = useParams();
+  const { user } = useAuth();
   const toaster = useToaster();
   const [dispute, setDispute] = useState<Dispute | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  const dashboardPath = user?.role === 'freelancer' ? '/freelancer/dashboard' : '/client/dashboard';
 
   const styles = useMemo(() => {
     const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
@@ -125,7 +129,7 @@ const UserDisputeDetailsPage: React.FC = () => {
       <div className={cn(styles.container, styles.errorState)}>
         <h2>Error Loading Dispute</h2>
         <p>{error || 'Dispute not found'}</p>
-        <Button variant="primary" onClick={() => router.push('/client/dashboard')}>
+        <Button variant="primary" onClick={() => router.push(dashboardPath)}>
           Back to Dashboard
         </Button>
       </div>

@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 logger = logging.getLogger(__name__)
 
-from app.db.turso_http import execute_query, to_str, parse_date
+from app.db.turso_http import execute_query, to_str, to_int, to_float, extract_value, parse_date
 
 
 DISPUTE_SELECT_COLS = ("id, contract_id, raised_by, dispute_type, description, "
@@ -19,8 +19,8 @@ DISPUTE_SELECT_COLS = ("id, contract_id, raised_by, dispute_type, description, "
 
 def _row_to_dispute(row) -> dict:
     """Convert Turso row to dispute dict using actual DB columns."""
-    raised_by = int(row[2].get("value")) if row[2].get("type") != "null" else None
-    assigned_to = int(row[6].get("value")) if row[6].get("type") != "null" else None
+    raised_by = to_int(row[2])
+    assigned_to = to_int(row[6])
     dispute_type = to_str(row[3])
     description = to_str(row[4])
     evidence_value = to_str(row[10]) if len(row) > 10 else None
@@ -37,8 +37,8 @@ def _row_to_dispute(row) -> dict:
             evidence = [{"url": evidence_value}]
 
     dispute = {
-        "id": int(row[0].get("value")) if row[0].get("type") != "null" else None,
-        "contract_id": int(row[1].get("value")) if row[1].get("type") != "null" else None,
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
         "raised_by": raised_by,
         "dispute_type": dispute_type,
         "description": description,
@@ -48,7 +48,7 @@ def _row_to_dispute(row) -> dict:
         "created_at": parse_date(row[8]),
         "updated_at": parse_date(row[9]),
         "resolved_at": parse_date(row[11]) if len(row) > 11 else None,
-        "resolution_amount": float(row[12].get("value")) if len(row) > 12 and row[12].get("type") != "null" else None,
+        "resolution_amount": to_float(row[12]) if len(row) > 12 else None,
         "evidence": evidence,
     }
     return dispute
@@ -72,9 +72,9 @@ def get_contract_parties(contract_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "client_id": int(row[1].get("value")),
-        "freelancer_id": int(row[2].get("value")),
+        "id": to_int(row[0]),
+        "client_id": to_int(row[1]),
+        "freelancer_id": to_int(row[2]),
     }
 
 
@@ -85,8 +85,8 @@ def get_contract_client_freelancer(contract_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "client_id": int(row[0].get("value")),
-        "freelancer_id": int(row[1].get("value")),
+        "client_id": to_int(row[0]),
+        "freelancer_id": to_int(row[1]),
     }
 
 
@@ -149,7 +149,7 @@ def get_admin_user_ids() -> List[int]:
     result = execute_query("SELECT id FROM users WHERE lower(user_type) = 'admin' OR lower(role) = 'admin'", [])
     if not result or not result.get("rows"):
         return []
-    return [int(r[0].get("value")) for r in result["rows"]]
+    return [to_int(r[0]) for r in result["rows"]]
 
 
 def get_user_contract_ids(user_id: int) -> List[int]:
@@ -160,7 +160,7 @@ def get_user_contract_ids(user_id: int) -> List[int]:
     )
     if not result or not result.get("rows"):
         return []
-    return [int(r[0].get("value")) for r in result["rows"]]
+    return [to_int(r[0]) for r in result["rows"]]
 
 
 def list_disputes(user_type: str, user_id: int, contract_id: Optional[int],
@@ -195,7 +195,7 @@ def list_disputes(user_type: str, user_id: int, contract_id: Optional[int],
     count_result = execute_query(count_sql, params)
     total = 0
     if count_result and count_result.get("rows"):
-        total = int(count_result["rows"][0][0].get("value"))
+        total = to_int(count_result["rows"][0][0]) or 0
 
     sql += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
     params.extend([limit, skip])
@@ -222,8 +222,8 @@ def get_dispute_contract_id(dispute_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "contract_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
         "status": to_str(row[2]),
     }
 
@@ -287,8 +287,8 @@ def get_dispute_evidence(dispute_id: int) -> Optional[dict]:
         return None
     row = result["rows"][0]
     return {
-        "id": int(row[0].get("value")),
-        "contract_id": int(row[1].get("value")),
+        "id": to_int(row[0]),
+        "contract_id": to_int(row[1]),
         "evidence_json": to_str(row[2]),
     }
 

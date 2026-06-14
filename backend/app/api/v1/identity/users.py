@@ -37,8 +37,19 @@ def list_freelancers(
     offset = (page - 1) * page_size
 
     # Build WHERE clause and params for the search service
-    conditions = ["u.user_type = 'freelancer'"]
+    conditions = ["u.user_type = 'freelancer'", "u.is_active = 1"]
     params: list = []
+
+    # Quality gate: hide automated test/junk accounts and incomplete profiles so the public
+    # directory only shows real, presentable freelancers. (See seed_marketplace.py for demo data.)
+    conditions.append("u.email NOT LIKE '%@example.com'")
+    conditions.append("u.email NOT LIKE 'test_%'")
+    conditions.append("(u.profile_visibility IS NULL OR u.profile_visibility = 'public')")
+    conditions.append(
+        "(u.hourly_rate > 0 "
+        "OR (u.skills IS NOT NULL AND u.skills NOT IN ('', '[]', 'null')) "
+        "OR (u.bio IS NOT NULL AND TRIM(u.bio) != ''))"
+    )
 
     if search:
         conditions.append("(u.name LIKE ? OR u.bio LIKE ? OR u.skills LIKE ?)")
@@ -62,7 +73,7 @@ def list_freelancers(
     where_clause = " AND ".join(conditions)
 
     # Append LIMIT and OFFSET to params (search service expects them at end)
-    sort_key = sort_by or "newest"
+    sort_key = sort_by or "relevance"
     params.extend([page_size, offset])
 
     result = search_freelancers_advanced(

@@ -87,6 +87,7 @@ export const freelancerNavItems: NavItem[] = [
     icon: "Wallet",
     section: "Finance",
   },
+  { label: "Escrow", href: "/freelancer/escrow", icon: "Lock" },
   {
     label: "AI Suite",
     href: "/ai",
@@ -380,6 +381,7 @@ export const breadcrumbConfig: Record<string, string[]> = {
   "/freelancer/communication": ["Freelancer", "Communication"],
   "/freelancer/feedback": ["Freelancer", "Feedback"],
   "/freelancer/disputes": ["Freelancer", "Disputes"],
+  "/freelancer/escrow": ["Freelancer", "Escrow"],
   "/freelancer/favorites": ["Freelancer", "Favorites"],
   "/freelancer/settings": ["Freelancer", "Settings"],
   "/freelancer/help": ["Freelancer", "Help"],

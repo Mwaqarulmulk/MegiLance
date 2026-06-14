@@ -1,0 +1,266 @@
+/* Common Styles */
+
+.fadedIcon {
+  opacity: 0.3;
+}
+
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+}
+
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconPrimary { background: rgba(69, 115, 223, 0.1); color: var(--color-primary, var(--ml-blue)); }
+.iconWarning { background: rgba(242, 201, 76, 0.15); color: #c9a000; }
+.iconSuccess { background: rgba(39, 174, 96, 0.1); color: var(--color-success, var(--ml-green)); }
+.iconSecondary { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s,
+    background-color 0.2s,
+    color 0.2s,
+    opacity 0.2s;
+}
+
+.filterBtnActive {
+  /* Active state styles applied via theme-specific CSS */
+  font-weight: 600;
+}
+
+.filterCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 6px;
+}
+
+/* Error Banner */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  background: rgba(232, 17, 35, 0.08);
+  border: 1px solid rgba(232, 17, 35, 0.2);
+  border-radius: 10px;
+  color: var(--color-error, var(--ml-red));
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* States */
+.loadingState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  border-radius: 12px;
+  gap: 1rem;
+}
+
+.emptyState h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.emptyState p {
+  margin: 0;
+  max-width: 300px;
+}
+
+/* Table */
+.tableWrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.projectCell {
+  font-weight: 500;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amountCell {
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.milestoneCell {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+/* Status Badges */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status_warning { background: rgba(242, 201, 76, 0.15); color: #c9a000; }
+.status_success { background: rgba(39, 174, 96, 0.1); color: var(--color-success, var(--ml-green)); }
+.status_primary { background: rgba(69, 115, 223, 0.1); color: var(--color-primary, var(--ml-blue)); }
+.status_danger { background: rgba(232, 17, 35, 0.1); color: var(--color-error, var(--ml-red)); }
+.status_secondary { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+
+@media (max-width: 900px) {
+  .tableWrapper {
+    overflow-x: auto;
+  }
+  
+  .table {
+    min-width: 800px;
+  }
+}
+
+/* Small phones (380px and below) */
+@media (max-width: 380px) {
+  .container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .statCard {
+    padding: 1rem;
+  }
+  
+  .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .filterBtn {
+    white-space: nowrap;
+  }
+}
+
+/* Extra small phones (320px) */
+@media (max-width: 320px) {
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .statValue {
+    font-size: 1.25rem;
+  }
+  
+  .filterBtn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}

@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import List
 import logging
 
-from app.db.turso_http import execute_query, to_str, parse_date, parse_rows
+from app.db.turso_http import execute_query, to_str, to_float, extract_value, parse_date, parse_rows
 
 logger = logging.getLogger("megilance")
 
@@ -22,10 +22,10 @@ def get_client_projects(client_id) -> List[dict]:
 
     transformed_projects = []
     for row in result["rows"]:
-        project_id = row[0].get("value") if row[0].get("type") != "null" else None
+        project_id = extract_value(row[0])
         status_val = to_str(row[2])
-        budget_min = float(row[3].get("value")) if row[3].get("type") != "null" else 0
-        budget_max = float(row[4].get("value")) if row[4].get("type") != "null" else 0
+        budget_min = to_float(row[3]) or 0
+        budget_max = to_float(row[4]) or 0
 
         status_map = {
             "open": "Pending",
@@ -66,7 +66,7 @@ def _calculate_project_progress(project_id) -> int:
     )
     if not contract_result or not contract_result.get("rows"):
         return 0
-    contract_id = contract_result["rows"][0][0].get("value")
+    contract_id = extract_value(contract_result["rows"][0][0])
     if not contract_id:
         return 0
     milestone_result = execute_query(
@@ -78,8 +78,8 @@ def _calculate_project_progress(project_id) -> int:
     )
     if not milestone_result or not milestone_result.get("rows"):
         return 0
-    total_count = milestone_result["rows"][0][0].get("value", 0)
-    completed_count = milestone_result["rows"][0][1].get("value", 0)
+    total_count = extract_value(milestone_result["rows"][0][0]) or 0
+    completed_count = extract_value(milestone_result["rows"][0][1]) or 0
     if total_count and total_count > 0:
         return int((completed_count / total_count) * 100)
     return 0
@@ -95,7 +95,7 @@ def _calculate_project_paid(project_id) -> float:
     )
     if not contract_result or not contract_result.get("rows"):
         return 0
-    contract_id = contract_result["rows"][0][0].get("value")
+    contract_id = extract_value(contract_result["rows"][0][0])
     if not contract_id:
         return 0
     payment_result = execute_query(
@@ -105,9 +105,9 @@ def _calculate_project_paid(project_id) -> float:
     )
     if not payment_result or not payment_result.get("rows"):
         return 0
-    paid_val = payment_result["rows"][0][0].get("value")
-    if paid_val and payment_result["rows"][0][0].get("type") != "null":
-        return float(paid_val)
+    paid_val = to_float(payment_result["rows"][0][0])
+    if paid_val:
+        return paid_val
     return 0
 
 
@@ -125,7 +125,7 @@ def _get_project_freelancers(project_id) -> List[dict]:
     freelancers = []
     if freelancer_result and freelancer_result.get("rows"):
         for fl_row in freelancer_result["rows"]:
-            fl_id = fl_row[0].get("value") if fl_row[0].get("type") != "null" else None
+            fl_id = extract_value(fl_row[0])
             fl_name = to_str(fl_row[1])
             fl_image = to_str(fl_row[2])
             if fl_id:
@@ -158,9 +158,9 @@ def get_client_payments(user_id) -> List[dict]:
 
     transformed_payments = []
     for row in result["rows"]:
-        payment_id = row[0].get("value") if row[0].get("type") != "null" else None
-        to_user_id_val = row[1].get("value") if row[1].get("type") != "null" else None
-        amount = float(row[3].get("value")) if row[3].get("type") != "null" else 0
+        payment_id = extract_value(row[0])
+        to_user_id_val = extract_value(row[1])
+        amount = to_float(row[3]) or 0
         status_val = to_str(row[4])
 
         payment_type = "Payment" if to_user_id_val == user_id else "Refund"
@@ -201,7 +201,7 @@ def get_client_freelancers(client_id) -> List[dict]:
 
     freelancers = []
     for row in result["rows"]:
-        freelancer_id = row[0].get("value") if row[0].get("type") != "null" else None
+        freelancer_id = extract_value(row[0])
         name = to_str(row[1])
         if not name:
             first = to_str(row[2]) or ""
@@ -211,7 +211,7 @@ def get_client_freelancers(client_id) -> List[dict]:
         bio = to_str(row[4])
         title = bio.split('.')[0][:50] + "..." if bio else "Freelancer"
 
-        hourly_rate = float(row[5].get("value")) if row[5].get("type") != "null" else 0
+        hourly_rate = to_float(row[5]) or 0
         skills_str = to_str(row[6])
         skills = skills_str.split(",") if skills_str else []
 
@@ -248,7 +248,7 @@ def _get_freelancer_completed_count(freelancer_id) -> int:
         [freelancer_id]
     )
     if count_result and count_result.get("rows"):
-        return count_result["rows"][0][0].get("value", 0)
+        return extract_value(count_result["rows"][0][0]) or 0
     return 0
 
 
@@ -259,9 +259,7 @@ def _get_freelancer_avg_rating(freelancer_id) -> float:
         [freelancer_id]
     )
     if rating_result and rating_result.get("rows"):
-        val = rating_result["rows"][0][0]
-        if val.get("type") != "null":
-            return round(float(val.get("value", 0)), 1)
+        return to_float(rating_result["rows"][0][0]) or 0
     return 0
 
 
@@ -283,8 +281,8 @@ def get_client_reviews(user_id) -> List[dict]:
 
     reviews = []
     for row in result["rows"]:
-        review_id = row[0].get("value") if row[0].get("type") != "null" else None
-        rating = row[1].get("value") if row[1].get("type") != "null" else 0
+        review_id = extract_value(row[0])
+        rating = extract_value(row[1]) or 0
         created_at = parse_date(row[3])
 
         freelancer_name = to_str(row[5])

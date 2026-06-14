@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 import json
 
-from app.db.turso_http import execute_query, parse_date
+from app.db.turso_http import execute_query, parse_date, extract_value, to_int, to_str, to_float
 from app.services.db_utils import get_val as _get_val, safe_str as _safe_str
 
 logger = logging.getLogger(__name__)
@@ -412,7 +412,7 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
             [client_id, freelancer_id]
         )
         if lb_result and lb_result.get("rows"):
-            lifetime_billing = float(lb_result["rows"][0][0] or 0)
+            lifetime_billing = to_float(extract_value(lb_result["rows"][0][0])) or 0
     except Exception as e:
         logger.warning(f"Failed to fetch lifetime billing for fee calc: {e}")
 
@@ -443,11 +443,11 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
             [project_id, freelancer_id, proposal_id]
         )
         if contract_res and contract_res.get("rows"):
-            contract_id = int(contract_res["rows"][0][0])
+            contract_id = to_int(extract_value(contract_res["rows"][0][0]))
             execute_query(
-                """INSERT INTO escrow (contract_id, client_id, freelancer_id, amount, status, released_amount, created_at, updated_at)
-                   VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)""",
-                [contract_id, client_id, freelancer_id, contract_amount, 0, now, now]
+                """INSERT INTO escrow (contract_id, client_id, amount, status, released_amount, created_at, updated_at)
+                   VALUES (?, ?, ?, 'pending', ?, ?, ?)""",
+                [contract_id, client_id, contract_amount, 0, now, now]
             )
             logger.info(f"Contract {contract_id} and escrow created for project {project_id} on proposal {proposal_id} acceptance")
         else:
@@ -475,7 +475,7 @@ def reject_proposal(proposal_id: int, reason: str = None) -> Optional[dict]:
         raw = execute_query("SELECT draft_data FROM proposals WHERE id = ?", [proposal_id])
         if raw and raw.get("rows") and raw["rows"][0][0]:
             try:
-                existing_data = json.loads(raw["rows"][0][0])
+                existing_data = json.loads(to_str(extract_value(raw["rows"][0][0])) or "{}")
             except (json.JSONDecodeError, TypeError):
                 pass
         existing_data["rejection_reason"] = reason
@@ -519,7 +519,7 @@ def create_counter_offer(proposal_id: int, counter_data: dict) -> Optional[dict]
     raw = execute_query("SELECT draft_data FROM proposals WHERE id = ?", [proposal_id])
     if raw and raw.get("rows") and raw["rows"][0][0]:
         try:
-            existing_metadata = json.loads(raw["rows"][0][0])
+            existing_metadata = json.loads(to_str(extract_value(raw["rows"][0][0])) or "{}")
         except (json.JSONDecodeError, TypeError):
             pass
 
@@ -571,8 +571,8 @@ def get_freelancer_proposal_stats(freelancer_id: int) -> dict:
     avg_bid = 0
     avg_rate = 0
     if avg_result and avg_result.get("rows"):
-        avg_bid = round(float(avg_result["rows"][0][0] or 0), 2)
-        avg_rate = round(float(avg_result["rows"][0][1] or 0), 2)
+        avg_bid = round(to_float(extract_value(avg_result["rows"][0][0])) or 0, 2)
+        avg_rate = round(to_float(extract_value(avg_result["rows"][0][1])) or 0, 2)
 
     # Recent activity (last 30 days)
     thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
@@ -583,7 +583,7 @@ def get_freelancer_proposal_stats(freelancer_id: int) -> dict:
     )
     recent_count = 0
     if recent_result and recent_result.get("rows"):
-        recent_count = int(recent_result["rows"][0][0] or 0)
+        recent_count = to_int(extract_value(recent_result["rows"][0][0])) or 0
 
     return {
         "freelancer_id": freelancer_id,
