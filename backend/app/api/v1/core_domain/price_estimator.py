@@ -114,12 +114,92 @@ PROJECT_TYPES = [
 # ── Request / Response Schemas ──────────────────────────────────────────────
 
 class EstimateRequest(BaseModel):
-    skill_slug: str
+    skill_slug: Optional[str] = None
     project_type: str = "web-app"
-    complexity: str = "moderate"
+    complexity: Optional[str] = None
     industry: str = "general"
     hours_estimate: Optional[int] = None
     currency: str = "USD"
+    # Frontend payload format (for schema compatibility)
+    category: Optional[str] = None
+    service_type: Optional[str] = None
+    scope: Optional[str] = None
+    quality_tier: Optional[str] = None
+    urgency: Optional[str] = None
+    description: Optional[str] = None
+
+
+# Mapping tables for frontend → backend schema
+SERVICE_TYPE_TO_SKILL = {
+    "web_application": "web-development",
+    "web-app": "web-development",
+    "website": "web-development",
+    "mobile_app": "mobile-development",
+    "mobile": "mobile-development",
+    "api": "backend-development",
+    "backend": "backend-development",
+    "frontend": "frontend-development",
+    "design": "ui-ux-design",
+    "data": "data-science",
+    "devops": "devops",
+}
+
+CATEGORY_TO_INDUSTRY = {
+    "software_development": "general",
+    "fintech": "fintech",
+    "healthcare": "healthcare",
+    "ecommerce": "ecommerce",
+    "saas": "saas",
+    "gaming": "gaming",
+    "education": "education",
+    "media": "media",
+}
+
+SCOPE_TO_COMPLEXITY = {
+    "simple": "simple",
+    "small": "simple",
+    "moderate": "moderate",
+    "medium": "moderate",
+    "complex": "complex",
+    "large": "complex",
+    "enterprise": "enterprise",
+    "high": "complex",
+    "low": "simple",
+}
+
+
+def normalize_estimate_request(body: EstimateRequest) -> EstimateRequest:
+    """Convert frontend schema to backend schema if needed."""
+    # If frontend payload format detected, map to backend schema
+    if body.service_type or body.category or body.scope:
+        # Map service_type → skill_slug
+        skill = SERVICE_TYPE_TO_SKILL.get(
+            (body.service_type or "web_application").lower().replace(" ", "_"),
+            "web-development"
+        )
+        body.skill_slug = body.skill_slug or skill
+
+        # Map category → industry
+        industry = CATEGORY_TO_INDUSTRY.get(
+            (body.category or "software_development").lower(),
+            "general"
+        )
+        body.industry = industry
+
+        # Map scope → complexity
+        complexity = SCOPE_TO_COMPLEXITY.get(
+            (body.scope or "moderate").lower(),
+            "moderate"
+        )
+        body.complexity = body.complexity or complexity
+
+    # Ensure required fields
+    if not body.skill_slug:
+        body.skill_slug = "web-development"
+    if not body.complexity:
+        body.complexity = "moderate"
+
+    return body
 
 
 class CompareRequest(BaseModel):
@@ -154,6 +234,9 @@ class RangeRequest(BaseModel):
 async def estimate_price(body: EstimateRequest, current_user=Depends(get_current_user_optional)):
     # Public lead-gen tool: usable without an account (marketed as "no sign-up required").
     _ensure_table()
+
+    # Handle both frontend and backend request formats
+    body = normalize_estimate_request(body)
 
     skill = SKILL_BASE_RATES.get(body.skill_slug)
     if not skill:
