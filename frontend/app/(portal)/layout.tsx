@@ -254,10 +254,9 @@ export default function PortalLayout({
           />
         )}
 
-        {/* AI Client Assistant Widget — floating chatbot, clients only */}
-        {(user?.user_type === "client" || user?.role === "client") && (
-          <ClientAssistant />
-        )}
+        {/* Megi AI Assistant Widget — floating concierge for clients & freelancers */}
+        {(["client", "freelancer"].includes(user?.user_type ?? "") ||
+          ["client", "freelancer"].includes(user?.role ?? "")) && <ClientAssistant />}
       </AppLayout>
     </UnreadCountProvider>
   );

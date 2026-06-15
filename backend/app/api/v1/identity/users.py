@@ -128,7 +128,7 @@ def autocomplete_freelancers_endpoint(
     current_user=Depends(get_current_user)
 ):
     """Autocomplete freelancer names for search suggestions"""
-    items = autocomplete_freelancers(query=q, limit=limit)
+    items = autocomplete_freelancers(search_term=q, limit=limit)
     return {"items": items}
 
 
@@ -140,10 +140,11 @@ def get_user_profile(
     """Get a user's profile by ID"""
     result = execute_query(
         """SELECT id, name, email, user_type, role, bio, skills, hourly_rate,
-                  profile_image_url, location, headline, experience_level,
+                  profile_image_url, location, headline, tagline, experience_level,
                   years_of_experience, availability_status, availability_hours,
                   profile_slug, profile_visibility, profile_views, seller_level,
                   languages, industry_focus, tools_and_technologies,
+                  education, certifications, work_history, achievements,
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
                   video_intro_url, resume_url, created_at
@@ -154,16 +155,33 @@ def get_user_profile(
     if not result or not result.get("rows"):
         raise HTTPException(status_code=404, detail="User not found")
 
-    rows = parse_rows(result)
-    user = rows[0]
+    user = parse_rows(result)[0]
 
-    # Parse JSON fields
-    for field in ("skills", "languages", "tools_and_technologies"):
-        if isinstance(user.get(field), str):
+    # Tag fields may be comma-separated (legacy) or JSON — normalize to arrays.
+    for field in ("skills", "languages", "industry_focus", "tools_and_technologies"):
+        v = user.get(field)
+        if isinstance(v, str):
+            s = v.strip()
+            if s.startswith("["):
+                try:
+                    user[field] = json.loads(s)
+                    continue
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            user[field] = [p.strip() for p in s.split(",") if p.strip()] if s else []
+        elif v is None:
+            user[field] = []
+
+    # Structured fields are stored as JSON strings — parse to lists of objects.
+    for field in ("education", "certifications", "work_history", "achievements"):
+        v = user.get(field)
+        if isinstance(v, str) and v.strip().startswith(("[", "{")):
             try:
-                user[field] = json.loads(user[field])
+                user[field] = json.loads(v)
             except (json.JSONDecodeError, TypeError):
                 user[field] = []
+        elif not isinstance(v, (list, dict)):
+            user[field] = []
 
     return user
 

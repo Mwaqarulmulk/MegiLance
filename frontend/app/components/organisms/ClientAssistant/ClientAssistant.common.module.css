@@ -975,3 +975,141 @@
     padding: var(--space-2);
   }
 }
+
+/* ─── Account-aware cards (overview / lists / wallet / confirm) ─────────────── */
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: var(--space-2);
+}
+
+.statCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.statValue {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  font-family: var(--font-heading);
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.listRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.listRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.listRowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.listRowTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listRowMeta {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emptyRow {
+  font-size: var(--font-size-sm);
+  opacity: 0.7;
+  padding: var(--space-2) 0;
+}
+
+.statusBadge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: rgba(125, 125, 125, 0.16);
+}
+
+.status_open,
+.status_active,
+.status_accepted {
+  background: rgba(34, 197, 94, 0.18);
+  color: #16a34a;
+}
+
+.status_in_progress,
+.status_pending,
+.status_submitted {
+  background: rgba(59, 130, 246, 0.18);
+  color: #2563eb;
+}
+
+.status_completed {
+  background: rgba(139, 92, 246, 0.18);
+  color: #7c3aed;
+}
+
+.status_cancelled,
+.status_rejected,
+.status_withdrawn,
+.status_disputed {
+  background: rgba(239, 68, 68, 0.16);
+  color: #dc2626;
+}
+
+.confirmDesc {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+  opacity: 0.9;
+}
+
+.confirmSuccess {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #16a34a;
+  padding-top: var(--space-1);
+}
+
+.confirmLink {
+  text-decoration: underline;
+}
+
+.confirmError {
+  font-size: var(--font-size-sm);
+  color: #dc2626;
+  padding-top: var(--space-1);
+}

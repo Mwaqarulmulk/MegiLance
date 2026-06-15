@@ -12,11 +12,29 @@ from app.db.turso_http import execute_query, parse_rows
 router = APIRouter()
 
 
-def _safe_count(result, col=0) -> int:
+def _cell(result, col=0):
+    """Return the unwrapped scalar at row 0 / column `col`, handling Turso's
+    {type, value} cell format. Returns None if absent."""
     if result and result.get("rows") and result["rows"]:
         val = result["rows"][0][col]
-        return int(val or 0)
-    return 0
+        if isinstance(val, dict):
+            return None if val.get("type") == "null" else val.get("value")
+        return val
+    return None
+
+
+def _safe_count(result, col=0) -> int:
+    try:
+        return int(_cell(result, col) or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _safe_float(result, col=0) -> float:
+    try:
+        return float(_cell(result, col) or 0)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 @router.get("/analytics/dashboard/summary")
@@ -32,13 +50,11 @@ async def get_dashboard_summary(current_user=Depends(require_admin)):
     active_projects = _safe_count(execute_query(
         "SELECT COUNT(*) FROM projects WHERE status = 'open'", []
     ))
-    total_revenue = 0.0
     rev_result = execute_query(
         "SELECT SUM(amount) FROM payments WHERE status = 'completed' AND created_at >= ?",
         [month_start]
     )
-    if rev_result and rev_result.get("rows"):
-        total_revenue = float(rev_result["rows"][0][0] or 0)
+    total_revenue = _safe_float(rev_result)
 
     active_users_week = _safe_count(execute_query(
         "SELECT COUNT(DISTINCT from_user_id) FROM payments WHERE created_at >= ?", [week_ago]
@@ -234,12 +250,9 @@ async def get_revenue_stats(
         "WHERE status = 'completed' AND created_at >= ?",
         [since],
     )
-    total = avg = count = 0.0
-    if rev_result and rev_result.get("rows"):
-        row = rev_result["rows"][0]
-        total = float(row[0] or 0)
-        count = int(row[1] or 0)
-        avg = float(row[2] or 0)
+    total = _safe_float(rev_result, 0)
+    count = _safe_count(rev_result, 1)
+    avg = _safe_float(rev_result, 2)
     return {
         "days": days,
         "total_revenue": round(total, 2),
@@ -263,21 +276,15 @@ async def get_growth_summary(current_user=Depends(require_admin)):
     ))
     growth_pct = round((this_users - last_users) / max(last_users, 1) * 100, 1)
 
-    this_revenue = 0.0
-    rev_result = execute_query(
+    this_revenue = _safe_float(execute_query(
         "SELECT SUM(amount) FROM payments WHERE status = 'completed' AND created_at >= ?",
         [this_month.isoformat()],
-    )
-    if rev_result and rev_result.get("rows"):
-        this_revenue = float(rev_result["rows"][0][0] or 0)
+    ))
 
-    last_revenue = 0.0
-    rev_last = execute_query(
+    last_revenue = _safe_float(execute_query(
         "SELECT SUM(amount) FROM payments WHERE status = 'completed' AND created_at >= ? AND created_at < ?",
         [last_month.isoformat(), this_month.isoformat()],
-    )
-    if rev_last and rev_last.get("rows"):
-        last_revenue = float(rev_last["rows"][0][0] or 0)
+    ))
 
     return {
         "users_this_month": this_users,

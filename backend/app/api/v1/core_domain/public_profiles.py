@@ -11,16 +11,53 @@ from app.services.reviews_service import get_reviews_for_user
 
 router = APIRouter()
 
+# Tag-style fields stored as comma strings (legacy) or JSON; normalized to arrays.
+_TAG_FIELDS = ("skills", "languages", "industry_focus", "tools_and_technologies")
+# Structured fields stored as JSON strings; normalized to lists of objects.
+_STRUCT_FIELDS = ("education", "certifications", "work_history", "achievements")
+
+
+def _normalize_public_profile(profile: dict) -> dict:
+    """Turn raw DB strings into clean arrays so the public profile renders fully.
+
+    Tag fields may be comma-separated (legacy) or JSON; structured fields are JSON.
+    """
+    for field in _TAG_FIELDS:
+        v = profile.get(field)
+        if isinstance(v, str):
+            s = v.strip()
+            if s.startswith("["):
+                try:
+                    profile[field] = json.loads(s)
+                    continue
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            profile[field] = [p.strip() for p in s.split(",") if p.strip()] if s else []
+        elif v is None:
+            profile[field] = []
+
+    for field in _STRUCT_FIELDS:
+        v = profile.get(field)
+        if isinstance(v, str) and v.strip().startswith(("[", "{")):
+            try:
+                profile[field] = json.loads(v)
+            except (json.JSONDecodeError, TypeError):
+                profile[field] = []
+        elif not isinstance(v, (list, dict)):
+            profile[field] = []
+    return profile
+
 
 @router.get("/id/{user_id}")
 def get_public_profile(user_id: int):
     """Get a freelancer's public profile by user ID"""
     result = execute_query(
         """SELECT id, name, user_type, role, bio, skills, hourly_rate,
-                  profile_image_url, location, headline, experience_level,
+                  profile_image_url, location, headline, tagline, experience_level,
                   years_of_experience, availability_status, availability_hours,
                   profile_slug, profile_visibility, profile_views, seller_level,
                   languages, industry_focus, tools_and_technologies,
+                  education, certifications, work_history, achievements,
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
                   video_intro_url, resume_url, created_at
@@ -31,16 +68,7 @@ def get_public_profile(user_id: int):
     if not result or not result.get("rows"):
         raise HTTPException(status_code=404, detail="Freelancer not found")
 
-    rows = parse_rows(result)
-    profile = rows[0]
-
-    # Parse JSON fields
-    for field in ("skills", "languages", "tools_and_technologies"):
-        if isinstance(profile.get(field), str):
-            try:
-                profile[field] = json.loads(profile[field])
-            except (json.JSONDecodeError, TypeError):
-                profile[field] = []
+    profile = _normalize_public_profile(parse_rows(result)[0])
 
     # Increment profile views
     execute_query("UPDATE users SET profile_views = profile_views + 1 WHERE id = ?", [user_id])
@@ -54,10 +82,11 @@ def get_public_profile_by_slug(slug: str):
     """Get a freelancer's public profile by slug"""
     result = execute_query(
         """SELECT id, name, user_type, role, bio, skills, hourly_rate,
-                  profile_image_url, location, headline, experience_level,
+                  profile_image_url, location, headline, tagline, experience_level,
                   years_of_experience, availability_status, availability_hours,
                   profile_slug, profile_visibility, profile_views, seller_level,
                   languages, industry_focus, tools_and_technologies,
+                  education, certifications, work_history, achievements,
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
                   video_intro_url, resume_url, created_at
@@ -68,17 +97,7 @@ def get_public_profile_by_slug(slug: str):
     if not result or not result.get("rows"):
         raise HTTPException(status_code=404, detail="Freelancer not found")
 
-    rows = parse_rows(result)
-    profile = rows[0]
-
-    for field in ("skills", "languages", "tools_and_technologies"):
-        if isinstance(profile.get(field), str):
-            try:
-                profile[field] = json.loads(profile[field])
-            except (json.JSONDecodeError, TypeError):
-                profile[field] = []
-
-    return profile
+    return _normalize_public_profile(parse_rows(result)[0])
 
 
 @router.get("/{user_id}/stats")

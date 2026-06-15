@@ -30,16 +30,37 @@ def search_freelancers(
     """Search freelancers with advanced filters"""
     offset = (page - 1) * page_size
 
+    # search_freelancers_advanced takes (where_clause, params, sort) where the last
+    # two params are LIMIT and OFFSET. Build the query here.
+    conditions = ["u.user_type = 'freelancer'", "u.is_active = 1"]
+    params: list = []
+    # Quality gate — keep the public directory to real, presentable freelancers.
+    conditions.append("u.email NOT LIKE '%@example.com'")
+    conditions.append("u.email NOT LIKE 'test_%'")
+    conditions.append("(u.profile_visibility IS NULL OR u.profile_visibility = 'public')")
+    if q:
+        conditions.append("(u.name LIKE ? OR u.bio LIKE ? OR u.skills LIKE ?)")
+        like = f"%{q}%"
+        params.extend([like, like, like])
+    if min_rate is not None:
+        conditions.append("u.hourly_rate >= ?")
+        params.append(min_rate)
+    if max_rate is not None:
+        conditions.append("u.hourly_rate <= ?")
+        params.append(max_rate)
+    if category:
+        conditions.append("u.industry_focus LIKE ?")
+        params.append(f"%{category}%")
+    if experience_level:
+        conditions.append("u.experience_level = ?")
+        params.append(experience_level)
+    if availability:
+        conditions.append("u.availability_status = ?")
+        params.append(availability)
+
+    params.extend([page_size, offset])
     result = search_freelancers_advanced(
-        query=q,
-        min_rate=min_rate,
-        max_rate=max_rate,
-        category=category,
-        experience_level=experience_level,
-        availability=availability,
-        sort_by=sort_by,
-        limit=page_size,
-        offset=offset,
+        " AND ".join(conditions), params, sort=sort_by or "newest"
     )
 
     items = result.get("items", [])
@@ -65,7 +86,7 @@ def global_search(
     limit: int = Query(20, ge=1, le=50),
 ):
     """Global search across freelancers and projects"""
-    result = global_search_freelancers(query=q, limit=limit)
+    result = global_search_freelancers(search_term=q, limit=limit)
     return result
 
 
@@ -75,7 +96,7 @@ def search_autocomplete(
     limit: int = Query(10, ge=1, le=20),
 ):
     """Autocomplete search suggestions"""
-    items = autocomplete_freelancers(query=q, limit=limit)
+    items = autocomplete_freelancers(search_term=q, limit=limit)
     return {"items": items}
 
 

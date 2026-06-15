@@ -77,27 +77,28 @@ def _build_stats(uid: int) -> dict:
     # Completed and cancelled contract counts
     contracts_result = execute_query("""
         SELECT
-            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN status IN ('active','in_progress') THEN 1 ELSE 0 END)
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
+            SUM(CASE WHEN status IN ('active','in_progress') THEN 1 ELSE 0 END) AS active
         FROM contracts WHERE freelancer_id = ?
     """, [uid])
 
     completed_orders = 0
     cancelled_orders = 0
     active_contracts = 0
-    if contracts_result and contracts_result.get("rows"):
-        row = contracts_result["rows"][0]
-        completed_orders = int(row[0] or 0)
-        cancelled_orders = int(row[1] or 0)
-        active_contracts = int(row[2] or 0)
+    _rows = parse_rows(contracts_result)
+    if _rows:
+        row = _rows[0]
+        completed_orders = int(row.get("completed") or 0)
+        cancelled_orders = int(row.get("cancelled") or 0)
+        active_contracts = int(row.get("active") or 0)
 
     # Total earnings and earnings this month
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0).isoformat()
     earnings_result = execute_query("""
         SELECT
-            SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END),
-            SUM(CASE WHEN p.status = 'completed' AND p.created_at >= ? THEN p.amount ELSE 0 END)
+            SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END) AS total,
+            SUM(CASE WHEN p.status = 'completed' AND p.created_at >= ? THEN p.amount ELSE 0 END) AS this_month
         FROM payments p
         JOIN contracts c ON p.contract_id = c.id
         WHERE c.freelancer_id = ?
@@ -105,30 +106,33 @@ def _build_stats(uid: int) -> dict:
 
     total_earnings = 0.0
     earnings_this_month = 0.0
-    if earnings_result and earnings_result.get("rows"):
-        row = earnings_result["rows"][0]
-        total_earnings = float(row[0] or 0)
-        earnings_this_month = float(row[1] or 0)
+    _rows = parse_rows(earnings_result)
+    if _rows:
+        row = _rows[0]
+        total_earnings = float(row.get("total") or 0)
+        earnings_this_month = float(row.get("this_month") or 0)
 
     # Average rating
     reviews_result = execute_query("""
-        SELECT AVG(CAST(rating AS FLOAT)), COUNT(*)
+        SELECT AVG(CAST(rating AS FLOAT)) AS avg_rating, COUNT(*) AS review_count
         FROM reviews
         WHERE reviewee_id = ?
     """, [uid])
 
     avg_rating = 0.0
     review_count = 0
-    if reviews_result and reviews_result.get("rows"):
-        row = reviews_result["rows"][0]
-        avg_rating = round(float(row[0] or 0), 2)
-        review_count = int(row[1] or 0)
+    _rows = parse_rows(reviews_result)
+    if _rows:
+        row = _rows[0]
+        avg_rating = round(float(row.get("avg_rating") or 0), 2)
+        review_count = int(row.get("review_count") or 0)
 
     # Member months
     user_result = execute_query("SELECT created_at FROM users WHERE id = ?", [uid])
     member_months = 0
-    if user_result and user_result.get("rows"):
-        created_at_str = user_result["rows"][0][0]
+    _rows = parse_rows(user_result)
+    if _rows:
+        created_at_str = _rows[0].get("created_at")
         if created_at_str:
             try:
                 created_at = datetime.fromisoformat(created_at_str.replace("Z", "+00:00"))

@@ -8,6 +8,14 @@ logger = logging.getLogger(__name__)
 from app.db.turso_http import execute_query, parse_date
 
 
+# Structured profile fields stored as JSON strings in the DB. Parsed back into
+# lists/dicts on read so the API returns real arrays (not raw JSON strings).
+_JSON_PROFILE_FIELDS = (
+    "education", "certifications", "work_history", "achievements",
+    "portfolio_projects", "contact_preferences",
+)
+
+
 def _user_from_row(row: list, cols: list) -> dict:
     """Convert a Turso row to a user dict, parsing profile_data and dates."""
     data = {}
@@ -26,6 +34,15 @@ def _user_from_row(row: list, cols: list) -> dict:
                 data.update(profile)
         except Exception:
             pass
+
+    # Parse structured JSON fields into lists so the frontend gets real arrays.
+    for field in _JSON_PROFILE_FIELDS:
+        v = data.get(field)
+        if isinstance(v, str) and v.strip().startswith(("[", "{")):
+            try:
+                data[field] = json.loads(v)
+            except (json.JSONDecodeError, TypeError):
+                pass
 
     return data
 
@@ -137,6 +154,11 @@ def update_user_fields(user_id: int, update_data: Dict[str, Any]) -> Any:
     for key, value in update_data.items():
         if key not in _ALLOWED_USER_COLUMNS:
             raise ValueError(f"Invalid column name: {key}")
+        # Turso params must be scalars — serialize structured values to JSON.
+        if isinstance(value, (list, dict)):
+            value = json.dumps(value)
+        elif isinstance(value, bool):
+            value = 1 if value else 0
         set_parts.append(f"{key} = ?")
         values.append(value if value is not None else "")
     if not set_parts:
@@ -149,10 +171,22 @@ def update_user_fields(user_id: int, update_data: Dict[str, Any]) -> Any:
 
 
 def get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
-    """Fetch a user by ID, returning a parsed user dict or None."""
+    """Fetch a user by ID, returning a parsed user dict or None.
+
+    Selects the full rich profile so /auth/me hydrates every field the
+    freelancer profile editor and public profile rely on.
+    """
     result = execute_query(
-        """SELECT id, email, is_active, name, user_type, role, bio, skills,
-           hourly_rate, profile_image_url, location, profile_data, joined_at
+        """SELECT id, email, is_active, is_verified, email_verified, name, user_type, role,
+                  bio, skills, hourly_rate, profile_image_url, location, profile_data,
+                  headline, tagline, experience_level, years_of_experience, languages,
+                  timezone, availability_status, availability_hours, preferred_project_size,
+                  industry_focus, tools_and_technologies, linkedin_url, github_url,
+                  website_url, twitter_url, dribbble_url, behance_url, stackoverflow_url,
+                  phone_number, video_intro_url, resume_url, profile_slug, profile_visibility,
+                  profile_views, seller_level, education, certifications, work_history,
+                  achievements, contact_preferences, testimonials_enabled,
+                  two_factor_enabled, account_balance, joined_at
            FROM users WHERE id = ?""",
         [user_id]
     )

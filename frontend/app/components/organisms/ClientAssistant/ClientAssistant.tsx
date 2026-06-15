@@ -45,6 +45,13 @@ interface ToolResult {
     | "cost_estimate"
     | "market_rates"
     | "scope_plan"
+    | "account_overview"
+    | "my_projects"
+    | "proposals_received"
+    | "my_proposals"
+    | "my_contracts"
+    | "wallet_summary"
+    | "confirm_post_project"
     | "text";
 }
 
@@ -358,6 +365,276 @@ function ScopePlanCard({
   );
 }
 
+// ─── Account-aware cards ──────────────────────────────────────────────────────
+
+const STATUS_LABELS: Record<string, string> = {
+  open: "Open",
+  in_progress: "In progress",
+  completed: "Completed",
+  cancelled: "Cancelled",
+  active: "Active",
+  pending: "Pending",
+  disputed: "Disputed",
+  submitted: "Submitted",
+  accepted: "Accepted",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+};
+
+function StatusBadge({ status }: { status?: string }) {
+  const key = (status ?? "").toLowerCase();
+  return (
+    <span className={cn(commonStyles.statusBadge, commonStyles[`status_${key}`])}>
+      {STATUS_LABELS[key] ?? status ?? "—"}
+    </span>
+  );
+}
+
+function money(n: unknown): string {
+  const v = typeof n === "number" ? n : Number(n);
+  if (!isFinite(v)) return "—";
+  return `$${v.toLocaleString()}`;
+}
+
+function AccountOverviewCard({
+  data,
+  themeStyles,
+}: {
+  data: Record<string, unknown>;
+  themeStyles: Record<string, string>;
+}) {
+  const isFreelancer = data.role === "freelancer";
+  const stats: { label: string; value: React.ReactNode }[] = isFreelancer
+    ? [
+        { label: "Active contracts", value: (data.active_contracts as number) ?? 0 },
+        { label: "Proposals sent", value: (data.proposals_submitted as number) ?? 0 },
+        { label: "Accepted", value: (data.proposals_accepted as number) ?? 0 },
+        { label: "Balance", value: money(data.balance) },
+      ]
+    : [
+        { label: "Open projects", value: (data.open_projects as number) ?? 0 },
+        { label: "In progress", value: (data.in_progress_projects as number) ?? 0 },
+        { label: "Proposals in", value: (data.proposals_received as number) ?? 0 },
+        { label: "Active contracts", value: (data.active_contracts as number) ?? 0 },
+        { label: "Balance", value: money(data.balance) },
+      ];
+  return (
+    <div className={cn(commonStyles.toolCard, themeStyles.toolCard)}>
+      <div className={cn(commonStyles.toolCardLabel, themeStyles.toolCardLabel)}>
+        📊 Account Overview
+      </div>
+      <div className={commonStyles.statGrid}>
+        {stats.map((s, i) => (
+          <div key={i} className={cn(commonStyles.statCell, themeStyles.statCell)}>
+            <span className={cn(commonStyles.statValue, themeStyles.statValue)}>
+              {s.value}
+            </span>
+            <span className={cn(commonStyles.statLabel, themeStyles.statLabel)}>
+              {s.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface ListRow {
+  id?: string | number;
+  title?: string;
+  project_title?: string;
+  status?: string;
+  amount?: number;
+  bid_amount?: number;
+  budget_min?: number;
+  budget_max?: number;
+  proposals_count?: number;
+  freelancer_name?: string;
+  counterparty?: string;
+}
+
+function RowListCard({
+  label,
+  rows,
+  themeStyles,
+  empty,
+  primary,
+  secondary,
+}: {
+  label: string;
+  rows: ListRow[];
+  themeStyles: Record<string, string>;
+  empty: string;
+  primary: (r: ListRow) => React.ReactNode;
+  secondary: (r: ListRow) => React.ReactNode;
+}) {
+  return (
+    <div className={cn(commonStyles.toolCard, themeStyles.toolCard)}>
+      <div className={cn(commonStyles.toolCardLabel, themeStyles.toolCardLabel)}>
+        {label}
+      </div>
+      {rows.length === 0 ? (
+        <div className={cn(commonStyles.emptyRow, themeStyles.emptyRow)}>{empty}</div>
+      ) : (
+        <div className={commonStyles.listRows}>
+          {rows.map((r, i) => (
+            <div key={r.id ?? i} className={cn(commonStyles.listRow, themeStyles.listRow)}>
+              <div className={commonStyles.listRowMain}>
+                <span className={cn(commonStyles.listRowTitle, themeStyles.listRowTitle)}>
+                  {primary(r)}
+                </span>
+                <span className={cn(commonStyles.listRowMeta, themeStyles.listRowMeta)}>
+                  {secondary(r)}
+                </span>
+              </div>
+              <StatusBadge status={r.status} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WalletSummaryCard({
+  data,
+  themeStyles,
+}: {
+  data: Record<string, unknown>;
+  themeStyles: Record<string, string>;
+}) {
+  const txns = (data.recent_transactions ?? []) as {
+    type?: string;
+    amount?: number;
+    description?: string;
+  }[];
+  return (
+    <div className={cn(commonStyles.toolCard, themeStyles.toolCard)}>
+      <div className={cn(commonStyles.toolCardLabel, themeStyles.toolCardLabel)}>
+        💳 {(data.label as string) ?? "Wallet"}
+      </div>
+      <div className={cn(commonStyles.priceRange, themeStyles.priceRange)}>
+        {money(data.balance)}
+      </div>
+      {txns.length > 0 && (
+        <div className={commonStyles.listRows}>
+          {txns.map((t, i) => (
+            <div key={i} className={cn(commonStyles.listRow, themeStyles.listRow)}>
+              <span className={cn(commonStyles.listRowTitle, themeStyles.listRowTitle)}>
+                {t.description ?? t.type ?? "Transaction"}
+              </span>
+              <span className={cn(commonStyles.listRowMeta, themeStyles.listRowMeta)}>
+                {money(t.amount)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConfirmPostProjectCard({
+  data,
+  themeStyles,
+}: {
+  data: Record<string, unknown>;
+  themeStyles: Record<string, string>;
+}) {
+  const draft = (data.draft ?? {}) as Record<string, unknown>;
+  const endpoint =
+    (data.confirm_endpoint as string) ??
+    "/ai/client-assistant/actions/post-project";
+  const [state, setState] = useState<"idle" | "posting" | "done" | "error">(
+    "idle",
+  );
+  const [resultUrl, setResultUrl] = useState<string | null>(null);
+  const [errMsg, setErrMsg] = useState<string>("");
+
+  const handleConfirm = async () => {
+    setState("posting");
+    try {
+      const res = await apiFetch<{ url?: string; message?: string }>(endpoint, {
+        method: "POST",
+        body: JSON.stringify(draft),
+      });
+      setResultUrl(res?.url ?? "/client/projects");
+      setState("done");
+    } catch (e) {
+      setErrMsg(
+        e instanceof Error ? e.message : "Could not post the project.",
+      );
+      setState("error");
+    }
+  };
+
+  const fields: { label: string; value: React.ReactNode }[] = [
+    { label: "Title", value: String(draft.title ?? "—") },
+    { label: "Category", value: String(draft.category ?? "—") },
+    {
+      label: "Budget",
+      value: `${String(draft.budget_type ?? "Fixed")} · ${money(draft.budget_min)}–${money(draft.budget_max)}`,
+    },
+    { label: "Experience", value: String(draft.experience_level ?? "—") },
+    { label: "Duration", value: String(draft.estimated_duration ?? "—") },
+    { label: "Skills", value: String(draft.skills ?? "—") },
+  ];
+
+  return (
+    <div className={cn(commonStyles.toolCard, themeStyles.toolCard)}>
+      <div className={cn(commonStyles.toolCardLabel, themeStyles.toolCardLabel)}>
+        📝 Review project before posting
+      </div>
+      {String(draft.description ?? "") && (
+        <p className={cn(commonStyles.confirmDesc, themeStyles.confirmDesc)}>
+          {String(draft.description)}
+        </p>
+      )}
+      <div className={commonStyles.listRows}>
+        {fields.map((f, i) => (
+          <div key={i} className={cn(commonStyles.listRow, themeStyles.listRow)}>
+            <span className={cn(commonStyles.listRowMeta, themeStyles.listRowMeta)}>
+              {f.label}
+            </span>
+            <span className={cn(commonStyles.listRowTitle, themeStyles.listRowTitle)}>
+              {f.value}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {state === "done" ? (
+        <div className={cn(commonStyles.confirmSuccess, themeStyles.confirmSuccess)}>
+          ✅ Project posted!{" "}
+          <a href={resultUrl ?? "/client/projects"} className={commonStyles.confirmLink}>
+            View it →
+          </a>
+        </div>
+      ) : (
+        <div className={commonStyles.actionButtonsRow}>
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={state === "posting"}
+            className={cn(
+              commonStyles.actionBtn,
+              commonStyles.actionBtnPrimary,
+              themeStyles.actionBtnPrimary,
+            )}
+          >
+            {state === "posting" ? "Posting…" : "Confirm & Post"}
+          </button>
+        </div>
+      )}
+      {state === "error" && (
+        <div className={cn(commonStyles.confirmError, themeStyles.confirmError)}>
+          {errMsg}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ToolResultRenderer({
   result,
   themeStyles,
@@ -365,15 +642,68 @@ function ToolResultRenderer({
   result: ToolResult;
   themeStyles: Record<string, string>;
 }) {
+  const data = result.data;
   switch (result.display_type) {
     case "freelancer_cards":
-      return <FreelancerCards data={result.data} themeStyles={themeStyles} />;
+      return <FreelancerCards data={data} themeStyles={themeStyles} />;
     case "cost_estimate":
-      return <CostEstimateCard data={result.data} themeStyles={themeStyles} />;
+      return <CostEstimateCard data={data} themeStyles={themeStyles} />;
     case "market_rates":
-      return <MarketRatesCard data={result.data} themeStyles={themeStyles} />;
+      return <MarketRatesCard data={data} themeStyles={themeStyles} />;
     case "scope_plan":
-      return <ScopePlanCard data={result.data} themeStyles={themeStyles} />;
+      return <ScopePlanCard data={data} themeStyles={themeStyles} />;
+    case "account_overview":
+      return <AccountOverviewCard data={data} themeStyles={themeStyles} />;
+    case "my_projects":
+      return (
+        <RowListCard
+          label="🗂 My Projects"
+          rows={(data.projects ?? []) as ListRow[]}
+          themeStyles={themeStyles}
+          empty="You haven't posted any projects yet."
+          primary={(r) => r.title ?? "Project"}
+          secondary={(r) =>
+            `${money(r.budget_min)}–${money(r.budget_max)} · ${r.proposals_count ?? 0} proposals`
+          }
+        />
+      );
+    case "proposals_received":
+      return (
+        <RowListCard
+          label="📨 Proposals Received"
+          rows={(data.proposals ?? []) as ListRow[]}
+          themeStyles={themeStyles}
+          empty="No proposals yet."
+          primary={(r) => r.freelancer_name ?? "Freelancer"}
+          secondary={(r) => `${r.project_title ?? ""} · bid ${money(r.bid_amount)}`}
+        />
+      );
+    case "my_proposals":
+      return (
+        <RowListCard
+          label="📨 My Proposals"
+          rows={(data.proposals ?? []) as ListRow[]}
+          themeStyles={themeStyles}
+          empty="You haven't submitted any proposals yet."
+          primary={(r) => r.project_title ?? "Project"}
+          secondary={(r) => `Bid ${money(r.bid_amount)}`}
+        />
+      );
+    case "my_contracts":
+      return (
+        <RowListCard
+          label="📑 My Contracts"
+          rows={(data.contracts ?? []) as ListRow[]}
+          themeStyles={themeStyles}
+          empty="No contracts yet."
+          primary={(r) => r.project_title ?? "Contract"}
+          secondary={(r) => `${r.counterparty ?? ""} · ${money(r.amount)}`}
+        />
+      );
+    case "wallet_summary":
+      return <WalletSummaryCard data={data} themeStyles={themeStyles} />;
+    case "confirm_post_project":
+      return <ConfirmPostProjectCard data={data} themeStyles={themeStyles} />;
     case "text":
     default:
       return (
@@ -420,9 +750,9 @@ export default function ClientAssistant() {
     resolvedTheme === "light" ? lightStyles : darkStyles
   ) as Record<string, string>;
 
-  // ── Only render for clients ────────────────────────────────────────────────
+  // ── Render for clients and freelancers ─────────────────────────────────────
   const userType = user?.user_type ?? user?.role ?? "";
-  if (userType !== "client") return null;
+  if (userType !== "client" && userType !== "freelancer") return null;
 
   return (
     <ClientAssistantInner

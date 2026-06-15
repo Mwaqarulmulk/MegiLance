@@ -66,8 +66,24 @@ export default function QuickLogin() {
         return;
       }
 
-      await authApi.login(account.email, account.password);
-      
+      const data = await authApi.login(account.email, account.password);
+
+      // Store user and role in localStorage so the portal layout and useAuth
+      // hook recognise the session immediately without requiring a page refresh.
+      if (data.user) {
+        try {
+          localStorage.setItem('user', JSON.stringify({
+            ...data.user,
+            user_type: role,
+            role,
+          }));
+          localStorage.setItem('portal_area', role);
+          localStorage.setItem('ml_user_role', role);
+        } catch {
+          /* localStorage unavailable in private browsing */
+        }
+      }
+
       // Redirect based on role
       switch (role) {
         case 'admin':

@@ -60,11 +60,16 @@ export const authApi = {
     return data;
   },
 
-  register: async (userData: { email: string; password: string; name: string; role: string }): Promise<AuthUser> => {
-    return apiFetch<AuthUser>('/auth/register', {
+  register: async (userData: { email: string; password: string; name: string; role: string }): Promise<LoginResponse> => {
+    const data = await apiFetch<LoginResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
+    // Auto-login: store tokens so the user is authenticated immediately
+    // after signup (the backend returns tokens on registration).
+    setAuthToken(data.access_token);
+    setRefreshToken(data.refresh_token);
+    return data;
   },
 
   logout: async () => {

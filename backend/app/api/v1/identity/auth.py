@@ -194,8 +194,8 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         subject=user["email"],
         custom_claims={
             "user_id": user["id"],
-            "role": user.get("role", body.user_type),
-            "user_type": body.user_type,
+            "role": user.get("role", user_type),
+            "user_type": user_type,
             "name": body.name,
         },
     )
@@ -224,8 +224,10 @@ async def register(request: Request, body: RegisterRequest, response: Response):
             "id": user["id"],
             "email": user["email"],
             "name": user["name"],
-            "role": user.get("role", body.user_type),
-            "user_type": body.user_type,
+            "role": user.get("role", user_type),
+            "user_type": user_type,
+            "two_factor_enabled": False,
+            "email_verified": False,
         },
     }
 
@@ -306,6 +308,10 @@ async def update_me(
 ):
     body = await request.json()
 
+    # The profile editor sends `full_name`; the column is `name`.
+    if body.get("full_name") and not body.get("name"):
+        body["name"] = body["full_name"]
+
     allowed_fields = {
         "name", "bio", "headline", "tagline", "skills", "hourly_rate",
         "location", "experience_level", "years_of_experience", "languages",
@@ -314,12 +320,23 @@ async def update_me(
         "linkedin_url", "github_url", "website_url", "twitter_url",
         "dribbble_url", "behance_url", "stackoverflow_url", "phone_number",
         "video_intro_url", "resume_url", "profile_visibility", "profile_slug",
-        "company_name", "industry", "company_size", "website", "phone",
         "education", "certifications", "work_history", "achievements",
-        "portfolio_projects", "testimonials_enabled", "profile_image_url",
+        "contact_preferences", "testimonials_enabled", "profile_image_url",
     }
+    # NOTE: `portfolio_projects` is intentionally excluded — there is no such
+    # column on `users` (portfolio lives in the portfolio_items table). Including
+    # it previously made update_user_fields reject the entire request with a 400,
+    # which silently broke every profile save.
 
     update_data = {k: v for k, v in body.items() if k in allowed_fields and v is not None}
+
+    # Keep tag-style fields in the platform's legacy comma-separated format so
+    # existing readers (freelancer search, AI matching) keep working; structured
+    # fields are JSON-encoded downstream in update_user_fields.
+    _comma_fields = ("skills", "languages", "industry_focus", "tools_and_technologies")
+    for f in _comma_fields:
+        if isinstance(update_data.get(f), list):
+            update_data[f] = ", ".join(str(x).strip() for x in update_data[f] if str(x).strip())
 
     if not update_data:
         raise HTTPException(

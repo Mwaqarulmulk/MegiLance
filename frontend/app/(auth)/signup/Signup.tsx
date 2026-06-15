@@ -162,12 +162,28 @@ const Signup: React.FC = () => {
       setLoading(true);
       trackSignupStart(selectedRole, 'email');
       try {
-        await api.auth.register({
+        const data = await api.auth.register({
           email: formData.email,
           password: formData.password,
           name: formData.fullName,
           role: selectedRole,
         });
+
+        // Store user and role so the portal layout recognises the session
+        // immediately after redirect to onboarding (no page refresh needed).
+        if (data.user) {
+          try {
+            localStorage.setItem('user', JSON.stringify({
+              ...data.user,
+              user_type: selectedRole,
+              role: selectedRole,
+            }));
+            localStorage.setItem('portal_area', selectedRole);
+            localStorage.setItem('ml_user_role', selectedRole);
+          } catch {
+            /* localStorage unavailable in private browsing */
+          }
+        }
 
         trackSignupComplete(selectedRole, 'email');
         // Route new users through role-specific onboarding
@@ -198,7 +214,10 @@ const Signup: React.FC = () => {
     setLoading(true);
     try {
       const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
-      try { window.localStorage.setItem('portal_area', selectedRole); } catch { /* localStorage unavailable in private browsing */ }
+      try {
+        window.localStorage.setItem('portal_area', selectedRole);
+        window.localStorage.setItem('ml_user_role', selectedRole);
+      } catch { /* localStorage unavailable in private browsing */ }
       
       const response = await api.socialAuth.start(provider, redirectUri, selectedRole, 'register') as { authorization_url?: string };
       

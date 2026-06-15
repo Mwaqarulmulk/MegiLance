@@ -20,21 +20,33 @@ router = APIRouter()
 # System prompts per role
 # ──────────────────────────────────────────────────────────────────────────────
 
-_CLIENT_SYSTEM = """You are Megi, an expert AI assistant on MegiLance — a professional freelancing marketplace.
-You help CLIENTS: find the right freelancers, estimate project costs, plan project scope, understand platform features,
-manage contracts, and navigate the platform. Be concise, professional, and action-oriented.
+_CLIENT_SYSTEM = """You are Megi, the AI concierge/receptionist for CLIENTS on MegiLance — a professional freelancing marketplace.
+Act like a capable personal attendant: you can both advise AND look up the client's real account data to answer precisely.
 
-You can call tools to: search freelancers, estimate costs, plan scope, check market rates, find projects, show platform guides.
-When showing data, format it clearly with markdown tables, bullet lists, and headings.
-Keep responses under 300 words unless the user asks for detail. Always end with a follow-up question or next step."""
+You can call tools to:
+• See the client's OWN account — get_account_overview, get_my_projects, get_proposals_received, get_my_contracts, get_wallet_summary.
+• Help them act — search_freelancers, estimate_project_cost, plan_project_scope, get_market_rates, get_platform_guide.
+• Post a job FOR them — propose_post_project drafts a complete project posting and shows a confirmation card. When a client asks you to post/create a project, gather the essentials (what they need, budget, timeline), then call propose_post_project with every field filled. NEVER say the project is posted — it only goes live after the client clicks Confirm on the card.
 
-_FREELANCER_SYSTEM = """You are Megi, an expert AI assistant on MegiLance — a professional freelancing marketplace.
-You help FREELANCERS: find projects, write better proposals, optimize their profile, understand their earnings/stats,
-manage workloads, set competitive rates, and grow their business on the platform.
+IMPORTANT BEHAVIOUR:
+- When the user asks anything about THEIR status ("what's going on", "my projects", "who applied", "my balance", "where do things stand"), CALL the account tools first and answer with their real numbers — never guess.
+- You may call several tools in one turn to give a complete picture.
+- The account tools already return only THIS user's data; never ask the user for their own id.
+- When a tool returns a list, summarise it clearly with markdown (short tables or bullet lists), highlight what needs the client's attention (e.g. new proposals to review, milestones to approve), and end with a concrete next step.
+Keep responses under 300 words unless the user asks for detail."""
 
-You can call tools to: find matching projects, draft proposal outlines, check market rates, analyze profile gaps,
-show earnings stats. Be encouraging, practical, and results-focused.
-Format data clearly. Keep responses under 300 words. Always suggest a concrete next action."""
+_FREELANCER_SYSTEM = """You are Megi, the AI concierge/assistant for FREELANCERS on MegiLance — a professional freelancing marketplace.
+Act like a capable personal attendant: advise AND look up the freelancer's real account data to answer precisely.
+
+You can call tools to:
+• See the freelancer's OWN account — get_account_overview, get_my_proposals, get_my_contracts, get_wallet_summary.
+• Help them grow — find_matching_projects, draft_proposal_outline, get_market_rates, get_platform_guide.
+
+IMPORTANT BEHAVIOUR:
+- When the user asks about THEIR status ("my proposals", "did I get accepted", "my earnings", "my active work"), CALL the account tools first and answer with their real numbers — never guess.
+- The account tools already return only THIS user's data; never ask the user for their own id.
+- Summarise lists clearly with markdown, highlight what needs attention (accepted proposals, contracts to start), and end with a concrete next action.
+Be encouraging and results-focused. Keep responses under 300 words unless asked for detail."""
 
 _ADMIN_SYSTEM = """You are Megi, an internal AI assistant for MegiLance platform administrators.
 You help ADMINS: understand platform metrics, manage users, review flagged content, interpret analytics,
@@ -190,6 +202,158 @@ FREELANCER_TOOLS = [
 ]
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Account-aware tools — let the assistant act as a real receptionist/attendant by
+# reading the signed-in user's own data (projects, proposals, contracts, wallet).
+# These tools are personal/secured: every query is scoped to the current user_id.
+# ──────────────────────────────────────────────────────────────────────────────
+
+CLIENT_ACCOUNT_TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_account_overview",
+            "description": "Get a snapshot of the CURRENT client's account: number of open/active projects, total proposals received, active contracts, and wallet balance. Use this whenever the user asks 'what's going on', 'where do things stand', 'my dashboard', or any status question about their own account.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_my_projects",
+            "description": "List the CURRENT client's own posted projects with status and number of proposals received. Use for 'my projects', 'my job posts', 'how many proposals did I get'.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "description": "Optional filter: open, in_progress, completed, cancelled"},
+                    "limit": {"type": "integer", "default": 5},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_proposals_received",
+            "description": "List proposals submitted by freelancers to the CURRENT client's projects, with freelancer name, bid amount and status. Use for 'who applied', 'show me proposals', 'review bids'.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "project_id": {"type": "integer", "description": "Optional: only proposals for this project"},
+                    "limit": {"type": "integer", "default": 6},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_my_contracts",
+            "description": "List the CURRENT client's contracts with the hired freelancer, amount and status. Use for 'my contracts', 'who am I working with', 'active hires'.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "description": "Optional filter: active, pending, completed, disputed"},
+                    "limit": {"type": "integer", "default": 6},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_wallet_summary",
+            "description": "Get the CURRENT client's wallet balance and recent transactions. Use for 'my balance', 'payments', 'how much have I spent', 'transaction history'.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "propose_post_project",
+            "description": "Draft a new project posting for the client and show a confirmation card. Use when the client wants you to post/create a job for them. Do NOT claim the project is posted — this only PROPOSES a draft; the client must click Confirm to actually publish it. Infer sensible values from the conversation and fill every field.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string", "description": "Short, clear project title"},
+                    "description": {"type": "string", "description": "Detailed description of the work, deliverables and requirements"},
+                    "category": {"type": "string", "description": "One of: Web Development, Mobile Development, Data Science & Analytics, Design & Creative, Writing & Content, Marketing & Sales, Video & Animation, Other"},
+                    "budget_type": {"type": "string", "description": "Fixed or Hourly"},
+                    "budget_min": {"type": "number", "description": "Minimum budget in USD"},
+                    "budget_max": {"type": "number", "description": "Maximum budget in USD"},
+                    "experience_level": {"type": "string", "description": "Entry, Intermediate, or Expert"},
+                    "estimated_duration": {"type": "string", "description": "e.g. 'Less than 1 week', '1-4 weeks', '1-3 months', '3-6 months'"},
+                    "skills": {"type": "string", "description": "Comma-separated required skills"},
+                },
+                "required": ["title", "description", "category", "budget_type"],
+            },
+        },
+    },
+]
+
+FREELANCER_ACCOUNT_TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_account_overview",
+            "description": "Get a snapshot of the CURRENT freelancer's account: active contracts, submitted proposals (and how many were accepted), and wallet/earnings balance. Use for any status question about their own account.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_my_proposals",
+            "description": "List the CURRENT freelancer's submitted proposals with project title, bid amount and status. Use for 'my proposals', 'my bids', 'did I get accepted'.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "description": "Optional filter: submitted, accepted, rejected, withdrawn"},
+                    "limit": {"type": "integer", "default": 6},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_my_contracts",
+            "description": "List the CURRENT freelancer's contracts with client, amount and status. Use for 'my contracts', 'my active work'.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "description": "Optional filter: active, pending, completed, disputed"},
+                    "limit": {"type": "integer", "default": 6},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_wallet_summary",
+            "description": "Get the CURRENT freelancer's earnings balance and recent transactions. Use for 'my earnings', 'my balance', 'when do I get paid'.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+]
+
+# Extend role toolsets with account-aware tools
+CLIENT_TOOLS = CLIENT_TOOLS + CLIENT_ACCOUNT_TOOLS
+FREELANCER_TOOLS = FREELANCER_TOOLS + FREELANCER_ACCOUNT_TOOLS
+
+# Only these display types have dedicated rich renderers in the frontend widget.
+# Other tool results are fed to the LLM, which summarizes them in the chat bubble.
+CARD_DISPLAY_TYPES = {
+    "freelancer_cards", "cost_estimate", "market_rates", "scope_plan",
+    # account-aware cards
+    "account_overview", "my_projects", "proposals_received", "my_proposals",
+    "my_contracts", "wallet_summary",
+    # guided actions
+    "confirm_post_project",
+}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Tool execution (actual data queries)
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -210,6 +374,21 @@ def _execute_tool(tool_name: str, args: dict, user_id: int, role: str) -> dict:
             return _tool_find_projects(args, user_id)
         elif tool_name == "draft_proposal_outline":
             return _tool_proposal_outline(args)
+        # ── Account-aware tools (scoped to current user) ──
+        elif tool_name == "get_account_overview":
+            return _tool_account_overview(user_id, role)
+        elif tool_name == "get_my_projects":
+            return _tool_my_projects(args, user_id)
+        elif tool_name == "get_proposals_received":
+            return _tool_proposals_received(args, user_id)
+        elif tool_name == "get_my_contracts":
+            return _tool_my_contracts(args, user_id, role)
+        elif tool_name == "get_my_proposals":
+            return _tool_my_proposals(args, user_id)
+        elif tool_name == "get_wallet_summary":
+            return _tool_wallet_summary(user_id, role)
+        elif tool_name == "propose_post_project":
+            return _tool_propose_post_project(args, role)
         else:
             return {"error": f"Unknown tool: {tool_name}"}
     except Exception as e:
@@ -227,39 +406,45 @@ def _tool_search_freelancers(args: dict) -> dict:
     if not skill_list:
         return {"display_type": "freelancer_cards", "freelancers": []}
 
+    # Freelancer data lives directly on the users table (there is no profiles
+    # table); ratings come from the reviews table (reviewee_id).
     conditions = []
-    params = []
+    params: list = []
     for sk in skill_list[:3]:
-        conditions.append("(p.skills LIKE ? OR p.bio LIKE ? OR u.name LIKE ?)")
-        params.extend([f"%{sk}%", f"%{sk}%", f"%{sk}%"])
+        conditions.append("(u.skills LIKE ? OR u.bio LIKE ? OR u.tagline LIKE ? OR u.name LIKE ?)")
+        params.extend([f"%{sk}%", f"%{sk}%", f"%{sk}%", f"%{sk}%"])
 
     where = f"({' OR '.join(conditions)})" if conditions else "1=1"
     if max_rate < 999:
-        where += " AND (p.hourly_rate IS NULL OR p.hourly_rate <= ?)"
+        where += " AND (u.hourly_rate IS NULL OR u.hourly_rate <= ?)"
         params.append(max_rate)
-    if min_rating > 0:
-        where += " AND (p.avg_rating IS NULL OR p.avg_rating >= ?)"
-        params.append(min_rating)
-    params.append(limit)
+    # Over-fetch so we can apply the rating filter after computing avg rating.
+    params.append(limit * 3)
 
     result = execute_query(f"""
-        SELECT u.id, u.name, p.title, p.hourly_rate, p.avg_rating, p.avatar_url, p.skills
+        SELECT u.id, u.name,
+               COALESCE(NULLIF(u.tagline, ''), NULLIF(u.headline, ''), 'Freelancer') AS title,
+               u.hourly_rate, u.profile_image_url AS avatar_url, u.skills,
+               (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE reviewee_id = u.id) AS rating
         FROM users u
-        LEFT JOIN profiles p ON u.id = p.user_id
         WHERE u.role = 'freelancer' AND {where}
-        ORDER BY p.avg_rating DESC NULLS LAST
+        ORDER BY rating DESC, u.hourly_rate ASC
         LIMIT ?
     """, params)
 
     freelancers = []
-    if result and result.get("rows"):
-        for row in result["rows"]:
-            freelancers.append({
-                "id": row[0], "full_name": row[1], "title": row[2],
-                "hourly_rate": float(row[3]) if row[3] else None,
-                "rating": float(row[4]) if row[4] else None,
-                "avatar_url": row[5],
-            })
+    for r in parse_rows(result):
+        rating = float(r["rating"]) if r["rating"] else None
+        if min_rating and (rating or 0) < min_rating:
+            continue
+        freelancers.append({
+            "id": r["id"], "full_name": r["name"], "title": r["title"],
+            "hourly_rate": float(r["hourly_rate"]) if r["hourly_rate"] else None,
+            "rating": rating,
+            "avatar_url": r["avatar_url"],
+        })
+        if len(freelancers) >= limit:
+            break
 
     return {
         "display_type": "freelancer_cards",
@@ -400,7 +585,7 @@ def _tool_find_projects(args: dict, user_id: int) -> dict:
     params = []
     if skill_list:
         for sk in skill_list[:3]:
-            conditions.append("(p.skills_required LIKE ? OR p.title LIKE ? OR p.description LIKE ?)")
+            conditions.append("(p.skills LIKE ? OR p.title LIKE ? OR p.description LIKE ?)")
             params.extend([f"%{sk}%", f"%{sk}%", f"%{sk}%"])
 
     where = f"p.status = 'open'"
@@ -413,7 +598,7 @@ def _tool_find_projects(args: dict, user_id: int) -> dict:
     params.append(limit)
     result = execute_query(f"""
         SELECT p.id, p.title, p.description, p.budget_min, p.budget_max,
-               p.skills_required, p.created_at, u.name
+               p.skills, p.created_at, u.name AS posted_by
         FROM projects p
         LEFT JOIN users u ON p.client_id = u.id
         WHERE {where}
@@ -422,17 +607,15 @@ def _tool_find_projects(args: dict, user_id: int) -> dict:
     """, params)
 
     projects = []
-    if result and result.get("rows"):
-        for row in result["rows"]:
-            desc = (row[2] or "")[:150]
-            if len(row[2] or "") > 150:
-                desc += "..."
-            projects.append({
-                "id": row[0], "title": row[1], "description": desc,
-                "budget_min": float(row[3]) if row[3] else None,
-                "budget_max": float(row[4]) if row[4] else None,
-                "skills": row[5], "posted_by": row[7], "created_at": row[6],
-            })
+    for r in parse_rows(result):
+        full_desc = r["description"] or ""
+        desc = full_desc[:150] + ("..." if len(full_desc) > 150 else "")
+        projects.append({
+            "id": r["id"], "title": r["title"], "description": desc,
+            "budget_min": float(r["budget_min"]) if r["budget_min"] else None,
+            "budget_max": float(r["budget_max"]) if r["budget_max"] else None,
+            "skills": r["skills"], "posted_by": r["posted_by"], "created_at": r["created_at"],
+        })
 
     return {
         "display_type": "project_list",
@@ -474,6 +657,268 @@ def _tool_proposal_outline(args: dict) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Account-aware tool implementations (scoped to the signed-in user)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _money(val) -> float:
+    # Turso cells arrive unwrapped via parse_rows; coerce safely to a number.
+    try:
+        return round(float(val), 2)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _rows(query: str, params: list) -> list:
+    """Run a query and return a list of dict rows (column-name keyed, unwrapped)."""
+    return parse_rows(execute_query(query, params))
+
+
+def _scalar(query: str, params: list) -> int:
+    """Run a COUNT/scalar query and return the first integer value (0 on failure)."""
+    rows = _rows(query, params)
+    if rows:
+        first = next(iter(rows[0].values()), 0)
+        try:
+            return int(first or 0)
+        except (TypeError, ValueError):
+            return 0
+    return 0
+
+
+def _user_balance(user_id: int) -> float:
+    rows = _rows("SELECT account_balance FROM users WHERE id = ?", [user_id])
+    return _money(rows[0]["account_balance"]) if rows else 0.0
+
+
+def _tool_account_overview(user_id: int, role: str) -> dict:
+    """Receptionist snapshot of the user's own account."""
+    balance = _user_balance(user_id)
+
+    if role == "freelancer":
+        return {
+            "display_type": "account_overview",
+            "role": "freelancer",
+            "active_contracts": _scalar(
+                "SELECT COUNT(*) FROM contracts WHERE freelancer_id = ? AND status = 'active'", [user_id]),
+            "proposals_submitted": _scalar(
+                "SELECT COUNT(*) FROM proposals WHERE freelancer_id = ?", [user_id]),
+            "proposals_accepted": _scalar(
+                "SELECT COUNT(*) FROM proposals WHERE freelancer_id = ? AND status = 'accepted'", [user_id]),
+            "balance": balance,
+        }
+
+    # Client
+    return {
+        "display_type": "account_overview",
+        "role": "client",
+        "open_projects": _scalar(
+            "SELECT COUNT(*) FROM projects WHERE client_id = ? AND status = 'open'", [user_id]),
+        "in_progress_projects": _scalar(
+            "SELECT COUNT(*) FROM projects WHERE client_id = ? AND status = 'in_progress'", [user_id]),
+        "proposals_received": _scalar(
+            "SELECT COUNT(*) FROM proposals pr JOIN projects p ON pr.project_id = p.id WHERE p.client_id = ?", [user_id]),
+        "active_contracts": _scalar(
+            "SELECT COUNT(*) FROM contracts WHERE client_id = ? AND status = 'active'", [user_id]),
+        "balance": balance,
+    }
+
+
+def _tool_my_projects(args: dict, user_id: int) -> dict:
+    status = (args.get("status") or "").strip().lower()
+    limit = min(int(args.get("limit", 5) or 5), 10)
+    where = "p.client_id = ?"
+    params: list = [user_id]
+    if status:
+        where += " AND p.status = ?"
+        params.append(status)
+    params.append(limit)
+    rows = _rows(f"""
+        SELECT p.id, p.title, p.status, p.budget_min, p.budget_max, p.proposals_count, p.created_at
+        FROM projects p
+        WHERE {where}
+        ORDER BY p.created_at DESC
+        LIMIT ?
+    """, params)
+    projects = [{
+        "id": r["id"], "title": r["title"], "status": r["status"],
+        "budget_min": _money(r["budget_min"]) if r["budget_min"] is not None else None,
+        "budget_max": _money(r["budget_max"]) if r["budget_max"] is not None else None,
+        "proposals_count": int(r["proposals_count"] or 0),
+        "created_at": r["created_at"],
+    } for r in rows]
+    return {"display_type": "my_projects", "projects": projects, "total": len(projects)}
+
+
+def _tool_proposals_received(args: dict, user_id: int) -> dict:
+    project_id = args.get("project_id")
+    limit = min(int(args.get("limit", 6) or 6), 12)
+    where = "p.client_id = ?"
+    params: list = [user_id]
+    if project_id:
+        where += " AND pr.project_id = ?"
+        params.append(int(project_id))
+    params.append(limit)
+    rows = _rows(f"""
+        SELECT pr.id, pr.project_id, p.title AS project_title, u.name AS freelancer_name,
+               pr.bid_amount, pr.status, pr.created_at
+        FROM proposals pr
+        JOIN projects p ON pr.project_id = p.id
+        LEFT JOIN users u ON pr.freelancer_id = u.id
+        WHERE {where}
+        ORDER BY pr.created_at DESC
+        LIMIT ?
+    """, params)
+    proposals = [{
+        "id": r["id"], "project_id": r["project_id"], "project_title": r["project_title"],
+        "freelancer_name": r["freelancer_name"] or "Freelancer",
+        "bid_amount": _money(r["bid_amount"]) if r["bid_amount"] is not None else None,
+        "status": r["status"], "created_at": r["created_at"],
+    } for r in rows]
+    return {"display_type": "proposals_received", "proposals": proposals, "total": len(proposals)}
+
+
+def _tool_my_proposals(args: dict, user_id: int) -> dict:
+    status = (args.get("status") or "").strip().lower()
+    limit = min(int(args.get("limit", 6) or 6), 12)
+    where = "pr.freelancer_id = ?"
+    params: list = [user_id]
+    if status:
+        where += " AND pr.status = ?"
+        params.append(status)
+    params.append(limit)
+    rows = _rows(f"""
+        SELECT pr.id, p.title AS project_title, pr.bid_amount, pr.status, pr.created_at
+        FROM proposals pr
+        LEFT JOIN projects p ON pr.project_id = p.id
+        WHERE {where}
+        ORDER BY pr.created_at DESC
+        LIMIT ?
+    """, params)
+    proposals = [{
+        "id": r["id"], "project_title": r["project_title"] or "Project",
+        "bid_amount": _money(r["bid_amount"]) if r["bid_amount"] is not None else None,
+        "status": r["status"], "created_at": r["created_at"],
+    } for r in rows]
+    return {"display_type": "my_proposals", "proposals": proposals, "total": len(proposals)}
+
+
+def _tool_my_contracts(args: dict, user_id: int, role: str) -> dict:
+    status = (args.get("status") or "").strip().lower()
+    limit = min(int(args.get("limit", 6) or 6), 12)
+    id_col = "freelancer_id" if role == "freelancer" else "client_id"
+    other_col = "client_id" if role == "freelancer" else "freelancer_id"
+    where = f"c.{id_col} = ?"
+    params: list = [user_id]
+    if status:
+        where += " AND c.status = ?"
+        params.append(status)
+    params.append(limit)
+    rows = _rows(f"""
+        SELECT c.id, p.title AS project_title, u.name AS counterparty, c.amount, c.status, c.created_at
+        FROM contracts c
+        LEFT JOIN projects p ON c.project_id = p.id
+        LEFT JOIN users u ON c.{other_col} = u.id
+        WHERE {where}
+        ORDER BY c.created_at DESC
+        LIMIT ?
+    """, params)
+    contracts = [{
+        "id": r["id"], "project_title": r["project_title"] or "Contract",
+        "counterparty": r["counterparty"] or ("Client" if role == "freelancer" else "Freelancer"),
+        "amount": _money(r["amount"]) if r["amount"] is not None else None,
+        "status": r["status"], "created_at": r["created_at"],
+    } for r in rows]
+    return {"display_type": "my_contracts", "contracts": contracts, "total": len(contracts)}
+
+
+def _tool_wallet_summary(user_id: int, role: str) -> dict:
+    balance = _user_balance(user_id)
+    txns = []
+    try:
+        rows = _rows("""
+            SELECT id, type, amount, description, created_at
+            FROM wallet_transactions WHERE user_id = ?
+            ORDER BY created_at DESC LIMIT 5
+        """, [user_id])
+        txns = [{
+            "id": r["id"], "type": r["type"],
+            "amount": _money(r["amount"]) if r["amount"] is not None else None,
+            "description": r["description"], "created_at": r["created_at"],
+        } for r in rows]
+    except Exception as e:
+        logger.warning(f"wallet_summary txns failed: {e}")
+    label = "Earnings balance" if role == "freelancer" else "Wallet balance"
+    return {"display_type": "wallet_summary", "balance": balance, "label": label, "recent_transactions": txns}
+
+
+# Allowed enum values for a project posting — keep in sync with the Project model.
+_PROJECT_CATEGORIES = [
+    "Web Development", "Mobile Development", "Data Science & Analytics",
+    "Design & Creative", "Writing & Content", "Marketing & Sales",
+    "Video & Animation", "Other",
+]
+_EXPERIENCE_LEVELS = ["Entry", "Intermediate", "Expert"]
+
+
+def _normalize_project_draft(args: dict) -> dict:
+    """Coerce LLM-provided project fields into valid, schema-safe values."""
+    def _match(value: str, options: list, default: str) -> str:
+        v = (value or "").strip().lower()
+        for opt in options:
+            if v == opt.lower():
+                return opt
+        for opt in options:
+            if v and (v in opt.lower() or opt.lower() in v):
+                return opt
+        return default
+
+    budget_type = (args.get("budget_type") or "Fixed").strip().capitalize()
+    if budget_type not in ("Fixed", "Hourly"):
+        budget_type = "Fixed"
+
+    try:
+        budget_min = float(args.get("budget_min") or 0)
+    except (TypeError, ValueError):
+        budget_min = 0.0
+    try:
+        budget_max = float(args.get("budget_max") or 0)
+    except (TypeError, ValueError):
+        budget_max = 0.0
+    if budget_max and budget_min and budget_max < budget_min:
+        budget_min, budget_max = budget_max, budget_min
+
+    skills = args.get("skills") or ""
+    if isinstance(skills, list):
+        skills = ", ".join(str(s) for s in skills)
+
+    return {
+        "title": (args.get("title") or "Untitled Project").strip()[:255],
+        "description": (args.get("description") or "").strip(),
+        "category": _match(args.get("category", ""), _PROJECT_CATEGORIES, "Other"),
+        "budget_type": budget_type,
+        "budget_min": budget_min,
+        "budget_max": budget_max,
+        "experience_level": _match(args.get("experience_level", ""), _EXPERIENCE_LEVELS, "Intermediate"),
+        "estimated_duration": (args.get("estimated_duration") or "1-4 weeks").strip()[:50],
+        "skills": skills.strip(),
+    }
+
+
+def _tool_propose_post_project(args: dict, role: str) -> dict:
+    """Build a project-posting confirmation card. Does NOT create anything —
+    the client must confirm via the /actions/post-project endpoint."""
+    if role != "client":
+        return {"display_type": "text", "text": "Only client accounts can post projects."}
+    draft = _normalize_project_draft(args)
+    return {
+        "display_type": "confirm_post_project",
+        "draft": draft,
+        "confirm_endpoint": "/ai/client-assistant/actions/post-project",
+        "note": "Review the details below. Nothing is published until you press Confirm.",
+    }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # LLM Chat with tool calling
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -508,6 +953,7 @@ async def _run_openai_chat(
     messages.append({"role": "user", "content": user_message})
 
     tool_results_for_frontend: list = []
+    called_tools: list = []
 
     try:
         payload = {
@@ -545,12 +991,18 @@ async def _run_openai_chat(
                     args = json.loads(fn.get("arguments", "{}"))
                 except json.JSONDecodeError:
                     args = {}
+                called_tools.append(tool_name)
                 result = _execute_tool(tool_name, args, user_id, role)
-                tool_results_for_frontend.append({
-                    "tool_name": tool_name,
-                    "data": result,
-                    "display_type": result.get("display_type", "text"),
-                })
+                # Only forward results that have a dedicated rich renderer in the
+                # widget. Account data (overview/projects/contracts/wallet) is fed
+                # to the LLM, which summarizes it conversationally in the bubble —
+                # avoids dumping raw JSON for display types the frontend can't render.
+                if result.get("display_type") in CARD_DISPLAY_TYPES:
+                    tool_results_for_frontend.append({
+                        "tool_name": tool_name,
+                        "data": result,
+                        "display_type": result.get("display_type", "text"),
+                    })
                 tool_messages.append({
                     "role": "tool",
                     "tool_call_id": tc.get("id", ""),
@@ -576,7 +1028,7 @@ async def _run_openai_chat(
                 return _fallback_response(user_message, role)
 
         suggestions = _generate_suggestions(user_message, role, bool(tool_results_for_frontend))
-        action_buttons = _generate_action_buttons(user_message, role, tool_results_for_frontend)
+        action_buttons = _generate_action_buttons(user_message, role, tool_results_for_frontend, called_tools)
         return {
             "message": final_content,
             "tool_results": tool_results_for_frontend,
@@ -634,28 +1086,57 @@ def _generate_suggestions(message: str, role: str, had_tools: bool) -> list:
         return ["Find me a developer", "Estimate my project cost", "Plan my project scope", "How does hiring work?"]
 
 
-def _generate_action_buttons(message: str, role: str, tool_results: list) -> list:
-    buttons = []
+def _generate_action_buttons(message: str, role: str, tool_results: list, called_tools: Optional[list] = None) -> list:
+    """Build deep-link buttons routing the user to the right portal page.
+
+    Account-aware: if the assistant looked up the user's projects/proposals/
+    contracts/wallet, surface a button that jumps straight to that section.
+    """
+    called = set(called_tools or [])
     m = message.lower()
+    is_freelancer = role == "freelancer"
+    base = "/freelancer" if is_freelancer else "/client"
+
+    buttons: list = []
+
+    def add(label: str, href: str, variant: str = "primary"):
+        if not any(b["href"] == href for b in buttons):
+            buttons.append({"label": label, "href": href, "variant": variant})
+
+    # 1) Account-aware navigation based on which data the agent fetched
+    if "get_proposals_received" in called:
+        add("Review Proposals", "/client/proposals")
+    if "get_my_proposals" in called:
+        add("My Proposals", "/freelancer/proposals")
+    if "get_my_projects" in called:
+        add("My Projects", "/client/projects", "secondary")
+    if "get_my_contracts" in called:
+        add("View Contracts", f"{base}/contracts", "secondary")
+    if "get_wallet_summary" in called:
+        add("Open Wallet", f"{base}/wallet", "secondary")
+    if "get_account_overview" in called:
+        add("Go to Dashboard", f"{base}/dashboard", "secondary")
+
+    # 2) Card-driven navigation
     has_freelancers = any(tr.get("display_type") == "freelancer_cards" for tr in tool_results)
-    has_projects = any(tr.get("display_type") == "project_list" for tr in tool_results)
-
     if has_freelancers:
-        buttons = [
-            {"label": "Browse All Talent", "href": "/talent", "variant": "primary"},
-            {"label": "Post a Project", "href": "/projects/new", "variant": "secondary"},
-        ]
-    elif has_projects:
-        buttons = [
-            {"label": "Browse All Projects", "href": "/projects", "variant": "primary"},
-            {"label": "Update My Profile", "href": "/freelancer/profile", "variant": "secondary"},
-        ]
-    elif any(w in m for w in ["hire", "post project", "find freelancer"]):
-        buttons = [{"label": "Post a Project", "href": "/projects/new", "variant": "primary"}]
-    elif any(w in m for w in ["submit proposal", "apply", "find project"]):
-        buttons = [{"label": "Browse Projects", "href": "/projects", "variant": "primary"}]
+        add("Browse All Talent", "/client/search")
+        add("Post a Project", "/client/post-job", "secondary")
 
-    return buttons
+    # 3) Intent-driven fallbacks (only if nothing else matched)
+    if not buttons:
+        if is_freelancer:
+            if any(w in m for w in ["find work", "find project", "browse", "apply", "proposal"]):
+                add("Browse Jobs", "/freelancer/jobs")
+            elif any(w in m for w in ["profile", "portfolio", "improve"]):
+                add("Edit My Profile", "/freelancer/profile")
+        else:
+            if any(w in m for w in ["hire", "post project", "find freelancer", "post a job"]):
+                add("Post a Project", "/client/post-job")
+            elif any(w in m for w in ["freelancer", "developer", "designer", "talent"]):
+                add("Browse Freelancers", "/client/search")
+
+    return buttons[:3]
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -809,6 +1290,64 @@ async def submit_feedback(body: FeedbackRequest, current_user=Depends(get_curren
     except Exception as e:
         logger.warning(f"Failed to save feedback: {e}")
     return {"message": "Thank you for your feedback!"}
+
+
+class PostProjectAction(BaseModel):
+    title: str
+    description: str = ""
+    category: str = "Other"
+    budget_type: str = "Fixed"
+    budget_min: float = 0
+    budget_max: float = 0
+    experience_level: str = "Intermediate"
+    estimated_duration: str = "1-4 weeks"
+    skills: str = ""
+
+
+@router.post("/client-assistant/actions/post-project")
+async def action_post_project(body: PostProjectAction, current_user=Depends(get_current_user)):
+    """Guided action: actually publish a project the assistant drafted.
+    Only clients may post; the draft is re-normalized server-side for safety."""
+    role = getattr(current_user, "role", None) or getattr(current_user, "user_type", "client")
+    role = (role or "client").lower()
+    if role != "client":
+        raise HTTPException(status_code=403, detail="Only client accounts can post projects.")
+
+    draft = _normalize_project_draft(body.model_dump())
+    if not draft["title"] or not draft["description"]:
+        raise HTTPException(status_code=400, detail="A title and description are required to post a project.")
+
+    now = datetime.now(timezone.utc).isoformat()
+    result = execute_query(
+        """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
+                  skills, estimated_duration, experience_level, status, client_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, ?)""",
+        [
+            draft["title"], draft["description"], draft["category"], draft["budget_type"],
+            draft["budget_min"], draft["budget_max"], draft["skills"],
+            draft["estimated_duration"], draft["experience_level"],
+            current_user.id, now, now,
+        ],
+    )
+    if result is None:
+        raise HTTPException(status_code=500, detail="Failed to post the project. Please try again.")
+
+    id_result = execute_query(
+        "SELECT id FROM projects WHERE client_id = ? AND title = ? ORDER BY id DESC LIMIT 1",
+        [current_user.id, draft["title"]],
+    )
+    project_id = None
+    if id_result and id_result.get("rows"):
+        raw = id_result["rows"][0][0]
+        if isinstance(raw, dict):
+            raw = raw.get("value")
+        project_id = int(raw) if raw else None
+
+    return {
+        "message": f"✅ Your project '{draft['title']}' is now live! Freelancers can start submitting proposals.",
+        "project_id": project_id,
+        "url": f"/client/projects/{project_id}" if project_id else "/client/projects",
+    }
 
 
 @router.get("/client-assistant/suggestions")

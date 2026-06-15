@@ -32,7 +32,9 @@ class Dispute(BaseModel):
     raised_by: int
     dispute_type: str
     description: str
-    evidence: Optional[str] = None
+    # Evidence is stored as a JSON array of attachment objects (or a string for
+    # legacy rows); accept either so the list endpoint doesn't 500 on validation.
+    evidence: Optional[Any] = None
     status: str
     assigned_to: Optional[int] = None
     resolution: Optional[str] = None
