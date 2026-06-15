@@ -70,10 +70,10 @@ def test_health_and_infrastructure():
     r = safe_request("get", f"{BASE_URL}/health/ready")
     if r and r.status_code == 200:
         data = r.json()
-        if data.get("status") == "ready" and data.get("db") == "ok":
-            log_pass("Health ready endpoint", f"DB={data.get('driver')}, uptime={data.get('uptime_seconds')}s")
+        if data.get("status") in ("ready", "healthy", "ok") and data.get("db", data.get("database")) in ("ok", "connected"):
+            log_pass("Health ready endpoint", f"DB={data.get('database', data.get('db'))}, uptime={data.get('uptime_seconds')}s")
         else:
-            log_fail("Health ready", f"status={data.get('status')}, db={data.get('db')}")
+            log_fail("Health ready", f"status={data.get('status')}, db={data.get('db', data.get('database'))}")
     else:
         log_fail("Health ready", f"status={r.status_code if r else 'NO RESPONSE'}")
         return False

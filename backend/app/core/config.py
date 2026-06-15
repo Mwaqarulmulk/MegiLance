@@ -101,10 +101,9 @@ class Settings(BaseSettings):
         ".docx",
     ]
 
-    # AI Service — Anthropic Claude (primary) + DigitalOcean AI (fallback)
+    # AI Service — DigitalOcean AI
     ai_service_url: Optional[str] = "http://localhost:8001"
-    anthropic_api_key: Optional[str] = None        # ANTHROPIC_API_KEY — preferred
-    do_ai_api_key: Optional[str] = None            # DO_AI_API_KEY — fallback
+    do_ai_api_key: Optional[str] = None            # DO_AI_API_KEY
     do_ai_api_base: Optional[str] = "https://inference.do-ai.run/v1"
     do_ai_model: Optional[str] = "llama3.3-70b-instruct"
 
