@@ -16,6 +16,7 @@ import {
 import commonStyles from './InvoiceGenerator.common.module.css';
 import lightStyles from './InvoiceGenerator.light.module.css';
 import darkStyles from './InvoiceGenerator.dark.module.css';
+import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ============================================================================
@@ -83,6 +84,7 @@ const TEMPLATE_ICONS: Record<string, any> = {
 export default function InvoiceGenerator() {
   const { resolvedTheme } = useTheme();
   const t = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   /* ----- State ----- */
   const [step, setStep] = useState(0);
@@ -292,15 +294,18 @@ export default function InvoiceGenerator() {
 
   /* ----- Render ----- */
   return (
-    <div className={cn(commonStyles.container, t.container)}>
-      <div className={commonStyles.innerContainer}>
+    <div className={cn(commonStyles.container, t.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <div className={cn(commonStyles.innerContainer, 'relative z-10')}>
         {/* Header */}
         <header className={commonStyles.header}>
-          <span className={cn(commonStyles.headerBadge, t.headerBadge)}>
-            <FileText /> Professional Invoice Builder
+          <span className="mb-3 inline-flex justify-center">
+            <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}>
+              <FileText size={14} /> Professional Invoice Builder
+            </ShineBadge>
           </span>
           <h1 className={cn(commonStyles.title, t.title)}>
-            Invoice <span className={commonStyles.titleAccent}>Generator</span>
+            Invoice <AnimatedGradientText>Generator</AnimatedGradientText>
           </h1>
           <p className={cn(commonStyles.subtitle, t.subtitle)}>
             Create professional invoices instantly — multi-currency, tax-aware, with 5 beautiful templates and 30+ currencies.
@@ -804,16 +809,20 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
   const sym = curr.symbol;
   const maxItemTotal = Math.max(...items.map(i => i.total));
 
+  useEffect(() => { celebrate(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+
   return (
     <div className={cs.resultsContainer}>
       {/* Invoice Hero */}
       <motion.div
-        className={cn(cs.priceHero, ts.priceHero)}
+        className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
         <div className={cn(cs.priceHeroGlow, ts.priceHeroGlow)} />
+        <Meteors number={10} />
+        <BorderBeam size={240} duration={10} />
         <div className={cs.invoiceHeroTop}>
           <div>
             <p className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Invoice {invoice.number}</p>
@@ -827,7 +836,7 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
         </div>
         <div className={cs.priceHeroRange}>
           <span className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
-            {sym}{fmt(calculations.grand_total)}
+            <NumberTicker value={calculations.grand_total} prefix={sym} decimals={2} />
           </span>
         </div>
         <p className={cn(cs.invoiceHeroWords, ts.invoiceHeroWords)}>{calculations.amount_in_words}</p>

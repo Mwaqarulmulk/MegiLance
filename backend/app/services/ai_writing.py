@@ -44,6 +44,13 @@ class AIWritingService:
     async def _ensure_tables(self):
         if self._tables_ready:
             return
+        try:
+            await self._create_tables()
+            self._tables_ready = True
+        except Exception as e:
+            logger.warning(f"ai_writing table init failed (non-critical): {e}")
+
+    async def _create_tables(self):
         execute_query("""
             CREATE TABLE IF NOT EXISTS ai_writing_history (
                 id TEXT PRIMARY KEY,
@@ -75,13 +82,16 @@ class AIWritingService:
     async def _log_generation(self, gen_id: str, user_id: int, content_type: str,
                                tone: str, word_count: int, content: str,
                                metadata: Optional[Dict] = None):
-        """Log a content generation to history."""
-        execute_query(
-            """INSERT INTO ai_writing_history (id, user_id, content_type, tone, word_count, content, metadata, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            [gen_id, user_id, content_type, tone, word_count, content,
-             json.dumps(metadata or {}), datetime.now(timezone.utc).isoformat()]
-        )
+        """Log a content generation to history. Non-critical: never breaks generation."""
+        try:
+            execute_query(
+                """INSERT INTO ai_writing_history (id, user_id, content_type, tone, word_count, content, metadata, created_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                [gen_id, user_id, str(content_type), tone, word_count, content,
+                 json.dumps(metadata or {}), datetime.now(timezone.utc).isoformat()]
+            )
+        except Exception as e:
+            logger.warning(f"ai_writing history log failed (non-critical): {e}")
     
     # Content Generation
     async def generate_proposal(
@@ -119,11 +129,8 @@ Please make the tone {tone.value}."""
         
         # Log the generation
         await self._log_generation(
-            user_id,
-            WritingContentType.PROPOSAL,
-            prompt,
-            generated_content,
-            {"tone": tone.value}
+            str(uuid.uuid4()), user_id, WritingContentType.PROPOSAL.value,
+            tone.value, word_count, generated_content, {"tone": tone.value}
         )
         
         return {

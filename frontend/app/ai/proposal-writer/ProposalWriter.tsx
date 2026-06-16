@@ -13,6 +13,16 @@ import { cn } from '@/lib/utils';
 import commonStyles from './ProposalWriter.common.module.css';
 import lightStyles from './ProposalWriter.light.module.css';
 import darkStyles from './ProposalWriter.dark.module.css';
+import {
+  AuroraBackground,
+  ShineBadge,
+  AnimatedGradientText,
+  NumberTicker,
+  BorderBeam,
+  Meteors,
+  celebrate,
+  sideCannons,
+} from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
@@ -258,6 +268,14 @@ function ResultsDashboard({
   const [copied, setCopied] = useState(false);
   const proposalRef = useRef<HTMLDivElement>(null);
 
+  // Celebrate the proposal reveal — bigger party for high scores
+  useEffect(() => {
+    const pct = result.proposal_score.total / result.proposal_score.max;
+    if (pct >= 0.8) sideCannons();
+    else celebrate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(result.proposal);
@@ -278,10 +296,14 @@ function ResultsDashboard({
   return (
     <div className={cs.resultsContainer}>
       {/* Hero - Proposal Score */}
-      <div className={cn(cs.priceHero, ts.priceHero)}>
+      <div className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}>
         <div className={cs.priceHeroGlow} />
+        <Meteors number={10} />
+        <BorderBeam size={220} duration={9} />
         <div className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Proposal Score</div>
-        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>{result.proposal_score.total}/{result.proposal_score.max}</div>
+        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
+          <NumberTicker value={result.proposal_score.total} />/{result.proposal_score.max}
+        </div>
         <div className={cs.priceHeroMeta}>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>
             <Award size={14} /> {result.proposal_score.level}
@@ -466,12 +488,18 @@ export default function ProposalWriter() {
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   return (
-    <div className={cn(cs.container, ts.container)}>
-      <header className={cs.header}>
-        <div className={cn(cs.headerBadge, ts.headerBadge)}><Sparkles size={14} /> AI-Powered</div>
-        <h1 className={cn(cs.title, ts.title)}>Proposal Writer</h1>
+    <div className={cn(cs.container, ts.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <header className={cn(cs.header, 'relative z-10')}>
+        <span className="mb-3 inline-flex justify-center">
+          <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}>
+            <Sparkles size={14} /> AI-Powered
+          </ShineBadge>
+        </span>
+        <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Proposal Writer</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Generate winning proposals with market-data-backed pricing</p>
       </header>
 

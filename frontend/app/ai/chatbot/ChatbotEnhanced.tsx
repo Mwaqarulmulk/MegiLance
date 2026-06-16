@@ -9,6 +9,7 @@ import { useAIChat } from '@/app/hooks/useAIChat';
 import AIStatusIndicator from '@/app/components/AI/AIStatusIndicator/AIStatusIndicator';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
+import { AuroraBackground, BorderBeam } from '@/app/components/AI/kit';
 import {
   Send,
   Trash2,
@@ -238,9 +239,11 @@ const ChatbotEnhanced: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className={cn(commonStyles.container, themeStyles.container)}>
+      <div className={cn(commonStyles.container, themeStyles.container, 'relative overflow-hidden')}>
+        <AuroraBackground isDark={resolvedTheme === 'dark'} particleCount={40} grid={false} />
         <ScrollReveal>
-          <div className={cn(commonStyles.chatContainer, themeStyles.chatContainer)}>
+          <div className={cn(commonStyles.chatContainer, themeStyles.chatContainer, 'relative z-10')}>
+            <BorderBeam size={300} duration={14} borderWidth={1} />
             {/* Header */}
             <header className={cn(commonStyles.header, themeStyles.header)}>
               <div className={commonStyles.headerLeft}>

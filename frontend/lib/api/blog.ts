@@ -1,4 +1,5 @@
 import { BlogPostCardProps } from '@/app/components/Public/BlogPostCard/BlogPostCard';
+import { apiFetch } from './core';
 
 // Always use /api/v1 for backend API calls.
 // NEXT_PUBLIC_API_URL may be "https://api.megilance.site/api" (without v1),
@@ -49,20 +50,49 @@ export interface UpdateBlogPost {
   is_news_trend?: boolean;
 }
 
+/**
+ * Unified blog storage: the admin CMS and the public blog page both use MongoDB
+ * (`megilance.blogs` via `/blogs-mongo`). This maps a Mongo blog doc — which holds
+ * both CMS fields and SEO/public render fields — onto the admin `BlogPost` shape.
+ */
+function mongoToBlogPost(d: any): BlogPost {
+  return {
+    id: d?.id || d?.slug || '',
+    title: d?.title || '',
+    slug: d?.slug || '',
+    excerpt: d?.excerpt || d?.meta_description || '',
+    content: d?.content || '',
+    image_url: d?.image_url || d?.featured_image_url || '',
+    author: d?.author || 'MegiLance',
+    tags:
+      Array.isArray(d?.tags) && d.tags.length
+        ? d.tags
+        : Array.isArray(d?.secondary_keywords) && d.secondary_keywords.length
+          ? d.secondary_keywords
+          : d?.category
+            ? [d.category]
+            : [],
+    created_at: d?.created_at || d?.published_date || '',
+    updated_at: d?.updated_at || d?.created_at || '',
+    is_published:
+      d?.is_published !== undefined ? d.is_published : d?.status ? d.status === 'published' : true,
+    is_news_trend: d?.is_news_trend ?? false,
+    views: d?.views ?? d?.view_count ?? 0,
+    reading_time: d?.reading_time ?? d?.reading_time_minutes ?? 1,
+  };
+}
+
 export const blogApi = {
   getAll: async (isPublished?: boolean, isNewsTrend?: boolean): Promise<BlogPost[]> => {
-    const params = new URLSearchParams();
-    if (isPublished !== undefined) params.append('is_published', String(isPublished));
-    if (isNewsTrend !== undefined) params.append('is_news_trend', String(isNewsTrend));
-    
     try {
-      const res = await fetch(`${API_URL}/blog?${params.toString()}`, {
-        cache: 'no-store',
-      });
-      if (!res.ok) throw new Error('Failed to fetch posts');
-      const data = await res.json();
-      // Return actual data only - no demo fallback for production
-      return Array.isArray(data) ? data : [];
+      // include_drafts=true so the admin CMS sees unpublished posts too
+      const res = await apiFetch<{ items?: any[] }>(
+        '/blogs-mongo?include_drafts=true&limit=100',
+      );
+      let items = (res.items || []).map(mongoToBlogPost);
+      if (isPublished !== undefined) items = items.filter((p) => p.is_published === isPublished);
+      if (isNewsTrend !== undefined) items = items.filter((p) => p.is_news_trend === isNewsTrend);
+      return items;
     } catch (error) {
       console.error('Blog API error:', error);
       return [];
@@ -71,14 +101,8 @@ export const blogApi = {
 
   getBySlug: async (slug: string): Promise<BlogPost | null> => {
     try {
-      const res = await fetch(`${API_URL}/blog/${slug}`, {
-        cache: 'no-store',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data || null;
-      }
-      return null;
+      const data = await apiFetch<any>(`/blogs-mongo/${slug}`);
+      return data ? mongoToBlogPost(data) : null;
     } catch (error) {
       console.error('Blog API error:', error);
       return null;
@@ -86,30 +110,23 @@ export const blogApi = {
   },
 
   create: async (post: CreateBlogPost): Promise<BlogPost> => {
-    const res = await fetch(`${API_URL}/blog`, {
+    const data = await apiFetch<any>('/blogs-mongo', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(post),
     });
-    if (!res.ok) throw new Error('Failed to create post');
-    return res.json();
+    return mongoToBlogPost(data);
   },
 
   update: async (id: string, post: UpdateBlogPost): Promise<BlogPost> => {
-    const res = await fetch(`${API_URL}/blog/${id}`, {
+    const data = await apiFetch<any>(`/blogs-mongo/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(post),
     });
-    if (!res.ok) throw new Error('Failed to update post');
-    return res.json();
+    return mongoToBlogPost(data);
   },
 
   delete: async (id: string): Promise<void> => {
-    const res = await fetch(`${API_URL}/blog/${id}`, {
-      method: 'DELETE',
-    });
-    if (!res.ok) throw new Error('Failed to delete post');
+    await apiFetch(`/blogs-mongo/${id}`, { method: 'DELETE' });
   },
 };
 

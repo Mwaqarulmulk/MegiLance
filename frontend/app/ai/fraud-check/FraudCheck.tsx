@@ -1,7 +1,7 @@
 // @AI-HINT: Premium AI Fraud Check page with production-ready quality UI. Calls backend /api/ai/fraud-check for real pattern analysis, with client-side fallback.
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import commonStyles from './FraudCheck.common.module.css';
 import lightStyles from './FraudCheck.light.module.css';
 import darkStyles from './FraudCheck.dark.module.css';
+import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, celebrate } from '@/app/components/AI/kit';
 
 interface Warning {
   category: string;
@@ -134,6 +135,11 @@ const FraudCheck: React.FC = () => {
   const riskClass = analysisResult ? commonStyles[`risk${analysisResult.riskLevel}`] : '';
   const riskThemeClass = analysisResult ? themeStyles[`risk${analysisResult.riskLevel}`] : '';
 
+  // Celebrate only when the content is verified safe (low risk)
+  useEffect(() => {
+    if (analysisResult && analysisResult.riskLevel === 'Low') celebrate();
+  }, [analysisResult]);
+
   // Calculate stroke-dashoffset for SVG ring
   const circumference = 2 * Math.PI * 60; // radius = 60
   const strokeDashoffset = analysisResult 
@@ -142,15 +148,21 @@ const FraudCheck: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className={cn(commonStyles.container, themeStyles.container)}>
-        <div className={commonStyles.innerContainer}>
+      <div className={cn(commonStyles.container, themeStyles.container, 'relative overflow-hidden')}>
+        <AuroraBackground isDark={resolvedTheme === 'dark'} particleCount={45} />
+        <div className={cn(commonStyles.innerContainer, 'relative z-10')}>
           {/* Header */}
           <ScrollReveal>
             <header className={commonStyles.header}>
               <div className={cn(commonStyles.headerIcon, themeStyles.headerIcon)}>
                 <Shield size={32} />
               </div>
-              <h1 className={cn(commonStyles.title, themeStyles.title)}>AI Fraud & Spam Analyzer</h1>
+              <span className="mb-3 inline-flex justify-center">
+                <ShineBadge className={cn(resolvedTheme === 'dark' ? 'text-blue-100' : 'text-blue-700')}>
+                  <Shield size={14} /> AI-Powered
+                </ShineBadge>
+              </span>
+              <h1 className={cn(commonStyles.title, themeStyles.title)}><AnimatedGradientText>AI Fraud &amp; Spam Analyzer</AnimatedGradientText></h1>
               <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
                 Powered by advanced AI to detect fraudulent patterns, spam indicators, and suspicious content in project descriptions, messages, and user profiles.
               </p>
@@ -271,7 +283,7 @@ const FraudCheck: React.FC = () => {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
                       >
-                        {analysisResult.score}
+                        <NumberTicker value={analysisResult.score} />
                       </motion.p>
                       <span className={cn(commonStyles.scoreLabel, themeStyles.scoreLabel)}>Risk Score</span>
                     </div>

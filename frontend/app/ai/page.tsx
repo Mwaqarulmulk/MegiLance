@@ -6,16 +6,17 @@ import { useTheme } from 'next-themes';
 import { useMounted } from '@/app/hooks/useMounted';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import commonStyles from './AiHub.common.module.css';
 import lightStyles from './AiHub.light.module.css';
 import darkStyles from './AiHub.dark.module.css';
 import { motion } from 'framer-motion';
-import { 
-  MessageSquare, 
-  DollarSign, 
-  Shield, 
-  Search, 
-  FileText, 
+import {
+  MessageSquare,
+  DollarSign,
+  Shield,
+  Search,
+  FileText,
   Sparkles,
   ArrowRight,
   Bot,
@@ -29,6 +30,16 @@ import {
   Brain,
   Calculator
 } from 'lucide-react';
+import {
+  AuroraBackground,
+  ShineBadge,
+  AnimatedGradientText,
+  NumberTicker,
+  ShimmerButton,
+  MagicCard,
+  BorderBeam,
+  Meteors,
+} from '@/app/components/AI/kit';
 
 const aiFeatures = [
   {
@@ -152,9 +163,9 @@ const capabilities = [
   { icon: Layers, label: 'Instant Results', desc: 'Real-time AI processing' },
 ];
 
-const stats = [
-  { value: '11', label: 'Free AI Tools' },
-  { value: '100%', label: 'Free to Use' },
+const stats: { value: string; label: string; num?: number; suffix?: string }[] = [
+  { value: '11', label: 'Free AI Tools', num: 11 },
+  { value: '100%', label: 'Free to Use', num: 100, suffix: '%' },
   { value: 'Instant', label: 'No Sign-up Required' },
   { value: 'AI', label: 'Powered by ML' },
 ];
@@ -162,6 +173,7 @@ const stats = [
 const AIHubPage = () => {
   const { resolvedTheme } = useTheme();
   const mounted = useMounted();
+  const router = useRouter();
 
   const isDark = mounted && resolvedTheme === 'dark';
   const themeStyles = isDark ? darkStyles : lightStyles;
@@ -182,44 +194,32 @@ const AIHubPage = () => {
   return (
     <div className={cn(
       commonStyles.pageContainer,
-      themeStyles.pageContainer
+      themeStyles.pageContainer,
+      'relative'
     )}>
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-8 pb-16">
-        {/* Background Effects */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className={cn(
-            'absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-3xl',
-            isDark ? 'bg-blue-600/10' : 'bg-blue-400/10'
-          )} />
-          <div className={cn(
-            'absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-3xl',
-            isDark ? 'bg-purple-600/10' : 'bg-purple-400/10'
-          )} />
-        </div>
+        {/* Premium animated backdrop */}
+        <AuroraBackground isDark={isDark} particleCount={70} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div 
+          <motion.div
             className="text-center"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className={cn(
-              commonStyles.heroTag,
-              themeStyles.heroTag,
-              'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6'
-            )}>
-              <Bot className="w-4 h-4" />
-              <span>11 Free AI Tools — No Sign-up Required</span>
-              <Sparkles className="w-4 h-4" />
+            <div className="mb-6 flex justify-center">
+              <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}>
+                <Bot className="w-4 h-4" />
+                <span>11 Free AI Tools — No Sign-up Required</span>
+                <Sparkles className="w-4 h-4 opacity-70" />
+              </ShineBadge>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               MegiLance{' '}
-              <span className={cn(commonStyles.highlightText, themeStyles.highlightText)}>
-                AI Hub
-              </span>
+              <AnimatedGradientText>AI Hub</AnimatedGradientText>
             </h1>
             
             <p className={cn(
@@ -250,7 +250,11 @@ const AIHubPage = () => {
                   )}
                 >
                   <div className={cn("text-2xl md:text-3xl font-bold", commonStyles.highlightText, themeStyles.highlightText)}>
-                    {stat.value}
+                    {stat.num != null ? (
+                      <NumberTicker value={stat.num} suffix={stat.suffix} />
+                    ) : (
+                      stat.value
+                    )}
                   </div>
                   <div className={cn(
                     'text-sm',
@@ -265,18 +269,15 @@ const AIHubPage = () => {
 
             {/* Quick Actions */}
             <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                href="/ai/price-estimator"
-                className={cn(
-                  "group inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all hover:shadow-xl hover:-translate-y-0.5",
-                  commonStyles.btnPrimary,
-                  themeStyles.btnPrimary
-                )}
+              <ShimmerButton
+                onClick={() => router.push('/ai/price-estimator')}
+                borderRadius="14px"
+                className="group gap-2 px-6 py-3 text-base font-semibold"
               >
                 <DollarSign className="w-5 h-5" />
                 <span>Estimate a Price</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
+              </ShimmerButton>
               <Link
                 href="/ai/proposal-writer"
                 className={cn(
@@ -344,11 +345,15 @@ const AIHubPage = () => {
                   <Link
                     href={feature.href}
                     className={cn(
-                      'group block p-6 rounded-2xl border transition-all duration-300 h-full',
+                      'group relative block p-6 rounded-2xl border transition-all duration-300 h-full overflow-hidden',
                       commonStyles.featureCard,
                       themeStyles.featureCard
                     )}
                   >
+                    {/* animated border beam on hover */}
+                    <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                      <BorderBeam size={130} duration={6} borderWidth={1.5} />
+                    </div>
                     <div className="flex items-start justify-between mb-4">
                       <div className={cn(
                         'p-3 rounded-xl border',
@@ -512,6 +517,8 @@ const AIHubPage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
+            <Meteors number={14} />
+            <BorderBeam size={220} duration={10} />
             <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl shadow-[0_0_120px_var(--ml-blue-light)]" />
             <div className="absolute bottom-0 right-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl shadow-[0_0_120px_var(--ml-purple-light)]" />
             
@@ -542,17 +549,14 @@ const AIHubPage = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link
-                  href="/ai/price-estimator"
-                  className={cn(
-                    "inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-xl hover:-translate-y-0.5",
-                    commonStyles.btnPrimary,
-                    themeStyles.btnPrimary
-                  )}
+                <ShimmerButton
+                  onClick={() => router.push('/ai/price-estimator')}
+                  borderRadius="14px"
+                  className="gap-2 px-8 py-4 text-base font-semibold"
                 >
                   <DollarSign className="w-5 h-5" />
                   <span>Try Price Estimator</span>
-                </Link>
+                </ShimmerButton>
                 <Link
                   href="/ai/chatbot"
                   className={cn(

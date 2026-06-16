@@ -113,14 +113,20 @@
 
 /* ─── Tablets & small desktops (≤ 768px) ─── */
 @media (max-width: 768px) {
+  /* Anchor to the viewport (not the FAB container) so the panel can never be
+     pushed off-screen by the toggle button's height. Sits above the button and
+     is height-bounded to the visible viewport. */
   .chatbotAgent {
-    width: calc(100vw - 1rem);
-    max-width: 100%;
-    height: calc(100dvh - 100px);
-    max-height: none;
+    position: fixed;
+    top: auto;
+    left: auto;
+    right: 0.5rem;
+    bottom: calc(1rem + 100px + 0.5rem + env(safe-area-inset-bottom, 0px));
+    width: min(420px, calc(100vw - 1rem));
+    max-width: calc(100vw - 1rem);
+    height: auto;
+    max-height: calc(100dvh - 100px - 3rem - env(safe-area-inset-bottom, 0px));
     border-radius: 1rem;
-    bottom: calc(100% + 0.25rem);
-    right: 0.25rem;
   }
 
   .toggleButton {
@@ -477,9 +483,16 @@
 /* ─── Landscape orientation fix ─── */
 @media (max-height: 500px) and (orientation: landscape) {
   .chatbotAgent {
-    height: 100dvh;
-    max-height: 100dvh;
-    border-radius: 0;
+    position: fixed;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    left: auto;
+    width: min(420px, calc(100vw - 1rem));
+    max-width: calc(100vw - 1rem);
+    height: auto;
+    max-height: calc(100dvh - 1rem);
+    border-radius: 1rem;
   }
 
   .chatbotAgentHeader {

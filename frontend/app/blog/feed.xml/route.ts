@@ -11,12 +11,14 @@ interface BlogPost {
   excerpt?: string;
   created_at?: string;
   updated_at?: string;
+  published_date?: string;
   author?: string;
 }
 
 async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/blog?page=1&page_size=50&is_published=true`, {
+    // Unified MongoDB blog store (published only by default).
+    const res = await fetch(`${BACKEND_URL}/api/v1/blogs-mongo?limit=50`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
@@ -47,7 +49,7 @@ export async function GET() {
       <link>${BASE_URL}/blog/${escapeXml(post.slug)}</link>
       <guid isPermaLink="true">${BASE_URL}/blog/${escapeXml(post.slug)}</guid>
       ${post.excerpt ? `<description>${escapeXml(post.excerpt)}</description>` : ''}
-      ${post.created_at ? `<pubDate>${new Date(post.created_at).toUTCString()}</pubDate>` : ''}
+      ${post.published_date || post.created_at ? `<pubDate>${new Date(post.published_date || post.created_at!).toUTCString()}</pubDate>` : ''}
       ${post.author ? `<author>${escapeXml(post.author)}</author>` : ''}
     </item>`
     )

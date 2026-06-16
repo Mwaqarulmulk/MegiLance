@@ -13,7 +13,7 @@ import Input from '@/app/components/atoms/Input/Input';
 import { Label } from '@/app/components/atoms/Label/Label';
 import Select from '@/app/components/molecules/Select/Select';
 import { AIProposalAssistant } from '@/app/components/AI';
-import { aiApi } from '@/lib/api/ai';
+import { aiApi, aiWritingApi } from '@/lib/api/ai';
 import Button from '@/app/components/atoms/Button/Button';
 
 import common from './StepDetails.common.module.css';
@@ -63,9 +63,50 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors, job
     return (data.hourlyRate || 0) * (data.estimatedHours || 0);
   }, [data.hourlyRate, data.estimatedHours]);
 
-  const handleAIGenerate = (content: string) => {
-    updateData({ coverLetter: content });
-  };
+  // Generate or improve the cover letter via the proposal-writer AI endpoint.
+  // Returns the generated text so AIProposalAssistant can preview it before insert.
+  const handleAIGenerate = useCallback(
+    async (type: 'generate' | 'improve'): Promise<string> => {
+      let skills: string[] = job?.skills || [];
+      let yearsExperience: number | undefined;
+      try {
+        const userRaw = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+        const user = userRaw ? JSON.parse(userRaw) : null;
+        if (user) {
+          if (typeof user.skills === 'string' && user.skills.trim()) {
+            skills = user.skills.split(',').map((s: string) => s.trim()).filter(Boolean);
+          } else if (Array.isArray(user.skills) && user.skills.length) {
+            skills = user.skills;
+          }
+          yearsExperience = user.years_experience || user.years_of_experience || undefined;
+        }
+      } catch {
+        // fall back to job skills
+      }
+
+      // "Improve" rewrites the freelancer's existing draft via the LLM; "generate"
+      // writes a fresh proposal from the job context. Both use the AI writing gateway.
+      if (type === 'improve' && data.coverLetter.trim()) {
+        const res = await aiWritingApi.improveText({
+          content: data.coverLetter.trim(),
+          content_type: 'proposal',
+          improvements: ['clarity', 'persuasiveness', 'professionalism', 'grammar'],
+        });
+        return res.content || data.coverLetter;
+      }
+
+      const res = await aiWritingApi.generateProposal({
+        project_title: job?.title || 'Untitled Project',
+        project_description:
+          job?.description || 'Please review the job requirements and write a compelling proposal.',
+        user_skills: skills,
+        user_experience: yearsExperience ? `${yearsExperience} years of experience` : undefined,
+        tone: 'professional',
+      });
+      return res.content || '';
+    },
+    [job, data.coverLetter],
+  );
 
   const handleSuggestRate = useCallback(async () => {
     if (!job) return;
@@ -110,13 +151,8 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors, job
 
           <div className="mb-4">
             <AIProposalAssistant
-              {...{
-                jobDescription: job?.description || "Please review the job requirements and write a compelling proposal.",
-                jobTitle: job?.title,
-                currentProposal: data.coverLetter,
-                onGenerate: handleAIGenerate,
-                onImprove: handleAIGenerate,
-              } as any}
+              onGenerate={handleAIGenerate}
+              onInsert={(text) => updateData({ coverLetter: text })}
             />
           </div>
 

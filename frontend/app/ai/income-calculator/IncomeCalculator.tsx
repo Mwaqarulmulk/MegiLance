@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './IncomeCalculator.common.module.css';
 import lightStyles from './IncomeCalculator.light.module.css';
 import darkStyles from './IncomeCalculator.dark.module.css';
+import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
@@ -213,13 +214,17 @@ function ResultsDashboard({
   const cur = result.meta.currency;
   const healthColor = result.health.score >= 85 ? '#27ae60' : result.health.score >= 65 ? '#f39c12' : '#e81123';
 
+  useEffect(() => { celebrate(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+
   return (
     <div className={cs.resultsContainer}>
       {/* Hero */}
-      <div className={cn(cs.priceHero, ts.priceHero)}>
+      <div className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}>
         <div className={cs.priceHeroGlow} />
+        <Meteors number={10} />
+        <BorderBeam size={220} duration={9} />
         <div className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Annual Net Income</div>
-        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>{cur} {fmt(result.net_income.annual)}</div>
+        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}><NumberTicker value={result.net_income.annual} prefix={`${cur} `} /></div>
         <div className={cs.priceHeroMeta}>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>{cur} {fmt(result.net_income.monthly)}/mo</span>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>{cur} {fmt(result.effective_rates.hourly)}/hr effective</span>
@@ -388,12 +393,16 @@ export default function IncomeCalculator() {
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   return (
-    <div className={cn(cs.container, ts.container)}>
-      <header className={cs.header}>
-        <div className={cn(cs.headerBadge, ts.headerBadge)}><TrendingUp size={14} /> AI-Powered</div>
-        <h1 className={cn(cs.title, ts.title)}>Income Calculator</h1>
+    <div className={cn(cs.container, ts.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <header className={cn(cs.header, 'relative z-10')}>
+        <span className="mb-3 inline-flex justify-center">
+          <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}><TrendingUp size={14} /> AI-Powered</ShineBadge>
+        </span>
+        <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Income Calculator</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Project your freelance income, taxes, and financial health</p>
       </header>
 

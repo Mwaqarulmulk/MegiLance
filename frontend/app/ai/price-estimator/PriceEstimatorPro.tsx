@@ -17,6 +17,15 @@ import {
 import commonStyles from './PriceEstimatorPro.common.module.css';
 import lightStyles from './PriceEstimatorPro.light.module.css';
 import darkStyles from './PriceEstimatorPro.dark.module.css';
+import {
+  AuroraBackground,
+  ShineBadge,
+  AnimatedGradientText,
+  NumberTicker,
+  BorderBeam,
+  Meteors,
+  celebrate,
+} from '@/app/components/AI/kit';
 
 /* ============================================================================
    Types
@@ -258,6 +267,7 @@ const STEP_GUIDANCE: Record<number, { icon: any; title: string; text: string }> 
 export default function PriceEstimatorPro() {
   const { resolvedTheme } = useTheme();
   const t = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   /* ----- State ----- */
   const [step, setStep] = useState(0);
@@ -514,15 +524,18 @@ export default function PriceEstimatorPro() {
 
   /* ----- Render ----- */
   return (
-    <div className={cn(commonStyles.container, t.container)}>
-      <div className={commonStyles.innerContainer}>
+    <div className={cn(commonStyles.container, t.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={50} />
+      <div className={cn(commonStyles.innerContainer, 'relative z-10')}>
         {/* Header */}
         <header className={commonStyles.header}>
-          <span className={cn(commonStyles.headerBadge, t.headerBadge)}>
-            <Sparkles /> AI-Powered Estimation Engine
+          <span className="mb-3 inline-flex justify-center">
+            <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}>
+              <Sparkles className="h-4 w-4" /> AI-Powered Estimation Engine
+            </ShineBadge>
           </span>
           <h1 className={cn(commonStyles.title, t.title)}>
-            Price <span className={commonStyles.titleAccent}>Estimator Pro</span>
+            Price <AnimatedGradientText>Estimator Pro</AnimatedGradientText>
           </h1>
           <p className={cn(commonStyles.subtitle, t.subtitle)}>
             Get instant, market-aware pricing for any service — powered by real industry data across 10 categories and 100+ service types.
@@ -1278,6 +1291,12 @@ interface ResultsDashboardProps {
 
 function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardProps) {
   const { estimate, breakdown, confidence, market_comparison, factors: pricingFactors, roi_insights, timeline, regional_analysis } = result;
+
+  // Celebrate the reveal of a fresh estimate
+  useEffect(() => {
+    celebrate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const maxBreakdownCost = Math.max(...breakdown.map(b => b.cost));
 
   // Build market tier bars (relative widths)
@@ -1296,14 +1315,16 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
         transition={{ duration: 0.4 }}
       >
         <div className={cn(cs.priceHeroGlow, ts.priceHeroGlow)} />
+        <Meteors number={10} />
+        <BorderBeam size={240} duration={9} />
         <p className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Estimated Project Cost</p>
         <div className={cs.priceHeroRange}>
           <span className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
-            ${fmt(estimate.low_estimate)}
+            <NumberTicker value={estimate.low_estimate} prefix="$" />
           </span>
           <span className={cn(cs.priceHeroDivider, ts.priceHeroDivider)}>—</span>
           <span className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
-            ${fmt(estimate.high_estimate)}
+            <NumberTicker value={estimate.high_estimate} prefix="$" />
           </span>
         </div>
         <div className={cs.priceHeroMeta}>

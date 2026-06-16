@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './ExpenseTaxCalculator.common.module.css';
 import lightStyles from './ExpenseTaxCalculator.light.module.css';
 import darkStyles from './ExpenseTaxCalculator.dark.module.css';
+import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
@@ -176,13 +177,17 @@ function ResultsDashboard({
 }: { cs: typeof commonStyles; ts: typeof lightStyles; result: TaxResult; fmt: (n: number) => string }) {
   const cur = result.meta.currency;
 
+  useEffect(() => { celebrate(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+
   return (
     <div className={cs.resultsContainer}>
       {/* Hero */}
-      <div className={cn(cs.priceHero, ts.priceHero)}>
+      <div className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}>
         <div className={cs.priceHeroGlow} />
+        <Meteors number={10} />
+        <BorderBeam size={220} duration={9} />
         <div className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Total Tax Liability</div>
-        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>{cur} {fmt(result.taxes.total_tax)}</div>
+        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}><NumberTicker value={result.taxes.total_tax} prefix={`${cur} `} /></div>
         <div className={cs.priceHeroMeta}>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>{result.taxes.effective_rate}% effective rate</span>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>{result.taxes.marginal_rate}% marginal rate</span>
@@ -361,12 +366,16 @@ export default function ExpenseTaxCalculator() {
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   return (
-    <div className={cn(cs.container, ts.container)}>
-      <header className={cs.header}>
-        <div className={cn(cs.headerBadge, ts.headerBadge)}><Receipt size={14} /> AI-Powered</div>
-        <h1 className={cn(cs.title, ts.title)}>Expense & Tax Calculator</h1>
+    <div className={cn(cs.container, ts.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <header className={cn(cs.header, 'relative z-10')}>
+        <span className="mb-3 inline-flex justify-center">
+          <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}><Receipt size={14} /> AI-Powered</ShineBadge>
+        </span>
+        <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Expense & Tax Calculator</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Track expenses, deductions, and estimate your tax obligations</p>
       </header>
 

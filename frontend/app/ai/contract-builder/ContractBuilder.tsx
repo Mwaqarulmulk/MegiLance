@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './ContractBuilder.common.module.css';
 import lightStyles from './ContractBuilder.light.module.css';
 import darkStyles from './ContractBuilder.dark.module.css';
+import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate, sideCannons } from '@/app/components/AI/kit';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -300,11 +301,18 @@ function ResultsDashboard({
 
   const scoreColor = result.completeness.score >= 85 ? '#27ae60' : result.completeness.score >= 65 ? '#f39c12' : '#e81123';
 
+  useEffect(() => {
+    if (result.completeness.score >= 85) sideCannons(); else celebrate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={cs.resultsContainer}>
       {/* Hero */}
-      <div className={cn(cs.priceHero, ts.priceHero)}>
+      <div className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}>
         <div className={cs.priceHeroGlow} />
+        <Meteors number={10} />
+        <BorderBeam size={220} duration={9} />
         <div className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Contract Ready</div>
         <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>{result.contract.type_label}</div>
         <div className={cs.priceHeroMeta}>
@@ -327,7 +335,7 @@ function ResultsDashboard({
             <div className={cs.scoreBarTrack}>
               <div className={cs.scoreBarFill} style={{ width: `${result.completeness.score}%`, background: scoreColor }} />
             </div>
-            <span className={cn(cs.scoreValue, ts.scoreValue)}>{result.completeness.score}%</span>
+            <span className={cn(cs.scoreValue, ts.scoreValue)}><NumberTicker value={result.completeness.score} suffix="%" /></span>
           </div>
           {result.completeness.factors.map((f, i) => (
             <div key={i} className={cn(cs.factorRow, ts.factorRow)}>
@@ -507,14 +515,18 @@ export default function ContractBuilder() {
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   return (
-    <div className={cn(cs.container, ts.container)}>
-      <header className={cs.header}>
-        <div className={cn(cs.headerBadge, ts.headerBadge)}>
-          <Scale size={14} /> AI-Powered
-        </div>
-        <h1 className={cn(cs.title, ts.title)}>Contract Builder</h1>
+    <div className={cn(cs.container, ts.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <header className={cn(cs.header, 'relative z-10')}>
+        <span className="mb-3 inline-flex justify-center">
+          <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}>
+            <Scale size={14} /> AI-Powered
+          </ShineBadge>
+        </span>
+        <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Contract Builder</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Generate professional contracts, NDAs, and agreements in minutes</p>
       </header>
 

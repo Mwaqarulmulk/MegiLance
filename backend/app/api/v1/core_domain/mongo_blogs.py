@@ -4,14 +4,85 @@ Serves 100 SEO blog articles from MongoDB with full search, filter, and statisti
 """
 
 import os
+import re
 import logging
-from typing import Optional
+from datetime import datetime, timezone
+from typing import Optional, List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
+
+from app.core.security import require_admin
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+def _slugify(text: str) -> str:
+    return re.sub(r"(^-|-$)+", "", re.sub(r"[^a-z0-9]+", "-", (text or "").lower()))
+
+
+def _reading_time(content: str) -> int:
+    words = len(re.findall(r"\w+", content or ""))
+    return max(1, round(words / 200))
+
+
+class BlogUpsert(BaseModel):
+    title: str
+    slug: Optional[str] = None
+    excerpt: str = ""
+    content: str = ""
+    image_url: Optional[str] = ""
+    author: str = "MegiLance"
+    tags: List[str] = []
+    is_published: bool = False
+    is_news_trend: bool = False
+
+
+def _build_doc(data: BlogUpsert, existing: Optional[dict] = None) -> dict:
+    """Build a unified blog doc holding BOTH admin (CMS) and public (SEO) render fields,
+    so one collection (megilance.blogs) serves the public page and admin CMS."""
+    now = datetime.now(timezone.utc).isoformat()
+    slug = (data.slug or "").strip() or _slugify(data.title)
+    rt = _reading_time(data.content)
+    category = data.tags[0] if data.tags else (existing or {}).get("category", "General")
+    word_count = len(re.findall(r"\w+", data.content or ""))
+    doc = {
+        "_id": slug,
+        "slug": slug,
+        "title": data.title,
+        "excerpt": data.excerpt,
+        "content": data.content,
+        # admin/CMS fields
+        "author": data.author,
+        "tags": data.tags,
+        "image_url": data.image_url or "",
+        "is_published": data.is_published,
+        "is_news_trend": data.is_news_trend,
+        "views": (existing or {}).get("views", (existing or {}).get("view_count", 0)),
+        "reading_time": rt,
+        # public/SEO render fields (kept in sync so the public page renders CMS posts)
+        "status": "published" if data.is_published else "draft",
+        "category": category,
+        "featured_image_url": data.image_url or "",
+        "featured_image_webp_url": data.image_url or "",
+        "featured_image_alt": data.title,
+        "seo_title": (existing or {}).get("seo_title", data.title),
+        "meta_description": data.excerpt,
+        "focus_keyword": (existing or {}).get("focus_keyword", data.tags[0] if data.tags else ""),
+        "secondary_keywords": data.tags,
+        "reading_time_minutes": rt,
+        "view_count": (existing or {}).get("view_count", 0),
+        "word_count": word_count,
+        "seo_score": (existing or {}).get("seo_score", 70),
+        "internal_links": (existing or {}).get("internal_links", []),
+        "related_blog_slugs": (existing or {}).get("related_blog_slugs", []),
+        "published_date": (existing or {}).get("published_date", now),
+        "created_at": (existing or {}).get("created_at", now),
+        "updated_at": now,
+    }
+    return doc
 
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
 _client = None
@@ -48,13 +119,15 @@ def _doc(d: dict) -> dict:
 @router.get("")
 async def list_blogs(
     skip: int     = Query(0, ge=0),
-    limit: int    = Query(10, ge=1, le=50),
+    limit: int    = Query(10, ge=1, le=100),
     category: Optional[str] = None,
     keyword: Optional[str]  = None,
     sort_by: str  = Query("published_date", enum=["published_date", "view_count", "seo_score"]),
+    include_drafts: bool = Query(False, description="Admin only — include unpublished drafts"),
 ):
     col   = get_collection()
-    query = {}
+    # Public callers only see published posts; the admin CMS passes include_drafts=true.
+    query: dict = {} if include_drafts else {"status": {"$ne": "draft"}}
     if category:
         query["category"] = {"$regex": category, "$options": "i"}
     if keyword:
@@ -77,6 +150,46 @@ async def list_blogs(
         "limit":  limit,
         "pages":  max(1, -(-total // limit)),  # ceil division
     }
+
+
+# ── Create blog (admin) ──────────────────────────────────────────────────────────
+
+@router.post("", status_code=201)
+async def create_blog(data: BlogUpsert, current_user=Depends(require_admin)):
+    col = get_collection()
+    doc = _build_doc(data)
+    if col.find_one({"_id": doc["_id"]}, {"_id": 1}):
+        raise HTTPException(status_code=409, detail=f"A blog with slug '{doc['_id']}' already exists.")
+    col.insert_one(doc)
+    return _doc(doc)
+
+
+# ── Update blog (admin) ──────────────────────────────────────────────────────────
+
+@router.put("/{slug}")
+async def update_blog(slug: str, data: BlogUpsert, current_user=Depends(require_admin)):
+    col = get_collection()
+    existing = col.find_one({"_id": slug}) or col.find_one({"slug": slug})
+    if not existing:
+        raise HTTPException(status_code=404, detail=f"Blog '{slug}' not found")
+    # Preserve the original slug/_id so the URL stays stable on edit.
+    data.slug = existing["slug"]
+    doc = _build_doc(data, existing=existing)
+    col.replace_one({"_id": existing["_id"]}, doc)
+    return _doc(doc)
+
+
+# ── Delete blog (admin) ──────────────────────────────────────────────────────────
+
+@router.delete("/{slug}", status_code=204)
+async def delete_blog(slug: str, current_user=Depends(require_admin)):
+    col = get_collection()
+    result = col.delete_one({"_id": slug})
+    if result.deleted_count == 0:
+        result = col.delete_one({"slug": slug})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail=f"Blog '{slug}' not found")
+    return None
 
 
 # ── Get single blog ────────────────────────────────────────────────────────────

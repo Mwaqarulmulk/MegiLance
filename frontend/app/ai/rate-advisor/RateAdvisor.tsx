@@ -14,6 +14,15 @@ import commonStyles from './RateAdvisor.common.module.css';
 import lightStyles from './RateAdvisor.light.module.css';
 import darkStyles from './RateAdvisor.dark.module.css';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
+import {
+  AuroraBackground,
+  ShineBadge,
+  AnimatedGradientText,
+  NumberTicker,
+  BorderBeam,
+  Meteors,
+  celebrate,
+} from '@/app/components/AI/kit';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -254,13 +263,22 @@ function ResultsDashboard({
 }: { cs: typeof commonStyles; ts: typeof lightStyles; result: RateResult; fmt: (n: number) => string }) {
   const cur = result.rates.currency;
 
+  useEffect(() => {
+    celebrate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={cs.resultsContainer}>
       {/* Hero */}
-      <div className={cn(cs.priceHero, ts.priceHero)}>
+      <div className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}>
         <div className={cs.priceHeroGlow} />
+        <Meteors number={10} />
+        <BorderBeam size={220} duration={9} />
         <div className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Recommended Rate</div>
-        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>${fmt(result.rates.recommended)}/hr</div>
+        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
+          <NumberTicker value={result.rates.recommended} prefix="$" decimals={2} />/hr
+        </div>
         <div className={cs.priceHeroMeta}>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>
             Min ${fmt(result.rates.minimum)}
@@ -440,12 +458,18 @@ export default function RateAdvisor() {
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   return (
-    <div className={cn(cs.container, ts.container)}>
-      <header className={cs.header}>
-        <div className={cn(cs.headerBadge, ts.headerBadge)}><DollarSign size={14} /> AI-Powered</div>
-        <h1 className={cn(cs.title, ts.title)}>Rate Advisor</h1>
+    <div className={cn(cs.container, ts.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <header className={cn(cs.header, 'relative z-10')}>
+        <span className="mb-3 inline-flex justify-center">
+          <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}>
+            <DollarSign size={14} /> AI-Powered
+          </ShineBadge>
+        </span>
+        <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Rate Advisor</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Get personalized rate recommendations based on real market data</p>
       </header>
 

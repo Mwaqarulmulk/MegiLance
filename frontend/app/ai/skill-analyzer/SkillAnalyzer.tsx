@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import commonStyles from './SkillAnalyzer.common.module.css';
 import lightStyles from './SkillAnalyzer.light.module.css';
 import darkStyles from './SkillAnalyzer.dark.module.css';
+import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate, sideCannons } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 
 /* ------------------------------------------------------------------ */
@@ -233,13 +234,20 @@ function ProcessingView({ cs, ts }: { cs: typeof commonStyles; ts: typeof lightS
 function ResultsDashboard({
   cs, ts, result,
 }: { cs: typeof commonStyles; ts: typeof lightStyles; result: AnalysisResult }) {
+  useEffect(() => {
+    if (result.profile_score.score >= 80) sideCannons(); else celebrate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={cs.resultsContainer}>
       {/* Hero - Profile Score */}
-      <div className={cn(cs.priceHero, ts.priceHero)}>
+      <div className={cn(cs.priceHero, ts.priceHero, 'relative overflow-hidden')}>
         <div className={cs.priceHeroGlow} />
+        <Meteors number={10} />
+        <BorderBeam size={220} duration={9} />
         <div className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Profile Score</div>
-        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}>{result.profile_score.score}/100</div>
+        <div className={cn(cs.priceHeroValue, ts.priceHeroValue)}><NumberTicker value={result.profile_score.score} />/100</div>
         <div className={cs.priceHeroMeta}>
           <span className={cn(cs.priceHeroMetaItem, ts.priceHeroMetaItem)}>
             <Award size={14} /> {result.profile_score.label}
@@ -438,12 +446,16 @@ export default function SkillAnalyzer() {
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const isDark = resolvedTheme !== 'light';
 
   return (
-    <div className={cn(cs.container, ts.container)}>
-      <header className={cs.header}>
-        <div className={cn(cs.headerBadge, ts.headerBadge)}><Brain size={14} /> AI-Powered</div>
-        <h1 className={cn(cs.title, ts.title)}>Skill Analyzer</h1>
+    <div className={cn(cs.container, ts.container, 'relative overflow-hidden')}>
+      <AuroraBackground isDark={isDark} particleCount={45} />
+      <header className={cn(cs.header, 'relative z-10')}>
+        <span className="mb-3 inline-flex justify-center">
+          <ShineBadge className={cn(isDark ? 'text-blue-100' : 'text-blue-700')}><Brain size={14} /> AI-Powered</ShineBadge>
+        </span>
+        <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Skill Analyzer</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Analyze your skills against 2025 market demand and find high-ROI gaps</p>
       </header>
 
