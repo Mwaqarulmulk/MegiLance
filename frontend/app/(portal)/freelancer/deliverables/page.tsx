@@ -61,6 +61,7 @@ const mockDeliverables: Deliverable[] = [
     contractTitle: 'E-Commerce Platform Development',
     title: 'Final Design System',
     description: 'Complete design system with component library, color tokens, and typography scale.',
+    submissionNotes: 'Complete design system delivered.',
     status: 'approved',
     files: [
       { id: 'f3', name: 'design-system-v3.figma', size: 5600000, type: 'application/octet-stream', url: '#' },

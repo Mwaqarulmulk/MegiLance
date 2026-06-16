@@ -16,7 +16,7 @@ interface Contract {
   status: 'pending_signature' | 'active' | 'paused' | 'completed' | 'cancelled' | 'disputed';
   totalAmount: number;
   currency: string;
-  paymentType: 'fixed' | 'hourly' | 'retainer';
+  paymentType: 'fixed' | 'hourly' | 'retainer' | 'milestone';
   startDate: string;
   endDate: string;
   milestones: {

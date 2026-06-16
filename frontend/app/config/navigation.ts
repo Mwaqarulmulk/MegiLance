@@ -422,7 +422,6 @@ export const breadcrumbConfig: Record<string, string[]> = {
   "/client/escrow": ["Client", "Escrow"],
   "/client/wallet": ["Client", "Wallet"],
   "/client/analytics": ["Client", "Analytics"],
-  "/client/invoices": ["Client", "Invoices"],
   "/client/hire": ["Client", "Hire"],
   "/client/search": ["Client", "Talent Search"],
   "/client/freelancers": ["Client", "Browse Freelancers"],
