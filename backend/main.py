@@ -83,10 +83,10 @@ async def lifespan(app: FastAPI):
     # Startup
     try:
         result = await execute_query_async("SELECT 1")
-            if result:
-                logger.info("startup.database_initialized via Turso HTTP API")
-            else:
-                logger.warning("startup.turso_http_test_failed")
+        if result:
+            logger.info("startup.database_initialized via Turso HTTP API")
+        else:
+            logger.warning("startup.turso_http_test_failed")
         logger.info("startup.mongodb_disabled - using Turso/SQLite only")
 
         # Initialize persistent token blacklist table and cleanup expired entries

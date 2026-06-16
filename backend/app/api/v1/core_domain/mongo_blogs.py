@@ -87,10 +87,11 @@ def _build_doc(data: BlogUpsert, existing: Optional[dict] = None) -> dict:
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
 _client = None
 _collection = None
+_mongo_available = None  # Track if MongoDB was ever successfully connected
 
 
 def get_collection():
-    global _client, _collection
+    global _client, _collection, _mongo_available
     if _collection is not None:
         return _collection
     try:
@@ -98,13 +99,12 @@ def get_collection():
         _client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=3000)
         _client.admin.command("ping")
         _collection = _client["megilance"]["blogs"]
+        _mongo_available = True
         return _collection
     except Exception as e:
-        logger.error(f"MongoDB connection failed: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Blog database unavailable. Please ensure MongoDB is running.",
-        )
+        logger.warning(f"MongoDB connection failed: {e} - using fallback blog data")
+        _mongo_available = False
+        return None
 
 
 def _doc(d: dict) -> dict:
@@ -112,6 +112,147 @@ def _doc(d: dict) -> dict:
     d["id"] = str(d.get("_id", ""))
     d.pop("_id", None)
     return d
+
+
+# ── Fallback blog data when MongoDB is unavailable ──────────────────────────────
+
+FALLBACK_BLOGS = [
+    {
+        "_id": "ultimate-guide-freelancing-2026",
+        "slug": "ultimate-guide-freelancing-2026",
+        "title": "The Ultimate Guide to Freelancing in 2026",
+        "excerpt": "Everything you need to know about starting and growing your freelance career in 2026, from finding clients to managing finances.",
+        "content": "<p>Freelancing has become one of the most popular career paths in 2026. With the rise of remote work and AI-powered platforms like MegiLance, it's easier than ever to find high-paying clients and build a successful freelance business.</p>",
+        "author": "MegiLance Team",
+        "tags": ["Freelancing", "Career", "Remote Work"],
+        "image_url": "/images/blog/freelancing-guide.jpg",
+        "status": "published",
+        "category": "Career",
+        "featured_image_url": "/images/blog/freelancing-guide.jpg",
+        "seo_title": "Ultimate Freelancing Guide 2026 | MegiLance",
+        "meta_description": "Complete guide to freelancing in 2026. Learn how to find clients, set rates, and grow your freelance business.",
+        "focus_keyword": "freelancing 2026",
+        "secondary_keywords": ["freelance tips", "remote work", "freelance career"],
+        "reading_time_minutes": 8,
+        "view_count": 1250,
+        "word_count": 1800,
+        "seo_score": 85,
+        "published_date": "2026-01-15T10:00:00Z",
+        "created_at": "2026-01-15T10:00:00Z",
+        "updated_at": "2026-01-15T10:00:00Z",
+        "is_published": True,
+        "views": 1250,
+        "reading_time": 8,
+    },
+    {
+        "_id": "ai-powered-freelance-matching",
+        "slug": "ai-powered-freelance-matching",
+        "title": "How AI is Revolutionizing Freelance Matching",
+        "excerpt": "Discover how artificial intelligence is transforming the way freelancers and clients find each other on modern platforms.",
+        "content": "<p>Artificial Intelligence is changing the freelancing landscape. Smart matching algorithms now connect freelancers with projects that perfectly match their skills and experience.</p>",
+        "author": "MegiLance Team",
+        "tags": ["AI", "Technology", "Freelancing"],
+        "image_url": "/images/blog/ai-matching.jpg",
+        "status": "published",
+        "category": "Technology",
+        "featured_image_url": "/images/blog/ai-matching.jpg",
+        "seo_title": "AI-Powered Freelance Matching | MegiLance Blog",
+        "meta_description": "Learn how AI matching technology connects freelancers with perfect projects.",
+        "focus_keyword": "AI freelance matching",
+        "secondary_keywords": ["artificial intelligence", "freelance platform", "smart matching"],
+        "reading_time_minutes": 6,
+        "view_count": 890,
+        "word_count": 1200,
+        "seo_score": 82,
+        "published_date": "2026-01-10T10:00:00Z",
+        "created_at": "2026-01-10T10:00:00Z",
+        "updated_at": "2026-01-10T10:00:00Z",
+        "is_published": True,
+        "views": 890,
+        "reading_time": 6,
+    },
+    {
+        "_id": "escrow-payments-freelancing",
+        "slug": "escrow-payments-freelancing",
+        "title": "Why Escrow Payments Are Essential for Freelancers",
+        "excerpt": "Learn how escrow payments protect both freelancers and clients, ensuring secure transactions on every project.",
+        "content": "<p>Escrow payments are the backbone of secure freelance transactions. They protect both parties by ensuring funds are available before work begins.</p>",
+        "author": "MegiLance Team",
+        "tags": ["Payments", "Security", "Freelancing"],
+        "image_url": "/images/blog/escrow-payments.jpg",
+        "status": "published",
+        "category": "Finance",
+        "featured_image_url": "/images/blog/escrow-payments.jpg",
+        "seo_title": "Escrow Payments for Freelancers | MegiLance",
+        "meta_description": "Understanding escrow payments and how they protect freelancers and clients.",
+        "focus_keyword": "escrow payments freelancing",
+        "secondary_keywords": ["secure payments", "escrow", "freelance finance"],
+        "reading_time_minutes": 5,
+        "view_count": 670,
+        "word_count": 950,
+        "seo_score": 78,
+        "published_date": "2026-01-05T10:00:00Z",
+        "created_at": "2026-01-05T10:00:00Z",
+        "updated_at": "2026-01-05T10:00:00Z",
+        "is_published": True,
+        "views": 670,
+        "reading_time": 5,
+    },
+    {
+        "_id": "top-freelance-skills-2026",
+        "slug": "top-freelance-skills-2026",
+        "title": "Top 10 Freelance Skills in Demand for 2026",
+        "excerpt": "From AI development to UX design, these are the most sought-after freelance skills that will earn you top dollar in 2026.",
+        "content": "<p>The freelance job market is evolving rapidly. Here are the top skills that clients are looking for in 2026.</p>",
+        "author": "MegiLance Team",
+        "tags": ["Skills", "Career", "Trends"],
+        "image_url": "/images/blog/top-skills.jpg",
+        "status": "published",
+        "category": "Career",
+        "featured_image_url": "/images/blog/top-skills.jpg",
+        "seo_title": "Top Freelance Skills 2026 | MegiLance Blog",
+        "meta_description": "Discover the most in-demand freelance skills for 2026 and boost your earning potential.",
+        "focus_keyword": "freelance skills 2026",
+        "secondary_keywords": ["in-demand skills", "freelance career", "top skills"],
+        "reading_time_minutes": 7,
+        "view_count": 2100,
+        "word_count": 1500,
+        "seo_score": 90,
+        "published_date": "2026-01-01T10:00:00Z",
+        "created_at": "2026-01-01T10:00:00Z",
+        "updated_at": "2026-01-01T10:00:00Z",
+        "is_published": True,
+        "views": 2100,
+        "reading_time": 7,
+    },
+    {
+        "_id": "building-freelance-portfolio",
+        "slug": "building-freelance-portfolio",
+        "title": "How to Build a Portfolio That Wins Clients",
+        "excerpt": "Your portfolio is your first impression. Learn how to create a stunning portfolio that showcases your best work and attracts high-paying clients.",
+        "content": "<p>A strong portfolio is essential for freelance success. It's the first thing clients see when evaluating your expertise.</p>",
+        "author": "MegiLance Team",
+        "tags": ["Portfolio", "Marketing", "Career"],
+        "image_url": "/images/blog/portfolio.jpg",
+        "status": "published",
+        "category": "Career",
+        "featured_image_url": "/images/blog/portfolio.jpg",
+        "seo_title": "Build a Winning Freelance Portfolio | MegiLance",
+        "meta_description": "Tips for creating a freelance portfolio that attracts clients and wins projects.",
+        "focus_keyword": "freelance portfolio",
+        "secondary_keywords": ["portfolio tips", "client attraction", "freelance marketing"],
+        "reading_time_minutes": 6,
+        "view_count": 1450,
+        "word_count": 1100,
+        "seo_score": 83,
+        "published_date": "2025-12-28T10:00:00Z",
+        "created_at": "2025-12-28T10:00:00Z",
+        "updated_at": "2025-12-28T10:00:00Z",
+        "is_published": True,
+        "views": 1450,
+        "reading_time": 6,
+    },
+]
 
 
 # ── List blogs ─────────────────────────────────────────────────────────────────
@@ -125,7 +266,30 @@ async def list_blogs(
     sort_by: str  = Query("published_date", enum=["published_date", "view_count", "seo_score"]),
     include_drafts: bool = Query(False, description="Admin only — include unpublished drafts"),
 ):
-    col   = get_collection()
+    col = get_collection()
+    
+    # If MongoDB is not available, return fallback data
+    if col is None:
+        blogs = FALLBACK_BLOGS.copy()
+        if not include_drafts:
+            blogs = [b for b in blogs if b.get("status") != "draft"]
+        if category:
+            blogs = [b for b in blogs if category.lower() in (b.get("category", "") or "").lower()]
+        if keyword:
+            kw = keyword.lower()
+            blogs = [b for b in blogs if kw in (b.get("title", "") or "").lower() or kw in (b.get("focus_keyword", "") or "").lower()]
+        
+        total = len(blogs)
+        blogs = blogs[skip:skip + limit]
+        
+        return {
+            "items":  [_doc(d) for d in blogs],
+            "total":  total,
+            "skip":   skip,
+            "limit":  limit,
+            "pages":  max(1, -(-total // limit)) if total > 0 else 1,
+        }
+    
     # Public callers only see published posts; the admin CMS passes include_drafts=true.
     query: dict = {} if include_drafts else {"status": {"$ne": "draft"}}
     if category:
@@ -157,6 +321,11 @@ async def list_blogs(
 @router.post("", status_code=201)
 async def create_blog(data: BlogUpsert, current_user=Depends(require_admin)):
     col = get_collection()
+    if col is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Blog database unavailable. MongoDB is required for creating blog posts.",
+        )
     doc = _build_doc(data)
     if col.find_one({"_id": doc["_id"]}, {"_id": 1}):
         raise HTTPException(status_code=409, detail=f"A blog with slug '{doc['_id']}' already exists.")
@@ -169,6 +338,11 @@ async def create_blog(data: BlogUpsert, current_user=Depends(require_admin)):
 @router.put("/{slug}")
 async def update_blog(slug: str, data: BlogUpsert, current_user=Depends(require_admin)):
     col = get_collection()
+    if col is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Blog database unavailable. MongoDB is required for updating blog posts.",
+        )
     existing = col.find_one({"_id": slug}) or col.find_one({"slug": slug})
     if not existing:
         raise HTTPException(status_code=404, detail=f"Blog '{slug}' not found")
@@ -184,6 +358,11 @@ async def update_blog(slug: str, data: BlogUpsert, current_user=Depends(require_
 @router.delete("/{slug}", status_code=204)
 async def delete_blog(slug: str, current_user=Depends(require_admin)):
     col = get_collection()
+    if col is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Blog database unavailable. MongoDB is required for deleting blog posts.",
+        )
     result = col.delete_one({"_id": slug})
     if result.deleted_count == 0:
         result = col.delete_one({"slug": slug})
@@ -197,6 +376,16 @@ async def delete_blog(slug: str, current_user=Depends(require_admin)):
 @router.get("/{slug}")
 async def get_blog(slug: str):
     col = get_collection()
+    
+    # If MongoDB is not available, search fallback data
+    if col is None:
+        blog = next((b for b in FALLBACK_BLOGS if b.get("slug") == slug or b.get("_id") == slug), None)
+        if not blog:
+            raise HTTPException(status_code=404, detail=f"Blog '{slug}' not found")
+        blog_data = _doc(blog)
+        blog_data["related_blogs"] = []
+        return blog_data
+    
     doc = col.find_one_and_update(
         {"slug": slug},
         {"$inc": {"view_count": 1}},
@@ -228,7 +417,28 @@ async def search_blogs(
     limit: int = Query(10, ge=1, le=30),
     skip:  int = Query(0, ge=0),
 ):
-    col   = get_collection()
+    col = get_collection()
+    
+    # If MongoDB is not available, search fallback data
+    if col is None:
+        kw = q.lower()
+        blogs = [
+            b for b in FALLBACK_BLOGS
+            if kw in (b.get("title", "") or "").lower()
+            or kw in (b.get("focus_keyword", "") or "").lower()
+            or kw in (b.get("meta_description", "") or "").lower()
+            or any(kw in (k or "").lower() for k in b.get("secondary_keywords", []))
+        ]
+        total = len(blogs)
+        blogs = blogs[skip:skip + limit]
+        return {
+            "query": q,
+            "items": [_doc(d) for d in blogs],
+            "total": total,
+            "skip": skip,
+            "limit": limit,
+        }
+    
     query = {
         "$or": [
             {"title":             {"$regex": q, "$options": "i"}},
@@ -260,7 +470,21 @@ async def blogs_by_category(
     skip:  int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=50),
 ):
-    col   = get_collection()
+    col = get_collection()
+    
+    # If MongoDB is not available, filter fallback data
+    if col is None:
+        blogs = [b for b in FALLBACK_BLOGS if (b.get("category", "") or "").lower() == category.lower()]
+        total = len(blogs)
+        blogs = blogs[skip:skip + limit]
+        return {
+            "category": category,
+            "items": [_doc(d) for d in blogs],
+            "total": total,
+            "skip": skip,
+            "limit": limit,
+        }
+    
     query = {"category": {"$regex": f"^{category}$", "$options": "i"}}
     total = col.count_documents(query)
     docs  = list(col.find(query, {"content": 0, "schema_jsonld": 0})
@@ -281,6 +505,16 @@ async def blogs_by_category(
 @router.get("/categories/list")
 async def list_categories():
     col = get_collection()
+    
+    # If MongoDB is not available, derive categories from fallback data
+    if col is None:
+        cats = {}
+        for b in FALLBACK_BLOGS:
+            cat = b.get("category", "General")
+            cats[cat] = cats.get(cat, 0) + 1
+        result = [{"name": k, "count": v} for k, v in sorted(cats.items(), key=lambda x: -x[1])]
+        return {"categories": result, "total": len(result)}
+    
     pipeline = [
         {"$group": {"_id": "$category", "count": {"$sum": 1}}},
         {"$sort":  {"count": -1}},
@@ -295,6 +529,24 @@ async def list_categories():
 @router.get("/stats/overview")
 async def stats_overview():
     col = get_collection()
+    
+    # If MongoDB is not available, return stats from fallback data
+    if col is None:
+        total = len(FALLBACK_BLOGS)
+        views = sum(b.get("view_count", 0) for b in FALLBACK_BLOGS)
+        avg_rt = round(sum(b.get("reading_time_minutes", 1) for b in FALLBACK_BLOGS) / max(total, 1), 1)
+        cats = {}
+        for b in FALLBACK_BLOGS:
+            cat = b.get("category", "General")
+            cats[cat] = cats.get(cat, 0) + 1
+        top_cats = [{"name": k, "count": v} for k, v in sorted(cats.items(), key=lambda x: -x[1])[:5]]
+        return {
+            "total_blogs": total,
+            "total_views": views,
+            "avg_reading_time": avg_rt,
+            "top_categories": top_cats,
+        }
+    
     total       = col.count_documents({})
     total_views = col.aggregate([{"$group": {"_id": None, "v": {"$sum": "$view_count"}}}])
     total_views = list(total_views)

@@ -23,7 +23,6 @@ from .v1.core_domain import (
     audit,
     availability_calendar,
     backup_restore,
-    blog,
     branding,
     error_reports,
     client,
@@ -550,3 +549,19 @@ api_router.include_router(video_calls.router, prefix="/video", tags=["video-call
 
 # Payout Methods - Payment withdrawal methods
 api_router.include_router(payout_methods.router, prefix="/payout-methods", tags=["payout-methods"])
+
+# ============================================================================
+# ESSENTIAL OPERATIONS - PDF Generation, E-Signatures, Deliverables
+# ============================================================================
+
+# PDF Generation - Invoice, Contract, Proposal, Receipt PDFs
+from app.api.routers.pdf_routes import router as pdf_router
+api_router.include_router(pdf_router, prefix="/pdf", tags=["pdf-generation"])
+
+# E-Signatures - Document signing workflow
+from app.api.routers.signature_routes import router as signature_router
+api_router.include_router(signature_router, prefix="/signatures", tags=["e-signatures"])
+
+# Deliverables - Milestone file submission and approval
+from app.api.routers.deliverable_routes import router as deliverable_router
+api_router.include_router(deliverable_router, prefix="/deliverables", tags=["deliverables"])
