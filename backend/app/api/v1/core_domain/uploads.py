@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user
+from app.services.storage import store_bytes
 
 router = APIRouter()
 
@@ -54,14 +55,8 @@ async def upload_avatar(
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File too large (max 10MB)")
 
-    avatar_dir = os.path.join(UPLOAD_DIR, "avatars")
-    os.makedirs(avatar_dir, exist_ok=True)
-    full_path = _safe_path(avatar_dir, file.filename)
-
-    with open(full_path, "wb") as f:
-        f.write(contents)
-
-    url = f"/uploads/avatars/{os.path.basename(full_path)}"
+    key = f"avatars/{uuid.uuid4().hex[:12]}.{_sanitize_extension(file.filename)}"
+    url = store_bytes(contents, key, file.content_type or "image/jpeg")
     return {"message": "Avatar uploaded", "url": url, "file_url": url, "path": url}
 
 
@@ -77,14 +72,8 @@ async def upload_document(
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File too large (max 10MB)")
 
-    doc_dir = os.path.join(UPLOAD_DIR, "documents")
-    os.makedirs(doc_dir, exist_ok=True)
-    full_path = _safe_path(doc_dir, file.filename)
-
-    with open(full_path, "wb") as f:
-        f.write(contents)
-
-    url = f"/uploads/documents/{os.path.basename(full_path)}"
+    key = f"documents/{uuid.uuid4().hex[:12]}.{_sanitize_extension(file.filename)}"
+    url = store_bytes(contents, key, file.content_type or "application/pdf")
     return {"message": "Document uploaded", "url": url, "file_url": url}
 
 
@@ -100,12 +89,6 @@ async def upload_project_file(
 
     # Sanitize project_id — only allow alphanumeric and hyphens
     safe_project_id = re.sub(r'[^a-zA-Z0-9\-]', '', project_id)[:50]
-    project_dir = os.path.join(UPLOAD_DIR, "projects", safe_project_id)
-    os.makedirs(project_dir, exist_ok=True)
-    full_path = _safe_path(project_dir, file.filename)
-
-    with open(full_path, "wb") as f:
-        f.write(contents)
-
-    url = f"/uploads/projects/{safe_project_id}/{os.path.basename(full_path)}"
+    key = f"projects/{safe_project_id}/{uuid.uuid4().hex[:12]}.{_sanitize_extension(file.filename)}"
+    url = store_bytes(contents, key, file.content_type or "application/octet-stream")
     return {"message": "File uploaded", "url": url, "file_url": url}

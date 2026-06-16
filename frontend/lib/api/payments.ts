@@ -202,14 +202,14 @@ export const payoutMethodsApi = {
 };
 
 export const multiCurrencyApi = {
-  getSupportedCurrencies: () => apiFetch("/multi-currency/currencies"),
+  getSupportedCurrencies: () => apiFetch("/multicurrency/currencies"),
   getExchangeRates: (baseCurrency = "USD") =>
-    apiFetch(`/multi-currency/rates?base=${baseCurrency}`),
+    apiFetch(`/multicurrency/rates?base=${baseCurrency}`),
   convert: (amount: number, from: string, to: string) =>
-    apiFetch(`/multi-currency/convert?amount=${amount}&from=${from}&to=${to}`),
-  getPreferredCurrency: () => apiFetch("/multi-currency/preference"),
+    apiFetch(`/multicurrency/convert?amount=${amount}&from=${from}&to=${to}`),
+  getPreferredCurrency: () => apiFetch("/multicurrency/preference"),
   setPreferredCurrency: (currency: string) =>
-    apiFetch("/multi-currency/preference", {
+    apiFetch("/multicurrency/preference", {
       method: "PUT",
       body: JSON.stringify({ currency }),
     }),

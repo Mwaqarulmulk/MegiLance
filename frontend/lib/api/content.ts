@@ -75,13 +75,13 @@ export const activityFeedApi = {
         if (value !== undefined) params.append(key, value.toString());
       });
     }
-    return apiFetch(`/activity-feed?${params}`);
+    return apiFetch(`/activity?${params}`);
   },
-  get: (activityId: ResourceId) => apiFetch(`/activity-feed/${activityId}`),
+  get: (activityId: ResourceId) => apiFetch(`/activity/${activityId}`),
   markAsRead: (activityId: ResourceId) =>
-    apiFetch(`/activity-feed/${activityId}/read`, { method: 'POST' }),
-  markAllAsRead: () => apiFetch('/activity-feed/read-all', { method: 'POST' }),
-  getUnreadCount: () => apiFetch('/activity-feed/unread-count'),
+    apiFetch(`/activity/${activityId}/read`, { method: 'POST' }),
+  markAllAsRead: () => apiFetch('/activity/read-all', { method: 'POST' }),
+  getUnreadCount: () => apiFetch('/activity/unread-count'),
 };
 
 export const uploadsApi = {

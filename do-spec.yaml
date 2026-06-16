@@ -64,6 +64,21 @@ services:
   - key: MONGODB_URI
     scope: RUN_AND_BUILD_TIME
     value: mongodb+srv://megilanceofficial_db_user:NqCAJ3WKyCqS0uZn@cluster0.8is4jam.mongodb.net/?appName=Cluster0
+  - key: R2_ACCOUNT_ID
+    scope: RUN_AND_BUILD_TIME
+    value: 3f295cd4f9644c8899d8d020de37d802
+  - key: R2_ACCESS_KEY_ID
+    scope: RUN_AND_BUILD_TIME
+    value: 41146f52c4d672bc3fd1cc2ec75dd393
+  - key: R2_SECRET_ACCESS_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: 5137b877d608b04e6620bc0b900bd5a227404bb03114d051de6a3b959c2beb1f
+  - key: R2_BUCKET
+    scope: RUN_AND_BUILD_TIME
+    value: megilance-media
+  - key: R2_PUBLIC_URL
+    scope: RUN_AND_BUILD_TIME
+    value: https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev
   - key: TURSO_DATABASE_URL
     scope: RUN_AND_BUILD_TIME
     value: libsql://megilance-db-megilance.aws-ap-south-1.turso.io

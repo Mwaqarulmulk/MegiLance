@@ -194,15 +194,15 @@ export const aiMatchingApi = {
         match_score: number;
         reasons: string[];
       }>;
-    }>("/ai-matching/projects"),
+    }>("/matching/projects"),
 
   getMatchScore: (projectId: ResourceId, freelancerId: ResourceId) =>
     apiFetch<{ score: number; breakdown: Record<string, number> }>(
-      `/ai-matching/score/${projectId}/${freelancerId}`,
+      `/matching/score?project_id=${projectId}&freelancer_id=${freelancerId}`,
     ),
 
   trackClick: (projectId: ResourceId) =>
-    apiFetch("/ai-matching/track-click", {
+    apiFetch("/matching/track-click", {
       method: "POST",
       body: JSON.stringify({ project_id: projectId }),
     }),

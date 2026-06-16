@@ -120,3 +120,13 @@ jest.mock('framer-motion', () => {
     useInView: () => true,
   };
 });
+
+// Mock lottie-react to prevent HTMLCanvasElement.prototype.getContext errors in jsdom
+jest.mock('lottie-react', () => {
+  const React = require('react');
+  const LottieMock = React.forwardRef((props, ref) => {
+    return React.createElement('div', { ref, 'data-testid': 'lottie-mock', ...props });
+  });
+  LottieMock.displayName = 'LottieMock';
+  return LottieMock;
+});

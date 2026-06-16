@@ -138,3 +138,27 @@ async def get_recommendations(
             })
 
     return {"recommendations": recommendations, "total": len(recommendations)}
+
+
+class TrackClickRequest(BaseModel):
+    project_id: int
+
+
+@router.post("/track-click")
+async def track_click(body: TrackClickRequest, current_user=Depends(get_current_user)):
+    """Record that a freelancer clicked a matched project (best-effort analytics signal)."""
+    try:
+        from datetime import datetime, timezone
+        execute_query(
+            """CREATE TABLE IF NOT EXISTS match_clicks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                freelancer_id INTEGER, project_id INTEGER, created_at TEXT
+            )""", []
+        )
+        execute_query(
+            "INSERT INTO match_clicks (freelancer_id, project_id, created_at) VALUES (?, ?, ?)",
+            [current_user.id, body.project_id, datetime.now(timezone.utc).isoformat()],
+        )
+    except Exception as e:
+        logger.warning(f"track_click failed (non-critical): {e}")
+    return {"ok": True}
