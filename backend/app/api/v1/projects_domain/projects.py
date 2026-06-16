@@ -179,6 +179,11 @@ async def get_project(project_id: str):
 
 @router.post("")
 async def create_project(request: ProjectCreate, current_user=Depends(get_current_user)):
+    # RBAC: only clients (and admins) may post projects; freelancers submit proposals instead.
+    role = (getattr(current_user, "role", "") or "").lower()
+    if role not in ("client", "admin"):
+        raise HTTPException(status_code=403, detail="Only clients can post projects. Switch to a client account to hire.")
+
     now = datetime.now(timezone.utc).isoformat()
 
     skills_str = request.skills

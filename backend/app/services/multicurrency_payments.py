@@ -212,7 +212,7 @@ class MultiCurrencyPaymentService:
 
     async def _get_fallback_rate(self, from_currency: str, to_currency: str) -> Decimal:
         """Get fallback exchange rate from database"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         result = execute_query("""
             SELECT rate FROM exchange_rates
@@ -277,7 +277,7 @@ class MultiCurrencyPaymentService:
         5. Process payment
         6. Record transaction
         """
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         # Validate currency
         if payment.currency not in self.FIAT_CURRENCIES and payment.currency not in self.CRYPTO_CURRENCIES:
@@ -523,7 +523,7 @@ class MultiCurrencyPaymentService:
         - Geographic location
         - Current market rates
         """
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         factors = []
         
@@ -602,7 +602,7 @@ class MultiCurrencyPaymentService:
 
     async def _calculate_market_rate(self, project_id: int) -> Decimal:
         """Calculate average market rate for similar projects"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         # Get similar projects
         result = execute_query("""
@@ -655,7 +655,7 @@ class MultiCurrencyPaymentService:
         - PayPal
         - Payoneer
         """
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         # Verify user balance
         balance_result = execute_query("""

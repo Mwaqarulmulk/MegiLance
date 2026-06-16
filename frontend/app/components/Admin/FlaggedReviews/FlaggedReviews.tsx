@@ -96,7 +96,8 @@ export default function FlaggedReviews() {
         api.admin.getUsers({ limit: 200 }),
       ]);
       
-      const users = (usersData as any).users ?? usersData ?? [];
+      const rawUsers = (usersData as any).users ?? usersData ?? [];
+      const users = Array.isArray(rawUsers) ? rawUsers : [];
       
       // Create user lookup map
       const userMap = new Map<number, { name: string; avatar_url?: string }>();

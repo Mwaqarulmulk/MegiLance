@@ -13,8 +13,8 @@ export const PUBLIC_ROUTES = {
   BLOG: '/blog',
   FAQ: '/faq',
   EXPLORE: '/explore',
-  PRIVACY: '/privacy',
-  TERMS: '/terms',
+  PRIVACY: '/legal/privacy',
+  TERMS: '/legal/terms',
   COOKIES: '/cookies',
 } as const;
 

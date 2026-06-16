@@ -311,7 +311,7 @@ const StepDetails: React.FC<StepDetailsProps> = ({ data, updateData, errors, job
               <div className={cn(common.estimatedBreakdown, themed.estimatedBreakdown)}>
                 <span>{data.estimatedHours} hours × ${data.hourlyRate}/hr</span>
                 <span className={cn(common.serviceFee, themed.serviceFee)}>
-                  Platform fee (10%): ${(estimatedTotal * 0.1).toFixed(2)}
+                  Platform fee (8%): ${(estimatedTotal * 0.08).toFixed(2)}
                 </span>
               </div>
             </motion.div>

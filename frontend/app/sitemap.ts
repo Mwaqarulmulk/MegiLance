@@ -48,9 +48,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date();
 
   // ── Fetch dynamic content in parallel ─────────────────────────────────
-  const [projects, gigs, freelancers, blogPosts] = await Promise.all([
+  const [projects, freelancers, blogPosts] = await Promise.all([
     fetchPublicList<{ id: number; updated_at?: string }>('/projects', { status: 'open' }),
-    fetchPublicList<{ slug: string; updated_at?: string }>('/gigs', { status: 'active' }),
     fetchPublicList<{ id: number; updated_at?: string }>('/marketplace/freelancers'),
     fetchPublicList<{ slug: string; updated_at?: string; created_at?: string }>('/blog', { is_published: 'true' }),
   ]);
@@ -63,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/hire', changeFrequency: 'weekly', priority: 0.92 },
     { path: '/talent', changeFrequency: 'daily', priority: 0.9 },
     { path: '/freelancers', changeFrequency: 'daily', priority: 0.9 },
-    { path: '/gigs', changeFrequency: 'daily', priority: 0.88 },
+    
 
     // Key landing pages
     { path: '/how-it-works', changeFrequency: 'monthly', priority: 0.85 },
@@ -203,13 +202,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const gigPages: MetadataRoute.Sitemap = gigs.map((g) => ({
-    url: `${baseUrl}/gigs/${g.slug}`,
-    lastModified: g.updated_at ? new Date(g.updated_at) : currentDate,
-    changeFrequency: 'daily' as const,
-    priority: 0.8,
-  }));
-
   const freelancerPages: MetadataRoute.Sitemap = freelancers.map((f) => ({
     url: `${baseUrl}/freelancers/${f.id}`,
     lastModified: f.updated_at ? new Date(f.updated_at) : currentDate,
@@ -224,5 +216,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...skillPages, ...hirePages, ...jobPages, ...gigPages, ...freelancerPages, ...blogPages];
+  return [...staticPages, ...skillPages, ...hirePages, ...jobPages, ...freelancerPages, ...blogPages];
 }

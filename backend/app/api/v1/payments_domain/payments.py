@@ -14,38 +14,21 @@ from app.services.db_utils import get_val as _get_val, safe_str as _safe_str
 router = APIRouter()
 
 
-def calculate_tiered_fee(amount: float, lifetime_billing: float = 0) -> dict:
+def calculate_tiered_fee(amount: float, lifetime_billing: float = 0, plan: str = "free") -> dict:
     """
-    Calculate platform fee based on cumulative billing between client and freelancer.
-    Tiered structure rewards repeat business:
-      - First $500: 5%
-      - $501-$5000: 4%
-      - $5001-$25000: 3%
-      - $25000+: 2.5%
+    MegiLance platform fee — charged to freelancers only (clients pay 0%).
+    Transparent flat rate, deliberately below market (Upwork ~10%, Fiverr ~20%):
+      - Free plan:     8%
+      - Standard plan: 5% (loyalty / subscriber rate)
+      - Enterprise:    negotiable (handled out of band)
+    Returns a stable shape used across payments, proposals and contract displays.
     """
-    tiers = [
-        (500, 0.05),
-        (5000, 0.04),
-        (25000, 0.03),
-        (float("inf"), 0.025),
-    ]
-    remaining = amount
-    fee = 0.0
-    prev_limit = 0
-
-    for limit, rate in tiers:
-        tier_capacity = limit - prev_limit
-        taxable = min(remaining, tier_capacity)
-        if taxable <= 0:
-            break
-        fee += taxable * rate
-        remaining -= taxable
-        prev_limit = limit
-
-    effective_rate = round((fee / amount) * 100, 2) if amount > 0 else 0
+    rate = 0.05 if plan == "standard" else 0.08
+    fee = max(0.0, amount) * rate
     return {
         "platform_fee": round(fee, 2),
-        "effective_rate": effective_rate,
+        "effective_rate": round(rate * 100, 2),
+        "plan": plan,
         "lifetime_billing": lifetime_billing,
     }
 

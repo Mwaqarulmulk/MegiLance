@@ -117,7 +117,7 @@ class AdvancedSecurityService:
             qr_code = base64.b64encode(buffer.getvalue()).decode()
             
             # Store in database
-            from app.db.session import execute_query
+            from app.db.turso_http import execute_query
             execute_query("""
                 INSERT INTO mfa_methods (user_id, method, secret, is_active, created_at)
                 VALUES (?, ?, ?, 1, ?)
@@ -209,7 +209,7 @@ class AdvancedSecurityService:
         device_info: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Verify MFA code"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         if method == "totp":
             # Verify TOTP code
@@ -298,7 +298,7 @@ class AdvancedSecurityService:
         - Unusual login time
         - Failed login history
         """
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         risk_factors = []
         risk_score = 0.0
@@ -408,7 +408,7 @@ class AdvancedSecurityService:
         location: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Create secure session with device tracking"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         session_token = secrets.token_urlsafe(32)
         device_fingerprint = self._generate_device_fingerlogger.info(ip_address, user_agent)
@@ -435,7 +435,7 @@ class AdvancedSecurityService:
 
     async def get_active_sessions(self, user_id: int) -> List[Dict[str, Any]]:
         """Get all active sessions for user"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         result = execute_query("""
             SELECT id, ip_address, user_agent, device_info, location, created_at, last_activity
@@ -461,7 +461,7 @@ class AdvancedSecurityService:
 
     async def revoke_session(self, user_id: int, session_id: int) -> Dict[str, Any]:
         """Revoke specific session"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         execute_query("""
             UPDATE user_sessions SET is_active = 0
@@ -479,7 +479,7 @@ class AdvancedSecurityService:
 
     async def revoke_all_sessions(self, user_id: int, except_current: Optional[int] = None) -> Dict[str, Any]:
         """Revoke all sessions except current (optional)"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         if except_current:
             execute_query("""
@@ -514,7 +514,7 @@ class AdvancedSecurityService:
         device_info: Optional[Dict[str, Any]] = None
     ):
         """Log security event"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         execute_query("""
             INSERT INTO security_events (
@@ -539,7 +539,7 @@ class AdvancedSecurityService:
 
     def _generate_backup_codes(self, user_id: int, count: int = 10) -> List[str]:
         """Generate backup codes for MFA"""
-        from app.db.session import execute_query
+        from app.db.turso_http import execute_query
         
         codes = []
         for _ in range(count):

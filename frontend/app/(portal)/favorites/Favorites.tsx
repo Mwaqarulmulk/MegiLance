@@ -87,9 +87,9 @@ const Favorites: React.FC = () => {
       case 'project':
         return `/projects/${favorite.target_id}`;
       case 'freelancer':
-        return `/browse-talent/${favorite.target_id}`;
+        return `/freelancers/${favorite.target_id}`;
       case 'client':
-        return `/browse-talent/${favorite.target_id}`;
+        return `/freelancers/${favorite.target_id}`;
       default:
         return '#';
     }

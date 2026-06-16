@@ -20,35 +20,34 @@ import darkStyles from './Pricing.dark.module.css';
 const plans = [
   {
     tier: 'Free',
-    description: 'For freelancers & clients getting started. Post projects, submit proposals — we take a small commission.',
+    description: 'Everything you need to hire or get hired — with our full AI toolkit included free while we grow.',
     price: '0',
     pricePeriod: '/mo',
     features: [
-      'Unlimited project browsing',
-      'Up to 5 proposals per month',
-      'Standard messaging',
-      'Basic AI matching',
-      'Community forum access',
+      'Unlimited project browsing & proposals',
+      'Full AI toolkit — FREE (matching, proposal writer, price estimator)',
+      'Smart AI talent matching',
+      'AI-assisted messaging & writing',
       'Escrow payment protection',
-      '8% platform commission',
+      'Community forum access',
+      'Just 8% fee — clients pay 0%',
     ],
     ctaText: 'Get Started Free',
     ctaLink: '/signup?plan=free',
   },
   {
     tier: 'Standard',
-    description: 'For growing freelancers & clients who need more reach, better tools, and lower fees.',
+    description: 'For growing freelancers who want a lower fee, more reach, and priority tools.',
     price: '$29',
     pricePeriod: '/mo',
     features: [
-      'Everything in Free',
-      'Unlimited proposals',
+      'Everything in Free (incl. all AI tools)',
+      'Lower 5% platform fee',
       'Priority project invites',
       'Verified badge on profile',
-      'AI-powered proposal assistant',
       'Advanced search & filters',
-      'Analytics dashboard',
-      '5% platform commission',
+      'Detailed analytics & insights',
+      'Priority support',
     ],
     isPopular: true,
     ctaText: 'Upgrade to Standard',
@@ -77,21 +76,24 @@ const plans = [
 const comparisonFeatures = [
   { name: 'Post & Browse Projects', free: true, standard: true, enterprise: true },
   { name: 'Escrow Payment Protection', free: true, standard: true, enterprise: true },
-  { name: 'AI-Powered Matching', free: 'Basic', standard: 'Advanced', enterprise: 'Custom' },
-  { name: 'Monthly Proposals', free: '5', standard: 'Unlimited', enterprise: 'Unlimited' },
+  { name: 'Monthly Proposals', free: 'Unlimited', standard: 'Unlimited', enterprise: 'Unlimited' },
+  { name: 'AI Talent Matching', free: 'Included', standard: 'Priority', enterprise: 'Custom' },
+  { name: 'AI Proposal Writer & Tools', free: true, standard: true, enterprise: true },
+  { name: 'AI Price Estimator', free: true, standard: true, enterprise: true },
   { name: 'Verified Profile Badge', free: false, standard: true, enterprise: true },
-  { name: 'Proposal Assistant (AI)', free: false, standard: true, enterprise: true },
-  { name: 'Analytics Dashboard', free: false, standard: true, enterprise: true },
+  { name: 'Advanced Analytics', free: false, standard: true, enterprise: true },
   { name: 'Priority Support', free: false, standard: true, enterprise: true },
   { name: 'Dedicated Account Manager', free: false, standard: false, enterprise: true },
   { name: 'NDA & Legal Agreements', free: false, standard: false, enterprise: true },
   { name: 'Staff Augmentation', free: false, standard: false, enterprise: true },
   { name: 'Custom Talent Sourcing', free: false, standard: false, enterprise: true },
-  { name: 'Platform Commission', free: '8%', standard: '5%', enterprise: 'Negotiable' },
+  { name: 'Client Fee', free: '0%', standard: '0%', enterprise: '0%' },
+  { name: 'Freelancer Platform Fee', free: '8%', standard: '5%', enterprise: 'Negotiable' },
 ];
 
 const faqs = [
-  { q: 'How does the commission model work?', a: 'MegiLance charges a small commission on each successful project. On the Free plan it\'s 8%, Standard plan 5%, and Enterprise is negotiable. Clients and freelancers connect directly — we simply facilitate the match and secure the payment.' },
+  { q: 'Are the AI features really free?', a: 'Yes. While we grow, our entire AI toolkit — AI talent matching, the AI proposal writer, the price estimator, fraud detection and the assistant — is free for every client and freelancer, on every plan. No credit card, no AI usage fees.' },
+  { q: 'How does the fee model work?', a: 'Clients pay 0% — posting projects and hiring is completely free. We charge freelancers a small platform fee only on successfully completed projects: 8% on Free, 5% on Standard, and negotiable for Enterprise. That\'s well below Upwork (~10%) and Fiverr (~20%), and it covers secure escrow and payment processing.' },
   { q: 'What is Staff Augmentation?', a: 'With our Enterprise plan, we source and embed dedicated freelancers into your team on a contract basis. This includes NDA agreements, managed onboarding, and ongoing support — like having an extended team without the overhead.' },
   { q: 'Can I switch plans anytime?', a: 'Yes, you can upgrade or downgrade at any time. When upgrading, you get immediate access to the new features. When downgrading, your current plan stays active until the end of the billing period.' },
   { q: 'Is there a contract for the Enterprise plan?', a: 'Enterprise plans are based on custom agreements tailored to your needs. We work with you to define scope, SLAs, and pricing. Typical contracts are month-to-month or annual depending on your preference.' },
@@ -122,10 +124,12 @@ const Pricing: React.FC = () => {
         {/* Hero */}
         <ScrollReveal>
           <div className={styles.header}>
-            <span className={commonStyles.heroBadge}>Simple & Transparent</span>
-            <h1 className={styles.title}>Pick the plan that fits your workflow</h1>
+            <span className={commonStyles.heroBadge}>All AI features free · Clients pay 0%</span>
+            <h1 className={styles.title}>Simple pricing. Free AI for everyone.</h1>
             <p className={styles.subtitle}>
-              No hidden fees. Freelancers and clients connect directly — we just take a small commission on completed projects.
+              Clients post and hire for free. Freelancers keep more — just an 8% fee on completed
+              work (5% on Standard), well below the 20% you&apos;d pay elsewhere. Our full AI toolkit
+              is included free while we grow.
             </p>
           </div>
         </ScrollReveal>

@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import AppLayout from "../components/templates/AppLayout/AppLayout";
+import AppLayout from "../components/AppLayout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { UnreadCountProvider } from "@/contexts/UnreadCountContext";
 import Loading from "@/app/components/atoms/Loading/Loading";

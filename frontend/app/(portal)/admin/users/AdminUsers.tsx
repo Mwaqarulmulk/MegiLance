@@ -112,7 +112,7 @@ const AdminUsers: React.FC = () => {
       
       const response = await api.admin.getUsers(filters) as { users?: RawUserData[]; total?: number };
       
-      if (response && response.users) {
+      if (response && Array.isArray(response.users) && response.users.length > 0) {
         const mappedUsers: UserRow[] = response.users.map((u: RawUserData) => ({
           id: String(u.id),
           name: u.name || 'Unknown',

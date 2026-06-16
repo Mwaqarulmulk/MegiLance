@@ -63,7 +63,8 @@ export default function FlaggedFraudList() {
         
         // Fetch users from admin API
         const usersData = await api.admin.getUsers({ limit: 50 }) as any;
-        const users: ApiUser[] = usersData.users ?? usersData ?? [];
+        const rawUsers = usersData.users ?? usersData ?? [];
+        const users: ApiUser[] = Array.isArray(rawUsers) ? rawUsers : [];
 
         // Check fraud risk for each user (in parallel with rate limiting)
         const flaggedItems: FlaggedItem[] = [];

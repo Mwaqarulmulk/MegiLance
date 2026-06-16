@@ -45,9 +45,8 @@ export const footerNavItems = {
     { label: "FAQ", href: "/faq" },
   ],
   legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
+    { label: "Privacy Policy", href: "/legal/privacy" },
+    { label: "Terms of Service", href: "/legal/terms" },
   ],
 };
 
@@ -64,7 +63,7 @@ export const freelancerNavItems: NavItem[] = [
     section: "Overview",
   },
   { label: "Find Work", href: "/freelancer/jobs", icon: "Search" },
-  { label: "Browse Jobs", href: "/projects", icon: "Globe" },
+  { label: "Browse Jobs", href: "/jobs", icon: "Globe" },
   {
     label: "My Projects",
     href: "/freelancer/projects",
@@ -72,7 +71,10 @@ export const freelancerNavItems: NavItem[] = [
     section: "Work",
   },
   { label: "Proposals", href: "/freelancer/proposals", icon: "FileText" },
+  { label: "Submit Proposal", href: "/freelancer/submit-proposal", icon: "Send" },
   { label: "Contracts", href: "/freelancer/contracts", icon: "FolderGit2" },
+  { label: "Deliverables", href: "/freelancer/deliverables", icon: "Upload" },
+  { label: "Time Entries", href: "/freelancer/time-entries", icon: "Clock" },
   { label: "Disputes", href: "/freelancer/disputes", icon: "Gavel" },
   {
     label: "Messages",
@@ -87,7 +89,9 @@ export const freelancerNavItems: NavItem[] = [
     icon: "Wallet",
     section: "Finance",
   },
+  { label: "Invoices", href: "/freelancer/invoices", icon: "Receipt" },
   { label: "Escrow", href: "/freelancer/escrow", icon: "Lock" },
+  { label: "Documents", href: "/freelancer/legal", icon: "FileSignature" },
   {
     label: "AI Suite",
     href: "/ai",
@@ -146,6 +150,7 @@ export const clientNavItems: NavItem[] = [
   },
   { label: "Proposals", href: "/client/proposals", icon: "FileText" },
   { label: "Contracts", href: "/client/contracts", icon: "FolderGit2" },
+  { label: "Deliverables", href: "/client/deliverables", icon: "Upload" },
   { label: "Disputes", href: "/client/disputes", icon: "Gavel" },
   {
     label: "Messages",
@@ -160,7 +165,9 @@ export const clientNavItems: NavItem[] = [
     icon: "CreditCard",
     section: "Finance",
   },
+  { label: "Invoices", href: "/client/invoices", icon: "Receipt" },
   { label: "Wallet", href: "/client/wallet", icon: "Wallet" },
+  { label: "Documents", href: "/client/documents", icon: "FileSignature" },
   {
     label: "Find Talent",
     href: "/client/search",
@@ -359,6 +366,9 @@ export const breadcrumbConfig: Record<string, string[]> = {
   "/freelancer/proposals": ["Freelancer", "Proposals"],
   "/freelancer/submit-proposal": ["Freelancer", "Submit Proposal"],
   "/freelancer/contracts": ["Freelancer", "Contracts"],
+  "/freelancer/deliverables": ["Freelancer", "Deliverables"],
+  "/freelancer/time-entries": ["Freelancer", "Time Entries"],
+  "/freelancer/invoices": ["Freelancer", "Invoices"],
   "/freelancer/payments": ["Freelancer", "Payments"],
   "/freelancer/earnings": ["Freelancer", "Earnings"],
   "/freelancer/rate-cards": ["Freelancer", "Rate Cards"],
@@ -393,6 +403,9 @@ export const breadcrumbConfig: Record<string, string[]> = {
   "/client/proposals": ["Client", "Proposals"],
   "/client/post-job": ["Client", "Post Job"],
   "/client/contracts": ["Client", "Contracts"],
+  "/client/deliverables": ["Client", "Deliverables"],
+  "/client/invoices": ["Client", "Invoices"],
+  "/client/documents": ["Client", "Documents"],
   "/client/payments": ["Client", "Payments"],
   "/client/messages": ["Client", "Messages"],
   "/client/notifications": ["Client", "Notifications"],

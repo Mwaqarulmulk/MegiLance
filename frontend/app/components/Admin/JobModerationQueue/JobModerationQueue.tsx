@@ -152,8 +152,10 @@ const JobModerationQueue = () => {
         api.admin.getUsers({ limit: 200 }),
       ]);
       
-      const projects: APIProject[] = (projectsData as any).projects ?? projectsData ?? [];
-      const users = (usersData as any).users ?? usersData ?? [];
+      const rawProjects = (projectsData as any).projects ?? projectsData ?? [];
+      const projects: APIProject[] = Array.isArray(rawProjects) ? rawProjects : [];
+      const rawUsers = (usersData as any).users ?? usersData ?? [];
+      const users = Array.isArray(rawUsers) ? rawUsers : [];
       
       // Create user lookup map
       const userMap = new Map<number, { name: string; avatar_url?: string }>();

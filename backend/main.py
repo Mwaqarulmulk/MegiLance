@@ -13,7 +13,6 @@ from app.api.routers import api_router
 from app.core.config import get_settings
 from app.core.rate_limit import limiter
 from app.db.init_db import init_db
-from app.db.session import get_engine
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -83,12 +82,7 @@ async def lifespan(app: FastAPI):
 
     # Startup
     try:
-        engine = get_engine()
-        if engine is not None:
-            init_db(engine)
-            logger.info("startup.database_initialized")
-        else:
-            result = await execute_query_async("SELECT 1")
+        result = await execute_query_async("SELECT 1")
             if result:
                 logger.info("startup.database_initialized via Turso HTTP API")
             else:
@@ -1597,7 +1591,6 @@ def health_live():
 
 @app.get("/api/v1/health/ready")
 def health_ready():
-    engine = get_engine()
     uptime_seconds = int(time.time() - _APP_START_TIME)
     base_info = {
         "version": "2.0.0",

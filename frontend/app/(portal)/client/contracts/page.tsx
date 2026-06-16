@@ -1,739 +1,183 @@
-// @AI-HINT: Client Contracts List Page - Full-featured with KPI stats, status tabs, search, sorting, and rich contract cards
-"use client";
+'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { contractsApi } from "@/lib/api";
-import { Button } from "@/app/components/atoms/Button";
-import { Badge } from "@/app/components/atoms/Badge";
-import Input from "@/app/components/atoms/Input/Input";
-import Select from "@/app/components/molecules/Select/Select";
-import Pagination from "@/app/components/molecules/Pagination/Pagination";
-import EmptyState from "@/app/components/molecules/EmptyState/EmptyState";
-import ErrorBanner from "@/app/components/molecules/ErrorBanner/ErrorBanner";
-import { PageTransition } from "@/app/components/Animations/PageTransition";
-import { ScrollReveal } from "@/app/components/Animations/ScrollReveal";
+import { useState } from 'react';
 import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/app/components/Animations/StaggerContainer";
-import {
-  Search,
-  FileText,
-  DollarSign,
-  CheckCircle,
-  Plus,
-  Download,
-  Calendar,
-  ArrowRight,
-  Briefcase,
-  XCircle,
-} from "lucide-react";
-import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
-import commonStyles from "./Contracts.common.module.css";
-import lightStyles from "./Contracts.light.module.css";
-import darkStyles from "./Contracts.dark.module.css";
+  FileText, Download, Send, Eye, CheckCircle, Clock, AlertCircle,
+  Plus, ChevronDown, ChevronRight, DollarSign, Calendar, User
+} from 'lucide-react';
+import { SignaturePad } from '@/app/components/SignaturePad';
 
 interface Contract {
-  id: number;
+  id: string;
   title: string;
-  status: string;
-  total_budget: number;
-  paid_amount?: number;
-  start_date: string;
-  end_date?: string;
-  milestones_count?: number;
-  milestones_completed?: number;
-  freelancer?: {
-    full_name: string;
-    avatar_url?: string;
-  };
+  freelancerName: string;
+  freelancerTitle: string;
+  status: 'pending_signature' | 'active' | 'paused' | 'completed' | 'cancelled' | 'disputed';
+  totalAmount: number;
+  currency: string;
+  paymentType: string;
+  startDate: string;
+  endDate: string;
+  milestones: {
+    id: string;
+    title: string;
+    amount: number;
+    status: string;
+    dueDate: string;
+  }[];
+  signedByClient: boolean;
+  signedByFreelancer: boolean;
 }
 
-const STATUS_TABS = [
-  { key: "all", label: "All" },
-  { key: "active", label: "Active" },
-  { key: "completed", label: "Completed" },
-  { key: "pending", label: "Pending" },
-  { key: "cancelled", label: "Cancelled" },
+const mockContracts: Contract[] = [
+  {
+    id: 'c1',
+    title: 'E-Commerce Platform Development',
+    freelancerName: 'John Developer',
+    freelancerTitle: 'Senior Full-Stack Developer',
+    status: 'active',
+    totalAmount: 15000,
+    currency: 'USD',
+    paymentType: 'milestone',
+    startDate: '2024-01-15',
+    endDate: '2024-04-15',
+    milestones: [
+      { id: 'm1', title: 'UI/UX Design', amount: 3000, status: 'paid', dueDate: '2024-02-01' },
+      { id: 'm2', title: 'Frontend Development', amount: 5000, status: 'in_progress', dueDate: '2024-02-28' },
+      { id: 'm3', title: 'Backend API', amount: 4000, status: 'pending', dueDate: '2024-03-15' },
+      { id: 'm4', title: 'Testing & Deployment', amount: 3000, status: 'pending', dueDate: '2024-04-01' },
+    ],
+    signedByClient: true,
+    signedByFreelancer: true,
+  },
 ];
 
-const SORT_OPTIONS = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "budget_high", label: "Budget (High to Low)" },
-  { value: "budget_low", label: "Budget (Low to High)" },
-  { value: "title", label: "Title (A-Z)" },
-];
-
-const getStatusVariant = (
-  status: string,
-): "success" | "warning" | "danger" | "default" | "primary" => {
-  const normalized = status?.toLowerCase();
-  switch (normalized) {
-    case "active":
-    case "in_progress":
-      return "success";
-    case "completed":
-    case "done":
-      return "primary";
-    case "pending":
-    case "draft":
-      return "warning";
-    case "cancelled":
-    case "terminated":
-      return "danger";
-    default:
-      return "default";
-  }
+const statusConfig: Record<string, { label: string; color: string }> = {
+  pending_signature: { label: 'Pending Signature', color: 'bg-yellow-100 text-yellow-700' },
+  active: { label: 'Active', color: 'bg-green-100 text-green-700' },
+  paused: { label: 'Paused', color: 'bg-gray-100 text-gray-700' },
+  completed: { label: 'Completed', color: 'bg-blue-100 text-blue-700' },
+  cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-700' },
+  disputed: { label: 'Disputed', color: 'bg-orange-100 text-orange-700' },
 };
 
 export default function ClientContractsPage() {
-  const { resolvedTheme } = useTheme();
-  const router = useRouter();
-  const toaster = useToaster();
-  const themeStyles = resolvedTheme === "light" ? lightStyles : darkStyles;
-
-  const [contracts, setContracts] = useState<Contract[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [sortKey, setSortKey] = useState("newest");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [cancelLoading, setCancelLoading] = useState(false);
-  const itemsPerPage = 9;
-
-  useEffect(() => {
-    async function loadContracts() {
-      try {
-        const response = (await contractsApi.list()) as {
-          contracts: Contract[];
-        };
-        const data = Array.isArray(response)
-          ? response
-          : response.contracts || [];
-        setContracts(data);
-        setError(null);
-      } catch (error) {
-        if (process.env.NODE_ENV === "development") {
-          console.error("Failed to load contracts", error);
-        }
-        setError("Failed to load contracts. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadContracts();
-  }, []);
-
-  // KPI calculations
-  const kpis = useMemo(() => {
-    const total = contracts.length;
-    const active = contracts.filter((c) =>
-      ["active", "in_progress"].includes(c.status?.toLowerCase()),
-    ).length;
-    const totalValue = contracts.reduce(
-      (sum, c) => sum + (c.total_budget || 0),
-      0,
-    );
-    const completed = contracts.filter((c) =>
-      ["completed", "done"].includes(c.status?.toLowerCase()),
-    ).length;
-    return { total, active, totalValue, completed };
-  }, [contracts]);
-
-  // Status counts for tab badges
-  const statusCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: contracts.length };
-    contracts.forEach((c) => {
-      const s = c.status?.toLowerCase() || "unknown";
-      counts[s] = (counts[s] || 0) + 1;
-      // Normalize in_progress to active
-      if (s === "in_progress") counts["active"] = (counts["active"] || 0) + 1;
-    });
-    return counts;
-  }, [contracts]);
-
-  // Filtered contracts
-  const filteredContracts = useMemo(() => {
-    return contracts.filter((c) => {
-      const matchesTab =
-        activeTab === "all" ||
-        c.status?.toLowerCase() === activeTab ||
-        (activeTab === "active" && c.status?.toLowerCase() === "in_progress");
-      const matchesSearch =
-        !searchQuery ||
-        c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.freelancer?.full_name
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase());
-      return matchesTab && matchesSearch;
-    });
-  }, [contracts, activeTab, searchQuery]);
-
-  // Sorted contracts
-  const sortedContracts = useMemo(() => {
-    const sorted = [...filteredContracts];
-    switch (sortKey) {
-      case "newest":
-        return sorted.sort(
-          (a, b) =>
-            new Date(b.start_date).getTime() - new Date(a.start_date).getTime(),
-        );
-      case "oldest":
-        return sorted.sort(
-          (a, b) =>
-            new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
-        );
-      case "budget_high":
-        return sorted.sort(
-          (a, b) => (b.total_budget || 0) - (a.total_budget || 0),
-        );
-      case "budget_low":
-        return sorted.sort(
-          (a, b) => (a.total_budget || 0) - (b.total_budget || 0),
-        );
-      case "title":
-        return sorted.sort((a, b) =>
-          (a.title || "").localeCompare(b.title || ""),
-        );
-      default:
-        return sorted;
-    }
-  }, [filteredContracts, sortKey]);
-
-  // Paginated contracts
-  const paginatedContracts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return sortedContracts.slice(start, start + itemsPerPage);
-  }, [sortedContracts, currentPage]);
-
-  const totalPages = Math.ceil(sortedContracts.length / itemsPerPage);
-
-  // Reset page on filter changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab, searchQuery, sortKey]);
-
-  const getProgress = useCallback((contract: Contract) => {
-    if (contract.milestones_count && contract.milestones_completed) {
-      return Math.round(
-        (contract.milestones_completed / contract.milestones_count) * 100,
-      );
-    }
-    if (contract.paid_amount && contract.total_budget) {
-      return Math.round((contract.paid_amount / contract.total_budget) * 100);
-    }
-    if (["completed", "done"].includes(contract.status?.toLowerCase()))
-      return 100;
-    if (["active", "in_progress"].includes(contract.status?.toLowerCase()))
-      return 50;
-    return 0;
-  }, []);
-
-  const handleCancelContract = useCallback(
-    async (contractId: number) => {
-      if (cancelLoading) return;
-      const confirmed = window.confirm(
-        "Are you sure you want to cancel this contract? This action cannot be undone.",
-      );
-      if (!confirmed) return;
-      setCancelLoading(true);
-      try {
-        await (contractsApi as any).cancel(contractId);
-        setContracts((prev) => prev.filter((c) => c.id !== contractId));
-        toaster.success("Contract cancelled successfully.");
-      } catch (err: any) {
-        toaster.error(
-          err?.message || "Failed to cancel contract. Please try again.",
-        );
-      } finally {
-        setCancelLoading(false);
-      }
-    },
-    [cancelLoading, toaster],
-  );
-
-  const handleExport = useCallback(() => {
-    const header = ["Title", "Status", "Budget", "Freelancer", "Start Date"];
-    const rows = contracts.map((c) => [
-      c.title,
-      c.status,
-      `$${c.total_budget}`,
-      c.freelancer?.full_name || "N/A",
-      c.start_date,
-    ]);
-    const csv = [header, ...rows]
-      .map((r) => r.map((v) => `"${v}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `contracts_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [contracts]);
+  const [contracts] = useState<Contract[]>(mockContracts);
+  const [expandedContract, setExpandedContract] = useState<string | null>('c1');
+  const [showSignModal, setShowSignModal] = useState(false);
 
   return (
-    <PageTransition>
-      <div className={cn(commonStyles.page, themeStyles.theme)}>
-        {/* Header */}
-        <ScrollReveal>
-          <header className={commonStyles.header}>
-            <div className={commonStyles.headerInfo}>
-              <h1 className={cn(commonStyles.title, themeStyles.title)}>
-                Contracts
-              </h1>
-              <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-                Manage all your contracts, milestones, and freelancer
-                agreements.
-              </p>
-            </div>
-            <div className={commonStyles.headerActions}>
-              <Button
-                variant="secondary"
-                size="md"
-                iconBefore={<Download size={16} />}
-                onClick={handleExport}
-              >
-                Export
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                iconBefore={<Plus size={16} />}
-                onClick={() => router.push("/client/post-job")}
-              >
-                New Contract
-              </Button>
-            </div>
-          </header>
-        </ScrollReveal>
-
-        {/* KPI Stats */}
-        <ScrollReveal delay={0.1}>
-          <div className={commonStyles.kpiGrid}>
-            <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
-              <div className={cn(commonStyles.kpiIcon, themeStyles.kpiIcon)}>
-                <FileText size={22} />
-              </div>
-              <div>
-                <span
-                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
-                >
-                  Total Contracts
-                </span>
-                <span
-                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
-                >
-                  {kpis.total}
-                </span>
-              </div>
-            </div>
-            <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
-              <div className={cn(commonStyles.kpiIcon, themeStyles.kpiIcon)}>
-                <Briefcase size={22} />
-              </div>
-              <div>
-                <span
-                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
-                >
-                  Active
-                </span>
-                <span
-                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
-                >
-                  {kpis.active}
-                </span>
-              </div>
-            </div>
-            <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
-              <div className={cn(commonStyles.kpiIcon, themeStyles.kpiIcon)}>
-                <DollarSign size={22} />
-              </div>
-              <div>
-                <span
-                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
-                >
-                  Total Value
-                </span>
-                <span
-                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
-                >
-                  ${kpis.totalValue.toLocaleString()}
-                </span>
-              </div>
-            </div>
-            <div className={cn(commonStyles.kpiCard, themeStyles.kpiCard)}>
-              <div className={cn(commonStyles.kpiIcon, themeStyles.kpiIcon)}>
-                <CheckCircle size={22} />
-              </div>
-              <div>
-                <span
-                  className={cn(commonStyles.kpiLabel, themeStyles.kpiLabel)}
-                >
-                  Completed
-                </span>
-                <span
-                  className={cn(commonStyles.kpiValue, themeStyles.kpiValue)}
-                >
-                  {kpis.completed}
-                </span>
-              </div>
-            </div>
-          </div>
-        </ScrollReveal>
-
-        {/* Status Tabs */}
-        <ScrollReveal delay={0.15}>
-          <div
-            className={commonStyles.statusTabs}
-            role="tablist"
-            aria-label="Contract status filter"
-          >
-            {STATUS_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                role="tab"
-                aria-selected={activeTab === tab.key}
-                className={cn(
-                  commonStyles.statusTab,
-                  themeStyles.statusTab,
-                  activeTab === tab.key && commonStyles.statusTabActive,
-                  activeTab === tab.key && themeStyles.statusTabActive,
-                )}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label}
-                <span
-                  className={cn(commonStyles.tabCount, themeStyles.tabCount)}
-                >
-                  {statusCounts[tab.key] || 0}
-                </span>
-              </button>
-            ))}
-          </div>
-        </ScrollReveal>
-
-        {/* Search & Sort Controls */}
-        <ScrollReveal delay={0.2}>
-          <div className={commonStyles.controls}>
-            <Input
-              id="contract-search"
-              aria-label="Search contracts"
-              iconBefore={<Search size={18} />}
-              placeholder="Search by title or freelancer..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={commonStyles.searchInput}
-            />
-            <div className={commonStyles.filters}>
-              <Select
-                id="sort-contracts"
-                aria-label="Sort contracts"
-                options={SORT_OPTIONS}
-                value={sortKey}
-                onChange={(e) => setSortKey(e.target.value)}
-              />
-            </div>
-          </div>
-        </ScrollReveal>
-
-        {/* Contract Cards */}
-        {error ? (
-          <ErrorBanner
-            title="Failed to load contracts"
-            message={error}
-            onRetry={() => window.location.reload()}
-            showGoHome={false}
-          />
-        ) : loading ? (
-          <div className={commonStyles.grid}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  commonStyles.skeletonCard,
-                  themeStyles.skeletonCard,
-                )}
-              />
-            ))}
-          </div>
-        ) : paginatedContracts.length > 0 ? (
-          <StaggerContainer className={commonStyles.grid}>
-            {paginatedContracts.map((contract) => {
-              const progress = getProgress(contract);
-              const initials =
-                contract.freelancer?.full_name
-                  ?.split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2) || "??";
-
-              return (
-                <StaggerItem key={contract.id}>
-                  <Link
-                    href={`/client/contracts/${contract.id}`}
-                    className={cn(commonStyles.card, themeStyles.card)}
-                    aria-label={`Contract: ${contract.title}`}
-                  >
-                    {/* Card Header */}
-                    <div className={commonStyles.cardHeader}>
-                      <h3
-                        className={cn(
-                          commonStyles.cardTitle,
-                          themeStyles.cardTitle,
-                        )}
-                      >
-                        {contract.title}
-                      </h3>
-                      <div className={commonStyles.cardBadge}>
-                        <Badge variant={getStatusVariant(contract.status)}>
-                          {contract.status?.replace("_", " ")}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Freelancer Info */}
-                    <div
-                      className={cn(
-                        commonStyles.freelancerInfo,
-                        themeStyles.freelancerInfo,
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          commonStyles.freelancerAvatar,
-                          themeStyles.freelancerAvatar,
-                        )}
-                      >
-                        {initials}
-                      </div>
-                      <div className={commonStyles.freelancerDetails}>
-                        <span
-                          className={cn(
-                            commonStyles.freelancerName,
-                            themeStyles.freelancerName,
-                          )}
-                        >
-                          {contract.freelancer?.full_name || "Unassigned"}
-                        </span>
-                        <span
-                          className={cn(
-                            commonStyles.freelancerLabel,
-                            themeStyles.freelancerLabel,
-                          )}
-                        >
-                          Freelancer
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Stats */}
-                    <div className={commonStyles.cardStats}>
-                      <div className={commonStyles.cardStat}>
-                        <span
-                          className={cn(
-                            commonStyles.cardStatLabel,
-                            themeStyles.cardStatLabel,
-                          )}
-                        >
-                          Budget
-                        </span>
-                        <span
-                          className={cn(
-                            commonStyles.cardStatValue,
-                            themeStyles.cardStatValue,
-                          )}
-                        >
-                          ${contract.total_budget?.toLocaleString() || "0"}
-                        </span>
-                      </div>
-                      <div className={commonStyles.cardStat}>
-                        <span
-                          className={cn(
-                            commonStyles.cardStatLabel,
-                            themeStyles.cardStatLabel,
-                          )}
-                        >
-                          Paid
-                        </span>
-                        <span
-                          className={cn(
-                            commonStyles.cardStatValue,
-                            themeStyles.cardStatValue,
-                          )}
-                        >
-                          ${(contract.paid_amount || 0).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Progress */}
-                    <div className={commonStyles.progressSection}>
-                      <div className={commonStyles.progressHeader}>
-                        <span
-                          className={cn(
-                            commonStyles.progressLabel,
-                            themeStyles.progressLabel,
-                          )}
-                        >
-                          Progress
-                        </span>
-                        <span
-                          className={cn(
-                            commonStyles.progressValue,
-                            themeStyles.progressValue,
-                          )}
-                        >
-                          {progress}%
-                        </span>
-                      </div>
-                      <div
-                        className={cn(
-                          commonStyles.progressBar,
-                          themeStyles.progressBar,
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            commonStyles.progressFill,
-                            themeStyles.progressFill,
-                          )}
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Milestones Summary */}
-                    {contract.milestones_count != null && (
-                      <div className={commonStyles.milestoneSummary}>
-                        <CheckCircle size={12} />
-                        {contract.milestones_completed || 0}/
-                        {contract.milestones_count} milestones completed
-                      </div>
-                    )}
-
-                    {/* Footer */}
-                    <div
-                      className={cn(
-                        commonStyles.cardFooter,
-                        themeStyles.cardFooter,
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          commonStyles.cardDate,
-                          themeStyles.cardDate,
-                        )}
-                      >
-                        <Calendar size={12} />
-                        {new Date(contract.start_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          },
-                        )}
-                      </span>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "6px",
-                          alignItems: "center",
-                        }}
-                      >
-                        {["active", "in_progress"].includes(
-                          contract.status?.toLowerCase(),
-                        ) && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleCancelContract(contract.id);
-                            }}
-                            disabled={cancelLoading}
-                            aria-label="Cancel this contract"
-                            style={{
-                              background: "transparent",
-                              border: "1px solid #e81123",
-                              color: "#e81123",
-                              borderRadius: "4px",
-                              padding: "2px 8px",
-                              fontSize: "11px",
-                              cursor: cancelLoading ? "not-allowed" : "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "3px",
-                              flexShrink: 0,
-                              opacity: cancelLoading ? 0.6 : 1,
-                            }}
-                          >
-                            <XCircle size={11} /> Cancel
-                          </button>
-                        )}
-                        <span
-                          className={cn(
-                            commonStyles.cardDate,
-                            themeStyles.cardDate,
-                            commonStyles.labelBold,
-                          )}
-                        >
-                          View Details <ArrowRight size={12} />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
-        ) : (
-          <div className={commonStyles.emptyState}>
-            <div className={cn(commonStyles.emptyIcon, themeStyles.emptyIcon)}>
-              <FileText size={36} />
-            </div>
-            <h3 className={cn(commonStyles.emptyTitle, themeStyles.emptyTitle)}>
-              {searchQuery || activeTab !== "all"
-                ? "No matching contracts"
-                : "No contracts yet"}
-            </h3>
-            <p className={cn(commonStyles.emptyText, themeStyles.emptyText)}>
-              {searchQuery || activeTab !== "all"
-                ? "Try adjusting your search or filter criteria."
-                : "Start by posting a job and hiring a freelancer to create your first contract."}
-            </p>
-            {!searchQuery && activeTab === "all" && (
-              <Button
-                variant="primary"
-                iconBefore={<Plus size={16} />}
-                onClick={() => router.push("/client/post-job")}
-              >
-                Post a Job
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className={commonStyles.paginationContainer}>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            />
-          </div>
-        )}
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contracts</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage your service agreements</p>
+        </div>
+        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+          <Plus size={14} />
+          New Contract
+        </button>
       </div>
-    </PageTransition>
+
+      <div className="space-y-4">
+        {contracts.map((contract) => {
+          const config = statusConfig[contract.status];
+          const isExpanded = expandedContract === contract.id;
+          return (
+            <div key={contract.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div
+                className="p-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750"
+                onClick={() => setExpandedContract(isExpanded ? null : contract.id)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <button className="text-gray-400">
+                      {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                    </button>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{contract.title}</h3>
+                      <p className="text-sm text-gray-500">{contract.freelancerName} • {contract.freelancerTitle}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <div className="font-semibold text-gray-900 dark:text-white">${contract.totalAmount.toLocaleString()}</div>
+                    </div>
+                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${config.color}`}>{config.label}</span>
+                  </div>
+                </div>
+              </div>
+
+              {isExpanded && (
+                <div className="border-t border-gray-200 dark:border-gray-700 p-5 space-y-4">
+                  {/* Signatures */}
+                  <div className="flex items-center gap-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      {contract.signedByClient ? <CheckCircle size={16} className="text-green-500" /> : <Clock size={16} className="text-yellow-500" />}
+                      <span className="text-sm"><b>Client:</b> {contract.signedByClient ? 'Signed' : 'Pending'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {contract.signedByFreelancer ? <CheckCircle size={16} className="text-green-500" /> : <Clock size={16} className="text-yellow-500" />}
+                      <span className="text-sm"><b>Freelancer:</b> {contract.signedByFreelancer ? 'Signed' : 'Pending'}</span>
+                    </div>
+                    {!contract.signedByClient && (
+                      <button onClick={() => setShowSignModal(true)} className="ml-auto px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                        Sign Contract
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Milestones */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-3">Milestones</h4>
+                    <div className="space-y-2">
+                      {contract.milestones.map((ms) => (
+                        <div key={ms.id} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full ${ms.status === 'paid' ? 'bg-green-500' : ms.status === 'in_progress' ? 'bg-yellow-500' : 'bg-gray-300'}`} />
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">{ms.title}</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">${ms.amount.toLocaleString()}</span>
+                            <span className="text-xs text-gray-500">{ms.dueDate}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <Download size={14} /> Download PDF
+                    </button>
+                    <button className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <Eye size={14} /> View Details
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Sign Modal */}
+      {showSignModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full p-6 space-y-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Sign Contract</h2>
+            <p className="text-sm text-gray-500">Draw your signature below to sign this contract.</p>
+            <SignaturePad
+              onSignature={(dataUrl) => {
+                console.log('Contract signed');
+                setShowSignModal(false);
+              }}
+            />
+            <button onClick={() => setShowSignModal(false)} className="w-full text-center text-sm text-gray-500 hover:text-gray-700">Cancel</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

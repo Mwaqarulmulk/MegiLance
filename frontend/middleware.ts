@@ -96,7 +96,6 @@ export function middleware(request: NextRequest) {
     "/workroom",
     "/notifications",
     "/favorites",
-    "/browse-talent",
     "/complete-profile",
     "/disputes",
     "/payments",

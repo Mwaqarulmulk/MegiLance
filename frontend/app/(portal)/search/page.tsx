@@ -178,7 +178,8 @@ function SearchContent() {
             users?: FreelancerResult[];
           };
           if (controller.signal.aborted) return;
-          const results = data.freelancers ?? data.users ?? [];
+          const raw = data.freelancers ?? data.users ?? [];
+          const results = Array.isArray(raw) ? raw : [];
           setFreelancers(results);
           setResultsCount(results.length);
         } else if (activeTab === "projects") {

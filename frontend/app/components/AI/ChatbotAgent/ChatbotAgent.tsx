@@ -371,7 +371,7 @@ export default function ChatbotAgent() {
       return { text: "MegiLance supports secure payments via USDC stablecoin on Polygon network. Enjoy low fees (< 1%) and instant settlements with blockchain-backed security!", sentiment: 'positive' };
     }
     if (msg.includes('fee') || msg.includes('price') || msg.includes('cost')) {
-      return { text: "MegiLance charges only 5-10% platform fees, compared to 20-27% on traditional platforms. Check our Pricing page for detailed plans!", sentiment: 'positive' };
+      return { text: "Clients pay 0% — posting and hiring is free. Freelancers pay just an 8% fee on completed work (5% on Standard), far below the 20% charged elsewhere. Plus, all AI features are free right now. See the Pricing page for details!", sentiment: 'positive' };
     }
     if (msg.includes('tips') || msg.includes('advice')) {
       return { text: "Quick tips for success:\n• Complete your profile 100%\n• Add a professional portfolio\n• Respond to messages within 24 hours\n• Ask clarifying questions before bidding\n• Deliver quality work on time!", sentiment: 'positive' };

@@ -143,12 +143,6 @@ const platformTools = [
     href: "/freelancers",
     icon: Users,
   },
-  {
-    title: "Browse Gigs",
-    description: "Buy ready-made services with fixed pricing and fast delivery from top pros.",
-    href: "/gigs",
-    icon: Star,
-  },
 ];
 
 export default function ToolsPage() {

@@ -130,7 +130,7 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: Optional[str] = None
     STRIPE_PUBLISHABLE_KEY: Optional[str] = None
     STRIPE_WEBHOOK_SECRET: Optional[str] = None
-    STRIPE_PLATFORM_FEE_PERCENT: float = 10.0  # Platform fee percentage (default 10%)
+    STRIPE_PLATFORM_FEE_PERCENT: float = 8.0  # Platform fee % charged to freelancers (below market; clients pay 0%)
 
     # Binance Pay Configuration (crypto payments via Binance)
     BINANCE_PAY_API_KEY: Optional[str] = None

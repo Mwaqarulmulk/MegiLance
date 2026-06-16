@@ -136,7 +136,8 @@ export default function UserSearchTable() {
     setError(null);
     try {
       const data = await api.admin.getUsers() as any;
-      const userList = data.users ?? data ?? [];
+      const raw = data.users ?? data ?? [];
+      const userList = Array.isArray(raw) ? raw : [];
       const transformed = userList.map(transformUser);
       setUsers(transformed);
     } catch (err) {

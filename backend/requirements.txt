@@ -57,3 +57,7 @@ sentry-sdk[fastapi]>=1.40.0
 pytest==8.3.5
 pytest-asyncio==0.25.1
 pytest-cov==6.0.0
+
+# PDF Generation
+reportlab>=4.0.0
+pypdf>=3.0.0

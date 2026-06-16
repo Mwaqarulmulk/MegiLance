@@ -421,9 +421,6 @@ const Explore: React.FC = () => {
                 <Link href="/jobs" className={cn(common.quickLink, themed.quickLink)}>
                   <Briefcase size={16} /> Browse All Projects
                 </Link>
-                <Link href="/gigs" className={cn(common.quickLink, themed.quickLink)}>
-                  <Grid3X3 size={16} /> Browse Gigs
-                </Link>
               </div>
             </div>
           </aside>

@@ -14,7 +14,7 @@ export const metadata: Metadata = buildMeta({
 
 import React, { Suspense } from 'react';
 import Link from 'next/link';
-import { Search, ArrowRight, Briefcase, Users, Package, Bot, TrendingUp, Star, Clock, DollarSign, Zap, ChevronRight } from 'lucide-react';
+import { Search, ArrowRight, Briefcase, Users, Bot, TrendingUp, Star, Zap, ChevronRight } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
@@ -24,15 +24,6 @@ async function fetchFreelancers() {
     if (!res.ok) return [];
     const data = await res.json();
     return (data.items || data || []).slice(0, 6);
-  } catch { return []; }
-}
-
-async function fetchGigs() {
-  try {
-    const res = await fetch(`${API_URL}/api/v1/gigs?status=published&page=1&page_size=6`, { next: { revalidate: 120 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data.items || data.gigs || data || []).slice(0, 6);
   } catch { return []; }
 }
 
@@ -101,17 +92,6 @@ function ExploreClient() {
             </span>
           </Link>
 
-          <Link href="/gigs" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-              <Package size={24} style={{ color: '#22c55e' }} />
-            </div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>Services (Gigs)</h2>
-            <p style={{ color: '#64748b', margin: '0 0 1rem', fontSize: '0.9rem' }}>Fixed-price, ready-to-buy services from vetted pros.</p>
-            <span style={{ color: '#4573df', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-              Browse Gigs <ArrowRight size={14} />
-            </span>
-          </Link>
-
           <Link href="/jobs" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#fefce8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
               <Briefcase size={24} style={{ color: '#ca8a04' }} />
@@ -145,9 +125,8 @@ function ExploreClient() {
 }
 
 async function LiveDataSections() {
-  const [freelancers, gigs, projects] = await Promise.all([
+  const [freelancers, projects] = await Promise.all([
     fetchFreelancers(),
-    fetchGigs(),
     fetchProjects(),
   ]);
 
@@ -185,41 +164,6 @@ async function LiveDataSections() {
                         <Star size={12} fill="#ca8a04" /> {Number(f.avg_rating).toFixed(1)}
                       </span>
                     )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Latest Gigs */}
-      {gigs.length > 0 && (
-        <section style={{ padding: '3rem 2rem' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.25rem' }}>Popular Gigs</h2>
-                <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Ready-to-buy services with fixed pricing</p>
-              </div>
-              <Link href="/gigs" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
-                View All <ArrowRight size={14} />
-              </Link>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-              {gigs.map((g: any) => (
-                <Link key={g.id} href={`/gigs/${g.slug || g.id}`} style={{ borderRadius: '14px', border: '1.5px solid #e2e8f0', background: 'white', textDecoration: 'none', color: 'inherit', overflow: 'hidden', transition: 'all 0.2s' }}>
-                  <div style={{ height: '140px', background: g.thumbnail_url ? `url(${g.thumbnail_url}) center/cover` : 'linear-gradient(135deg, #eff6ff, #f0f9ff)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {!g.thumbnail_url && <Package size={32} style={{ color: '#93c5fd' }} />}
-                  </div>
-                  <div style={{ padding: '1rem' }}>
-                    <h3 style={{ fontSize: '0.95rem', fontWeight: 650, margin: '0 0 0.5rem', color: '#0f172a', lineHeight: 1.3 }}>{g.title}</h3>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a' }}>${g.basic_price || g.price || 0}</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>
-                        <Clock size={12} /> {g.basic_delivery_days || g.delivery_days || '?'} days
-                      </span>
-                    </div>
                   </div>
                 </Link>
               ))}
