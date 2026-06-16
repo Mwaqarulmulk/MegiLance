@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero/Hero';
+import PainSolutions from './components/PainSolutions/PainSolutions';
 import TrustIndicators from './components/TrustIndicators';
 import AIToolsHub from './components/AIToolsHub';
 import Features from './components/Features';
@@ -49,6 +50,15 @@ const Home: React.FC = () => {
                     style={{ width: '100%', height: 'auto', maxWidth: '1100px', borderRadius: '24px', boxShadow: '0 25px 60px -12px rgba(0,0,0,0.15)', display: 'inline-block' }}
                   />
                 </div>
+              </ScrollReveal>
+            </div>
+          </section>
+
+          {/* Pain points → solutions (high-conversion value section) */}
+          <section className={commonStyles.homeSection} aria-label="Why MegiLance — problems we solve">
+            <div className={commonStyles.sectionContainer}>
+              <ScrollReveal width="100%" direction="up" delay={0.1}>
+                <PainSolutions />
               </ScrollReveal>
             </div>
           </section>

@@ -40,8 +40,9 @@ export default function Hero({ stats = defaultStats }) {
         </h1>
         
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-          MegiLance is the #1 freelance platform where clients and vetted professionals 
-          connect directly using real-time AI and completely transparent pricing.
+          MegiLance fixes what&apos;s broken in freelancing: AI matches you with vetted talent at a
+          fair price, milestone escrow protects every payment — even cross-border — and transparent
+          pricing means no overpaying, no surprises, and no late projects.
         </p>
 
         <div className={cn(commonStyles.actions, themeStyles.actions)}>
