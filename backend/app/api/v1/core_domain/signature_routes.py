@@ -6,7 +6,10 @@ from typing import Optional
 from datetime import datetime, timezone
 import uuid
 
-from app.services.pdf_generator import compute_signature_hash
+import hashlib
+
+def compute_signature_hash(data: str) -> str:
+    return hashlib.sha256(data.encode()).hexdigest()
 
 router = APIRouter(prefix="/signatures", tags=["E-Signatures"])
 

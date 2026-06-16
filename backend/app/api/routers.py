@@ -555,13 +555,13 @@ api_router.include_router(payout_methods.router, prefix="/payout-methods", tags=
 # ============================================================================
 
 # PDF Generation - Invoice, Contract, Proposal, Receipt PDFs
-from app.api.routers.pdf_routes import router as pdf_router
+from app.api.v1.core_domain.pdf_routes import router as pdf_router
 api_router.include_router(pdf_router, prefix="/pdf", tags=["pdf-generation"])
 
 # E-Signatures - Document signing workflow
-from app.api.routers.signature_routes import router as signature_router
+from app.api.v1.core_domain.signature_routes import router as signature_router
 api_router.include_router(signature_router, prefix="/signatures", tags=["e-signatures"])
 
 # Deliverables - Milestone file submission and approval
-from app.api.routers.deliverable_routes import router as deliverable_router
+from app.api.v1.core_domain.deliverable_routes import router as deliverable_router
 api_router.include_router(deliverable_router, prefix="/deliverables", tags=["deliverables"])
