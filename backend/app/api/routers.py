@@ -25,6 +25,7 @@ from .v1.core_domain import (
     backup_restore,
     branding,
     error_reports,
+    metrics as admin_metrics,
     client,
     communication,
     community,
@@ -184,7 +185,7 @@ api_router.include_router(support_tickets.router, prefix="/support-tickets", tag
 api_router.include_router(refunds.router, prefix="/refunds", tags=["refunds"])
 
 # Search functionality
-api_router.include_router(search.router, prefix="", tags=["search"])
+api_router.include_router(search.router, prefix="/search", tags=["search"])
 api_router.include_router(
     search_advanced.router, prefix="", tags=["search-advanced"]
 )  # Turso FTS5 search
@@ -404,7 +405,7 @@ api_router.include_router(contact.router, prefix="/contact", tags=["contact"])
 api_router.include_router(learning_center.router, tags=["learning-center"])
 
 # Fraud Detection - AI-powered fraud prevention
-api_router.include_router(fraud_detection.router, tags=["fraud-detection"])
+api_router.include_router(fraud_detection.router, prefix="/fraud-detection", tags=["fraud-detection"])
 
 # Analytics Dashboard - Business intelligence
 api_router.include_router(analytics_dashboard.router, tags=["analytics-dashboard"])
@@ -505,6 +506,9 @@ api_router.include_router(mongo_blogs.router, prefix="/blogs-mongo", tags=["blog
 
 # Error / issue reporting — auto-captured errors + manual user reports (admin monitoring)
 api_router.include_router(error_reports.router, prefix="/error-reports", tags=["error-reports"])
+
+# Admin metrics dashboards
+api_router.include_router(admin_metrics.router, prefix="/metrics", tags=["metrics"])
 
 # Public clients showcase (no auth required)
 

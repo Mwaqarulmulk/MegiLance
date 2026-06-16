@@ -11,8 +11,38 @@ from app.services.search_service import (
     autocomplete_freelancers,
 )
 from app.services.search_fts import SearchService
+from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
+
+
+def _search_projects(q: str, limit: int, offset: int = 0,
+                     budget_min=None, budget_max=None, category=None):
+    conditions = ["status = 'open'"]
+    params: list = []
+    if q:
+        conditions.append("(title LIKE ? OR description LIKE ? OR skills LIKE ?)")
+        like = f"%{q}%"
+        params.extend([like, like, like])
+    if budget_min is not None:
+        conditions.append("budget_max >= ?"); params.append(budget_min)
+    if budget_max is not None:
+        conditions.append("budget_min <= ?"); params.append(budget_max)
+    if category:
+        conditions.append("category LIKE ?"); params.append(f"%{category}%")
+    where = " AND ".join(conditions)
+    total_rows = parse_rows(execute_query(f"SELECT COUNT(*) as c FROM projects WHERE {where}", params))
+    total = total_rows[0]["c"] if total_rows else 0
+    rows = parse_rows(execute_query(
+        f"""SELECT id, title, description, category, budget_type, budget_min, budget_max,
+                   skills, experience_level, status, created_at
+            FROM projects WHERE {where} ORDER BY created_at DESC LIMIT ? OFFSET ?""",
+        params + [limit, offset],
+    )) or []
+    for r in rows:
+        if isinstance(r.get("skills"), str) and r["skills"]:
+            r["skills"] = [s.strip() for s in r["skills"].split(",") if s.strip()]
+    return {"items": rows, "total": total}
 
 
 @router.get("/freelancers")
@@ -129,3 +159,75 @@ def fts_search(
         }
 
     return {"items": [], "total": 0, "page": page}
+
+
+@router.get("")
+def global_search_root(
+    q: str = Query(..., min_length=1, max_length=200),
+    limit: int = Query(20, ge=1, le=50),
+):
+    """Global search across freelancers and projects (used by the navbar/global search)."""
+    freelancers = []
+    try:
+        fl = global_search_freelancers(search_term=q, limit=limit)
+        freelancers = fl.get("items", []) if isinstance(fl, dict) else (fl or [])
+    except Exception:
+        freelancers = []
+    projects = _search_projects(q, limit=limit).get("items", [])
+    return {
+        "query": q,
+        "freelancers": freelancers,
+        "projects": projects,
+        "total": len(freelancers) + len(projects),
+    }
+
+
+@router.get("/projects")
+def search_projects(
+    q: str = Query("", max_length=200),
+    budget_min: Optional[float] = Query(None),
+    budget_max: Optional[float] = Query(None),
+    category: Optional[str] = Query(None),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=50),
+    limit: Optional[int] = Query(None, ge=1, le=50),
+    offset: Optional[int] = Query(None, ge=0),
+):
+    """Search open projects with filters."""
+    lim = limit or page_size
+    off = offset if offset is not None else (page - 1) * page_size
+    res = _search_projects(q, limit=lim, offset=off, budget_min=budget_min, budget_max=budget_max, category=category)
+    return {"items": res["items"], "total": res["total"], "page": page, "page_size": lim}
+
+
+@router.get("/suggestions")
+def search_suggestions(
+    q: str = Query(..., min_length=1, max_length=100),
+    limit: int = Query(10, ge=1, le=20),
+):
+    """Search suggestions (freelancer-name/skill based)."""
+    try:
+        items = autocomplete_freelancers(search_term=q, limit=limit)
+    except Exception:
+        items = []
+    return {"items": items, "suggestions": items}
+
+
+@router.get("/trending")
+def search_trending(
+    type: str = Query("projects"),
+    limit: int = Query(10, ge=1, le=30),
+):
+    """Trending projects or freelancers (most recent / active)."""
+    if type == "freelancers":
+        try:
+            rows = parse_rows(execute_query(
+                """SELECT id, name, bio, skills, hourly_rate, profile_image_url
+                   FROM users WHERE user_type='freelancer' AND is_active=1
+                   AND email NOT LIKE '%@example.com'
+                   ORDER BY id DESC LIMIT ?""", [limit])) or []
+            return {"type": type, "items": rows}
+        except Exception:
+            return {"type": type, "items": []}
+    res = _search_projects("", limit=limit)
+    return {"type": "projects", "items": res["items"]}

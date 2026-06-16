@@ -225,16 +225,123 @@ async def check_user_fraud(user_id: int, current_user=Depends(require_admin)):
     }
 
 
+def _recommendation(risk_level: str) -> str:
+    return {
+        "critical": "Block and manually review immediately — strong fraud signals.",
+        "high": "Restrict actions and require manual verification.",
+        "medium": "Monitor closely; request identity verification if it continues.",
+        "low": "Low risk — routine monitoring is sufficient.",
+        "minimal": "No action needed — looks legitimate.",
+    }.get(risk_level, "Monitor.")
+
+
+@router.get("/analyze/user/{user_id}")
+async def analyze_user(user_id: int, current_user=Depends(require_admin)):
+    """Risk analysis for a user (matches frontend fraud client shape)."""
+    rows = parse_rows(execute_query("SELECT id, name, email FROM users WHERE id = ?", [user_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="User not found")
+    a = _analyze_user_fraud(user_id)
+    return {
+        "user_id": user_id,
+        "user_name": rows[0].get("name"),
+        "risk_score": a["risk_score"],
+        "risk_level": a["risk_level"],
+        "risk_factors": a.get("flags", []),
+        "recommendation": _recommendation(a["risk_level"]),
+        "details": a.get("details", {}),
+    }
+
+
+@router.get("/analyze/project/{project_id}")
+async def analyze_project(project_id: int, current_user=Depends(require_admin)):
+    flags = []
+    score = 0.0
+    rows = parse_rows(execute_query(
+        "SELECT id, client_id, budget_min, budget_max, description, created_at FROM projects WHERE id = ?", [project_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Project not found")
+    p = rows[0]
+    desc = (p.get("description") or "")
+    if len(desc) < 30:
+        flags.append("very_short_description"); score += 0.2
+    try:
+        if float(p.get("budget_max") or 0) > 100000:
+            flags.append("unusually_high_budget"); score += 0.2
+    except (ValueError, TypeError):
+        pass
+    for kw in ("western union", "gift card", "telegram", "whatsapp only", "pay outside"):
+        if kw in desc.lower():
+            flags.append(f"offsite_payment_signal:{kw}"); score += 0.3
+    # inherit some client risk
+    if p.get("client_id"):
+        score = min(1.0, score + _analyze_user_fraud(int(p["client_id"]))["risk_score"] * 0.3)
+    level = "high" if score >= 0.5 else "medium" if score >= 0.3 else "low" if score >= 0.1 else "minimal"
+    return {"project_id": project_id, "risk_score": round(min(score, 1.0), 3), "risk_level": level,
+            "risk_factors": flags, "recommendation": _recommendation(level)}
+
+
+@router.get("/analyze/proposal/{proposal_id}")
+async def analyze_proposal(proposal_id: int, current_user=Depends(require_admin)):
+    rows = parse_rows(execute_query(
+        "SELECT id, freelancer_id, cover_letter, bid_amount FROM proposals WHERE id = ?", [proposal_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Proposal not found")
+    pr = rows[0]
+    flags = []
+    score = 0.0
+    cl = (pr.get("cover_letter") or "")
+    if len(cl) < 40:
+        flags.append("generic_or_short_cover_letter"); score += 0.2
+    if pr.get("freelancer_id"):
+        fa = _analyze_user_fraud(int(pr["freelancer_id"]))
+        score = min(1.0, score + fa["risk_score"] * 0.5)
+        flags += fa.get("flags", [])
+    level = "high" if score >= 0.5 else "medium" if score >= 0.3 else "low" if score >= 0.1 else "minimal"
+    return {"proposal_id": proposal_id, "risk_score": round(score, 3), "risk_level": level,
+            "risk_factors": flags, "recommendation": _recommendation(level)}
+
+
+@router.get("/transaction/{transaction_id}")
+async def analyze_transaction(transaction_id: int, current_user=Depends(require_admin)):
+    rows = parse_rows(execute_query(
+        "SELECT id, client_id, amount, status, created_at FROM payments WHERE id = ?", [transaction_id]))
+    if not rows:
+        return {"transaction_id": transaction_id, "risk_score": 0.0, "risk_level": "minimal",
+                "risk_factors": ["transaction_not_found"], "recommendation": "No data."}
+    t = rows[0]
+    flags = []
+    score = 0.0
+    try:
+        if float(t.get("amount") or 0) > 50000:
+            flags.append("high_value_transaction"); score += 0.3
+    except (ValueError, TypeError):
+        pass
+    if (t.get("status") or "") == "failed":
+        flags.append("failed_transaction"); score += 0.2
+    level = "high" if score >= 0.5 else "medium" if score >= 0.3 else "low" if score >= 0.1 else "minimal"
+    return {"transaction_id": transaction_id, "risk_score": round(score, 3), "risk_level": level,
+            "risk_factors": flags, "recommendation": _recommendation(level)}
+
+
+class FraudReportRequest(BaseModel):
+    type: Optional[str] = "user_report"
+    target_id: str
+    reason: str
+    details: Optional[str] = None
+
+
 @router.post("/report")
-async def report_suspicious_activity(
-    user_id: int,
-    reason: str,
-    current_user=Depends(get_current_user),
-):
+async def report_suspicious_activity(body: FraudReportRequest, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
+    try:
+        target_user = int(body.target_id)
+    except (ValueError, TypeError):
+        target_user = None
+    desc = body.reason + (f" — {body.details}" if body.details else "")
     execute_query(
         """INSERT INTO fraud_alerts (user_id, reporter_id, alert_type, severity, description, status, created_at)
-           VALUES (?, ?, 'user_report', 'medium', ?, 'pending', ?)""",
-        [user_id, current_user.id, reason, now],
+           VALUES (?, ?, ?, 'medium', ?, 'pending', ?)""",
+        [target_user, current_user.id, body.type or "user_report", desc, now],
     )
     return {"message": "Report submitted for review"}
