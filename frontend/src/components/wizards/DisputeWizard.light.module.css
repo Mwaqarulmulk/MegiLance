@@ -1,0 +1,98 @@
+/* Light theme overrides */
+.warningBox {
+  background: #fffbeb;
+  border-color: #f59e0b;
+}
+
+.contractInfo {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.typeCard {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.typeCard:hover {
+  background: #fafafa;
+}
+
+.typeCardSelected {
+  background: #ebf4ff;
+  border-color: #4573df;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.infoBox {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.uploadButton {
+  background: #4573df;
+}
+
+.uploadButton:hover {
+  background: #3562c6;
+}
+
+.evidenceItem {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.evidenceIcon {
+  background: #eff6ff;
+}
+
+.evidenceChecklist {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+}
+
+.tipBox {
+  background: #fef3c7;
+  border-color: #fbbf24;
+  color: #92400e;
+}
+
+.resolutionCard {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.resolutionCard:hover {
+  background: #fafafa;
+}
+
+.resolutionCardSelected {
+  background: #f0fff4;
+  border-color: #27ae60;
+}
+
+.summaryBox {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.summarySection {
+  border-bottom-color: #e2e8f0;
+}
+
+.processBox {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+}
+
+.agreementSection {
+  background: #fafafa;
+  border-color: #e2e8f0;
+}

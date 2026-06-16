@@ -1,0 +1,65 @@
+/* @AI-HINT: Common styles for the Table component system. */
+/* This file defines the base structure, typography, padding, and alignment for all table elements, ensuring a consistent and professional look. */
+
+.tableWrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.table {
+  width: 100%;
+  caption-side: bottom;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  font-family: var(--font-family-body);
+  border-collapse: collapse;
+  letter-spacing: 0.01em;
+}
+
+.footer {
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.01em;
+  /* Border and background in theme files */
+}
+
+.row {
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Border in theme files */
+}
+
+.head {
+  height: 48px; /* 48px min touch target */
+  padding: 0 var(--spacing-lg);
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 600;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  /* Text color in theme files */
+}
+
+.cell {
+  padding: var(--spacing-md) var(--spacing-lg);
+  vertical-align: middle;
+}
+
+.caption {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.01em;
+  opacity: 0.8;
+  /* Text color in theme files */
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .wrapper {
+    border-radius: 0.5rem;
+  }
+}

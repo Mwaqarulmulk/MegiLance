@@ -1,0 +1,39 @@
+/* @AI-HINT: Light theme styles for the Table component. */
+/* This file defines the colors for text, backgrounds, and borders in the light theme, ensuring readability and a clean aesthetic. */
+
+.tableWrapper {
+  border: 1px solid #e2e8f0; /* gray-200 */
+}
+
+.header {
+  border-bottom: 1px solid #e2e8f0; /* gray-200 */
+}
+
+.footer {
+  border-top: 1px solid #e2e8f0; /* gray-200 */
+  background-color: #f8fafc; /* slate-50 */
+}
+
+.row {
+  border-bottom: 1px solid #e2e8f0; /* gray-200 */
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row:hover {
+  background-color: #f1f5f9; /* slate-100 */
+}
+
+.head {
+  color: #475569; /* slate-600 */
+}
+
+.cell {
+  color: #334155; /* slate-700 */
+}
+
+.caption {
+  color: #64748b; /* slate-500 */
+}

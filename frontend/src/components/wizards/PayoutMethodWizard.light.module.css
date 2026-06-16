@@ -1,0 +1,69 @@
+/* @AI-HINT: Light theme colors for PayoutMethodWizard */
+
+.methodCard {
+  background: white;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.methodCardSelected {
+  background: #ebf4ff;
+}
+
+.methodDetails {
+  border-color: #e2e8f0;
+}
+
+.formGroup input,
+.formGroup select {
+  background: white;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.verificationBox {
+  background: #f7fafc;
+  border-color: #4573df;
+}
+
+.infoBox {
+  background: #ebf8ff;
+  border-color: #90cdf4;
+  color: #2c5282;
+}
+
+.successBox {
+  background: #f0fff4;
+  border-color: #9ae6b4;
+  color: #22543d;
+}
+
+.warningBox {
+  background: #fffaf0;
+  border-color: #f6ad55;
+  color: #744210;
+}
+
+.settingsSection {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.summaryBox {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.summaryRow {
+  border-color: #e2e8f0;
+}
+
+.primaryBadge {
+  background: #c6f6d5;
+  border-color: #9ae6b4;
+  color: #22543d;
+}
+
+.stripeLink {
+  color: #4573df;
+}

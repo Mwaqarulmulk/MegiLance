@@ -1,0 +1,105 @@
+.homePage {
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+}
+
+.parallaxBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gradientOrb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  animation: floatOrb 20s infinite ease-in-out;
+}
+
+.orb1 {
+  width: min(600px, 80vw);
+  height: min(600px, 80vw);
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.orb2 {
+  width: min(500px, 70vw);
+  height: min(500px, 70vw);
+  top: 40%;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+.orb3 {
+  width: min(700px, 90vw);
+  height: min(700px, 90vw);
+  bottom: -200px;
+  left: 20%;
+  animation-delay: -10s;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+.pageContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.homeSection {
+  position: relative;
+  width: 100%;
+  padding: 0.75rem 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.sectionContainer {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 480px) {
+  .sectionContainer {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .homeSection {
+    padding: 1.25rem 0;
+  }
+
+  .sectionContainer {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .homeSection {
+    padding: 1.5rem 0;
+  }
+
+  .sectionContainer {
+    padding: 0 2.5rem;
+  }
+}

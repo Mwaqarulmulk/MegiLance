@@ -1,0 +1,58 @@
+.trustTitle {
+  color: var(--text-primary-dark);
+}
+
+.trustSubtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.indicatorItem {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.indicatorItem:hover {
+  background: rgba(30, 41, 59, 0.6);
+  box-shadow: 0 20px 40px rgba(39, 174, 96, 0.15);
+  border-color: rgba(74, 222, 128, 0.5);
+}
+
+.indicatorIcon {
+  background: rgba(39, 174, 96, 0.15);
+  color: #4ade80;
+  box-shadow: 0 0 15px rgba(39, 174, 96, 0.2);
+}
+
+.indicatorValue {
+  color: var(--text-primary-dark);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.indicatorLabel {
+  color: var(--text-tertiary-dark);
+}
+
+.badgeItem {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.badgeItem:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(74, 222, 128, 0.5);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1);
+}
+
+.badgeIcon {
+  background: rgba(39, 174, 96, 0.15);
+  color: #4ade80;
+}
+
+.badgeTitle {
+  color: #e2e8f0;
+}
+
+.badgeDescription {
+  color: var(--text-tertiary-dark);
+}

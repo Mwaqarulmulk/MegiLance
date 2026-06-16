@@ -1,0 +1,29 @@
+/* AI-HINT: Light theme styles for the BillingToggle component. Defines colors for the toggle switch, labels, and discount badge in light mode. */
+
+.theme {}
+
+.toggleLabel {
+  color: #64748b;
+}
+
+.toggleLabelActive {
+  color: #0f172a;
+}
+
+.toggleSlider {
+  background-color: #cbd5e1;
+}
+
+.toggleSlider::before {
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.toggleCheckbox:checked + .toggleSlider {
+  background-color: #4573df;
+}
+
+.toggleDiscount {
+  color: #15803d;
+  background-color: #dcfce7;
+}

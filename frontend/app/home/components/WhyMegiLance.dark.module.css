@@ -1,0 +1,114 @@
+/* @AI-HINT: Dark theme specific styles for WhyMegiLance component. Defines color palette, text colors, backgrounds, and visual elements for dark mode. */
+
+.section {
+  background: linear-gradient(180deg, var(--bg-primary-dark) 0%, var(--bg-secondary-dark) 100%);
+}
+
+.bgBlob1 {
+  background: radial-gradient(circle, rgba(69, 115, 223, 0.2) 0%, rgba(69, 115, 223, 0) 70%);
+}
+
+.bgBlob2 {
+  background: radial-gradient(circle, rgba(255, 152, 0, 0.15) 0%, rgba(255, 152, 0, 0) 70%);
+}
+
+.bgBlob3 {
+  background: radial-gradient(circle, rgba(156, 39, 176, 0.15) 0%, rgba(156, 39, 176, 0) 70%);
+}
+
+.preheader {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.badge {
+  color: #60a5fa;
+}
+
+.badgeDot {
+  background-color: #60a5fa;
+}
+
+.badgeText {
+  color: #e2e8f0;
+}
+
+.heading {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}
+
+/* Value Card Styles - Dark Theme */
+.valueCard {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.3),
+    0 4px 10px -2px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.valueCard:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: var(--ml-blue);
+  box-shadow: 
+    0 20px 40px -5px rgba(69, 115, 223, 0.2),
+    0 10px 20px -5px rgba(0, 0, 0, 0.2);
+}
+
+.cardTitle {
+  color: var(--text-primary-dark);
+}
+
+.cardSubtitle {
+  color: #60a5fa;
+}
+
+.cardDescription {
+  color: var(--text-secondary-dark);
+}
+
+.benefitText {
+  color: var(--text-tertiary-dark);
+}
+
+.cardCta {
+  color: #60a5fa;
+  border-color: #60a5fa;
+}
+
+.cardCta:hover {
+  background: var(--ml-blue);
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(69, 115, 223, 0.3);
+  border-color: var(--ml-blue);
+}
+
+/* Trust Section - Dark Theme */
+.trustSection {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.trustLabel {
+  color: var(--text-tertiary-dark);
+}
+
+.trustBadge {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.trustBadge:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: var(--ml-blue);
+  box-shadow: 0 10px 20px rgba(69, 115, 223, 0.2);
+}
+
+.badgeLabel {
+  color: #e2e8f0;
+}

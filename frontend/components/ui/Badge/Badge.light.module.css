@@ -1,0 +1,33 @@
+/* @AI-HINT: Light theme styles for the Badge component. */
+/* This file defines the colors for all badge variants in the light theme, ensuring they are vibrant and readable against a light background. */
+
+.primary {
+  background-color: #4573df; /* MegiLance Blue */
+  color: #ffffff;
+}
+
+.secondary {
+  background-color: #e2e8f0; /* slate-200 */
+  color: #334155; /* slate-700 */
+}
+
+.destructive {
+  background-color: #e81123; /* Error Red */
+  color: #ffffff;
+}
+
+.success {
+  background-color: #27AE60; /* Success Green */
+  color: #ffffff;
+}
+
+.warning {
+  background-color: #F2C94C; /* Warning Yellow */
+  color: #1f2937; /* A dark color for contrast */
+}
+
+.outline {
+  background-color: transparent;
+  border-color: #cbd5e1; /* slate-300 */
+  color: #475569; /* slate-600 */
+}

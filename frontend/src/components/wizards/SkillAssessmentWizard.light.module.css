@@ -1,0 +1,61 @@
+/* Light theme for SkillAssessmentWizard */
+
+.levelCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+  color: #333333;
+}
+
+.levelCard:hover {
+  border-color: #4573df;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.levelCardSelected {
+  background: #f0f5ff;
+  border-color: #4573df;
+}
+
+.progressBar {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.questionCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.optionCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+  color: #333333;
+}
+
+.optionCard:hover {
+  border-color: #4573df;
+  background: #f8f9fa;
+}
+
+.optionSelected {
+  background: #f0f5ff;
+  border-color: #4573df;
+}
+
+.resultsCard {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
+.passedCard {
+  background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+  border-color: #27AE60;
+}
+
+.statsGrid {
+  background: #f8f9fa;
+}
+
+.certificateBox {
+  background: #f0fff4;
+}

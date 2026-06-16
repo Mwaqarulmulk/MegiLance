@@ -1,0 +1,108 @@
+/* Light theme */
+.selectedClient {
+  background: #f0fff4;
+}
+
+.searchInput {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.clientCard {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.clientCard:hover {
+  background: #fafafa;
+}
+
+.clientCardSelected {
+  background: #f0fff4;
+  border-color: #27ae60;
+}
+
+.tableHeader {
+  background: #f7fafc;
+  border-bottom-color: #cbd5e0;
+}
+
+.lineItemRow {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.lineItemRow input {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.removeButton {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.subtotalBox {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+}
+
+.totalsBox {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.totalRow {
+  border-bottom-color: #e2e8f0;
+}
+
+.grandTotal {
+  border-top-color: #cbd5e0;
+}
+
+.infoBox {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.previewBox {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+}
+
+.previewHeader {
+  border-bottom-color: #cbd5e0;
+}
+
+.previewInvoice {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.previewTop {
+  border-bottom-color: #e2e8f0;
+}
+
+.previewItems th {
+  background: #f7fafc;
+  border-bottom-color: #cbd5e0;
+}
+
+.previewItems td {
+  border-bottom-color: #e2e8f0;
+}
+
+.previewTotal {
+  border-top-color: #cbd5e0;
+}

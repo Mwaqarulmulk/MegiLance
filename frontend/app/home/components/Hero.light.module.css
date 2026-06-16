@@ -1,0 +1,75 @@
+/* @AI-HINT: Premium Hero Light Theme - Soft gradients, elegant glassmorphism, elevated shadows */
+.heroContainer {
+  background: linear-gradient(to bottom, var(--bg-primary-light) 0%, var(--bg-secondary-light) 100%);
+}
+
+.mouseGlow {
+  background: radial-gradient(circle, rgba(69, 115, 223, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.ambientOrb1 {
+  background: radial-gradient(circle, rgba(69, 115, 223, 0.12) 0%, rgba(255,255,255,0) 70%);
+}
+
+.ambientOrb2 {
+  background: radial-gradient(circle, rgba(232, 17, 35, 0.04) 0%, rgba(255,255,255,0) 70%);
+}
+
+.mainHeadline {
+  color: var(--text-primary-light);
+}
+
+.heroSubtitle {
+  color: var(--text-secondary-light);
+}
+
+.searchForm {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(69, 115, 223, 0.15);
+}
+
+.searchForm:focus-within {
+  border-color: rgba(69, 115, 223, 0.4);
+  box-shadow: 0 32px 64px rgba(69, 115, 223, 0.12), 0 0 0 4px rgba(69, 115, 223, 0.05);
+  background: var(--bg-primary-light);
+}
+
+.searchIcon {
+  color: var(--text-tertiary-light);
+}
+
+.searchForm:focus-within .searchIcon {
+  color: var(--ml-blue);
+}
+
+.searchInput {
+  color: var(--text-primary-light);
+}
+.searchInput::placeholder {
+  color: var(--text-tertiary-light);
+}
+
+.popularPrefix {
+  color: var(--color-text-secondary-light);
+}
+
+.tagPill {
+  background: rgba(255, 255, 255, 0.6);
+  color: #334155;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.tagPill:hover {
+  background: var(--bg-primary-light);
+  color: var(--ml-blue);
+  border-color: rgba(69, 115, 223, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(69, 115, 223, 0.08);
+}
+
+.metricText {
+  color: var(--text-secondary-light);
+}
+.metricIcon {
+  color: var(--ml-blue);
+}

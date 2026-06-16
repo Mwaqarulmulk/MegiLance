@@ -1,0 +1,23 @@
+/* AI-HINT: This file contains dark theme styles for the Input component. */
+
+.input {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.input:focus-visible {
+  border-color: #60a5fa;
+}
+
+.input[type="file"]::file-selector-button {
+  color: #60a5fa;
+}
+
+.input[type="file"]::file-selector-button:hover {
+  color: #7c9ff2;
+}

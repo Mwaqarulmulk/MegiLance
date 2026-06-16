@@ -1,0 +1,88 @@
+/* @AI-HINT: Light theme colors for PaymentWizard */
+
+.balanceCard {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  background: white;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.methodCard {
+  background: white;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.methodCardSelected {
+  background: #ebf4ff;
+}
+
+.feePreview {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.feeRow {
+  border-color: #e2e8f0;
+}
+
+.verificationBox {
+  background: #fffaf0;
+  border-color: #f6ad55;
+}
+
+.infoBox {
+  background: #ebf8ff;
+  border-color: #90cdf4;
+  color: #2c5282;
+}
+
+.radioLabel {
+  background: white;
+  border-color: #cbd5e0;
+}
+
+.summaryBox {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.summaryRow {
+  border-color: #e2e8f0;
+}
+
+.quickAmountBtn {
+  background: white;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.quickAmountSelected {
+  background: #ebf4ff;
+}
+
+.savedMethodCard {
+  background: white;
+  border-color: #cbd5e0;
+}
+
+.savedMethodSelected {
+  background: #ebf4ff;
+}
+
+.addNewMethod {
+  background: white;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.secureBox {
+  background: #f0fff4;
+  border-color: #9ae6b4;
+}

@@ -1,0 +1,76 @@
+/* @AI-HINT: Light theme styles for FeaturesStatus section */
+
+.section {
+  background: linear-gradient(180deg, var(--bg-primary-light) 0%, var(--bg-secondary-light) 100%);
+}
+
+.title {
+  background: linear-gradient(135deg, #1a1a1a 0%, var(--ml-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: #4b5563;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.statCard:hover {
+  box-shadow: 0 10px 30px rgba(69, 115, 223, 0.15);
+}
+
+.statValue {
+  color: var(--ml-blue);
+}
+
+.statLabel {
+  color: var(--color-text-secondary-light);
+}
+
+.categoryCard {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.categoryCard:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  border-color: rgba(69, 115, 223, 0.3);
+}
+
+.categoryIcon {
+  color: var(--ml-blue);
+}
+
+.categoryTitle {
+  color: #1a1a1a;
+}
+
+.featureItem {
+  background: rgba(248, 249, 250, 0.5);
+}
+
+.featureItem:hover {
+  background: rgba(69, 115, 223, 0.05);
+}
+
+.featureName {
+  color: #374151;
+}
+
+.legend {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.legendTitle {
+  color: var(--color-text-secondary-light);
+}
+
+.legendItem {
+  color: #4b5563;
+}

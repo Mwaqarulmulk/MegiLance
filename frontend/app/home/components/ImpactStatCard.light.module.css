@@ -1,0 +1,28 @@
+.stat {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.stat:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 40px rgba(39, 174, 96, 0.1);
+  border-color: var(--ml-green);
+}
+
+.statIcon {
+  background: rgba(39, 174, 96, 0.1);
+  color: var(--ml-green);
+}
+
+.statNumber {
+  color: #1a202c;
+}
+
+.statLabel {
+  color: #2d3748;
+}
+
+.statDescription {
+  color: #718096;
+}

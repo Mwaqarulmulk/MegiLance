@@ -1,0 +1,42 @@
+/* @AI-HINT: Dark theme styles for AIShowcaseCard. */
+
+.cardContent {
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.card:hover .cardContent {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.iconWrapper {
+  background: rgba(69, 115, 223, 0.15);
+  color: #60a5fa;
+}
+
+.card:hover .iconWrapper {
+  background: #60a5fa;
+  color: #ffffff;
+}
+
+.title {
+  color: #ffffff;
+}
+
+.description {
+  color: var(--text-secondary-dark);
+}
+
+.stats {
+  background: rgba(69, 115, 223, 0.15);
+  color: #60a5fa;
+}
+
+.learnMore {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.card:hover .learnMore {
+  background: #60a5fa;
+  color: #ffffff;
+}

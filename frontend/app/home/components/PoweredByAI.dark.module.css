@@ -1,0 +1,86 @@
+/* @AI-HINT: Dark theme styles for PoweredByAI. */
+
+.section {
+  background: linear-gradient(180deg, var(--bg-secondary-dark) 0%, var(--bg-primary-dark) 100%);
+}
+
+.badge {
+  background: rgba(69, 115, 223, 0.15);
+  color: #60a5fa;
+  border-color: rgba(69, 115, 223, 0.3);
+}
+
+.heading {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.featureCard {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.featureCard:hover {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.cardTitle {
+  color: var(--text-primary-dark);
+}
+
+.cardDescription {
+  color: var(--text-secondary-dark);
+}
+
+.techStackSection {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.techStackTitle {
+  color: var(--text-primary-dark);
+}
+
+.techStackSubtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.techItem {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.techItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.techName {
+  color: var(--text-primary-dark);
+}
+
+.techType {
+  color: var(--text-tertiary-dark);
+}
+
+.capabilitiesSection {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.capabilitiesTitle {
+  color: var(--text-primary-dark);
+}
+
+.capabilityItem {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.capabilityItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.capabilityText {
+  color: var(--text-primary-dark);
+}

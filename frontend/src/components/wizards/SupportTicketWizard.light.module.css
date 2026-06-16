@@ -1,0 +1,85 @@
+/* Light theme for SupportTicketWizard */
+
+.categoryCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.categoryCard:hover {
+  border-color: #4573df;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.categorySelected {
+  background: #f0f5ff;
+  border-color: #4573df;
+}
+
+.subcategoryCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.subcategoryCard:hover {
+  border-color: #4573df;
+  background: #f8f9fa;
+}
+
+.subcategorySelected {
+  background: #f0f5ff;
+  border-color: #4573df;
+}
+
+.priorityCard {
+  background: #ffffff;
+}
+
+.input,
+.textarea {
+  background: #ffffff;
+  border-color: #d0d0d0;
+  color: #333;
+}
+
+.tipBox {
+  background: #f0f5ff;
+}
+
+.uploadBox {
+  background: #f8f9fa;
+  border-color: #4573df;
+}
+
+.attachmentItem {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.contactCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.contactCard:hover {
+  border-color: #4573df;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contactSelected {
+  background: #f0f5ff;
+  border-color: #4573df;
+}
+
+.summaryCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.descriptionBox {
+  background: #f8f9fa;
+}
+
+.responseBox {
+  background: #f0f5ff;
+  border-color: #4573df;
+}

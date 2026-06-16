@@ -1,0 +1,145 @@
+/* @AI-HINT: Common styles for the How It Works section. Defines the responsive grid layout, typography, and structure for a premium, modern design. */
+
+.howItWorks {
+  padding: 5rem 0;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* PREMIUM - 3D Context */
+  perspective: 1000px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 480px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 6rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  /* PREMIUM - 3D Depth */
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+}
+
+.tagline {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 100px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--color-primary, var(--ml-blue)) 0%, var(--color-accent, var(--ml-orange)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1.8;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.timeline {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem; /* Increased gap between cards */
+  /* PREMIUM - 3D Context */
+  transform-style: preserve-3d;
+}
+
+/* The vertical timeline bar */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -2px;
+  background: linear-gradient(to bottom, var(--color-primary, var(--ml-blue)), var(--color-accent, var(--ml-orange)));
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(69, 115, 223, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .howItWorks {
+    padding: 3.5rem 0;
+  }
+
+  .header {
+    margin-bottom: 3rem;
+  }
+
+  .timeline::after {
+    left: 1.5rem;
+  }
+  
+  .timeline {
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 374px) {
+  .howItWorks {
+    padding: 2.5rem 0;
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .timeline::after {
+    left: 1.25rem;
+  }
+
+  .timeline {
+    gap: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1.05rem;
+  }
+}

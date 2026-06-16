@@ -1,0 +1,78 @@
+/* Light theme for RefundRequestWizard */
+
+.warningBox {
+  background: #fff9e6;
+  color: #333;
+}
+
+.paymentInfo {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.reasonCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.reasonCard:hover {
+  border-color: #e81123;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reasonSelected {
+  background: #fff5f5;
+  border-color: #e81123;
+}
+
+.input,
+.textarea,
+.select {
+  background: #ffffff;
+  border-color: #d0d0d0;
+  color: #333;
+}
+
+.uploadBox {
+  background: #f8f9fa;
+  border-color: #4573df;
+}
+
+.evidenceItem {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.infoBox {
+  background: #f0f5ff;
+}
+
+.typeCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.typeCard:hover {
+  border-color: #4573df;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.typeSelected {
+  background: #f0f5ff;
+  border-color: #4573df;
+}
+
+.calculationBox {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.summaryCard {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.processBox {
+  background: #f0f5ff;
+  border-color: #4573df;
+}

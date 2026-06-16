@@ -1,0 +1,282 @@
+/* @AI-HINT: Common styles for the AIShowcaseCard. Defines layout, typography, and advanced 3D interactive elements. */
+
+/* Status Badge Styles */
+.statusBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 10;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.statusLive {
+  background: rgba(39, 174, 96, 0.2);
+  color: var(--color-success, var(--ml-green));
+  border: 1px solid rgba(39, 174, 96, 0.4);
+}
+
+.statusBeta {
+  background: rgba(69, 115, 223, 0.2);
+  color: var(--color-primary, var(--ml-blue));
+  border: 1px solid rgba(69, 115, 223, 0.4);
+}
+
+.statusSmart {
+  background: rgba(255, 152, 0, 0.2);
+  color: var(--color-accent, var(--ml-orange));
+  border: 1px solid rgba(255, 152, 0, 0.4);
+}
+
+.card {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: visible; /* Allow 3D elements to pop out */
+  z-index: 1;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(20px);
+  z-index: 10;
+}
+
+.cardContent {
+  position: relative;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.05),
+    0 4px 10px -2px rgba(0, 0, 0, 0.02),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: transform 0.4s ease,
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    background-color 0.4s ease,
+    color 0.4s ease,
+    opacity 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+.card:hover .cardContent {
+  box-shadow: 
+    0 20px 40px -5px rgba(69, 115, 223, 0.15),
+    0 10px 20px -5px rgba(0, 0, 0, 0.05);
+  border-color: rgba(69, 115, 223, 0.3);
+}
+
+.cardGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(69, 115, 223, 0.15), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  border-radius: 1.5rem;
+}
+
+.card:hover .cardGlow {
+  opacity: 1;
+}
+
+.cardBorder {
+  display: none; /* Handled by border on cardContent */
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  transform: translateZ(20px);
+}
+
+.card:hover .iconWrapper {
+  transform: translateZ(40px) scale(1.1) rotate(-5deg);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.iconWrapper svg {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.5s ease;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  transform: translateZ(10px);
+  transition: transform 0.4s ease;
+}
+
+.card:hover .title {
+  transform: translateZ(30px);
+}
+
+.description {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  flex-grow: 1;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+  transform: translateZ(5px);
+  transition: transform 0.4s ease;
+}
+
+.card:hover .description {
+  transform: translateZ(20px);
+  opacity: 1;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateZ(10px);
+}
+
+.stats {
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.card:hover .stats {
+  transform: scale(1.05);
+}
+
+.learnMore {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  transform: rotate(-45deg);
+}
+
+.card:hover .learnMore {
+  transform: rotate(0deg) scale(1.1);
+}
+
+.arrowIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cardContent {
+    padding: 1.75rem;
+  }
+
+  .iconWrapper {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 1.5rem;
+  }
+
+  .iconWrapper svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .description {
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .learnMore {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 374px) {
+  .cardContent {
+    padding: 1.25rem;
+  }
+
+  .iconWrapper {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    font-size: 1.125rem;
+  }
+
+  .description {
+    font-size: 0.875rem;
+  }
+}

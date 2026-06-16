@@ -1,0 +1,11 @@
+.testimonials {
+  background: transparent;
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}

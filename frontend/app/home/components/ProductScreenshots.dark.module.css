@@ -1,0 +1,54 @@
+/* @AI-HINT: Dark theme styles for ProductScreenshots. */
+
+.carouselContainer {
+  background: linear-gradient(180deg, var(--bg-primary-dark) 0%, var(--bg-secondary-dark) 100%);
+}
+
+.carouselTitle {
+  color: var(--text-primary-dark);
+}
+
+.carouselSubtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.slideContent {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.slideTitle {
+  color: var(--text-primary-dark);
+}
+
+.slideDescription {
+  color: var(--text-secondary-dark);
+}
+
+.navButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.indicator {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.indicatorActive {
+  background: var(--ml-blue);
+}
+
+.autoPlayButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.autoPlayButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

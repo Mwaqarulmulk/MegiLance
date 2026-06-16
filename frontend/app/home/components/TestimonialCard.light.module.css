@@ -1,0 +1,26 @@
+.testimonialCard {
+  background: var(--bg-primary-light);
+  border-color: var(--border-light);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.testimonialCard:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: var(--ml-green);
+}
+
+.quoteIcon {
+  color: #1a202c;
+}
+
+.quote {
+  color: #4a5568;
+}
+
+.authorName {
+  color: #1a202c;
+}
+
+.authorTitle {
+  color: #718096;
+}

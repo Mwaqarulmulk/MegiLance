@@ -1,0 +1,21 @@
+/* AI-HINT: Dark theme styles for the FaqItem component. Defines colors for the question text, answer text, and border. */
+
+.item {
+  border-color: #334155;
+}
+
+.question {
+  color: #e2e8f0;
+}
+
+.question:hover {
+  color: #6b93f5;
+}
+
+.chevron {
+  color: #94a3b8;
+}
+
+.answerContent {
+  color: #94a3b8;
+}

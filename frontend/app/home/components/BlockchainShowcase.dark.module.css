@@ -1,0 +1,86 @@
+/* @AI-HINT: Dark theme styles for BlockchainShowcase. */
+
+.blockchainShowcase {
+  background: linear-gradient(180deg, var(--bg-primary-dark) 0%, var(--bg-secondary-dark) 100%);
+}
+
+.badge {
+  background: rgba(247, 147, 26, 0.15);
+  color: #f7931a;
+  border-color: rgba(247, 147, 26, 0.3);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.block {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.block:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.blockHeader {
+  color: var(--text-tertiary-dark);
+}
+
+.blockContent {
+  color: #ffffff;
+}
+
+.feature {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.feature:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.featureTitle {
+  color: #ffffff;
+}
+
+.featureDescription {
+  color: var(--text-secondary-dark);
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.stat:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.statLabel {
+  color: var(--text-tertiary-dark);
+}
+
+.supportedChains {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.chainsTitle {
+  color: #ffffff;
+}
+
+.chain {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-tertiary-dark);
+}
+
+.chain:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f7931a;
+}

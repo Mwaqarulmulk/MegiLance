@@ -1,0 +1,95 @@
+/* Light theme overrides */
+.selectedRecipient {
+  background: #f0fff4;
+  border-color: #27ae60;
+}
+
+.searchInput {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.recipientCard {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.recipientCard:hover {
+  background: #fafafa;
+}
+
+.recipientCardSelected {
+  background: #f0fff4;
+  border-color: #27ae60;
+}
+
+.noResults {
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.infoBox {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.purposeCard {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.purposeCard:hover {
+  background: #fafafa;
+}
+
+.purposeCardSelected {
+  background: #ebf4ff;
+  border-color: #4573df;
+}
+
+.templateNotice {
+  background: #f0fff4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.formGroup input,
+.formGroup textarea {
+  background: white;
+  border-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.tipBox {
+  background: #fef3c7;
+  border-color: #fbbf24;
+  color: #92400e;
+}
+
+.uploadButton {
+  background: #4573df;
+}
+
+.uploadButton:hover {
+  background: #3562c6;
+}
+
+.attachmentItem {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.attachmentIcon {
+  background: #eff6ff;
+}
+
+.previewBox {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.previewMessage {
+  background: #f7fafc;
+  color: #1a202c;
+}

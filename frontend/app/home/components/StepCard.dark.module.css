@@ -1,0 +1,22 @@
+/* @AI-HINT: Dark theme styles for StepCard. */
+
+.stepCard {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.stepCard:hover {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.description {
+  color: var(--text-secondary-dark);
+}
+
+.stepNumber {
+  color: var(--text-primary-dark);
+}

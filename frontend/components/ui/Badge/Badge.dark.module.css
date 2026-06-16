@@ -1,0 +1,33 @@
+/* @AI-HINT: Dark theme styles for the Badge component. */
+/* This file defines the colors for all badge variants in the dark theme, ensuring they are high-contrast and visually appealing on dark surfaces. */
+
+.primary {
+  background-color: #4573df; /* MegiLance Blue */
+  color: #ffffff;
+}
+
+.secondary {
+  background-color: #334155; /* slate-700 */
+  color: #e2e8f0; /* slate-200 */
+}
+
+.destructive {
+  background-color: #e81123; /* Error Red */
+  color: #ffffff;
+}
+
+.success {
+  background-color: #27AE60; /* Success Green */
+  color: #ffffff;
+}
+
+.warning {
+  background-color: #F2C94C; /* Warning Yellow */
+  color: #1e293b; /* A dark color for contrast */
+}
+
+.outline {
+  background-color: transparent;
+  border-color: #64748b; /* slate-500 */
+  color: #cbd5e1; /* slate-300 */
+}
