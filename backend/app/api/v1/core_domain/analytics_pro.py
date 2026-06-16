@@ -44,24 +44,29 @@ def _ensure_table():
     """, [])
 
 
-def _safe_count(result, col=0) -> int:
+def _cell(result, col=0):
+    """Return the unwrapped scalar at row 0 / column `col`, handling Turso's
+    {type, value} cell format. Returns None if absent."""
     if result and result.get("rows") and result["rows"]:
         val = result["rows"][0][col]
-        try:
-            return int(val or 0)
-        except (ValueError, TypeError):
-            return 0
-    return 0
+        if isinstance(val, dict):
+            return None if val.get("type") == "null" else val.get("value")
+        return val
+    return None
+
+
+def _safe_count(result, col=0) -> int:
+    try:
+        return int(_cell(result, col) or 0)
+    except (TypeError, ValueError):
+        return 0
 
 
 def _safe_float(result, col=0) -> float:
-    if result and result.get("rows") and result["rows"]:
-        val = result["rows"][0][col]
-        try:
-            return float(val or 0)
-        except (ValueError, TypeError):
-            return 0.0
-    return 0.0
+    try:
+        return float(_cell(result, col) or 0)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def _now_utc() -> datetime:

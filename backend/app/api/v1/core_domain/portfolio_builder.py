@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user
-from app.db.turso_http import execute_query
+from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
 
@@ -43,13 +43,14 @@ async def get_user_showcase(user_id: int, current_user=Depends(get_current_user)
     )
     if not result or not result.get("rows"):
         return {"user_id": user_id, "template_id": "minimal", "layout_config": {}, "is_public": True}
-    row = result["rows"][0]
+    rows = parse_rows(result)
+    row = rows[0] if rows else {}
     return {
-        "user_id": row[0],
-        "template_id": row[1] or "minimal",
-        "layout_config": json.loads(row[2] or "{}"),
-        "is_public": bool(row[3]),
-        "updated_at": row[4],
+        "user_id": row.get("user_id"),
+        "template_id": row.get("template_id") or "minimal",
+        "layout_config": json.loads(row.get("layout_config") or "{}"),
+        "is_public": bool(row.get("is_public", 1)),
+        "updated_at": row.get("updated_at"),
     }
 
 

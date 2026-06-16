@@ -13,6 +13,7 @@ import ThemeToggleButton from '@/app/components/atoms/ThemeToggleButton/ThemeTog
 import LanguageSwitcher from '@/app/components/molecules/LanguageSwitcher/LanguageSwitcher';
 import FloatingActionButtons from '@/app/components/molecules/FloatingActionButtons/FloatingActionButtons';
 import ChatbotAgent from '@/app/components/AI/ChatbotAgent/ChatbotAgent';
+import GlobalErrorReporter from '@/app/components/ErrorReporting/GlobalErrorReporter';
 import InstallAppBanner from '@/app/components/PWA/InstallAppBanner/InstallAppBanner';
 import UpdateNotification from '@/app/components/PWA/UpdateNotification/UpdateNotification';
 import PageTransition from '@/app/components/Transitions/PageTransition';
@@ -85,6 +86,7 @@ const AppChromeClient: React.FC<{ children: React.ReactNode }> = ({ children }) 
         <LanguageSwitcher />
       </FloatingActionButtons>
       
+      <GlobalErrorReporter />
       <InstallAppBanner />
       <UpdateNotification />
     </div>

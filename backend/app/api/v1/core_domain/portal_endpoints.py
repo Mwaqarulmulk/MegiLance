@@ -250,7 +250,8 @@ async def submit_proposal(data: dict, current_user=Depends(get_current_user)):
     proj_result = execute_query("SELECT id, status FROM projects WHERE id = ?", [project_id])
     if not proj_result or not proj_result.get("rows"):
         raise HTTPException(status_code=404, detail="Project not found")
-    proj_status = proj_result["rows"][0][1]
+    proj_rows = parse_rows(proj_result)
+    proj_status = proj_rows[0].get("status") if proj_rows else None
     if proj_status != "open":
         raise HTTPException(status_code=400, detail="Project is not accepting proposals")
 

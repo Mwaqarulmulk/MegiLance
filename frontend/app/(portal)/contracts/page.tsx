@@ -16,7 +16,7 @@ export default function ContractsPage() {
     if (role === "freelancer") {
       router.replace("/freelancer/contracts");
     } else if (role === "admin") {
-      router.replace("/admin/contracts");
+      router.replace("/admin/projects");
     } else {
       router.replace("/client/contracts");
     }

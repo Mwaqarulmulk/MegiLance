@@ -29,14 +29,15 @@ async function fetchBlogPosts(): Promise<BlogPost[]> {
     const res = await fetch('/api/v1/blog?limit=50');
     if (!res.ok) return [];
     const data = await res.json();
-    return (data.posts || data || []).map((p: any) => ({
+    const list = data.items || data.posts || (Array.isArray(data) ? data : []);
+    return list.map((p: any) => ({
       slug: p.slug || String(p.id),
       title: p.title || 'Untitled',
-      excerpt: p.excerpt || p.summary || '',
-      imageUrl: p.image_url || p.imageUrl || '/images/blog/default.jpg',
+      excerpt: p.excerpt || p.meta_description || p.summary || '',
+      imageUrl: p.featured_image_url || p.image_url || p.imageUrl || '/images/blog/default.jpg',
       author: p.author || 'MegiLance Team',
-      date: p.published_at ? new Date(p.published_at).toLocaleDateString('en-US', { 
-        month: 'long', day: 'numeric', year: 'numeric' 
+      date: (p.published_date || p.published_at) ? new Date(p.published_date || p.published_at).toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric'
       }) : '',
     }));
   } catch {

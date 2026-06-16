@@ -180,6 +180,10 @@ export default function Header() {
               <Sparkles size={16} /> Explore
             </Link>
 
+            <Link href="/pricing" className={cn(commonStyles.navBtn, themeStyles.navBtn)}>
+              Pricing
+            </Link>
+
             {(Object.keys(megaMenuData) as Array<keyof typeof megaMenuData>).map((key) => (
               <div 
                 key={key} 

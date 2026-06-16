@@ -14,11 +14,12 @@ router = APIRouter()
 def _get_user_points(user_id: int) -> int:
     try:
         result = execute_query(
-            "SELECT COUNT(*) FROM contracts WHERE freelancer_id = ? AND status = 'completed'",
+            "SELECT COUNT(*) as cnt FROM contracts WHERE freelancer_id = ? AND status = 'completed'",
             [user_id],
         )
         if result and result.get("rows"):
-            return int(result["rows"][0][0] or 0) * 100
+            rows = parse_rows(result)
+            return int(rows[0].get("cnt", 0) or 0) * 100 if rows else 0
     except Exception:
         pass
     return 0

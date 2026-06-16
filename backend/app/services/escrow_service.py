@@ -314,7 +314,7 @@ def update_escrow_fields(escrow_id: int, update_dict: dict):
             raise ValueError(f"Invalid column name: {field}")
         if field == "expires_at" and value:
             update_fields.append(f"{field} = ?")
-            params.append(value.isoformat())
+            params.append(value.isoformat() if hasattr(value, 'isoformat') else str(value))
         else:
             update_fields.append(f"{field} = ?")
             params.append(value)

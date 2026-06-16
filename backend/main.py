@@ -1530,6 +1530,24 @@ async def general_exception_handler(request, exc):
         f"unhandled_exception type={type(exc).__name__} message={str(exc)} request_id={request_id} traceback={error_details.replace(chr(10), ' | ')}"
     )
 
+    # Auto-capture for the admin issue monitor (best-effort, never raises)
+    try:
+        from app.api.v1.core_domain.error_reports import record_error
+        record_error(
+            source="backend",
+            severity="high",
+            error_type=type(exc).__name__,
+            message=str(exc),
+            stack=error_details,
+            path=str(request.url.path),
+            method=request.method,
+            status_code=500,
+            user_agent=request.headers.get("user-agent"),
+            context={"request_id": request_id, "query": str(request.url.query)},
+        )
+    except Exception:
+        pass
+
     # SECURITY: Never expose internal error details in production
     if settings.environment == "production":
         return JSONResponse(

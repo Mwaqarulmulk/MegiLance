@@ -6,10 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { Github, Twitter, Linkedin, Mail, ShieldCheck, Percent, BadgeCheck, Headphones } from 'lucide-react';
 
 import { MegiLanceLogo } from '@/app/components/atoms/MegiLanceLogo/MegiLanceLogo';
 import FooterGlobe from './FooterGlobe';
+import ReportIssueButton from '@/app/components/ErrorReporting/ReportIssueButton';
 
 import commonStyles from './PublicFooter.common.module.css';
 import lightStyles from './PublicFooter.light.module.css';
@@ -84,6 +85,30 @@ const PublicFooter = () => {
             <p className={cn(commonStyles.tagline, styles.tagline)}>
               The Future of Freelance, Today.
             </p>
+            {/* Trust signals — reinforce safety & value */}
+            <ul
+              aria-label="Why MegiLance"
+              style={{
+                listStyle: 'none', padding: 0, margin: '0 0 1.25rem',
+                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 1rem',
+              }}
+            >
+              {[
+                { icon: ShieldCheck, label: 'Secure escrow' },
+                { icon: Percent, label: 'Low 5–10% fees' },
+                { icon: BadgeCheck, label: 'Verified talent' },
+                { icon: Headphones, label: '24/7 support' },
+              ].map(({ icon: Icon, label }) => (
+                <li
+                  key={label}
+                  className={cn(commonStyles.tagline, styles.tagline)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8125rem', margin: 0 }}
+                >
+                  <Icon size={15} style={{ color: '#27AE60', flexShrink: 0 }} aria-hidden="true" />
+                  {label}
+                </li>
+              ))}
+            </ul>
             {/* Newsletter CTA */}
             <div className={commonStyles.newsletterSection}>
               <p className={cn(commonStyles.newsletterLabel, styles.newsletterLabel)}>Stay Updated</p>
@@ -119,6 +144,9 @@ const PublicFooter = () => {
           <p className={cn(commonStyles.copyright, styles.copyright)}>
             &copy; {new Date().getFullYear()} MegiLance, Inc. All rights reserved.
           </p>
+          <div className={cn(commonStyles.linkItem, styles.linkItem)} style={{ display: 'flex', alignItems: 'center' }}>
+            <ReportIssueButton variant="link" />
+          </div>
           <div className={commonStyles.socialLinks}>
             {socialLinks.map((link) => (
               <a key={link.name} href={link.href} aria-label={link.name} className={cn(commonStyles.socialLink, styles.socialLink)}>

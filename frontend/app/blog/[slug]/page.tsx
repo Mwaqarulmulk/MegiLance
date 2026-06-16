@@ -30,10 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return buildArticleMeta({
     title: post.title,
-    description: post.excerpt,
+    description: post.excerpt || post.meta_description,
     path: `/blog/${post.slug}`,
-    image: post.image_url,
-    publishedTime: post.created_at,
+    image: post.featured_image_url || post.image_url,
+    publishedTime: post.published_date || post.created_at,
   });
 }
 
@@ -50,12 +50,12 @@ export default async function Page({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
-    description: post.excerpt,
-    image: post.image_url ? `${BASE_URL}${post.image_url}` : undefined,
-    datePublished: post.created_at,
+    description: post.excerpt || post.meta_description,
+    image: (post.featured_image_url || post.image_url) ? `${BASE_URL}${post.featured_image_url || post.image_url}` : undefined,
+    datePublished: post.published_date || post.created_at,
     author: {
       '@type': 'Person',
-      name: post.author,
+      name: post.author || 'MegiLance',
     },
     publisher: {
       '@type': 'Organization',

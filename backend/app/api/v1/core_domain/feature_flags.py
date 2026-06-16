@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user, require_admin
-from app.db.turso_http import execute_query
+from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
 
@@ -29,7 +29,14 @@ def _ensure_table():
     """, [])
 
 
-def _row_to_flag(row: list) -> dict:
+def _row_to_flag(row) -> dict:
+    if isinstance(row, dict):
+        return {
+            "id": row.get("id"), "name": row.get("name"), "description": row.get("description"),
+            "is_active": bool(row.get("is_active")), "rollout_percentage": row.get("rollout_percentage", 0),
+            "target_roles": json.loads(row.get("target_roles") or "[]"),
+            "created_at": row.get("created_at"), "updated_at": row.get("updated_at"),
+        }
     return {
         "id": row[0], "name": row[1], "description": row[2],
         "is_active": bool(row[3]), "rollout_percentage": row[4] or 0,
@@ -46,8 +53,9 @@ async def check_flag(flag_name: str, current_user=Depends(get_current_user)):
     )
     if not result or not result.get("rows"):
         return {"flag_name": flag_name, "is_enabled": False}
-    row = result["rows"][0]
-    is_active = bool(row[1])
+    rows = parse_rows(result)
+    row = rows[0] if rows else {}
+    is_active = bool(row.get("is_active", 0))
     return {"flag_name": flag_name, "is_enabled": is_active}
 
 
@@ -63,8 +71,9 @@ async def check_multiple_flags(body: dict, current_user=Depends(get_current_user
     )
     flags = {name: False for name in flag_names}
     if result and result.get("rows"):
-        for row in result["rows"]:
-            flags[row[0]] = bool(row[1])
+        rows = parse_rows(result)
+        for row in rows:
+            flags[row.get("name")] = bool(row.get("is_active", 0))
     return {"flags": flags}
 
 
@@ -77,7 +86,8 @@ async def get_my_flags(current_user=Depends(get_current_user)):
     )
     flags = []
     if result and result.get("rows"):
-        flags = [_row_to_flag(r) for r in result["rows"]]
+        rows = parse_rows(result)
+        flags = [_row_to_flag(r) for r in rows]
     return {"flags": flags}
 
 
@@ -90,7 +100,8 @@ async def admin_list_flags(current_user=Depends(require_admin)):
     )
     flags = []
     if result and result.get("rows"):
-        flags = [_row_to_flag(r) for r in result["rows"]]
+        rows = parse_rows(result)
+        flags = [_row_to_flag(r) for r in rows]
     return flags
 
 
@@ -103,7 +114,8 @@ async def admin_get_flag(flag_name: str, current_user=Depends(require_admin)):
     )
     if not result or not result.get("rows"):
         raise HTTPException(status_code=404, detail="Flag not found")
-    return _row_to_flag(result["rows"][0])
+    rows = parse_rows(result)
+    return _row_to_flag(rows[0])
 
 
 class FlagCreate(BaseModel):
@@ -183,9 +195,10 @@ async def admin_flag_analytics(flag_name: str, current_user=Depends(require_admi
 @router.get("/feature-flags/admin/analytics/summary")
 async def admin_flags_analytics_summary(current_user=Depends(require_admin)):
     _ensure_table()
-    result = execute_query("SELECT COUNT(*), SUM(is_active) FROM feature_flags", [])
+    result = execute_query("SELECT COUNT(*) as cnt, SUM(is_active) as active_cnt FROM feature_flags", [])
     total = active = 0
     if result and result.get("rows"):
-        total = int(result["rows"][0][0] or 0)
-        active = int(result["rows"][0][1] or 0)
+        rows = parse_rows(result)
+        total = int(rows[0].get("cnt", 0) or 0) if rows else 0
+        active = int(rows[0].get("active_cnt", 0) or 0) if rows else 0
     return {"total_flags": total, "active_flags": active, "inactive_flags": total - active}

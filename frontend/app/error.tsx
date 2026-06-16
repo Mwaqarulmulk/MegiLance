@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { reportError } from '@/lib/errorReporting';
 import commonStyles from './Error.common.module.css';
 import lightStyles from './Error.light.module.css';
 import darkStyles from './Error.dark.module.css';
@@ -23,15 +24,15 @@ export default function Error({
     setMounted(true);
     // Log error for debugging
     console.error('[Global Error Boundary]', error);
-    // Production error tracking (Sentry, LogRocket, etc.)
-    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
-      // TODO: Replace with actual error tracking service
-      // Sentry.captureException(error);
-      // or use browser's built-in reporting
-      if (window.reportError) {
-        window.reportError(error);
-      }
-    }
+    // Auto-report to the admin issue monitor (deduped, fire-and-forget)
+    reportError({
+      source: 'frontend',
+      severity: 'critical',
+      error_type: error.name || 'RenderError',
+      message: error.message || 'Render error (error boundary)',
+      stack: error.stack,
+      context: { digest: error.digest, boundary: 'global' },
+    });
   }, [error]);
 
   // Build merged styles

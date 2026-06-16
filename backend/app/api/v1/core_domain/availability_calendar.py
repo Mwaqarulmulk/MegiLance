@@ -62,11 +62,14 @@ async def get_settings(current_user=Depends(get_current_user)):
             "buffer_time": 15, "max_bookings_per_day": 5,
             "is_accepting_bookings": True,
         }
-    row = result["rows"][0]
+    rows = parse_rows(result)
+    row = rows[0] if rows else {}
     return {
-        "user_id": row[0], "timezone": row[1], "buffer_time": row[2],
-        "max_bookings_per_day": row[3], "is_accepting_bookings": bool(row[4]),
-        "updated_at": row[5],
+        "user_id": row.get("user_id"), "timezone": row.get("timezone", "UTC"),
+        "buffer_time": row.get("buffer_time", 15),
+        "max_bookings_per_day": row.get("max_bookings_per_day", 5),
+        "is_accepting_bookings": bool(row.get("is_accepting_bookings", 1)),
+        "updated_at": row.get("updated_at"),
     }
 
 
@@ -104,11 +107,12 @@ async def get_weekly_pattern(current_user=Depends(get_current_user)):
     )
     pattern = {day: {"is_available": False, "slots": []} for day in DAYS}
     if result and result.get("rows"):
-        for row in result["rows"]:
-            day = row[0]
+        rows = parse_rows(result)
+        for row in rows:
+            day = row.get("day_of_week")
             if day in pattern:
-                pattern[day]["is_available"] = bool(row[3])
-                pattern[day]["slots"].append({"start": row[1], "end": row[2]})
+                pattern[day]["is_available"] = bool(row.get("is_available", 0))
+                pattern[day]["slots"].append({"start": row.get("start_time"), "end": row.get("end_time")})
     return {"pattern": pattern}
 
 
@@ -141,8 +145,9 @@ async def get_blocks(current_user=Depends(get_current_user)):
     )
     blocks = []
     if result and result.get("rows"):
-        for row in result["rows"]:
-            blocks.append({"id": row[0], "start": row[2], "end": row[3], "reason": row[4]})
+        rows = parse_rows(result)
+        for row in rows:
+            blocks.append({"id": row.get("id"), "start": row.get("start_datetime"), "end": row.get("end_datetime"), "reason": row.get("reason")})
     return {"blocks": blocks}
 
 

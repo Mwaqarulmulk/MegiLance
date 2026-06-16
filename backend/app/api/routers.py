@@ -25,6 +25,7 @@ from .v1.core_domain import (
     backup_restore,
     blog,
     branding,
+    error_reports,
     client,
     communication,
     community,
@@ -502,6 +503,9 @@ api_router.include_router(
 # router is retired. /blogs-mongo kept as a temporary alias for old clients.
 api_router.include_router(mongo_blogs.router, prefix="/blog", tags=["blog"])
 api_router.include_router(mongo_blogs.router, prefix="/blogs-mongo", tags=["blogs-mongo"])
+
+# Error / issue reporting — auto-captured errors + manual user reports (admin monitoring)
+api_router.include_router(error_reports.router, prefix="/error-reports", tags=["error-reports"])
 
 # Public clients showcase (no auth required)
 

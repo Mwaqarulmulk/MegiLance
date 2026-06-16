@@ -32,21 +32,29 @@ def _ensure_table():
     """, [])
 
 
-def _row_to_event(row: list) -> dict:
+def _row_to_event(row) -> dict:
     import json
+    if isinstance(row, dict):
+        return {
+            "id": row.get("id"),
+            "user_id": row.get("user_id"),
+            "event_type": row.get("event_type"),
+            "resource_type": row.get("resource_type"),
+            "resource_id": row.get("resource_id"),
+            "action": row.get("action"),
+            "description": row.get("description"),
+            "ip_address": row.get("ip_address"),
+            "user_agent": row.get("user_agent"),
+            "metadata": json.loads(row.get("metadata") or "{}") if row.get("metadata") else {},
+            "severity": row.get("severity") or "info",
+            "created_at": row.get("created_at"),
+        }
     return {
-        "id": row[0],
-        "user_id": row[1],
-        "event_type": row[2],
-        "resource_type": row[3],
-        "resource_id": row[4],
-        "action": row[5],
-        "description": row[6],
-        "ip_address": row[7],
-        "user_agent": row[8],
+        "id": row[0], "user_id": row[1], "event_type": row[2],
+        "resource_type": row[3], "resource_id": row[4], "action": row[5],
+        "description": row[6], "ip_address": row[7], "user_agent": row[8],
         "metadata": json.loads(row[9] or "{}") if row[9] else {},
-        "severity": row[10] or "info",
-        "created_at": row[11],
+        "severity": row[10] or "info", "created_at": row[11],
     }
 
 
@@ -96,7 +104,8 @@ async def list_events(
 
     events = []
     if result and result.get("rows"):
-        for row in result["rows"]:
+        rows = parse_rows(result)
+        for row in rows:
             events.append(_row_to_event(row))
     return {"events": events, "page": page, "page_size": page_size}
 
@@ -111,7 +120,8 @@ async def get_event(event_id: int, current_user=Depends(require_admin)):
     )
     if not result or not result.get("rows"):
         raise HTTPException(status_code=404, detail="Event not found")
-    return _row_to_event(result["rows"][0])
+    rows = parse_rows(result)
+    return _row_to_event(rows[0])
 
 
 class AuditEventCreate(BaseModel):
@@ -149,14 +159,18 @@ async def get_summary(days: int = Query(30, ge=1, le=365), current_user=Depends(
     )
     counts = {"info": 0, "warning": 0, "error": 0, "critical": 0}
     if result and result.get("rows"):
-        for row in result["rows"]:
-            sev = row[0] or "info"
+        rows = parse_rows(result)
+        for row in rows:
+            sev = row.get("severity") or "info"
             if sev in counts:
-                counts[sev] = int(row[1] or 0)
+                counts[sev] = int(row.get("count", 0) or 0)
     total_result = execute_query(
-        "SELECT COUNT(*) FROM audit_events WHERE created_at >= ?", [since]
+        "SELECT COUNT(*) as cnt FROM audit_events WHERE created_at >= ?", [since]
     )
-    total = int(total_result["rows"][0][0] or 0) if total_result and total_result.get("rows") else 0
+    total = 0
+    if total_result and total_result.get("rows"):
+        total_rows = parse_rows(total_result)
+        total = int(total_rows[0].get("cnt", 0) or 0) if total_rows else 0
     return {"days": days, "total": total, "by_severity": counts}
 
 
@@ -177,7 +191,8 @@ async def get_user_activity(
     )
     events = []
     if result and result.get("rows"):
-        for row in result["rows"]:
+        rows = parse_rows(result)
+        for row in rows:
             events.append(_row_to_event(row))
     return {"user_id": user_id, "events": events}
 
@@ -195,7 +210,8 @@ async def get_resource_history(
     )
     events = []
     if result and result.get("rows"):
-        for row in result["rows"]:
+        rows = parse_rows(result)
+        for row in rows:
             events.append(_row_to_event(row))
     return {"resource_type": resource_type, "resource_id": resource_id, "history": events}
 
@@ -236,8 +252,9 @@ async def get_compliance_report(
     )
     breakdown = {}
     if result and result.get("rows"):
-        for row in result["rows"]:
-            breakdown[row[0] or "unknown"] = int(row[1] or 0)
+        rows = parse_rows(result)
+        for row in rows:
+            breakdown[row.get("event_type") or "unknown"] = int(row.get("count", 0) or 0)
     return {"start_date": start_date, "end_date": end_date, "event_type_breakdown": breakdown}
 
 

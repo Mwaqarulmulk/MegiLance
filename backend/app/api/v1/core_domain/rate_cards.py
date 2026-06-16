@@ -67,10 +67,11 @@ async def calculate_rate(
     )
     if not result or not result.get("rows"):
         raise HTTPException(status_code=404, detail="Rate card not found")
-    row = result["rows"][0]
-    hourly = float(row[0] or 0)
-    fixed = float(row[1] or 0)
-    currency = row[2] or "USD"
+    rows = parse_rows(result)
+    row = rows[0] if rows else {}
+    hourly = float(row.get("hourly_rate", 0) or 0)
+    fixed = float(row.get("fixed_rate", 0) or 0)
+    currency = row.get("currency") or "USD"
     return {
         "hours": hours,
         "hourly_rate": hourly,

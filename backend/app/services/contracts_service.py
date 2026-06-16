@@ -27,7 +27,7 @@ CONTRACT_SELECT_SQL = """
 def contract_from_row(row: list) -> dict:
     """Convert Turso row to contract dict."""
     return {
-        "id": _safe_str(_get_val(row, 0)),
+        "id": int(_get_val(row, 0) or 0),
         "project_id": int(_get_val(row, 1) or 0),
         "freelancer_id": int(_get_val(row, 2) or 0),
         "client_id": int(_get_val(row, 3) or 0),

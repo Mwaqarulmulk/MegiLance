@@ -95,7 +95,8 @@ async def create_milestone(request: MilestoneCreate, current_user=Depends(get_cu
     )
     order_index = 0
     if max_result and max_result.get("rows"):
-        raw_val = max_result["rows"][0][0]
+        rows = parse_rows(max_result)
+        raw_val = rows[0].get("order_index", 0) if rows else 0
         order_index = int(raw_val) if raw_val is not None else 0
 
     result = execute_query(

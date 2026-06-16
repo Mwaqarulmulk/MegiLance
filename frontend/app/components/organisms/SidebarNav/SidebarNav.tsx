@@ -47,7 +47,8 @@ import {
   Heart,
   Globe,
   Flag,
-  PenTool
+  PenTool,
+  Bug
 } from 'lucide-react';
 import {
   clientNavItems,
@@ -94,6 +95,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Home: <Home size={18} />,
   Flag: <Flag size={18} />,
   PenTool: <PenTool size={18} />,
+  Bug: <Bug size={18} />,
 };
 
 // Define the structure for a navigation item

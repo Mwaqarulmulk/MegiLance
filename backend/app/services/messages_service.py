@@ -116,9 +116,9 @@ def get_conversation_by_id(conversation_id: int) -> Optional[dict]:
 
 
 def get_conversation_participants(conversation_id: int) -> Optional[dict]:
-    """Get conversation client_id, freelancer_id, status for access checks."""
+    """Get conversation client_id, freelancer_id, status, project_id for access checks."""
     result = execute_query(
-        "SELECT id, client_id, freelancer_id, status FROM conversations WHERE id = ?",
+        "SELECT id, client_id, freelancer_id, status, project_id FROM conversations WHERE id = ?",
         [conversation_id]
     )
     if not result or not result.get("rows"):
@@ -170,7 +170,7 @@ def list_conversations_for_user(user_id: int, status_filter: Optional[str],
             WHERE {where_sql}
             ORDER BY c.last_message_at DESC
             LIMIT ? OFFSET ?""",
-        [user_id, user_id, user_id] + params
+        params
     )
 
     if not result:

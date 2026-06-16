@@ -71,13 +71,14 @@ async def get_variables(current_user=Depends(get_current_user)):
 async def get_analytics(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
-        "SELECT COUNT(*), SUM(use_count) FROM proposal_templates WHERE user_id = ?",
+        "SELECT COUNT(*) as total, SUM(use_count) as total_uses FROM proposal_templates WHERE user_id = ?",
         [current_user.id]
     )
     total = uses = 0
     if result and result.get("rows"):
-        total = int(result["rows"][0][0] or 0)
-        uses = int(result["rows"][0][1] or 0)
+        rows = parse_rows(result)
+        total = int(rows[0].get("total", 0) or 0) if rows else 0
+        uses = int(rows[0].get("total_uses", 0) or 0) if rows else 0
     return {"total_templates": total, "total_uses": uses}
 
 

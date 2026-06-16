@@ -200,6 +200,3 @@ class RateLimitConfig:
     
     # Admin operations
     ADMIN_OPERATIONS = "10/minute"
-    
-    # File uploads
-    FILE_UPLOAD = "10/hour"

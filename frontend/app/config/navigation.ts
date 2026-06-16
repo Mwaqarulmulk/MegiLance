@@ -257,6 +257,7 @@ export const adminNavItems: NavItem[] = [
     icon: "Activity",
     section: "System",
   },
+  { label: "Issues & Errors", href: "/admin/issues", icon: "Bug" },
   { label: "Settings", href: "/admin/settings", icon: "Settings" },
 ];
 

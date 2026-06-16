@@ -493,14 +493,10 @@ async def forgot_password(request: Request, body: PasswordResetRequest):
     })
 
     try:
-        email_service.send_email(
+        email_service.send_password_reset_email(
             to_email=body.email,
-            subject="Password Reset — MegiLance",
-            template_name="password_reset",
-            context={
-                "name": user.get("name", "User"),
-                "reset_url": f"https://megilance.com/reset-password?token={reset_token}",
-            },
+            user_name=user.get("name", "User"),
+            reset_token=reset_token,
         )
     except Exception as e:
         logger.error(f"Failed to send password reset email: {e}")
@@ -520,7 +516,7 @@ async def reset_password(request: Request, body: PasswordResetConfirm):
         )
 
     result = eq(
-        "SELECT id, email, name FROM users WHERE password_reset_token = ?",
+        "SELECT id, email, name, password_reset_expires FROM users WHERE password_reset_token = ?",
         [body.token],
     )
     rows = pr(result)
@@ -617,14 +613,10 @@ async def resend_verification(request: Request):
     })
 
     try:
-        email_service.send_email(
+        email_service.send_verification_email(
             to_email=email,
-            subject="Verify Your Email — MegiLance",
-            template_name="email_verification",
-            context={
-                "name": user.get("name", "User"),
-                "verify_url": f"https://megilance.com/verify-email?token={verification_token}",
-            },
+            user_name=user.get("name", "User"),
+            verification_token=verification_token,
         )
     except Exception as e:
         logger.error(f"Failed to send verification email: {e}")

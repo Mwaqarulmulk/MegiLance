@@ -5,6 +5,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { RefreshCw, Home } from 'lucide-react';
 import { LottieAnimation, errorAlertAnimation } from '@/app/components/Animations/LottieAnimation';
+import { reportError } from '@/lib/errorReporting';
 
 export default function PortalError({
   error,
@@ -17,6 +18,14 @@ export default function PortalError({
     if (process.env.NODE_ENV === 'development') {
       console.error('Portal error:', error);
     }
+    reportError({
+      source: 'frontend',
+      severity: 'high',
+      error_type: error.name || 'PortalRenderError',
+      message: error.message || 'Render error (portal boundary)',
+      stack: error.stack,
+      context: { digest: error.digest, boundary: 'portal' },
+    });
   }, [error]);
 
   const dashboardHref = useMemo(() => {
