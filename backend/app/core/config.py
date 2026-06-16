@@ -37,8 +37,8 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # MongoDB Configuration (Optional - for blog/advanced features)
-    MONGODB_URL: Optional[str] = None  # Set via environment variable if needed
-    MONGODB_DB_NAME: str = "megilance_blog"
+    MONGODB_URL: Optional[str] = None  # Set via MONGODB_URL or MONGODB_URI env var
+    MONGODB_DB_NAME: str = "megilance"  # Database name matching seed scripts
 
     # Path to mounted JSON data directory (for mock/admin/demo endpoints)
     json_data_dir: str = "/data/db"

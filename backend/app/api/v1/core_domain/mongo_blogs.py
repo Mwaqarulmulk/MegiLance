@@ -5,6 +5,7 @@ Serves 100 SEO blog articles from MongoDB with full search, filter, and statisti
 
 import os
 import re
+import time
 import logging
 from datetime import datetime, timezone
 from typing import Optional, List
@@ -84,22 +85,37 @@ def _build_doc(data: BlogUpsert, existing: Optional[dict] = None) -> dict:
     }
     return doc
 
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+MONGODB_URI = os.getenv("MONGODB_URI") or os.getenv("MONGODB_URL") or "mongodb://localhost:27017"
+MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "megilance")
 _client = None
 _collection = None
-_mongo_available = None  # Track if MongoDB was ever successfully connected
+_mongo_available = None
+_last_attempt_time = 0
+_RETRY_INTERVAL_SECONDS = 60
 
 
 def get_collection():
-    global _client, _collection, _mongo_available
+    global _client, _collection, _mongo_available, _last_attempt_time
     if _collection is not None:
         return _collection
+    if _mongo_available is False:
+        now = time.time()
+        if now - _last_attempt_time < _RETRY_INTERVAL_SECONDS:
+            return None
     try:
         from pymongo import MongoClient
-        _client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=3000)
-        _client.admin.command("ping")
-        _collection = _client["megilance"]["blogs"]
+        _last_attempt_time = time.time()
+        logger.info(f"Connecting to MongoDB: {MONGODB_URI[:30]}...")
+        _client = MongoClient(
+            MONGODB_URI,
+            serverSelectionTimeoutMS=2000,
+            connectTimeoutMS=2000,
+            socketTimeoutMS=3000,
+        )
+        _client.admin.command("ping", timeout=2000)
+        _collection = _client[MONGODB_DB_NAME]["blogs"]
         _mongo_available = True
+        logger.info(f"MongoDB connected successfully to database '{MONGODB_DB_NAME}'")
         return _collection
     except Exception as e:
         logger.warning(f"MongoDB connection failed: {e} - using fallback blog data")

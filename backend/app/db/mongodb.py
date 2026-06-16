@@ -29,8 +29,8 @@ async def get_database():
 async def connect_to_mongo():
     """Optional MongoDB connection - fails gracefully if unavailable"""
     try:
-        # Priority: 1) Environment variable, 2) Hardcoded default
-        mongo_url = settings.MONGODB_URL or os.getenv("MONGODB_URL") or DEFAULT_MONGODB_URL
+        # Priority: 1) MONGODB_URI env, 2) MONGODB_URL env, 3) Settings, 4) Default
+        mongo_url = os.getenv("MONGODB_URI") or os.getenv("MONGODB_URL") or settings.MONGODB_URL or DEFAULT_MONGODB_URL
         
         if not mongo_url:
             logger.warning("MongoDB URL not configured - Blog/CMS features disabled")

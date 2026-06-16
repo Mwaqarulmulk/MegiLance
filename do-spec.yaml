@@ -19,6 +19,12 @@ ingress:
       path:
         prefix: /api/v1
   - component:
+      name: backend
+      preserve_path_prefix: false
+    match:
+      path:
+        prefix: /health
+  - component:
       name: ai-service
       preserve_path_prefix: true
     match:
