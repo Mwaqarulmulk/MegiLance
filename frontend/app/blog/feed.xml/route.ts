@@ -18,7 +18,7 @@ interface BlogPost {
 async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
     // Unified MongoDB blog store (published only by default).
-    const res = await fetch(`${BACKEND_URL}/api/v1/blogs-mongo?limit=50`, {
+    const res = await fetch(`${BACKEND_URL}/api/v1/blog?limit=50`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];

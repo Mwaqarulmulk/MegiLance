@@ -497,10 +497,10 @@ api_router.include_router(
 
 # ============================================================================
 
-# Blog & News
-api_router.include_router(blog.router, prefix="/blog", tags=["blog"])
-
-# MongoDB-backed SEO blog articles (100 articles with full backlinking)
+# Blog & News — unified on MongoDB (megilance.blogs). The clean /blog route
+# (used in nav/footer) is served by the MongoDB router; the legacy SQL blog
+# router is retired. /blogs-mongo kept as a temporary alias for old clients.
+api_router.include_router(mongo_blogs.router, prefix="/blog", tags=["blog"])
 api_router.include_router(mongo_blogs.router, prefix="/blogs-mongo", tags=["blogs-mongo"])
 
 # Public clients showcase (no auth required)

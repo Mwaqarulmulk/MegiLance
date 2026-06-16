@@ -52,7 +52,7 @@ export interface UpdateBlogPost {
 
 /**
  * Unified blog storage: the admin CMS and the public blog page both use MongoDB
- * (`megilance.blogs` via `/blogs-mongo`). This maps a Mongo blog doc — which holds
+ * (`megilance.blogs` via `/blog`). This maps a Mongo blog doc — which holds
  * both CMS fields and SEO/public render fields — onto the admin `BlogPost` shape.
  */
 function mongoToBlogPost(d: any): BlogPost {
@@ -87,7 +87,7 @@ export const blogApi = {
     try {
       // include_drafts=true so the admin CMS sees unpublished posts too
       const res = await apiFetch<{ items?: any[] }>(
-        '/blogs-mongo?include_drafts=true&limit=100',
+        '/blog?include_drafts=true&limit=100',
       );
       let items = (res.items || []).map(mongoToBlogPost);
       if (isPublished !== undefined) items = items.filter((p) => p.is_published === isPublished);
@@ -101,7 +101,7 @@ export const blogApi = {
 
   getBySlug: async (slug: string): Promise<BlogPost | null> => {
     try {
-      const data = await apiFetch<any>(`/blogs-mongo/${slug}`);
+      const data = await apiFetch<any>(`/blog/${slug}`);
       return data ? mongoToBlogPost(data) : null;
     } catch (error) {
       console.error('Blog API error:', error);
@@ -110,7 +110,7 @@ export const blogApi = {
   },
 
   create: async (post: CreateBlogPost): Promise<BlogPost> => {
-    const data = await apiFetch<any>('/blogs-mongo', {
+    const data = await apiFetch<any>('/blog', {
       method: 'POST',
       body: JSON.stringify(post),
     });
@@ -118,7 +118,7 @@ export const blogApi = {
   },
 
   update: async (id: string, post: UpdateBlogPost): Promise<BlogPost> => {
-    const data = await apiFetch<any>(`/blogs-mongo/${id}`, {
+    const data = await apiFetch<any>(`/blog/${id}`, {
       method: 'PUT',
       body: JSON.stringify(post),
     });
@@ -126,7 +126,7 @@ export const blogApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    await apiFetch(`/blogs-mongo/${id}`, { method: 'DELETE' });
+    await apiFetch(`/blog/${id}`, { method: 'DELETE' });
   },
 };
 
@@ -176,7 +176,7 @@ export const mongoBlogApi = {
       const params = new URLSearchParams({ limit: String(limit), skip: String(skip) });
       if (category) params.append('category', category);
       if (keyword) params.append('keyword', keyword);
-      const res = await fetch(`${API_URL}/blogs-mongo?${params}`, { cache: 'no-store' });
+      const res = await fetch(`${API_URL}/blog?${params}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch mongo blogs');
       return res.json();
     } catch (e) {
@@ -187,7 +187,7 @@ export const mongoBlogApi = {
 
   getBySlug: async (slug: string): Promise<MongoBlog | null> => {
     try {
-      const res = await fetch(`${API_URL}/blogs-mongo/${slug}`, { cache: 'no-store' });
+      const res = await fetch(`${API_URL}/blog/${slug}`, { cache: 'no-store' });
       if (!res.ok) return null;
       return res.json();
     } catch (e) {
@@ -198,7 +198,7 @@ export const mongoBlogApi = {
 
   search: async (q: string, limit = 10, skip = 0): Promise<MongoBlogListResponse> => {
     try {
-      const res = await fetch(`${API_URL}/blogs-mongo/search/query?q=${encodeURIComponent(q)}&limit=${limit}&skip=${skip}`);
+      const res = await fetch(`${API_URL}/blog/search/query?q=${encodeURIComponent(q)}&limit=${limit}&skip=${skip}`);
       if (!res.ok) throw new Error('Search failed');
       return res.json();
     } catch (e) {
@@ -209,7 +209,7 @@ export const mongoBlogApi = {
 
   getCategories: async (): Promise<{ categories: { name: string; count: number }[]; total: number }> => {
     try {
-      const res = await fetch(`${API_URL}/blogs-mongo/categories/list`);
+      const res = await fetch(`${API_URL}/blog/categories/list`);
       if (!res.ok) throw new Error('Failed to fetch categories');
       return res.json();
     } catch (e) {
@@ -220,7 +220,7 @@ export const mongoBlogApi = {
 
   getStats: async () => {
     try {
-      const res = await fetch(`${API_URL}/blogs-mongo/stats/overview`);
+      const res = await fetch(`${API_URL}/blog/stats/overview`);
       if (!res.ok) throw new Error('Failed to fetch stats');
       return res.json();
     } catch (e) {
