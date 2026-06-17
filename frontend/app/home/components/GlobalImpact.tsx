@@ -24,7 +24,7 @@ const industryStats = [
   { icon: Users, number: "1M+", label: "Pakistani Freelancers", description: "Pakistan ranks 4th globally in freelancing (source: Oxford Internet Institute)." },
   { icon: Globe, number: "180+", label: "Countries Connected", description: "The global freelance marketplace connects talent across continents." },
   { icon: LineChart, number: "$455B+", label: "Global Market Size", description: "Worldwide freelancing market size per Statista 2025 report." },
-  { icon: Star, number: "5-10%", label: "Platform Fee", description: "MegiLance charges transparent fees vs traditional 20-27% platform commissions." }
+  { icon: Star, number: "8%", label: "Platform Fee", description: "Freelancers pay just 8% (clients 0%) — vs the 20%+ charged by traditional platforms." }
 ];
 
 interface SuccessStory {
@@ -46,19 +46,7 @@ const GlobalImpact: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch real platform stats
-        const statsRes = await fetch('/api/v1/public-clients/stats');
-        if (statsRes.ok) {
-          const stats = await statsRes.json();
-          if (stats.total_clients > 0 || stats.total_projects > 0) {
-            setPlatformStats([
-              { icon: Users, number: `${stats.total_clients || 0}+`, label: "Active Clients", description: "Companies hiring talent on MegiLance." },
-              { icon: Globe, number: `${stats.countries || '10'}+`, label: "Countries Served", description: "Connecting talent across borders." },
-              { icon: LineChart, number: `${stats.total_projects || 0}+`, label: "Projects Posted", description: "Real opportunities on our platform." },
-              { icon: Star, number: "5-10%", label: "Platform Fee", description: "Transparent fees vs traditional 20-27% commissions." }
-            ]);
-          }
-        }
+        // Platform stats use curated industry defaults (industryStats).
 
         // Fetch top freelancers as success stories
         const freelancersRes = await fetch('/api/v1/freelancers/featured?limit=3');
