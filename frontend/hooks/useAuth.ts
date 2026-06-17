@@ -9,6 +9,7 @@ import api, {
   setAuthToken,
   clearAuthData,
   getAuthToken,
+  getRefreshToken,
   APIError,
 } from "@/lib/api";
 
@@ -147,6 +148,20 @@ export function useAuth(): UseAuthReturn {
   // Load user on mount. Browser sessions rely on backend httpOnly cookies.
   useEffect(() => {
     const loadUser = async () => {
+      // Skip the /auth/me call entirely when there is no session.
+      // The httpOnly auth_token cookie is invisible to JS, but if neither
+      // the in-memory token nor a stored refresh token exists we know this
+      // is a fresh guest visit and the call would just return 401.
+      const hasSession =
+        !!getAuthToken() ||
+        (typeof window !== "undefined" && !!localStorage.getItem("refresh_token")) ||
+        (typeof window !== "undefined" && !!localStorage.getItem("user"));
+
+      if (!hasSession) {
+        if (isMounted.current) setIsLoading(false);
+        return;
+      }
+
       try {
         // Verify session and get fresh user data. This works with either
         // an in-memory bearer token or the backend-managed httpOnly cookie.

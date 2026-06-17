@@ -336,12 +336,23 @@ export async function apiFetch<T = unknown>(
           throw lastError;
         }
 
-        // 401 — attempt token refresh
+        // 401 — attempt token refresh only when there is an existing session
         if (
           response.status === 401 &&
           !endpoint.includes("/auth/refresh") &&
           !endpoint.includes("/auth/login")
         ) {
+          // If there was never an auth context (guest user on public page),
+          // just throw — do NOT redirect to /login.
+          const hadSession =
+            !!getAuthToken() ||
+            (typeof window !== "undefined" &&
+              !!localStorage.getItem("refresh_token"));
+
+          if (!hadSession) {
+            throw new APIError("Unauthorized", 401, "UNAUTHORIZED");
+          }
+
           if (!isRefreshing) {
             isRefreshing = true;
             const newToken = await attemptTokenRefresh();
