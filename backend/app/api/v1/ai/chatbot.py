@@ -192,7 +192,7 @@ async def chat(
 @router.post("/{conversation_id}/message")
 async def send_message_endpoint(
     conversation_id: str,
-    body: ChatMessageEnhanced = ChatMessageEnhanced(),
+    body: ChatMessageEnhanced,
     req: Request = None,
     current_user=Depends(get_current_user_optional),
 ):
