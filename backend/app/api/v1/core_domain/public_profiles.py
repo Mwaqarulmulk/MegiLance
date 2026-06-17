@@ -11,6 +11,43 @@ from app.services.reviews_service import get_reviews_for_user
 
 router = APIRouter()
 
+
+@router.get("/")
+def list_freelancers(
+    limit: int = Query(48, ge=1, le=100),
+    page: int = Query(1, ge=1),
+    q: Optional[str] = None,
+    skill: Optional[str] = None,
+):
+    """Public freelancer directory listing — no auth required."""
+    offset = (page - 1) * limit
+    where = "WHERE user_type = 'freelancer' AND is_active = 1"
+    params: list = []
+
+    if q:
+        sq = f"%{q.lower()}%"
+        where += " AND (LOWER(COALESCE(name,'')) LIKE ? OR LOWER(COALESCE(headline,'')) LIKE ? OR LOWER(COALESCE(skills,'')) LIKE ?)"
+        params.extend([sq, sq, sq])
+    if skill:
+        where += " AND LOWER(COALESCE(skills,'')) LIKE ?"
+        params.append(f"%{skill.lower()}%")
+
+    count_res = execute_query(f"SELECT COUNT(*) as total FROM users {where}", params)
+    total = (parse_rows(count_res) or [{}])[0].get("total", 0) if count_res and count_res.get("rows") else 0
+
+    params.extend([limit, offset])
+    result = execute_query(
+        f"""SELECT id, name, profile_image_url, headline, hourly_rate,
+                   location, skills, seller_level, availability_status, is_verified
+            FROM users {where}
+            ORDER BY updated_at DESC
+            LIMIT ? OFFSET ?""",
+        params,
+    )
+    rows = parse_rows(result) or []
+    return {"freelancers": rows, "total": total, "page": page}
+
+
 # Tag-style fields stored as comma strings (legacy) or JSON; normalized to arrays.
 _TAG_FIELDS = ("skills", "languages", "industry_focus", "tools_and_technologies")
 # Structured fields stored as JSON strings; normalized to lists of objects.

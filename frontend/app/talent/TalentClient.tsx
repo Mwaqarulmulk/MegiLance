@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { Loader2, Search, X } from 'lucide-react';
+import { Loader2, Search, X, MapPin, Star, CheckCircle, Clock } from 'lucide-react';
 import { PageTransition, ScrollReveal, StaggerContainer, StaggerItem } from '@/app/components/Animations';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
 
@@ -15,54 +15,82 @@ import common from './TalentDirectory.common.module.css';
 import light from './TalentDirectory.light.module.css';
 import dark from './TalentDirectory.dark.module.css';
 
-interface TalentProfile { 
-  id: string; 
-  name: string; 
-  role: string; 
-  rank: number; 
-  skills: string[]; 
-  avatar: string; 
+interface TalentProfile {
+  id: string;
+  name: string;
+  role: string;
+  rank: number;
+  skills: string[];
+  avatar: string;
+  hourlyRate: number | null;
+  location: string;
+  availability: string;
+  isVerified: boolean;
+  sellerLevel: string;
+  slug: string;
 }
 
 const CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'web', label: 'Web Dev' },
-  { id: 'mobile', label: 'Mobile' },
-  { id: 'design', label: 'Design' },
-  { id: 'ai', label: 'AI & ML' },
-  { id: 'data', label: 'Data' },
-  { id: 'devops', label: 'DevOps' },
-  { id: 'writing', label: 'Writing' },
+  { id: 'all', label: 'All', keywords: [] },
+  { id: 'web', label: 'Web Dev', keywords: ['react', 'vue', 'angular', 'next', 'node', 'javascript', 'typescript', 'html', 'css', 'php', 'laravel', 'django', 'fullstack', 'frontend', 'backend'] },
+  { id: 'mobile', label: 'Mobile', keywords: ['ios', 'android', 'flutter', 'react native', 'swift', 'kotlin', 'mobile'] },
+  { id: 'design', label: 'Design', keywords: ['figma', 'sketch', 'ui', 'ux', 'design', 'photoshop', 'adobe', 'branding', 'graphic', 'logo'] },
+  { id: 'ai', label: 'AI & ML', keywords: ['machine learning', 'deep learning', 'tensorflow', 'pytorch', 'ai', 'nlp', 'llm', 'data science'] },
+  { id: 'data', label: 'Data', keywords: ['sql', 'tableau', 'power bi', 'analytics', 'pandas', 'spark', 'etl', 'bigquery', 'data'] },
+  { id: 'devops', label: 'DevOps', keywords: ['docker', 'kubernetes', 'aws', 'azure', 'gcp', 'cloud', 'ci/cd', 'linux', 'devops', 'terraform'] },
+  { id: 'writing', label: 'Writing', keywords: ['writing', 'content', 'copywriting', 'seo', 'blog', 'documentation'] },
 ];
 
-interface FreelancerApiResponse {
+interface FreelancerApiRow {
   id?: string | number;
-  full_name?: string;
   name?: string;
-  title?: string;
+  profile_image_url?: string;
+  avatar?: string;
   headline?: string;
+  title?: string;
+  hourly_rate?: number | null;
+  location?: string;
+  skills?: string | string[];
+  seller_level?: string;
+  availability_status?: string;
+  is_verified?: boolean | number;
+  profile_slug?: string;
   ai_score?: number;
   rating?: number;
-  skills?: string[];
-  profile_image_url?: string;
-  avatar_url?: string;
+}
+
+function parseSkills(raw: string | string[] | undefined): string[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.filter(Boolean);
+  const s = raw.trim();
+  if (s.startsWith('[')) {
+    try { return JSON.parse(s).filter(Boolean); } catch { /* fall through */ }
+  }
+  return s.split(',').map(x => x.trim()).filter(Boolean);
 }
 
 async function fetchFreelancers(): Promise<TalentProfile[]> {
   const token = typeof window !== 'undefined' ? getAuthToken() : null;
   try {
-    const res = await fetch('/api/freelancers?limit=20', {
+    const res = await fetch('/api/freelancers?limit=48', {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!res.ok) return [];
     const data = await res.json();
-    return (data.freelancers || data || []).map((f: FreelancerApiResponse, idx: number) => ({
-      id: String(f.id || idx),
-      name: f.full_name || f.name || `Freelancer ${idx + 1}`,
-      role: f.title || f.headline || 'Freelancer',
-      rank: f.ai_score || Math.floor((f.rating || 0) * 20) || 0,
-      skills: f.skills || [],
-      avatar: f.profile_image_url || f.avatar_url || '',
+    const rows: FreelancerApiRow[] = data.freelancers || data.items || data || [];
+    return rows.map((f, idx) => ({
+      id: String(f.id ?? idx),
+      name: f.name ?? `Freelancer ${idx + 1}`,
+      role: f.headline ?? f.title ?? 'Freelancer',
+      rank: f.ai_score ?? Math.floor((f.rating ?? 0) * 20),
+      skills: parseSkills(f.skills),
+      avatar: f.profile_image_url ?? f.avatar ?? '',
+      hourlyRate: f.hourly_rate ?? null,
+      location: f.location ?? '',
+      availability: f.availability_status ?? '',
+      isVerified: Boolean(f.is_verified),
+      sellerLevel: f.seller_level ?? '',
+      slug: f.profile_slug ?? String(f.id ?? idx),
     }));
   } catch (err) {
     if (process.env.NODE_ENV === 'development') {
@@ -70,6 +98,14 @@ async function fetchFreelancers(): Promise<TalentProfile[]> {
     }
     return [];
   }
+}
+
+function availColor(status: string): string {
+  if (!status) return '#94a3b8';
+  const s = status.toLowerCase();
+  if (s === 'available') return '#22c55e';
+  if (s === 'busy') return '#f59e0b';
+  return '#94a3b8';
 }
 
 const TalentDirectoryPage = () => {
@@ -88,15 +124,30 @@ const TalentDirectoryPage = () => {
 
   useEffect(() => { loadProfiles(); }, [loadProfiles]);
 
-  const filtered = useMemo(() => {
-    return profiles.filter(m =>
-      !q ||
-      m.name.toLowerCase().includes(q.toLowerCase()) ||
-      m.skills.some(s => s.toLowerCase().includes(q.toLowerCase()))
-    );
-  }, [profiles, q]);
+  const catKeywords = useMemo(
+    () => CATEGORIES.find(c => c.id === category)?.keywords ?? [],
+    [category],
+  );
 
-  // Early return after all hooks are called
+  const filtered = useMemo(() => {
+    return profiles.filter(p => {
+      const skillStr = p.skills.join(' ').toLowerCase();
+      const nameStr = (p.name + ' ' + p.role).toLowerCase();
+
+      if (q) {
+        const qLow = q.toLowerCase();
+        if (!nameStr.includes(qLow) && !skillStr.includes(qLow)) return false;
+      }
+
+      if (category !== 'all' && catKeywords.length > 0) {
+        const matches = catKeywords.some(kw => skillStr.includes(kw) || nameStr.includes(kw));
+        if (!matches) return false;
+      }
+
+      return true;
+    });
+  }, [profiles, q, category, catKeywords]);
+
   if (!resolvedTheme) return null;
   const themed = resolvedTheme === 'dark' ? dark : light;
 
@@ -172,17 +223,53 @@ const TalentDirectoryPage = () => {
               <StaggerItem key={p.id}>
                 <div className={cn(common.card, themed.card)}>
                   <div className={common.cardHeader}>
-                    <Image src={p.avatar || '/images/default-avatar.svg'} alt={p.name} className={common.avatar} width={56} height={56} />
+                    <div className={common.avatarWrap}>
+                      <Image
+                        src={p.avatar || '/images/default-avatar.svg'}
+                        alt={p.name}
+                        className={common.avatar}
+                        width={56}
+                        height={56}
+                        onError={() => {/* handled by fallback src */}}
+                      />
+                      {p.availability && (
+                        <span
+                          className={common.availDot}
+                          style={{ background: availColor(p.availability) }}
+                          title={p.availability}
+                        />
+                      )}
+                    </div>
                     <div className={common.profileInfo}>
-                      <h3 className={cn(common.name, themed.name)}>{p.name}</h3>
+                      <div className={common.nameRow}>
+                        <h3 className={cn(common.name, themed.name)}>{p.name}</h3>
+                        {p.isVerified && (
+                          <CheckCircle size={14} className={cn(common.verifiedIcon, themed.verifiedIcon)} />
+                        )}
+                      </div>
                       <p className={cn(common.role, themed.role)}>{p.role}</p>
                     </div>
-                    {p.rank > 0 && <span className={cn(common.rankBadge, themed.rankBadge)}>Score {p.rank}</span>}
+                    {p.hourlyRate && p.hourlyRate > 0 ? (
+                      <span className={cn(common.rateBadge, themed.rateBadge)}>${p.hourlyRate}/hr</span>
+                    ) : p.rank > 0 ? (
+                      <span className={cn(common.rankBadge, themed.rankBadge)}>Score {p.rank}</span>
+                    ) : null}
                   </div>
+
+                  {p.location && (
+                    <div className={cn(common.locationRow, themed.locationRow)}>
+                      <MapPin size={12} />
+                      <span>{p.location}</span>
+                    </div>
+                  )}
+
                   <div className={common.skillsWrapper}>
-                    {p.skills.slice(0, 5).map(s => <span key={s} className={cn(common.skillTag, themed.skillTag)}>{s}</span>)}
+                    {p.skills.slice(0, 5).map(s => (
+                      <span key={s} className={cn(common.skillTag, themed.skillTag)}>{s}</span>
+                    ))}
                   </div>
-                  <Link href={`/freelancers/${p.id}`} className={cn(common.viewProfileBtn, themed.viewProfileBtn)}>
+
+                  <Link href={`/freelancers/${p.slug || p.id}`} className={cn(common.viewProfileBtn, themed.viewProfileBtn)}>
                     View Profile &rarr;
                   </Link>
                 </div>
@@ -190,7 +277,9 @@ const TalentDirectoryPage = () => {
             ))}
             {filtered.length === 0 && (
               <div className={cn(common.emptyState, themed.emptyState)}>
-                {profiles.length === 0 ? 'No freelancers available yet.' : 'No matches for your search.'}
+                {profiles.length === 0
+                  ? 'No freelancers found. Check back soon!'
+                  : 'No matches — try a different search or category.'}
               </div>
             )}
           </StaggerContainer>

@@ -26,6 +26,9 @@
 .name { color: var(--color-text-primary-light); }
 .role { color: var(--color-text-secondary-light); }
 .rankBadge { background: linear-gradient(135deg, var(--ml-blue), #6b8ef9); color: var(--bg-primary-light); }
+.rateBadge { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+.locationRow { color: var(--color-text-secondary-light); }
+.verifiedIcon { color: var(--ml-blue); }
 .skillTag { background-color: var(--bg-primary-light); border-color: var(--border-light); color: var(--text-secondary-light); }
 .viewProfileBtn { color: var(--ml-blue); }
 .emptyState { color: var(--color-text-secondary-light); }

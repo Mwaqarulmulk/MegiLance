@@ -135,11 +135,17 @@
 .card:hover { transform: translateY(-4px); }
 
 .cardHeader { display: flex; align-items: center; gap: 0.75rem; }
+.avatarWrap { position: relative; flex-shrink: 0; }
 .avatar { width: 3.5rem; height: 3.5rem; border-radius: 9999px; object-fit: cover; }
-.profileInfo { flex: 1; }
-.name { font-weight: 600; line-height: 1.25; }
-.role { font-size: 0.875rem; opacity: 0.75; }
-.rankBadge { margin-left: auto; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.5rem; border-radius: 6px; }
+.availDot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; border-radius: 9999px; border: 2px solid #fff; }
+.profileInfo { flex: 1; min-width: 0; }
+.nameRow { display: flex; align-items: center; gap: 4px; }
+.name { font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.verifiedIcon { flex-shrink: 0; }
+.role { font-size: 0.875rem; opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rankBadge { margin-left: auto; flex-shrink: 0; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.5rem; border-radius: 6px; }
+.rateBadge { margin-left: auto; flex-shrink: 0; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 6px; }
+.locationRow { display: flex; align-items: center; gap: 4px; font-size: 0.78rem; opacity: 0.65; }
 
 .skillsWrapper { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .skillTag { font-size: 0.75rem; border-radius: 6px; border: 1px solid transparent; padding: 0.25rem 0.5rem; }
