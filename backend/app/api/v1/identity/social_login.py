@@ -1,244 +1,171 @@
-# @AI-HINT: Social login router — OAuth with Google, GitHub, LinkedIn
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+# @AI-HINT: Social login router — OAuth with Google, GitHub, LinkedIn.
+# Mounted under the `/social-auth` prefix (see app/api/routers.py). Thin HTTP layer
+# that delegates all logic to app.services.social_login.SocialLoginService, which
+# handles per-state redirect_uri persistence, smart login/register, role-based
+# onboarding and persistent account linking. The frontend client lives in
+# frontend/lib/api/auth.ts (socialAuthApi) and the callback page at
+# frontend/app/(auth)/callback/page.tsx.
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime, timezone
+from typing import Optional, List
+from urllib.parse import urlparse
 import logging
-import httpx
-import secrets
-import hashlib
 
 logger = logging.getLogger(__name__)
 
-from app.core.security import (
-    create_access_token,
-    create_refresh_token,
-    get_password_hash,
-    get_user_by_email,
-    get_user_by_id,
-    get_current_user,
-)
-from app.db.turso_http import execute_query, parse_rows
+from app.core.security import get_current_user
 from app.core.config import get_settings
+from app.services.social_login import (
+    SocialProvider,
+    get_social_login_service,
+)
 
 router = APIRouter()
-
-# In-memory state store for CSRF protection (in production, use Redis)
-_oauth_states: dict[str, dict] = {}
-_STATE_TTL = 600  # 10 minutes
-
-# Allowed redirect URIs — prevent open redirect attacks
-ALLOWED_REDIRECT_URIS = {
-    "http://localhost:3000",
-    "http://localhost:3000/callback",
-    "https://megilance.com",
-    "https://megilance.com/callback",
-    "https://www.megilance.com",
-    "https://www.megilance.com/callback",
-}
 
 
 class SocialAuthStart(BaseModel):
     provider: str
     redirect_uri: Optional[str] = None
+    portal_area: Optional[str] = None
+    intent: Optional[str] = None  # "login" | "register" | "link"
+
 
 class SocialAuthComplete(BaseModel):
     code: str
     state: str
 
+
 class SocialSelectRole(BaseModel):
     role: str
 
 
-def _generate_oauth_state(provider: str) -> str:
-    """Generate a cryptographically secure state parameter for CSRF protection."""
-    state = secrets.token_urlsafe(32)
-    _oauth_states[state] = {
-        "provider": provider,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    return state
+class SyncProfileRequest(BaseModel):
+    provider: str
+    fields: Optional[List[str]] = None
 
 
-def _validate_oauth_state(state: str) -> Optional[str]:
-    """Validate and consume an OAuth state parameter. Returns provider name or None."""
-    import time
-    state_data = _oauth_states.pop(state, None)
-    if not state_data:
-        return None
-    # Check TTL
+def _parse_provider(provider: str) -> SocialProvider:
     try:
-        created = datetime.fromisoformat(state_data["created_at"])
-        if (datetime.now(timezone.utc) - created).total_seconds() > _STATE_TTL:
-            return None
-    except (ValueError, KeyError):
-        return None
-    return state_data.get("provider")
+        return SocialProvider(provider.lower())
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Unsupported provider: {provider}")
+
+
+def _allowed_redirect_origins() -> set[str]:
+    """Origins (scheme://host[:port]) permitted as OAuth redirect targets.
+
+    Built from configured FRONTEND_URL plus the known production + local hosts.
+    Validating the origin (not the full URL) prevents open-redirect abuse while
+    still allowing any callback path under our own domains.
+    """
+    settings = get_settings()
+    origins = {
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://megilance.site",
+        "https://www.megilance.site",
+        "https://api.megilance.site",
+    }
+    frontend_url = getattr(settings, "FRONTEND_URL", None)
+    if frontend_url:
+        parsed = urlparse(frontend_url)
+        if parsed.scheme and parsed.netloc:
+            origins.add(f"{parsed.scheme}://{parsed.netloc}")
+    return origins
+
+
+def _validate_redirect_uri(redirect_uri: str) -> str:
+    """Ensure redirect_uri points at one of our own origins. Returns it unchanged."""
+    parsed = urlparse(redirect_uri)
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        raise HTTPException(status_code=400, detail="Invalid redirect_uri")
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+    if origin not in _allowed_redirect_origins():
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid redirect_uri — must be an allowed MegiLance domain",
+        )
+    return redirect_uri
 
 
 @router.get("/providers")
 async def get_providers():
-    settings = get_settings()
-    providers = []
-    if settings.GOOGLE_CLIENT_ID:
-        providers.append({"id": "google", "name": "Google", "enabled": True})
-    if settings.GITHUB_CLIENT_ID:
-        providers.append({"id": "github", "name": "GitHub", "enabled": True})
-    if settings.LINKEDIN_CLIENT_ID:
-        providers.append({"id": "linkedin", "name": "LinkedIn", "enabled": True})
-    return {"providers": providers}
+    """List configured social login providers (with live enabled flags)."""
+    service = get_social_login_service()
+    return {"providers": await service.get_available_providers()}
 
 
 @router.post("/start")
 async def start_social_auth(request: SocialAuthStart):
-    settings = get_settings()
-    provider = request.provider.lower()
+    """Begin an OAuth flow — returns the provider authorization URL to redirect to."""
+    provider = _parse_provider(request.provider)
 
-    # Validate redirect_uri against whitelist to prevent open redirect
-    redirect_uri = request.redirect_uri or "http://localhost:3000/callback"
-    if not any(redirect_uri.startswith(allowed) for allowed in ALLOWED_REDIRECT_URIS):
-        raise HTTPException(status_code=400, detail="Invalid redirect_uri — must be an allowed domain")
+    # Default to the standard frontend callback if none supplied, then validate.
+    redirect_uri = request.redirect_uri or "http://localhost:3000/api/auth/callback/" + provider.value
+    redirect_uri = _validate_redirect_uri(redirect_uri)
 
-    # Generate CSRF state
-    state = _generate_oauth_state(provider)
+    service = get_social_login_service()
+    result = await service.start_oauth(
+        provider=provider,
+        redirect_uri=redirect_uri,
+        portal_area=request.portal_area,
+        intent=request.intent,
+    )
 
-    if provider == "google":
-        if not settings.GOOGLE_CLIENT_ID:
-            raise HTTPException(status_code=400, detail="Google OAuth not configured")
-        auth_url = (
-            f"https://accounts.google.com/o/oauth2/v2/auth"
-            f"?client_id={settings.GOOGLE_CLIENT_ID}"
-            f"&redirect_uri={redirect_uri}"
-            f"&response_type=code&scope=email%20profile&state={state}"
-        )
-    elif provider == "github":
-        if not settings.GITHUB_CLIENT_ID:
-            raise HTTPException(status_code=400, detail="GitHub OAuth not configured")
-        auth_url = (
-            f"https://github.com/login/oauth/authorize"
-            f"?client_id={settings.GITHUB_CLIENT_ID}"
-            f"&redirect_uri={redirect_uri}"
-            f"&scope=user:email&state={state}"
-        )
-    elif provider == "linkedin":
-        if not settings.LINKEDIN_CLIENT_ID:
-            raise HTTPException(status_code=400, detail="LinkedIn OAuth not configured")
-        auth_url = (
-            f"https://www.linkedin.com/oauth/v2/authorization"
-            f"?response_type=code&client_id={settings.LINKEDIN_CLIENT_ID}"
-            f"&redirect_uri={redirect_uri}"
-            f"&state={state}&scope=openid%20profile%20email"
-        )
-    else:
-        raise HTTPException(status_code=400, detail=f"Unsupported provider: {provider}")
+    if not result.get("authorization_url"):
+        # e.g. provider not configured — surface a clean 400 to the client.
+        raise HTTPException(status_code=400, detail=result.get("error", "Failed to start social login"))
 
-    return {"auth_url": auth_url, "state": state}
+    return result
 
 
 @router.post("/complete")
 async def complete_social_auth(request: SocialAuthComplete):
-    settings = get_settings()
+    """Complete an OAuth flow — exchange the code, then log in / register the user.
 
-    # Validate CSRF state
-    provider = _validate_oauth_state(request.state)
-    if not provider:
-        raise HTTPException(status_code=400, detail="Invalid or expired OAuth state. Please try again.")
-
-    redirect_uri = "http://localhost:3000/callback"
-    email = None
-    name = None
-
+    Returns the service result dict ({success, action, access_token, refresh_token,
+    user, is_new_user, needs_role_selection, ...}). On provider/state failure it
+    returns {success: False, error} which the frontend callback page surfaces.
+    """
+    service = get_social_login_service()
     try:
-        if provider == "google":
-            async with httpx.AsyncClient() as client:
-                token_resp = await client.post("https://oauth2.googleapis.com/token", data={
-                    "code": request.code, "client_id": settings.GOOGLE_CLIENT_ID,
-                    "client_secret": settings.GOOGLE_CLIENT_SECRET, "redirect_uri": redirect_uri,
-                    "grant_type": "authorization_code",
-                })
-                tokens = token_resp.json()
-                if "error" in tokens:
-                    raise HTTPException(status_code=400, detail=f"Google OAuth error: {tokens['error_description']}")
-                user_resp = await client.get("https://www.googleapis.com/oauth2/v2/userinfo", headers={"Authorization": f"Bearer {tokens.get('access_token')}"})
-                user_data = user_resp.json()
-                email = user_data.get("email")
-                name = user_data.get("name")
-
-        elif provider == "github":
-            async with httpx.AsyncClient() as client:
-                token_resp = await client.post("https://github.com/login/oauth/access_token", data={
-                    "code": request.code, "client_id": settings.GITHUB_CLIENT_ID,
-                    "client_secret": settings.GITHUB_CLIENT_SECRET, "redirect_uri": redirect_uri,
-                }, headers={"Accept": "application/json"})
-                tokens = token_resp.json()
-                if "error" in tokens:
-                    raise HTTPException(status_code=400, detail=f"GitHub OAuth error: {tokens['error_description']}")
-                user_resp = await client.get("https://api.github.com/user", headers={"Authorization": f"Bearer {tokens.get('access_token')}"})
-                user_data = user_resp.json()
-                email_resp = await client.get("https://api.github.com/user/emails", headers={"Authorization": f"Bearer {tokens.get('access_token')}"})
-                emails = email_resp.json()
-                email = next((e["email"] for e in emails if e.get("primary")), emails[0]["email"] if emails else None)
-                name = user_data.get("name") or user_data.get("login")
-
-        else:
-            raise HTTPException(status_code=400, detail=f"Unsupported provider: {provider}")
-
+        return await service.complete_oauth(code=request.code, state=request.state)
     except HTTPException:
         raise
-    except Exception as e:
-        logger.error(f"social_auth_error provider={provider} error={e}")
+    except Exception as e:  # pragma: no cover - defensive
+        logger.error(f"social_auth_complete_error error={e}")
         raise HTTPException(status_code=500, detail="Social authentication failed. Please try again.")
-
-    if not email:
-        raise HTTPException(status_code=400, detail="Could not get email from provider")
-
-    user = get_user_by_email(email)
-    now = datetime.now(timezone.utc).isoformat()
-
-    if not user:
-        try:
-            # Generate a random unguessable password hash for social-login users
-            # This prevents brute-force attacks on accounts that only use OAuth
-            _social_password_hash = get_password_hash(secrets.token_urlsafe(32))
-            execute_query(
-                "INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified, name, user_type, role, bio, skills, hourly_rate, profile_image_url, location, profile_data, two_factor_enabled, account_balance, joined_at, created_at, updated_at) VALUES (?, ?, 1, 0, 1, ?, 'client', 'client', '', '', 0, '', '', '{}', 0, 0, ?, ?, ?)",
-                [email, _social_password_hash, name or email, now, now, now],
-            )
-            user = get_user_by_email(email)
-        except Exception as e:
-            logger.error(f"social_auth_user_create_error email={email} error={e}")
-            raise HTTPException(status_code=500, detail="Failed to create user account")
-
-    access_token = create_access_token(
-        subject=user.email,
-        custom_claims={"user_id": user.id, "role": user.role, "user_type": user.user_type, "name": user.name},
-    )
-    refresh_token = create_refresh_token(subject=user.email, custom_claims={"user_id": user.id})
-
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "user": {"id": user.id, "email": user.email, "name": user.name, "role": user.role, "user_type": user.user_type},
-    }
 
 
 @router.post("/select-role")
 async def select_role(request: SocialSelectRole, current_user=Depends(get_current_user)):
-    execute_query("UPDATE users SET user_type = ?, role = ? WHERE id = ?", [request.role, request.role, current_user.id])
-    return {"message": "Role selected"}
+    """Set a freshly-registered OAuth user's role and re-issue tokens with it."""
+    service = get_social_login_service()
+    result = await service.update_user_role(current_user.id, request.role.lower())
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Failed to set role"))
+    return result
 
 
 @router.get("/linked-accounts")
 async def get_linked_accounts(current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT provider, provider_user_id, email, name, avatar_url, linked_at FROM user_verifications WHERE user_id = ? AND verification_type = 'oauth'",
-        [current_user.id],
-    )
-    rows = parse_rows(result)
-    return {"accounts": rows if rows else []}
+    service = get_social_login_service()
+    accounts = await service.get_linked_accounts(current_user.id)
+    return {"accounts": accounts}
+
+
+@router.delete("/linked-accounts/{provider}")
+async def unlink_account(provider: str, current_user=Depends(get_current_user)):
+    service = get_social_login_service()
+    result = await service.unlink_account(current_user.id, _parse_provider(provider))
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Failed to unlink account"))
+    return result
 
 
 @router.post("/sync-profile")
-async def sync_profile(provider: str, current_user=Depends(get_current_user)):
-    return {"message": f"Profile sync initiated for {provider}"}
+async def sync_profile(request: SyncProfileRequest, current_user=Depends(get_current_user)):
+    service = get_social_login_service()
+    return await service.sync_profile_from_social(
+        current_user.id, _parse_provider(request.provider), request.fields
+    )

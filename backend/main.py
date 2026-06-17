@@ -537,6 +537,27 @@ async def lifespan(app: FastAPI):
                 created_at TEXT NOT NULL,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             )""", "integrations"),
+            ("""CREATE TABLE IF NOT EXISTS social_accounts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                provider TEXT NOT NULL,
+                provider_user_id TEXT,
+                email TEXT,
+                name TEXT,
+                avatar_url TEXT,
+                linked_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )""", "social_accounts"),
+            ("""CREATE TABLE IF NOT EXISTS oauth_states (
+                state TEXT PRIMARY KEY,
+                provider TEXT NOT NULL,
+                redirect_uri TEXT NOT NULL,
+                user_id TEXT,
+                portal_area TEXT,
+                intent TEXT,
+                expires_at TEXT NOT NULL
+            )""", "oauth_states"),
             ("""CREATE TABLE IF NOT EXISTS payout_methods (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,

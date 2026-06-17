@@ -791,7 +791,7 @@ export default function ChatbotAgent() {
               transition={{ duration: 0.3, type: 'spring' }}
               className={commonStyles.flexCenter}
             >
-              <RobotModel size={72} />
+              <RobotModel size={84} />
             </motion.div>
           )}
         </AnimatePresence>

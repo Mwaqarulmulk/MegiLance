@@ -374,7 +374,10 @@ api_router.include_router(skill_graph.router, tags=["skill-graph"])
 api_router.include_router(ai_writing.router, prefix="/ai-writing", tags=["ai-writing"])
 
 # Social Login - OAuth2 social authentication
-api_router.include_router(social_login.router, tags=["social-login"])
+# IMPORTANT: the frontend client (frontend/lib/api/auth.ts) calls every social
+# endpoint under the `/social-auth` prefix (e.g. /social-auth/start). The router
+# must be mounted with that prefix or all OAuth calls 404.
+api_router.include_router(social_login.router, prefix="/social-auth", tags=["social-login"])
 
 # Timezone Management - Smart timezone handling
 api_router.include_router(timezone.router, tags=["timezone"])
