@@ -132,6 +132,145 @@ def autocomplete_freelancers_endpoint(
     return {"items": items}
 
 
+@router.get("/me")
+def get_current_user_profile(
+    current_user=Depends(get_current_user)
+):
+    """Get the current user's profile"""
+    user_id = current_user.get("user_id")
+    result = execute_query(
+        """SELECT id, name, email, user_type, role, bio, skills, hourly_rate,
+                  profile_image_url, location, headline, experience_level,
+                  years_of_experience, availability_status, availability_hours,
+                  profile_slug, profile_visibility, profile_views, seller_level,
+                  languages, industry_focus, tools_and_technologies,
+                  linkedin_url, github_url, website_url, twitter_url,
+                  dribbble_url, behance_url, stackoverflow_url,
+                  video_intro_url, resume_url, created_at
+           FROM users WHERE id = ?""",
+        [user_id]
+    )
+
+    if not result or not result.get("rows"):
+        raise HTTPException(status_code=404, detail="User not found")
+
+    rows = parse_rows(result)
+    user = rows[0]
+
+    for field in ("skills", "languages", "tools_and_technologies"):
+        val = user.get(field)
+        if isinstance(val, str):
+            try:
+                user[field] = json.loads(val)
+            except (json.JSONDecodeError, TypeError):
+                # Stored as a comma-separated string (search uses LIKE on these),
+                # so fall back to splitting instead of dropping to an empty list.
+                user[field] = [s.strip() for s in val.split(",") if s.strip()]
+
+    return user
+
+
+# Columns a user is allowed to edit on their OWN profile. Sensitive columns
+# (email, role, hashed_password, account_balance, verification flags, …) are
+# intentionally excluded so they can never be set through this endpoint.
+_EDITABLE_PROFILE_FIELDS = {
+    "name", "bio", "skills", "hourly_rate", "profile_image_url", "location",
+    "headline", "tagline", "experience_level", "years_of_experience", "languages",
+    "availability_status", "availability_hours", "industry_focus",
+    "tools_and_technologies", "linkedin_url", "github_url", "website_url",
+    "twitter_url", "dribbble_url", "behance_url", "stackoverflow_url",
+    "video_intro_url", "resume_url", "phone_number", "timezone",
+    "preferred_project_size", "certifications", "education", "work_history",
+    "achievements", "profile_visibility", "profile_slug", "contact_preferences",
+}
+# Stored as comma-separated strings so LIKE-based search keeps matching.
+_CSV_PROFILE_FIELDS = {"skills", "languages", "tools_and_technologies", "industry_focus"}
+# Stored as JSON blobs.
+_JSON_PROFILE_FIELDS = {"education", "work_history", "certifications", "achievements", "contact_preferences"}
+
+
+@router.put("/me")
+@router.patch("/me")
+def update_current_user_profile(data: dict, current_user=Depends(get_current_user)):
+    """Update the signed-in user's own profile. Whitelisted fields only."""
+    user_id = current_user.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    updates = {}
+    for key, value in (data or {}).items():
+        if key not in _EDITABLE_PROFILE_FIELDS:
+            continue
+        if key in _CSV_PROFILE_FIELDS and isinstance(value, list):
+            value = ", ".join(str(v).strip() for v in value if str(v).strip())
+        elif key in _JSON_PROFILE_FIELDS and not isinstance(value, (str, type(None))):
+            value = json.dumps(value)
+        updates[key] = value
+
+    if not updates:
+        raise HTTPException(status_code=400, detail="No valid profile fields to update")
+
+    from datetime import datetime, timezone
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+    set_parts = [f"{k} = ?" for k in updates]
+    values = list(updates.values()) + [user_id]
+    execute_query(f"UPDATE users SET {', '.join(set_parts)} WHERE id = ?", values)
+
+    return get_current_user_profile(current_user)
+
+
+@router.post("/onboarding-complete")
+async def complete_onboarding(data: dict, current_user=Depends(get_current_user)):
+    """Save onboarding wizard data for a new freelancer."""
+    user_id = current_user.get("user_id") or current_user.get("id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat()
+
+    title = data.get("title", "")
+    bio = data.get("bio", "")
+    skills = data.get("skills", [])
+    experience_level = data.get("experience_level", "")
+    hourly_rate = data.get("hourly_rate", 0)
+
+    updates = {"updated_at": now}
+    if title:
+        updates["headline"] = title
+    if bio:
+        updates["bio"] = bio
+    if skills:
+        # Store as a comma-separated string so the LIKE-based freelancer search
+        # keeps matching (consistent with PUT /me and the rest of the codebase).
+        updates["skills"] = ", ".join(str(s).strip() for s in skills if str(s).strip()) if isinstance(skills, list) else skills
+    if experience_level:
+        updates["experience_level"] = experience_level
+    if hourly_rate:
+        updates["hourly_rate"] = hourly_rate
+
+    updates["onboarding_completed"] = 1
+
+    set_parts = [f"{k} = ?" for k in updates]
+    values = list(updates.values()) + [user_id]
+
+    result = execute_query(
+        f"UPDATE users SET {', '.join(set_parts)} WHERE id = ?",
+        values,
+    )
+    if result is None:
+        # Don't report success if the write failed (previously this returned
+        # "completed" even when the UPDATE silently errored, losing all data).
+        raise HTTPException(status_code=500, detail="Failed to save onboarding data")
+
+    return {"message": "Onboarding completed successfully"}
+
+
+# NOTE: This catch-all `/{user_id}` route MUST stay declared AFTER every static
+# path (/me, /freelancers, /trending, …). FastAPI matches in declaration order,
+# so if it came first, "me" would be parsed as user_id (int) and GET /users/me
+# would fail with 422.
 @router.get("/{user_id}")
 def get_user_profile(
     user_id: int,
@@ -184,79 +323,3 @@ def get_user_profile(
             user[field] = []
 
     return user
-
-
-@router.get("/me")
-def get_current_user_profile(
-    current_user=Depends(get_current_user)
-):
-    """Get the current user's profile"""
-    user_id = current_user.get("user_id")
-    result = execute_query(
-        """SELECT id, name, email, user_type, role, bio, skills, hourly_rate,
-                  profile_image_url, location, headline, experience_level,
-                  years_of_experience, availability_status, availability_hours,
-                  profile_slug, profile_visibility, profile_views, seller_level,
-                  languages, industry_focus, tools_and_technologies,
-                  linkedin_url, github_url, website_url, twitter_url,
-                  dribbble_url, behance_url, stackoverflow_url,
-                  video_intro_url, resume_url, created_at
-           FROM users WHERE id = ?""",
-        [user_id]
-    )
-
-    if not result or not result.get("rows"):
-        raise HTTPException(status_code=404, detail="User not found")
-
-    rows = parse_rows(result)
-    user = rows[0]
-
-    for field in ("skills", "languages", "tools_and_technologies"):
-        if isinstance(user.get(field), str):
-            try:
-                user[field] = json.loads(user[field])
-            except (json.JSONDecodeError, TypeError):
-                user[field] = []
-
-    return user
-
-
-@router.post("/onboarding-complete")
-async def complete_onboarding(data: dict, current_user=Depends(get_current_user)):
-    """Save onboarding wizard data for a new freelancer."""
-    user_id = current_user.get("user_id") or current_user.get("id")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    from datetime import datetime, timezone
-    now = datetime.now(timezone.utc).isoformat()
-
-    title = data.get("title", "")
-    bio = data.get("bio", "")
-    skills = data.get("skills", [])
-    experience_level = data.get("experience_level", "")
-    hourly_rate = data.get("hourly_rate", 0)
-
-    updates = {"updated_at": now}
-    if title:
-        updates["headline"] = title
-    if bio:
-        updates["bio"] = bio
-    if skills:
-        updates["skills"] = json.dumps(skills) if isinstance(skills, list) else skills
-    if experience_level:
-        updates["experience_level"] = experience_level
-    if hourly_rate:
-        updates["hourly_rate"] = hourly_rate
-
-    updates["onboarding_completed"] = 1
-
-    set_parts = [f"{k} = ?" for k in updates]
-    values = list(updates.values()) + [user_id]
-
-    execute_query(
-        f"UPDATE users SET {', '.join(set_parts)} WHERE id = ?",
-        values,
-    )
-
-    return {"message": "Onboarding completed successfully"}

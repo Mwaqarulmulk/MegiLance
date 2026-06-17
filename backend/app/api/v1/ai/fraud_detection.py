@@ -10,8 +10,39 @@ logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user, require_admin
 from app.db.turso_http import execute_query, parse_rows
+from app.services.llm_gateway import llm_gateway
 
 router = APIRouter()
+
+
+async def _ai_risk_report(entity_type: str, context: dict, analysis: dict) -> Optional[str]:
+    """Generate a concise, human-readable risk narrative for an admin.
+
+    Grounded on the deterministic risk score + flags + entity context — the LLM
+    explains and recommends, it does not invent the score. Returns None if the
+    gateway is unavailable so callers can omit the field gracefully.
+    """
+    if not llm_gateway.is_active:
+        return None
+    system = (
+        "You are a trust & safety analyst for the MegiLance freelancing platform. "
+        "You receive a deterministic risk score, triggered flags, and entity context. "
+        "Write a brief, professional risk assessment for an admin: 2-4 sentences explaining "
+        "what the signals mean together, the most likely explanation (benign vs malicious), "
+        "and one clear recommended action. Do not contradict the provided risk_level. "
+        "Be measured — most users are legitimate. Plain text, no markdown headers."
+    )
+    user = (
+        f"ENTITY: {entity_type}\n"
+        f"RISK SCORE: {analysis.get('risk_score')} ({analysis.get('risk_level')})\n"
+        f"FLAGS: {', '.join(analysis.get('flags', analysis.get('risk_factors', []))) or 'none'}\n"
+        f"CONTEXT: {context}\n\n"
+        "Write the assessment now."
+    )
+    return await llm_gateway.chat(
+        [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        task="reasoning", max_tokens=320, temperature=0.4,
+    )
 
 
 def _analyze_user_fraud(user_id: int) -> dict:
@@ -92,10 +123,14 @@ def _analyze_user_fraud(user_id: int) -> dict:
         risk_score += 0.2
 
     # 6. Dispute history (> 3 disputes = risk)
+    # A user is "involved" if they raised the dispute OR are a party to the
+    # disputed contract. (The disputes table has raised_by + contract_id; there
+    # are no filed_by/filed_against columns.)
     result = execute_query(
-        """SELECT COUNT(*) as cnt FROM disputes
-           WHERE (filed_by = ? OR filed_against = ?)""",
-        [user_id, user_id],
+        """SELECT COUNT(*) as cnt FROM disputes d
+           LEFT JOIN contracts c ON d.contract_id = c.id
+           WHERE d.raised_by = ? OR c.freelancer_id = ? OR c.client_id = ?""",
+        [user_id, user_id, user_id],
     )
     rows = parse_rows(result)
     disputes = rows[0]["cnt"] if rows else 0
@@ -242,6 +277,8 @@ async def analyze_user(user_id: int, current_user=Depends(require_admin)):
     if not rows:
         raise HTTPException(status_code=404, detail="User not found")
     a = _analyze_user_fraud(user_id)
+    context = {"name": rows[0].get("name"), "email": rows[0].get("email"), **a.get("details", {})}
+    ai_report = await _ai_risk_report("user account", context, a)
     return {
         "user_id": user_id,
         "user_name": rows[0].get("name"),
@@ -250,6 +287,7 @@ async def analyze_user(user_id: int, current_user=Depends(require_admin)):
         "risk_factors": a.get("flags", []),
         "recommendation": _recommendation(a["risk_level"]),
         "details": a.get("details", {}),
+        "ai_report": ai_report,
     }
 
 
@@ -322,6 +360,112 @@ async def analyze_transaction(transaction_id: int, current_user=Depends(require_
     level = "high" if score >= 0.5 else "medium" if score >= 0.3 else "low" if score >= 0.1 else "minimal"
     return {"transaction_id": transaction_id, "risk_score": round(score, 3), "risk_level": level,
             "risk_factors": flags, "recommendation": _recommendation(level)}
+
+
+@router.get("/analyze/dispute/{dispute_id}")
+async def analyze_dispute(dispute_id: int, current_user=Depends(require_admin)):
+    """Risk + AI narrative for a dispute: pulls the dispute, its contract and both
+    parties' risk so an admin gets a grounded resolution recommendation."""
+    rows = parse_rows(execute_query(
+        """SELECT d.id, d.contract_id, d.raised_by, d.dispute_type, d.description,
+                  d.status, d.created_at, c.amount, c.freelancer_id, c.client_id,
+                  p.title AS project_title
+           FROM disputes d
+           LEFT JOIN contracts c ON d.contract_id = c.id
+           LEFT JOIN projects p ON c.project_id = p.id
+           WHERE d.id = ?""", [dispute_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Dispute not found")
+    d = rows[0]
+
+    flags, score = [], 0.0
+    desc = (d.get("description") or "")
+    if len(desc) < 40:
+        flags.append("thin_dispute_description"); score += 0.1
+
+    party_risk = {}
+    for label, uid in (("freelancer", d.get("freelancer_id")), ("client", d.get("client_id")), ("raised_by", d.get("raised_by"))):
+        if uid:
+            fa = _analyze_user_fraud(int(uid))
+            party_risk[label] = {"user_id": int(uid), "risk_score": fa["risk_score"], "risk_level": fa["risk_level"], "flags": fa["flags"]}
+            score = min(1.0, score + fa["risk_score"] * 0.25)
+
+    level = "high" if score >= 0.5 else "medium" if score >= 0.3 else "low" if score >= 0.1 else "minimal"
+    analysis = {"risk_score": round(score, 3), "risk_level": level, "flags": flags}
+    context = {
+        "dispute_type": d.get("dispute_type"), "status": d.get("status"),
+        "contract_amount": d.get("amount"), "project": d.get("project_title"),
+        "description": desc[:400], "party_risk": party_risk,
+    }
+    ai_report = await _ai_risk_report("payment/work dispute", context, analysis)
+    return {
+        "dispute_id": dispute_id,
+        "contract_id": d.get("contract_id"),
+        "risk_score": analysis["risk_score"],
+        "risk_level": level,
+        "risk_factors": flags,
+        "party_risk": party_risk,
+        "recommendation": _recommendation(level),
+        "ai_report": ai_report,
+    }
+
+
+@router.get("/analyze/invoice/{invoice_id}")
+async def analyze_invoice(invoice_id: int, current_user=Depends(require_admin)):
+    """Risk + AI narrative for an invoice: checks amount anomalies, status, and
+    the issuing/receiving parties' risk before payout."""
+    rows = parse_rows(execute_query(
+        """SELECT i.id, i.invoice_number, i.from_user_id, i.to_user_id, i.subtotal,
+                  i.tax, i.total, i.status, i.due_date, i.created_at, i.contract_id,
+                  c.amount AS contract_amount
+           FROM invoices i
+           LEFT JOIN contracts c ON i.contract_id = c.id
+           WHERE i.id = ?""", [invoice_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    inv = rows[0]
+
+    flags, score = [], 0.0
+    try:
+        total = float(inv.get("total") or 0)
+    except (ValueError, TypeError):
+        total = 0.0
+    if total > 50000:
+        flags.append("high_value_invoice"); score += 0.25
+    # Invoice materially exceeds the contract it bills against.
+    try:
+        camt = float(inv.get("contract_amount") or 0)
+        if camt and total > camt * 1.5:
+            flags.append("invoice_exceeds_contract"); score += 0.3
+    except (ValueError, TypeError):
+        pass
+    if (inv.get("status") or "") in ("disputed", "failed"):
+        flags.append(f"invoice_status_{inv.get('status')}"); score += 0.2
+
+    party_risk = {}
+    for label, uid in (("issuer", inv.get("from_user_id")), ("payer", inv.get("to_user_id"))):
+        if uid:
+            fa = _analyze_user_fraud(int(uid))
+            party_risk[label] = {"user_id": int(uid), "risk_score": fa["risk_score"], "risk_level": fa["risk_level"], "flags": fa["flags"]}
+            score = min(1.0, score + fa["risk_score"] * 0.2)
+
+    level = "high" if score >= 0.5 else "medium" if score >= 0.3 else "low" if score >= 0.1 else "minimal"
+    analysis = {"risk_score": round(min(score, 1.0), 3), "risk_level": level, "flags": flags}
+    context = {
+        "invoice_number": inv.get("invoice_number"), "total": total,
+        "contract_amount": inv.get("contract_amount"), "status": inv.get("status"),
+        "party_risk": party_risk,
+    }
+    ai_report = await _ai_risk_report("invoice / payout", context, analysis)
+    return {
+        "invoice_id": invoice_id,
+        "risk_score": analysis["risk_score"],
+        "risk_level": level,
+        "risk_factors": flags,
+        "party_risk": party_risk,
+        "recommendation": _recommendation(level),
+        "ai_report": ai_report,
+    }
 
 
 class FraudReportRequest(BaseModel):

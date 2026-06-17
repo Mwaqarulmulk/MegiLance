@@ -171,6 +171,9 @@ async def lifespan(app: FastAPI):
                 ("password_reset_token", "TEXT"),
                 ("password_reset_expires", "TEXT"),
                 ("email_verification_token", "TEXT"),
+                # Onboarding wizard completion flag (the /users/onboarding-complete
+                # write previously failed silently because this column was missing).
+                ("onboarding_completed", "INTEGER DEFAULT 0"),
             ]
             existing_res = execute_query("PRAGMA table_info(users)")
             existing_cols = set()

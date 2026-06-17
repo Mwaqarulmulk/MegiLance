@@ -343,6 +343,26 @@ FREELANCER_TOOLS = FREELANCER_TOOLS + FREELANCER_ACCOUNT_TOOLS
 
 # Only these display types have dedicated rich renderers in the frontend widget.
 # Other tool results are fed to the LLM, which summarizes them in the chat bubble.
+def _as_float(value, default: float) -> float:
+    """Coerce an LLM-provided arg to float. The model often sends numbers as
+    strings (e.g. "50"), which broke direct numeric comparisons."""
+    try:
+        if value is None or value == "":
+            return float(default)
+        return float(value)
+    except (TypeError, ValueError):
+        return float(default)
+
+
+def _as_int(value, default: int) -> int:
+    try:
+        if value is None or value == "":
+            return int(default)
+        return int(float(value))
+    except (TypeError, ValueError):
+        return int(default)
+
+
 CARD_DISPLAY_TYPES = {
     "freelancer_cards", "cost_estimate", "market_rates", "scope_plan",
     # account-aware cards
@@ -398,9 +418,9 @@ def _execute_tool(tool_name: str, args: dict, user_id: int, role: str) -> dict:
 
 def _tool_search_freelancers(args: dict) -> dict:
     skills = args.get("skills", "")
-    max_rate = args.get("max_hourly_rate", 999)
-    min_rating = args.get("min_rating", 0)
-    limit = min(int(args.get("limit", 4)), 8)
+    max_rate = _as_float(args.get("max_hourly_rate"), 999)
+    min_rating = _as_float(args.get("min_rating"), 0)
+    limit = min(_as_int(args.get("limit"), 4), 8)
 
     skill_list = [s.strip() for s in skills.split(",") if s.strip()]
     if not skill_list:
@@ -577,8 +597,8 @@ def _tool_platform_guide(args: dict) -> dict:
 
 def _tool_find_projects(args: dict, user_id: int) -> dict:
     skills = args.get("skills", "")
-    limit = min(int(args.get("limit", 5)), 10)
-    min_budget = args.get("min_budget", 0)
+    limit = min(_as_int(args.get("limit"), 5), 10)
+    min_budget = _as_float(args.get("min_budget"), 0)
 
     skill_list = [s.strip() for s in skills.split(",") if s.strip()]
     conditions = []
@@ -1195,14 +1215,20 @@ async def chat(body: ChatRequest, current_user=Depends(get_current_user)):
     if body.page_context:
         system_prompt += f"\n\nUser is currently on page: {body.page_context}"
 
-    result = await _run_llm_chat(
-        user_message=body.message,
-        history=body.conversation_history,
-        system_prompt=system_prompt,
-        tools=tools,
-        user_id=current_user.id,
-        role=role,
-    )
+    try:
+        result = await asyncio.wait_for(
+            _run_llm_chat(
+                user_message=body.message,
+                history=body.conversation_history,
+                system_prompt=system_prompt,
+                tools=tools,
+                user_id=current_user.id,
+                role=role,
+            ),
+            timeout=20.0,
+        )
+    except asyncio.TimeoutError:
+        result = _fallback_response(body.message, role)
     return result
 
 
