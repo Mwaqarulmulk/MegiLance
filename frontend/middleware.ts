@@ -138,7 +138,10 @@ export function middleware(request: NextRequest) {
 
   if (isProtectedPath && !isTokenValid) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("returnTo", pathname);
+    // Only set returnTo for non-login paths to avoid self-redirect loops
+    if (pathname !== "/login") {
+      loginUrl.searchParams.set("returnTo", pathname);
+    }
     return NextResponse.redirect(loginUrl);
   }
 

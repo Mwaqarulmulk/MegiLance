@@ -17,14 +17,26 @@ export function getAuthToken(): string | null {
   return authToken;
 }
 
-export function setRefreshToken(_token: string | null) {
-  // Refresh token is now stored as httpOnly cookie by the backend.
-  // Kept for backward compatibility — no-op.
+export function setRefreshToken(token: string | null) {
+  if (typeof window === "undefined") return;
+  try {
+    if (token) {
+      localStorage.setItem("refresh_token", token);
+    } else {
+      localStorage.removeItem("refresh_token");
+    }
+  } catch {
+    // localStorage unavailable — backend httpOnly cookie is the fallback
+  }
 }
 
 export function getRefreshToken(): string | null {
-  // Refresh token is httpOnly cookie — not accessible from JS.
-  return "__httponly_cookie__";
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem("refresh_token");
+  } catch {
+    return null;
+  }
 }
 
 export function clearAuthData() {
@@ -363,7 +375,10 @@ export async function apiFetch<T = unknown>(
               onTokenRefreshFailed();
               if (typeof window !== "undefined") {
                 const currentPath = window.location.pathname;
-                window.location.href = `/login?returnTo=${encodeURIComponent(currentPath)}&expired=true`;
+                // Never redirect to /login when already on /login — prevents infinite loop
+                if (currentPath !== "/login") {
+                  window.location.href = `/login?returnTo=${encodeURIComponent(currentPath)}&expired=true`;
+                }
               }
               throw new APIError("Session expired. Please log in again.", 401);
             }

@@ -108,7 +108,7 @@ async def login(request: Request, body: LoginRequest, response: Response):
         custom_claims={"user_id": user.id},
     )
 
-    # Set auth_token as httpOnly cookie for middleware auth protection
+    # Set auth_token and refresh_token as httpOnly cookies
     _settings = get_settings()
     response.set_cookie(
         key="auth_token",
@@ -117,6 +117,15 @@ async def login(request: Request, body: LoginRequest, response: Response):
         samesite="lax",
         secure=_settings.environment == "production",
         max_age=3600,  # 1 hour
+        path="/",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        samesite="lax",
+        secure=_settings.environment == "production",
+        max_age=60 * 60 * 24 * 30,  # 30 days
         path="/",
     )
 
@@ -208,7 +217,7 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         custom_claims={"user_id": user["id"]},
     )
 
-    # Set auth_token as httpOnly cookie for middleware auth protection
+    # Set auth_token and refresh_token as httpOnly cookies
     _settings = get_settings()
     response.set_cookie(
         key="auth_token",
@@ -217,6 +226,15 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         samesite="lax",
         secure=_settings.environment == "production",
         max_age=3600,
+        path="/",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        samesite="lax",
+        secure=_settings.environment == "production",
+        max_age=60 * 60 * 24 * 30,  # 30 days
         path="/",
     )
 
@@ -466,7 +484,7 @@ async def refresh_token(request: Request, response: Response):
             custom_claims={"user_id": user.id},
         )
 
-        # Refresh the auth_token cookie
+        # Rotate both cookies
         _settings = get_settings()
         response.set_cookie(
             key="auth_token",
@@ -475,6 +493,15 @@ async def refresh_token(request: Request, response: Response):
             samesite="lax",
             secure=_settings.environment == "production",
             max_age=3600,
+            path="/",
+        )
+        response.set_cookie(
+            key="refresh_token",
+            value=new_refresh,
+            httponly=True,
+            samesite="lax",
+            secure=_settings.environment == "production",
+            max_age=60 * 60 * 24 * 30,
             path="/",
         )
 
