@@ -194,7 +194,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
   }, [userId, router, isAuthenticated, currentUser]);
 
   const handleHire = useCallback(() => {
-    router.push(`/client/post-job?freelancer=${userId}`);
+    router.push('/client/find-talent');
   }, [userId, router]);
 
   if (loading) {

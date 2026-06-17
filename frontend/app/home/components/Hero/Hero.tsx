@@ -46,7 +46,7 @@ export default function Hero({ stats = defaultStats }) {
         </p>
 
         <div className={cn(commonStyles.actions, themeStyles.actions)}>
-          <Link href="/freelancers" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
+          <Link href="/client/find-talent" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
             Find Talent
           </Link>
           <Link href="/explore" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>

@@ -103,7 +103,7 @@ async function FreelancerList({ query }: { query: string }) {
     return (
       <div className={commonStyles.emptyState}>
         <h3>No freelancers found</h3>
-        <p>Try adjusting your search or <Link href="/post-project">post a project</Link> to get matched.</p>
+        <p>Try adjusting your search or <Link href="/client/find-talent">find talent</Link> to get matched.</p>
       </div>
     );
   }

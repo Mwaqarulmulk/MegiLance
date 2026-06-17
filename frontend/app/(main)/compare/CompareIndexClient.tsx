@@ -48,7 +48,7 @@ export default function CompareIndexClient({ competitors }: { competitors: Compe
           </div>
 
           <div className={commonStyles.ctaBlock}>
-            <Link href="/post-project">
+            <Link href="/client/find-talent">
               <Button variant="primary" size="lg">
                 Try MegiLance Free <ArrowRight size={18} />
               </Button>

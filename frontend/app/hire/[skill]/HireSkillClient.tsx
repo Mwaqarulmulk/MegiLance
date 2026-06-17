@@ -53,7 +53,7 @@ export function HireSkillClient({ skill, industries, relatedSkills }: HireSkillC
           <div className={commonStyles.breadcrumbs}>
             <Link href="/" className={themed.breadcrumbLink}>Home</Link>
             <span className={commonStyles.breadcrumbSeparator}>/</span>
-            <Link href="/hire" className={themed.breadcrumbLink}>Hire</Link>
+            <Link href="/client/find-talent" className={themed.breadcrumbLink}>Find Talent</Link>
             <span className={commonStyles.breadcrumbSeparator}>/</span>
             <span className={themed.breadcrumbCurrent}>{skill.name}</span>
           </div>

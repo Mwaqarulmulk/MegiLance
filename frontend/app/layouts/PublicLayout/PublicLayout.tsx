@@ -27,9 +27,9 @@ const PublicLayout: React.FC<Props> = ({ children }) => {
     <div className={styles.root}>
       <SmartBanner
         id="launch-promo"
-        text="🚀 Post your first project free — AI matches you with top freelancers in 24h"
-        ctaText="Post a Project"
-        href="/post-project"
+        text="🚀 Find top freelancers with AI matching — start for free"
+        ctaText="Find Talent"
+        href="/client/find-talent"
       />
 
       {/* @AI-HINT: PublicLayout - Marketing container only; AppChrome owns the sole <main id="main-content">. */}

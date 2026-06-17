@@ -293,7 +293,7 @@ const Projects: React.FC = () => {
               </Button>
               <Button
                 iconBefore={<PlusCircle size={16} />}
-                onClick={() => router.push("/client/post-job")}
+                onClick={() => router.push("/client/find-talent")}
               >
                 New Project
               </Button>
@@ -492,7 +492,7 @@ const Projects: React.FC = () => {
                   variant="primary"
                   size="sm"
                   iconBefore={<PlusCircle size={14} />}
-                  onClick={() => router.push("/client/post-job")}
+                  onClick={() => router.push("/client/find-talent")}
                 >
                   Post a Project
                 </Button>

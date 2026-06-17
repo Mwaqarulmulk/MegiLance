@@ -17,8 +17,8 @@ interface FloatingCTAProps {
 }
 
 export default function FloatingCTA({
-  text = 'Post a Project Free',
-  href = '/post-project',
+  text = 'Find Talent Free',
+  href = '/client/find-talent',
   showAfterPx = 600,
 }: FloatingCTAProps) {
   const { resolvedTheme } = useTheme();

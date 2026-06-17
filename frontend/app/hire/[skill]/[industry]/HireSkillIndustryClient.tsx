@@ -90,7 +90,7 @@ export function HireSkillIndustryClient({
               Home
             </Link>
             <span className={commonStyles.breadcrumbSeparator}>/</span>
-            <Link href="/talent" className={cn(commonStyles.breadcrumbLink, themeStyles.breadcrumbLink)}>
+            <Link href="/client/find-talent" className={cn(commonStyles.breadcrumbLink, themeStyles.breadcrumbLink)}>
               Talent
             </Link>
             <span className={commonStyles.breadcrumbSeparator}>/</span>

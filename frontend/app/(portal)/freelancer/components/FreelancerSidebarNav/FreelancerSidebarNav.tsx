@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { Gauge, Briefcase, FileText, Wallet, TrendingUp, User, Settings, SendHorizontal } from 'lucide-react';
+import { Gauge, Briefcase, FileText, Wallet, TrendingUp, User, Settings, SendHorizontal, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import MegiLanceLogo from '@/app/components/atoms/MegiLanceLogo/MegiLanceLogo';
 import commonStyles from './FreelancerSidebarNav.common.module.css';
@@ -14,12 +14,20 @@ import darkStyles from './FreelancerSidebarNav.dark.module.css';
 
 const navItems = [
   { href: '/freelancer/dashboard', label: 'Dashboard', icon: Gauge },
-  { href: '/freelancer/my-jobs', label: 'My Jobs', icon: Briefcase },
-  { href: '/freelancer/proposals', label: 'Proposals', icon: SendHorizontal },
+  { href: '/freelancer/invitations', label: 'Invitations', icon: SendHorizontal },
+  { href: '/freelancer/projects', label: 'My Projects', icon: Briefcase },
   { href: '/freelancer/contracts', label: 'Contracts', icon: FileText },
-  { href: '/freelancer/wallet', label: 'Wallet', icon: Wallet },
-  { href: '/freelancer/analytics', label: 'Analytics', icon: TrendingUp },
+  { href: '/freelancer/deliverables', label: 'Deliverables', icon: FileText },
+  { href: '/freelancer/time-entries', label: 'Time Entries', icon: TrendingUp },
+  { href: '/freelancer/disputes', label: 'Disputes', icon: Wallet },
+  { href: '/freelancer/messages', label: 'Messages', icon: SendHorizontal },
+  { href: '/freelancer/notifications', label: 'Notifications', icon: Bell },
+  { href: '/freelancer/earnings', label: 'Earnings', icon: Wallet },
+  { href: '/freelancer/invoices', label: 'Invoices', icon: FileText },
+  { href: '/freelancer/escrow', label: 'Escrow', icon: Wallet },
+  { href: '/freelancer/legal', label: 'Documents', icon: FileText },
   { href: '/freelancer/profile', label: 'Profile', icon: User },
+  { href: '/freelancer/reviews', label: 'Reviews', icon: TrendingUp },
   { href: '/freelancer/settings', label: 'Settings', icon: Settings },
 ];
 

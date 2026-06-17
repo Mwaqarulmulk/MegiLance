@@ -48,8 +48,8 @@ function getCommandsForRole(role: string): CommandItem[] {
   if (role === 'client') {
     return [
       { id: 'dashboard', label: 'Dashboard', description: 'Client overview', href: '/client/dashboard', icon: LayoutDashboard, group: 'Navigate', shortcut: '⌘1' },
-      { id: 'post-job', label: 'Post a Job', description: 'Create a new job posting', href: '/client/post-job', icon: Plus, group: 'Actions', keywords: ['create', 'new', 'hire'] },
-      { id: 'hire', label: 'Hire Talent', description: 'Find and hire freelancers', href: '/client/hire', icon: Users, group: 'Actions', keywords: ['search', 'find', 'talent'] },
+      { id: 'find-talent', label: 'Find Talent', description: 'AI-powered talent matching', href: '/client/find-talent', icon: Plus, group: 'Actions', keywords: ['create', 'new', 'hire'] },
+      { id: 'find-talent-2', label: 'Find Talent', description: 'AI-powered talent matching', href: '/client/find-talent', icon: Users, group: 'Actions', keywords: ['search', 'find', 'talent'] },
       { id: 'projects', label: 'Projects', description: 'Manage your projects', href: '/client/projects', icon: Briefcase, group: 'Navigate', keywords: ['work'] },
       { id: 'contracts', label: 'Contracts', description: 'View contracts', href: '/client/contracts', icon: FileText, group: 'Navigate' },
       { id: 'payments', label: 'Payments', description: 'Payment history', href: '/client/payments', icon: CreditCard, group: 'Navigate', keywords: ['billing', 'money'] },
@@ -64,11 +64,11 @@ function getCommandsForRole(role: string): CommandItem[] {
   if (role === 'freelancer') {
     return [
       { id: 'dashboard', label: 'Dashboard', description: 'Freelancer overview', href: '/freelancer/dashboard', icon: LayoutDashboard, group: 'Navigate', shortcut: '⌘1' },
-      { id: 'find-work', label: 'Find Work', description: 'Browse available jobs', href: '/freelancer/jobs', icon: Search, group: 'Actions', keywords: ['search', 'jobs', 'Browse'] },
-      { id: 'submit-proposal', label: 'Submit Proposal', description: 'Apply for a job', href: '/freelancer/submit-proposal', icon: Plus, group: 'Actions', keywords: ['apply'] },
-      { id: 'my-jobs', label: 'My Jobs', description: 'Active work', href: '/freelancer/my-jobs', icon: Briefcase, group: 'Navigate' },
-      { id: 'proposals', label: 'Proposals', description: 'Sent proposals', href: '/freelancer/proposals', icon: FileText, group: 'Navigate' },
-      { id: 'gigs', label: 'Gigs', description: 'Your services', href: '/freelancer/gigs', icon: Package, group: 'Navigate' },
+      { id: 'invitations', label: 'Invitations', description: 'View AI-matched invitations', href: '/freelancer/invitations', icon: Search, group: 'Actions', keywords: ['search', 'jobs', 'Browse'] },
+      { id: 'invitations-2', label: 'Invitations', description: 'View AI-matched invitations', href: '/freelancer/invitations', icon: Plus, group: 'Actions', keywords: ['apply'] },
+      { id: 'my-projects', label: 'My Projects', description: 'Active work', href: '/freelancer/projects', icon: Briefcase, group: 'Navigate' },
+      { id: 'invitations-3', label: 'Invitations', description: 'AI-matched invitations', href: '/freelancer/invitations', icon: FileText, group: 'Navigate' },
+      { id: 'earnings', label: 'Earnings', description: 'View earnings', href: '/freelancer/earnings', icon: TrendingUp, group: 'Navigate' },
       { id: 'earnings', label: 'Earnings', description: 'Revenue tracking', href: '/freelancer/earnings', icon: TrendingUp, group: 'Navigate', keywords: ['money', 'income'] },
       { id: 'wallet', label: 'Wallet', description: 'Balance & withdraw', href: '/freelancer/wallet', icon: Wallet, group: 'Navigate' },
       { id: 'portfolio', label: 'Portfolio', description: 'Showcase work', href: '/freelancer/portfolio', icon: Eye, group: 'Navigate' },

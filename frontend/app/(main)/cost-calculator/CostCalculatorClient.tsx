@@ -157,9 +157,9 @@ export default function CostCalculatorClient({ faqs }: { faqs: FAQ[] }) {
                 )}
               </div>
 
-              <Link href="/post-project">
+              <Link href="/client/find-talent">
                 <Button variant="primary" size="lg" fullWidth>
-                  Start Saving — Post a Project Free <ArrowRight size={18} />
+                  Start Saving — Find Talent Free <ArrowRight size={18} />
                 </Button>
               </Link>
             </div>

@@ -217,7 +217,7 @@ export default function FreelancerProjectsPage() {
               <Button variant="outline" iconBefore={<Download size={16} />} onClick={handleExportCSV}>
                 Export CSV
               </Button>
-              <Link href="/freelancer/jobs">
+              <Link href="/freelancer/invitations">
                 <Button variant="primary" iconBefore={<Briefcase size={18} />}>
                   Find New Projects
                 </Button>
@@ -347,7 +347,7 @@ export default function FreelancerProjectsPage() {
                   Clear Filters
                 </Button>
               ) : (
-                <Link href="/freelancer/jobs">
+                <Link href="/freelancer/invitations">
                   <Button variant="primary">Browse Jobs</Button>
                 </Link>
               )

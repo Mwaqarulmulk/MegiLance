@@ -64,17 +64,17 @@ const CATEGORY_HREFS: Record<string, string> = {
   'Getting Started': '/faq',
   'Billing & Payments': '/pricing',
   'Security & Privacy': '/security',
-  'Finding Work': '/freelancer/jobs',
+  'Finding Work': '/freelancer/invitations',
   'Contracts & Projects': '/freelancer/contracts',
   'Account Settings': '/settings',
   'Teams & Collaboration': '/freelancer/teams',
   'Communication': '/freelancer/messages',
-  'Growth & Analytics': '/freelancer/analytics',
+  'Growth & Analytics': '/freelancer/earnings',
 };
 
 const quickLinks: QuickLink[] = [
-  { label: 'Browse Projects', href: '/freelancer/jobs', icon: <Briefcase size={16} /> },
-  { label: 'Submit a Proposal', href: '/freelancer/proposals', icon: <FileText size={16} /> },
+  { label: 'View Invitations', href: '/freelancer/invitations', icon: <Briefcase size={16} /> },
+  { label: 'Accept Invitation', href: '/freelancer/invitations', icon: <FileText size={16} /> },
   { label: 'Time Tracking', href: '/freelancer/time-entries', icon: <Clock size={16} /> },
   { label: 'Earnings Dashboard', href: '/freelancer/earnings', icon: <TrendingUp size={16} /> },
   { label: 'Skill Assessments', href: '/freelancer/assessments', icon: <Award size={16} /> },

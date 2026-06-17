@@ -58,15 +58,15 @@ const getQuickActions = (role: string) => {
       ];
     case 'client':
       return [
-        { label: 'Post Job', icon: Plus, href: '/client/post-job', color: 'primary', isPrimary: true },
-        { label: 'Find Talent', icon: Search, href: '/client/talent', color: 'blue' },
+        { label: 'Find Talent', icon: Plus, href: '/client/find-talent', color: 'primary', isPrimary: true },
+        { label: 'Find Talent', icon: Search, href: '/client/find-talent', color: 'blue' },
         { label: 'My Projects', icon: Briefcase, href: '/client/projects', color: 'green' },
       ];
     case 'freelancer':
     default:
       return [
-        { label: 'Find Work', icon: Search, href: '/freelancer/find-work', color: 'primary', isPrimary: true },
-        { label: 'Proposals', icon: FileText, href: '/freelancer/proposals', color: 'blue' },
+        { label: 'Invitations', icon: FileText, href: '/freelancer/invitations', color: 'primary', isPrimary: true },
+        { label: 'Projects', icon: Briefcase, href: '/freelancer/projects', color: 'blue' },
         { label: 'Schedule', icon: Calendar, href: '/freelancer/schedule', color: 'green' },
       ];
   }

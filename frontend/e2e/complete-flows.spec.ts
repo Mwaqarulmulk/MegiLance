@@ -229,7 +229,7 @@ test.describe('4. Client Portal Pages', () => {
 test.describe('5. Freelancer Portal Pages', () => {
   const freelancerPages = [
     '/freelancer/dashboard',
-    '/freelancer/gigs',
+    '/freelancer/projects',
     '/profile',
   ];
 

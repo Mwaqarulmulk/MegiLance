@@ -79,8 +79,6 @@ export {
 
 // Marketplace
 export {
-  gigsApi,
-  jobAlertsApi,
   clientApi,
   supportTicketsApi,
   matchingApi,
@@ -188,8 +186,6 @@ import {
   featureFlagsApi,
 } from "./admin";
 import {
-  gigsApi,
-  jobAlertsApi,
   clientApi,
   supportTicketsApi,
   matchingApi,
@@ -255,7 +251,6 @@ export default {
   payments: paymentsApi,
   crypto: cryptoApi,
   reviews: reviewsApi,
-  jobAlerts: jobAlertsApi,
   portal: portalApi,
   admin: adminApi,
   client: clientApi,
@@ -288,7 +283,6 @@ export default {
   apiKeys: apiKeysApi,
   teams: teamsApi,
   wallet: walletApi,
-  gigs: gigsApi,
   workflow: workflowApi,
   knowledgeBase: knowledgeBaseApi,
   multiCurrency: multiCurrencyApi,

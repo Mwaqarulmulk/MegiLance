@@ -39,7 +39,7 @@ type SkillTrend = 'up' | 'stable' | 'down';
 
 const AnalyticsPage: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  const { analytics, projects, jobs, recommendedJobs, loading, error } = useFreelancerData();
+  const { analytics, projects, recommendedJobs, loading, error } = useFreelancerData();
   const [range, setRange] = usePersistedState<Range>('freelancer:analytics:range', '30d');
   const [uiLoading, setUiLoading] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>('csv');
@@ -79,7 +79,7 @@ const AnalyticsPage: React.FC = () => {
     ];
 
     const skillCounts = new Map<string, number>();
-    [...(jobs || []), ...(recommendedJobs || [])].forEach((job) => {
+    [...(recommendedJobs || [])].forEach((job) => {
       job.skills.forEach((skill) => {
         const key = skill.trim();
         if (key) skillCounts.set(key, (skillCounts.get(key) || 0) + 1);
@@ -120,7 +120,7 @@ const AnalyticsPage: React.FC = () => {
       completed,
       active,
     };
-  }, [analytics, jobs, projects, range, recommendedJobs]);
+  }, [analytics, projects, range, recommendedJobs]);
 
   useEffect(() => {
     setUiLoading(true);

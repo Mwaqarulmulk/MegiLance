@@ -58,10 +58,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const topLevelPaths = [
     // Core marketing (highest priority)
     { path: '/', changeFrequency: 'daily', priority: 1.0 },
-    { path: '/jobs', changeFrequency: 'hourly', priority: 0.95 },
-    { path: '/hire', changeFrequency: 'weekly', priority: 0.92 },
-    { path: '/talent', changeFrequency: 'daily', priority: 0.9 },
-    { path: '/freelancers', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/client/find-talent', changeFrequency: 'daily', priority: 0.95 },
+    { path: '/freelancer/projects', changeFrequency: 'daily', priority: 0.9 },
     
 
     // Key landing pages
@@ -90,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/press', changeFrequency: 'monthly', priority: 0.6 },
 
     // Growth / acquisition
-    { path: '/post-project', changeFrequency: 'weekly', priority: 0.92 },
+    { path: '/client/find-talent', changeFrequency: 'weekly', priority: 0.92 },
     { path: '/why-hire', changeFrequency: 'monthly', priority: 0.88 },
     { path: '/cost-calculator', changeFrequency: 'monthly', priority: 0.82 },
     { path: '/compare', changeFrequency: 'monthly', priority: 0.85 },
@@ -188,7 +186,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const hirePages: MetadataRoute.Sitemap = [...allCombos].map((combo) => ({
-    url: `${baseUrl}/hire/${combo}`,
+    url: `${baseUrl}/client/find-talent/${combo}`,
     lastModified: currentDate,
     changeFrequency: 'weekly' as const,
     priority: 0.75,
@@ -196,7 +194,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ── Dynamic content pages ────────────────────────────────────────────
   const jobPages: MetadataRoute.Sitemap = projects.map((p) => ({
-    url: `${baseUrl}/jobs/${p.id}`,
+    url: `${baseUrl}/client/projects/${p.id}`,
     lastModified: p.updated_at ? new Date(p.updated_at) : currentDate,
     changeFrequency: 'daily' as const,
     priority: 0.8,

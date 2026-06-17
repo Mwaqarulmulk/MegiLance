@@ -35,17 +35,10 @@ export const AUTH_ROUTES = {
  */
 export const FREELANCER_ROUTES = {
   DASHBOARD: '/freelancer/dashboard',
-  JOBS: '/freelancer/jobs',
-  SAVED_JOBS: '/freelancer/saved-jobs',
-  JOB_ALERTS: '/freelancer/job-alerts',
+  INVITATIONS: '/freelancer/invitations',
   PROJECTS: '/freelancer/projects',
-  MY_JOBS: '/freelancer/my-jobs',
-  PROPOSALS: '/freelancer/proposals',
-  SUBMIT_PROPOSAL: '/freelancer/submit-proposal',
   CONTRACTS: '/freelancer/contracts',
   CONTRACT_DETAIL: (id: string) => `/freelancer/contracts/${id}`,
-  GIGS: '/freelancer/gigs',
-  CREATE_GIG: '/freelancer/gigs/create',
   MESSAGES: '/freelancer/messages',
   NOTIFICATIONS: '/freelancer/notifications',
   VIDEO_CALLS: '/freelancer/video-calls',
@@ -75,7 +68,7 @@ export const FREELANCER_ROUTES = {
  */
 export const CLIENT_ROUTES = {
   DASHBOARD: '/client/dashboard',
-  POST_JOB: '/client/post-job',
+  FIND_TALENT: '/client/find-talent',
   PROJECTS: '/client/projects',
   PROJECT_DETAIL: (id: string) => `/client/projects/${id}`,
   CREATE_PROJECT: '/client/projects/create',
@@ -88,9 +81,6 @@ export const CLIENT_ROUTES = {
   PAYMENTS: '/client/payments',
   WALLET: '/client/wallet',
   INVOICES: '/client/invoices',
-  SEARCH: '/client/search',
-  HIRE: '/client/hire',
-  FREELANCERS: '/client/freelancers',
   PROFILE: '/client/profile',
   REVIEWS: '/client/reviews',
   SETTINGS: '/client/settings',

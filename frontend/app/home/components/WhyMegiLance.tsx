@@ -172,7 +172,7 @@ const ValueCard: React.FC<ValueCardProps> = ({
         <a
           href={prop.id === 'ai-precision' ? '/ai/chatbot' : 
                 prop.id === 'bulletproof-security' ? '/security' :
-                prop.id === 'borderless-opportunities' ? '/jobs' : 
+                prop.id === 'borderless-opportunities' ? '/freelancer/projects' : 
                 '/pricing'}
           className={cn(
             commonStyles.cardCta,

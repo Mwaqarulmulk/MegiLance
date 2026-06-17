@@ -447,7 +447,7 @@ export default function ProfileWizard() {
             <Button
               variant="outline"
               size="lg"
-              onClick={() => router.push("/freelancer/jobs")}
+              onClick={() => router.push("/freelancer/invitations")}
             >
               <Briefcase size={18} aria-hidden="true" />
               Browse Projects

@@ -300,7 +300,7 @@ const HowItWorksPage: React.FC = () => {
                 <Link href="/signup" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary)}>
                   Create Free Account <ArrowRight size={18} />
                 </Link>
-                <Link href="/jobs" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary)}>
+                <Link href="/freelancer/projects" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary)}>
                   Browse Projects
                 </Link>
               </div>

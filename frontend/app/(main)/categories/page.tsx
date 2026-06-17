@@ -129,8 +129,8 @@ export default async function CategoriesPage() {
           Post your project and our AI will match you with the best freelancers for your needs.
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <Link href="/post-project" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', background: '#4573df', color: 'white', textDecoration: 'none', fontWeight: 600 }}>
-            Post a Project <ArrowRight size={16} />
+          <Link href="/client/find-talent" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', background: '#4573df', color: 'white', textDecoration: 'none', fontWeight: 600 }}>
+            Find Talent <ArrowRight size={16} />
           </Link>
           <Link href="/explore" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', color: '#475569', textDecoration: 'none', fontWeight: 600 }}>
             Explore All <ArrowRight size={16} />

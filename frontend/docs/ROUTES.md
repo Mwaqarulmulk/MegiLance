@@ -45,7 +45,6 @@ These routes are accessible to all users without authentication:
 | `/pricing` | Pricing | Pricing plans and features |
 | `/contact` | Contact | Contact form and information |
 | `/faq` | FAQ | Frequently asked questions |
-| `/jobs` | Jobs | Public job listings |
 | `/clients` | Clients | Information for clients |
 | `/freelancers` | Freelancers | Information for freelancers |
 | `/legal/privacy` | PrivacyPolicy | Privacy policy |
@@ -84,8 +83,7 @@ Routes accessible to authenticated freelancers:
 |-------|-----------|-------------|
 | `/freelancer/dashboard` | FreelancerDashboard | Freelancer dashboard overview |
 | `/freelancer/profile` | FreelancerProfile | Freelancer profile management |
-| `/freelancer/my-jobs` | MyJobs | Freelancer's job listings |
-| `/freelancer/proposals` | Proposals | Submitted proposals |
+| `/freelancer/invitations` | Invitations | AI-matched project invitations |
 | `/freelancer/contracts` | Contracts | Active contracts |
 | `/freelancer/wallet` | Wallet | Financial management |
 | `/freelancer/analytics` | Analytics | Performance analytics |
@@ -93,7 +91,6 @@ Routes accessible to authenticated freelancers:
 | `/freelancer/portfolio` | Portfolio | Work portfolio |
 | `/freelancer/reviews` | Reviews | Client reviews |
 | `/freelancer/rank` | Rank | Freelancer ranking |
-| `/freelancer/job-alerts` | JobAlerts | Job notifications |
 | `/freelancer/support` | Support | Support requests |
 | `/freelancer/projects` | Projects | Project management |
 | `/freelancer/projects/[id]` | ProjectDetails | Individual project details |
@@ -107,11 +104,9 @@ Routes accessible to authenticated clients:
 |-------|-----------|-------------|
 | `/client/dashboard` | ClientDashboard | Client dashboard overview |
 | `/client/profile` | ClientProfile | Client profile management |
-| `/client/post-job` | PostJob | Job posting form |
+| `/client/find-talent` | FindTalent | AI-powered talent matching wizard |
 | `/client/projects` | ClientProjects | Project management |
 | `/client/projects/[id]` | ClientProjectDetails | Individual project details |
-| `/client/freelancers` | Freelancers | Freelancer search and hiring |
-| `/client/hire` | Hire | Hiring workflow |
 | `/client/reviews` | Reviews | Freelancer reviews |
 | `/client/payments` | Payments | Payment management |
 | `/client/wallet` | Wallet | Financial management |

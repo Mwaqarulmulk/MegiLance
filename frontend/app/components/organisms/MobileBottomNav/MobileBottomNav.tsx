@@ -43,14 +43,14 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ userType }) => {
       case 'freelancer':
         return [
           { label: 'Home', href: `${base}/dashboard`, icon: <LayoutDashboard size={20} /> },
-          { label: 'Jobs', href: `${base}/jobs`, icon: <Search size={20} /> },
+          { label: 'Projects', href: `${base}/projects`, icon: <Search size={20} /> },
           { label: 'Messages', href: `${base}/messages`, icon: <MessageSquare size={20} />, badgeKey: 'messages' },
           { label: 'Alerts', href: `${base}/notifications`, icon: <Bell size={20} />, badgeKey: 'notifications' },
         ];
       case 'client':
         return [
           { label: 'Home', href: `${base}/dashboard`, icon: <LayoutDashboard size={20} /> },
-          { label: 'Post Job', href: `${base}/post-job`, icon: <Briefcase size={20} /> },
+          { label: 'Find Talent', href: `${base}/find-talent`, icon: <Briefcase size={20} /> },
           { label: 'Messages', href: `${base}/messages`, icon: <MessageSquare size={20} />, badgeKey: 'messages' },
           { label: 'Alerts', href: `${base}/notifications`, icon: <Bell size={20} />, badgeKey: 'notifications' },
         ];

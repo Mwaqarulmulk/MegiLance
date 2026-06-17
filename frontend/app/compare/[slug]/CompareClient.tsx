@@ -58,9 +58,9 @@ export default function CompareClient({ data }: { data: CompareData }) {
                 Try MegiLance Free <ArrowRight size={18} />
               </Button>
             </Link>
-            <Link href="/post-project">
+            <Link href="/client/find-talent">
               <Button variant="outline" size="lg">
-                Post a Project
+                Find Talent
               </Button>
             </Link>
           </div>

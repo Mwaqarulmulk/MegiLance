@@ -100,15 +100,3 @@ class User(Base):
     assigned_tickets: Mapped[List["SupportTicket"]] = relationship("SupportTicket", foreign_keys="SupportTicket.assigned_to", back_populates="assigned_user")
     refunds_requested: Mapped[List["Refund"]] = relationship("Refund", foreign_keys="Refund.requested_by", back_populates="requester")
     refunds_approved: Mapped[List["Refund"]] = relationship("Refund", foreign_keys="Refund.approved_by", back_populates="approver")
-    
-    # Gig marketplace relationships
-    gigs: Mapped[List["Gig"]] = relationship("Gig", back_populates="seller")
-    gig_orders_as_buyer: Mapped[List["GigOrder"]] = relationship("GigOrder", foreign_keys="GigOrder.buyer_id", back_populates="buyer")
-    gig_orders_as_seller: Mapped[List["GigOrder"]] = relationship("GigOrder", foreign_keys="GigOrder.seller_id", back_populates="seller")
-    gig_reviews_given: Mapped[List["GigReview"]] = relationship("GigReview", foreign_keys="GigReview.reviewer_id", back_populates="reviewer")
-    gig_reviews_received: Mapped[List["GigReview"]] = relationship("GigReview", foreign_keys="GigReview.seller_id", back_populates="seller")
-    seller_stats: Mapped[Optional["SellerStats"]] = relationship("SellerStats", back_populates="user", uselist=False)
-    
-    # Talent invitation relationships
-    invitations_sent: Mapped[List["TalentInvitation"]] = relationship("TalentInvitation", foreign_keys="TalentInvitation.client_id", back_populates="client")
-    invitations_received: Mapped[List["TalentInvitation"]] = relationship("TalentInvitation", foreign_keys="TalentInvitation.freelancer_id", back_populates="freelancer")

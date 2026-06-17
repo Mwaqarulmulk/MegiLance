@@ -205,7 +205,7 @@ const TalentDirectoryPage = () => {
             </p>
             <div className={common.ctaButtons}>
               <Link href="/signup" className={cn(common.ctaBtn, themed.ctaBtn)}>Post a Project</Link>
-              <Link href="/freelancers" className={cn(common.ctaBtnOutline, themed.ctaBtnOutline)}>Advanced Search</Link>
+              <Link href="/client/find-talent" className={cn(common.ctaBtnOutline, themed.ctaBtnOutline)}>Advanced Search</Link>
             </div>
           </section>
         </ScrollReveal>

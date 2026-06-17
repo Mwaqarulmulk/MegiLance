@@ -1,4 +1,4 @@
-// @AI-HINT: Project details page with proposal submission
+// @AI-HINT: Project details page
 "use client";
 
 import { useState, useEffect } from "react";
@@ -8,9 +8,7 @@ import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import { PageTransition } from "@/app/components/Animations/PageTransition";
 import Button from "@/app/components/atoms/Button/Button";
-import ProposalBuilder from "@/app/components/Proposal/ProposalBuilder/ProposalBuilder";
 import { Clock, Banknote, Tag, User, CheckCircle } from "lucide-react";
-import SimilarJobs from "@/app/components/Matching/SimilarJobs/SimilarJobs";
 import RecommendedFreelancers from "@/app/components/Matching/RecommendedFreelancers/RecommendedFreelancers";
 
 import commonStyles from "./ProjectDetails.common.module.css";
@@ -23,9 +21,7 @@ export default function ProjectDetailsPage() {
   const router = useRouter();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showProposalBuilder, setShowProposalBuilder] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [hasApplied, setHasApplied] = useState(false);
 
   const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
@@ -41,22 +37,6 @@ export default function ProjectDetailsPage() {
       ]);
       setProject(projectData);
       setUser(userData);
-
-      if (
-        userData?.user_type === "freelancer" ||
-        userData?.role === "freelancer"
-      ) {
-        try {
-          const myProposals = await api.proposals
-            .list({ project_id: parseInt(id as string) })
-            .catch(() => null);
-          const items =
-            (myProposals as any)?.items || (myProposals as any) || [];
-          setHasApplied(Array.isArray(items) && items.length > 0);
-        } catch {
-          /* ignore */
-        }
-      }
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
         console.error("Failed to load data:", error);
@@ -103,32 +83,6 @@ export default function ProjectDetailsPage() {
   const isFreelancer =
     user?.user_type === "freelancer" || user?.role === "freelancer";
 
-  if (showProposalBuilder) {
-    return (
-      <div className={commonStyles.proposalBuilderWrapper}>
-        <Button
-          variant="ghost"
-          onClick={() => setShowProposalBuilder(false)}
-          className={commonStyles.backButton}
-        >
-          ← Back to Project Details
-        </Button>
-        <ProposalBuilder
-          projectId={parseInt(id as string)}
-          projectTitle={project.title}
-          projectDescription={project.description}
-          projectBudget={{
-            min: project.budget_min || 0,
-            max: project.budget_max || 0,
-          }}
-          onSubmit={() => {
-            router.push("/freelancer/proposals");
-          }}
-        />
-      </div>
-    );
-  }
-
   return (
     <PageTransition>
       <div
@@ -149,33 +103,15 @@ export default function ProjectDetailsPage() {
                   </span>
                 </div>
               </div>
-              {isFreelancer &&
-                (hasApplied ? (
-                  <div
-                    className={cn(
-                      commonStyles.alreadyApplied,
-                      themeStyles.alreadyApplied,
-                    )}
-                  >
-                    <CheckCircle size={16} />
-                    <span>You have already applied</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => router.push("/freelancer/proposals")}
-                    >
-                      View Proposal
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={() => setShowProposalBuilder(true)}
-                  >
-                    Submit Proposal
-                  </Button>
-                ))}
+            {isFreelancer && (
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => router.push("/freelancer/invitations")}
+              >
+                View Invitations
+              </Button>
+            )}
             </div>
 
             <div className={commonStyles.detailsGrid}>
@@ -247,11 +183,6 @@ export default function ProjectDetailsPage() {
 
           {(user?.user_type === "client" || user?.role === "client") && (
             <RecommendedFreelancers projectId={id as string} />
-          )}
-
-          {(user?.user_type === "freelancer" ||
-            user?.role === "freelancer") && (
-            <SimilarJobs projectId={id as string} />
           )}
         </div>
       </div>

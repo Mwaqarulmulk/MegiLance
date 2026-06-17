@@ -21,7 +21,7 @@ export default function SmartBanner({
   id,
   text,
   ctaText = 'Get Started',
-  href = '/post-project',
+  href = '/client/find-talent',
 }: SmartBannerProps) {
   const { resolvedTheme } = useTheme();
   const [dismissed, setDismissed] = useState(true);

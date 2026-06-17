@@ -415,10 +415,10 @@ const Explore: React.FC = () => {
             <div className={cn(common.sidebarCard, themed.sidebarCard)}>
               <h3 className={cn(common.sidebarTitle, themed.sidebarTitle)}>Quick Links</h3>
               <div className={common.quickLinks}>
-                <Link href="/freelancers" className={cn(common.quickLink, themed.quickLink)}>
-                  <Users size={16} /> Browse All Freelancers
+                <Link href="/client/find-talent" className={cn(common.quickLink, themed.quickLink)}>
+                  <Users size={16} /> Browse All Talent
                 </Link>
-                <Link href="/jobs" className={cn(common.quickLink, themed.quickLink)}>
+                <Link href="/freelancer/projects" className={cn(common.quickLink, themed.quickLink)}>
                   <Briefcase size={16} /> Browse All Projects
                 </Link>
               </div>
@@ -527,7 +527,7 @@ const Explore: React.FC = () => {
                       <h2 className={cn(common.sectionTitle, themed.sectionTitle)}>
                         <Users size={20} /> Freelancers ({freelancers.length})
                       </h2>
-                      <Link href="/freelancers" className={cn(common.seeAllLink, themed.seeAllLink)}>
+                      <Link href="/client/find-talent" className={cn(common.seeAllLink, themed.seeAllLink)}>
                         See all <ArrowRight size={14} />
                       </Link>
                     </div>
@@ -588,7 +588,7 @@ const Explore: React.FC = () => {
                       <h2 className={cn(common.sectionTitle, themed.sectionTitle)}>
                         <Briefcase size={20} /> Projects ({projects.length})
                       </h2>
-                      <Link href="/jobs" className={cn(common.seeAllLink, themed.seeAllLink)}>
+                      <Link href="/freelancer/projects" className={cn(common.seeAllLink, themed.seeAllLink)}>
                         See all <ArrowRight size={14} />
                       </Link>
                     </div>
@@ -596,7 +596,7 @@ const Explore: React.FC = () => {
                       {projects.slice(0, 6).map(p => (
                         <StaggerItem key={p.id}>
                           <Link
-                            href={`/jobs/${p.id}`}
+                            href={`/client/projects/${p.id}`}
                             className={cn(common.projectCard, themed.projectCard)}
                           >
                             <div className={common.projectHeader}>

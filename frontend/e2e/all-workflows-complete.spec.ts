@@ -91,8 +91,8 @@ test.describe.serial('WORKFLOW 1: Client Complete Journey', () => {
   });
 
   test('1.4 Client posts a project', async ({ page }) => {
-    // Navigate to post project
-    await page.goto(`${BASE}/client/post-project`);
+    // Navigate to find talent
+    await page.goto(`${BASE}/client/find-talent`);
     await page.waitForLoadState('load');
     
     // Fill project details - Step 1: Basic Info

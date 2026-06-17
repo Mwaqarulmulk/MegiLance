@@ -312,7 +312,7 @@ const ClientDashboard: React.FC = () => {
         icon: TrendingUp,
         title: "No active projects",
         desc: "Post your first project to start hiring",
-        href: "/client/post-job",
+        href: "/client/find-talent",
       });
     }
     return issues.slice(0, 3);
@@ -321,15 +321,15 @@ const ClientDashboard: React.FC = () => {
   // Quick actions for the grid
   const quickActions = [
     {
-      label: "Post a Project",
-      href: "/client/post-job",
+              label: "Find Talent",
+      href: "/client/find-talent",
       icon: Plus,
       color: "primary" as const,
       desc: "Create a new listing",
     },
     {
       label: "Find Talent",
-      href: "/client/search",
+      href: "/client/find-talent",
       icon: Search,
       color: "success" as const,
       desc: "Browse all freelancers",
@@ -342,9 +342,9 @@ const ClientDashboard: React.FC = () => {
       desc: `${metrics.activeProjects} active`,
     },
     {
-      label: "Proposals",
-      href: "/client/proposals",
-      icon: FileText,
+              label: "Projects",
+              href: "/client/projects",
+              icon: FileText,
       color: "warning" as const,
       desc: `${metrics.pendingProposals} awaiting review`,
     },
@@ -370,22 +370,22 @@ const ClientDashboard: React.FC = () => {
       desc: counts.messages > 0 ? `${counts.messages} unread` : "No unread",
     },
     {
-      label: "Analytics",
-      href: "/client/analytics",
+      label: "Projects",
+      href: "/client/projects",
       icon: BarChart3,
       color: "info" as const,
       desc: "Spending & project insights",
     },
     {
       label: "AI Match",
-      href: "/client/hire?ai=true",
+      href: "/client/find-talent?ai=true",
       icon: Zap,
       color: "primary" as const,
       desc: "AI-powered talent match",
     },
     {
       label: "Talent Pool",
-      href: "/client/search",
+      href: "/client/find-talent",
       icon: Users,
       color: "success" as const,
       desc: "Browse all freelancers",
@@ -440,7 +440,7 @@ const ClientDashboard: React.FC = () => {
               <p>Here&apos;s what&apos;s happening with your projects today.</p>
             </div>
             <div className={commonStyles.headerActions}>
-              <Link href="/client/hire">
+              <Link href="/client/find-talent">
                 <Button
                   variant="outline"
                   size="lg"
@@ -449,13 +449,13 @@ const ClientDashboard: React.FC = () => {
                   Browse Talent
                 </Button>
               </Link>
-              <Link href="/client/post-job">
+              <Link href="/client/find-talent">
                 <Button
                   variant="primary"
                   size="lg"
                   iconBefore={<Plus size={20} />}
                 >
-                  Post a Project
+                  Find Talent
                 </Button>
               </Link>
             </div>
@@ -491,7 +491,7 @@ const ClientDashboard: React.FC = () => {
             </div>
             <div className={commonStyles.welcomeBannerActions}>
               <Link
-                href="/client/post-job"
+                href="/client/find-talent"
                 className={cn(
                   commonStyles.welcomeBannerPrimaryAction,
                   themeStyles.welcomeBannerPrimaryAction,
@@ -583,7 +583,7 @@ const ClientDashboard: React.FC = () => {
                 title="Avg Project Value"
                 value={`$${metrics.averageProjectValue.toLocaleString()}`}
                 icon={TrendingUp}
-                href="/client/analytics"
+                href="/client/projects"
               />
             </motion.div>
             <motion.div
@@ -636,13 +636,13 @@ const ClientDashboard: React.FC = () => {
                       Monthly Spending (6mo)
                     </h3>
                     <Link
-                      href="/client/analytics"
+                      href="/client/projects"
                       className={cn(
                         commonStyles.insightViewLink,
                         themeStyles.insightViewLink,
                       )}
                     >
-                      View Analytics <ArrowRight size={12} />
+                      View Projects <ArrowRight size={12} />
                     </Link>
                   </div>
                   <div className={commonStyles.spendingBarChart}>
@@ -717,13 +717,13 @@ const ClientDashboard: React.FC = () => {
                       Hiring Funnel
                     </h3>
                     <Link
-                      href="/client/proposals"
+                      href="/client/projects"
                       className={cn(
                         commonStyles.insightViewLink,
                         themeStyles.insightViewLink,
                       )}
                     >
-                      View Proposals <ArrowRight size={12} />
+                      View Projects <ArrowRight size={12} />
                     </Link>
                   </div>
                   <div className={commonStyles.funnelList}>
@@ -1071,13 +1071,13 @@ const ClientDashboard: React.FC = () => {
                   animationWidth={120}
                   animationHeight={120}
                   action={
-                    <Link href="/client/post-job">
+                    <Link href="/client/find-talent">
                       <Button
                         variant="primary"
                         size="md"
                         iconBefore={<Plus size={16} />}
                       >
-                        Post Your First Project
+                        Find Talent
                       </Button>
                     </Link>
                   }
@@ -1120,7 +1120,7 @@ const ClientDashboard: React.FC = () => {
                 Recommended Talent
               </h2>
               <Link
-                href="/client/hire"
+                href="/client/find-talent"
                 className={cn(
                   commonStyles.viewAllLink,
                   themeStyles.viewAllLink,

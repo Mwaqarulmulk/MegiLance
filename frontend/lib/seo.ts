@@ -299,15 +299,7 @@ export function buildWebSiteJsonLd() {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: `${BASE_URL}/jobs?search={search_term_string}`,
-        },
-        'query-input': 'required name=search_term_string',
-      },
-      {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: `${BASE_URL}/hire?q={search_term_string}`,
+          urlTemplate: `${BASE_URL}/client/find-talent?q={search_term_string}`,
         },
         'query-input': 'required name=search_term_string',
       },
@@ -495,9 +487,8 @@ export function buildItemListJsonLd(
 /** Generates SiteNavigationElement for Google sitelinks */
 export function buildSiteNavigationJsonLd() {
   const navItems = [
-    { name: 'Find Work', url: '/jobs' },
-    { name: 'Hire Talent', url: '/hire' },
-    { name: 'Browse Freelancers', url: '/talent' },
+    { name: 'Find Talent', url: '/client/find-talent' },
+    { name: 'Browse Projects', url: '/freelancer/projects' },
     { name: 'How It Works', url: '/how-it-works' },
     { name: 'Pricing', url: '/pricing' },
     { name: 'About', url: '/about' },

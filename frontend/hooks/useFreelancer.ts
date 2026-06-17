@@ -118,7 +118,6 @@ export type FreelancerProposal = {
 
 export function useFreelancerData() {
   const [projects, setProjects] = useState<FreelancerProject[] | null>(null);
-  const [jobs, setJobs] = useState<FreelancerJob[] | null>(null);
   const [recommendedJobs, setRecommendedJobs] = useState<
     FreelancerJob[] | null
   >(null);
@@ -152,7 +151,6 @@ export function useFreelancerData() {
 
         const [
           projectsJson,
-          jobsJson,
           walletJson,
           paymentsJson,
           statsJson,
@@ -164,7 +162,6 @@ export function useFreelancerData() {
           fetchWithFallback(api.portal.freelancer.getProjects(), {
             projects: [],
           }),
-          fetchWithFallback(api.portal.freelancer.getJobs(), { jobs: [] }),
           fetchWithFallback(api.portal.freelancer.getWallet(), { balance: 0 }),
           fetchWithFallback(api.portal.freelancer.getPayments(), {
             payments: [],
@@ -179,8 +176,8 @@ export function useFreelancerData() {
           }),
           // Try AI matching first, but fallback is handled below
           fetchWithFallback(api.matching.findJobs(5), { recommendations: [] }),
-          fetchWithFallback(api.portal.freelancer.getProposals({ limit: 5 }), {
-            proposals: [],
+          fetchWithFallback(api.portal.freelancer.getInvitations({ status: "pending", page_size: 5 }), {
+            invitations: [],
           }),
         ]);
 
@@ -205,25 +202,11 @@ export function useFreelancerData() {
         }));
         setProjects(mappedProjects);
 
-        // Map Jobs
-        const mappedJobs: FreelancerJob[] = (jobsJson.jobs || []).map(
-          (j: JobResponse) => ({
-            id: String(j.id),
-            title: j.title,
-            clientName: j.client_name || "Unknown Client",
-            description: j.description,
-            budget: j.budget_max,
-            postedTime: j.created_at,
-            skills: j.skills || [],
-            status: "Open",
-          }),
-        );
-        setJobs(mappedJobs);
-
         // Map Recommended Jobs — 3-tier fallback:
-        // 1. AI-matched recommendations  2. Regular portal jobs  3. Open projects API
+        // 1. AI-matched recommendations  2. Invitations  3. Open projects API
         let mappedRecommendedJobs: FreelancerJob[] = [];
         const aiRecommendations = recommendedJson.recommendations || [];
+        const invitations = proposalsJson.invitations || proposalsJson.proposals || [];
 
         if (aiRecommendations.length > 0) {
           // Tier 1: Use AI-matched recommendations (with match score)
@@ -240,12 +223,18 @@ export function useFreelancerData() {
               matchScore: Math.round((r.match_score || 0) * 100),
             }),
           );
-        } else if (mappedJobs.length > 0) {
-          // Tier 2: Fallback to regular portal jobs (no match score)
-          mappedRecommendedJobs = mappedJobs.slice(0, 5).map((job) => ({
-            ...job,
-            clientName: job.clientName || "Available Job",
-            matchScore: undefined,
+        } else if (invitations.length > 0) {
+          // Tier 2: Fallback to invitations
+          mappedRecommendedJobs = invitations.slice(0, 5).map((inv: any) => ({
+            id: String(inv.project_id || inv.id),
+            title: inv.project_title || inv.title || "AI-Matched Project",
+            clientName: inv.client_name || "Client",
+            description: inv.description,
+            budget: inv.budget_max || inv.budget_min || 0,
+            postedTime: inv.created_at || inv.sent_date,
+            skills: [],
+            status: "Open" as const,
+            matchScore: inv.fit_score ? Math.round(inv.fit_score * 100) : undefined,
           }));
         } else {
           // Tier 3: Fetch open projects from the projects API
@@ -273,27 +262,6 @@ export function useFreelancerData() {
           }
         }
         setRecommendedJobs(mappedRecommendedJobs);
-
-        // Map Proposals
-        const mappedProposals: FreelancerProposal[] = (
-          proposalsJson.proposals || []
-        ).map((p: ProposalResponse) => ({
-          id: String(p.id),
-          projectTitle: p.project_title || "Untitled Project", // Backend might need to return project title
-          status:
-            p.status === "submitted"
-              ? "Submitted"
-              : p.status === "viewed"
-                ? "Viewed"
-                : p.status === "accepted"
-                  ? "Accepted"
-                  : p.status === "rejected"
-                    ? "Rejected"
-                    : "Withdrawn",
-          sentDate: p.created_at,
-          bidAmount: `$${(p.hourly_rate || 0) * (p.estimated_hours || 0)}`, // Approximate total
-        }));
-        setProposals(mappedProposals);
 
         // Map Transactions
         const mappedTransactions: FreelancerTransaction[] = (
@@ -349,13 +317,11 @@ export function useFreelancerData() {
 
   return {
     projects,
-    jobs,
     recommendedJobs,
-    proposals,
     transactions,
     analytics,
     monthlyEarnings,
     loading,
     error,
-  } as const;
+  };
 }

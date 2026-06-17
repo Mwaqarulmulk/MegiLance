@@ -132,15 +132,15 @@ const platformTools = [
     icon: Calculator,
   },
   {
-    title: "Post a Project",
-    description: "Post your project and get AI-matched with the best freelancers in minutes.",
-    href: "/post-project",
+    title: "Find Talent",
+    description: "Get AI-matched with the best freelancers in minutes.",
+    href: "/client/find-talent",
     icon: FileText,
   },
   {
-    title: "Find Freelancers",
-    description: "Browse vetted freelancers with verified reviews, portfolios, and real-time availability.",
-    href: "/freelancers",
+    title: "Browse Projects",
+    description: "Browse available projects matching your skills.",
+    href: "/freelancer/projects",
     icon: Users,
   },
 ];

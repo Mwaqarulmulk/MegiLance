@@ -62,7 +62,7 @@ export default function ChatbotAgent() {
     const actions = [...SUGGESTED_ACTIONS];
     if (!pathname) return actions;
     
-    if (pathname.includes('/client/post-job')) {
+    if (pathname.includes('/client/find-talent')) {
       actions.unshift({ icon: Zap, text: 'Help me estimate a budget' });
     } else if (pathname.includes('/freelancer/invoices')) {
       actions.unshift({ icon: FileText, text: 'Draft a professional invoice' });
@@ -408,7 +408,7 @@ export default function ChatbotAgent() {
         sentiment: 'positive' 
       }]);
       setTimeout(() => {
-        router.push('/client/post-job');
+        router.push('/client/find-talent');
         if (isExpanded) setIsExpanded(false);
       }, 1500);
       return;

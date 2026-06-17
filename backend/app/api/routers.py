@@ -9,6 +9,7 @@ from .v1.ai import (
     chatbot,
     client_assistant,
     fraud_detection,
+    project_brief,
     skill_analyzer,
 )
 from .v1.chat import comments, messages, video_communication, websocket
@@ -40,10 +41,8 @@ from .v1.core_domain import (
     escrow_pro,
     expense_tax_calculator,
     export_import,
-    external_projects,
     feature_flags,
     file_versions,
-    gamification,
     health,
     i18n,
     income_calculator,
@@ -51,7 +50,6 @@ from .v1.core_domain import (
     interviews,
     invoice_generator,
     invoice_tax,
-    job_alerts,
     knowledge_base,
     learning_center,
     legal_documents,
@@ -77,19 +75,16 @@ from .v1.core_domain import (
     referrals,
     reports,
     review_responses,
-    saved_searches,
     scheduler,
     scope_change,
     scope_planner,
     search,
     search_advanced,
     security,
-    seller_stats,
     skill_graph,
     support_tickets,
     system_status,
     tags,
-    talent_invitations,
     teams,
     templates,
     time_entries,
@@ -120,7 +115,6 @@ from .v1.projects_domain import (
     contracts,
     favorites,
     freelancers,
-    gigs,
     milestones,
     portfolio,
     projects,
@@ -142,7 +136,6 @@ api_router.include_router(
 # User management
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(skills.router, prefix="/skills", tags=["skills"])
-api_router.include_router(job_alerts.router, prefix="/job-alerts", tags=["job-alerts"])
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])  # Admin endpoints
 
 # Project workflow
@@ -200,8 +193,8 @@ api_router.include_router(
 # AI-powered matching
 api_router.include_router(ai_matching.router, prefix="/matching", tags=["ai-matching"])
 
-# Gamification
-api_router.include_router(gamification.router, prefix="", tags=["gamification"])
+# AI Project Brief & Smart Match - Client-first hiring flow
+api_router.include_router(project_brief.router, prefix="/ai", tags=["ai-project-brief"])
 
 # Analytics and reporting
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
@@ -326,11 +319,6 @@ api_router.include_router(newsletter.router, prefix="/newsletter", tags=["newsle
 
 # Bulk Operations - Batch processing
 
-
-# Saved Searches - Persistent search queries
-api_router.include_router(
-    saved_searches.router, prefix="/saved-searches", tags=["saved-searches"]
-)
 
 # Activity Feed - User timeline and social features
 api_router.include_router(
@@ -521,28 +509,6 @@ api_router.include_router(
 )
 
 # ============================================================================
-# FIVERR/UPWORK FEATURE PARITY - Gig Marketplace & Seller Tier System
-# ============================================================================
-
-# Gig Marketplace - Fiverr-style service packages with 3-tier pricing
-api_router.include_router(gigs.router, prefix="/gigs", tags=["gigs"])
-
-# Seller Stats & Tier System - Bronze to Platinum levels with JSS algorithm
-api_router.include_router(
-    seller_stats.router, prefix="/seller-stats", tags=["seller-stats"]
-)
-
-# Talent Invitations - Upwork-style invite-to-bid system
-api_router.include_router(
-    talent_invitations.router, prefix="/invitations", tags=["talent-invitations"]
-)
-
-# ============================================================================
-# EXTERNAL PROJECT SCRAPER - Aggregate freelance projects from RemoteOK, Jobicy, Arbeitnow
-# ============================================================================
-api_router.include_router(
-    external_projects.router, prefix="/external-projects", tags=["external-projects"]
-)
 
 # Communication - SMS, email, push notifications
 api_router.include_router(communication.router, prefix="/communication", tags=["communication"])

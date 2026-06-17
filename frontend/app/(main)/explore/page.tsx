@@ -81,7 +81,7 @@ function ExploreClient() {
       {/* Section Links Grid */}
       <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-          <Link href="/freelancers" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
+          <Link href="/client/find-talent" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
               <Users size={24} style={{ color: '#3b82f6' }} />
             </div>
@@ -92,12 +92,12 @@ function ExploreClient() {
             </span>
           </Link>
 
-          <Link href="/jobs" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
+          <Link href="/freelancer/projects" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#fefce8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
               <Briefcase size={24} style={{ color: '#ca8a04' }} />
             </div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>Jobs</h2>
-            <p style={{ color: '#64748b', margin: '0 0 1rem', fontSize: '0.9rem' }}>Start pitching customized project requests tailored to you.</p>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>Projects</h2>
+            <p style={{ color: '#64748b', margin: '0 0 1rem', fontSize: '0.9rem' }}>Browse available projects tailored to your skills.</p>
             <span style={{ color: '#4573df', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
               Find Work <ArrowRight size={14} />
             </span>
@@ -141,7 +141,7 @@ async function LiveDataSections() {
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.25rem' }}>Featured Freelancers</h2>
                 <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Top-rated talent ready for your project</p>
               </div>
-              <Link href="/freelancers" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
+              <Link href="/client/find-talent" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
                 View All <ArrowRight size={14} />
               </Link>
             </div>
@@ -181,7 +181,7 @@ async function LiveDataSections() {
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.25rem' }}>Open Projects</h2>
                 <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Apply now and start earning</p>
               </div>
-              <Link href="/jobs" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
+              <Link href="/freelancer/projects" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
                 View All <ArrowRight size={14} />
               </Link>
             </div>

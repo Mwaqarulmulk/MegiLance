@@ -56,11 +56,11 @@ const NotFoundPage: React.FC = () => {
               <div className={common.suggestions}>
                 <h3 className={common.suggestionsTitle}>Popular Pages</h3>
                 <div className={common.suggestionsGrid}>
-                  <Link href="/jobs" className={common.suggestionLink}>
-                    Find Jobs
+                  <Link href="/client/find-talent" className={common.suggestionLink}>
+                    Find Talent
                   </Link>
-                  <Link href="/freelancers" className={common.suggestionLink}>
-                    Find Freelancers
+                  <Link href="/freelancer/projects" className={common.suggestionLink}>
+                    Browse Projects
                   </Link>
                   <Link href="/pricing" className={common.suggestionLink}>
                     Pricing

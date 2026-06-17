@@ -56,9 +56,9 @@ export default function WhyHireClient({ faqs }: { faqs: FAQ[] }) {
             Zero commissions, secure payments, and quality guaranteed.
           </p>
           <div className={commonStyles.heroCtas}>
-            <Link href="/post-project">
+            <Link href="/client/find-talent">
               <Button variant="primary" size="lg">
-                Post Your Project Free <ArrowRight size={18} />
+                Find Talent Free <ArrowRight size={18} />
               </Button>
             </Link>
             <Link href="/how-it-works">
@@ -158,9 +158,9 @@ export default function WhyHireClient({ faqs }: { faqs: FAQ[] }) {
           <p className={cn(commonStyles.ctaDesc, theme.ctaDesc)}>
             Post your first project free. Get proposals in hours. Pay only when satisfied.
           </p>
-          <Link href="/post-project">
+          <Link href="/client/find-talent">
             <Button variant="primary" size="lg">
-              Post a Project Free <ArrowRight size={18} />
+              Find Talent Free <ArrowRight size={18} />
             </Button>
           </Link>
         </div>

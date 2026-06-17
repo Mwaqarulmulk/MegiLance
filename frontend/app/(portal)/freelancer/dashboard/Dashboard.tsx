@@ -31,7 +31,6 @@ import ActivityTimeline, {
 import ProgressRing from "@/app/components/atoms/ProgressRing/ProgressRing";
 import ProfileCompleteness from "@/app/components/organisms/ProfileCompleteness/ProfileCompleteness";
 import EarningsChart from "./components/EarningsChart/EarningsChart";
-import JobCard from "./components/JobCard";
 import {
   Briefcase,
   DollarSign,
@@ -114,7 +113,7 @@ function transformSellerStats(raw: Record<string, unknown>): SellerStatsData {
 const Dashboard: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const { analytics, recommendedJobs, proposals, loading, error } =
+  const { analytics, recommendedJobs, loading, error } =
     useFreelancerData();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -250,45 +249,22 @@ const Dashboard: React.FC = () => {
     return avg * 1.1; // 10% expected growth
   }, [earningsData]);
 
-  // Generate activity timeline from proposals
+  // Generate activity timeline from invitations/matches
   const recentActivity = useMemo((): TimelineEvent[] => {
     const events: TimelineEvent[] = [];
 
-    if (proposals) {
-      proposals.slice(0, 3).forEach((p) => {
-        const statusLower = p.status.toLowerCase();
-        events.push({
-          id: `proposal-${p.id}`,
-          actor: "You",
-          action:
-            statusLower === "accepted"
-              ? "got accepted on"
-              : statusLower === "rejected"
-                ? "proposal declined for"
-                : "submitted proposal for",
-          target: p.projectTitle,
-          targetHref: "/freelancer/proposals",
-          timestamp: p.sentDate || new Date().toISOString(),
-          type:
-            statusLower === "accepted"
-              ? "success"
-              : statusLower === "rejected"
-                ? "danger"
-                : "info",
-        });
-      });
-    }
-
     if (recommendedJobs && recommendedJobs.length > 0) {
-      events.push({
-        id: "match-1",
-        actor: "AI",
-        action: `found ${recommendedJobs.length} new job matches`,
-        target: "based on your skills",
-        targetHref: "/jobs",
-        timestamp: new Date().toISOString(),
-        type: "purple",
-        badge: `${recommendedJobs.length} jobs`,
+      recommendedJobs.slice(0, 3).forEach((job) => {
+        events.push({
+          id: `match-${job.id}`,
+          actor: "AI",
+          action: "matched you with",
+          target: job.title,
+          targetHref: "/freelancer/invitations",
+          timestamp: job.postedTime || new Date().toISOString(),
+          type: job.matchScore ? "success" : "info",
+          badge: job.matchScore ? `${job.matchScore}% fit` : undefined,
+        });
       });
     }
 
@@ -298,7 +274,7 @@ const Dashboard: React.FC = () => {
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )
       .slice(0, 5);
-  }, [proposals, recommendedJobs]);
+  }, [recommendedJobs]);
   // Generate performance alerts
   const performanceAlerts = useMemo(() => {
     const alerts = [];
@@ -329,7 +305,7 @@ const Dashboard: React.FC = () => {
         type: "warning" as const,
         title: "Low Completion Rate",
         message: `Your completion rate is ${metrics.completionRate}%. Avoid cancellations to maintain your reputation.`,
-        action: { label: "View My Active Jobs", href: "/freelancer/my-jobs" },
+        action: { label: "View My Active Jobs", href: "/freelancer/projects" },
       });
     }
 
@@ -360,21 +336,21 @@ const Dashboard: React.FC = () => {
   const quickActions = [
     {
       label: "Find Work",
-      href: "/jobs",
+      href: "/freelancer/projects",
       icon: Search,
       color: "primary" as const,
-      desc: "Browse jobs",
+      desc: "Browse projects",
     },
     {
       label: "My Gigs",
-      href: "/freelancer/gigs",
+      href: "/freelancer/earnings",
       icon: Package,
       color: "success" as const,
       desc: "Manage offerings",
     },
     {
       label: "Proposals",
-      href: "/freelancer/proposals",
+      href: "/freelancer/invitations",
       icon: FileText,
       color: "info" as const,
       desc: `${metrics.proposalsSent} sent`,
@@ -387,8 +363,8 @@ const Dashboard: React.FC = () => {
       desc: "Chat with clients",
     },
     {
-      label: "Analytics",
-      href: "/freelancer/analytics",
+      label: "Earnings",
+      href: "/freelancer/earnings",
       icon: BarChart3,
       color: "warning" as const,
       desc: "View insights",
@@ -511,7 +487,7 @@ const Dashboard: React.FC = () => {
             )}
         </div>
         <div className={commonStyles.headerActions}>
-          <Link href="/freelancer/gigs">
+          <Link href="/freelancer/earnings">
             <Button
               variant="outline"
               size="lg"
@@ -520,7 +496,7 @@ const Dashboard: React.FC = () => {
               My Gigs
             </Button>
           </Link>
-          <Link href="/jobs">
+          <Link href="/freelancer/projects">
             <Button
               variant="primary"
               size="lg"
@@ -635,14 +611,14 @@ const Dashboard: React.FC = () => {
             title="Proposal Win Rate"
             value={`${metrics.winRate}%`}
             icon={CheckCircle2}
-            href="/freelancer/proposals"
+            href="/freelancer/invitations"
           />
           <StatCard
             title="Inquiry Rate"
             value={`${metrics.inquiryRate}%`}
             icon={Eye}
             sparklineColor="warning"
-            href="/freelancer/analytics"
+            href="/freelancer/earnings"
           />
         </div>
       </section>
@@ -829,7 +805,7 @@ const Dashboard: React.FC = () => {
               Recommended Jobs
             </h2>
             <Link
-              href="/jobs"
+              href="/freelancer/projects"
               className={cn(commonStyles.viewAllLink, themeStyles.viewAllLink)}
             >
               View All <ArrowRight size={16} />
@@ -842,18 +818,27 @@ const Dashboard: React.FC = () => {
             ) : recommendedJobs && recommendedJobs.length > 0 ? (
               recommendedJobs
                 .slice(0, 3)
-                .map((job: any) => <JobCard key={job.id} job={job} />)
+                .map((job: any) => (
+                  <Link key={job.id} href="/freelancer/invitations">
+                    <div className={commonStyles.jobCard}>
+                      <h4 className={commonStyles.jobTitle}>{job.title || 'AI-Matched Project'}</h4>
+                      <p className={commonStyles.jobBudget}>
+                        ${job.budget_min || 0} - ${job.budget_max || 0}
+                      </p>
+                    </div>
+                  </Link>
+                ))
             ) : (
               <EmptyState
-                title="No matching jobs found"
-                description="We couldn't find jobs matching your skills yet. Update your profile to improve AI matching accuracy."
+                title="No matching projects found"
+                description="When clients create projects matching your skills, you'll see them here."
                 animationData={searchingAnimation}
                 animationWidth={120}
                 animationHeight={120}
                 action={
-                  <Link href="/freelancer/profile">
+                  <Link href="/freelancer/invitations">
                     <Button variant="outline" size="sm">
-                      Update Skills & Profile
+                      View Invitations
                     </Button>
                   </Link>
                 }
@@ -893,10 +878,10 @@ const Dashboard: React.FC = () => {
                 themeStyles.sectionTitle,
               )}
             >
-              Recent Proposals
+              Recent Invitations
             </h2>
             <Link
-              href="/freelancer/proposals"
+              href="/freelancer/invitations"
               className={cn(commonStyles.viewAllLink, themeStyles.viewAllLink)}
             >
               View All
@@ -904,20 +889,12 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className={commonStyles.proposalList}>
-            {proposals && proposals.length > 0 ? (
-              proposals.slice(0, 5).map((proposal) => {
-                const statusLower = proposal.status.toLowerCase();
-                const statusColorClass =
-                  statusLower === "accepted"
-                    ? commonStyles.statusAccepted
-                    : statusLower === "rejected" || statusLower === "declined"
-                      ? commonStyles.statusRejected
-                      : statusLower === "pending"
-                        ? commonStyles.statusPending
-                        : commonStyles.statusDefault;
+            {recommendedJobs && recommendedJobs.length > 0 ? (
+              recommendedJobs.slice(0, 5).map((job) => {
                 return (
-                  <div
-                    key={proposal.id}
+                  <Link
+                    key={job.id}
+                    href="/freelancer/invitations"
                     className={cn(
                       commonStyles.proposalCard,
                       themeStyles.proposalCard,
@@ -925,7 +902,7 @@ const Dashboard: React.FC = () => {
                   >
                     <div className={commonStyles.proposalInfo}>
                       <h4 className={cn(themeStyles.proposalTitle)}>
-                        {proposal.projectTitle}
+                        {job.title}
                       </h4>
                       <span
                         className={cn(
@@ -933,36 +910,36 @@ const Dashboard: React.FC = () => {
                           themeStyles.proposalDate,
                         )}
                       >
-                        {new Date(proposal.sentDate).toLocaleDateString()}
+                        {job.matchScore ? `${job.matchScore}% match` : 'AI Matched'}
                       </span>
                     </div>
                     <span
                       className={cn(
                         commonStyles.proposalStatus,
                         themeStyles.proposalStatus,
-                        statusColorClass,
+                        commonStyles.statusPending,
                       )}
                     >
-                      {proposal.status}
+                      Pending
                     </span>
-                  </div>
+                  </Link>
                 );
               })
             ) : (
               <EmptyState
-                title="No proposals yet"
-                description="Browse available projects and submit proposals to start earning. Your first proposal is the most important step!"
+                title="No invitations yet"
+                description="When clients create projects matching your skills, you'll receive AI-matched invitations here."
                 animationData={emptyBoxAnimation}
                 animationWidth={100}
                 animationHeight={100}
                 action={
-                  <Link href="/jobs">
+                  <Link href="/freelancer/profile">
                     <Button
                       variant="primary"
                       size="sm"
                       iconBefore={<Search size={14} />}
                     >
-                      Browse Projects
+                      Update Skills
                     </Button>
                   </Link>
                 }

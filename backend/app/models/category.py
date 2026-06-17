@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Optional, List
 
 if TYPE_CHECKING:
     from .category import Category
-    from .gig import Gig
 
 
 class Category(Base):
@@ -29,7 +28,6 @@ class Category(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)  # Featured on homepage
     project_count: Mapped[int] = mapped_column(Integer, default=0)
-    gig_count: Mapped[int] = mapped_column(Integer, default=0)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
@@ -37,6 +35,3 @@ class Category(Base):
     # Self-referential relationship for hierarchy
     parent: Mapped[Optional["Category"]] = relationship("Category", remote_side=[id], back_populates="children")
     children: Mapped[List["Category"]] = relationship("Category", back_populates="parent")
-    
-    # Gigs in this category
-    gigs: Mapped[List["Gig"]] = relationship("Gig", back_populates="category")

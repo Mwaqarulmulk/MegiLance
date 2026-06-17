@@ -346,180 +346,6 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"startup.community_tables_warning: {e}")
 
-        # Ensure gig marketplace tables exist
-        try:
-            execute_query("""CREATE TABLE IF NOT EXISTS gigs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                seller_id INTEGER NOT NULL,
-                title TEXT NOT NULL,
-                slug TEXT NOT NULL UNIQUE,
-                description TEXT,
-                category_id INTEGER,
-                subcategory TEXT,
-                tags TEXT,
-                basic_price REAL NOT NULL DEFAULT 0,
-                standard_price REAL,
-                premium_price REAL,
-                basic_delivery_days INTEGER NOT NULL DEFAULT 3,
-                standard_delivery_days INTEGER,
-                premium_delivery_days INTEGER,
-                basic_revisions INTEGER NOT NULL DEFAULT 1,
-                standard_revisions INTEGER,
-                premium_revisions INTEGER,
-                basic_description TEXT,
-                standard_description TEXT,
-                premium_description TEXT,
-                images TEXT,
-                requirements TEXT,
-                status TEXT NOT NULL DEFAULT 'draft',
-                orders_count INTEGER NOT NULL DEFAULT 0,
-                average_rating REAL NOT NULL DEFAULT 0,
-                reviews_count INTEGER NOT NULL DEFAULT 0,
-                impressions_count INTEGER NOT NULL DEFAULT 0,
-                clicks_count INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL,
-                FOREIGN KEY(seller_id) REFERENCES users(id)
-            )""")
-            execute_query("CREATE INDEX IF NOT EXISTS idx_gigs_seller_id ON gigs(seller_id)")
-            execute_query("CREATE INDEX IF NOT EXISTS idx_gigs_status ON gigs(status)")
-            execute_query("""CREATE TABLE IF NOT EXISTS gig_faqs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                gig_id INTEGER NOT NULL,
-                question TEXT NOT NULL,
-                answer TEXT NOT NULL,
-                sort_order INTEGER NOT NULL DEFAULT 0,
-                FOREIGN KEY(gig_id) REFERENCES gigs(id) ON DELETE CASCADE
-            )""")
-            execute_query("""CREATE TABLE IF NOT EXISTS gig_orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                gig_id INTEGER NOT NULL,
-                buyer_id INTEGER NOT NULL,
-                seller_id INTEGER NOT NULL,
-                package_type TEXT NOT NULL DEFAULT 'basic',
-                price REAL NOT NULL,
-                delivery_days INTEGER NOT NULL,
-                revisions INTEGER NOT NULL DEFAULT 1,
-                requirements TEXT,
-                status TEXT NOT NULL DEFAULT 'pending',
-                due_date TEXT,
-                completed_at TEXT,
-                cancelled_at TEXT,
-                cancel_reason TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL,
-                FOREIGN KEY(gig_id) REFERENCES gigs(id),
-                FOREIGN KEY(buyer_id) REFERENCES users(id),
-                FOREIGN KEY(seller_id) REFERENCES users(id)
-            )""")
-            execute_query("CREATE INDEX IF NOT EXISTS idx_gig_orders_buyer_id ON gig_orders(buyer_id)")
-            execute_query("CREATE INDEX IF NOT EXISTS idx_gig_orders_seller_id ON gig_orders(seller_id)")
-            execute_query("""CREATE TABLE IF NOT EXISTS gig_deliveries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                order_id INTEGER NOT NULL,
-                message TEXT,
-                attachments TEXT,
-                revision_number INTEGER NOT NULL DEFAULT 1,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(order_id) REFERENCES gig_orders(id) ON DELETE CASCADE
-            )""")
-            execute_query("""CREATE TABLE IF NOT EXISTS gig_revisions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                order_id INTEGER NOT NULL,
-                requested_by INTEGER NOT NULL,
-                message TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(order_id) REFERENCES gig_orders(id) ON DELETE CASCADE,
-                FOREIGN KEY(requested_by) REFERENCES users(id)
-            )""")
-            execute_query("""CREATE TABLE IF NOT EXISTS gig_reviews (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                gig_id INTEGER NOT NULL,
-                order_id INTEGER NOT NULL UNIQUE,
-                reviewer_id INTEGER NOT NULL,
-                rating REAL NOT NULL,
-                comment TEXT,
-                seller_response TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(gig_id) REFERENCES gigs(id),
-                FOREIGN KEY(order_id) REFERENCES gig_orders(id),
-                FOREIGN KEY(reviewer_id) REFERENCES users(id)
-            )""")
-            execute_query("CREATE INDEX IF NOT EXISTS idx_gig_reviews_gig_id ON gig_reviews(gig_id)")
-            logger.info("startup.gig_tables_initialized")
-        except Exception as e:
-            logger.warning(f"startup.gig_tables_warning: {e}")
-
-        # Ensure external projects tables exist
-        try:
-            execute_query("""CREATE TABLE IF NOT EXISTS external_projects (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                company TEXT,
-                company_logo TEXT,
-                description TEXT,
-                description_plain TEXT,
-                category TEXT,
-                source TEXT NOT NULL,
-                source_id TEXT,
-                project_type TEXT,
-                experience_level TEXT,
-                budget_min REAL,
-                budget_max REAL,
-                budget_currency TEXT DEFAULT 'USD',
-                location TEXT,
-                apply_url TEXT,
-                trust_score REAL DEFAULT 0.5,
-                is_verified INTEGER DEFAULT 0,
-                tags TEXT,
-                views_count INTEGER NOT NULL DEFAULT 0,
-                clicks_count INTEGER NOT NULL DEFAULT 0,
-                scraped_at TEXT NOT NULL,
-                posted_at TEXT,
-                expires_at TEXT
-            )""")
-            execute_query("CREATE INDEX IF NOT EXISTS idx_external_projects_source ON external_projects(source)")
-            execute_query("""CREATE TABLE IF NOT EXISTS external_project_saves (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                project_id INTEGER NOT NULL,
-                created_at TEXT NOT NULL,
-                UNIQUE(user_id, project_id),
-                FOREIGN KEY(user_id) REFERENCES users(id),
-                FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE
-            )""")
-            execute_query("""CREATE TABLE IF NOT EXISTS external_project_clicks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                project_id INTEGER NOT NULL,
-                user_id INTEGER,
-                ip_address TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE
-            )""")
-            execute_query("""CREATE TABLE IF NOT EXISTS external_project_flags (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                project_id INTEGER NOT NULL,
-                user_id INTEGER NOT NULL,
-                reason TEXT,
-                created_at TEXT NOT NULL,
-                UNIQUE(user_id, project_id),
-                FOREIGN KEY(project_id) REFERENCES external_projects(id) ON DELETE CASCADE,
-                FOREIGN KEY(user_id) REFERENCES users(id)
-            )""")
-            execute_query("""CREATE TABLE IF NOT EXISTS scrape_jobs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                source TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'pending',
-                started_at TEXT,
-                completed_at TEXT,
-                projects_scraped INTEGER DEFAULT 0,
-                error_message TEXT,
-                created_at TEXT NOT NULL
-            )""")
-            logger.info("startup.external_projects_tables_initialized")
-        except Exception as e:
-            logger.warning(f"startup.external_projects_tables_warning: {e}")
-
         # Ensure advanced referral tables exist
         try:
             execute_query("""CREATE TABLE IF NOT EXISTS referral_campaigns (
@@ -708,20 +534,6 @@ async def lifespan(app: FastAPI):
                 created_at TEXT NOT NULL,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             )""", "integrations"),
-            ("""CREATE TABLE IF NOT EXISTS job_alerts (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                name TEXT NOT NULL,
-                keywords TEXT,
-                category TEXT,
-                min_budget REAL,
-                max_budget REAL,
-                skills TEXT,
-                is_active INTEGER DEFAULT 1,
-                last_sent_at TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(user_id) REFERENCES users(id)
-            )""", "job_alerts"),
             ("""CREATE TABLE IF NOT EXISTS payout_methods (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
@@ -1234,6 +1046,32 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"startup.chatbot_tables_warning: {e}")
 
+        # Ensure invitations table exists (AI-matched project invitations)
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS invitations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id INTEGER NOT NULL,
+                freelancer_id INTEGER NOT NULL,
+                client_id INTEGER NOT NULL,
+                fit_score REAL,
+                ai_reasoning TEXT,
+                status TEXT NOT NULL DEFAULT 'pending',
+                freelancer_message TEXT,
+                client_message TEXT,
+                proposed_rate REAL,
+                expires_at TEXT,
+                created_at TEXT NOT NULL,
+                responded_at TEXT,
+                FOREIGN KEY(project_id) REFERENCES projects(id),
+                FOREIGN KEY(freelancer_id) REFERENCES users(id),
+                FOREIGN KEY(client_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_invitations_freelancer_id ON invitations(freelancer_id)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_invitations_status ON invitations(status)")
+            logger.info("startup.invitations_table_initialized")
+        except Exception as e:
+            logger.warning(f"startup.invitations_table_warning: {e}")
+
     except Exception as e:
         logger.error(f"startup.database_failed error={e}")
         # Always fail fast if DB is unreachable to prevent healthy-looking broken app
@@ -1277,7 +1115,6 @@ app = FastAPI(
     - Blockchain-Based Escrow Payments
     - Secure Authentication & Role Management
     - Real-time Messaging & Notifications
-    - Gig Marketplace & Seller Tiers
     - Multi-Currency Payment Support
     """,
     version="2.0.0",

@@ -81,7 +81,7 @@ export const portalApi = {
           if (value !== undefined) params.append(key, value.toString());
         });
       }
-      return apiFetch(`/portal/client/proposals?${params}`);
+      return apiFetch(`/portal/client/projects?${params}`);
     },
     getPayments: (page = 1, pageSize = 50) =>
       apiFetch(`/portal/client/payments?page=${page}&page_size=${pageSize}`),
@@ -93,8 +93,8 @@ export const portalApi = {
   },
   freelancer: {
     getDashboardStats: () => apiFetch("/portal/freelancer/dashboard/stats"),
-    getJobs: (filters?: {
-      category?: string;
+    getInvitations: (filters?: {
+      status?: string;
       page?: number;
       page_size?: number;
     }) => {
@@ -104,7 +104,7 @@ export const portalApi = {
           if (value !== undefined) params.append(key, value.toString());
         });
       }
-      return apiFetch(`/portal/freelancer/jobs?${params}`);
+      return apiFetch(`/ai/invitations?${params}`);
     },
     getProjects: (filters?: {
       status?: string;
@@ -131,7 +131,7 @@ export const portalApi = {
           if (value !== undefined) params.append(key, value.toString());
         });
       }
-      return apiFetch(`/proposals?${params}`);
+      return apiFetch(`/ai/invitations?${params}`);
     },
     submitProposal: (data: {
       project_id: number;
@@ -139,9 +139,9 @@ export const portalApi = {
       bid_amount: number;
       delivery_time: number;
     }) => {
-      return apiFetch(`/portal/freelancer/proposals`, {
+      return apiFetch(`/ai/invitations/${data.project_id}/respond`, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ accept: true, message: data.cover_letter }),
       });
     },
     getPortfolio: () => apiFetch("/portal/freelancer/portfolio"),
