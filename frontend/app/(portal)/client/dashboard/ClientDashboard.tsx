@@ -41,7 +41,6 @@ import {
   BarChart3,
   Zap,
   Target,
-  Users,
   Star,
 } from "lucide-react";
 
@@ -318,21 +317,21 @@ const ClientDashboard: React.FC = () => {
     return issues.slice(0, 3);
   }, [metrics]);
 
-  // Quick actions for the grid
+  // Quick actions for the grid — each links to a distinct destination.
   const quickActions = [
-    {
-              label: "Find Talent",
-      href: "/client/find-talent",
-      icon: Plus,
-      color: "primary" as const,
-      desc: "Create a new listing",
-    },
     {
       label: "Find Talent",
       href: "/client/find-talent",
       icon: Search,
-      color: "success" as const,
-      desc: "Browse all freelancers",
+      color: "primary" as const,
+      desc: "Browse & hire freelancers",
+    },
+    {
+      label: "AI Match",
+      href: "/client/find-talent?ai=true",
+      icon: Zap,
+      color: "primary" as const,
+      desc: "AI-powered talent match",
     },
     {
       label: "My Projects",
@@ -342,11 +341,14 @@ const ClientDashboard: React.FC = () => {
       desc: `${metrics.activeProjects} active`,
     },
     {
-              label: "Projects",
-              href: "/client/projects",
-              icon: FileText,
+      label: "Proposals",
+      href: "/client/projects",
+      icon: FileText,
       color: "warning" as const,
-      desc: `${metrics.pendingProposals} awaiting review`,
+      desc:
+        metrics.pendingProposals > 0
+          ? `${metrics.pendingProposals} awaiting review`
+          : "No proposals pending",
     },
     {
       label: "Contracts",
@@ -368,27 +370,6 @@ const ClientDashboard: React.FC = () => {
       icon: MessageSquare,
       color: "purple" as const,
       desc: counts.messages > 0 ? `${counts.messages} unread` : "No unread",
-    },
-    {
-      label: "Projects",
-      href: "/client/projects",
-      icon: BarChart3,
-      color: "info" as const,
-      desc: "Spending & project insights",
-    },
-    {
-      label: "AI Match",
-      href: "/client/find-talent?ai=true",
-      icon: Zap,
-      color: "primary" as const,
-      desc: "AI-powered talent match",
-    },
-    {
-      label: "Talent Pool",
-      href: "/client/find-talent",
-      icon: Users,
-      color: "success" as const,
-      desc: "Browse all freelancers",
     },
     {
       label: "My Reviews",

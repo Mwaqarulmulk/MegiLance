@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api/core";
+import { downloadInvoicePdf } from "@/lib/api/pdf";
 import {
   FileText,
   Download,
@@ -16,23 +17,81 @@ import {
   X,
 } from "lucide-react";
 
+type InvoiceStatus = "draft" | "pending" | "paid" | "overdue" | "cancelled";
+
 interface Invoice {
   id: string;
   invoiceNumber: string;
   clientName: string;
   clientEmail: string;
+  freelancerName: string;
+  freelancerEmail: string;
   projectTitle: string;
   amount: number;
   currency: string;
   taxRate: number;
   taxAmount: number;
   total: number;
-  status: "draft" | "pending" | "paid" | "overdue" | "cancelled";
+  status: InvoiceStatus;
   issueDate: string;
   dueDate: string;
   paidDate?: string;
   items: { description: string; quantity: number; rate: number }[];
   notes: string;
+}
+
+// Backend (GET /invoices) returns snake_case rows wrapped in { items, total, page }.
+interface RawInvoice {
+  id: number | string;
+  invoice_number?: string;
+  freelancer_id?: number;
+  freelancer_name?: string;
+  freelancer_email?: string;
+  client_id?: number;
+  client_name?: string;
+  client_email?: string;
+  project_title?: string;
+  amount?: number;
+  currency?: string;
+  status?: string;
+  description?: string;
+  due_date?: string;
+  notes?: string;
+  created_at?: string;
+}
+
+const STATUS_MAP: Record<string, InvoiceStatus> = {
+  draft: "draft",
+  sent: "pending",
+  updated: "pending",
+  pending: "pending",
+  paid: "paid",
+  overdue: "overdue",
+  cancelled: "cancelled",
+};
+
+function normalizeInvoice(raw: RawInvoice): Invoice {
+  const amount = Number(raw.amount) || 0;
+  const description = raw.description || "";
+  return {
+    id: String(raw.id),
+    invoiceNumber: raw.invoice_number || `INV-${raw.id}`,
+    clientName: raw.client_name || `Client #${raw.client_id ?? "?"}`,
+    clientEmail: raw.client_email || "",
+    freelancerName: raw.freelancer_name || "",
+    freelancerEmail: raw.freelancer_email || "",
+    projectTitle: raw.project_title || description || "—",
+    amount,
+    currency: raw.currency || "USD",
+    taxRate: 0,
+    taxAmount: 0,
+    total: amount,
+    status: STATUS_MAP[(raw.status || "").toLowerCase()] || "pending",
+    issueDate: (raw.created_at || "").split("T")[0] || "—",
+    dueDate: raw.due_date || "—",
+    items: description ? [{ description, quantity: 1, rate: amount }] : [],
+    notes: raw.notes || "",
+  };
 }
 
 interface NewInvoiceItem {
@@ -82,8 +141,11 @@ export default function InvoicesPage() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await apiFetch<Invoice[]>("/invoices");
-        setInvoices(data);
+        const data = await apiFetch<{ items?: RawInvoice[] } | RawInvoice[]>(
+          "/invoices",
+        );
+        const rows = Array.isArray(data) ? data : (data?.items ?? []);
+        setInvoices(rows.map(normalizeInvoice));
       } catch (err) {
         setFetchError(
           err instanceof Error ? err.message : "Failed to load invoices.",
@@ -95,17 +157,33 @@ export default function InvoicesPage() {
   }, []);
 
   // ── Download invoice PDF ─────────────────────────────────────────────────────
-  const handleDownloadPdf = async (invoiceId: string) => {
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const handleDownloadPdf = async (invoice: Invoice) => {
+    setPdfError(null);
     try {
-      const blob = await apiFetch<Blob>(`/invoices/${invoiceId}/pdf`);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `invoice-${invoiceId}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
+      await downloadInvoicePdf({
+        invoice_id: invoice.id,
+        invoice_number: invoice.invoiceNumber,
+        client_name: invoice.clientName,
+        client_email: invoice.clientEmail,
+        freelancer_name: invoice.freelancerName || "Freelancer",
+        freelancer_email: invoice.freelancerEmail,
+        items: invoice.items.length
+          ? invoice.items
+          : [{ description: invoice.projectTitle, quantity: 1, rate: invoice.amount }],
+        subtotal: invoice.amount,
+        tax_rate: invoice.taxRate,
+        tax_amount: invoice.taxAmount,
+        total: invoice.total,
+        currency: invoice.currency,
+        due_date: invoice.dueDate,
+        status: invoice.status,
+        notes: invoice.notes,
+      });
     } catch (err) {
-      console.error("PDF download failed:", err);
+      setPdfError(
+        err instanceof Error ? err.message : "PDF download failed. Please try again.",
+      );
     }
   };
 
@@ -240,6 +318,8 @@ export default function InvoicesPage() {
         invoiceNumber: `INV-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(3, "0")}`,
         clientName: form.clientName,
         clientEmail: form.clientEmail,
+        freelancerName: "",
+        freelancerEmail: "",
         projectTitle: form.projectTitle,
         amount: subtotal,
         currency: "USD",
@@ -355,6 +435,13 @@ export default function InvoicesPage() {
         ))}
       </div>
 
+      {pdfError && (
+        <div className="flex items-start gap-2 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" />
+          {pdfError}
+        </div>
+      )}
+
       {/* ── Invoices Table ─────────────────────────────────────────────────── */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         {loading && (
@@ -368,7 +455,26 @@ export default function InvoicesPage() {
             {fetchError}
           </div>
         )}
-        {!loading && !fetchError && (
+        {!loading && !fetchError && invoices.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+            <div className="w-14 h-14 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-4">
+              <FileText size={26} className="text-blue-500" />
+            </div>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+              No invoices yet
+            </h3>
+            <p className="text-sm text-gray-500 mt-1 max-w-sm">
+              Create your first invoice to bill a client for completed work.
+            </p>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+            >
+              <Plus size={14} /> Create Invoice
+            </button>
+          </div>
+        )}
+        {!loading && !fetchError && invoices.length > 0 && (
         <table className="w-full">
           <thead className="bg-gray-50 dark:bg-gray-700/50">
             <tr>
@@ -458,7 +564,7 @@ export default function InvoicesPage() {
                           <Eye size={14} />
                         </button>
                         <button
-                          onClick={() => handleDownloadPdf(invoice.id)}
+                          onClick={() => handleDownloadPdf(invoice)}
                           className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                           title="Download PDF"
                         >
@@ -513,7 +619,7 @@ export default function InvoicesPage() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleDownloadPdf(selectedInvoice.id)}
+                  onClick={() => handleDownloadPdf(selectedInvoice)}
                   className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <Download size={14} />

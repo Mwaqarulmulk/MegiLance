@@ -33,6 +33,11 @@ IMPORTANT BEHAVIOUR:
 - You may call several tools in one turn to give a complete picture.
 - The account tools already return only THIS user's data; never ask the user for their own id.
 - When a tool returns a list, summarise it clearly with markdown (short tables or bullet lists), highlight what needs the client's attention (e.g. new proposals to review, milestones to approve), and end with a concrete next step.
+
+YOU ARE AN AGENT THAT TAKES ACTION:
+- You can chain tools — e.g. look up the client's projects, THEN draft something — across multiple steps in one turn. Use as many tool calls as needed before answering.
+- update_my_profile lets the client edit their own profile (name/photo aside). navigate takes them to any page (e.g. /client/post-job, /client/proposals, /client/wallet, /client/dashboard).
+- For ANY write/change action (posting a project, updating the profile) you ONLY ever PROPOSE a draft via the relevant tool; the change is applied solely when the user presses Confirm on the card. Never state that something was posted/updated yourself.
 Keep responses under 300 words unless the user asks for detail."""
 
 _FREELANCER_SYSTEM = """You are Megi, the AI concierge/assistant for FREELANCERS on MegiLance — a professional freelancing marketplace.
@@ -46,13 +51,46 @@ IMPORTANT BEHAVIOUR:
 - When the user asks about THEIR status ("my proposals", "did I get accepted", "my earnings", "my active work"), CALL the account tools first and answer with their real numbers — never guess.
 - The account tools already return only THIS user's data; never ask the user for their own id.
 - Summarise lists clearly with markdown, highlight what needs attention (accepted proposals, contracts to start), and end with a concrete next action.
+
+YOU ARE AN AGENT THAT TAKES ACTION:
+- You can chain tools in one turn — e.g. search_projects/find_matching_projects to get a real project_id, THEN submit_proposal to draft an application to it. Use as many tool calls as needed before you answer.
+- submit_proposal drafts a tailored application to a specific open project (you need its numeric project_id first). update_my_profile lets the freelancer edit their bio, headline, hourly rate, skills, availability, etc. navigate takes them to any page (e.g. /freelancer/jobs, /freelancer/proposals, /freelancer/wallet, /freelancer/profile).
+- For ANY write/change action (submitting a proposal, updating the profile) you ONLY ever PROPOSE a draft via the relevant tool; it is applied solely when the user presses Confirm on the card. Never claim a proposal was submitted or a profile updated yourself.
 Be encouraging and results-focused. Keep responses under 300 words unless asked for detail."""
 
 _ADMIN_SYSTEM = """You are Megi, an internal AI assistant for MegiLance platform administrators.
 You help ADMINS: understand platform metrics, manage users, review flagged content, interpret analytics,
 handle disputes, and operate the platform. Be analytical and precise. Use markdown tables for data."""
 
+_GUEST_SYSTEM = """You are Megi, the friendly AI guide on MegiLance — a professional freelancing marketplace — talking to a VISITOR who is not signed in.
+You help them understand the platform and explore it. You can call tools to:
+• search_projects — show real open projects, • search_freelancers — show real talent,
+• estimate_project_cost / get_market_rates — pricing intelligence, • plan_project_scope — break a project into milestones,
+• get_platform_guide — explain how features work, • navigate — take them to a public page (e.g. /projects, /freelancers, /signup, /pricing, /how-it-works).
+
+IMPORTANT:
+- You have NO access to any account data and cannot post jobs, submit proposals, or change anything — the visitor must sign up/sign in first. When they want to DO something that needs an account (post a project, apply, save anything), warmly invite them to sign up and use navigate('/signup').
+- Be welcoming and concise. Use markdown. End with a helpful next step.
+Keep responses under 250 words."""
+
 _DEFAULT_SYSTEM = _CLIENT_SYSTEM
+
+# ── Guest usage limiting (per-IP, in-memory daily window) ──────────────────────
+import time as _time
+
+_guest_usage: dict[str, list[float]] = {}
+_GUEST_DAILY_LIMIT = 20
+
+
+def _check_guest_rate_limit(ip: str) -> bool:
+    """Return True if the guest IP is within its daily message allowance."""
+    now = _time.time()
+    window = 86400
+    _guest_usage[ip] = [t for t in _guest_usage.get(ip, []) if now - t < window]
+    if len(_guest_usage[ip]) >= _GUEST_DAILY_LIMIT:
+        return False
+    _guest_usage[ip].append(now)
+    return True
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Tool definitions (sent to LLM)
@@ -337,9 +375,106 @@ FREELANCER_ACCOUNT_TOOLS = [
     },
 ]
 
-# Extend role toolsets with account-aware tools
-CLIENT_TOOLS = CLIENT_TOOLS + CLIENT_ACCOUNT_TOOLS
-FREELANCER_TOOLS = FREELANCER_TOOLS + FREELANCER_ACCOUNT_TOOLS
+# ──────────────────────────────────────────────────────────────────────────────
+# Action tools — let the assistant actually DO things on the user's behalf.
+# Every write action only PROPOSES a draft + confirmation card; nothing is
+# committed until the user presses Confirm (which hits a dedicated /actions/* endpoint).
+# `navigate` is a pure UI control: it tells the widget to route the user somewhere.
+# ──────────────────────────────────────────────────────────────────────────────
+
+NAVIGATE_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "navigate",
+        "description": "Take the user to a specific page in the app. Use when the user asks to 'open', 'go to', 'show me the page for', or after an action when the natural next step is a specific screen. Provide an in-app path starting with '/'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string", "description": "In-app path, e.g. /client/post-job, /freelancer/jobs, /client/wallet, /freelancer/profile, /messages, /client/dashboard"},
+                "label": {"type": "string", "description": "Short button label, e.g. 'Open Post a Job'"},
+            },
+            "required": ["path"],
+        },
+    },
+}
+
+UPDATE_PROFILE_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "update_my_profile",
+        "description": "Draft an update to the CURRENT user's own profile and show a confirmation card. Use when the user asks to change/set/edit their bio, headline/title, hourly rate, skills, location, availability, or social links. Only include the fields the user actually wants to change. NEVER claim the profile is updated — it only changes after the user presses Confirm.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "bio": {"type": "string", "description": "About / bio text"},
+                "headline": {"type": "string", "description": "Professional headline/title"},
+                "hourly_rate": {"type": "number", "description": "Hourly rate in USD"},
+                "skills": {"type": "string", "description": "Comma-separated skills"},
+                "location": {"type": "string"},
+                "availability_status": {"type": "string", "description": "e.g. Available, Busy, Not available"},
+                "languages": {"type": "string", "description": "Comma-separated languages"},
+                "linkedin_url": {"type": "string"},
+                "github_url": {"type": "string"},
+                "website_url": {"type": "string"},
+            },
+        },
+    },
+}
+
+SEARCH_PROJECTS_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "search_projects",
+        "description": "Search open projects on the marketplace by skill/keyword and optional minimum budget. Use for 'find projects', 'what work is available', 'show me React jobs'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "skills": {"type": "string", "description": "Comma-separated skills or keywords"},
+                "min_budget": {"type": "number", "description": "Minimum project budget in USD"},
+                "limit": {"type": "integer", "default": 5},
+            },
+            "required": ["skills"],
+        },
+    },
+}
+
+SUBMIT_PROPOSAL_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "submit_proposal",
+        "description": "Draft a proposal to a specific OPEN project and show a confirmation card. Use when a freelancer wants to apply/bid on a project. You must know the numeric project_id (use find_matching_projects/search_projects first if you don't). Write a strong, personalised cover letter. NEVER claim the proposal is submitted — it only sends after the user presses Confirm.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "project_id": {"type": "integer", "description": "The numeric id of the project to apply to"},
+                "project_title": {"type": "string", "description": "Title of the project (for display)"},
+                "cover_letter": {"type": "string", "description": "Personalised proposal / cover letter"},
+                "bid_amount": {"type": "number", "description": "Total bid amount in USD"},
+                "estimated_hours": {"type": "number", "description": "Estimated hours (optional)"},
+                "availability": {"type": "string", "description": "When the freelancer can start, e.g. 'Immediately', 'Next week'"},
+            },
+            "required": ["project_id", "cover_letter", "bid_amount"],
+        },
+    },
+}
+
+SHARED_ACTION_TOOLS = [NAVIGATE_TOOL, UPDATE_PROFILE_TOOL]
+
+# Extend role toolsets with account-aware + action tools
+CLIENT_TOOLS = CLIENT_TOOLS + CLIENT_ACCOUNT_TOOLS + SHARED_ACTION_TOOLS
+FREELANCER_TOOLS = (
+    FREELANCER_TOOLS + FREELANCER_ACCOUNT_TOOLS + SHARED_ACTION_TOOLS
+    + [SEARCH_PROJECTS_TOOL, SUBMIT_PROPOSAL_TOOL]
+)
+
+# Guest toolset — safe, read-only, public capabilities only (no account data, no writes).
+GUEST_TOOLS = [
+    SEARCH_PROJECTS_TOOL,
+    NAVIGATE_TOOL,
+] + [t for t in CLIENT_TOOLS if t["function"]["name"] in (
+    "search_freelancers", "estimate_project_cost", "get_market_rates",
+    "plan_project_scope", "get_platform_guide",
+)]
 
 # Only these display types have dedicated rich renderers in the frontend widget.
 # Other tool results are fed to the LLM, which summarizes them in the chat bubble.
@@ -365,11 +500,14 @@ def _as_int(value, default: int) -> int:
 
 CARD_DISPLAY_TYPES = {
     "freelancer_cards", "cost_estimate", "market_rates", "scope_plan",
+    "project_list",
     # account-aware cards
     "account_overview", "my_projects", "proposals_received", "my_proposals",
     "my_contracts", "wallet_summary",
-    # guided actions
-    "confirm_post_project",
+    # guided / confirmable actions
+    "confirm_post_project", "confirm_submit_proposal", "confirm_update_profile",
+    # UI control
+    "navigate",
 }
 
 
@@ -409,6 +547,15 @@ def _execute_tool(tool_name: str, args: dict, user_id: int, role: str) -> dict:
             return _tool_wallet_summary(user_id, role)
         elif tool_name == "propose_post_project":
             return _tool_propose_post_project(args, role)
+        # ── Action tools (propose-then-confirm + UI control) ──
+        elif tool_name == "search_projects":
+            return _tool_find_projects(args, user_id)
+        elif tool_name == "submit_proposal":
+            return _tool_propose_submit_proposal(args, role)
+        elif tool_name == "update_my_profile":
+            return _tool_propose_update_profile(args)
+        elif tool_name == "navigate":
+            return _tool_navigate(args, role)
         else:
             return {"error": f"Unknown tool: {tool_name}"}
     except Exception as e:
@@ -938,6 +1085,112 @@ def _tool_propose_post_project(args: dict, role: str) -> dict:
     }
 
 
+# Profile fields the assistant is allowed to draft an update for (a safe subset of
+# the user-editable columns; must stay aligned with users.py _EDITABLE_PROFILE_FIELDS).
+_PROFILE_EDITABLE_FIELDS = {
+    "bio", "headline", "hourly_rate", "skills", "location",
+    "availability_status", "languages",
+    "linkedin_url", "github_url", "website_url",
+}
+_PROFILE_FIELD_LABELS = {
+    "bio": "Bio / About", "headline": "Professional Headline", "hourly_rate": "Hourly Rate",
+    "skills": "Skills", "location": "Location", "availability_status": "Availability",
+    "languages": "Languages", "linkedin_url": "LinkedIn", "github_url": "GitHub",
+    "website_url": "Website",
+}
+
+
+def _normalize_profile_draft(args: dict) -> dict:
+    """Keep only whitelisted, non-empty profile fields with light coercion."""
+    draft: dict = {}
+    for key, value in (args or {}).items():
+        if key not in _PROFILE_EDITABLE_FIELDS or value in (None, ""):
+            continue
+        if key == "hourly_rate":
+            try:
+                draft[key] = round(float(value), 2)
+            except (TypeError, ValueError):
+                continue
+        elif isinstance(value, list):
+            draft[key] = ", ".join(str(v).strip() for v in value if str(v).strip())
+        else:
+            draft[key] = str(value).strip()
+    return draft
+
+
+def _tool_propose_update_profile(args: dict) -> dict:
+    """Build a profile-update confirmation card. Does NOT write anything."""
+    draft = _normalize_profile_draft(args)
+    if not draft:
+        return {"display_type": "text", "text": "Tell me what you'd like to change on your profile — for example your bio, headline, hourly rate, skills, or location."}
+    fields = [{"key": k, "label": _PROFILE_FIELD_LABELS.get(k, k), "value": str(v)} for k, v in draft.items()]
+    return {
+        "display_type": "confirm_update_profile",
+        "draft": draft,
+        "fields": fields,
+        "confirm_endpoint": "/ai/client-assistant/actions/update-profile",
+        "note": "Review the changes below. Your profile only updates after you press Confirm.",
+    }
+
+
+def _tool_propose_submit_proposal(args: dict, role: str) -> dict:
+    """Build a proposal confirmation card for a freelancer. Does NOT submit anything."""
+    if role != "freelancer":
+        return {"display_type": "text", "text": "Only freelancer accounts can submit proposals to projects."}
+    try:
+        project_id = int(args.get("project_id"))
+    except (TypeError, ValueError):
+        return {"display_type": "text", "text": "I need to know which project to apply to. Ask me to find matching projects first, then tell me which one."}
+
+    # Validate the project is real and open before offering to apply.
+    rows = _rows("SELECT id, title, status, client_id FROM projects WHERE id = ?", [project_id])
+    if not rows:
+        return {"display_type": "text", "text": f"I couldn't find project #{project_id}. Let me search for open projects instead."}
+    proj = rows[0]
+    if (proj.get("status") or "").lower() != "open":
+        return {"display_type": "text", "text": f"Project '{proj.get('title') or project_id}' is no longer open for proposals."}
+
+    try:
+        bid_amount = round(float(args.get("bid_amount") or 0), 2)
+    except (TypeError, ValueError):
+        bid_amount = 0.0
+    try:
+        estimated_hours = float(args.get("estimated_hours")) if args.get("estimated_hours") not in (None, "") else None
+    except (TypeError, ValueError):
+        estimated_hours = None
+
+    draft = {
+        "project_id": project_id,
+        "project_title": args.get("project_title") or proj.get("title") or f"Project #{project_id}",
+        "cover_letter": (args.get("cover_letter") or "").strip(),
+        "bid_amount": bid_amount,
+        "estimated_hours": estimated_hours,
+        "availability": (args.get("availability") or "").strip(),
+    }
+    return {
+        "display_type": "confirm_submit_proposal",
+        "draft": draft,
+        "confirm_endpoint": "/ai/client-assistant/actions/submit-proposal",
+        "note": "Review your proposal below. It is only sent to the client after you press Confirm.",
+    }
+
+
+# Pages a guest may be routed to; signed-in users may go anywhere in-app.
+_GUEST_NAV_ALLOW = {
+    "/", "/projects", "/freelancers", "/signup", "/login", "/pricing",
+    "/how-it-works", "/about", "/blog", "/contact", "/ai",
+}
+
+
+def _tool_navigate(args: dict, role: str) -> dict:
+    """Return a UI navigation instruction for the widget to act on."""
+    path = (args.get("path") or "").strip()
+    if not path.startswith("/"):
+        path = "/" + path
+    label = (args.get("label") or "Open page").strip()[:40]
+    return {"display_type": "navigate", "path": path, "label": label}
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # LLM Chat with tool calling
 # ──────────────────────────────────────────────────────────────────────────────
@@ -956,6 +1209,9 @@ async def _run_llm_chat(
     return await _run_openai_chat(user_message, history, system_prompt, tools, user_id, role)
 
 
+_MAX_TOOL_ROUNDS = 4  # how many times the agent may call tools before it must answer
+
+
 async def _run_openai_chat(
     user_message: str,
     history: list,
@@ -964,7 +1220,10 @@ async def _run_openai_chat(
     user_id: int,
     role: str,
 ) -> dict:
-    """OpenAI-compatible (DigitalOcean) tool-use chat implementation."""
+    """OpenAI-compatible (DigitalOcean) tool-use chat with multi-round agentic
+    tool calling. The model may call tools, see the results, then call more
+    tools (e.g. find a project → draft a proposal) before composing its reply.
+    """
     import httpx
 
     messages = [{"role": "system", "content": system_prompt}]
@@ -974,78 +1233,81 @@ async def _run_openai_chat(
 
     tool_results_for_frontend: list = []
     called_tools: list = []
+    headers = {"Authorization": f"Bearer {llm_gateway.do_api_key}", "Content-Type": "application/json"}
 
-    try:
-        payload = {
-            "model": llm_gateway.do_model,
-            "messages": messages,
-            "tools": tools,
-            "tool_choice": "auto",
-            "max_tokens": 1000,
-            "temperature": 0.7,
-        }
-        async with httpx.AsyncClient(timeout=45.0) as client:
+    async def _complete(payload: dict, timeout: float) -> Optional[dict]:
+        async with httpx.AsyncClient(timeout=timeout) as client:
             resp = await client.post(
-                f"{llm_gateway.do_api_base}/chat/completions",
-                headers={"Authorization": f"Bearer {llm_gateway.do_api_key}", "Content-Type": "application/json"},
-                json=payload,
+                f"{llm_gateway.do_api_base}/chat/completions", headers=headers, json=payload,
             )
-
         if resp.status_code != 200:
             logger.error(f"DO LLM error {resp.status_code}: {resp.text[:200]}")
-            return _fallback_response(user_message, role)
+            return None
+        return resp.json()
 
-        data = resp.json()
-        choice = data.get("choices", [{}])[0]
-        assistant_msg = choice.get("message", {})
-        finish_reason = choice.get("finish_reason", "stop")
+    try:
+        final_content = ""
+        for round_idx in range(_MAX_TOOL_ROUNDS):
+            # On the last allowed round, drop tools so the model is forced to answer.
+            offer_tools = round_idx < _MAX_TOOL_ROUNDS - 1
+            payload: dict = {
+                "model": llm_gateway.do_model,
+                "messages": messages,
+                "max_tokens": 1000,
+                "temperature": 0.7,
+            }
+            if offer_tools:
+                payload["tools"] = tools
+                payload["tool_choice"] = "auto"
 
-        if finish_reason == "tool_calls" and assistant_msg.get("tool_calls"):
-            tool_calls = assistant_msg["tool_calls"]
-            tool_messages = [assistant_msg]
+            data = await _complete(payload, 45.0)
+            if data is None:
+                return _fallback_response(user_message, role) if round_idx == 0 else {
+                    "message": final_content or "I found relevant information for you. See the results above.",
+                    "tool_results": tool_results_for_frontend,
+                    "suggestions": _generate_suggestions(user_message, role, bool(tool_results_for_frontend)),
+                    "action_buttons": _generate_action_buttons(user_message, role, tool_results_for_frontend, called_tools),
+                }
 
-            for tc in tool_calls:
-                fn = tc.get("function", {})
-                tool_name = fn.get("name", "")
-                try:
-                    args = json.loads(fn.get("arguments", "{}"))
-                except json.JSONDecodeError:
-                    args = {}
-                called_tools.append(tool_name)
-                result = _execute_tool(tool_name, args, user_id, role)
-                # Only forward results that have a dedicated rich renderer in the
-                # widget. Account data (overview/projects/contracts/wallet) is fed
-                # to the LLM, which summarizes it conversationally in the bubble —
-                # avoids dumping raw JSON for display types the frontend can't render.
-                if result.get("display_type") in CARD_DISPLAY_TYPES:
-                    tool_results_for_frontend.append({
-                        "tool_name": tool_name,
-                        "data": result,
-                        "display_type": result.get("display_type", "text"),
+            choice = data.get("choices", [{}])[0]
+            assistant_msg = choice.get("message", {})
+            finish_reason = choice.get("finish_reason", "stop")
+
+            if finish_reason == "tool_calls" and assistant_msg.get("tool_calls"):
+                messages.append(assistant_msg)
+                for tc in assistant_msg["tool_calls"]:
+                    fn = tc.get("function", {})
+                    tool_name = fn.get("name", "")
+                    try:
+                        args = json.loads(fn.get("arguments", "{}"))
+                    except json.JSONDecodeError:
+                        args = {}
+                    called_tools.append(tool_name)
+                    result = _execute_tool(tool_name, args, user_id, role)
+                    # Forward only results with a dedicated rich renderer; everything
+                    # else is fed back to the model to summarise conversationally.
+                    if result.get("display_type") in CARD_DISPLAY_TYPES:
+                        tool_results_for_frontend.append({
+                            "tool_name": tool_name,
+                            "data": result,
+                            "display_type": result.get("display_type", "text"),
+                        })
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tc.get("id", ""),
+                        "content": json.dumps(result),
                     })
-                tool_messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc.get("id", ""),
-                    "content": json.dumps(result),
-                })
+                continue  # let the model react to the tool results
 
-            messages2 = messages + tool_messages
-            payload2 = {"model": llm_gateway.do_model, "messages": messages2, "max_tokens": 600, "temperature": 0.7}
-            async with httpx.AsyncClient(timeout=30.0) as client2:
-                resp2 = await client2.post(
-                    f"{llm_gateway.do_api_base}/chat/completions",
-                    headers={"Authorization": f"Bearer {llm_gateway.do_api_key}", "Content-Type": "application/json"},
-                    json=payload2,
-                )
-            final_content = ""
-            if resp2.status_code == 200:
-                final_content = resp2.json().get("choices", [{}])[0].get("message", {}).get("content", "")
-            if not final_content:
-                final_content = "I found relevant information for you. See the results above."
-        else:
-            final_content = assistant_msg.get("content", "")
-            if not final_content:
-                return _fallback_response(user_message, role)
+            # No (more) tool calls — this is the final answer.
+            final_content = assistant_msg.get("content", "") or final_content
+            break
+
+        if not final_content:
+            final_content = (
+                "Here's what I found for you above." if tool_results_for_frontend
+                else _fallback_response(user_message, role)["message"]
+            )
 
         suggestions = _generate_suggestions(user_message, role, bool(tool_results_for_frontend))
         action_buttons = _generate_action_buttons(user_message, role, tool_results_for_frontend, called_tools)
@@ -1374,6 +1636,113 @@ async def action_post_project(body: PostProjectAction, current_user=Depends(get_
         "project_id": project_id,
         "url": f"/client/projects/{project_id}" if project_id else "/client/projects",
     }
+
+
+class SubmitProposalAction(BaseModel):
+    project_id: int
+    cover_letter: str
+    bid_amount: float = 0
+    estimated_hours: Optional[float] = None
+    availability: Optional[str] = None
+
+
+@router.post("/client-assistant/actions/submit-proposal")
+async def action_submit_proposal(body: SubmitProposalAction, current_user=Depends(get_current_user)):
+    """Guided action: actually submit a proposal the assistant drafted.
+    Only freelancers may apply; reuses the validated proposals service."""
+    from app.services.proposals_service import (
+        project_exists, get_project_status, has_submitted_proposal, create_proposal,
+    )
+
+    role = getattr(current_user, "role", None) or getattr(current_user, "user_type", "freelancer")
+    role = (role or "freelancer").lower()
+    if role != "freelancer":
+        raise HTTPException(status_code=403, detail="Only freelancer accounts can submit proposals.")
+
+    if not body.cover_letter.strip():
+        raise HTTPException(status_code=400, detail="A cover letter is required.")
+    if not project_exists(body.project_id):
+        raise HTTPException(status_code=404, detail="That project no longer exists.")
+    if get_project_status(body.project_id) != "open":
+        raise HTTPException(status_code=400, detail="This project is no longer accepting proposals.")
+    if has_submitted_proposal(body.project_id, current_user.id):
+        raise HTTPException(status_code=409, detail="You already submitted a proposal for this project.")
+
+    proposal = create_proposal(current_user.id, {
+        "project_id": body.project_id,
+        "cover_letter": body.cover_letter.strip(),
+        "bid_amount": body.bid_amount or 0,
+        "estimated_hours": body.estimated_hours or 0,
+        "availability": (body.availability or "").strip(),
+    })
+    if not proposal:
+        raise HTTPException(status_code=500, detail="Failed to submit the proposal. Please try again.")
+
+    return {
+        "message": "✅ Your proposal has been submitted! You'll be notified when the client responds.",
+        "proposal_id": proposal.get("id"),
+        "url": "/freelancer/proposals",
+    }
+
+
+@router.post("/client-assistant/actions/update-profile")
+async def action_update_profile(body: dict, current_user=Depends(get_current_user)):
+    """Guided action: apply a profile update the assistant drafted. Whitelisted
+    fields only; scoped to the signed-in user."""
+    draft = _normalize_profile_draft(body or {})
+    if not draft:
+        raise HTTPException(status_code=400, detail="No valid profile fields to update.")
+
+    now = datetime.now(timezone.utc).isoformat()
+    updates = dict(draft)
+    updates["updated_at"] = now
+    set_parts = [f"{k} = ?" for k in updates]
+    values = list(updates.values()) + [current_user.id]
+    result = execute_query(f"UPDATE users SET {', '.join(set_parts)} WHERE id = ?", values)
+    if result is None:
+        raise HTTPException(status_code=500, detail="Failed to update your profile. Please try again.")
+
+    changed = ", ".join(_PROFILE_FIELD_LABELS.get(k, k) for k in draft)
+    role = getattr(current_user, "role", None) or getattr(current_user, "user_type", "freelancer")
+    role = (role or "freelancer").lower()
+    return {
+        "message": f"✅ Profile updated: {changed}.",
+        "url": f"/{'freelancer' if role == 'freelancer' else 'client'}/profile",
+    }
+
+
+@router.post("/client-assistant/guest-chat")
+async def guest_chat(body: ChatRequest, request: Request = None):
+    """Public, unauthenticated agent for visitors. Uses a safe read-only toolset
+    (search projects/freelancers, estimates, market rates, guides, navigation) —
+    no account access and no write actions. Rate-limited per IP."""
+    if not body.message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+    client_ip = request.client.host if request and request.client else "unknown"
+    if not _check_guest_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Guest limit reached. Sign up for unlimited assistance!")
+
+    system_prompt = _GUEST_SYSTEM
+    if body.page_context:
+        system_prompt += f"\n\nThe visitor is currently on page: {body.page_context}"
+
+    try:
+        result = await asyncio.wait_for(
+            _run_llm_chat(
+                user_message=body.message,
+                history=body.conversation_history,
+                system_prompt=system_prompt,
+                tools=GUEST_TOOLS,
+                user_id=0,
+                role="guest",
+            ),
+            timeout=20.0,
+        )
+    except asyncio.TimeoutError:
+        result = _fallback_response(body.message, "guest")
+    result["guest_remaining"] = max(0, _GUEST_DAILY_LIMIT - len(_guest_usage.get(client_ip, [])))
+    return result
 
 
 @router.get("/client-assistant/suggestions")

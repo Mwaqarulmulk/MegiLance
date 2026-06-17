@@ -47,10 +47,14 @@ async def list_invoices(
         f"""SELECT i.id, i.contract_id, i.client_id, i.freelancer_id, i.amount,
                    i.currency, i.status, i.description, i.due_date, i.notes,
                    i.invoice_number, i.created_at, i.updated_at,
-                   c.project_id, pr.title as project_title
+                   c.project_id, pr.title as project_title,
+                   cl.name as client_name, cl.email as client_email,
+                   fr.name as freelancer_name, fr.email as freelancer_email
             FROM invoices i
             LEFT JOIN contracts c ON i.contract_id = c.id
             LEFT JOIN projects pr ON c.project_id = pr.id
+            LEFT JOIN users cl ON i.client_id = cl.id
+            LEFT JOIN users fr ON i.freelancer_id = fr.id
             {where}
             ORDER BY i.created_at DESC
             LIMIT ? OFFSET ?""",
@@ -65,8 +69,16 @@ async def get_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT i.id, i.contract_id, i.client_id, i.freelancer_id, i.amount,
                   i.currency, i.status, i.description, i.due_date, i.notes,
-                  i.invoice_number, i.created_at, i.updated_at
-           FROM invoices i WHERE i.id = ? AND (i.client_id = ? OR i.freelancer_id = ?)""",
+                  i.invoice_number, i.created_at, i.updated_at,
+                  c.project_id, pr.title as project_title,
+                  cl.name as client_name, cl.email as client_email,
+                  fr.name as freelancer_name, fr.email as freelancer_email
+           FROM invoices i
+           LEFT JOIN contracts c ON i.contract_id = c.id
+           LEFT JOIN projects pr ON c.project_id = pr.id
+           LEFT JOIN users cl ON i.client_id = cl.id
+           LEFT JOIN users fr ON i.freelancer_id = fr.id
+           WHERE i.id = ? AND (i.client_id = ? OR i.freelancer_id = ?)""",
         [invoice_id, current_user.id, current_user.id],
     )
     rows = parse_rows(result)

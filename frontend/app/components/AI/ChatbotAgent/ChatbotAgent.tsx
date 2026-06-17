@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/hooks/useAuth';
@@ -33,6 +34,18 @@ import darkStyles from './ChatbotAgent.dark.module.css';
 type Role = 'client' | 'freelancer' | 'admin' | 'guest';
 type ChatStatus = 'online' | 'degraded' | 'offline';
 
+interface AgentToolResult {
+  tool_name: string;
+  display_type: string;
+  data: Record<string, any>;
+}
+
+interface AgentActionButton {
+  label: string;
+  href: string;
+  variant?: 'primary' | 'secondary';
+}
+
 interface Message {
   id: number;
   text: string;
@@ -45,6 +58,8 @@ interface Message {
   isMarkdown?: boolean;
   isStepSummary?: boolean;
   stepData?: { label: string; value: string }[];
+  toolResults?: AgentToolResult[];
+  agentActions?: AgentActionButton[];
 }
 
 interface SuggestedAction {
@@ -380,6 +395,218 @@ const ALL_FLOWS: Record<string, FlowDefinition> = {
   write_proposal: WRITE_PROPOSAL_FLOW,
   estimate_budget: ESTIMATE_BUDGET_FLOW,
 };
+
+// ── Agent Tool-Result Cards ──────────────────────────────────────────────────
+// Rich, theme-neutral renderers for the structured results returned by the
+// agentic backend (/ai/client-assistant). Confirmation cards execute real
+// write actions only when the user presses Confirm.
+
+const cardBox: React.CSSProperties = {
+  border: '1px solid rgba(127,127,127,0.28)',
+  background: 'rgba(127,127,127,0.07)',
+  borderRadius: 12,
+  padding: '0.7rem 0.8rem',
+  marginTop: 8,
+  fontSize: '0.82rem',
+  lineHeight: 1.45,
+};
+const cardTitle: React.CSSProperties = { fontWeight: 700, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 };
+const cardRow: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 10, padding: '2px 0' };
+const cardLabel: React.CSSProperties = { opacity: 0.7, flexShrink: 0 };
+const cardBtn: React.CSSProperties = {
+  border: '1px solid rgba(127,127,127,0.35)', borderRadius: 8, padding: '0.4rem 0.7rem',
+  fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', display: 'inline-flex',
+  alignItems: 'center', gap: 6, background: 'transparent', color: 'inherit',
+};
+const cardBtnPrimary: React.CSSProperties = {
+  ...cardBtn, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', border: 'none',
+};
+
+function ConfirmCard({
+  result,
+  onActionDone,
+}: {
+  result: AgentToolResult;
+  onActionDone: (msg: string, url?: string) => void;
+}) {
+  const data = result.data || {};
+  const draft = (data.draft || {}) as Record<string, any>;
+  const endpoint = data.confirm_endpoint as string;
+  const [state, setState] = useState<'idle' | 'working' | 'done' | 'error'>('idle');
+  const [errMsg, setErrMsg] = useState('');
+
+  const isProject = result.display_type === 'confirm_post_project';
+  const isProposal = result.display_type === 'confirm_submit_proposal';
+  const title = isProject ? 'Confirm project posting' : isProposal ? 'Confirm proposal' : 'Confirm profile update';
+
+  const rows: { label: string; value: string }[] = (() => {
+    if (result.display_type === 'confirm_update_profile' && Array.isArray(data.fields)) {
+      return (data.fields as any[]).map((f) => ({ label: f.label, value: String(f.value) }));
+    }
+    if (isProposal) {
+      return [
+        { label: 'Project', value: String(draft.project_title ?? draft.project_id ?? '') },
+        { label: 'Bid', value: draft.bid_amount ? `$${draft.bid_amount}` : '—' },
+        ...(draft.availability ? [{ label: 'Start', value: String(draft.availability) }] : []),
+        { label: 'Cover letter', value: String(draft.cover_letter ?? '') },
+      ];
+    }
+    // project
+    return [
+      { label: 'Title', value: String(draft.title ?? '') },
+      { label: 'Category', value: String(draft.category ?? '') },
+      { label: 'Budget', value: `${draft.budget_type ?? ''} ${draft.budget_min ?? ''}${draft.budget_max ? `–${draft.budget_max}` : ''}`.trim() },
+      ...(draft.skills ? [{ label: 'Skills', value: String(draft.skills) }] : []),
+      { label: 'Description', value: String(draft.description ?? '') },
+    ];
+  })();
+
+  const handleConfirm = async () => {
+    if (!endpoint) return;
+    setState('working');
+    setErrMsg('');
+    try {
+      const res = await apiFetch<{ message?: string; url?: string }>(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(draft),
+      });
+      setState('done');
+      onActionDone(res?.message || 'Done!', res?.url);
+    } catch (e: any) {
+      setState('error');
+      setErrMsg(e?.message || 'Something went wrong. Please try again.');
+    }
+  };
+
+  return (
+    <div style={cardBox}>
+      <div style={cardTitle}><CheckCircle2 size={15} /> {title}</div>
+      {rows.map((r, i) => (
+        <div key={i} style={cardRow}>
+          <span style={cardLabel}>{r.label}</span>
+          <span style={{ textAlign: 'right', whiteSpace: 'pre-wrap' }}>{r.value || '—'}</span>
+        </div>
+      ))}
+      {data.note && state === 'idle' && (
+        <div style={{ opacity: 0.65, fontSize: '0.74rem', marginTop: 6 }}>{String(data.note)}</div>
+      )}
+      {state === 'error' && <div style={{ color: '#ef4444', marginTop: 6 }}>{errMsg}</div>}
+      {state === 'done' ? (
+        <div style={{ color: '#10b981', marginTop: 8, fontWeight: 600 }}>✓ Confirmed</div>
+      ) : (
+        <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+          <button style={cardBtnPrimary} onClick={handleConfirm} disabled={state === 'working'}>
+            {state === 'working' ? 'Working…' : 'Confirm'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FreelancerCards({ data }: { data: Record<string, any> }) {
+  const list = (data.freelancers || []) as any[];
+  if (!list.length) return <div style={cardBox}>No matching freelancers found yet.</div>;
+  return (
+    <div>
+      {list.map((f, i) => (
+        <div key={i} style={cardBox}>
+          <div style={cardTitle}><User size={14} /> {f.full_name || 'Freelancer'}</div>
+          <div style={{ opacity: 0.8 }}>{f.title || ''}</div>
+          <div style={cardRow}>
+            <span style={cardLabel}>Rate</span>
+            <span>{f.hourly_rate ? `$${f.hourly_rate}/hr` : '—'}</span>
+          </div>
+          {f.rating != null && (
+            <div style={cardRow}><span style={cardLabel}>Rating</span><span>{Number(f.rating).toFixed(1)} ★</span></div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ProjectCards({ data }: { data: Record<string, any> }) {
+  const list = (data.projects || []) as any[];
+  if (!list.length) return <div style={cardBox}>No open projects matched that search.</div>;
+  return (
+    <div>
+      {list.map((p, i) => (
+        <div key={i} style={cardBox}>
+          <div style={cardTitle}><Briefcase size={14} /> {p.title || 'Project'}</div>
+          {p.description && <div style={{ opacity: 0.8 }}>{p.description}</div>}
+          <div style={cardRow}>
+            <span style={cardLabel}>Budget</span>
+            <span>{p.budget_min || p.budget_max ? `$${p.budget_min ?? '?'}–$${p.budget_max ?? '?'}` : '—'}</span>
+          </div>
+          {p.skills && <div style={cardRow}><span style={cardLabel}>Skills</span><span style={{ textAlign: 'right' }}>{p.skills}</span></div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CostEstimateCard({ data }: { data: Record<string, any> }) {
+  return (
+    <div style={cardBox}>
+      <div style={cardTitle}><DollarSign size={14} /> Cost estimate</div>
+      <div style={cardRow}><span style={cardLabel}>Total</span><span>${data.total_min}–${data.total_max}</span></div>
+      <div style={cardRow}><span style={cardLabel}>Timeline</span><span>{data.estimated_timeline}</span></div>
+    </div>
+  );
+}
+
+function MarketRatesCard({ data }: { data: Record<string, any> }) {
+  const rates = (data.rates || []) as any[];
+  return (
+    <div style={cardBox}>
+      <div style={cardTitle}><TrendingUp size={14} /> Market rates ({data.period || 'hourly'})</div>
+      {rates.map((r, i) => (
+        <div key={i} style={cardRow}>
+          <span style={cardLabel}>{r.role}</span>
+          <span>${r.min}–${r.max} (avg ${r.avg})</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AgentToolResultView({
+  result,
+  onActionDone,
+  onNavigate,
+}: {
+  result: AgentToolResult;
+  onActionDone: (msg: string, url?: string) => void;
+  onNavigate: (path: string, label?: string) => void;
+}) {
+  const data = result.data || {};
+  switch (result.display_type) {
+    case 'confirm_post_project':
+    case 'confirm_submit_proposal':
+    case 'confirm_update_profile':
+      return <ConfirmCard result={result} onActionDone={onActionDone} />;
+    case 'freelancer_cards':
+      return <FreelancerCards data={data} />;
+    case 'project_list':
+      return <ProjectCards data={data} />;
+    case 'cost_estimate':
+      return <CostEstimateCard data={data} />;
+    case 'market_rates':
+      return <MarketRatesCard data={data} />;
+    case 'navigate':
+      return (
+        <div style={{ marginTop: 8 }}>
+          <button style={cardBtnPrimary} onClick={() => onNavigate(String(data.path), String(data.label || ''))}>
+            {String(data.label || 'Open page')} <ArrowRight size={13} />
+          </button>
+        </div>
+      );
+    default:
+      return null;
+  }
+}
 
 // ── Component ──────────────────────────────────────────────────────────────
 
@@ -1071,6 +1298,48 @@ export default function ChatbotAgent() {
     };
   }, [chatStatus, getQuickActions]);
 
+  // ── Agentic backend call (LLM tool-calling) ────────────────────────────
+  // Authenticated users hit the full account-aware agent; guests hit the
+  // public, read-only agent. Returns null if the backend gave us nothing
+  // usable, so the caller can gracefully fall back to offline pattern-matching.
+
+  const callAgent = useCallback(async (text: string): Promise<{
+    message: string;
+    toolResults?: AgentToolResult[];
+    suggestions?: string[];
+    agentActions?: AgentActionButton[];
+  } | null> => {
+    const endpoint = isAuthenticated ? '/ai/client-assistant/chat' : '/ai/client-assistant/guest-chat';
+    const history = messages
+      .filter(m => m.text && !m.isStepSummary)
+      .slice(-8)
+      .map(m => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text }));
+    const res = await apiFetch<{
+      message?: string;
+      response?: string;
+      tool_results?: AgentToolResult[];
+      suggestions?: string[];
+      action_buttons?: AgentActionButton[];
+    }>(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        conversation_history: history,
+        page_context: pathname || undefined,
+      }),
+    });
+    const message = res.message || res.response || '';
+    const toolResults = res.tool_results || [];
+    if (!message && toolResults.length === 0) return null;
+    return {
+      message,
+      toolResults,
+      suggestions: res.suggestions,
+      agentActions: res.action_buttons,
+    };
+  }, [isAuthenticated, messages, pathname]);
+
   // ── Send Message ──────────────────────────────────────────────────────
 
   const handleSendMessage = useCallback(async (e: React.FormEvent) => {
@@ -1096,48 +1365,53 @@ export default function ChatbotAgent() {
     }
 
     try {
-      let data: { response: string; sentiment?: string; suggested_actions?: string[] };
-      try {
-        const res = await apiFetch<{ response: string; sentiment?: string; suggested_actions?: string[] }>(
-          `/${conversationId}/message`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: trimmed }),
-          },
-        );
-        data = res;
-      } catch {
-        data = {
-          response: getOfflineResponse(trimmed).text,
-          sentiment: getOfflineResponse(trimmed).sentiment,
-          suggested_actions: getOfflineResponse(trimmed).suggestedActions?.map(a => a.text),
-        };
-        setChatStatus('degraded');
-      }
+      const agent = await callAgent(trimmed);
+      if (!agent) throw new Error('empty agent response');
 
-      await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 100));
+      await new Promise(resolve => setTimeout(resolve, 80 + Math.random() * 80));
 
-      const offlineActions = getOfflineResponse(trimmed).suggestedActions;
-      addBotMessage(data.response, {
-        sentiment: (data.sentiment as 'positive' | 'neutral' | 'negative') || 'neutral',
-        suggestedActions: offlineActions,
+      addBotMessage(agent.message || ' ', {
+        sentiment: 'neutral',
+        toolResults: agent.toolResults,
+        agentActions: agent.agentActions,
+        suggestedActions: (agent.suggestions || []).map(s => ({ icon: Sparkles, text: s })),
       });
+      if (chatStatus !== 'online') setChatStatus('online');
       if (!isOpen) setUnreadCount(prev => prev + 1);
       playSound('receive');
     } catch {
+      // Graceful degradation: agent/AI gateway unreachable → offline patterns.
       const offlineData = getOfflineResponse(trimmed);
       addBotMessage(offlineData.text, {
         sentiment: offlineData.sentiment as any,
         suggestedActions: offlineData.suggestedActions,
       });
+      setChatStatus('degraded');
       if (!isOpen) setUnreadCount(prev => prev + 1);
       playSound('receive');
     } finally {
       setIsLoading(false);
       setIsTyping(false);
     }
-  }, [inputValue, conversationId, activeFlow, flowStepIndex, addUserMessage, addBotMessage, playSound, advanceFlow, getOfflineResponse, isOpen]);
+  }, [inputValue, conversationId, activeFlow, flowStepIndex, addUserMessage, addBotMessage, playSound, advanceFlow, callAgent, getOfflineResponse, isOpen, chatStatus]);
+
+  // ── Agent navigation & post-action handlers ───────────────────────────
+
+  const handleAgentNavigate = useCallback((path: string, label?: string) => {
+    if (!path) return;
+    addBotMessage(label ? `Opening ${label}…` : 'Taking you there…');
+    setTimeout(() => {
+      setIsOpen(false);
+      router.push(path);
+    }, 450);
+  }, [addBotMessage, router]);
+
+  const handleAgentActionDone = useCallback((msg: string, url?: string) => {
+    addBotMessage(msg, {
+      agentActions: url ? [{ label: 'Open', href: url, variant: 'primary' }] : undefined,
+    });
+    playSound('step_complete');
+  }, [addBotMessage, playSound]);
 
   // ── Handle Action ─────────────────────────────────────────────────────
 
@@ -1203,21 +1477,56 @@ export default function ChatbotAgent() {
     }
 
     if (action === 'submit_project') {
-      addBotMessage("Your project has been submitted! You\u2019ll start receiving proposals soon. I\u2019ll notify you when there are new matches.", {
-        suggestedActions: [
-          { icon: LayoutDashboard, text: 'View My Projects', action: 'nav:/client/dashboard' },
-          { icon: Sparkles, text: 'Something else', action: 'clear_flow' },
-        ],
-      });
+      // Actually publish the project the guided flow collected, via the real
+      // backend action endpoint (no more fake "submitted" message).
+      const CATEGORY_MAP: Record<string, string> = {
+        web: 'Web Development', mobile: 'Mobile Development', design: 'Design & Creative',
+        writing: 'Writing & Content', marketing: 'Marketing & Sales',
+        data: 'Data Science & Analytics', devops: 'Other', security: 'Other',
+      };
+      const BUDGET_MAP: Record<string, [number, number]> = {
+        under_500: [100, 500], '500_2000': [500, 2000], '2000_5000': [2000, 5000], '5000_plus': [5000, 15000],
+      };
+      const [bmin, bmax] = BUDGET_MAP[flowData.budget] || [0, 0];
+      const skillsStr = selectedSkills.length > 0 ? selectedSkills.join(', ') : (flowData.skills || '');
+      const draft = {
+        title: flowData.title || 'Untitled Project',
+        description: flowData.description || '',
+        category: CATEGORY_MAP[flowData.category] || 'Other',
+        budget_type: 'Fixed',
+        budget_min: bmin,
+        budget_max: bmax,
+        skills: skillsStr,
+      };
       setActiveFlow(null);
+      setIsTyping(true);
+      (async () => {
+        try {
+          const res = await apiFetch<{ message?: string; url?: string }>(
+            '/ai/client-assistant/actions/post-project',
+            { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(draft) },
+          );
+          addBotMessage(res?.message || 'Your project is now live!', {
+            agentActions: res?.url ? [{ label: 'View Project', href: res.url, variant: 'primary' }] : undefined,
+            suggestedActions: [{ icon: Sparkles, text: 'Something else', action: 'clear_flow' }],
+          });
+          playSound('step_complete');
+        } catch (err: any) {
+          addBotMessage(`I couldn\u2019t post that automatically (${err?.message || 'error'}). You can finish it on the post-a-job page.`, {
+            suggestedActions: [{ icon: Briefcase, text: 'Open Post a Job', action: 'nav:/client/post-job' }],
+          });
+        } finally {
+          setIsTyping(false);
+        }
+      })();
       return;
     }
 
     if (action === 'publish_portfolio') {
-      addBotMessage("Portfolio entry published! Your profile just got stronger. Want to add another entry or do something else?", {
+      addBotMessage("Great \u2014 let\u2019s add this to your portfolio. Open the portfolio page to save it with images and links.", {
         suggestedActions: [
-          { icon: Award, text: 'Add Another', action: 'flow:build_portfolio', requiresAuth: true },
-          { icon: User, text: 'View Profile', action: `nav:/${userRole}/profile` },
+          { icon: Award, text: 'Open Portfolio', action: `nav:/${userRole}/profile` },
+          { icon: Award, text: 'Add Another Draft', action: 'flow:build_portfolio', requiresAuth: true },
         ],
       });
       setActiveFlow(null);
@@ -1225,10 +1534,11 @@ export default function ChatbotAgent() {
     }
 
     if (action === 'submit_proposal') {
-      addBotMessage("Proposal submitted! The client will review it shortly. Here are some next steps:", {
+      // The guided flow gathers free-text only (no project id), so route the user
+      // to the agent for a real, confirmable submission rather than faking success.
+      addBotMessage("To actually submit this, tell me which open project to apply to (e.g. \u201capply to the React dashboard project\u201d) and I\u2019ll draft + send it for your confirmation. Or open the project to apply directly.", {
         suggestedActions: [
-          { icon: Search, text: 'Find More Projects', action: 'nav:/freelancer/browse-projects' },
-          { icon: LayoutDashboard, text: 'Go to Dashboard', action: 'nav:/freelancer/dashboard' },
+          { icon: Search, text: 'Find Matching Projects', action: 'nav:/freelancer/browse-projects' },
         ],
       });
       setActiveFlow(null);
@@ -1254,7 +1564,7 @@ export default function ChatbotAgent() {
       setIsTyping(false);
       playSound('receive');
     }, 500);
-  }, [isAuthenticated, addBotMessage, startFlow, handleFlowChoice, handleFlowSkillToggle, handleFlowSkillsDone, router, getOfflineResponse, getQuickActions, activeFlow, playSound, userRole]);
+  }, [isAuthenticated, addBotMessage, startFlow, handleFlowChoice, handleFlowSkillToggle, handleFlowSkillsDone, router, getOfflineResponse, getQuickActions, activeFlow, playSound, userRole, flowData, selectedSkills]);
 
   // ── Feedback ──────────────────────────────────────────────────────────
 
@@ -1475,6 +1785,41 @@ export default function ChatbotAgent() {
 
         {message.isStepSummary && message.stepData && renderStepSummary(message)}
 
+        {isBot && message.toolResults && message.toolResults.length > 0 && (
+          <div>
+            {message.toolResults.map((tr, idx) => (
+              <AgentToolResultView
+                key={idx}
+                result={tr}
+                onActionDone={handleAgentActionDone}
+                onNavigate={handleAgentNavigate}
+              />
+            ))}
+          </div>
+        )}
+
+        {isBot && message.agentActions && message.agentActions.length > 0 && (
+          <div className={commonStyles.suggestedActions}>
+            {message.agentActions.map((b, idx) => (
+              <motion.button
+                key={idx}
+                className={cn(
+                  commonStyles.actionButton,
+                  b.variant === 'secondary'
+                    ? cn(commonStyles.actionButtonSecondary, themeStyles.actionButtonSecondary)
+                    : cn(commonStyles.actionButtonPrimary, themeStyles.actionButtonPrimary),
+                )}
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => handleAgentNavigate(b.href, b.label)}
+              >
+                {b.label}
+                <ArrowRight size={12} />
+              </motion.button>
+            ))}
+          </div>
+        )}
+
         {isBot && message.flowActions && message.flowActions.length > 0 && (
           <div className={commonStyles.suggestedActions}>
             {message.flowActions.map((fa, idx) => {
@@ -1608,8 +1953,12 @@ export default function ChatbotAgent() {
 
   // ── Render: Main ──────────────────────────────────────────────────────
 
-  return (
-    <div className={commonStyles.chatbotContainer}>
+  // The dialog + proactive chip are portalled to <body> so their
+  // position:fixed is resolved against the viewport. They must NOT live inside
+  // FloatingActionButtons, whose animated/transformed container would otherwise
+  // become the containing block and push the panel off-screen on mobile.
+  const overlay = (
+    <>
       {/* Proactive Chip */}
       <AnimatePresence>
         {showProactiveChip && !isOpen && proactiveSuggestion && (
@@ -1842,7 +2191,11 @@ export default function ChatbotAgent() {
           </motion.div>
         )}
       </AnimatePresence>
+    </>
+  );
 
+  return (
+    <div className={commonStyles.chatbotContainer}>
       {/* Toggle Button */}
       <motion.button
         ref={buttonRef}
@@ -1929,6 +2282,8 @@ export default function ChatbotAgent() {
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.button>
+
+      {typeof document !== 'undefined' && createPortal(overlay, document.body)}
     </div>
   );
 }
