@@ -1340,7 +1340,7 @@ export default function ChatbotAgent() {
   const renderFlowCards = (choices: { label: string; value: string; icon?: React.ElementType }[], type: 'choice' | 'multi-choice') => (
     <div className={commonStyles.flowStart}>
       {choices.map(choice => {
-        const Icon = (choice.icon || ArrowRight) as React.ElementType;
+        const IconComponent = choice.icon || ArrowRight;
         const isSelected = type === 'multi-choice' && selectedSkills.includes(choice.value);
         return (
           <motion.button
@@ -1358,7 +1358,7 @@ export default function ChatbotAgent() {
             aria-label={choice.label}
           >
             <span className={cn(commonStyles.flowCardIcon, themeStyles.flowCardIcon)}>
-              <Icon size={20} />
+              {React.createElement(IconComponent, { size: 20 })}
             </span>
             <span className={commonStyles.flowCardTitle}>{choice.label}</span>
             {isSelected && <CheckCircle2 size={16} className={commonStyles.flowCardCheck} />}
@@ -1492,7 +1492,7 @@ export default function ChatbotAgent() {
                   whileTap={{ scale: 0.96 }}
                   onClick={() => handleAction(fa.action, fa.requiresAuth)}
                 >
-                  {FaIcon && <FaIcon size={14} />}
+                  {FaIcon && React.createElement(FaIcon, { size: 14 })}
                   {fa.label}
                 </motion.button>
               );
@@ -1503,7 +1503,7 @@ export default function ChatbotAgent() {
         {isBot && message.suggestedActions && message.suggestedActions.length > 0 && (
           <div className={commonStyles.suggestedActions}>
             {message.suggestedActions.map((action, idx) => {
-              const Icon = action.icon || Sparkles;
+              const IconComp = (action.icon || Sparkles) as React.ComponentType<{ size?: number; className?: string }>;
               const isPrimary = action.variant === 'primary';
               const isActionFlow = action.action?.startsWith('flow:');
               return (
@@ -1526,7 +1526,7 @@ export default function ChatbotAgent() {
                     }
                   }}
                 >
-                  <Icon size={14} />
+                  <IconComp size={14} />
                   {action.text}
                   {isActionFlow && <ArrowRight size={12} />}
                 </motion.button>
@@ -1748,7 +1748,9 @@ export default function ChatbotAgent() {
             >
               {messages.length === 0 && !isTyping && (
                 <div className={commonStyles.suggestedActions}>
-                  {ROLE_QUICK_ACTIONS[userRole].map((action, index) => (
+                  {ROLE_QUICK_ACTIONS[userRole].map((action, index) => {
+                    const ActionIcon = action.icon as React.ComponentType<{ size?: number; className?: string }>;
+                    return (
                     <motion.button
                       key={index}
                       className={cn(
@@ -1763,11 +1765,12 @@ export default function ChatbotAgent() {
                         else { setInputValue(action.text); inputRef.current?.focus(); }
                       }}
                     >
-                      <action.icon size={14} />
+                      <ActionIcon size={14} />
                       {action.text}
                       {action.action?.startsWith('flow:') && <ArrowRight size={12} />}
                     </motion.button>
-                  ))}
+                  );
+                  })}
                 </div>
               )}
 

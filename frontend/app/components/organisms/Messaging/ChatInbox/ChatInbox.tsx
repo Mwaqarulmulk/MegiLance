@@ -122,7 +122,7 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
     }
     setUserSearchLoading(true);
     try {
-      const results = await api.users?.search?.(query) || [];
+      const results = await api.users?.search?.(query, 'all') || [];
       setUserSearchResults(Array.isArray(results) ? results.slice(0, 10) : []);
     } catch {
       setUserSearchResults([]);
