@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { authApi, proposalsApi } from '@/lib/api';
+import { authApi, proposalsApi, favoritesApi } from '@/lib/api';
 import Button from '@/app/components/atoms/Button/Button';
 import { Heart, ShieldCheck, Star, Clock, MapPin, Sparkles } from 'lucide-react';
 import common from './JobCard.common.module.css';
@@ -45,6 +45,8 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const { resolvedTheme } = useTheme();
   const [isSaved, setIsSaved] = useState(false);
+  const [favoriteId, setFavoriteId] = useState<string | number | null>(null);
+  const [savingFavorite, setSavingFavorite] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
 
   const themeStyles = resolvedTheme === 'dark' ? dark : light;
@@ -55,10 +57,26 @@ const JobCard: React.FC<JobCardProps> = ({
       ? `$${budget.toLocaleString()}`
       : budget || 'Negotiable';
 
-  const toggleSave = (e: React.MouseEvent) => {
+  const toggleSave = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsSaved(!isSaved);
+    if (savingFavorite) return;
+    setSavingFavorite(true);
+    const next = !isSaved;
+    setIsSaved(next); // optimistic
+    try {
+      if (next) {
+        const resp: any = await favoritesApi.create('project', Number(id));
+        if (resp?.favorite_id != null) setFavoriteId(resp.favorite_id);
+      } else if (favoriteId != null) {
+        await favoritesApi.delete(favoriteId);
+        setFavoriteId(null);
+      }
+    } catch {
+      setIsSaved(!next); // revert on failure
+    } finally {
+      setSavingFavorite(false);
+    }
   };
 
   useEffect(() => {
@@ -78,6 +96,19 @@ const JobCard: React.FC<JobCardProps> = ({
       }
     };
     checkApplied();
+
+    const checkSaved = async () => {
+      try {
+        const resp: any = await favoritesApi.check('project', Number(id));
+        if (!mounted) return;
+        setIsSaved(Boolean(resp?.is_favorite));
+        if (resp?.favorite_id != null) setFavoriteId(resp.favorite_id);
+      } catch {
+        // not logged in or endpoint unavailable — leave default unsaved state
+      }
+    };
+    checkSaved();
+
     return () => { mounted = false; };
   }, [id]);
 

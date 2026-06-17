@@ -13,6 +13,27 @@ from app.db.turso_http import execute_query, parse_rows
 
 router = APIRouter()
 
+_referral_code_column_checked = False
+
+
+def _ensure_referral_code_column() -> None:
+    """Self-heal: ensure users.referral_code exists.
+
+    The column isn't in the base migrations, so on existing databases the
+    referral reads/writes would fail. Adding it idempotently (ALTER errors if it
+    already exists) keeps the feature working without a manual migration run.
+    """
+    global _referral_code_column_checked
+    if _referral_code_column_checked:
+        return
+    try:
+        execute_query("ALTER TABLE users ADD COLUMN referral_code TEXT", [])
+    except Exception:
+        # Column already exists (or DB rejected duplicate) — that's the success case.
+        pass
+    finally:
+        _referral_code_column_checked = True
+
 
 class ReferralInvite(BaseModel):
     email: str
@@ -26,6 +47,7 @@ class BulkInvite(BaseModel):
 @router.get("/me")
 async def get_my_referral_data(current_user=Depends(get_current_user)):
     try:
+        _ensure_referral_code_column()
         code_result = execute_query(
             "SELECT referral_code FROM users WHERE id = ?",
             [current_user.id],
@@ -124,6 +146,7 @@ async def invite_referral(
 ):
     now = datetime.now(timezone.utc).isoformat()
     try:
+        _ensure_referral_code_column()
         code_result = execute_query(
             "SELECT referral_code FROM users WHERE id = ?",
             [current_user.id],

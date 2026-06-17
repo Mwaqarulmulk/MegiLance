@@ -103,6 +103,7 @@ from .v1.core_domain import (
 )
 from .v1.identity import admin, api_keys, auth, social_login, users, verification
 from .v1.payments_domain import (
+    crypto,
     escrow,
     invoices,
     multi_currency,
@@ -168,6 +169,7 @@ api_router.include_router(payments.router, prefix="/payments", tags=["payments"]
 api_router.include_router(stripe.router, prefix="/stripe", tags=["stripe"])
 api_router.include_router(portfolio.router, prefix="/portfolio", tags=["portfolio"])
 api_router.include_router(wallet.router, prefix="/wallet", tags=["wallet"])
+api_router.include_router(crypto.router, prefix="/crypto", tags=["crypto-payments"])
 
 
 # Time tracking, invoices, and escrow

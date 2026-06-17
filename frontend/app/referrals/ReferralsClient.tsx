@@ -42,16 +42,23 @@ export function ReferralsClient() {
 
   const fetchData = async () => {
     try {
-      // Fetch stats
-      const statsRes = await fetch('/api/v1/referrals/stats');
-      if (statsRes.ok) {
-        setStats(await statsRes.json());
+      // Overview (code + url + aggregate stats) from /referrals/me
+      const meRes = await fetch('/api/v1/referrals/me', { credentials: 'include' });
+      if (meRes.ok) {
+        const me = await meRes.json();
+        setStats({
+          total_referrals: me?.stats?.total_referrals ?? 0,
+          total_earnings: Number(me?.total_earned ?? 0),
+          pending_earnings: 0,
+          referral_link: me?.referral_url ?? '',
+        });
       }
 
-      // Fetch list
-      const listRes = await fetch('/api/v1/referrals');
+      // List from /referrals/history → { items: [...] }
+      const listRes = await fetch('/api/v1/referrals/history', { credentials: 'include' });
       if (listRes.ok) {
-        setReferrals(await listRes.json());
+        const data = await listRes.json();
+        setReferrals(Array.isArray(data) ? data : (data?.items ?? []));
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {

@@ -49,6 +49,7 @@ import {
   QrCode,
 } from "lucide-react";
 import ErrorBanner from "@/app/components/molecules/ErrorBanner/ErrorBanner";
+import MetaMaskDeposit from "@/app/components/payments/MetaMaskDeposit/MetaMaskDeposit";
 import api from "@/lib/api";
 
 type TabKey = "overview" | "transactions" | "budget" | "methods";
@@ -96,8 +97,8 @@ export default function ClientWallet() {
   const [showDeposit, setShowDeposit] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [depositMethod, setDepositMethod] = useState<
-    "crypto" | "binance" | "wallet_id"
-  >("binance");
+    "metamask" | "crypto" | "binance" | "wallet_id"
+  >("metamask");
 
   // Pending withdrawals state
   const [pendingWithdrawals, setPendingWithdrawals] = useState<
@@ -440,6 +441,16 @@ export default function ClientWallet() {
                   className={cn(
                     commonStyles.depMethodBtn,
                     t.depMethodBtn,
+                    depositMethod === "metamask" && commonStyles.depMethodActive,
+                  )}
+                  onClick={() => setDepositMethod("metamask")}
+                >
+                  <Wallet size={18} /> MetaMask
+                </button>
+                <button
+                  className={cn(
+                    commonStyles.depMethodBtn,
+                    t.depMethodBtn,
                     depositMethod === "crypto" && commonStyles.depMethodActive,
                   )}
                   onClick={() => setDepositMethod("crypto")}
@@ -476,13 +487,28 @@ export default function ClientWallet() {
               </div>
               <div className={commonStyles.depositInput}>
                 <Input
-                  label="Custom Amount (USDT)"
+                  label="Custom Amount (USD)"
                   type="number"
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
                   placeholder="Enter amount..."
                 />
               </div>
+
+              {depositMethod === "metamask" && (
+                <div style={{ marginTop: "1rem" }}>
+                  <MetaMaskDeposit
+                    amountUsd={parseFloat(depositAmount) || 0}
+                    onSuccess={() => {
+                      setTimeout(() => {
+                        setShowDeposit(false);
+                        setDepositAmount("");
+                        window.location.reload();
+                      }, 2500);
+                    }}
+                  />
+                </div>
+              )}
 
               {depositMethod === "wallet_id" && (
                 <div
@@ -508,22 +534,24 @@ export default function ClientWallet() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  disabled={!depositAmount || parseFloat(depositAmount) <= 0}
-                >
-                  {depositMethod === "binance" ? (
-                    <QrCode size={16} />
-                  ) : (
-                    <Shield size={16} />
-                  )}
-                  {depositMethod === "binance" ? "Generate Pay QR" : "Deposit"}{" "}
-                  {depositAmount || "0"} USDT
-                </Button>
+                {depositMethod !== "metamask" && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={!depositAmount || parseFloat(depositAmount) <= 0}
+                  >
+                    {depositMethod === "binance" ? (
+                      <QrCode size={16} />
+                    ) : (
+                      <Shield size={16} />
+                    )}
+                    {depositMethod === "binance" ? "Generate Pay QR" : "Deposit"}{" "}
+                    {depositAmount || "0"} USDT
+                  </Button>
+                )}
               </div>
-              {/* Deposit fee preview */}
-              {depositAmount && parseFloat(depositAmount) > 0 && (
+              {/* Deposit fee preview (MetaMask flow shows its own on-chain amounts) */}
+              {depositMethod !== "metamask" && depositAmount && parseFloat(depositAmount) > 0 && (
                 <div
                   className={cn(commonStyles.feePreview, t.feePreview)}
                   role="status"

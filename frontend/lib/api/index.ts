@@ -35,6 +35,7 @@ export {
   refundsApi,
   payoutMethodsApi,
   multiCurrencyApi,
+  cryptoApi,
 } from "./payments";
 
 // Messaging & realtime
@@ -153,6 +154,7 @@ import {
   refundsApi,
   payoutMethodsApi,
   multiCurrencyApi,
+  cryptoApi,
 } from "./payments";
 import {
   messagesApi,
@@ -251,6 +253,7 @@ export default {
   messages: messagesApi,
   notifications: notificationsApi,
   payments: paymentsApi,
+  crypto: cryptoApi,
   reviews: reviewsApi,
   jobAlerts: jobAlertsApi,
   portal: portalApi,

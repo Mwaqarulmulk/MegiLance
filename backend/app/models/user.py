@@ -43,6 +43,7 @@ class User(Base):
     profile_data: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Stored as JSON string for portability
     notification_preferences: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON string for notification settings
     account_balance: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
+    referral_code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True)  # User's shareable referral code
     # created_by: removed — self-referencing FK never populated or used by any endpoint
     joined_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))

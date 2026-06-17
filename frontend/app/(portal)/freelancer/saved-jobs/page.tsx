@@ -20,7 +20,8 @@ import lightStyles from './SavedJobs.light.module.css';
 import darkStyles from './SavedJobs.dark.module.css';
 
 interface SavedJob {
-  id: string;
+  id: string;          // project id (used for routing/apply)
+  favorite_id: string; // favorites row id (used for removal)
   title: string;
   description: string;
   budget_type: 'fixed' | 'hourly';
@@ -31,6 +32,38 @@ interface SavedJob {
   posted_at: string;
   proposals_count: number;
   saved_at: string;
+}
+
+/** Skills may arrive as a JSON string, comma list, or array — normalize to string[]. */
+function normalizeSkills(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.map(String);
+  if (typeof raw === 'string' && raw.trim()) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed.map(String);
+    } catch { /* not JSON — fall through to comma split */ }
+    return raw.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+/** Map a backend favorites row (project favorite) to the SavedJob shape the UI renders. */
+function mapFavoriteToJob(fav: any): SavedJob {
+  const bt = String(fav.budget_type || 'fixed').toLowerCase();
+  return {
+    id: String(fav.project_id ?? ''),
+    favorite_id: String(fav.id ?? ''),
+    title: fav.project_title || 'Untitled project',
+    description: fav.project_description || '',
+    budget_type: bt === 'hourly' ? 'hourly' : 'fixed',
+    budget_min: Number(fav.budget_min ?? 0),
+    budget_max: Number(fav.budget_max ?? 0),
+    skills: normalizeSkills(fav.project_skills),
+    client_name: fav.client_name || 'Client',
+    posted_at: fav.project_created_at || fav.created_at || new Date().toISOString(),
+    proposals_count: Number(fav.proposals_count ?? 0),
+    saved_at: fav.created_at || new Date().toISOString(),
+  };
 }
 
 type SortBy = 'saved_at' | 'budget_max' | 'proposals_count' | 'posted_at';
@@ -63,8 +96,10 @@ export default function SavedJobsPage() {
   const loadSavedJobs = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch<any>('/saved-jobs');
-      setSavedJobs(Array.isArray(data) ? data : data.items || data.jobs || []);
+      // Saved jobs are project favorites — backend exposes them via /favorites.
+      const data = await apiFetch<any>('/favorites?target_type=project');
+      const items: any[] = Array.isArray(data) ? data : data.items || data.jobs || [];
+      setSavedJobs(items.filter(f => f.project_id != null).map(mapFavoriteToJob));
     } catch {
       setSavedJobs([]);
     } finally {
@@ -73,19 +108,26 @@ export default function SavedJobsPage() {
   };
 
   const handleRemove = async (jobId: string) => {
+    const job = savedJobs.find(j => j.id === jobId);
     setRemovingId(jobId);
     try {
-      await apiFetch(`/saved-jobs/${encodeURIComponent(jobId)}`, { method: 'DELETE' });
+      if (job?.favorite_id) {
+        await apiFetch(`/favorites/${encodeURIComponent(job.favorite_id)}`, { method: 'DELETE' });
+      }
     } catch { /* optimistic removal */ }
-    setSavedJobs(prev => prev.filter(job => job.id !== jobId));
+    setSavedJobs(prev => prev.filter(j => j.id !== jobId));
     setSelectedIds(prev => { const n = new Set(prev); n.delete(jobId); return n; });
     setRemovingId(null);
   };
 
   const handleBulkRemove = async () => {
-    const ids = Array.from(selectedIds);
-    for (const id of ids) {
-      try { await apiFetch(`/saved-jobs/${encodeURIComponent(id)}`, { method: 'DELETE' }); } catch { /* ok */ }
+    const jobs = savedJobs.filter(j => selectedIds.has(j.id));
+    for (const job of jobs) {
+      try {
+        if (job.favorite_id) {
+          await apiFetch(`/favorites/${encodeURIComponent(job.favorite_id)}`, { method: 'DELETE' });
+        }
+      } catch { /* ok */ }
     }
     setSavedJobs(prev => prev.filter(j => !selectedIds.has(j.id)));
     setSelectedIds(new Set());

@@ -73,6 +73,73 @@ export const walletApi = {
     apiFetch(`/wallet/withdrawals/${referenceId}/cancel`, { method: "POST" }),
 };
 
+export interface CryptoToken {
+  symbol: string;       // e.g. "USDC"
+  address: string;      // ERC-20 contract address
+  decimals: number;
+  faucet: boolean;      // true when the token exposes a public mint() faucet (mock/test tokens)
+}
+
+export interface CryptoChain {
+  chain_id: number;
+  chain_id_hex: string;
+  chain_name: string;
+  currency_symbol: string;
+  rpc_url: string;
+  block_explorer: string;
+  price_usd: number | null;
+  is_testnet: boolean;
+  receiving_address: string;
+  tokens: CryptoToken[];
+}
+
+export interface CryptoConfig {
+  enabled: boolean;
+  receiving_address: string;
+  chain_id: number;
+  chain_id_hex: string;
+  chain_name: string;
+  currency_symbol: string;
+  rpc_url: string;
+  block_explorer: string;
+  price_usd: number | null;
+  supported_chains: CryptoChain[];
+  min_deposit_usd: number;
+  max_deposit_usd: number;
+}
+
+export interface CryptoDepositResult {
+  status: "pending" | "completed" | "failed";
+  confirmed: boolean;
+  credited: boolean;
+  balance?: number;
+  detail?: string;
+}
+
+// Crypto / MetaMask payments — config + record on-chain deposit + verify receipt.
+export const cryptoApi = {
+  getConfig: () => apiFetch<CryptoConfig>("/crypto/config"),
+
+  deposit: (data: {
+    tx_hash: string;
+    amount_usd: number;
+    amount_crypto: number;
+    chain_id: number;
+    from_address?: string;
+    currency?: string;
+    asset_type?: "native" | "token";
+    token_address?: string;
+    token_decimals?: number;
+  }) =>
+    apiFetch<CryptoDepositResult>("/crypto/deposit", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  verify: (txHash: string) =>
+    apiFetch<CryptoDepositResult>(`/crypto/verify/${txHash}`, {}, true),
+};
+
 export const invoicesApi = {
   create: (data: {
     contract_id?: number;

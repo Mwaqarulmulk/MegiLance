@@ -136,8 +136,13 @@ class Settings(BaseSettings):
     BINANCE_PAY_API_KEY: Optional[str] = None
     BINANCE_PAY_SECRET_KEY: Optional[str] = None
     BINANCE_PAY_MERCHANT_ID: Optional[str] = None
-    CRYPTO_WALLET_ADDRESS: Optional[str] = None  # Platform's USDT wallet for deposits
-    CRYPTO_NETWORK: str = "BSC"  # Binance Smart Chain
+    CRYPTO_WALLET_ADDRESS: Optional[str] = None  # Platform's receiving wallet for crypto deposits
+    CRYPTO_NETWORK: str = "BSC"  # Network name (ETH, BSC, POLYGON, SEPOLIA, BSC_TESTNET)
+    CRYPTO_CHAIN_ID: Optional[int] = None  # EVM chain id; derived from CRYPTO_NETWORK when unset
+    CRYPTO_RPC_URL: Optional[str] = None  # Override JSON-RPC endpoint used to verify transactions
+    # Stablecoin (ERC-20) token registry override as JSON, merged over built-in defaults:
+    # {"80002": {"USDC": {"address": "0x...", "decimals": 6, "faucet": true}}}
+    STABLECOIN_TOKENS: Optional[str] = None
 
     # OAuth Configuration - Google (FREE forever)
     # Get from: https://console.cloud.google.com/apis/credentials

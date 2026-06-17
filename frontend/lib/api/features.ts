@@ -6,38 +6,99 @@ import type {
   AvailabilityBookingUpdate, ProposalTemplateMilestone,
 } from '@/types/api';
 
+// Backend exposes /referrals/* (see backend/app/api/v1/core_domain/referrals.py).
+// This client maps the UI's expected method names + response shapes onto those routes.
 export const referralApi = {
-  getMyCode: () => apiFetch('/referral-program/my-code'),
-  generateCode: () => apiFetch('/referral-program/generate-code', { method: 'POST' }),
-  validateCode: (code: string) => apiFetch(`/referral-program/validate/${code}`),
-  applyCode: (code: string) => apiFetch(`/referral-program/apply/${code}`, { method: 'POST' }),
-  getMyReferrals: (status?: string, page = 1, pageSize = 50) => {
+  // GET /referrals/me → { referral_code, referral_url, stats, total_earned, recent_referrals }
+  getMyCode: async () => {
+    const data = await apiFetch<any>('/referrals/me');
+    return {
+      code: data?.referral_code || '',
+      referral_url: data?.referral_url || '',
+      uses_count: data?.stats?.total_referrals ?? 0,
+      reward_per_referral: 0,
+    };
+  },
+  // GET /referrals/stats → { total_referrals, completed_referrals, pending, total_earned, this_month }
+  getStats: async () => {
+    const data = await apiFetch<any>('/referrals/stats');
+    const total = Number(data?.total_referrals ?? 0);
+    const completed = Number(data?.completed_referrals ?? 0);
+    return {
+      total_referrals: total,
+      successful_referrals: completed,
+      pending_referrals: Number(data?.pending ?? 0),
+      total_earnings: Number(data?.total_earned ?? 0),
+      pending_earnings: 0,
+      conversion_rate: total > 0 ? (completed / total) * 100 : 0,
+      this_month: Number(data?.this_month ?? 0),
+    };
+  },
+  // GET /referrals/history → { items, total, page }
+  getMyReferrals: async (status?: string, page = 1, pageSize = 50) => {
     const params = new URLSearchParams({ page: page.toString(), page_size: pageSize.toString() });
-    if (status) params.append('status', status);
-    return apiFetch(`/referral-program/my-referrals?${params}`);
+    if (status && status !== 'all') params.append('status_filter', status);
+    const data = await apiFetch<any>(`/referrals/history?${params}`);
+    const items = (data?.items || []) as any[];
+    return items.map((r) => ({
+      id: String(r.id),
+      referred_email: r.referred_email,
+      status: r.status,
+      reward_amount: Number(r.reward_amount || 0),
+      reward_paid: r.status === 'completed',
+      created_at: r.created_at,
+      referred_name: r.referred_name,
+    }));
   },
-  getStats: () => apiFetch('/referral-program/stats'),
-  getRewards: (status?: string) => {
-    const params = status ? `?status=${status}` : '';
-    return apiFetch(`/referral-program/rewards${params}`);
+  // GET /referrals/milestones → { milestones, completed_referrals }
+  getMilestones: async () => {
+    const data = await apiFetch<any>('/referrals/milestones');
+    const completed = Number(data?.completed_referrals ?? 0);
+    const milestones = ((data?.milestones || []) as any[]).map((m) => ({
+      referrals: m.target_count,
+      bonus: m.reward_amount,
+      achieved: !!m.achieved,
+      name: m.name,
+    }));
+    const next = milestones.find((m) => !m.achieved) || null;
+    return {
+      milestones,
+      current_referrals: completed,
+      next_milestone: next ? { referrals: next.referrals, bonus: next.bonus } : null,
+    };
   },
-  withdrawRewards: (amount: number) =>
-    apiFetch(`/referral-program/withdraw-rewards`, { method: 'POST', body: JSON.stringify({ amount }) }),
-  getLeaderboard: (period = 'monthly', limit = 10) =>
-    apiFetch(`/referral-program/leaderboard?period=${period}&limit=${limit}`),
-  getCampaigns: () => apiFetch('/referral-program/campaigns'),
+  // No dedicated backend share-links route — derive from the referral URL on /referrals/me
+  getShareLinks: async () => {
+    const data = await apiFetch<any>('/referrals/me');
+    const url = data?.referral_url || '';
+    const text = encodeURIComponent('Join me on MegiLance — the smarter freelancing platform!');
+    const enc = encodeURIComponent(url);
+    return {
+      direct_link: url,
+      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${enc}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${enc}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`,
+      whatsapp: `https://wa.me/?text=${text}%20${enc}`,
+    };
+  },
+  // POST /referrals/invite { email, message }
   sendInvite: (email: string, message?: string) =>
-    apiFetch('/referral-program/invite/email', {
+    apiFetch('/referrals/invite', {
       method: 'POST',
       body: JSON.stringify({ email, message }),
     }),
+  // POST /referrals/invite per email (no bulk route on backend → fan out)
   sendBulkInvites: (emails: string[]) =>
-    apiFetch('/referral-program/invite/bulk', {
-      method: 'POST',
-      body: JSON.stringify({ emails }),
-    }),
-  getShareLinks: () => apiFetch('/referral-program/share-links'),
-  getMilestones: () => apiFetch('/referral-program/milestones'),
+    Promise.all(
+      emails.map((email) =>
+        apiFetch('/referrals/invite', { method: 'POST', body: JSON.stringify({ email }) }).catch(() => null),
+      ),
+    ),
+  // GET /referrals/leaderboard
+  getLeaderboard: (period: 'monthly' | 'all_time' = 'monthly', limit = 10) =>
+    apiFetch(`/referrals/leaderboard?period=${period}&limit=${limit}`),
+  // GET /referrals/campaigns
+  getCampaigns: () => apiFetch('/referrals/campaigns'),
 };
 
 export const careerApi = {
