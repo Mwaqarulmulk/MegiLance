@@ -302,23 +302,27 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
   const updateStatus = useCallback((updates: Partial<AIConnectionStatus>) => {
     setStatus((prev) => {
       const newStatus = { ...prev, ...updates };
-      
-      // Determine mode based on availability
-      if (newStatus.backendAvailable && newStatus.aiServiceAvailable) {
+
+      // When no separate AI service is configured, backend availability alone
+      // determines mode — requiring aiServiceAvailable would always show "degraded".
+      if (!aiServiceUrl) {
+        newStatus.mode = newStatus.backendAvailable ? 'online' : 'offline';
+        newStatus.isOnline = newStatus.backendAvailable;
+      } else if (newStatus.backendAvailable && newStatus.aiServiceAvailable) {
         newStatus.mode = 'online';
         newStatus.isOnline = true;
       } else if (newStatus.backendAvailable || newStatus.aiServiceAvailable) {
         newStatus.mode = 'degraded';
         newStatus.isOnline = true;
       } else {
-        newStatus.mode = enableOfflineMode ? 'offline' : 'offline';
+        newStatus.mode = 'offline';
         newStatus.isOnline = enableOfflineMode;
       }
 
       onStatusChange?.(newStatus);
       return newStatus;
     });
-  }, [enableOfflineMode, onStatusChange]);
+  }, [aiServiceUrl, enableOfflineMode, onStatusChange]);
 
   // Ping backend
   const pingBackend = useCallback(async (): Promise<boolean> => {

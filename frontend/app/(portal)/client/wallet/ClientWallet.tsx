@@ -370,7 +370,14 @@ export default function ClientWallet() {
     );
   }
 
-  if (error) {
+  // Only block with a full error screen on a hard/unexpected failure.
+  // When error is the partial-data message from useClientData, continue to
+  // render the wallet with empty payment data rather than an opaque error page.
+  const isFatalError =
+    !!error &&
+    error !== "Some data failed to load. Partial results are shown.";
+
+  if (isFatalError) {
     return (
       <PageTransition>
         <div className={cn(commonStyles.container, t.container)}>
@@ -399,6 +406,17 @@ export default function ClientWallet() {
   return (
     <PageTransition>
       <div className={cn(commonStyles.container, t.container)}>
+        {/* Soft warning when API returned partial data */}
+        {error && !isFatalError && (
+          <div style={{ marginBottom: "1rem" }}>
+            <ErrorBanner
+              title="Transaction data unavailable"
+              message="Could not retrieve your payment history right now. Your wallet settings are still accessible."
+              onRetry={() => window.location.reload()}
+              showGoHome={false}
+            />
+          </div>
+        )}
         {/* Header */}
         <div className={cn(commonStyles.header, t.header)}>
           <div className={commonStyles.headerContent}>
