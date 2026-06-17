@@ -216,6 +216,20 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         path="/",
     )
 
+    # Generate verification token and send verification email
+    try:
+        verification_token = secrets.token_urlsafe(32)
+        update_user_fields(user["id"], {
+            "email_verification_token": verification_token,
+        })
+        email_service.send_verification_email(
+            to_email=body.email,
+            user_name=body.name,
+            verification_token=verification_token,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to send verification email during registration: {e}")
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
