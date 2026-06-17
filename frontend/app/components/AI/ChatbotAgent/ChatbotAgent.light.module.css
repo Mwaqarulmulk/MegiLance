@@ -182,3 +182,40 @@
     transparent 70%
   );
 }
+
+/* ═════ New theme additions ═════ */
+
+.stepProgress { background: var(--bg-secondary-light, #f8f9fa); }
+.stepProgressBar { background: linear-gradient(90deg, var(--ml-blue, #4571df), #9b59b6); }
+.stepLabel { color: var(--text-secondary-light, #64748b); }
+
+.flowCard { background: var(--bg-primary-light, #fff); border-color: var(--border-light, #e2e8f0); }
+.flowCard:hover { background: var(--bg-tertiary-light, #f1f5f9); border-color: var(--ml-blue, #4571df); }
+.flowCardIcon { background: linear-gradient(135deg, rgba(69, 115, 223, 0.1), rgba(155, 89, 182, 0.1)); color: var(--ml-blue, #4571df); }
+.flowCardTitle { color: var(--text-primary-light, #1e293b); }
+
+.actionButtonPrimary { background: linear-gradient(135deg, var(--ml-blue, #4571df), #9b59b6); color: #fff; }
+.actionButtonPrimary:hover { box-shadow: 0 8px 24px rgba(69, 115, 223, 0.4); }
+.actionButtonSecondary { color: var(--text-secondary-light, #64748b); border-color: var(--border-light, #e2e8f0); }
+.actionButtonSecondary:hover { background: rgba(69, 115, 223, 0.08); color: var(--ml-blue, #4571df); border-color: var(--ml-blue, #4571df); }
+
+.feedbackRow { color: var(--text-tertiary-light, #94a3b8); }
+.feedbackBtn { color: var(--text-tertiary-light, #94a3b8); }
+.feedbackBtn[data-active="true"] { color: var(--ml-blue, #4571df); }
+
+.userAvatar { background: var(--bg-tertiary-light, #f1f5f9); color: var(--text-primary-light, #1e293b); border-color: var(--border-light, #e2e8f0); }
+
+.guestBanner { background: linear-gradient(90deg, rgba(69, 115, 223, 0.06), rgba(155, 89, 182, 0.06)); color: var(--text-secondary-light, #64748b); border-bottom: 1px solid var(--border-light, #e2e8f0); }
+
+.markdownContent { color: var(--color-text-primary-light, #1e293b); }
+.markdownContent code { background: rgba(69, 115, 223, 0.08); color: #c0392b; }
+.markdownContent strong { color: var(--text-primary-light, #1e293b); }
+
+.attachmentBtn { color: var(--text-tertiary-light, #94a3b8); }
+
+.stepSummary { background: var(--bg-primary-light, #fff); border-color: var(--border-light, #e2e8f0); }
+.stepSummaryToggle { color: var(--text-secondary-light, #64748b); }
+.stepSummaryLabel { color: var(--text-secondary-light, #64748b); }
+.stepSummaryValue { color: var(--text-primary-light, #1e293b); }
+
+.proactiveChip { background: var(--bg-primary-light, #fff); color: var(--text-primary-light, #1e293b); border-color: var(--border-light, #e2e8f0); }

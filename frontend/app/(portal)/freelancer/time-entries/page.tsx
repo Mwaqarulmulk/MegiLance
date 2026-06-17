@@ -1,21 +1,24 @@
 // @AI-HINT: Detailed time entries tracking with reporting and analytics
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
-import { timeEntriesApi as _timeEntriesApi } from '@/lib/api';
-import Button from '@/app/components/atoms/Button/Button';
-import Input from '@/app/components/atoms/Input/Input';
-import Select from '@/app/components/molecules/Select/Select';
-import Textarea from '@/app/components/atoms/Textarea/Textarea';
-import { PageTransition, ScrollReveal, StaggerContainer, StaggerItem } from '@/app/components/Animations';
-import { Clock, Pause, Trash2, Plus } from 'lucide-react'
-import commonStyles from './TimeEntries.common.module.css';
-import lightStyles from './TimeEntries.light.module.css';
-import darkStyles from './TimeEntries.dark.module.css';
-
-const timeEntriesApi: any = _timeEntriesApi;
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { apiFetch } from "@/lib/api/core";
+import Button from "@/app/components/atoms/Button/Button";
+import Input from "@/app/components/atoms/Input/Input";
+import Select from "@/app/components/molecules/Select/Select";
+import Textarea from "@/app/components/atoms/Textarea/Textarea";
+import {
+  PageTransition,
+  ScrollReveal,
+  StaggerContainer,
+  StaggerItem,
+} from "@/app/components/Animations";
+import { Clock, Pause, Trash2, Plus } from "lucide-react";
+import commonStyles from "./TimeEntries.common.module.css";
+import lightStyles from "./TimeEntries.light.module.css";
+import darkStyles from "./TimeEntries.dark.module.css";
 
 interface TimeEntry {
   id: string;
@@ -27,7 +30,7 @@ interface TimeEntry {
   duration_minutes: number;
   hourly_rate: number;
   billable: boolean;
-  status: 'running' | 'paused' | 'completed' | 'approved' | 'invoiced';
+  status: "running" | "paused" | "completed" | "approved" | "invoiced";
   notes: string;
   tags: string[];
   created_at: string;
@@ -52,23 +55,26 @@ const formatDuration = (minutes: number): string => {
 };
 
 const formatTime = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return new Date(dateStr).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
 const formatDate = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleDateString('en-US', { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric' 
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
   });
 };
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  running: { label: 'Running', color: '#22c55e' },
-  paused: { label: 'Paused', color: '#f59e0b' },
-  completed: { label: 'Completed', color: '#3b82f6' },
-  approved: { label: 'Approved', color: '#8b5cf6' },
-  invoiced: { label: 'Invoiced', color: '#06b6d4' },
+  running: { label: "Running", color: "#22c55e" },
+  paused: { label: "Paused", color: "#f59e0b" },
+  completed: { label: "Completed", color: "#3b82f6" },
+  approved: { label: "Approved", color: "#8b5cf6" },
+  invoiced: { label: "Invoiced", color: "#06b6d4" },
 };
 
 export default function TimeEntriesPage() {
@@ -79,51 +85,64 @@ export default function TimeEntriesPage() {
   const [weekSummary, setWeekSummary] = useState<WeekSummary | null>(null);
   const [showTimer, setShowTimer] = useState(false);
   const [activeTimer, setActiveTimer] = useState<TimeEntry | null>(null);
-  
+
   // Filters
-  const [selectedProject, setSelectedProject] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<'today' | 'week' | 'month' | 'custom'>('week');
-  
+  const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [dateRange, setDateRange] = useState<
+    "today" | "week" | "month" | "custom"
+  >("week");
+
   // New entry form
   const [newEntry, setNewEntry] = useState({
-    project_id: '',
-    task_description: '',
+    project_id: "",
+    task_description: "",
     billable: true,
-    notes: '',
+    notes: "",
     tags: [] as string[],
   });
-  const [tagInput, setTagInput] = useState('');
+  const [tagInput, setTagInput] = useState("");
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   useEffect(() => {
     loadData();
   }, [selectedProject, selectedStatus, dateRange]);
 
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
   const loadData = async () => {
     try {
       setLoading(true);
-      const params: Record<string, unknown> = { date_range: dateRange };
-      if (selectedProject !== 'all') params.project_id = selectedProject;
-      if (selectedStatus !== 'all') params.status = selectedStatus;
 
-      const [entriesRes, projectsRes, summaryRes] = await Promise.all([
-        timeEntriesApi.list(params),
-        timeEntriesApi.getProjects(),
-        timeEntriesApi.getWeekSummary(),
+      const entryParams = new URLSearchParams();
+      if (selectedProject !== "all") entryParams.append("project_id", selectedProject);
+      if (selectedStatus !== "all") entryParams.append("status", selectedStatus);
+      entryParams.append("date_range", dateRange);
+
+      const [entriesRes, projectsRes, summaryRes] = await Promise.allSettled([
+        apiFetch<any>(`/time-entries?${entryParams}`),
+        apiFetch<any>("/portal/freelancer/projects?status=open"),
+        apiFetch<any>("/time-entries/summary"),
       ]);
 
-      setEntries(entriesRes.items || []);
-      setProjects(projectsRes.items || []);
-      setWeekSummary(summaryRes);
-      
-      // Check for running timer
-      const running = (entriesRes.items || []).find((e: TimeEntry) => e.status === 'running');
+      const entriesData = entriesRes.status === "fulfilled" ? entriesRes.value : null;
+      const projectsData = projectsRes.status === "fulfilled" ? projectsRes.value : null;
+      const summaryData = summaryRes.status === "fulfilled" ? summaryRes.value : null;
+
+      setEntries(entriesData?.items || entriesData || []);
+      setProjects(projectsData?.items || projectsData || []);
+      if (summaryData) setWeekSummary(summaryData);
+
+      const items = entriesData?.items || entriesData || [];
+      const running = items.find((e: TimeEntry) => e.status === "running");
       if (running) setActiveTimer(running);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to load time entries:', error);
-      }
+      setToast({ message: "Failed to load time entries", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -133,21 +152,30 @@ export default function TimeEntriesPage() {
     if (!newEntry.project_id || !newEntry.task_description.trim()) return;
 
     try {
-      const response = await timeEntriesApi.startTimer({
-        project_id: newEntry.project_id,
-        task_description: newEntry.task_description,
-        billable: newEntry.billable,
-        notes: newEntry.notes,
-        tags: newEntry.tags,
+      const response = await apiFetch<any>("/time-entries", {
+        method: "POST",
+        body: JSON.stringify({
+          project_id: newEntry.project_id,
+          task_description: newEntry.task_description,
+          billable: newEntry.billable,
+          notes: newEntry.notes,
+          tags: newEntry.tags,
+          status: "running",
+        }),
       });
       setActiveTimer(response);
       setShowTimer(false);
-      setNewEntry({ project_id: '', task_description: '', billable: true, notes: '', tags: [] });
+      setNewEntry({
+        project_id: "",
+        task_description: "",
+        billable: true,
+        notes: "",
+        tags: [],
+      });
+      setToast({ message: "Timer started", type: "success" });
       loadData();
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to start timer:', error);
-      }
+      setToast({ message: "Failed to start timer", type: "error" });
     }
   };
 
@@ -155,74 +183,66 @@ export default function TimeEntriesPage() {
     if (!activeTimer) return;
 
     try {
-      await timeEntriesApi.stopTimer(activeTimer.id);
+      await apiFetch(`/time-entries/${activeTimer.id}/stop`, { method: "POST" });
       setActiveTimer(null);
+      setToast({ message: "Timer stopped", type: "success" });
       loadData();
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to stop timer:', error);
-      }
+      setToast({ message: "Failed to stop timer", type: "error" });
     }
   };
 
   const pauseTimer = async () => {
     if (!activeTimer) return;
-
-    try {
-      await timeEntriesApi.pauseTimer(activeTimer.id);
-      setActiveTimer(prev => prev ? { ...prev, status: 'paused' } : null);
-      loadData();
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to pause timer:', error);
-      }
-    }
+    setActiveTimer((prev) => (prev ? { ...prev, status: "paused" } : null));
+    setToast({ message: "Timer paused (local only)", type: "success" });
   };
 
   const resumeTimer = async (id: string) => {
-    try {
-      const response = await timeEntriesApi.resumeTimer(id);
-      setActiveTimer(response);
-      loadData();
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to resume timer:', error);
-      }
-    }
+    setActiveTimer((prev) => (prev ? { ...prev, status: "running" } : null));
+    setToast({ message: "Timer resumed (local only)", type: "success" });
   };
 
   const deleteEntry = async (id: string) => {
     try {
-      await timeEntriesApi.delete(id);
+      await apiFetch(`/time-entries/${id}`, { method: "DELETE" });
       setDeleteTargetId(null);
+      setToast({ message: "Entry deleted", type: "success" });
       loadData();
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to delete entry:', error);
-      }
+      setToast({ message: "Failed to delete entry", type: "error" });
     }
   };
 
   const addTag = () => {
     if (tagInput.trim() && !newEntry.tags.includes(tagInput.trim())) {
-      setNewEntry(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
-      setTagInput('');
+      setNewEntry((prev) => ({
+        ...prev,
+        tags: [...prev.tags, tagInput.trim()],
+      }));
+      setTagInput("");
     }
   };
 
   const removeTag = (tag: string) => {
-    setNewEntry(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tag) }));
+    setNewEntry((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tag),
+    }));
   };
 
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = resolvedTheme === "light" ? lightStyles : darkStyles;
 
   // Group entries by date
-  const groupedEntries = entries.reduce((acc, entry) => {
-    const dateKey = formatDate(entry.created_at);
-    if (!acc[dateKey]) acc[dateKey] = [];
-    acc[dateKey].push(entry);
-    return acc;
-  }, {} as Record<string, TimeEntry[]>);
+  const groupedEntries = entries.reduce(
+    (acc, entry) => {
+      const dateKey = formatDate(entry.created_at);
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(entry);
+      return acc;
+    },
+    {} as Record<string, TimeEntry[]>,
+  );
 
   return (
     <PageTransition>
@@ -231,7 +251,9 @@ export default function TimeEntriesPage() {
           <div className={commonStyles.header}>
             <div className={commonStyles.headerTop}>
               <div>
-                <h1 className={cn(commonStyles.title, themeStyles.title)}>Time Tracking</h1>
+                <h1 className={cn(commonStyles.title, themeStyles.title)}>
+                  Time Tracking
+                </h1>
                 <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
                   Track your work hours and manage time entries
                 </p>
@@ -247,29 +269,66 @@ export default function TimeEntriesPage() {
 
             {/* Week Summary */}
             {weekSummary && (
-              <StaggerContainer className={cn(commonStyles.summaryGrid, themeStyles.summaryGrid)}>
+              <StaggerContainer
+                className={cn(
+                  commonStyles.summaryGrid,
+                  themeStyles.summaryGrid,
+                )}
+              >
                 <StaggerItem>
-                  <div className={cn(commonStyles.summaryCard, themeStyles.summaryCard)}>
-                    <span className={commonStyles.summaryLabel}>Total Hours</span>
-                    <span className={commonStyles.summaryValue}>{weekSummary.total_hours.toFixed(1)}h</span>
+                  <div
+                    className={cn(
+                      commonStyles.summaryCard,
+                      themeStyles.summaryCard,
+                    )}
+                  >
+                    <span className={commonStyles.summaryLabel}>
+                      Total Hours
+                    </span>
+                    <span className={commonStyles.summaryValue}>
+                      {weekSummary.total_hours.toFixed(1)}h
+                    </span>
                   </div>
                 </StaggerItem>
                 <StaggerItem>
-                  <div className={cn(commonStyles.summaryCard, themeStyles.summaryCard)}>
-                    <span className={commonStyles.summaryLabel}>Billable Hours</span>
-                    <span className={commonStyles.summaryValue}>{weekSummary.billable_hours.toFixed(1)}h</span>
+                  <div
+                    className={cn(
+                      commonStyles.summaryCard,
+                      themeStyles.summaryCard,
+                    )}
+                  >
+                    <span className={commonStyles.summaryLabel}>
+                      Billable Hours
+                    </span>
+                    <span className={commonStyles.summaryValue}>
+                      {weekSummary.billable_hours.toFixed(1)}h
+                    </span>
                   </div>
                 </StaggerItem>
                 <StaggerItem>
-                  <div className={cn(commonStyles.summaryCard, themeStyles.summaryCard)}>
+                  <div
+                    className={cn(
+                      commonStyles.summaryCard,
+                      themeStyles.summaryCard,
+                    )}
+                  >
                     <span className={commonStyles.summaryLabel}>Earnings</span>
-                    <span className={commonStyles.summaryValue}>${weekSummary.total_earnings.toFixed(2)}</span>
+                    <span className={commonStyles.summaryValue}>
+                      ${weekSummary.total_earnings.toFixed(2)}
+                    </span>
                   </div>
                 </StaggerItem>
                 <StaggerItem>
-                  <div className={cn(commonStyles.summaryCard, themeStyles.summaryCard)}>
+                  <div
+                    className={cn(
+                      commonStyles.summaryCard,
+                      themeStyles.summaryCard,
+                    )}
+                  >
                     <span className={commonStyles.summaryLabel}>Projects</span>
-                    <span className={commonStyles.summaryValue}>{weekSummary.projects_worked}</span>
+                    <span className={commonStyles.summaryValue}>
+                      {weekSummary.projects_worked}
+                    </span>
                   </div>
                 </StaggerItem>
               </StaggerContainer>
@@ -278,10 +337,22 @@ export default function TimeEntriesPage() {
             {/* Active Timer */}
             {activeTimer && (
               <ScrollReveal>
-                <div className={cn(commonStyles.activeTimer, themeStyles.activeTimer)}>
+                <div
+                  className={cn(
+                    commonStyles.activeTimer,
+                    themeStyles.activeTimer,
+                  )}
+                >
                   <div className={commonStyles.timerInfo}>
-                    <span className={commonStyles.timerProject}>{activeTimer.project_name}</span>
-                    <span className={cn(commonStyles.timerTask, themeStyles.timerTask)}>
+                    <span className={commonStyles.timerProject}>
+                      {activeTimer.project_name}
+                    </span>
+                    <span
+                      className={cn(
+                        commonStyles.timerTask,
+                        themeStyles.timerTask,
+                      )}
+                    >
                       {activeTimer.task_description}
                     </span>
                   </div>
@@ -289,11 +360,15 @@ export default function TimeEntriesPage() {
                     {formatDuration(activeTimer.duration_minutes)}
                   </div>
                   <div className={commonStyles.timerActions}>
-                    {activeTimer.status === 'running' ? (
+                    {activeTimer.status === "running" ? (
                       <button
                         type="button"
                         onClick={pauseTimer}
-                        className={cn(commonStyles.timerBtn, commonStyles.pauseBtn, themeStyles.pauseBtn)}
+                        className={cn(
+                          commonStyles.timerBtn,
+                          commonStyles.pauseBtn,
+                          themeStyles.pauseBtn,
+                        )}
                       >
                         ⏸️ Pause
                       </button>
@@ -301,7 +376,11 @@ export default function TimeEntriesPage() {
                       <button
                         type="button"
                         onClick={() => resumeTimer(activeTimer.id)}
-                        className={cn(commonStyles.timerBtn, commonStyles.resumeBtn, themeStyles.resumeBtn)}
+                        className={cn(
+                          commonStyles.timerBtn,
+                          commonStyles.resumeBtn,
+                          themeStyles.resumeBtn,
+                        )}
                       >
                         ▶️ Resume
                       </button>
@@ -309,7 +388,11 @@ export default function TimeEntriesPage() {
                     <button
                       type="button"
                       onClick={stopTimer}
-                      className={cn(commonStyles.timerBtn, commonStyles.stopBtn, themeStyles.stopBtn)}
+                      className={cn(
+                        commonStyles.timerBtn,
+                        commonStyles.stopBtn,
+                        themeStyles.stopBtn,
+                      )}
                     >
                       ⏹️ Stop
                     </button>
@@ -323,11 +406,13 @@ export default function TimeEntriesPage() {
               <div className={commonStyles.filters}>
                 <Select
                   value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value as typeof dateRange)}
+                  onChange={(e) =>
+                    setDateRange(e.target.value as typeof dateRange)
+                  }
                   options={[
-                    { value: 'today', label: 'Today' },
-                    { value: 'week', label: 'This Week' },
-                    { value: 'month', label: 'This Month' },
+                    { value: "today", label: "Today" },
+                    { value: "week", label: "This Week" },
+                    { value: "month", label: "This Month" },
                   ]}
                 />
 
@@ -335,8 +420,8 @@ export default function TimeEntriesPage() {
                   value={selectedProject}
                   onChange={(e) => setSelectedProject(e.target.value)}
                   options={[
-                    { value: 'all', label: 'All Projects' },
-                    ...projects.map(p => ({ value: p.id, label: p.name })),
+                    { value: "all", label: "All Projects" },
+                    ...projects.map((p) => ({ value: p.id, label: p.name })),
                   ]}
                 />
 
@@ -344,8 +429,11 @@ export default function TimeEntriesPage() {
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   options={[
-                    { value: 'all', label: 'All Status' },
-                    ...Object.entries(statusConfig).map(([key, { label }]) => ({ value: key, label })),
+                    { value: "all", label: "All Status" },
+                    ...Object.entries(statusConfig).map(([key, { label }]) => ({
+                      value: key,
+                      label,
+                    })),
                   ]}
                 />
               </div>
@@ -354,11 +442,15 @@ export default function TimeEntriesPage() {
         </ScrollReveal>
 
         {loading ? (
-          <div className={cn(commonStyles.loading, themeStyles.loading)}>Loading time entries...</div>
+          <div className={cn(commonStyles.loading, themeStyles.loading)}>
+            Loading time entries...
+          </div>
         ) : Object.keys(groupedEntries).length === 0 ? (
           <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
             <span className={commonStyles.emptyIcon}>⏰</span>
-            <h3 className={cn(commonStyles.emptyTitle, themeStyles.emptyTitle)}>No Time Entries</h3>
+            <h3 className={cn(commonStyles.emptyTitle, themeStyles.emptyTitle)}>
+              No Time Entries
+            </h3>
             <p className={cn(commonStyles.emptyDesc, themeStyles.emptyDesc)}>
               Start tracking your time to see entries here
             </p>
@@ -367,46 +459,86 @@ export default function TimeEntriesPage() {
           <StaggerContainer className={commonStyles.entriesList}>
             {Object.entries(groupedEntries).map(([dateKey, dayEntries]) => (
               <StaggerItem key={dateKey} className={commonStyles.dateGroup}>
-                <h3 className={cn(commonStyles.dateHeader, themeStyles.dateHeader)}>
+                <h3
+                  className={cn(
+                    commonStyles.dateHeader,
+                    themeStyles.dateHeader,
+                  )}
+                >
                   {dateKey}
-                  <span className={cn(commonStyles.dateDuration, themeStyles.dateDuration)}>
-                    {formatDuration(dayEntries.reduce((sum, e) => sum + e.duration_minutes, 0))}
+                  <span
+                    className={cn(
+                      commonStyles.dateDuration,
+                      themeStyles.dateDuration,
+                    )}
+                  >
+                    {formatDuration(
+                      dayEntries.reduce(
+                        (sum, e) => sum + e.duration_minutes,
+                        0,
+                      ),
+                    )}
                   </span>
                 </h3>
-                
-                {dayEntries.map(entry => (
+
+                {dayEntries.map((entry) => (
                   <div
                     key={entry.id}
-                    className={cn(commonStyles.entryCard, themeStyles.entryCard)}
+                    className={cn(
+                      commonStyles.entryCard,
+                      themeStyles.entryCard,
+                    )}
                   >
                     <div className={commonStyles.entryTime}>
-                      <span className={cn(commonStyles.timeRange, themeStyles.timeRange)}>
+                      <span
+                        className={cn(
+                          commonStyles.timeRange,
+                          themeStyles.timeRange,
+                        )}
+                      >
                         {formatTime(entry.start_time)}
                         {entry.end_time && ` - ${formatTime(entry.end_time)}`}
                       </span>
-                      <span className={cn(commonStyles.duration, themeStyles.duration)}>
+                      <span
+                        className={cn(
+                          commonStyles.duration,
+                          themeStyles.duration,
+                        )}
+                      >
                         {formatDuration(entry.duration_minutes)}
                       </span>
                     </div>
 
                     <div className={commonStyles.entryContent}>
                       <div className={commonStyles.entryHeader}>
-                        <span className={cn(commonStyles.projectName, themeStyles.projectName)}>
+                        <span
+                          className={cn(
+                            commonStyles.projectName,
+                            themeStyles.projectName,
+                          )}
+                        >
                           {entry.project_name}
                         </span>
                         <span
                           className={commonStyles.statusBadge}
-                          style={{ backgroundColor: statusConfig[entry.status]?.color }}
+                          style={{
+                            backgroundColor: statusConfig[entry.status]?.color,
+                          }}
                         >
                           {statusConfig[entry.status]?.label}
                         </span>
                       </div>
-                      <p className={cn(commonStyles.taskDesc, themeStyles.taskDesc)}>
+                      <p
+                        className={cn(
+                          commonStyles.taskDesc,
+                          themeStyles.taskDesc,
+                        )}
+                      >
                         {entry.task_description}
                       </p>
                       {entry.tags.length > 0 && (
                         <div className={commonStyles.tags}>
-                          {entry.tags.map(tag => (
+                          {entry.tags.map((tag) => (
                             <span
                               key={tag}
                               className={cn(commonStyles.tag, themeStyles.tag)}
@@ -420,14 +552,26 @@ export default function TimeEntriesPage() {
 
                     <div className={commonStyles.entryMeta}>
                       {entry.billable && (
-                        <span className={cn(commonStyles.billable, themeStyles.billable)}>
-                          💵 ${(entry.duration_minutes / 60 * entry.hourly_rate).toFixed(2)}
+                        <span
+                          className={cn(
+                            commonStyles.billable,
+                            themeStyles.billable,
+                          )}
+                        >
+                          💵 $
+                          {(
+                            (entry.duration_minutes / 60) *
+                            entry.hourly_rate
+                          ).toFixed(2)}
                         </span>
                       )}
                       <button
                         type="button"
                         onClick={() => setDeleteTargetId(entry.id)}
-                        className={cn(commonStyles.deleteBtn, themeStyles.deleteBtn)}
+                        className={cn(
+                          commonStyles.deleteBtn,
+                          themeStyles.deleteBtn,
+                        )}
                         aria-label="Delete entry"
                       >
                         <Trash2 size={16} />
@@ -442,14 +586,35 @@ export default function TimeEntriesPage() {
 
         {/* New Timer Modal */}
         {showTimer && (
-          <div className={commonStyles.modalOverlay} onClick={() => setShowTimer(false)}>
-            <div className={cn(commonStyles.modal, themeStyles.modal)} onClick={(e) => e.stopPropagation()}>
-              <div className={cn(commonStyles.modalHeader, themeStyles.modalHeader)}>
-                <h2 className={cn(commonStyles.modalTitle, themeStyles.modalTitle)}>Start Timer</h2>
+          <div
+            className={commonStyles.modalOverlay}
+            onClick={() => setShowTimer(false)}
+          >
+            <div
+              className={cn(commonStyles.modal, themeStyles.modal)}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className={cn(
+                  commonStyles.modalHeader,
+                  themeStyles.modalHeader,
+                )}
+              >
+                <h2
+                  className={cn(
+                    commonStyles.modalTitle,
+                    themeStyles.modalTitle,
+                  )}
+                >
+                  Start Timer
+                </h2>
                 <button
                   type="button"
                   onClick={() => setShowTimer(false)}
-                  className={cn(commonStyles.closeButton, themeStyles.closeButton)}
+                  className={cn(
+                    commonStyles.closeButton,
+                    themeStyles.closeButton,
+                  )}
                 >
                   ×
                 </button>
@@ -457,49 +622,89 @@ export default function TimeEntriesPage() {
 
               <div className={commonStyles.modalContent}>
                 <div className={commonStyles.formGroup}>
-                  <label className={cn(commonStyles.label, themeStyles.label)}>Project *</label>
+                  <label className={cn(commonStyles.label, themeStyles.label)}>
+                    Project *
+                  </label>
                   <Select
                     value={newEntry.project_id}
-                    onChange={(e) => setNewEntry(prev => ({ ...prev, project_id: e.target.value }))}
+                    onChange={(e) =>
+                      setNewEntry((prev) => ({
+                        ...prev,
+                        project_id: e.target.value,
+                      }))
+                    }
                     options={[
-                      { value: '', label: 'Select a project' },
-                      ...projects.map(p => ({ value: p.id, label: p.name })),
+                      {
+                        value: "",
+                        label:
+                          projects.length === 0
+                            ? "— No projects found —"
+                            : "Select a project",
+                      },
+                      ...projects.map((p) => ({ value: p.id, label: p.name })),
                     ]}
                   />
+                  {projects.length === 0 && (
+                    <p className="mt-1.5 text-sm text-amber-600 dark:text-amber-400">
+                      No active projects found.{" "}
+                      <a
+                        href="/freelancer/projects/new"
+                        className="underline font-medium hover:opacity-80"
+                      >
+                        Create a project first
+                      </a>{" "}
+                      to start tracking time.
+                    </p>
+                  )}
                 </div>
 
                 <div className={commonStyles.formGroup}>
-                  <label className={cn(commonStyles.label, themeStyles.label)}>Task Description *</label>
+                  <label className={cn(commonStyles.label, themeStyles.label)}>
+                    Task Description *
+                  </label>
                   <Input
                     value={newEntry.task_description}
-                    onChange={(e) => setNewEntry(prev => ({ ...prev, task_description: e.target.value }))}
+                    onChange={(e) =>
+                      setNewEntry((prev) => ({
+                        ...prev,
+                        task_description: e.target.value,
+                      }))
+                    }
                     placeholder="What are you working on?"
                   />
                 </div>
 
                 <div className={commonStyles.formGroup}>
-                  <label className={cn(commonStyles.label, themeStyles.label)}>Tags</label>
+                  <label className={cn(commonStyles.label, themeStyles.label)}>
+                    Tags
+                  </label>
                   <div className={commonStyles.tagInput}>
                     <Input
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addTag())
+                      }
                       placeholder="Add a tag"
                     />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={addTag}
-                    >
+                    <Button variant="ghost" size="sm" onClick={addTag}>
                       <Plus size={14} /> Add
                     </Button>
                   </div>
                   {newEntry.tags.length > 0 && (
                     <div className={commonStyles.selectedTags}>
-                      {newEntry.tags.map(tag => (
-                        <span key={tag} className={cn(commonStyles.selectedTag, themeStyles.selectedTag)}>
+                      {newEntry.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={cn(
+                            commonStyles.selectedTag,
+                            themeStyles.selectedTag,
+                          )}
+                        >
                           {tag}
-                          <button type="button" onClick={() => removeTag(tag)}>×</button>
+                          <button type="button" onClick={() => removeTag(tag)}>
+                            ×
+                          </button>
                         </span>
                       ))}
                     </div>
@@ -511,31 +716,57 @@ export default function TimeEntriesPage() {
                     <input
                       type="checkbox"
                       checked={newEntry.billable}
-                      onChange={(e) => setNewEntry(prev => ({ ...prev, billable: e.target.checked }))}
+                      onChange={(e) =>
+                        setNewEntry((prev) => ({
+                          ...prev,
+                          billable: e.target.checked,
+                        }))
+                      }
                     />
-                    <span className={cn(commonStyles.checkboxText, themeStyles.checkboxText)}>
+                    <span
+                      className={cn(
+                        commonStyles.checkboxText,
+                        themeStyles.checkboxText,
+                      )}
+                    >
                       Billable time
                     </span>
                   </label>
                 </div>
 
                 <div className={commonStyles.formGroup}>
-                  <label className={cn(commonStyles.label, themeStyles.label)}>Notes (optional)</label>
+                  <label className={cn(commonStyles.label, themeStyles.label)}>
+                    Notes (optional)
+                  </label>
                   <Textarea
                     value={newEntry.notes}
-                    onChange={(e) => setNewEntry(prev => ({ ...prev, notes: e.target.value }))}
+                    onChange={(e) =>
+                      setNewEntry((prev) => ({
+                        ...prev,
+                        notes: e.target.value,
+                      }))
+                    }
                     placeholder="Any additional notes..."
                     rows={3}
                   />
                 </div>
               </div>
 
-              <div className={cn(commonStyles.modalFooter, themeStyles.modalFooter)}>
-                <Button variant="ghost" onClick={() => setShowTimer(false)}>Cancel</Button>
+              <div
+                className={cn(
+                  commonStyles.modalFooter,
+                  themeStyles.modalFooter,
+                )}
+              >
+                <Button variant="ghost" onClick={() => setShowTimer(false)}>
+                  Cancel
+                </Button>
                 <Button
                   variant="primary"
                   onClick={startTimer}
-                  disabled={!newEntry.project_id || !newEntry.task_description.trim()}
+                  disabled={
+                    !newEntry.project_id || !newEntry.task_description.trim()
+                  }
                 >
                   <Clock size={16} /> Start Timer
                 </Button>
@@ -546,20 +777,60 @@ export default function TimeEntriesPage() {
 
         {/* Delete Confirmation Modal */}
         {deleteTargetId && (
-          <div className={commonStyles.modalOverlay} onClick={() => setDeleteTargetId(null)}>
-            <div className={cn(commonStyles.modal, themeStyles.modal)} onClick={(e) => e.stopPropagation()}>
-              <h2 className={cn(commonStyles.modalTitle, themeStyles.modalTitle)}>Delete Time Entry</h2>
-              <p className={cn(commonStyles.confirmText, themeStyles.confirmText)}>
-                Are you sure you want to delete this time entry? This action cannot be undone.
+          <div
+            className={commonStyles.modalOverlay}
+            onClick={() => setDeleteTargetId(null)}
+          >
+            <div
+              className={cn(commonStyles.modal, themeStyles.modal)}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2
+                className={cn(commonStyles.modalTitle, themeStyles.modalTitle)}
+              >
+                Delete Time Entry
+              </h2>
+              <p
+                className={cn(
+                  commonStyles.confirmText,
+                  themeStyles.confirmText,
+                )}
+              >
+                Are you sure you want to delete this time entry? This action
+                cannot be undone.
               </p>
-              <div className={cn(commonStyles.modalFooter, themeStyles.modalFooter)}>
-                <Button variant="ghost" onClick={() => setDeleteTargetId(null)}>Cancel</Button>
-                <Button variant="danger" onClick={() => deleteEntry(deleteTargetId)}>Delete</Button>
+              <div
+                className={cn(
+                  commonStyles.modalFooter,
+                  themeStyles.modalFooter,
+                )}
+              >
+                <Button variant="ghost" onClick={() => setDeleteTargetId(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => deleteEntry(deleteTargetId)}
+                >
+                  Delete
+                </Button>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {toast && (
+        <div
+          className={cn(
+            "fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium transition-opacity",
+            toast.type === "success" ? "bg-green-600" : "bg-red-600",
+          )}
+          onClick={() => setToast(null)}
+        >
+          {toast.message}
+        </div>
+      )}
     </PageTransition>
   );
 }

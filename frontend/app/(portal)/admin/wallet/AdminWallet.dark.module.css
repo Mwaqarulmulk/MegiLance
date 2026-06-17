@@ -1,0 +1,44 @@
+/* @AI-HINT: Dark-theme overrides for Admin Wallet page */
+
+.container      { background: var(--bg-primary-dark, #0f172a); }
+.title          { color: var(--text-primary-dark, #f1f5f9); }
+.subtitle       { color: var(--text-tertiary-dark, #94a3b8); }
+
+.statCard       { background: var(--bg-secondary-dark, #1e293b); border: 1px solid var(--border-dark, #334155); }
+.statValue      { color: var(--text-primary-dark, #f1f5f9); }
+.statLabel      { color: var(--text-tertiary-dark, #94a3b8); }
+
+.chartSection   { background: var(--bg-secondary-dark, #1e293b); border: 1px solid var(--border-dark, #334155); }
+.chartTitle     { color: var(--text-primary-dark, #f1f5f9); }
+.chartBar       { background: var(--ml-blue, #4573df); }
+.chartLabel     { color: #6b7280; }
+
+/* Cards */
+.sectionCard    { background: var(--bg-secondary-dark, #1e293b); border: 1px solid var(--border-dark, #334155); }
+.sectionTitle   { color: var(--text-primary-dark, #f1f5f9); }
+
+/* Gateways */
+.gatewayRow     { background: rgba(255, 255, 255, 0.04); }
+.gatewayName    { color: var(--text-primary-dark, #f1f5f9); }
+
+/* Settings */
+.settingLabel   { color: var(--text-secondary-dark, #cbd5e1); }
+.settingInput   { background: rgba(255, 255, 255, 0.06); border-color: var(--border-dark, #334155); color: var(--text-primary-dark, #f1f5f9); }
+.settingSelect  { background: rgba(255, 255, 255, 0.06); border-color: var(--border-dark, #334155); color: var(--text-primary-dark, #f1f5f9); }
+
+/* Table */
+.tableContainer { background: var(--bg-secondary-dark, #1e293b); border: 1px solid var(--border-dark, #334155); }
+.tableTh        { background: var(--bg-secondary-dark, #1e293b); color: var(--text-tertiary-dark, #94a3b8); border-bottom: 1px solid var(--border-dark, #334155); }
+.tableTd        { color: var(--text-secondary-dark, #cbd5e1); border-bottom: 1px solid var(--border-dark, #334155); }
+.tableRow:hover { background: rgba(255, 255, 255, 0.04); }
+
+/* Toast */
+.toast {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(39, 174, 96, 0.4);
+  color: #4ade80;
+}
+.toastError {
+  border-color: rgba(232, 17, 35, 0.4);
+  color: #f87171;
+}

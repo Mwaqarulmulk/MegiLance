@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
-import { Search, MessageSquarePlus } from 'lucide-react';
+import { Search, MessageSquarePlus, UserPlus, X } from 'lucide-react';
 import UserAvatar from '@/app/components/atoms/UserAvatar/UserAvatar';
 import { cn } from '@/lib/utils';
 import api from '@/lib/api';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { useRouter } from 'next/navigation';
 import commonStyles from './ChatInbox.common.module.css';
 import lightStyles from './ChatInbox.light.module.css';
 import darkStyles from './ChatInbox.dark.module.css';
@@ -41,13 +42,14 @@ interface ApiConversation {
   unread_count?: number;
 }
 
-const DEMO_CONVERSATIONS: Conversation[] = [
-  { id: 'demo_1', numericId: 1001, userName: 'Alex Johnson', userId: 1, avatarUrl: 'https://i.pravatar.cc/150?img=1', lastMessage: 'Hi! I reviewed your proposal — I\'m interested. Can we discuss?', timestamp: '2m ago', unreadCount: 2, isDemo: true },
-  { id: 'demo_2', numericId: 1002, userName: 'Sarah Chen', userId: 2, avatarUrl: 'https://i.pravatar.cc/150?img=5', lastMessage: 'The designs look great! Just a few tweaks on mobile.', timestamp: '1h ago', unreadCount: 0, isDemo: true },
-  { id: 'demo_3', numericId: 1003, userName: 'Marcus Williams', userId: 3, avatarUrl: 'https://i.pravatar.cc/150?img=3', lastMessage: 'You: Sent the updated files. Let me know!', timestamp: 'Yesterday', unreadCount: 0, isDemo: true },
-  { id: 'demo_4', numericId: 1004, userName: 'Priya Patel', userId: 4, avatarUrl: 'https://i.pravatar.cc/150?img=9', lastMessage: 'Can we schedule a call to review requirements?', timestamp: '2d ago', unreadCount: 1, isDemo: true },
-  { id: 'demo_5', numericId: 1005, userName: 'James Thompson', userId: 5, avatarUrl: 'https://i.pravatar.cc/150?img=11', lastMessage: 'You: Payment released. Great work!', timestamp: '3d ago', unreadCount: 0, isDemo: true },
-];
+interface UserSearchResult {
+  id: number;
+  name: string;
+  user_type: string;
+  profile_image_url?: string;
+  headline?: string;
+  location?: string;
+}
 
 function fmtTime(isoDate: string): string {
   const d = new Date(isoDate);
@@ -69,48 +71,90 @@ interface ChatInboxProps {
 
 const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessage }) => {
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [active, setActive] = useState<string | null>(null);
+  const [showUserSearch, setShowUserSearch] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [userSearchResults, setUserSearchResults] = useState<UserSearchResult[]>([]);
+  const [userSearchLoading, setUserSearchLoading] = useState(false);
+  const [creatingConversation, setCreatingConversation] = useState<number | null>(null);
 
   const userIds = useMemo(() => conversations.map(c => c.userId).filter(Boolean), [conversations]);
   const { isOnline } = useOnlineStatus(userIds);
   const { typingUsers } = useTypingIndicator();
 
+  const loadConversations = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data: ApiConversation[] = await (api.messages as any).getConversations?.() || [];
+      const mapped: Conversation[] = data.map(conv => ({
+        id: `convo_${conv.id}`,
+        numericId: conv.id,
+        userName: conv.other_user_name || `User ${conv.other_user_id || conv.client_id}`,
+        userId: conv.other_user_id || conv.client_id || conv.freelancer_id,
+        avatarUrl: conv.other_user_avatar || '/avatars/default.png',
+        lastMessage: conv.last_message_content || 'No messages yet',
+        timestamp: fmtTime(conv.last_message_at || conv.created_at),
+        unreadCount: conv.unread_count || 0,
+      }));
+      setConversations(mapped);
+      if (mapped.length > 0 && !active) { setActive(mapped[0].id); onConversationSelect?.(mapped[0]); }
+    } catch (err) {
+      setConversations([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [active, onConversationSelect]);
+
   useEffect(() => {
     let cancelled = false;
-    async function load() {
-      setLoading(true);
-      try {
-        const data: ApiConversation[] = await (api.messages as any).getConversations?.() || [];
-        if (cancelled) return;
-        if (data.length === 0) throw new Error('empty');
-        const mapped: Conversation[] = data.map(conv => ({
-          id: `convo_${conv.id}`,
-          numericId: conv.id,
-          userName: conv.other_user_name || `User ${conv.other_user_id || conv.client_id}`,
-          userId: conv.other_user_id || conv.client_id || conv.freelancer_id,
-          avatarUrl: conv.other_user_avatar || '/avatars/default.png',
-          lastMessage: conv.last_message_content || 'No messages yet',
-          timestamp: fmtTime(conv.last_message_at || conv.created_at),
-          unreadCount: conv.unread_count || 0,
-        }));
-        setConversations(mapped);
-        if (mapped.length > 0) { setActive(mapped[0].id); onConversationSelect?.(mapped[0]); }
-      } catch (err) {
-        if (!cancelled) {
-          // Show empty state instead of demo data — real conversations load from API
-          setConversations([]);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
+    (async () => { if (!cancelled) await loadConversations(); })();
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadConversations]);
+
+  const searchUsers = useCallback(async (query: string) => {
+    if (!query.trim() || query.length < 2) {
+      setUserSearchResults([]);
+      return;
+    }
+    setUserSearchLoading(true);
+    try {
+      const results = await api.users?.search?.(query) || [];
+      setUserSearchResults(Array.isArray(results) ? results.slice(0, 10) : []);
+    } catch {
+      setUserSearchResults([]);
+    } finally {
+      setUserSearchLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchUsers(userSearchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [userSearchQuery, searchUsers]);
+
+  const startConversation = useCallback(async (userId: number) => {
+    setCreatingConversation(userId);
+    try {
+      const result = await api.messages.createConversation({ freelancer_id: userId } as any);
+      const convId = (result as any)?.conversation_id;
+      if (convId) {
+        await loadConversations();
+        setShowUserSearch(false);
+        setUserSearchQuery('');
+        setUserSearchResults([]);
+        setActive(`convo_${convId}`);
+        router.push('/messages');
+      }
+    } catch (err) {
+      console.error('Failed to create conversation:', err);
+    } finally {
+      setCreatingConversation(null);
+    }
+  }, [loadConversations, router]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return conversations;
@@ -134,15 +178,80 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
             <h2 className={cn(commonStyles.title, th.title)}>Messages</h2>
             {totalUnread > 0 && <span className={cn(commonStyles.unreadBadge, th.unreadBadge)}>{totalUnread}</span>}
           </div>
-          <button className={cn(commonStyles.composeBtn, th.composeBtn)} onClick={onNewMessage} title="New message" aria-label="New message">
-            <MessageSquarePlus size={18} />
-          </button>
+          <div className="flex gap-1">
+            <button 
+              className={cn(commonStyles.composeBtn, th.composeBtn)} 
+              onClick={() => setShowUserSearch(!showUserSearch)} 
+              title="Find users to message" 
+              aria-label="Find users to message"
+            >
+              <UserPlus size={18} />
+            </button>
+            <button className={cn(commonStyles.composeBtn, th.composeBtn)} onClick={onNewMessage} title="New message" aria-label="New message">
+              <MessageSquarePlus size={18} />
+            </button>
+          </div>
         </div>
+
+        {/* User Search Panel */}
+        {showUserSearch && (
+          <div className="border-b border-slate-200 p-3 dark:border-slate-700">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search freelancers or clients to message..."
+                value={userSearchQuery}
+                onChange={e => setUserSearchQuery(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-8 text-sm dark:border-slate-700 dark:bg-slate-800"
+                autoFocus
+              />
+              {userSearchQuery && (
+                <button
+                  onClick={() => { setUserSearchQuery(''); setUserSearchResults([]); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            {userSearchLoading && (
+              <div className="mt-2 text-center text-xs text-slate-400">Searching...</div>
+            )}
+            {userSearchResults.length > 0 && (
+              <div className="mt-2 max-h-60 overflow-y-auto">
+                {userSearchResults.map(user => (
+                  <div
+                    key={user.id}
+                    className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-slate-50 dark:hover:bg-slate-800"
+                  >
+                    <UserAvatar src={user.profile_image_url} name={user.name} size="small" />
+                    <div className="flex-1 min-w-0">
+                      <div className="truncate text-sm font-medium">{user.name}</div>
+                      <div className="truncate text-xs text-slate-500">{user.headline || user.user_type}</div>
+                    </div>
+                    <button
+                      onClick={() => startConversation(user.id)}
+                      disabled={creatingConversation === user.id}
+                      className="rounded-md bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {creatingConversation === user.id ? 'Starting...' : 'Message'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {userSearchQuery.length >= 2 && !userSearchLoading && userSearchResults.length === 0 && (
+              <div className="mt-2 text-center text-xs text-slate-400">No users found</div>
+            )}
+          </div>
+        )}
+
         <div className={cn(commonStyles.searchWrap, th.searchWrap)}>
           <Search size={14} className={cn(commonStyles.searchIcon, th.searchIcon)} />
           <input
             type="text"
-            placeholder="Search conversations…"
+            placeholder="Search conversations..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className={cn(commonStyles.searchInput, th.searchInput)}
@@ -167,8 +276,17 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
         ) : filtered.length === 0 ? (
           <div className={cn(commonStyles.emptyState, th.emptyState)}>
             <MessageSquarePlus size={32} style={{ opacity: 0.25, marginBottom: '0.5rem' }} />
-            <p style={{ fontWeight: 600, marginBottom: '0.25rem' }}>No conversations</p>
-            <p style={{ fontSize: '0.8rem', opacity: 0.55 }}>Start a new message to connect</p>
+            <p style={{ fontWeight: 600, marginBottom: '0.25rem' }}>No conversations yet</p>
+            <p style={{ fontSize: '0.8rem', opacity: 0.55, marginBottom: '1rem' }}>
+              Find freelancers or clients to start a conversation
+            </p>
+            <button
+              onClick={() => setShowUserSearch(true)}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+            >
+              <UserPlus size={14} className="mr-1 inline" />
+              Find Users
+            </button>
           </div>
         ) : filtered.map(convo => {
           const typing = getTyping(convo.numericId);
@@ -195,7 +313,7 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
                 </div>
                 <div className={commonStyles.row}>
                   {typing.length > 0 ? (
-                    <span className={commonStyles.typingText}>{typing[0].userName} is typing…</span>
+                    <span className={commonStyles.typingText}>{typing[0].userName} is typing...</span>
                   ) : (
                     <span className={cn(commonStyles.lastMsg, th.lastMsg, convo.unreadCount > 0 ? commonStyles.lastMsgUnread : '')}>{convo.lastMessage}</span>
                   )}

@@ -336,6 +336,79 @@ async def freelancer_monthly_earnings(months: int = Query(6, ge=1, le=24), curre
     return {"earnings": earnings}
 
 
+@router.get("/client/projects")
+async def client_projects(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1),
+    current_user=Depends(get_current_user),
+):
+    offset = (page - 1) * page_size
+    result = execute_query(
+        """SELECT id, title, description, category, status, budget_type, budget_min, budget_max,
+                  created_at, updated_at
+           FROM projects WHERE client_id = ?
+           ORDER BY created_at DESC LIMIT ? OFFSET ?""",
+        [current_user.id, page_size, offset],
+    )
+    rows = parse_rows(result)
+    count_result = execute_query("SELECT COUNT(*) as count FROM projects WHERE client_id = ?", [current_user.id])
+    count_rows = parse_rows(count_result)
+    total = count_rows[0]["count"] if count_rows else 0
+    return {"projects": rows if rows else [], "total": total, "page": page, "page_size": page_size}
+
+
+@router.post("/client/projects")
+async def client_create_project(data: dict, current_user=Depends(get_current_user)):
+    title = data.get("title", "").strip()
+    description = data.get("description", "").strip()
+    category = data.get("category", "").strip()
+    budget_type = data.get("budget_type", "fixed")
+    budget_min = data.get("budget_min", 0)
+    budget_max = data.get("budget_max", 0)
+
+    if not title:
+        raise HTTPException(status_code=400, detail="Title is required")
+    if not description:
+        raise HTTPException(status_code=400, detail="Description is required")
+
+    now = datetime.now(timezone.utc).isoformat()
+    result = execute_query(
+        """INSERT INTO projects (client_id, title, description, category, status, budget_type,
+           budget_min, budget_max, created_at, updated_at)
+           VALUES (?, ?, ?, ?, 'open', ?, ?, ?, ?, ?)""",
+        [current_user.id, title, description, category, budget_type, budget_min, budget_max, now, now],
+    )
+    return {"message": "Project created", "project_id": result.get("last_insert_rowid")}
+
+
+@router.get("/client/payments")
+async def client_payments(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1),
+    current_user=Depends(get_current_user),
+):
+    offset = (page - 1) * page_size
+    result = execute_query(
+        """SELECT p.id, p.amount, p.status, p.type, p.description, p.created_at as date,
+                  pr.title as project, u.name as freelancer_name
+           FROM payments p
+           JOIN contracts c ON p.contract_id = c.id
+           LEFT JOIN projects pr ON c.project_id = pr.id
+           LEFT JOIN users u ON c.freelancer_id = u.id
+           WHERE c.client_id = ?
+           ORDER BY p.created_at DESC LIMIT ? OFFSET ?""",
+        [current_user.id, page_size, offset],
+    )
+    rows = parse_rows(result)
+    count_result = execute_query(
+        "SELECT COUNT(*) as count FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.client_id = ?",
+        [current_user.id],
+    )
+    count_rows = parse_rows(count_result)
+    total = count_rows[0]["count"] if count_rows else 0
+    return {"payments": rows if rows else [], "total": total, "page": page}
+
+
 @router.get("/freelancer/wallet")
 async def freelancer_wallet(current_user=Depends(get_current_user)):
     balance = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])

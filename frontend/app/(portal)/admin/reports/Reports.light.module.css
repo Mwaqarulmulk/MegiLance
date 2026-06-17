@@ -1,24 +1,102 @@
 /* Light Theme - Admin Reports */
-.container { background: var(--bg-primary-light); }
-.title { color: #1a1a1a; }
-.subtitle { color: var(--color-text-secondary-light); }
-.statCard { background: #fff; border: 1px solid var(--border-light); }
-.statValue { color: #1a1a1a; }
-.statLabel { color: var(--color-text-secondary-light); }
-.tab { background: var(--bg-tertiary-light); color: #374151; }
-.tab:hover { background: var(--border-light); }
-.tabActive { background: var(--ml-blue) !important; color: #fff !important; }
-.reportCard { background: #fff; border: 1px solid var(--border-light); }
-.reportCard:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-.reportCardTitle { color: #1a1a1a; }
-.reportCardDesc { color: var(--color-text-secondary-light); }
-.reportCardMeta { color: var(--text-tertiary-light); }
-.chartSection { background: #fff; border: 1px solid var(--border-light); }
-.chartTitle { color: #1a1a1a; }
-.chartBar { background: var(--ml-blue); }
-.chartLabel { color: var(--text-tertiary-light); }
-.tableContainer { background: #fff; border: 1px solid var(--border-light); }
-.th { background: #f9fafb; color: var(--color-text-secondary-light); border-bottom: 1px solid var(--border-light); }
-.td { color: #374151; border-bottom: 1px solid var(--bg-tertiary-light); }
-.tr:hover { background: #f9fafb; }
-.emptyState { background: #f9fafb; color: var(--color-text-secondary-light); }
+.container {
+    background: var(--bg-primary-light);
+}
+.title {
+    color: #1a1a1a;
+}
+.subtitle {
+    color: var(--color-text-secondary-light);
+}
+.statCard {
+    background: #fff;
+    border: 1px solid var(--border-light);
+}
+.statValue {
+    color: #1a1a1a;
+}
+.statLabel {
+    color: var(--color-text-secondary-light);
+}
+.tab {
+    background: var(--bg-tertiary-light);
+    color: #374151;
+}
+.tab:hover {
+    background: var(--border-light);
+}
+.tabActive {
+    background: var(--ml-blue) !important;
+    color: #fff !important;
+}
+.reportCard {
+    background: #fff;
+    border: 1px solid var(--border-light);
+}
+.reportCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.reportCardTitle {
+    color: #1a1a1a;
+}
+.reportCardDesc {
+    color: var(--color-text-secondary-light);
+}
+.reportCardMeta {
+    color: var(--text-tertiary-light);
+}
+.chartSection {
+    background: #fff;
+    border: 1px solid var(--border-light);
+}
+.chartTitle {
+    color: #1a1a1a;
+}
+.chartBar {
+    background: var(--ml-blue);
+}
+.chartLabel {
+    color: var(--text-tertiary-light);
+}
+.tableContainer {
+    background: #fff;
+    border: 1px solid var(--border-light);
+}
+.th {
+    background: #f9fafb;
+    color: var(--color-text-secondary-light);
+    border-bottom: 1px solid var(--border-light);
+}
+.td {
+    color: #374151;
+    border-bottom: 1px solid var(--bg-tertiary-light);
+}
+.tr:hover {
+    background: #f9fafb;
+}
+.emptyState {
+    background: #f9fafb;
+    color: var(--color-text-secondary-light);
+}
+
+/* Modal */
+.modal {
+    background: #fff;
+    border: 1px solid var(--border-light, #e5e7eb);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+.modalTitle {
+    color: #1a1a1a;
+}
+.modalDesc {
+    color: var(--color-text-secondary-light, #6b7280);
+}
+.previewTable th {
+    background: #f9fafb;
+    color: var(--color-text-secondary-light, #6b7280);
+    border-bottom: 1px solid var(--border-light, #e5e7eb);
+}
+.previewTable td {
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}

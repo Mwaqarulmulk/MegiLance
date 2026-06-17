@@ -5,7 +5,24 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ml-border, #e2e8f0) transparent;
+}
+
+.sidebarNav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebarNav::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.sidebarNav::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: var(--ml-border, #e2e8f0);
 }
 
 .sidebarNavCollapsed {

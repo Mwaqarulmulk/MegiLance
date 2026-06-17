@@ -1,1 +1,9 @@
-.freelancers { background: transparent; color: var(--text-primary-dark); }
+.freelancers { background: transparent; color: var(--text-primary-dark, #e2e8f0); }
+.pageSubtitle { color: var(--text-secondary-dark, #94a3b8); }
+.card { background: rgba(15, 23, 42, 0.6); border-color: rgba(51, 65, 85, 0.5); }
+.card:hover { border-color: var(--ml-blue, #4573df); }
+.cardMeta p { color: var(--text-secondary-dark, #94a3b8); }
+.searchInput { background: rgba(15, 23, 42, 0.6); border-color: rgba(51, 65, 85, 0.5); color: var(--text-primary-dark, #e2e8f0); }
+.searchInput:focus { border-color: var(--ml-blue, #4573df); }
+.skillBadge { background: rgba(69, 115, 223, 0.15); color: #93c5fd; }
+.skeletonLine { background: linear-gradient(90deg, rgba(30,41,59,0.5) 25%, rgba(51,65,85,0.5) 50%, rgba(30,41,59,0.5) 75%); background-size: 200% 100%; }

@@ -74,6 +74,7 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  &::-ms-expand { display: none; }
   cursor: pointer;
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),

@@ -1,14 +1,14 @@
 // @AI-HINT: This is a reusable, theme-aware, and accessible toggle switch component for forms.
-'use client';
+"use client";
 
-import React, { useMemo } from 'react';
-import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import React, { useMemo } from "react";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
-import commonStyles from './ToggleSwitch.common.module.css';
-import lightStyles from './ToggleSwitch.light.module.css';
-import darkStyles from './ToggleSwitch.dark.module.css';
+import commonStyles from "./ToggleSwitch.common.module.css";
+import lightStyles from "./ToggleSwitch.light.module.css";
+import darkStyles from "./ToggleSwitch.dark.module.css";
 
 interface ToggleSwitchProps {
   label: string;
@@ -19,10 +19,17 @@ interface ToggleSwitchProps {
   helpText?: string;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked = false, checked, onChange, helpText }) => {
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+  label,
+  id,
+  defaultChecked = false,
+  checked,
+  onChange,
+  helpText,
+}) => {
   const { resolvedTheme } = useTheme();
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
-  
+
   const isChecked = checked !== undefined ? checked : internalChecked;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +41,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked =
   };
 
   const styles = useMemo(() => {
-    const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+    const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
     return { ...commonStyles, ...themeStyles };
   }, [resolvedTheme]);
 
@@ -44,7 +51,12 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked =
         <label htmlFor={id} className={cn(styles.label)}>
           {label}
         </label>
-        <div className={cn(styles.switchContainer, isChecked ? styles.switchChecked : styles.switchUnchecked)}>
+        <div
+          className={cn(
+            styles.switchContainer,
+            isChecked ? styles.switchChecked : styles.switchUnchecked,
+          )}
+        >
           <input
             type="checkbox"
             id={id}
@@ -54,19 +66,33 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, id, defaultChecked =
             role="switch"
             aria-checked={isChecked}
           />
-          <motion.div 
-            className={cn(styles.slider)} 
-            animate={{ backgroundColor: isChecked ? 'var(--color-primary, #4573df)' : 'transparent' }}
+          {/*
+            Use a plain div for the slider track so the CSS `transition: all`
+            already on `.slider` handles the background change smoothly.
+            Framer Motion previously tried to animate `backgroundColor` on top
+            of the CSS `background: linear-gradient(...)` which caused them to
+            fight each other and produce the visible flicker.
+          */}
+          <div
+            className={cn(styles.slider)}
+            style={{
+              background: isChecked
+                ? "var(--color-primary, #4573df)"
+                : undefined,
+            }}
           >
+            {/*
+              `initial={false}` prevents the spring from firing on first mount.
+              `layout` is removed — position is already handled by `animate.x`;
+              having both caused competing animations.
+            */}
             <motion.div
-              layout
+              initial={false}
               transition={{ type: "spring", stiffness: 700, damping: 30 }}
               className={cn(styles.sliderKnob)}
-              animate={{ 
-                x: isChecked ? 20 : 2 
-              }}
+              animate={{ x: isChecked ? 20 : 2 }}
             />
-          </motion.div>
+          </div>
         </div>
       </div>
       {helpText && <p className={cn(styles.helpText)}>{helpText}</p>}

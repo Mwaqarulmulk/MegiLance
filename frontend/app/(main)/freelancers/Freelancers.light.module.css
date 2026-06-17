@@ -1,1 +1,4 @@
-.freelancers { background: var(--bg-primary-light); color: var(--text-primary-light); }
+.freelancers { background: var(--bg-primary-light, #f8fafc); color: var(--text-primary-light, #0f172a); }
+.pageSubtitle { color: var(--text-secondary-light, #64748b); }
+.cardMeta p { color: var(--text-secondary-light, #64748b); }
+.skillBadge { background: rgba(69, 115, 223, 0.08); color: var(--ml-blue, #4573df); }

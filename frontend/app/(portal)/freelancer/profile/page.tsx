@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { RichTextEditor, ReadOnlyEditor } from '@/app/components/Editor';
 import { SignaturePad } from '@/app/components/SignaturePad';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
+import { apiFetch } from '@/lib/api/core';
 import {
   User, Mail, MapPin, Globe, Clock, Star, Award, Briefcase,
   Edit3, Save, Camera, Plus, Trash2, ExternalLink, Download,
@@ -117,10 +119,124 @@ const defaultProfile: FreelancerProfile = {
 };
 
 export default function FreelancerProfilePage() {
+  const { showToast } = useToaster();
   const [profile, setProfile] = useState<FreelancerProfile>(defaultProfile);
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Please select an image file', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image must be under 5MB', 'error');
+      return;
+    }
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_type', 'avatar');
+      const response = await fetch('/api/v1/uploads/avatar', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${(await import('@/lib/api/core')).getAuthToken() || ''}`,
+        },
+        body: formData,
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const url = data.url || data.file_url || data.path;
+        if (url) setProfile((p) => ({ ...p, avatar: url }));
+      } else {
+        showToast('Failed to upload image. Please try again.', 'error');
+      }
+    } catch {
+      showToast('Failed to upload image. Please try again.', 'error');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Please select an image file', 'error');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Cover image must be under 10MB', 'error');
+      return;
+    }
+    setUploadingCover(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_type', 'cover');
+      const response = await fetch('/api/v1/uploads/cover', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${(await import('@/lib/api/core')).getAuthToken() || ''}`,
+        },
+        body: formData,
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const url = data.url || data.file_url || data.path;
+        if (url) setProfile((p) => ({ ...p, coverImage: url }));
+      } else {
+        showToast('Failed to upload cover image. Please try again.', 'error');
+      }
+    } catch {
+      showToast('Failed to upload cover image. Please try again.', 'error');
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      await apiFetch('/profiles/me', {
+        method: 'PUT',
+        body: JSON.stringify({
+          full_name: profile.name,
+          title: profile.title,
+          bio: profile.bio,
+          location: profile.location,
+          timezone: profile.timezone,
+          hourly_rate: profile.hourlyRate,
+          skills: profile.skills,
+          experience_level: profile.experienceLevel,
+          availability_status: profile.availability.toLowerCase(),
+          profile_image_url: profile.avatar || null,
+          cover_image_url: profile.coverImage || null,
+          linkedin_url: profile.socialLinks.linkedin || null,
+          github_url: profile.socialLinks.github || null,
+          twitter_url: profile.socialLinks.twitter || null,
+          website_url: profile.socialLinks.website || null,
+        }),
+      });
+      showToast('Profile saved successfully!', 'success');
+      setEditing(false);
+    } catch {
+      showToast('Failed to save profile', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -135,11 +251,27 @@ export default function FreelancerProfilePage() {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Cover Image & Avatar */}
       <div className="relative bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl h-48 overflow-hidden">
+        {profile.coverImage && (
+          <img src={profile.coverImage} alt="Cover" className="absolute inset-0 w-full h-full object-cover" />
+        )}
         <div className="absolute inset-0 bg-black/20" />
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleCoverUpload}
+          className="hidden"
+          aria-label="Upload cover image"
+        />
         {editing && (
-          <button className="absolute top-4 right-4 flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm hover:bg-white/30 transition-colors">
+          <button
+            type="button"
+            onClick={() => coverInputRef.current?.click()}
+            disabled={uploadingCover}
+            className="absolute top-4 right-4 flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm hover:bg-white/30 transition-colors"
+          >
             <Camera size={14} />
-            Change Cover
+            {uploadingCover ? 'Uploading…' : 'Change Cover'}
           </button>
         )}
       </div>
@@ -149,13 +281,34 @@ export default function FreelancerProfilePage() {
         <div className="flex items-end gap-6">
           <div className="relative">
             <div className="w-32 h-32 rounded-2xl bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-lg overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
-                {profile.name.charAt(0)}
-              </div>
+              {profile.avatar && profile.avatar !== '/avatars/default.png' ? (
+                <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
+                  {profile.name.charAt(0)}
+                </div>
+              )}
             </div>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              className="hidden"
+              aria-label="Upload profile photo"
+            />
             {editing && (
-              <button className="absolute bottom-1 right-1 p-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                <Camera size={12} />
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={uploadingImage}
+                className="absolute bottom-1 right-1 p-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {uploadingImage ? (
+                  <span className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full inline-block" />
+                ) : (
+                  <Camera size={12} />
+                )}
               </button>
             )}
           </div>
@@ -186,11 +339,24 @@ export default function FreelancerProfilePage() {
 
           <div className="flex items-center gap-3 pb-2">
             <button
-              onClick={() => setEditing(!editing)}
+              onClick={() => {
+                if (editing) {
+                  handleSaveProfile();
+                } else {
+                  setEditing(true);
+                }
+              }}
+              disabled={saving}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
             >
-              {editing ? <Save size={14} /> : <Edit3 size={14} />}
-              {editing ? 'Save Profile' : 'Edit Profile'}
+              {saving ? (
+                <span className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+              ) : editing ? (
+                <Save size={14} />
+              ) : (
+                <Edit3 size={14} />
+              )}
+              {saving ? 'Saving…' : editing ? 'Save Profile' : 'Edit Profile'}
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
               <Download size={14} />

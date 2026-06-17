@@ -45,7 +45,10 @@ const AccountSettingsPage = () => {
   // Security settings
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingNotifications, setIsSavingNotifications] = useState(false);
+  const [isSavingPrivacy, setIsSavingPrivacy] = useState(false);
+  const [isSavingSecurity, setIsSavingSecurity] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -70,8 +73,16 @@ const AccountSettingsPage = () => {
 
   const handleSubmit = async (e: React.FormEvent, section: string) => {
     e.preventDefault();
-    setIsSaving(true);
-    
+
+    const setSaving = (v: boolean) => {
+      if (section === 'Profile') setIsSavingProfile(v);
+      else if (section === 'Notification') setIsSavingNotifications(v);
+      else if (section === 'Privacy') setIsSavingPrivacy(v);
+      else if (section === 'Security') setIsSavingSecurity(v);
+    };
+
+    setSaving(true);
+
     try {
         if (section === 'Profile') {
             await api.auth.updateProfile({
@@ -94,21 +105,27 @@ const AccountSettingsPage = () => {
                     quietHoursEnd: '08:00',
                 },
             });
-        } else {
-            // Privacy and Security sections - no backend endpoint yet
-            toaster.notify({ title: 'Info', description: `${section} settings will be available soon.`, variant: 'info' });
-            setIsSaving(false);
-            return;
+        } else if (section === 'Privacy') {
+            await api.auth.updateProfile({
+                profile_visibility: profileVisibility,
+                contact_preferences: { show_contact_info: showContactInfo },
+            });
+        } else if (section === 'Security') {
+            if (twoFactorAuth) {
+                await api.twoFactor.setup();
+            } else {
+                await api.twoFactor.disable();
+            }
         }
-        
+
         toaster.notify({ title: 'Saved', description: `${section} settings updated successfully!`, variant: 'success' });
     } catch (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to update profile', error);
+          console.error('Failed to update settings', error);
         }
         toaster.notify({ title: 'Error', description: 'Failed to update settings', variant: 'danger' });
     } finally {
-        setIsSaving(false);
+        setSaving(false);
     }
   };
 
@@ -197,8 +214,8 @@ const AccountSettingsPage = () => {
               </div>
 
               <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Save Changes'}
+                <Button type="submit" disabled={isSavingProfile}>
+                  {isSavingProfile ? 'Saving...' : 'Save Changes'}
                 </Button>
               </footer>
             </form>
@@ -270,8 +287,8 @@ const AccountSettingsPage = () => {
               </div>
 
               <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Save Preferences'}
+                <Button type="submit" disabled={isSavingNotifications}>
+                  {isSavingNotifications ? 'Saving...' : 'Save Preferences'}
                 </Button>
               </footer>
             </form>
@@ -345,8 +362,8 @@ const AccountSettingsPage = () => {
               </div>
 
               <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Save Privacy Settings'}
+                <Button type="submit" disabled={isSavingPrivacy}>
+                  {isSavingPrivacy ? 'Saving...' : 'Save Privacy Settings'}
                 </Button>
               </footer>
             </form>
@@ -397,8 +414,8 @@ const AccountSettingsPage = () => {
               </div>
 
               <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Save Security Settings'}
+                <Button type="submit" disabled={isSavingSecurity}>
+                  {isSavingSecurity ? 'Saving...' : 'Save Security Settings'}
                 </Button>
               </footer>
             </form>

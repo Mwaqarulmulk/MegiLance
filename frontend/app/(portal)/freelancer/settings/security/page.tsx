@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { twoFactorApi } from '@/lib/api';
+import { twoFactorApi, apiFetch } from '@/lib/api';
 import Modal from '@/app/components/organisms/Modal/Modal';
 import Button from '@/app/components/atoms/Button/Button';
 import Loader from '@/app/components/atoms/Loader/Loader';
@@ -525,6 +525,14 @@ export default function SecuritySettingsPage() {
                 className={cn(commonStyles.primaryButton, themeStyles.primaryButton)}
                 onClick={async () => {
                   try {
+                    await apiFetch('/users/me/notification-preferences', {
+                      method: 'PUT',
+                      body: JSON.stringify({
+                        login_alerts: loginAlerts,
+                        unknown_device_alert: unknownDeviceAlert,
+                        password_change_alert: passwordChangeAlert,
+                      }),
+                    });
                     showToast('Alert preferences saved!');
                   } catch {
                     showToast('Failed to save preferences.', 'error');

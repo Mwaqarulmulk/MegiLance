@@ -186,12 +186,11 @@ const Signup: React.FC = () => {
         }
 
         trackSignupComplete(selectedRole, 'email');
-        // Route new users through role-specific onboarding
-        if (selectedRole === 'client') {
-          router.push('/onboarding/client');
-        } else {
-          router.push('/onboarding?role=freelancer');
-        }
+        // Redirect to verification page
+        try {
+          localStorage.setItem('pending_verification_email', formData.email);
+        } catch { /* private browsing */ }
+        router.push('/verify-email?registered=true');
       } catch (error: unknown) {
         setErrors({ email: error instanceof Error ? error.message : 'Registration failed. Please try again.' });
       } finally {

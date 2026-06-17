@@ -75,7 +75,8 @@ const VerifyEmail: React.FC = () => {
   const handleResendVerification = async () => {
     setResending(true);
     try {
-      await api.auth.resendVerification();
+      const storedEmail = typeof window !== 'undefined' ? window.localStorage.getItem('pending_verification_email') : null;
+      await api.auth.resendVerification(storedEmail || undefined);
       setMessage('Verification email has been resent! Please check your inbox.');
     } catch (error: unknown) {
       setMessage(error instanceof Error ? error.message : 'Failed to resend verification email. Please log in first.');

@@ -260,31 +260,68 @@ def seed(force: bool = False):
         sid = row[0]["id"] if row else None
         seller_ids.append((sid, rating, reviews))
 
-    # Demo client (acts as reviewer + contract counterparty so ratings/completions are realistic)
-    client_email = f"demo-client@{DEMO_DOMAIN}"
-    execute_query(
-        """INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified,
-              name, user_type, role, bio, location, two_factor_enabled, account_balance,
-              joined_at, created_at, updated_at)
-           VALUES (?,?,1,1,1,?,?,?,?,?,0,0,?,?,?)""",
-        [client_email, pw, "Meridian Studios", "client", "client",
-         "Product studio hiring top freelancers for client work.", "Remote",
-         now.isoformat(), now.isoformat(), now.isoformat()],
-    )
-    crow = parse_rows(execute_query("SELECT id FROM users WHERE email = ?", [client_email]) or {})
-    client_id = crow[0]["id"] if crow else None
+    # Demo clients (multiple realistic clients)
+    DEMO_CLIENTS = [
+        ("Meridian Studios", "Product studio hiring top freelancers for client work.", "Remote"),
+        ("TechVenture Inc", "Innovative tech startup building the future of SaaS.", "San Francisco, CA"),
+        ("Global Media Co", "Digital media agency creating content worldwide.", "New York, NY"),
+        ("EcoSolutions Ltd", "Sustainable technology solutions for modern businesses.", "London, UK"),
+        ("DataFlow Systems", "Enterprise data analytics and visualization platform.", "Berlin, Germany"),
+    ]
 
-    # A valid project id is required for the contracts FK; reuse an existing one or skip contracts.
-    prow = parse_rows(execute_query("SELECT id FROM projects ORDER BY id LIMIT 1") or {})
-    project_id = prow[0]["id"] if prow else None
+    client_ids = []
+    for ci, (cname, cbio, cloc) in enumerate(DEMO_CLIENTS):
+        client_email = f"{_slug(cname)}@{DEMO_DOMAIN}"
+        execute_query(
+            """INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified,
+                  name, user_type, role, bio, location, two_factor_enabled, account_balance,
+                  joined_at, created_at, updated_at)
+               VALUES (?,?,1,1,1,?,?,?,?,?,0,0,?,?,?)""",
+            [client_email, pw, cname, "client", "client", cbio, cloc,
+             now.isoformat(), now.isoformat(), now.isoformat()],
+        )
+        crow = parse_rows(execute_query("SELECT id FROM users WHERE email = ?", [client_email]) or {})
+        cid = crow[0]["id"] if crow else None
+        client_ids.append(cid)
+
+    # Demo projects
+    DEMO_PROJECTS = [
+        ("E-commerce Platform Redesign", "Complete redesign of our e-commerce platform with modern UI/UX, React frontend, and Node.js backend.", "Web Development", 5000, 12000, "intermediate", "1-3 months"),
+        ("Mobile App Development", "Cross-platform mobile app for iOS and Android with Flutter.", "Mobile Development", 8000, 20000, "expert", "2-4 months"),
+        ("AI Chatbot Integration", "Integrate AI-powered customer support chatbot into our website.", "Data Science", 3000, 8000, "expert", "1-2 months"),
+        ("Brand Identity Design", "Complete brand identity including logo, color palette, and guidelines.", "Design", 1500, 4000, "intermediate", "2-4 weeks"),
+        ("Cloud Infrastructure Setup", "AWS cloud infrastructure with CI/CD pipeline and monitoring.", "DevOps", 4000, 10000, "expert", "1-2 months"),
+        ("Content Management System", "Custom CMS built with Next.js and headless architecture.", "Web Development", 6000, 15000, "intermediate", "1-3 months"),
+        ("Data Analytics Dashboard", "Real-time analytics dashboard with charts and KPI tracking.", "Data Science", 5000, 12000, "expert", "1-2 months"),
+        ("SEO Optimization Campaign", "Full SEO audit and optimization for improved search rankings.", "Marketing", 2000, 5000, "intermediate", "2-4 weeks"),
+    ]
+
+    project_ids = []
+    for pi, (ptitle, pdesc, pcat, pbmin, pbmax, pexp, pdur) in enumerate(DEMO_PROJECTS):
+        client_id = client_ids[pi % len(client_ids)]
+        if not client_id:
+            continue
+        execute_query(
+            """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
+                  experience_level, estimated_duration, skills, client_id, status, proposals_count, created_at, updated_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,'open',?, ?, ?)""",
+            [ptitle, pdesc, pcat, "fixed", pbmin, pbmax, pexp, pdur,
+             json.dumps(["React", "Node.js", "TypeScript"]), client_id, 3 + pi,
+             (now - timedelta(days=30 - pi * 3)).isoformat(), now.isoformat()],
+        )
+        prow = parse_rows(execute_query("SELECT id FROM projects WHERE title = ?", [ptitle]) or {})
+        pid = prow[0]["id"] if prow else None
+        project_ids.append(pid)
 
     # Completed contracts + linked reviews -> populates avg_rating, review_count, completed_projects
     for idx, (sid, rating, review_count) in enumerate(seller_ids):
-        if not sid or not client_id or not project_id:
+        if not sid or not client_ids[0] or not project_ids[0]:
             break
         n = min(6, max(2, review_count // 20))
         for k in range(n):
             amount = 500.0 + (idx * 50) + (k * 120)
+            client_id = client_ids[(idx + k) % len(client_ids)]
+            project_id = project_ids[(idx + k) % len(project_ids)]
             execute_query(
                 """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_amount,
                       platform_fee, status, created_at, updated_at)
@@ -335,7 +372,34 @@ def seed(force: bool = False):
         )
         gig_count += 1
 
-    result = {"status": "seeded", "freelancers": len(seller_ids), "gigs": gig_count}
+    # Seed demo conversations between clients and freelancers
+    conversation_count = 0
+    for ci, cid in enumerate(client_ids[:3]):
+        if not cid:
+            continue
+        for si, (sid, _, _) in enumerate(seller_ids[ci * 3:ci * 3 + 3]):
+            if not sid:
+                continue
+            now_iso = now.isoformat()
+            execute_query(
+                """INSERT INTO conversations (client_id, freelancer_id, status, is_archived, last_message_at, created_at, updated_at)
+                   VALUES (?,?,'active',0,?,?,?)""",
+                [cid, sid, now_iso, now_iso, now_iso],
+            )
+            conv = parse_rows(execute_query(
+                "SELECT id FROM conversations WHERE client_id = ? AND freelancer_id = ? ORDER BY id DESC LIMIT 1",
+                [cid, sid]) or {})
+            conv_id = conv[0]["id"] if conv else None
+            if conv_id:
+                msg_now = (now - timedelta(hours=1)).isoformat()
+                execute_query(
+                    """INSERT INTO messages (conversation_id, sender_id, receiver_id, content, message_type, is_read, is_deleted, sent_at, created_at)
+                       VALUES (?,?,'active',0,?,?,?,?,?)""",
+                    [conv_id, cid, sid, f"Hi! I'm interested in your work. Let's discuss the project.", "text", False, False, msg_now, msg_now],
+                )
+                conversation_count += 1
+
+    result = {"status": "seeded", "freelancers": len(seller_ids), "clients": len(client_ids), "projects": len(project_ids), "gigs": gig_count, "conversations": conversation_count}
     logger.info(f"seed_marketplace: {result}")
     return result
 

@@ -398,6 +398,7 @@ export default function SkillAnalyzer() {
   const [experience, setExperience] = useState('mid');
   const [country, setCountry] = useState('US');
   const [targetRole, setTargetRole] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/v1/skill-analyzer/skills').then(r => r.json()).then((data: any[]) => {
@@ -424,6 +425,7 @@ export default function SkillAnalyzer() {
   const handleSubmit = async () => {
     setStep(2);
     setLoading(true);
+    setError(null);
     try {
       const body = {
         skills: selected,
@@ -436,13 +438,20 @@ export default function SkillAnalyzer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.detail || errData?.message || `Server error (${res.status}). Please try again.`);
+      }
       const data = await res.json();
       setResult(data);
       setLoading(false);
-    } catch { setLoading(false); }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      setLoading(false);
+    }
   };
 
-  const reset = () => { setStep(0); setResult(null); setLoading(false); };
+  const reset = () => { setStep(0); setResult(null); setLoading(false); setError(null); };
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
@@ -480,11 +489,21 @@ export default function SkillAnalyzer() {
           {step === 0 && <StepSkills cs={cs} ts={ts} grouped={grouped} selected={selected} onToggle={toggleSkill} searchTerm={searchTerm} onSearch={setSearchTerm} />}
           {step === 1 && <StepProfile cs={cs} ts={ts} experience={experience} country={country} targetRole={targetRole} onChange={handleProfileChange} />}
           {step === 2 && loading && <ProcessingView cs={cs} ts={ts} />}
-          {step === 2 && !loading && result && <ResultsDashboard cs={cs} ts={ts} result={result} />}
+          {step === 2 && !loading && error && (
+            <div className={cn(cs.processingContainer, ts.processingContainer)}>
+              <AlertTriangle size={48} />
+              <h3 className={cn(cs.formTitle, ts.formTitle)}>Something Went Wrong</h3>
+              <p className={cn(cs.processingSubtitle, ts.processingSubtitle)}>{error}</p>
+              <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => { setStep(1); setError(null); }} style={{ marginTop: '1rem' }}>
+                <ArrowLeft size={16} /> Go Back &amp; Try Again
+              </button>
+            </div>
+          )}
+          {step === 2 && !loading && !error && result && <ResultsDashboard cs={cs} ts={ts} result={result} />}
         </motion.div>
       </AnimatePresence>
 
-      {!(step === 2 && loading) && (
+      {!(step === 2 && loading) && !(step === 2 && error) && (
         <div className={cs.navBar}>
           {step > 0 && step < 2 && <button className={cn(cs.navButtonBack, ts.navButtonBack)} onClick={() => setStep(step - 1)}><ArrowLeft size={16} /> Back</button>}
           <div className={cs.navSpacer} />

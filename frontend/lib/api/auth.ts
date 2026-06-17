@@ -127,7 +127,14 @@ export const authApi = {
     body: JSON.stringify({ token }),
   }),
 
-  resendVerification: () => apiFetch('/auth/resend-verification', { method: 'POST' }),
+  resendVerification: (email?: string) => {
+    const body: Record<string, unknown> = {};
+    if (email) body.email = email;
+    return apiFetch('/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  },
 
   disable2FA: () => apiFetch('/auth/2fa/disable', { method: 'POST' }),
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Contact Form Submission</h2>
+
+<div class="info-box">
+    <p><strong>From:</strong> {{ name }} ({{ from_email }})</p>
+    <p><strong>Subject:</strong> {{ subject }}</p>
+</div>
+
+<p>{{ message }}</p>
+
+<p style="margin-top: 20px; font-size: 13px; color: #666;">
+    Reply directly to this email to respond to {{ name }} at {{ from_email }}.
+</p>
+{% endblock %}

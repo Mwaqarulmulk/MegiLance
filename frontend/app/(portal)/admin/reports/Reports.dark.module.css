@@ -1,24 +1,102 @@
 /* Dark Theme - Admin Reports */
-.container { background: var(--bg-primary-dark); }
-.title { color: var(--text-primary-dark); }
-.subtitle { color: var(--text-tertiary-dark); }
-.statCard { background: var(--bg-secondary-dark); border: 1px solid var(--border-dark); }
-.statValue { color: var(--text-primary-dark); }
-.statLabel { color: var(--text-tertiary-dark); }
-.tab { background: var(--border-dark); color: var(--text-secondary-dark); }
-.tab:hover { background: var(--border-dark); }
-.tabActive { background: var(--ml-blue) !important; color: #fff !important; }
-.reportCard { background: var(--bg-secondary-dark); border: 1px solid var(--border-dark); }
-.reportCard:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-.reportCardTitle { color: var(--text-primary-dark); }
-.reportCardDesc { color: var(--text-tertiary-dark); }
-.reportCardMeta { color: #6b7280; }
-.chartSection { background: var(--bg-secondary-dark); border: 1px solid var(--border-dark); }
-.chartTitle { color: var(--text-primary-dark); }
-.chartBar { background: var(--ml-blue); }
-.chartLabel { color: #6b7280; }
-.tableContainer { background: var(--bg-secondary-dark); border: 1px solid var(--border-dark); }
-.th { background: var(--bg-secondary-dark); color: var(--text-tertiary-dark); border-bottom: 1px solid var(--border-dark); }
-.td { color: var(--text-secondary-dark); border-bottom: 1px solid var(--border-dark); }
-.tr:hover { background: var(--bg-secondary-dark); }
-.emptyState { background: var(--bg-secondary-dark); color: var(--text-tertiary-dark); }
+.container {
+    background: var(--bg-primary-dark);
+}
+.title {
+    color: var(--text-primary-dark);
+}
+.subtitle {
+    color: var(--text-tertiary-dark);
+}
+.statCard {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+}
+.statValue {
+    color: var(--text-primary-dark);
+}
+.statLabel {
+    color: var(--text-tertiary-dark);
+}
+.tab {
+    background: var(--border-dark);
+    color: var(--text-secondary-dark);
+}
+.tab:hover {
+    background: var(--border-dark);
+}
+.tabActive {
+    background: var(--ml-blue) !important;
+    color: #fff !important;
+}
+.reportCard {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+}
+.reportCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.reportCardTitle {
+    color: var(--text-primary-dark);
+}
+.reportCardDesc {
+    color: var(--text-tertiary-dark);
+}
+.reportCardMeta {
+    color: #6b7280;
+}
+.chartSection {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+}
+.chartTitle {
+    color: var(--text-primary-dark);
+}
+.chartBar {
+    background: var(--ml-blue);
+}
+.chartLabel {
+    color: #6b7280;
+}
+.tableContainer {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+}
+.th {
+    background: var(--bg-secondary-dark);
+    color: var(--text-tertiary-dark);
+    border-bottom: 1px solid var(--border-dark);
+}
+.td {
+    color: var(--text-secondary-dark);
+    border-bottom: 1px solid var(--border-dark);
+}
+.tr:hover {
+    background: var(--bg-secondary-dark);
+}
+.emptyState {
+    background: var(--bg-secondary-dark);
+    color: var(--text-tertiary-dark);
+}
+
+/* Modal */
+.modal {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.modalTitle {
+    color: var(--text-primary-dark);
+}
+.modalDesc {
+    color: var(--text-tertiary-dark);
+}
+.previewTable th {
+    background: var(--bg-secondary-dark);
+    color: var(--text-tertiary-dark);
+    border-bottom: 1px solid var(--border-dark);
+}
+.previewTable td {
+    color: var(--text-secondary-dark);
+    border-bottom: 1px solid var(--border-dark);
+}

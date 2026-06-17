@@ -5,7 +5,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { User, Shield, Bell, CreditCard, LifeBuoy, CheckCircle, AlertCircle } from 'lucide-react';
-import api from '@/lib/api';
+import api, { apiFetch } from '@/lib/api';
 
 import SettingsSection from '@/app/components/organisms/SettingsSection/SettingsSection';
 import Input from '@/app/components/atoms/Input/Input';
@@ -42,6 +42,8 @@ const Settings: React.FC = () => {
   const [twoFactor, setTwoFactor] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [productAnnouncements, setProductAnnouncements] = useState(false);
+  const [country, setCountry] = useState('US');
+  const [taxId, setTaxId] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -51,6 +53,8 @@ const Settings: React.FC = () => {
         setName(user.name || user.full_name || '');
         setEmail(user.email || '');
         setBio(user.bio || '');
+        setCountry(user.billing_country || 'US');
+        setTaxId(user.tax_id || '');
         // Set other preferences if available in user object
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
@@ -83,6 +87,117 @@ const Settings: React.FC = () => {
         console.error(err);
       }
       setError('Could not save your changes. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveSecurity = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      await api.auth.updateProfile({
+        two_factor_enabled: twoFactor,
+      });
+
+      setSuccessMessage('Security settings updated successfully');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err);
+      }
+      setError('Could not save security settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveNotifications = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      await api.users.updateNotificationPreferences({
+        preferences: {
+          email: { enabled: emailNotifications },
+          marketing: { enabled: productAnnouncements },
+        },
+        digest: {
+          frequency: 'daily',
+          quietHoursStart: '22:00',
+          quietHoursEnd: '08:00',
+        },
+      });
+
+      setSuccessMessage('Notification preferences updated successfully');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err);
+      }
+      setError('Could not save notification preferences. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveBilling = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      await apiFetch('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify({
+          billing_country: country,
+          tax_id: taxId || undefined,
+        }),
+      });
+
+      setSuccessMessage('Billing settings updated successfully');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err);
+      }
+      setError('Could not save billing settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdatePaymentMethod = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const result = await apiFetch<{ url?: string; session_id?: string; mode?: string; message?: string }>(
+        '/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            amount: 0,
+            currency: 'usd',
+            success_url: `${origin}/client/settings?tab=billing&payment=success`,
+            cancel_url: `${origin}/client/settings?tab=billing&payment=cancelled`,
+            description: 'Payment method update',
+          }),
+        },
+      );
+
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err);
+      }
+      setError('Could not start payment method update. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -135,7 +250,7 @@ const Settings: React.FC = () => {
           <SettingsSection
             title="Security"
             description="Manage your account's security settings and password."
-            footerContent={<Button>Save Changes</Button>}
+            footerContent={<Button onClick={handleSaveSecurity} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>}
           >
             <ToggleSwitch
               id="two-factor-auth"
@@ -155,7 +270,7 @@ const Settings: React.FC = () => {
           <SettingsSection
             title="Notifications"
             description="Control how you receive notifications from MegiLance."
-            footerContent={<Button>Save Changes</Button>}
+            footerContent={<Button onClick={handleSaveNotifications} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>}
           >
             <ToggleSwitch
               id="email-notifications"
@@ -178,13 +293,14 @@ const Settings: React.FC = () => {
           <SettingsSection
             title="Billing"
             description="Manage your payment methods, subscription, and view invoices."
-            footerContent={<Button>Save Changes</Button>}
+            footerContent={<Button onClick={handleSaveBilling} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>}
           >
               <div className={styles.formGrid}>
                 <Select 
                   id="country-select"
                   label="Country" 
-                  defaultValue="US"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
                   options={[
                     { value: 'US', label: 'United States' },
                     { value: 'GB', label: 'United Kingdom' },
@@ -192,11 +308,11 @@ const Settings: React.FC = () => {
                     { value: 'DE', label: 'Germany' },
                   ]}
                 />
-                <Input label="Tax ID (Optional)" placeholder="e.g., EUVAT12345" helpText="Your business Tax ID for invoices."/>
+                <Input label="Tax ID (Optional)" placeholder="e.g., EUVAT12345" helpText="Your business Tax ID for invoices." value={taxId} onChange={(e) => setTaxId(e.target.value)}/>
               </div>
               <div className={styles.actionRow}>
                 <p className={styles.actionDescription}>Update the credit card on file for your account.</p>
-                <Button variant="secondary">Update Payment Method</Button>
+                <Button variant="secondary" onClick={handleUpdatePaymentMethod} disabled={saving}>Update Payment Method</Button>
               </div>
           </SettingsSection>
         );

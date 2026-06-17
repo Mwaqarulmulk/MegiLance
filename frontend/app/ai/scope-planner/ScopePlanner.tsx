@@ -361,6 +361,7 @@ export default function ScopePlanner() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
   const [deliverables, setDeliverables] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/v1/scope-planner/options').then(r => r.json()).then(setOptions).catch(() => {});
@@ -372,6 +373,7 @@ export default function ScopePlanner() {
   const handleSubmit = async () => {
     setStep(3);
     setLoading(true);
+    setError(null);
     try {
       const body = {
         project_name: form.project_name || 'Untitled Project',
@@ -391,13 +393,20 @@ export default function ScopePlanner() {
       const res = await fetch('/api/v1/scope-planner/plan', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.detail || errData?.message || `Server error (${res.status}). Please try again.`);
+      }
       const data = await res.json();
       setResult(data);
       setLoading(false);
-    } catch { setLoading(false); }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      setLoading(false);
+    }
   };
 
-  const reset = () => { setStep(0); setResult(null); setLoading(false); };
+  const reset = () => { setStep(0); setResult(null); setLoading(false); setError(null); };
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
@@ -436,11 +445,21 @@ export default function ScopePlanner() {
           {step === 1 && <StepBudget cs={cs} ts={ts} form={form} onChange={handleChange} />}
           {step === 2 && options && <StepTeam cs={cs} ts={ts} form={form} roles={options.team_roles} members={members} setMembers={setMembers} features={features} setFeatures={setFeatures} deliverables={deliverables} setDeliverables={setDeliverables} onChange={handleChange} />}
           {step === 3 && loading && <ProcessingView cs={cs} ts={ts} />}
-          {step === 3 && !loading && result && <ResultsDashboard cs={cs} ts={ts} result={result} fmt={fmt} />}
+          {step === 3 && !loading && error && (
+            <div className={cn(cs.processingContainer, ts.processingContainer)}>
+              <AlertTriangle size={48} />
+              <h3 className={cn(cs.formTitle, ts.formTitle)}>Something Went Wrong</h3>
+              <p className={cn(cs.processingSubtitle, ts.processingSubtitle)}>{error}</p>
+              <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => { setStep(2); setError(null); }} style={{ marginTop: '1rem' }}>
+                <ArrowLeft size={16} /> Go Back &amp; Try Again
+              </button>
+            </div>
+          )}
+          {step === 3 && !loading && !error && result && <ResultsDashboard cs={cs} ts={ts} result={result} fmt={fmt} />}
         </motion.div>
       </AnimatePresence>
 
-      {!(step === 3 && loading) && (
+      {!(step === 3 && loading) && !(step === 3 && error) && (
         <div className={cs.navBar}>
           {step > 0 && step < 3 && <button className={cn(cs.navButtonBack, ts.navButtonBack)} onClick={() => setStep(step - 1)}><ArrowLeft size={16} /> Back</button>}
           <div className={cs.navSpacer} />

@@ -1070,6 +1070,48 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"startup.chatbot_tables_warning: {e}")
 
+        # Ensure messaging tables exist (conversations, messages)
+        try:
+            execute_query("""CREATE TABLE IF NOT EXISTS conversations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                client_id INTEGER NOT NULL,
+                freelancer_id INTEGER NOT NULL,
+                project_id INTEGER,
+                status TEXT NOT NULL DEFAULT 'active',
+                is_archived INTEGER DEFAULT 0,
+                last_message_at TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY(client_id) REFERENCES users(id),
+                FOREIGN KEY(freelancer_id) REFERENCES users(id),
+                FOREIGN KEY(project_id) REFERENCES projects(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_conversations_client ON conversations(client_id)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_conversations_freelancer ON conversations(freelancer_id)")
+            execute_query("""CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id INTEGER NOT NULL,
+                sender_id INTEGER NOT NULL,
+                receiver_id INTEGER NOT NULL,
+                project_id INTEGER,
+                content TEXT NOT NULL,
+                message_type TEXT NOT NULL DEFAULT 'text',
+                attachment_url TEXT,
+                is_read INTEGER DEFAULT 0,
+                is_deleted INTEGER DEFAULT 0,
+                sent_at TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(conversation_id) REFERENCES conversations(id),
+                FOREIGN KEY(sender_id) REFERENCES users(id),
+                FOREIGN KEY(receiver_id) REFERENCES users(id)
+            )""")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id)")
+            execute_query("CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id)")
+            logger.info("startup.messaging_tables_initialized")
+        except Exception as e:
+            logger.warning(f"startup.messaging_tables_warning: {e}")
+
         # Ensure invitations table exists (AI-matched project invitations)
         try:
             execute_query("""CREATE TABLE IF NOT EXISTS invitations (

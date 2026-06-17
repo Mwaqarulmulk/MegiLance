@@ -5,7 +5,7 @@ export type ResourceId = string | number;
 
 // In production on DO App Platform: /api/v1 routes directly to backend
 // In local dev: /api is proxied via next.config.js rewrites → backend /api/v1
-const API_BASE_URL = '/api/v1';
+const API_BASE_URL = "/api/v1";
 
 let authToken: string | null = null;
 
@@ -24,25 +24,25 @@ export function setRefreshToken(_token: string | null) {
 
 export function getRefreshToken(): string | null {
   // Refresh token is httpOnly cookie — not accessible from JS.
-  return '__httponly_cookie__';
+  return "__httponly_cookie__";
 }
 
 export function clearAuthData() {
   authToken = null;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
       // Clean up any legacy tokens
-      sessionStorage.removeItem('auth_token');
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('portal_area');
-      localStorage.removeItem('ml_user_role');
+      sessionStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("portal_area");
+      localStorage.removeItem("ml_user_role");
       // Drop JS-accessible auth cookies
-      document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Lax';
+      document.cookie = "auth_token=; path=/; max-age=0; SameSite=Lax";
     } catch (e) {
-      console.warn('Storage unavailable:', e);
+      console.warn("Storage unavailable:", e);
     }
   }
 }
@@ -52,14 +52,14 @@ export class APIError extends Error {
     message: string,
     public status: number,
     public code?: string,
-    public details?: Record<string, unknown>
+    public details?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 }
 
-const REQUEST_TIMEOUT = 60000;
+const REQUEST_TIMEOUT = 15000;
 
 // Retry with exponential backoff + jitter
 interface RetryConfig {
@@ -71,14 +71,18 @@ interface RetryConfig {
 }
 
 const RETRY_CONFIG: RetryConfig = {
-  maxRetries: 3,
+  maxRetries: 1,
   baseDelay: 500,
   maxDelay: 10000,
-  retryableMethods: new Set(['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE']),
+  retryableMethods: new Set(["GET", "HEAD", "OPTIONS", "PUT", "DELETE"]),
   retryableStatuses: new Set([408, 429, 500, 502, 503, 504]),
 };
 
-function getRetryDelay(attempt: number, baseDelay: number, maxDelay: number): number {
+function getRetryDelay(
+  attempt: number,
+  baseDelay: number,
+  maxDelay: number,
+): number {
   const exponentialDelay = baseDelay * Math.pow(2, attempt);
   const jitter = exponentialDelay * 0.2 * Math.random();
   return Math.min(exponentialDelay + jitter, maxDelay);
@@ -145,27 +149,27 @@ export function invalidateCache(endpointPrefix?: string): void {
 
 // === Connection quality detection ===
 export function isOnline(): boolean {
-  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+  return typeof navigator !== "undefined" ? navigator.onLine : true;
 }
 
 /** Build URLSearchParams from a filter object, skipping null/undefined values */
 export function buildQueryParams(filters?: Record<string, unknown>): string {
-  if (!filters) return '';
+  if (!filters) return "";
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(filters)) {
-    if (value !== null && value !== undefined && value !== '') {
+    if (value !== null && value !== undefined && value !== "") {
       params.set(key, String(value));
     }
   }
   const qs = params.toString();
-  return qs ? `?${qs}` : '';
+  return qs ? `?${qs}` : "";
 }
 
 // Request deduplication for identical concurrent GET requests
 const inflightRequests = new Map<string, Promise<unknown>>();
 
 function getDedupeKey(endpoint: string, method: string): string | null {
-  if (method.toUpperCase() !== 'GET') return null;
+  if (method.toUpperCase() !== "GET") return null;
   return `GET:${endpoint}`;
 }
 
@@ -173,12 +177,12 @@ let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
 function onTokenRefreshed(token: string) {
-  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers.forEach((cb) => cb(token));
   refreshSubscribers = [];
 }
 
 function onTokenRefreshFailed() {
-  refreshSubscribers.forEach(cb => cb(''));
+  refreshSubscribers.forEach((cb) => cb(""));
   refreshSubscribers = [];
 }
 
@@ -190,13 +194,16 @@ function addRefreshSubscriber(callback: (token: string) => void) {
 
 async function attemptTokenRefresh(): Promise<string | null> {
   try {
-    const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
+    const refreshToken =
+      typeof window !== "undefined"
+        ? localStorage.getItem("refresh_token")
+        : null;
 
     const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(refreshToken ? { refresh_token: refreshToken } : {}),
-      credentials: 'include',
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -209,7 +216,7 @@ async function attemptTokenRefresh(): Promise<string | null> {
     if (newToken) {
       setAuthToken(newToken);
       if (data.refresh_token) {
-        localStorage.setItem('refresh_token', data.refresh_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
       }
       return newToken;
     }
@@ -224,15 +231,19 @@ export async function apiFetch<T = unknown>(
   endpoint: string,
   options: RequestInit = {},
   /** Set to true to skip the GET response cache for this request */
-  skipCache = false
+  skipCache = false,
 ): Promise<T> {
-  const method = (options.method || 'GET').toUpperCase();
+  const method = (options.method || "GET").toUpperCase();
   const token = getAuthToken();
-  const shouldUseResponseCache = method === 'GET' && !skipCache;
+  const shouldUseResponseCache = method === "GET" && !skipCache;
 
   // Offline check
   if (!isOnline()) {
-    throw new APIError('You appear to be offline. Please check your connection.', 0, 'OFFLINE');
+    throw new APIError(
+      "You appear to be offline. Please check your connection.",
+      0,
+      "OFFLINE",
+    );
   }
 
   // Check GET cache before making request
@@ -242,9 +253,9 @@ export async function apiFetch<T = unknown>(
   }
 
   // Invalidate related cache on mutations
-  if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
     // Invalidate cache for the specific resource being mutated
-    const pathParts = endpoint.split('?')[0].split('/').filter(Boolean);
+    const pathParts = endpoint.split("?")[0].split("/").filter(Boolean);
     // Invalidate the base resource (e.g., /projects) and the specific item (e.g., /projects/123)
     if (pathParts.length >= 2) {
       const resourceBase = `/${pathParts[0]}/${pathParts[1]}`;
@@ -263,20 +274,24 @@ export async function apiFetch<T = unknown>(
 
     for (let attempt = 0; attempt <= RETRY_CONFIG.maxRetries; attempt++) {
       if (attempt > 0) {
-        const delay = getRetryDelay(attempt - 1, RETRY_CONFIG.baseDelay, RETRY_CONFIG.maxDelay);
+        const delay = getRetryDelay(
+          attempt - 1,
+          RETRY_CONFIG.baseDelay,
+          RETRY_CONFIG.maxDelay,
+        );
         await sleep(delay);
       }
 
       const headers: Record<string, string> = {
-        ...(options.headers as Record<string, string> || {}),
+        ...((options.headers as Record<string, string>) || {}),
       };
 
       if (!(options.body instanceof FormData)) {
-        headers['Content-Type'] = 'application/json';
+        headers["Content-Type"] = "application/json";
       }
 
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers["Authorization"] = `Bearer ${token}`;
       }
 
       const controller = new AbortController();
@@ -287,20 +302,20 @@ export async function apiFetch<T = unknown>(
           ...options,
           headers: headers as HeadersInit,
           signal: controller.signal,
-          credentials: 'include',
+          credentials: "include",
         });
 
         clearTimeout(timeoutId);
 
         // Rate limiting
         if (response.status === 429) {
-          const retryAfter = response.headers.get('Retry-After');
+          const retryAfter = response.headers.get("Retry-After");
           const waitSeconds = retryAfter ? parseInt(retryAfter, 10) : 60;
           lastError = new APIError(
             `Too many requests. Please try again in ${waitSeconds} seconds.`,
             429,
-            'RATE_LIMITED',
-            { retryAfter: waitSeconds }
+            "RATE_LIMITED",
+            { retryAfter: waitSeconds },
           );
           if (attempt < RETRY_CONFIG.maxRetries) {
             await sleep(waitSeconds * 1000);
@@ -310,7 +325,11 @@ export async function apiFetch<T = unknown>(
         }
 
         // 401 — attempt token refresh
-        if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
+        if (
+          response.status === 401 &&
+          !endpoint.includes("/auth/refresh") &&
+          !endpoint.includes("/auth/login")
+        ) {
           if (!isRefreshing) {
             isRefreshing = true;
             const newToken = await attemptTokenRefresh();
@@ -318,39 +337,49 @@ export async function apiFetch<T = unknown>(
 
             if (newToken) {
               onTokenRefreshed(newToken);
-              headers['Authorization'] = `Bearer ${newToken}`;
+              headers["Authorization"] = `Bearer ${newToken}`;
               const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
                 ...options,
                 headers: headers as HeadersInit,
-                credentials: 'include',
+                credentials: "include",
               });
 
               if (!retryResponse.ok) {
-                const error = await retryResponse.json().catch(() => ({ detail: 'Request failed after token refresh' }));
-                throw new APIError(error.detail || `HTTP ${retryResponse.status}`, retryResponse.status, error.error_type, error);
+                const error = await retryResponse
+                  .json()
+                  .catch(() => ({
+                    detail: "Request failed after token refresh",
+                  }));
+                throw new APIError(
+                  error.detail || `HTTP ${retryResponse.status}`,
+                  retryResponse.status,
+                  error.error_type,
+                  error,
+                );
               }
               if (retryResponse.status === 204) return undefined as T;
               return retryResponse.json();
             } else {
               onTokenRefreshFailed();
-              if (typeof window !== 'undefined') {
+              if (typeof window !== "undefined") {
                 const currentPath = window.location.pathname;
                 window.location.href = `/login?returnTo=${encodeURIComponent(currentPath)}&expired=true`;
               }
-              throw new APIError('Session expired. Please log in again.', 401);
+              throw new APIError("Session expired. Please log in again.", 401);
             }
           } else {
             return new Promise<T>((resolve, reject) => {
               addRefreshSubscriber((newToken: string) => {
-                headers['Authorization'] = `Bearer ${newToken}`;
+                headers["Authorization"] = `Bearer ${newToken}`;
                 fetch(`${API_BASE_URL}${endpoint}`, {
                   ...options,
                   headers: headers as HeadersInit,
-                  credentials: 'include',
+                  credentials: "include",
                 })
-                  .then(res => {
+                  .then((res) => {
                     if (res.status === 204) return undefined as T;
-                    if (!res.ok) throw new APIError('Request failed', res.status);
+                    if (!res.ok)
+                      throw new APIError("Request failed", res.status);
                     return res.json();
                   })
                   .then(resolve)
@@ -361,12 +390,14 @@ export async function apiFetch<T = unknown>(
         }
 
         if (!response.ok) {
-          const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+          const error = await response
+            .json()
+            .catch(() => ({ detail: "Unknown error" }));
           lastError = new APIError(
             error.detail || `HTTP ${response.status}`,
             response.status,
             error.error_type,
-            error
+            error,
           );
           if (shouldRetry(method, response.status, attempt)) {
             continue;
@@ -383,7 +414,6 @@ export async function apiFetch<T = unknown>(
         }
 
         return data;
-
       } catch (error) {
         clearTimeout(timeoutId);
 
@@ -395,8 +425,8 @@ export async function apiFetch<T = unknown>(
           throw error;
         }
 
-        if (error instanceof Error && error.name === 'AbortError') {
-          lastError = new APIError('Request timeout', 408);
+        if (error instanceof Error && error.name === "AbortError") {
+          lastError = new APIError("Request timeout", 408);
           if (shouldRetry(method, 408, attempt)) {
             continue;
           }
@@ -404,8 +434,8 @@ export async function apiFetch<T = unknown>(
         }
 
         lastError = new APIError(
-          error instanceof Error ? error.message : 'Network error',
-          0
+          error instanceof Error ? error.message : "Network error",
+          0,
         );
         if (shouldRetry(method, 0, attempt)) {
           continue;
@@ -414,7 +444,7 @@ export async function apiFetch<T = unknown>(
       }
     }
 
-    throw lastError || new APIError('Request failed after retries', 0);
+    throw lastError || new APIError("Request failed after retries", 0);
   };
 
   if (dedupeKey) {

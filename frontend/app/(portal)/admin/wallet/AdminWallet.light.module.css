@@ -1,0 +1,44 @@
+/* @AI-HINT: Light-theme overrides for Admin Wallet page */
+
+.container      { background: var(--bg-primary-light, #f3f4f6); }
+.title          { color: #1a1a1a; }
+.subtitle       { color: var(--color-text-secondary-light, #6b7280); }
+
+.statCard       { background: #fff; border: 1px solid var(--border-light, #e5e7eb); }
+.statValue      { color: #1a1a1a; }
+.statLabel      { color: var(--color-text-secondary-light, #6b7280); }
+
+.chartSection   { background: #fff; border: 1px solid var(--border-light, #e5e7eb); }
+.chartTitle     { color: #1a1a1a; }
+.chartBar       { background: var(--ml-blue, #4573df); }
+.chartLabel     { color: #9ca3af; }
+
+/* Cards */
+.sectionCard    { background: #fff; border: 1px solid var(--border-light, #e5e7eb); }
+.sectionTitle   { color: #1a1a1a; }
+
+/* Gateways */
+.gatewayRow     { background: #f9fafb; }
+.gatewayName    { color: #1a1a1a; }
+
+/* Settings */
+.settingLabel   { color: #374151; }
+.settingInput   { background: #f9fafb; border-color: var(--border-light, #e5e7eb); color: #1a1a1a; }
+.settingSelect  { background: #f9fafb; border-color: var(--border-light, #e5e7eb); color: #1a1a1a; }
+
+/* Table */
+.tableContainer { background: #fff; border: 1px solid var(--border-light, #e5e7eb); }
+.tableTh        { background: #f9fafb; color: var(--color-text-secondary-light, #6b7280); border-bottom: 1px solid var(--border-light, #e5e7eb); }
+.tableTd        { color: #374151; border-bottom: 1px solid #f3f4f6; }
+.tableRow:hover { background: #f9fafb; }
+
+/* Toast */
+.toast {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+  color: #166534;
+}
+.toastError {
+  border-color: rgba(232, 17, 35, 0.3);
+  color: #991b1b;
+}

@@ -217,7 +217,7 @@ export default function InvoiceGenerator() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => null);
-        throw new Error(errData?.detail || 'Invoice generation failed');
+        throw new Error(errData?.detail || errData?.message || `Server error (${res.status}). Please try again.`);
       }
 
       const data: InvoiceResult = await res.json();
@@ -416,7 +416,7 @@ export default function InvoiceGenerator() {
             </button>
             <button
               className={cn(commonStyles.navButton, t.navButtonNext)}
-              disabled={step === 2 && !hasValidItems}
+              disabled={(step === 2 && !hasValidItems) || (step === 3 && !hasValidItems)}
               onClick={() => {
                 if (step === 3) submitInvoice();
                 else setStep(s => s + 1);

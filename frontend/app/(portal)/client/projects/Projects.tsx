@@ -75,7 +75,7 @@ const Projects: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === "dark" ? dark : light;
   const router = useRouter();
-  const { projects: rawProjects, loading, error } = useClientData();
+  const { projects: rawProjects, loading, error, refetch } = useClientData();
   const { toast } = useToast();
   const [dismissedError, setDismissedError] = useState(false);
   const projects = useMemo(
@@ -181,7 +181,7 @@ const Projects: React.FC = () => {
         description: `${ids.length} project(s) status updated`,
         variant: "success",
       });
-      window.location.reload();
+      refetch();
     } catch (error) {
       toast({
         title: "Error",
@@ -213,7 +213,7 @@ const Projects: React.FC = () => {
         description: `${ids.length} project(s) archived`,
         variant: "success",
       });
-      window.location.reload();
+      refetch();
     } catch (error) {
       toast({
         title: "Error",
@@ -243,7 +243,7 @@ const Projects: React.FC = () => {
         message="We couldn't load your projects. Check your connection and try again."
         onRetry={() => {
           setDismissedError(false);
-          window.location.reload();
+          refetch();
         }}
         onDismiss={() => setDismissedError(true)}
         showGoHome={true}
@@ -447,13 +447,7 @@ const Projects: React.FC = () => {
           </ScrollReveal>
         )}
 
-        {loading ? (
-          <div className={common.grid}>
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className={common.skeletonCard} />
-            ))}
-          </div>
-        ) : paginatedProjects.length > 0 ? (
+        {paginatedProjects.length > 0 ? (
           <StaggerContainer delay={0.2} className={common.grid}>
             {paginatedProjects.map((project) => (
               <ProjectCard key={project.id} {...project} />

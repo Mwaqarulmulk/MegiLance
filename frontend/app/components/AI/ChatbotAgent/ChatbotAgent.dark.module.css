@@ -182,3 +182,43 @@
     transparent 70%
   );
 }
+
+/* ═════ New theme additions ═════ */
+
+.stepProgress { background: rgba(0, 0, 0, 0.3); }
+.stepProgressBar { background: linear-gradient(90deg, var(--ml-blue, #4571df), #9b59b6); }
+.stepLabel { color: rgba(255, 255, 255, 0.7); }
+
+.flowCard { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
+.flowCard:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(69, 115, 223, 0.5); }
+.flowCardIcon { background: linear-gradient(135deg, rgba(69, 115, 223, 0.2), rgba(155, 89, 182, 0.2)); color: #9bb8f0; }
+.flowCardTitle { color: rgba(255, 255, 255, 0.9); }
+
+.actionButtonPrimary { background: linear-gradient(135deg, var(--ml-blue, #4571df), #9b59b6); color: #fff; }
+.actionButtonPrimary:hover { box-shadow: 0 8px 24px rgba(69, 115, 223, 0.6); }
+.actionButtonSecondary { color: rgba(255, 255, 255, 0.7); border-color: rgba(255, 255, 255, 0.2); }
+.actionButtonSecondary:hover { background: rgba(69, 115, 223, 0.15); color: #9bb8f0; border-color: rgba(69, 115, 223, 0.5); }
+
+.feedbackRow { color: rgba(255, 255, 255, 0.4); }
+.feedbackBtn { color: rgba(255, 255, 255, 0.4); }
+.feedbackBtn[data-active="true"] { color: #9bb8f0; }
+
+.userAvatar { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.9); border-color: rgba(255, 255, 255, 0.15); }
+
+.guestBanner { background: linear-gradient(90deg, rgba(69, 115, 223, 0.1), rgba(155, 89, 182, 0.1)); color: rgba(255, 255, 255, 0.7); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+
+.markdownContent { color: #f0f0f0; }
+.markdownContent code { background: rgba(255, 255, 255, 0.1); color: #ff9f9f; }
+.markdownContent strong { color: #fff; }
+
+.attachmentBtn { color: rgba(255, 255, 255, 0.4); }
+
+.stepSummary { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
+.stepSummaryToggle { color: rgba(255, 255, 255, 0.6); }
+.stepSummaryLabel { color: rgba(255, 255, 255, 0.5); }
+.stepSummaryValue { color: rgba(255, 255, 255, 0.85); }
+
+.proactiveChip { background: #1a1a2e; color: rgba(255, 255, 255, 0.9); border-color: rgba(69, 115, 223, 0.3); }
+
+.loaderSkeleton { background: rgba(255, 255, 255, 0.05); }
+.loaderSkeletonLine { background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%); background-size: 200% 100%; }

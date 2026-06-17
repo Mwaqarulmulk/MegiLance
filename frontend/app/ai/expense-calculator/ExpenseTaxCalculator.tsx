@@ -321,6 +321,7 @@ export default function ExpenseTaxCalculator() {
     quarterly_tax_paid: '', quarters_remaining: 4,
   });
   const [deductions, setDeductions] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/v1/expense-tax-calculator/options').then(r => r.json()).then(setOptions).catch(() => {});
@@ -334,6 +335,7 @@ export default function ExpenseTaxCalculator() {
   const handleSubmit = async () => {
     setStep(3);
     setLoading(true);
+    setError(null);
     try {
       const deductionMap: Record<string, number> = {};
       for (const [k, v] of Object.entries(deductions)) {
@@ -356,13 +358,20 @@ export default function ExpenseTaxCalculator() {
       const res = await fetch('/api/v1/expense-tax-calculator/calculate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.detail || errData?.message || `Server error (${res.status}). Please try again.`);
+      }
       const data = await res.json();
       setResult(data);
       setLoading(false);
-    } catch { setLoading(false); }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      setLoading(false);
+    }
   };
 
-  const reset = () => { setStep(0); setResult(null); setLoading(false); };
+  const reset = () => { setStep(0); setResult(null); setLoading(false); setError(null); };
 
   const cs = commonStyles;
   const ts = resolvedTheme === 'light' ? lightStyles : darkStyles;
@@ -401,11 +410,21 @@ export default function ExpenseTaxCalculator() {
           {step === 1 && options && <StepExpenses cs={cs} ts={ts} categories={options.deduction_categories} deductions={deductions} onChange={handleDeduction} />}
           {step === 2 && options && <StepTaxSettings cs={cs} ts={ts} form={form} regions={options.regions} filingStatuses={options.filing_statuses} usStates={options.us_state_taxes} onChange={handleChange} />}
           {step === 3 && loading && <ProcessingView cs={cs} ts={ts} />}
-          {step === 3 && !loading && result && <ResultsDashboard cs={cs} ts={ts} result={result} fmt={fmt} />}
+          {step === 3 && !loading && error && (
+            <div className={cn(cs.processingContainer, ts.processingContainer)}>
+              <AlertTriangle size={48} />
+              <h3 className={cn(cs.formTitle, ts.formTitle)}>Something Went Wrong</h3>
+              <p className={cn(cs.processingSubtitle, ts.processingSubtitle)}>{error}</p>
+              <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => { setStep(2); setError(null); }} style={{ marginTop: '1rem' }}>
+                <ArrowLeft size={16} /> Go Back &amp; Try Again
+              </button>
+            </div>
+          )}
+          {step === 3 && !loading && !error && result && <ResultsDashboard cs={cs} ts={ts} result={result} fmt={fmt} />}
         </motion.div>
       </AnimatePresence>
 
-      {!(step === 3 && loading) && (
+      {!(step === 3 && loading) && !(step === 3 && error) && (
         <div className={cs.navBar}>
           {step > 0 && step < 3 && <button className={cn(cs.navButtonBack, ts.navButtonBack)} onClick={() => setStep(step - 1)}><ArrowLeft size={16} /> Back</button>}
           <div className={cs.navSpacer} />

@@ -9,7 +9,8 @@ import React, {
   useRef,
 } from "react";
 import { useTheme } from "next-themes";
-import api from "@/lib/api";
+import api, { apiFetch } from "@/lib/api";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
 import UserAvatar from "@/app/components/atoms/UserAvatar/UserAvatar";
 import Button from "@/app/components/atoms/Button/Button";
 import Input from "@/app/components/atoms/Input/Input";
@@ -117,6 +118,7 @@ const availabilityStatusOptions = [
 
 const Profile: React.FC = () => {
   const { resolvedTheme } = useTheme();
+  const { showToast } = useToaster();
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("basic");
   const [saving, setSaving] = useState(false);
@@ -142,17 +144,11 @@ const Profile: React.FC = () => {
   const [profileViews, setProfileViews] = useState(0);
   const [availabilityStatus, setAvailabilityStatus] = useState("available");
   const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
-
-  // Revoke object URLs on unmount to prevent memory leaks
-  useEffect(() => {
-    return () => {
-      if (profileImageUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(profileImageUrl);
-      }
-    };
-  }, [profileImageUrl]);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   // Professional fields
   const [skills, setSkills] = useState("");
@@ -208,11 +204,11 @@ const Profile: React.FC = () => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
+      showToast("Please select an image file", "error");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image must be under 5MB");
+      showToast("Image must be under 5MB", "error");
       return;
     }
 
@@ -236,16 +232,54 @@ const Profile: React.FC = () => {
         const url = data.url || data.file_url || data.path;
         if (url) setProfileImageUrl(url);
       } else {
-        // Fallback: show local preview even if server upload fails
-        const objectUrl = URL.createObjectURL(file);
-        setProfileImageUrl(objectUrl);
+        showToast("Failed to upload image. Please try again.", "error");
       }
     } catch {
-      // Fallback: still show preview so the UI feels responsive
-      const objectUrl = URL.createObjectURL(file);
-      setProfileImageUrl(objectUrl);
+      showToast("Failed to upload image. Please try again.", "error");
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("Please select an image file", "error");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("Cover image must be under 10MB", "error");
+      return;
+    }
+
+    setUploadingCover(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_type", "cover");
+
+      const response = await fetch("/api/v1/uploads/cover", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${(await import("@/lib/api/core")).getAuthToken() || ""}`,
+        },
+        body: formData,
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const url = data.url || data.file_url || data.path;
+        if (url) setCoverImageUrl(url);
+      } else {
+        showToast("Failed to upload cover image. Please try again.", "error");
+      }
+    } catch {
+      showToast("Failed to upload cover image. Please try again.", "error");
+    } finally {
+      setUploadingCover(false);
     }
   };
 
@@ -265,6 +299,7 @@ const Profile: React.FC = () => {
       setProfileViews(data.profile_views || 0);
       setAvailabilityStatus(data.availability_status || "available");
       setProfileImageUrl(data.profile_image_url || "");
+      setCoverImageUrl(data.cover_image_url || "");
       setSkills(
         Array.isArray(data.skills) ? data.skills.join(", ") : data.skills || "",
       );
@@ -377,6 +412,7 @@ const Profile: React.FC = () => {
       const payload: Record<string, unknown> = {
         full_name: name,
         profile_image_url: profileImageUrl || null,
+        cover_image_url: coverImageUrl || null,
         title,
         tagline,
         headline,
@@ -425,12 +461,18 @@ const Profile: React.FC = () => {
         testimonials_enabled: testimonialsEnabled,
         profile_visibility: profileVisibility,
       };
-      await api.auth.updateProfile(payload as any);
+      await apiFetch("/profiles/me", {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
       setStatus("Profile saved successfully!");
-      const updated: any = await api.auth.me();
+      showToast("Profile saved successfully!", "success");
+      const updated: any = await apiFetch("/profiles/me");
       setProfileSlug(updated.profile_slug || "");
     } catch (error: any) {
-      setStatus(error.message || "Failed to save profile");
+      const errMsg = error.message || "Failed to save profile";
+      setStatus(errMsg);
+      showToast(errMsg, "error");
     } finally {
       setSaving(false);
     }
@@ -627,6 +669,52 @@ const Profile: React.FC = () => {
       <div className={styles.profileContainer}>
         {/* Header */}
         <ScrollReveal>
+          {coverImageUrl && (
+            <div
+              className={commonStyles.coverImageWrapper}
+              style={{
+                width: "100%",
+                height: 200,
+                borderRadius: 12,
+                overflow: "hidden",
+                marginBottom: 16,
+                position: "relative",
+              }}
+            >
+              <img
+                src={coverImageUrl}
+                alt="Cover"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              <button
+                type="button"
+                onClick={() => coverFileInputRef.current?.click()}
+                disabled={uploadingCover}
+                style={{
+                  position: "absolute",
+                  bottom: 8,
+                  right: 8,
+                  padding: "6px 12px",
+                  background: "rgba(0,0,0,0.6)",
+                  color: "#fff",
+                  borderRadius: 6,
+                  fontSize: 12,
+                  cursor: uploadingCover ? "not-allowed" : "pointer",
+                  opacity: uploadingCover ? 0.6 : 1,
+                }}
+              >
+                {uploadingCover ? "Uploading…" : "Change Cover"}
+              </button>
+            </div>
+          )}
+          <input
+            ref={coverFileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleCoverImageUpload}
+            className={commonStyles.hiddenInput}
+            aria-label="Upload cover image"
+          />
           <header className={styles.header}>
             <UserAvatar name={name} src={profileImageUrl} size="large" />
             <div className={styles.headerInfo}>
@@ -777,6 +865,29 @@ const Profile: React.FC = () => {
                       className={`${commonStyles.uploadHelpText} ${styles.uploadHelpText}`}
                     >
                       JPG, PNG or GIF · Max 5 MB
+                    </p>
+                  </div>
+                </div>
+
+                {/* Cover Photo Upload */}
+                <div className={styles.inlineSection}>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => coverFileInputRef.current?.click()}
+                      disabled={uploadingCover}
+                      className={`${commonStyles.uploadBtn} ${styles.uploadBtn}`}
+                      style={{
+                        cursor: uploadingCover ? "not-allowed" : "pointer",
+                        opacity: uploadingCover ? 0.6 : 1,
+                      }}
+                    >
+                      {uploadingCover ? "Uploading…" : coverImageUrl ? "Change Cover" : "Upload Cover"}
+                    </button>
+                    <p
+                      className={`${commonStyles.uploadHelpText} ${styles.uploadHelpText}`}
+                    >
+                      JPG, PNG or GIF · Max 10 MB
                     </p>
                   </div>
                 </div>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+
+<p>Hello {{ user_name }},</p>
+
+<p>{{ message }}</p>
+
+{% if action_url %}
+<p style="text-align: center;">
+    <a href="{{ action_url }}" class="button">{{ action_text }}</a>
+</p>
+{% endif %}
+
+<div class="info-box">
+    <p><strong>Notification Type:</strong> {{ notification_type }}</p>
+</div>
+
+<p>Best regards,<br>
+<strong>The {{ app_name }} Team</strong></p>
+{% endblock %}

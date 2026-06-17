@@ -152,6 +152,22 @@
   overflow-x: hidden;
   padding: 0.75rem 0.625rem;
   scrollbar-width: thin;
+  scrollbar-color: var(--ml-border, #e2e8f0) transparent;
+  min-height: 0;
+}
+
+.sidebarNavContainer::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebarNavContainer::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.sidebarNavContainer::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: var(--ml-border, #e2e8f0);
 }
 
 .sidebarNavContainer::-webkit-scrollbar {

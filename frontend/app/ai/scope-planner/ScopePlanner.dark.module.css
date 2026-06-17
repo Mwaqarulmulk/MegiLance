@@ -38,6 +38,7 @@
 .addBtn:hover { background: rgba(69,115,223,0.25); }
 .memberRow { background: rgba(15,23,42,0.4); }
 .smallSelect, .smallInput { background: rgba(15,23,42,0.5); border-color: rgba(51,65,85,0.5); color: var(--color-text-primary-dark); }
+.smallSelect { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); }
 .smallSelect:focus, .smallInput:focus { border-color: var(--ml-blue); }
 .removeBtn { background: rgba(231,76,60,0.1); color: #e74c3c; }
 .removeBtn:hover { background: rgba(231,76,60,0.2); }

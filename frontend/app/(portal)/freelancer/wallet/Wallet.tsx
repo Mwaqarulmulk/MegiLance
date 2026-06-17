@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Info } from 'lucide-react';
+import { Info, ArrowUpRight, ArrowDownLeft, Send, Plus, TrendingUp, TrendingDown, Filter } from 'lucide-react';
 import api from '@/lib/api';
 import { apiFetch } from '@/lib/api/core';
 import TransactionRow from '@/app/components/molecules/TransactionRow/TransactionRow';
@@ -59,6 +59,8 @@ const Wallet: React.FC = () => {
     return parseFloat(balanceStr) ?? 0;
   }, [analytics?.walletBalance]);
 
+  const [filterType, setFilterType] = useState<string>('all');
+
   const [q, setQ] = usePersistedState<string>('freelancer:wallet:q', '');
   const [sortKey, setSortKey] = usePersistedState<'date' | 'amount' | 'type'>('freelancer:wallet:sortKey', 'date');
   const [sortDir, setSortDir] = usePersistedState<'asc' | 'desc'>('freelancer:wallet:sortDir', 'desc');
@@ -91,12 +93,51 @@ const Wallet: React.FC = () => {
     }));
   }, [transactions]);
 
+  const monthlyEarnings = useMemo(() => {
+    const now = new Date();
+    const months: { label: string; amount: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleDateString('en', { month: 'short' });
+      const amount = transactionRows
+        .filter((tx) => {
+          const txDate = new Date(tx.date);
+          return (
+            txDate.getMonth() === d.getMonth() &&
+            txDate.getFullYear() === d.getFullYear() &&
+            tx.type === 'earning'
+          );
+        })
+        .reduce((sum, tx) => sum + parseFloat(tx.amount || '0'), 0);
+      months.push({ label, amount });
+    }
+    return months;
+  }, [transactionRows]);
+
+  const maxMonthly = Math.max(...monthlyEarnings.map((m) => m.amount), 1);
+
+  const monthOverMonth = useMemo(() => {
+    if (monthlyEarnings.length < 2) return 0;
+    const curr = monthlyEarnings[monthlyEarnings.length - 1].amount;
+    const prev = monthlyEarnings[monthlyEarnings.length - 2].amount;
+    if (prev === 0) return curr > 0 ? 100 : 0;
+    return Math.round(((curr - prev) / prev) * 100);
+  }, [monthlyEarnings]);
+
+  const totalEarnings = useMemo(() => {
+    return transactionRows
+      .filter((tx) => tx.type === 'earning')
+      .reduce((sum, tx) => sum + parseFloat(tx.amount || '0'), 0);
+  }, [transactionRows]);
+
   const filtered = useMemo(() => {
     const lowerCaseQ = q.toLowerCase();
     return transactionRows.filter((tx) => {
-      return tx.type.includes(lowerCaseQ) || tx.description.includes(lowerCaseQ);
+      const matchesSearch = tx.type.includes(lowerCaseQ) || tx.description.toLowerCase().includes(lowerCaseQ);
+      const matchesType = filterType === 'all' || tx.type === filterType;
+      return matchesSearch && matchesType;
     });
-  }, [transactionRows, q]);
+  }, [transactionRows, q, filterType]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -234,6 +275,27 @@ const Wallet: React.FC = () => {
               <h2 className={styles.cardTitle}>Available Balance</h2>
               <p className={styles.balanceAmount}>${balance.toLocaleString()}</p>
 
+              {/* Quick Stats */}
+              <div className={styles.quickStats}>
+                <div className={styles.statItem}>
+                  <span className={styles.statLabel}>Total Earnings</span>
+                  <span className={styles.statValue}>${totalEarnings.toLocaleString()}</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statLabel}>This Month</span>
+                  <span className={styles.statValue}>
+                    ${monthlyEarnings[monthlyEarnings.length - 1]?.amount.toLocaleString() || '0'}
+                  </span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statLabel}>vs Last Month</span>
+                  <span className={`${styles.statValue} ${monthOverMonth >= 0 ? styles.trendUp : styles.trendDown}`}>
+                    {monthOverMonth >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                    {Math.abs(monthOverMonth)}%
+                  </span>
+                </div>
+              </div>
+
               {/* Fee breakdown info */}
               <div className={styles.feeBreakdown} role="region" aria-label="Fee information">
                 <div className={styles.feeRow}>
@@ -249,22 +311,85 @@ const Wallet: React.FC = () => {
                 </p>
               </div>
 
-              <Button
-                variant="primary"
-                size="large"
-                disabled={balance <= 0}
-                aria-disabled={balance <= 0}
-                title={balance <= 0 ? 'No available balance to withdraw' : 'Withdraw funds to your account'}
-                onClick={openWithdraw}
-              >
-                Withdraw Funds
-              </Button>
+              {/* Quick Action Buttons */}
+              <div className={styles.quickActions}>
+                <Button
+                  variant="primary"
+                  size="medium"
+                  disabled={balance <= 0}
+                  aria-disabled={balance <= 0}
+                  title={balance <= 0 ? 'No available balance to withdraw' : 'Withdraw funds to your account'}
+                  onClick={openWithdraw}
+                  className={styles.actionBtn}
+                >
+                  <ArrowUpRight size={16} />
+                  Withdraw
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  title="Deposit funds to your wallet"
+                  onClick={() => window.location.href = '/portal/freelancer/wallet/deposit'}
+                  className={styles.actionBtn}
+                >
+                  <ArrowDownLeft size={16} />
+                  Deposit
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  title="Transfer funds to another user"
+                  onClick={() => window.location.href = '/portal/freelancer/wallet/transfer'}
+                  className={styles.actionBtn}
+                >
+                  <Send size={16} />
+                  Transfer
+                </Button>
+              </div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal>
             <section className={styles.transactionsCard}>
               <h2 className={styles.cardTitle}>Transaction History</h2>
+
+              {/* Earnings Chart */}
+              <div className={styles.chartSection}>
+                <h3 className={styles.chartTitle}>Monthly Earnings</h3>
+                <div className={styles.chartContainer}>
+                  <div className={styles.chartBars}>
+                    {monthlyEarnings.map((m, i) => (
+                      <div key={i} className={styles.chartCol}>
+                        <span className={styles.chartAmount}>
+                          ${m.amount >= 1000 ? `${(m.amount / 1000).toFixed(1)}k` : m.amount.toFixed(0)}
+                        </span>
+                        <div
+                          className={styles.chartBar}
+                          style={{
+                            height: `${Math.max((m.amount / maxMonthly) * 120, 4)}px`,
+                          }}
+                        />
+                        <span className={styles.chartLabel}>{m.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Transaction Type Filter */}
+              <div className={styles.filterRow}>
+                <Filter size={14} className={styles.filterIcon} />
+                {['all', 'earning', 'withdrawal', 'payment'].map((type) => (
+                  <button
+                    key={type}
+                    className={`${styles.filterBtn} ${filterType === type ? styles.filterBtnActive : ''}`}
+                    onClick={() => { setFilterType(type); setPage(1); }}
+                  >
+                    {type === 'all' ? 'All' : type.charAt(0).toUpperCase() + type.slice(1)}
+                  </button>
+                ))}
+              </div>
+
               <DataToolbar
                 query={q}
                 onQueryChange={(val) => { setQ(val); setPage(1); }}

@@ -4,6 +4,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
 import { useAdminData } from '@/hooks/useAdmin';
 import Button from '@/app/components/atoms/Button/Button';
@@ -245,12 +246,29 @@ const AdminSettings: React.FC = () => {
 
   const handleSave = useCallback(async () => {
     setSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    setSaving(false);
-    setUnsavedChanges(false);
-    showToast('All settings saved successfully!');
-  }, [showToast]);
+    try {
+      await apiFetch('/admin/settings', {
+        method: 'PUT',
+        body: JSON.stringify({
+          general: { companyName, tagline, supportEmail, siteUrl, defaultLocale, timezone, signupsEnabled, maintenanceMode },
+          security: { require2FA, passwordMinLength: Number(passwordMinLength), requireSpecialChars, requireUppercase, maxLoginAttempts: Number(maxLoginAttempts), lockoutDuration: Number(lockoutDuration), ipWhitelist, csrfProtection, contentSecurityPolicy },
+          api: { rateLimitEnabled, rateLimitPerMin: Number(rateLimitPerMin), rateLimitBurst: Number(rateLimitBurst), apiKeyRotationDays: Number(apiKeyRotationDays), corsOrigins, requestTimeout: Number(requestTimeout), maxPayloadSizeMB: Number(maxPayloadSizeMB) },
+          email: { smtpHost, smtpPort, smtpUser, smtpPassword: smtpPassword === '••••••••' ? undefined : smtpPassword, smtpTls, emailFromName, emailFromAddress },
+          storage: { storageProvider, maxFileSize: Number(maxFileSize), allowedFileTypes, s3Bucket, s3Region },
+          sessions: { accessTokenTTL: Number(accessTokenTTL), refreshTokenTTL: Number(refreshTokenTTL), sessionConcurrency: Number(sessionConcurrency), idleTimeout: Number(idleTimeout), rememberMeDays: Number(rememberMeDays) },
+          maintenance: { maintenanceMsg, maintenanceAllowedIPs, maintenanceScheduled },
+          notifications: { emailAlerts, smsAlerts, slackWebhook, alertOnLogin, alertOnPayment, alertOnDispute, alertOnError, dailyDigest },
+          database: { dbUrl, poolSize: Number(poolSize), queryTimeout: Number(queryTimeout), backupEnabled, backupFrequency, backupRetention: Number(backupRetention) },
+        }),
+      });
+      setUnsavedChanges(false);
+      showToast('All settings saved successfully!');
+    } catch {
+      showToast('Failed to save settings. Please try again.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  }, [companyName, tagline, supportEmail, siteUrl, defaultLocale, timezone, signupsEnabled, maintenanceMode, require2FA, passwordMinLength, requireSpecialChars, requireUppercase, maxLoginAttempts, lockoutDuration, ipWhitelist, csrfProtection, contentSecurityPolicy, rateLimitEnabled, rateLimitPerMin, rateLimitBurst, apiKeyRotationDays, corsOrigins, requestTimeout, maxPayloadSizeMB, smtpHost, smtpPort, smtpUser, smtpPassword, smtpTls, emailFromName, emailFromAddress, storageProvider, maxFileSize, allowedFileTypes, s3Bucket, s3Region, accessTokenTTL, refreshTokenTTL, sessionConcurrency, idleTimeout, rememberMeDays, maintenanceMsg, maintenanceAllowedIPs, maintenanceScheduled, emailAlerts, smsAlerts, slackWebhook, alertOnLogin, alertOnPayment, alertOnDispute, alertOnError, dailyDigest, dbUrl, poolSize, queryTimeout, backupEnabled, backupFrequency, backupRetention, showToast]);
 
   const handleReset = useCallback(() => {
     setUnsavedChanges(false);

@@ -35,3 +35,23 @@
 .feeValueBold {
   color: var(--text-primary-light);
 }
+
+.chartSection {
+  background-color: var(--bg-primary-light);
+  border-color: var(--border-light);
+}
+
+.chartTitle {
+  color: var(--text-primary-light);
+}
+
+.filterBtn {
+  border-color: var(--border-light);
+  color: var(--text-primary-light);
+}
+
+.filterBtnActive {
+  background-color: var(--color-primary, #4573df);
+  color: white;
+  border-color: var(--color-primary, #4573df);
+}

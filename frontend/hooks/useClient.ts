@@ -1,14 +1,23 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
-import api from '@/lib/api';
+import { useEffect, useState, useRef, useCallback } from "react";
+import api from "@/lib/api";
 
 // @AI-HINT: Hook to fetch client portal datasets (projects, payments, freelancers, reviews).
 // Uses proper cleanup to prevent memory leaks and request abortion issues.
 
-export type ClientProject = { 
-  id: string; 
-  title: string; 
-  status: 'Open' | 'In Progress' | 'Completed' | 'Pending' | 'Cancelled' | 'open' | 'in_progress' | 'completed' | 'cancelled'; 
-  budget: string; 
+export type ClientProject = {
+  id: string;
+  title: string;
+  status:
+    | "Open"
+    | "In Progress"
+    | "Completed"
+    | "Pending"
+    | "Cancelled"
+    | "open"
+    | "in_progress"
+    | "completed"
+    | "cancelled";
+  budget: string;
   updatedAt?: string;
   updated?: string;
   description?: string;
@@ -20,23 +29,23 @@ export type ClientProject = {
   proposals_count?: number;
 };
 
-export type ClientPayment = { 
-  id: string; 
-  date: string; 
-  description: string; 
-  amount: string; 
-  status: 'Completed' | 'Paid' | 'Pending' | 'Failed';
-  type: 'Payment' | 'Refund';
+export type ClientPayment = {
+  id: string;
+  date: string;
+  description: string;
+  amount: string;
+  status: "Completed" | "Paid" | "Pending" | "Failed";
+  type: "Payment" | "Refund";
   project?: string;
   freelancer?: string;
   freelancerAvatarUrl?: string;
 };
 
-export type ClientFreelancer = { 
-  id: string; 
-  name: string; 
-  title: string; 
-  rating: number; 
+export type ClientFreelancer = {
+  id: string;
+  name: string;
+  title: string;
+  rating: number;
   hourlyRate: string;
   skills: string[];
   completedProjects: number;
@@ -45,11 +54,11 @@ export type ClientFreelancer = {
   availability?: string;
 };
 
-export type ClientReview = { 
-  id: string; 
-  projectTitle: string; 
-  freelancerName: string; 
-  rating: number; 
+export type ClientReview = {
+  id: string;
+  projectTitle: string;
+  freelancerName: string;
+  rating: number;
   comment: string;
   date: string;
   avatarUrl?: string;
@@ -58,7 +67,9 @@ export type ClientReview = {
 export function useClientData() {
   const [projects, setProjects] = useState<ClientProject[] | null>(null);
   const [payments, setPayments] = useState<ClientPayment[] | null>(null);
-  const [freelancers, setFreelancers] = useState<ClientFreelancer[] | null>(null);
+  const [freelancers, setFreelancers] = useState<ClientFreelancer[] | null>(
+    null,
+  );
   const [reviews, setReviews] = useState<ClientReview[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,111 +79,135 @@ export function useClientData() {
   const load = useCallback(async () => {
     if (loadingRef.current) return;
     loadingRef.current = true;
-    
+
     setLoading(true);
     setError(null);
-    
+    const safetyTimeout = setTimeout(() => {
+      if (mountedRef.current) {
+        loadingRef.current = false;
+        setLoading(false);
+      }
+    }, 15000);
+
     try {
-      const fetchWithFallback = async <T>(promise: Promise<T>, fallback: T): Promise<T> => {
-        try {
-          return await promise;
-        } catch (err) {
-          if (err instanceof Error && err.name === 'AbortError') {
-            throw err;
-          }
-          return fallback;
-        }
-      };
-      
-      const freelancersPromise = api.client?.getFreelancers?.() ?? Promise.resolve([]);
+      const freelancersPromise =
+        api.client?.getFreelancers?.() ?? Promise.resolve([]);
       const reviewsPromise = api.client?.getReviews?.() ?? Promise.resolve([]);
-      
-      const [projectsRes, paymentsRes, freelancersData, reviewsData] = await Promise.all([
-        fetchWithFallback<unknown>(api.client.getProjects(), { projects: [] }),
-        fetchWithFallback<unknown>(api.client.getPayments(), { payments: [] }),
-        fetchWithFallback(freelancersPromise, []),
-        fetchWithFallback(reviewsPromise, []),
-      ]);
-        
-      // Check if component is still mounted before updating state
+
+      const [projectsResult, paymentsResult, freelancersResult, reviewsResult] =
+        await Promise.allSettled([
+          api.client.getProjects(),
+          api.client.getPayments(),
+          freelancersPromise,
+          reviewsPromise,
+        ]);
+
       if (!mountedRef.current) return;
-      
-      // Extract arrays from response objects (API returns {total, projects} or {total, payments} structure)
+
+      const settle = <T>(result: PromiseSettledResult<T>, fallback: T): T =>
+        result.status === "fulfilled" ? result.value : fallback;
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const projectsData: any[] = Array.isArray(projectsRes) ? projectsRes : ((projectsRes as any)?.projects || []);
+      const projectsRes = settle(projectsResult, { projects: [] } as any);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const paymentsData: any[] = Array.isArray(paymentsRes) ? paymentsRes : ((paymentsRes as any)?.payments || []);
-        
-      // Map projects - handle API response format (budget_min/budget_max instead of budget)
-      const mappedProjects: ClientProject[] = (projectsData || []).map((p: any) => {
-        // Calculate budget display - use budget_max or budget_min if budget isn't available
-        const budgetAmount = (p.budget || p.budget_max || p.budget_min || 0) as string | number;
-        const budgetStr = typeof budgetAmount === 'number' 
-          ? `$${budgetAmount.toLocaleString()}` 
-          : budgetAmount;
-        
-        return {
-          id: String(p.id),
-          title: p.title,
-          status: p.status,
-          budget: budgetStr,
-          updatedAt: p.updated_at || p.updatedAt,
-          progress: p.progress,
-          paid: p.paid,
-          freelancers: p.freelancers,
-          description: p.description,
-          proposals_count: p.proposals_count || 0,
-        };
-      });
+      const paymentsRes = settle(paymentsResult, { payments: [] } as any);
+      const freelancersData = settle(freelancersResult, [] as any[]);
+      const reviewsData = settle(reviewsResult, [] as any[]);
+
+      const projectsData: any[] = Array.isArray(projectsRes)
+        ? projectsRes
+        : (projectsRes as any)?.projects || [];
+      const paymentsData: any[] = Array.isArray(paymentsRes)
+        ? paymentsRes
+        : (paymentsRes as any)?.payments || [];
+
+      const mappedProjects: ClientProject[] = (projectsData || []).map(
+        (p: any) => {
+          const budgetAmount = (p.budget ||
+            p.budget_max ||
+            p.budget_min ||
+            0) as string | number;
+          const budgetStr =
+            typeof budgetAmount === "number"
+              ? `$${budgetAmount.toLocaleString()}`
+              : budgetAmount;
+
+          return {
+            id: String(p.id),
+            title: p.title,
+            status: p.status,
+            budget: budgetStr,
+            updatedAt: p.updated_at || p.updatedAt,
+            progress: p.progress,
+            paid: p.paid,
+            freelancers: p.freelancers,
+            description: p.description,
+            proposals_count: p.proposals_count || 0,
+          };
+        },
+      );
       setProjects(mappedProjects);
 
-      // Map payments
-      const mappedPayments: ClientPayment[] = (paymentsData || []).map((p: any) => ({
-        id: p.id,
-        date: p.date,
-        description: p.description,
-        amount: typeof p.amount === 'string' && p.amount.startsWith('$') ? p.amount : `$${parseFloat(String(p.amount || '0')).toLocaleString()}`,
-        status: p.status,
-        type: p.type,
-        project: p.project,
-        freelancer: p.freelancer,
-        freelancerAvatarUrl: p.freelancerAvatarUrl
-      }));
+      const mappedPayments: ClientPayment[] = (paymentsData || []).map(
+        (p: any) => ({
+          id: p.id,
+          date: p.date,
+          description: p.description,
+          amount:
+            typeof p.amount === "string" && p.amount.startsWith("$")
+              ? p.amount
+              : `$${parseFloat(String(p.amount || "0")).toLocaleString()}`,
+          status: p.status,
+          type: p.type,
+          project: p.project,
+          freelancer: p.freelancer,
+          freelancerAvatarUrl: p.freelancerAvatarUrl,
+        }),
+      );
       setPayments(mappedPayments);
 
-      // Map freelancers
-      const mappedFreelancers: ClientFreelancer[] = (freelancersData || []).map((f: any) => ({
-        id: f.id,
-        name: f.name,
-        title: f.title,
-        rating: f.rating as number,
-        hourlyRate: f.hourlyRate as string,
-        skills: f.skills as string[],
-        completedProjects: f.completedProjects as number,
-        avatarUrl: f.avatarUrl,
-        location: f.location,
-        availability: f.availability
-      }));
+      const mappedFreelancers: ClientFreelancer[] = (freelancersData || []).map(
+        (f: any) => ({
+          id: f.id,
+          name: f.name,
+          title: f.title,
+          rating: f.rating as number,
+          hourlyRate: f.hourlyRate as string,
+          skills: f.skills as string[],
+          completedProjects: f.completedProjects as number,
+          avatarUrl: f.avatarUrl,
+          location: f.location,
+          availability: f.availability,
+        }),
+      );
       setFreelancers(mappedFreelancers);
 
-      // Map reviews
-      const mappedReviews: ClientReview[] = (reviewsData || []).map((r: any) => ({
-        id: r.id,
-        projectTitle: r.projectTitle,
-        freelancerName: r.freelancerName,
-        rating: r.rating as number,
-        comment: r.comment as string,
-        date: r.date as string,
-        avatarUrl: r.avatarUrl
-      }));
+      const mappedReviews: ClientReview[] = (reviewsData || []).map(
+        (r: any) => ({
+          id: r.id,
+          projectTitle: r.projectTitle,
+          freelancerName: r.freelancerName,
+          rating: r.rating as number,
+          comment: r.comment as string,
+          date: r.date as string,
+          avatarUrl: r.avatarUrl,
+        }),
+      );
       setReviews(mappedReviews);
 
+      const hasError =
+        projectsResult.status === "rejected" &&
+        paymentsResult.status === "rejected";
+      if (hasError) {
+        setError("Some data failed to load. Partial results are shown.");
+      }
     } catch (e: unknown) {
       // Don't update state if unmounted or if it's an abort error
       if (!mountedRef.current) return;
-      if (e instanceof Error && e.name === 'AbortError') return;
-      setError(e instanceof Error ? e.message : 'Failed to load client data');
+      if (e instanceof Error && e.name === "AbortError") return;
+      setError(e instanceof Error ? e.message : "Failed to load client data");
     } finally {
+      clearTimeout(safetyTimeout);
       loadingRef.current = false;
       if (mountedRef.current) setLoading(false);
     }
@@ -181,11 +216,11 @@ export function useClientData() {
   useEffect(() => {
     mountedRef.current = true;
     load();
-    
-    return () => { 
-      mountedRef.current = false; 
+
+    return () => {
+      mountedRef.current = false;
     };
   }, [load]);
 
-  return { projects, payments, freelancers, reviews, loading, error } as const;
+  return { projects, payments, freelancers, reviews, loading, error, refetch: load } as const;
 }

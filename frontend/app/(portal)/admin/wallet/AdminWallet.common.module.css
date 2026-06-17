@@ -1,0 +1,353 @@
+/* @AI-HINT: Common (layout) styles for Admin Wallet page */
+
+.container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.headerInfo h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.headerInfo p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ── Stats ───────────────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  transition: transform 0.2s;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+}
+
+.statIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconBlue   { background: rgba(69, 115, 223, 0.12); color: var(--ml-blue); }
+.iconGreen  { background: rgba(39, 174, 96, 0.12);  color: #27ae60; }
+.iconOrange { background: rgba(255, 152, 0, 0.12);  color: #f59e0b; }
+.iconPurple { background: rgba(147, 51, 234, 0.12); color: #9333ea; }
+.iconRed    { background: rgba(232, 17, 35, 0.12);  color: #e81123; }
+
+.statInfo    { display: flex; flex-direction: column; }
+.statValue   { font-size: 1.35rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.statLabel   { font-size: 0.82rem; }
+
+/* ── Revenue Chart ───────────────────────────────────────── */
+.chartSection {
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chartTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chartContainer {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  height: 180px;
+  align-items: flex-end;
+}
+
+.chartBar {
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.4s ease;
+  cursor: pointer;
+}
+
+.chartBar:hover { opacity: 0.8; }
+
+.chartLabels {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.chartLabel {
+  text-align: center;
+  font-size: 0.65rem;
+}
+
+/* ── Two-column layout ───────────────────────────────────── */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ── Section cards ───────────────────────────────────────── */
+.sectionCard {
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Payment Gateways ────────────────────────────────────── */
+.gatewayList  { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.gatewayRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+}
+
+.gatewayInfo  { display: flex; align-items: center; gap: 0.75rem; }
+
+.gatewayIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.gatewayMeta    { display: flex; flex-direction: column; }
+.gatewayName    { font-weight: 600; font-size: 0.9rem; }
+.gatewaySubtext { font-size: 0.78rem; opacity: 0.65; }
+
+/* ── Toggle switch ───────────────────────────────────────── */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  outline: none;
+}
+
+.toggle:focus-visible { outline: 2px solid var(--ml-blue); outline-offset: 2px; }
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+  pointer-events: none;
+}
+
+.toggleOn  { background: var(--ml-blue, #4573df); }
+.toggleOff { background: #9ca3af; }
+.knobOn  { left: 23px; }
+.knobOff { left: 3px; }
+
+/* ── Financial Settings ──────────────────────────────────── */
+.settingsList { display: flex; flex-direction: column; gap: 1rem; }
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.settingLabel { font-size: 0.9rem; font-weight: 500; }
+
+.settingInput {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 150px;
+  text-align: right;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.settingInput:focus-visible { outline: none; border-color: var(--ml-blue); }
+
+.settingSelect {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 150px;
+  border: 1.5px solid transparent;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.tableContainer {
+  border-radius: 12px;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.actionBtns { display: flex; gap: 0.5rem; }
+
+/* ── Settlement rows ─────────────────────────────────────── */
+.settlementHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.settlementRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+  font-size: 0.88rem;
+}
+
+.settlementRow:last-child { border-bottom: none; }
+
+.settlementHeadRow {
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 0.5rem;
+}
+
+/* ── Misc ────────────────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  background: rgba(232, 17, 35, 0.08);
+  border: 1px solid rgba(232, 17, 35, 0.2);
+  border-radius: 10px;
+  color: var(--color-error, #e81123);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 300;
+  animation: toastIn 0.35s ease;
+  backdrop-filter: blur(20px);
+}
+
+.toastError {}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .twoCol { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .container   { padding: 1rem; }
+  .statsGrid   { grid-template-columns: repeat(2, 1fr); }
+  .header      { flex-direction: column; }
+  .settlementRow { grid-template-columns: 1fr 1fr; }
+}

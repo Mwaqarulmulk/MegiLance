@@ -16,7 +16,7 @@ export const metadata: Metadata = buildMeta({
 import React, { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, MapPin, Briefcase } from 'lucide-react';
+import { Star, MapPin, Briefcase, Search, ArrowRight, Shield, Zap, TrendingUp } from 'lucide-react';
 import commonStyles from './Freelancers.common.module.css';
 import lightStyles from './Freelancers.light.module.css';
 import darkStyles from './Freelancers.dark.module.css';
@@ -53,6 +53,10 @@ function Loader() {
               <div className={commonStyles.skeletonLine} style={{ width: '40%' }} />
             </div>
           </div>
+          <div className={commonStyles.cardBody}>
+            <div className={commonStyles.skeletonLine} style={{ width: '30%' }} />
+            <div className={commonStyles.skeletonLine} style={{ width: '80%' }} />
+          </div>
         </div>
       ))}
     </div>
@@ -64,9 +68,9 @@ export default async function FreelancersPage(props: { searchParams?: Promise<{ 
   const q = searchParams?.q || '';
   
   return (
-    <main className={commonStyles.freelancers}>
+    <main className={`${commonStyles.freelancers} ${lightStyles.freelancers}`}>
       <header className={commonStyles.pageHeader}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
           <Image
             src="/images/hero/talent-hero.png"
             alt="MegiLance Talent Directory — browse AI-ranked verified freelancers with real-time availability and transparent rates"
@@ -74,15 +78,32 @@ export default async function FreelancersPage(props: { searchParams?: Promise<{ 
             height={540}
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
-            style={{ width: '100%', maxWidth: '900px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.15)' }}
+            style={{ width: '100%', maxWidth: '700px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.15)' }}
           />
         </div>
         <h1 className={commonStyles.pageTitle}>Find Top Freelance Talent</h1>
-        <p className={commonStyles.pageSubtitle}>Discover the perfect match for your next project with our AI-powered matchmaking algorithm.</p>
+        <p className={commonStyles.pageSubtitle}>
+          Discover the perfect match for your next project with our AI-powered matchmaking algorithm.
+        </p>
+
+        {/* Trust Badges */}
+        <div style={{ display: 'flex', gap: '2rem', marginTop: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', opacity: 0.7 }}>
+            <Shield size={16} /> Verified Professionals
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', opacity: 0.7 }}>
+            <Zap size={16} /> AI-Matched
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', opacity: 0.7 }}>
+            <TrendingUp size={16} /> Top-Rated
+          </div>
+        </div>
 
         <form action="/freelancers" method="GET" className={commonStyles.searchForm}>
           <input type="search" name="q" defaultValue={q} placeholder="Search skills, names, or expertise..." className={commonStyles.searchInput} />
-          <button type="submit" className={commonStyles.searchSubmit}>Search</button>
+          <button type="submit" className={commonStyles.searchSubmit}>
+            <Search size={18} /> Search
+          </button>
         </form>
       </header>
 

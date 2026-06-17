@@ -80,7 +80,7 @@ const Login: React.FC = () => {
   // not override the intended role — that's the root cause of the "always
   // lands on client portal" bug.
   const getRedirect = (role: UserRole) => {
-    if (returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
+    if (returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
       const rolePrefix = `/${role}`;
       if (returnTo === rolePrefix || returnTo.startsWith(`${rolePrefix}/`)) {
         return returnTo;
@@ -104,23 +104,47 @@ const Login: React.FC = () => {
   useEffect(() => {
     setMounted(true);
     // Auto-trigger demo login when redirected from home page with ?demo=role
-    const demoRole = searchParams.get('demo') as UserRole | null;
-    if (demoRole && ['client', 'freelancer', 'admin'].includes(demoRole)) {
-      const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true';
+    const demoRole = searchParams.get("demo") as UserRole | null;
+    if (demoRole && ["client", "freelancer", "admin"].includes(demoRole)) {
+      const SHOW_DEMO_LOGIN =
+        process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === "true";
       if (SHOW_DEMO_LOGIN) {
-        const DEMO_CREDS: Record<string, { email: string; password: string }> = {
-          client: { email: process.env.NEXT_PUBLIC_DEV_CLIENT_EMAIL || 'client1@example.com', password: process.env.NEXT_PUBLIC_DEV_CLIENT_PASSWORD || 'Client@123' },
-          freelancer: { email: process.env.NEXT_PUBLIC_DEV_FREELANCER_EMAIL || 'freelancer1@example.com', password: process.env.NEXT_PUBLIC_DEV_FREELANCER_PASSWORD || 'Freelancer@123' },
-          admin: { email: process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL || 'admin@megilance.com', password: process.env.NEXT_PUBLIC_DEV_ADMIN_PASSWORD || 'Admin@123' },
-        };
+        const DEMO_CREDS: Record<string, { email: string; password: string }> =
+          {
+            client: {
+              email:
+                process.env.NEXT_PUBLIC_DEV_CLIENT_EMAIL ||
+                "client1@example.com",
+              password:
+                process.env.NEXT_PUBLIC_DEV_CLIENT_PASSWORD || "Client@123",
+            },
+            freelancer: {
+              email:
+                process.env.NEXT_PUBLIC_DEV_FREELANCER_EMAIL ||
+                "freelancer1@example.com",
+              password:
+                process.env.NEXT_PUBLIC_DEV_FREELANCER_PASSWORD ||
+                "Freelancer@123",
+            },
+            admin: {
+              email:
+                process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL ||
+                "admin@megilance.com",
+              password:
+                process.env.NEXT_PUBLIC_DEV_ADMIN_PASSWORD || "Admin@123",
+            },
+          };
         const creds = DEMO_CREDS[demoRole];
         if (creds) {
           setSelectedRole(demoRole);
-          setTimeout(() => handleDevAutoLogin(creds.email, creds.password, demoRole), 300);
+          setTimeout(
+            () => handleDevAutoLogin(creds.email, creds.password, demoRole),
+            300,
+          );
         }
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const styles = React.useMemo(() => {
@@ -225,11 +249,14 @@ const Login: React.FC = () => {
       const data = await api.auth.login(email, password);
 
       if (data.user) {
-        localStorage.setItem("user", JSON.stringify({
-          ...data.user,
-          user_type: role,
-          role,
-        }));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...data.user,
+            user_type: role,
+            role,
+          }),
+        );
       }
       // ml_user_role: the authoritative login-time role.
       // Unlike portal_area (overwritten by AppLayout on every navigation),
@@ -273,7 +300,10 @@ const Login: React.FC = () => {
       ).toLowerCase() as UserRole;
       const resolvedRole: UserRole = devLoginRole
         ? devLoginRole
-        : apiRole && (apiRole === "admin" || apiRole === "freelancer" || apiRole === "client")
+        : apiRole &&
+            (apiRole === "admin" ||
+              apiRole === "freelancer" ||
+              apiRole === "client")
           ? apiRole
           : selectedRole
             ? selectedRole
@@ -283,9 +313,14 @@ const Login: React.FC = () => {
 
       // Store user with correct role (important for portal layout access check)
       if (data.user) {
-        localStorage.setItem("user", JSON.stringify(
-          { ...data.user, user_type: resolvedRole, role: resolvedRole }
-        ));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...data.user,
+            user_type: resolvedRole,
+            role: resolvedRole,
+          }),
+        );
       }
 
       try {
@@ -308,16 +343,17 @@ const Login: React.FC = () => {
 
   const handleSocialLogin = async (provider: "google" | "github") => {
     setLoading(true);
-    try {
-      // Use standard callback path that matches Google Console
-      const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
-      try {
-        window.localStorage.setItem("portal_area", selectedRole);
-        window.localStorage.setItem("ml_user_role", selectedRole);
-      } catch {
-        /* localStorage unavailable in private browsing */
-      }
 
+    // Persist the selected role so the callback page can redirect correctly
+    try {
+      window.localStorage.setItem("portal_area", selectedRole);
+      window.localStorage.setItem("ml_user_role", selectedRole);
+    } catch {
+      /* localStorage unavailable in private browsing */
+    }
+
+    try {
+      const redirectUri = `${window.location.origin}/api/auth/callback/${provider}`;
       const response = (await api.socialAuth.start(
         provider,
         redirectUri,
@@ -327,29 +363,15 @@ const Login: React.FC = () => {
 
       if (response.authorization_url) {
         window.location.href = response.authorization_url;
-      } else {
-        throw new Error("No authorization URL returned");
+        return;
       }
-    } catch (error: unknown) {
-      // Check for common OAuth configuration issues
-      const errorMsg = error instanceof Error ? error.message : "";
-      if (
-        errorMsg.includes("not configured") ||
-        errorMsg.includes("Missing client") ||
-        errorMsg.includes("client ID")
-      ) {
-        setErrors({
-          email: "",
-          password: "",
-          general: `${provider === "google" ? "Google" : "GitHub"} sign-in is being configured. Please use email/password login for now.`,
-        });
-      } else {
-        setErrors({
-          email: "",
-          password: "",
-          general: errorMsg || `Sign in with ${provider} failed.`,
-        });
-      }
+      throw new Error("Provider returned no authorization URL.");
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to start social login. Please try again.";
+      setErrors((prev) => ({ ...prev, general: msg }));
       setLoading(false);
     }
   };
@@ -393,7 +415,11 @@ const Login: React.FC = () => {
               </p>
             </StaggerItem>
 
-            <StaggerItem className={styles.roleSelector} role="radiogroup" aria-label="Select account type">
+            <StaggerItem
+              className={styles.roleSelector}
+              role="radiogroup"
+              aria-label="Select account type"
+            >
               {(["freelancer", "client", "admin"] as UserRole[]).map((role) => {
                 const RoleIcon = roleConfig[role].icon;
                 return (

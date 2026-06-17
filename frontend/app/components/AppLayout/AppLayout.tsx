@@ -210,10 +210,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </main>
           </ErrorBoundary>
 
-          <div className={commonStyles.footerWrapper}>
-            <PortalFooter />
-          </div>
-
         </div>
 
         {/* Mobile bottom tab navigation */}

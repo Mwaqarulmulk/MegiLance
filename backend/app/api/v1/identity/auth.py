@@ -18,6 +18,7 @@ from app.core.security import (
     verify_password,
     get_current_user,
     get_current_user_from_token,
+    get_current_user_optional,
     validate_password_strength,
     add_token_to_blacklist,
     get_user_by_email,
@@ -76,6 +77,9 @@ class TwoFactorSetup(BaseModel):
 
 class EmailVerifyRequest(BaseModel):
     token: str
+
+class ResendVerificationRequest(BaseModel):
+    email: Optional[str] = None
 
 
 # === Login ===
@@ -604,15 +608,21 @@ async def verify_email(request: EmailVerifyRequest):
 
 @router.post("/resend-verification")
 @email_rate_limit()
-async def resend_verification(request: Request):
-    try:
-        body = await request.json()
-        email = body.get("email") if body else None
-    except Exception:
-        email = None
+async def resend_verification(
+    request: Request,
+    body: Optional[ResendVerificationRequest] = None,
+    current_user=Depends(get_current_user_optional),
+):
+    email = body.email if body and body.email else None
+
+    if not email and current_user:
+        email = current_user.email
 
     if not email:
-        return {"message": "Email required in request body"}
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email required in request body or user must be authenticated",
+        )
 
     user = auth_get_user_by_email(email)
     if not user:
