@@ -27,6 +27,9 @@ export interface AuthUser {
   title?: string;
   is_verified?: boolean;
   joined_at?: string;
+  billing_country?: string;
+  tax_id?: string;
+  full_name?: string;
 }
 
 // Profile completion tracking

@@ -25,6 +25,11 @@ interface AuthUser {
   website?: string;
   experience_level?: string;
   headline?: string;
+  billing_country?: string;
+  tax_id?: string;
+  two_factor_enabled?: boolean;
+  profile_visibility?: string;
+  contact_preferences?: { show_contact_info?: boolean };
 }
 
 interface LoginResponse {

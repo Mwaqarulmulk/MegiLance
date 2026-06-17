@@ -1340,7 +1340,7 @@ export default function ChatbotAgent() {
   const renderFlowCards = (choices: { label: string; value: string; icon?: React.ElementType }[], type: 'choice' | 'multi-choice') => (
     <div className={commonStyles.flowStart}>
       {choices.map(choice => {
-        const Icon = choice.icon || ArrowRight;
+        const Icon = (choice.icon || ArrowRight) as React.ElementType;
         const isSelected = type === 'multi-choice' && selectedSkills.includes(choice.value);
         return (
           <motion.button
