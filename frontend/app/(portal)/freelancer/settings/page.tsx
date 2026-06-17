@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
-import { Bell, Lock, Eye, Mail, Globe } from 'lucide-react';
+import { Bell, Lock, Eye, Mail, Globe, KeyRound, AtSign } from 'lucide-react';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer } from '@/app/components/Animations/StaggerContainer';
@@ -44,7 +44,14 @@ const AccountSettingsPage = () => {
   
   // Security settings
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
-  
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [emailPassword, setEmailPassword] = useState('');
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [isSavingPrivacy, setIsSavingPrivacy] = useState(false);
@@ -70,6 +77,48 @@ const AccountSettingsPage = () => {
     };
     fetchProfile();
   }, [toaster]);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      toaster.notify({ title: 'Error', description: 'New passwords do not match', variant: 'danger' });
+      return;
+    }
+    if (newPassword.length < 8) {
+      toaster.notify({ title: 'Error', description: 'Password must be at least 8 characters', variant: 'danger' });
+      return;
+    }
+    setIsSavingPassword(true);
+    try {
+      await api.auth.changePassword(currentPassword, newPassword);
+      setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
+      toaster.notify({ title: 'Success', description: 'Password changed successfully!', variant: 'success' });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Failed to change password';
+      toaster.notify({ title: 'Error', description: msg, variant: 'danger' });
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmail || !newEmail.includes('@')) {
+      toaster.notify({ title: 'Error', description: 'Please enter a valid email address', variant: 'danger' });
+      return;
+    }
+    setIsSavingEmail(true);
+    try {
+      await (api.auth as any).changeEmail(newEmail, emailPassword);
+      setNewEmail(''); setEmailPassword('');
+      toaster.notify({ title: 'Verification sent', description: 'Check your new email to confirm the change', variant: 'success' });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Failed to change email';
+      toaster.notify({ title: 'Error', description: msg, variant: 'danger' });
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent, section: string) => {
     e.preventDefault();
@@ -369,7 +418,7 @@ const AccountSettingsPage = () => {
             </form>
           </section>
 
-          {/* Security Settings */}
+          {/* Security — 2FA */}
           <section className={cn(commonStyles.section)}>
             <div className={cn(commonStyles.sectionHeader)}>
               <Lock className={cn(commonStyles.sectionIcon)} />
@@ -378,7 +427,6 @@ const AccountSettingsPage = () => {
                 <p className={cn(commonStyles.sectionDescription)}>Manage your account security settings.</p>
               </div>
             </div>
-            
             <form onSubmit={(e) => handleSubmit(e, 'Security')} className={commonStyles.form}>
               <div className={commonStyles.switchGroup}>
                 <div className={commonStyles.switchRow}>
@@ -386,37 +434,63 @@ const AccountSettingsPage = () => {
                     <Label htmlFor="two-factor-auth">Two-Factor Authentication</Label>
                     <p className={cn(commonStyles.switchDescription)}>Add an extra layer of security to your account</p>
                   </div>
-                  <Switch
-                    label="Two-Factor Authentication"
-                    id="two-factor-auth"
-                    checked={twoFactorAuth}
-                    onChange={setTwoFactorAuth}
-                  />
+                  <Switch label="Two-Factor Authentication" id="two-factor-auth" checked={twoFactorAuth} onChange={setTwoFactorAuth} />
                 </div>
               </div>
-
-              <div className={commonStyles.inputGroup}>
-                <Label>Change Password</Label>
-                <Button variant="secondary" className={commonStyles.actionButton}>
-                  Update Password
-                </Button>
-              </div>
-
-              <div className={commonStyles.inputGroup}>
-                <Label>Connected Accounts</Label>
-                <div className={commonStyles.connectedAccounts}>
-                  <div className={commonStyles.accountRow}>
-                    <Globe className={commonStyles.accountIcon} />
-                    <span>Google</span>
-                    <Button variant="danger" size="sm">Disconnect</Button>
-                  </div>
-                </div>
-              </div>
-
               <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
-                <Button type="submit" disabled={isSavingSecurity}>
-                  {isSavingSecurity ? 'Saving...' : 'Save Security Settings'}
-                </Button>
+                <Button type="submit" disabled={isSavingSecurity}>{isSavingSecurity ? 'Saving...' : 'Save Security Settings'}</Button>
+              </footer>
+            </form>
+          </section>
+
+          {/* Change Password */}
+          <section className={cn(commonStyles.section)}>
+            <div className={cn(commonStyles.sectionHeader)}>
+              <KeyRound className={cn(commonStyles.sectionIcon)} />
+              <div>
+                <h2 className={cn(commonStyles.sectionTitle)}>Change Password</h2>
+                <p className={cn(commonStyles.sectionDescription)}>Update your account password.</p>
+              </div>
+            </div>
+            <form onSubmit={handleChangePassword} className={commonStyles.form}>
+              <div className={commonStyles.inputGroup}>
+                <Label htmlFor="current-password">Current Password</Label>
+                <Input id="current-password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Enter current password" required className={styles.input} />
+              </div>
+              <div className={commonStyles.inputGroup}>
+                <Label htmlFor="new-password">New Password</Label>
+                <Input id="new-password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 8 characters" required className={styles.input} />
+              </div>
+              <div className={commonStyles.inputGroup}>
+                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter new password" required className={styles.input} />
+              </div>
+              <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
+                <Button type="submit" disabled={isSavingPassword}>{isSavingPassword ? 'Changing...' : 'Change Password'}</Button>
+              </footer>
+            </form>
+          </section>
+
+          {/* Change Email */}
+          <section className={cn(commonStyles.section)}>
+            <div className={cn(commonStyles.sectionHeader)}>
+              <AtSign className={cn(commonStyles.sectionIcon)} />
+              <div>
+                <h2 className={cn(commonStyles.sectionTitle)}>Change Email</h2>
+                <p className={cn(commonStyles.sectionDescription)}>Update your account email address. A verification link will be sent to the new address.</p>
+              </div>
+            </div>
+            <form onSubmit={handleChangeEmail} className={commonStyles.form}>
+              <div className={commonStyles.inputGroup}>
+                <Label htmlFor="new-email">New Email Address</Label>
+                <Input id="new-email" type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="your-new@email.com" required className={styles.input} />
+              </div>
+              <div className={commonStyles.inputGroup}>
+                <Label htmlFor="email-password">Confirm with Password</Label>
+                <Input id="email-password" type="password" value={emailPassword} onChange={(e) => setEmailPassword(e.target.value)} placeholder="Enter your current password" required className={styles.input} />
+              </div>
+              <footer className={cn(commonStyles.formFooter, styles.formFooter)}>
+                <Button type="submit" disabled={isSavingEmail}>{isSavingEmail ? 'Sending...' : 'Send Verification Email'}</Button>
               </footer>
             </form>
           </section>

@@ -33,24 +33,34 @@ export const searchApi = {
 
   freelancers: (query: string, filters?: {
     skills?: string[];
+    skill?: string;
     hourly_rate_min?: number;
     hourly_rate_max?: number;
+    min_rate?: number;
+    max_rate?: number;
+    location?: string;
+    experience_level?: string;
+    availability_status?: string;
     page?: number;
     page_size?: number;
+    limit?: number;
   }) => {
-    const params = new URLSearchParams({ q: query });
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
     if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined) {
-          if (Array.isArray(value)) {
-            value.forEach(v => params.append(key, v.toString()));
-          } else {
-            params.append(key, value.toString());
-          }
+      const { page = 1, page_size, limit, skills, skill, ...rest } = filters;
+      const size = page_size || limit || 24;
+      params.set('page', page.toString());
+      params.set('page_size', size.toString());
+      if (skill) params.set('skill', skill);
+      if (skills?.length) params.set('skill', skills[0]);
+      Object.entries(rest).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          params.set(key, value.toString());
         }
       });
     }
-    return apiFetch(`/search/freelancers?${params}`);
+    return apiFetch(`/marketplace/freelancers?${params}`);
   },
 
   global: (query: string) =>

@@ -22,6 +22,9 @@ class InvoiceCreate(BaseModel):
 class InvoiceUpdate(BaseModel):
     status: Optional[str] = None
     notes: Optional[str] = None
+    amount: Optional[float] = None
+    description: Optional[str] = None
+    due_date: Optional[str] = None
 
 
 @router.get("")
@@ -101,22 +104,46 @@ async def create_invoice(request: InvoiceCreate, current_user=Depends(get_curren
 
 @router.put("/{invoice_id}")
 async def update_invoice(invoice_id: int, request: InvoiceUpdate, current_user=Depends(get_current_user)):
-    _ALLOWED_INVOICE_COLUMNS = frozenset({"status", "notes"})
+    rows = parse_rows(execute_query("SELECT id, freelancer_id, status FROM invoices WHERE id = ?", [invoice_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    invoice = rows[0]
+    if invoice["freelancer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the invoice creator can edit it")
+
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
 
-    # Validate column names against allowlist
+    # Amount/description/due_date only editable while draft
+    draft_only = {"amount", "description", "due_date"}
+    if any(k in draft_only for k in updates) and invoice["status"] not in ("draft",):
+        raise HTTPException(status_code=400, detail="Amount, description and due date can only be changed on draft invoices")
+
+    _ALLOWED = frozenset({"status", "notes", "amount", "description", "due_date"})
     for k in updates:
-        if k not in _ALLOWED_INVOICE_COLUMNS:
+        if k not in _ALLOWED:
             raise HTTPException(status_code=400, detail=f"Invalid field: {k}")
 
     set_parts = [f"{k} = ?" for k in updates]
     set_parts.append("updated_at = ?")
     values = list(updates.values()) + [datetime.now(timezone.utc).isoformat(), invoice_id]
-
     execute_query(f"UPDATE invoices SET {', '.join(set_parts)} WHERE id = ?", values)
     return {"message": "Invoice updated"}
+
+
+@router.delete("/{invoice_id}")
+async def delete_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+    rows = parse_rows(execute_query("SELECT id, freelancer_id, status FROM invoices WHERE id = ?", [invoice_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    invoice = rows[0]
+    if invoice["freelancer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the invoice creator can delete it")
+    if invoice["status"] not in ("draft", "cancelled"):
+        raise HTTPException(status_code=400, detail=f"Cannot delete invoice in '{invoice['status']}' status — cancel it first")
+    execute_query("DELETE FROM invoices WHERE id = ?", [invoice_id])
+    return {"message": "Invoice deleted"}
 
 
 @router.post("/{invoice_id}/send")

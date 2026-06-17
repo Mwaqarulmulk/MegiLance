@@ -20,6 +20,7 @@ from app.services.messages_service import (
     update_conversation_fields,
     sanitize_content,
     find_existing_conversation,
+    get_messaging_contacts,
 )
 
 # Import WebSocket manager for real-time broadcasting
@@ -60,6 +61,13 @@ async def list_conversations(
         skip=(page - 1) * page_size,
     )
     return {"items": conversations, "total": len(conversations), "page": page}
+
+
+@router.get("/conversations/contacts")
+async def get_contacts(current_user=Depends(get_current_user)):
+    """Return users who have contracts with the current user — the default messageable contacts."""
+    contacts = get_messaging_contacts(current_user.id)
+    return {"items": contacts}
 
 
 @router.get("/conversations/{conversation_id}")

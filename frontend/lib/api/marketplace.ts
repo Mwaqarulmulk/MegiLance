@@ -175,6 +175,19 @@ export const reviewsApi = {
   },
   getForUser: (userId: ResourceId) => apiFetch(`/reviews/user/${userId}`),
   getForContract: (contractId: ResourceId) => apiFetch(`/reviews/contract/${contractId}`),
+  update: (reviewId: ResourceId, data: {
+    rating?: number;
+    comment?: string;
+    communication_rating?: number;
+    quality_rating?: number;
+    deadline_rating?: number;
+    professionalism_rating?: number;
+    would_recommend?: boolean;
+  }) =>
+    apiFetch(`/reviews/${reviewId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
   delete: (reviewId: ResourceId) => apiFetch(`/reviews/${reviewId}`, { method: 'DELETE' }),
 };
 

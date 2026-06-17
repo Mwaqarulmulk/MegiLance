@@ -131,25 +131,26 @@ def list_conversations_for_user(user_id: int, status_filter: Optional[str],
                                 archived: Optional[bool], limit: int, skip: int) -> List[dict]:
     """Get all conversations for a user with enrichment (contact info, last message, unread)."""
     where_clauses = ["(c.client_id = ? OR c.freelancer_id = ?)"]
-    params: list = [user_id, user_id]
+    where_params: list = [user_id, user_id]
 
     if status_filter:
         where_clauses.append("c.status = ?")
-        params.append(status_filter.lower())
+        where_params.append(status_filter.lower())
 
     if archived is not None:
         where_clauses.append("c.is_archived = ?")
-        params.append(1 if archived else 0)
+        where_params.append(1 if archived else 0)
 
     where_sql = " AND ".join(where_clauses)
-    params.extend([limit, skip])
+    # SQL param order: subquery(user_id), CASE(user_id), WHERE params, LIMIT, OFFSET
+    params = [user_id, user_id] + where_params + [limit, skip]
 
-    # Optimized query with JOINs to avoid N+1
     result = execute_query(
         f"""SELECT c.id, c.client_id, c.freelancer_id, c.project_id, c.status, c.is_archived,
                    c.last_message_at, c.created_at, c.updated_at,
-                   other_user.name as contact_name,
-                   other_user.profile_image_url as avatar,
+                   other_user.id as other_user_id,
+                   other_user.name as other_user_name,
+                   other_user.profile_image_url as other_user_avatar,
                    last_msg.content as last_message_content,
                    last_msg.message_type as last_message_type,
                    (SELECT COUNT(*) FROM messages m
@@ -168,7 +169,7 @@ def list_conversations_for_user(user_id: int, status_filter: Optional[str],
                 ORDER BY m2.sent_at DESC LIMIT 1
             )
             WHERE {where_sql}
-            ORDER BY c.last_message_at DESC
+            ORDER BY COALESCE(c.last_message_at, c.created_at) DESC
             LIMIT ? OFFSET ?""",
         params
     )
@@ -182,17 +183,30 @@ def list_conversations_for_user(user_id: int, status_filter: Optional[str],
     for row in rows:
         conv = row
         conv["is_archived"] = bool(conv.get("is_archived"))
-
-        # Truncate last message for preview
         content = conv.get("last_message_content") or ""
-        if len(content) > 100:
-            conv["last_message"] = content[:100] + "..."
-        else:
-            conv["last_message"] = content
-
+        conv["last_message"] = (content[:100] + "...") if len(content) > 100 else content
         conversations.append(conv)
 
     return conversations
+
+
+def get_messaging_contacts(user_id: int) -> List[dict]:
+    """Return users who have active/pending/completed contracts with this user."""
+    result = execute_query(
+        """SELECT DISTINCT u.id, u.name, u.user_type, u.profile_image_url, u.headline, u.location
+           FROM contracts c
+           JOIN users u ON u.id = CASE
+               WHEN c.client_id = ? THEN c.freelancer_id
+               ELSE c.client_id
+           END
+           WHERE (c.client_id = ? OR c.freelancer_id = ?)
+           AND c.status IN ('pending', 'active', 'completed')
+           AND u.is_active = 1
+           ORDER BY c.updated_at DESC
+           LIMIT 50""",
+        [user_id, user_id, user_id],
+    )
+    return parse_rows(result) or []
 
 
 def update_conversation_fields(conversation_id: int, set_clause: str, params: list):

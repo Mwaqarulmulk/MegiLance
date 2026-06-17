@@ -102,6 +102,8 @@ function AuthCallbackPage() {
 
             if (response.user) {
               localStorage.setItem("user", JSON.stringify(response.user));
+              const oauthRole = (response.user.role || response.user.user_type || "client").toLowerCase();
+              localStorage.setItem("ml_user_role", oauthRole);
             }
 
             // ── New user who needs to pick a role → onboarding ──────────

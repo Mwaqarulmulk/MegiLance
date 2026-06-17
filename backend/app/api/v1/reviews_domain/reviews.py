@@ -24,6 +24,15 @@ class ReviewCreate(BaseModel):
     professionalism_rating: Optional[int] = None
     would_recommend: bool = True
 
+class ReviewUpdate(BaseModel):
+    rating: Optional[int] = None
+    comment: Optional[str] = None
+    communication_rating: Optional[int] = None
+    quality_rating: Optional[int] = None
+    deadline_rating: Optional[int] = None
+    professionalism_rating: Optional[int] = None
+    would_recommend: Optional[bool] = None
+
 class ReviewResponse(BaseModel):
     response: str
 
@@ -137,6 +146,42 @@ async def create_review(request: ReviewCreate, current_user=Depends(get_current_
         raise HTTPException(status_code=500, detail="Failed to create review")
 
     return {"message": "Review submitted successfully", "review_id": result.get("last_insert_rowid")}
+
+
+@router.put("/{review_id}")
+async def update_review(review_id: int, request: ReviewUpdate, current_user=Depends(get_current_user)):
+    rows = parse_rows(execute_query("SELECT id, reviewer_id FROM reviews WHERE id = ?", [review_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Review not found")
+    if rows[0]["reviewer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the reviewer can edit this review")
+
+    updates = {k: v for k, v in request.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    _ALLOWED = frozenset({"rating", "comment", "communication_rating", "quality_rating",
+                          "deadline_rating", "professionalism_rating", "would_recommend"})
+    for k in updates:
+        if k not in _ALLOWED:
+            raise HTTPException(status_code=400, detail=f"Invalid field: {k}")
+
+    set_parts = [f"{k} = ?" for k in updates]
+    set_parts.append("updated_at = ?")
+    values = list(updates.values()) + [datetime.now(timezone.utc).isoformat(), review_id]
+    execute_query(f"UPDATE reviews SET {', '.join(set_parts)} WHERE id = ?", values)
+    return {"message": "Review updated"}
+
+
+@router.delete("/{review_id}")
+async def delete_review(review_id: int, current_user=Depends(get_current_user)):
+    rows = parse_rows(execute_query("SELECT id, reviewer_id FROM reviews WHERE id = ?", [review_id]))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Review not found")
+    if rows[0]["reviewer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the reviewer can delete this review")
+    execute_query("DELETE FROM reviews WHERE id = ?", [review_id])
+    return {"message": "Review deleted"}
 
 
 @router.post("/{review_id}/respond")

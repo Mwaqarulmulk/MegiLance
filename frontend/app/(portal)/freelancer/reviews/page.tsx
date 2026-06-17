@@ -149,6 +149,26 @@ const ReviewsPage: React.FC = () => {
     return result;
   }, [reviews, filterRating, searchQuery, sortBy]);
 
+  const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    api.auth.me().then((u: any) => setCurrentUserId(u.id)).catch(() => {});
+  }, []);
+
+  const handleDeleteReview = async (reviewId: number) => {
+    if (!confirm('Delete this review permanently? This cannot be undone.')) return;
+    setDeletingReviewId(reviewId);
+    try {
+      await api.reviews.delete(reviewId);
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete review');
+    } finally {
+      setDeletingReviewId(null);
+    }
+  };
+
   const handleSubmitResponse = async (reviewId: number) => {
     if (!responseText.trim()) return;
     try {
@@ -327,6 +347,18 @@ const ReviewsPage: React.FC = () => {
                               <span className={cn(commonStyles.date, themed.date)}>
                                 {new Date(review.created_at).toLocaleDateString()}
                               </span>
+                              {currentUserId && review.reviewer_id === currentUserId && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteReview(review.id)}
+                                  disabled={deletingReviewId === review.id}
+                                  style={{ marginLeft: '0.5rem', padding: '0.25rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', opacity: deletingReviewId === review.id ? 0.5 : 1 }}
+                                  title="Delete review"
+                                  aria-label="Delete this review"
+                                >
+                                  <X size={14} />
+                                </button>
+                              )}
                             </div>
                           </div>
 

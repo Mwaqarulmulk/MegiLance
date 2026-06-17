@@ -81,6 +81,7 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
   const [userSearchResults, setUserSearchResults] = useState<UserSearchResult[]>([]);
   const [userSearchLoading, setUserSearchLoading] = useState(false);
   const [creatingConversation, setCreatingConversation] = useState<number | null>(null);
+  const [contacts, setContacts] = useState<UserSearchResult[]>([]);
 
   const userIds = useMemo(() => conversations.map(c => c.userId).filter(Boolean), [conversations]);
   const { isOnline } = useOnlineStatus(userIds);
@@ -89,31 +90,42 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
   const loadConversations = useCallback(async () => {
     setLoading(true);
     try {
-      const data: ApiConversation[] = await (api.messages as any).getConversations?.() || [];
-      const mapped: Conversation[] = data.map(conv => ({
+      const resp: any = await (api.messages as any).getConversations?.();
+      const rawData: ApiConversation[] = resp?.items || (Array.isArray(resp) ? resp : []);
+      const mapped: Conversation[] = rawData.map((conv: ApiConversation) => ({
         id: `convo_${conv.id}`,
         numericId: conv.id,
         userName: conv.other_user_name || `User ${conv.other_user_id || conv.client_id}`,
         userId: conv.other_user_id || conv.client_id || conv.freelancer_id,
         avatarUrl: conv.other_user_avatar || '/avatars/default.png',
-        lastMessage: conv.last_message_content || 'No messages yet',
+        lastMessage: (conv as any).last_message || conv.last_message_content || 'No messages yet',
         timestamp: fmtTime(conv.last_message_at || conv.created_at),
         unreadCount: conv.unread_count || 0,
       }));
       setConversations(mapped);
       if (mapped.length > 0 && !active) { setActive(mapped[0].id); onConversationSelect?.(mapped[0]); }
-    } catch (err) {
+    } catch {
       setConversations([]);
     } finally {
       setLoading(false);
     }
   }, [active, onConversationSelect]);
 
+  const loadContacts = useCallback(async () => {
+    try {
+      const resp: any = await (api.messages as any).getContacts?.();
+      const items: UserSearchResult[] = resp?.items || [];
+      setContacts(items);
+    } catch {
+      setContacts([]);
+    }
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
-    (async () => { if (!cancelled) await loadConversations(); })();
+    (async () => { if (!cancelled) { await loadConversations(); await loadContacts(); } })();
     return () => { cancelled = true; };
-  }, [loadConversations]);
+  }, [loadConversations, loadContacts]);
 
   const searchUsers = useCallback(async (query: string) => {
     if (!query.trim() || query.length < 2) {
@@ -122,7 +134,7 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
     }
     setUserSearchLoading(true);
     try {
-      const results = await api.users?.search?.(query, 'all') || [];
+      const results = await (api.users as any)?.search?.(query, 'all') || [];
       setUserSearchResults(Array.isArray(results) ? results.slice(0, 10) : []);
     } catch {
       setUserSearchResults([]);
@@ -218,32 +230,45 @@ const ChatInbox: React.FC<ChatInboxProps> = ({ onConversationSelect, onNewMessag
             {userSearchLoading && (
               <div className="mt-2 text-center text-xs text-slate-400">Searching...</div>
             )}
-            {userSearchResults.length > 0 && (
-              <div className="mt-2 max-h-60 overflow-y-auto">
-                {userSearchResults.map(user => (
-                  <div
-                    key={user.id}
-                    className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-slate-50 dark:hover:bg-slate-800"
-                  >
-                    <UserAvatar src={user.profile_image_url} name={user.name} size="small" />
-                    <div className="flex-1 min-w-0">
-                      <div className="truncate text-sm font-medium">{user.name}</div>
-                      <div className="truncate text-xs text-slate-500">{user.headline || user.user_type}</div>
+            {/* Show search results or contract contacts as defaults */}
+            {(() => {
+              const displayList = userSearchQuery.length >= 2 ? userSearchResults : contacts;
+              const label = userSearchQuery.length >= 2 ? null : contacts.length > 0 ? 'Your Hire Partners' : null;
+              return (
+                <>
+                  {label && <div className="mt-2 px-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">{label}</div>}
+                  {displayList.length > 0 && (
+                    <div className="mt-1 max-h-60 overflow-y-auto">
+                      {displayList.map(user => (
+                        <div
+                          key={user.id}
+                          className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-slate-50 dark:hover:bg-slate-800"
+                        >
+                          <UserAvatar src={user.profile_image_url} name={user.name} size="small" />
+                          <div className="flex-1 min-w-0">
+                            <div className="truncate text-sm font-medium">{user.name}</div>
+                            <div className="truncate text-xs text-slate-500">{user.headline || user.user_type}</div>
+                          </div>
+                          <button
+                            onClick={() => startConversation(user.id)}
+                            disabled={creatingConversation === user.id}
+                            className="rounded-md bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            {creatingConversation === user.id ? 'Starting...' : 'Message'}
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                    <button
-                      onClick={() => startConversation(user.id)}
-                      disabled={creatingConversation === user.id}
-                      className="rounded-md bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700 disabled:opacity-50"
-                    >
-                      {creatingConversation === user.id ? 'Starting...' : 'Message'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {userSearchQuery.length >= 2 && !userSearchLoading && userSearchResults.length === 0 && (
-              <div className="mt-2 text-center text-xs text-slate-400">No users found</div>
-            )}
+                  )}
+                  {userSearchQuery.length >= 2 && !userSearchLoading && userSearchResults.length === 0 && (
+                    <div className="mt-2 text-center text-xs text-slate-400">No users found</div>
+                  )}
+                  {userSearchQuery.length < 2 && contacts.length === 0 && (
+                    <div className="mt-2 text-center text-xs text-slate-400">No hire partners yet — complete a contract to connect</div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
 

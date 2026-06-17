@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { User, Shield, Bell, CreditCard, LifeBuoy, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Shield, Bell, CreditCard, LifeBuoy, CheckCircle, AlertCircle, KeyRound, AtSign } from 'lucide-react';
 import api, { apiFetch } from '@/lib/api';
 
 import SettingsSection from '@/app/components/organisms/SettingsSection/SettingsSection';
@@ -40,6 +40,13 @@ const Settings: React.FC = () => {
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
   const [twoFactor, setTwoFactor] = useState(true);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [emailConfirmPassword, setEmailConfirmPassword] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [savingEmail, setSavingEmail] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [productAnnouncements, setProductAnnouncements] = useState(false);
   const [country, setCountry] = useState('US');
@@ -90,6 +97,35 @@ const Settings: React.FC = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) { setError('New passwords do not match'); return; }
+    if (newPassword.length < 8) { setError('Password must be at least 8 characters'); return; }
+    setSavingPassword(true); setError(null); setSuccessMessage(null);
+    try {
+      await api.auth.changePassword(currentPassword, newPassword);
+      setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
+      setSuccessMessage('Password changed successfully');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to change password');
+    } finally { setSavingPassword(false); }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmail || !newEmail.includes('@')) { setError('Please enter a valid email address'); return; }
+    setSavingEmail(true); setError(null); setSuccessMessage(null);
+    try {
+      await (api.auth as any).changeEmail(newEmail, emailConfirmPassword);
+      setNewEmail(''); setEmailConfirmPassword('');
+      setSuccessMessage('Verification email sent — check your new inbox to confirm');
+      setTimeout(() => setSuccessMessage(null), 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to change email');
+    } finally { setSavingEmail(false); }
   };
 
   const handleSaveSecurity = async () => {
@@ -247,23 +283,44 @@ const Settings: React.FC = () => {
         );
       case 'security':
         return (
-          <SettingsSection
-            title="Security"
-            description="Manage your account's security settings and password."
-            footerContent={<Button onClick={handleSaveSecurity} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>}
-          >
-            <ToggleSwitch
-              id="two-factor-auth"
-              label="Two-Factor Authentication"
-              checked={twoFactor}
-              onChange={setTwoFactor}
-              helpText="Enhance your account security by requiring a second verification step."
-            />
-            <div className={styles.actionRow}>
-                <p className={styles.actionDescription}>Update your password by sending a reset link to your email.</p>
-                <Button variant="secondary">Send Password Reset Link</Button>
-            </div>
-          </SettingsSection>
+          <>
+            <SettingsSection
+              title="Two-Factor Authentication"
+              description="Add an extra verification step to protect your account."
+              footerContent={<Button onClick={handleSaveSecurity} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>}
+            >
+              {successMessage && <div className={cn(styles.alertBanner, styles.alertSuccess)} role="status"><CheckCircle size={18} /> {successMessage}</div>}
+              {error && <div className={cn(styles.alertBanner, styles.alertError)} role="alert"><AlertCircle size={18} /> {error}</div>}
+              <ToggleSwitch id="two-factor-auth" label="Two-Factor Authentication" checked={twoFactor} onChange={setTwoFactor} helpText="Enhance your account security by requiring a second verification step." />
+            </SettingsSection>
+
+            <SettingsSection
+              title="Change Password"
+              description="Update your account password. You'll need your current password to confirm."
+              footerContent={<Button onClick={() => {}} disabled={savingPassword} type="submit" form="change-password-form">{savingPassword ? 'Changing...' : 'Change Password'}</Button>}
+            >
+              <form id="change-password-form" onSubmit={handleChangePassword}>
+                <div className={styles.formGrid}>
+                  <Input label="Current Password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required className={styles.fullSpan} />
+                  <Input label="New Password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 8 characters" required />
+                  <Input label="Confirm New Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter new password" required />
+                </div>
+              </form>
+            </SettingsSection>
+
+            <SettingsSection
+              title="Change Email"
+              description="Update your account email. A verification link will be sent to the new address."
+              footerContent={<Button onClick={() => {}} disabled={savingEmail} type="submit" form="change-email-form">{savingEmail ? 'Sending...' : 'Send Verification'}</Button>}
+            >
+              <form id="change-email-form" onSubmit={handleChangeEmail}>
+                <div className={styles.formGrid}>
+                  <Input label="New Email Address" type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="your-new@email.com" required />
+                  <Input label="Confirm with Password" type="password" value={emailConfirmPassword} onChange={(e) => setEmailConfirmPassword(e.target.value)} placeholder="Enter current password" required />
+                </div>
+              </form>
+            </SettingsSection>
+          </>
         );
       case 'notifications':
         return (

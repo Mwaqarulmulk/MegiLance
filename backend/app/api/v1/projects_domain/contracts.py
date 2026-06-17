@@ -111,8 +111,26 @@ async def create_contract(request: ContractCreate, current_user=Depends(get_curr
     return {"message": "Contract created successfully", "contract_id": result.get("last_insert_rowid")}
 
 
+@router.post("/{contract_id}/sign")
+async def sign_contract(contract_id: str, current_user=Depends(get_current_user)):
+    raw_row = fetch_contract_with_joins(contract_id)
+    if not raw_row:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    contract = contract_from_row(raw_row)
+    if contract["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the client can sign this contract")
+
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?",
+        [now, contract_id],
+    )
+    return {"message": "Contract signed successfully"}
+
+
 @router.post("/{contract_id}/acknowledge")
-async def acknowledge_contract(contract_id: str, request: ContractAcknowledge, current_user=Depends(get_current_user)):
+async def acknowledge_contract(contract_id: str, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")

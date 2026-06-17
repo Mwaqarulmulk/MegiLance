@@ -81,6 +81,14 @@ class EmailVerifyRequest(BaseModel):
 class ResendVerificationRequest(BaseModel):
     email: Optional[str] = None
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+class ChangeEmailRequest(BaseModel):
+    new_email: str
+    password: str
+
 
 # === Login ===
 
@@ -805,3 +813,75 @@ async def get_2fa_status(current_user=Depends(get_current_user)):
         "enabled": bool(current_user.two_factor_enabled),
         "user_id": current_user.id,
     }
+
+
+# === Change Password (while logged in) ===
+
+@router.post("/change-password")
+async def change_password(body: ChangePasswordRequest, current_user=Depends(get_current_user)):
+    user = get_user_by_id(current_user.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not verify_password(body.current_password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect",
+        )
+
+    strength = validate_password_strength(body.new_password)
+    if not strength.get("valid"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=strength.get("message", "Password does not meet requirements"),
+        )
+
+    new_hash = get_password_hash(body.new_password)
+    update_user_fields(current_user.id, {"hashed_password": new_hash})
+    logger.info(f"password_changed user={current_user.id}")
+    return {"message": "Password changed successfully"}
+
+
+# === Change Email (while logged in) ===
+
+@router.post("/change-email")
+async def change_email(body: ChangeEmailRequest, current_user=Depends(get_current_user)):
+    user = get_user_by_id(current_user.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not verify_password(body.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password is incorrect",
+        )
+
+    new_email = body.new_email.lower().strip()
+    if not new_email or "@" not in new_email:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+
+    existing = get_user_by_email(new_email)
+    if existing and existing.id != current_user.id:
+        raise HTTPException(status_code=409, detail="Email already in use")
+
+    verification_token = secrets.token_urlsafe(32)
+    from datetime import timedelta
+    expires = datetime.now(timezone.utc) + timedelta(hours=24)
+
+    update_user_fields(current_user.id, {
+        "pending_email": new_email,
+        "email_change_token": verification_token,
+        "email_change_expires": expires.isoformat(),
+    })
+
+    try:
+        email_service.send_email_change_verification(
+            to_email=new_email,
+            user_name=current_user.name or "User",
+            verification_token=verification_token,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to send email change verification: {e}")
+
+    logger.info(f"email_change_requested user={current_user.id} new_email={new_email}")
+    return {"message": "Verification email sent. Please check your new inbox to confirm the change."}

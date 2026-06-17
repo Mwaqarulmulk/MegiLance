@@ -206,10 +206,7 @@ export default function ClientContractsPage() {
     if (!signingContractId) return;
     setSigningLoading(true);
     try {
-      await apiFetch(`/contracts/${signingContractId}`, {
-        method: "POST",
-        body: JSON.stringify({ role: "client" }),
-      });
+      await apiFetch(`/contracts/${signingContractId}/sign`, { method: "POST" });
       setShowSignModal(false);
       setSigningContractId(null);
       fetchContracts(activeTab);

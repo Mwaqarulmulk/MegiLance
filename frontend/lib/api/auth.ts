@@ -103,9 +103,15 @@ export const authApi = {
   }),
 
   changePassword: (currentPassword: string, newPassword: string): Promise<{ message: string }> =>
-    apiFetch<{ message: string }>('/users/me/change-password', {
+    apiFetch<{ message: string }>('/auth/change-password', {
       method: 'POST',
       body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    }),
+
+  changeEmail: (newEmail: string, password: string): Promise<{ message: string }> =>
+    apiFetch<{ message: string }>('/auth/change-email', {
+      method: 'POST',
+      body: JSON.stringify({ new_email: newEmail, password }),
     }),
 
   get2FAStatus: (): Promise<TwoFactorStatus> => apiFetch<TwoFactorStatus>('/auth/2fa/status'),

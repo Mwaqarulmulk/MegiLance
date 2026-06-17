@@ -39,12 +39,13 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     setLoading(true);
     try {
       const data: any = await notificationsApi.list(pageNum, pageSize);
-      const items: Notification[] = (data?.notifications || data || []).map((n: any) => ({
+      const rawItems: any[] = data?.items || data?.notifications || (Array.isArray(data) ? data : []);
+      const items: Notification[] = rawItems.map((n: any) => ({
         id: n.id,
-        type: n.type || 'system',
+        type: n.notification_type || n.type || 'system',
         title: n.title || 'Notification',
-        message: n.message || n.description || '',
-        is_read: n.is_read || false,
+        message: n.content || n.message || n.description || '',
+        is_read: Boolean(n.is_read),
         action_url: n.action_url,
         created_at: n.created_at || new Date().toISOString(),
       }));

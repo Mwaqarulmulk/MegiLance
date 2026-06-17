@@ -192,9 +192,47 @@ def _slug(text: str) -> str:
     return s[:90]
 
 
-def _avatar(name: str) -> str:
-    seed = name.replace(" ", "")
-    return f"https://api.dicebear.com/7.x/avataaars/svg?seed={seed}&backgroundColor=b6e3f4,c0aede,d1d4f9"
+# Real profile photos hosted on Cloudflare R2
+_FREELANCER_AVATARS = [
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/aisha-khan.jpg",  # aisha-khan
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/daniel-okafor.jpg",  # daniel-okafor
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/sofia-martinez.jpg",  # sofia-martinez
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/liam-o-brien.jpg",  # liam-o-brien
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/mei-lin.jpg",  # mei-lin
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/carlos-mendes.jpg",  # carlos-mendes
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/priya-nair.jpg",  # priya-nair
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/tomas-novak.jpg",  # tomas-novak
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/amara-diallo.jpg",  # amara-diallo
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/hiro-tanaka.jpg",  # hiro-tanaka
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/elena-popova.jpg",  # elena-popova
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/omar-haddad.jpg",  # omar-haddad
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/grace-chen.jpg",  # grace-chen
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/nikolai-volkov.jpg",  # nikolai-volkov
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/fatima-zahra.jpg",  # fatima-zahra
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/james-wilson.jpg",  # james-wilson
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/ananya-reddy.jpg",  # ananya-reddy
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/lucas-silva.jpg",  # lucas-silva
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/yuki-sato.jpg",  # yuki-sato
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/maria-garcia.jpg",  # maria-garcia
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/david-cohen.jpg",  # david-cohen
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/zara-ahmed.jpg",  # zara-ahmed
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/felix-mueller.jpg",  # felix-mueller
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/freelancers/isabella-rossi.jpg",  # isabella-rossi
+]
+
+_CLIENT_AVATARS = [
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/clients/meridian-studios.jpg",  # meridian-studios
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/clients/techventure-inc.jpg",  # techventure-inc
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/clients/global-media-co.jpg",  # global-media-co
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/clients/ecosolutions-ltd.jpg",  # ecosolutions-ltd
+    "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev/avatars/demo/clients/dataflow-systems.jpg",  # dataflow-systems
+]
+
+def _avatar(name: str, index: int = 0, pool: list = None) -> str:
+    """Return a real R2-hosted portrait for this demo profile."""
+    if pool is None:
+        pool = _FREELANCER_AVATARS
+    return pool[index % len(pool)]
 
 
 def _gig_image(slug: str) -> str:
@@ -253,7 +291,7 @@ def seed(force: bool = False):
                   two_factor_enabled, account_balance, last_active_at, joined_at, created_at, updated_at)
                VALUES (?,?,1,1,1,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0,?,?,?,?)""",
             [email, pw, name, "freelancer", "freelancer", bio, json.dumps(skills), float(rate),
-             _avatar(name), location, headline, headline[:60], exp, avail, level, langs,
+             _avatar(name, i, _FREELANCER_AVATARS), location, headline, headline[:60], exp, avail, level, langs,
              slug, 3 + (i % 9), "public", 200 + i * 37, last_active, joined, joined, now.isoformat()],
         )
         row = parse_rows(execute_query("SELECT id FROM users WHERE email = ?", [email]) or {})
@@ -274,10 +312,11 @@ def seed(force: bool = False):
         client_email = f"{_slug(cname)}@{DEMO_DOMAIN}"
         execute_query(
             """INSERT INTO users (email, hashed_password, is_active, is_verified, email_verified,
-                  name, user_type, role, bio, location, two_factor_enabled, account_balance,
+                  name, user_type, role, bio, location, profile_image_url, two_factor_enabled, account_balance,
                   joined_at, created_at, updated_at)
-               VALUES (?,?,1,1,1,?,?,?,?,?,0,0,?,?,?)""",
+               VALUES (?,?,1,1,1,?,?,?,?,?,?,0,0,?,?,?)""",
             [client_email, pw, cname, "client", "client", cbio, cloc,
+             _CLIENT_AVATARS[ci % len(_CLIENT_AVATARS)],
              now.isoformat(), now.isoformat(), now.isoformat()],
         )
         crow = parse_rows(execute_query("SELECT id FROM users WHERE email = ?", [client_email]) or {})

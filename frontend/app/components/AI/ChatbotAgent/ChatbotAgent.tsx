@@ -1326,7 +1326,7 @@ export default function ChatbotAgent() {
     return (
       <div className={commonStyles.chatbotContainer}>
         <button className={cn(commonStyles.toggleButton, lightStyles.toggleButton)} aria-label="Loading chat" disabled>
-          <RobotModel size={48} />
+          <RobotModel size={140} />
         </button>
       </div>
     );
@@ -1904,7 +1904,7 @@ export default function ChatbotAgent() {
               transition={{ duration: 0.3, type: 'spring' }}
               className={commonStyles.flexCenter}
             >
-              <RobotModel size={84} />
+              <RobotModel size={150} />
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { apiFetch } from "@/lib/api";
 
 interface WizardStep {
   id: string;
@@ -320,38 +321,28 @@ export default function FindTalentPage() {
 
   const handleHire = async (freelancerId: number) => {
     setLoading(true);
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     try {
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${baseUrl}/api/v1/ai/hire/confirm`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+      await apiFetch("/ai/hire/confirm", {
+        method: "POST",
+        body: JSON.stringify({
+          freelancer_id: freelancerId,
+          project_brief: {
+            title: `${category} Project`,
+            description,
+            category,
+            skills,
+            experience_level: complexity,
+            timeline,
           },
-          body: JSON.stringify({
-            freelancer_id: freelancerId,
-            project_brief: {
-              title: `${category} Project`,
-              description,
-              category,
-              skills,
-              experience_level: complexity,
-              timeline,
-            },
-            agreed_amount: Number(budgetMax) || 1000,
-            milestone_plan: [],
-            message_to_freelancer: null,
-          }),
-        },
+          agreed_amount: Number(budgetMax) || 1000,
+          milestone_plan: [],
+          message_to_freelancer: null,
+        }),
+      });
+      setHireSuccess(true);
+      setSelectedFreelancer(
+        matches.find((m) => m.freelancer_id === freelancerId),
       );
-      if (res.ok) {
-        setHireSuccess(true);
-        setSelectedFreelancer(
-          matches.find((m) => m.freelancer_id === freelancerId),
-        );
-      }
     } catch (e) {
       console.error("Hire failed:", e);
     } finally {

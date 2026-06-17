@@ -129,7 +129,7 @@ const Dashboard: React.FC = () => {
 
     const fetchSellerStats = async () => {
       try {
-        const data = await apiFetch("/seller-stats/me");
+        const data = await apiFetch("/portal/freelancer/seller-stats");
         setSellerStats(transformSellerStats(data as Record<string, unknown>));
       } catch {
         // Seller stats are optional - don't block dashboard

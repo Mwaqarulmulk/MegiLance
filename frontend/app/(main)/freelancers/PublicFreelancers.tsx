@@ -164,15 +164,16 @@ const PublicFreelancers: React.FC = () => {
     setError(null);
     try {
       const rateConfig = RATE_RANGES.find(r => r.id === filters.rateRange);
-      const params: Record<string, any> = { limit: PAGE_SIZE };
+      const params: Record<string, any> = { page: currentPage, page_size: PAGE_SIZE };
       if (rateConfig?.min !== undefined) params.min_rate = rateConfig.min;
       if (rateConfig?.max !== undefined) params.max_rate = rateConfig.max;
       if (filters.location) params.location = filters.location;
       if (filters.experienceLevel) params.experience_level = filters.experienceLevel;
       if (filters.availabilityStatus) params.availability_status = filters.availabilityStatus;
+      if (filters.category && filters.category !== 'all') params.skill = filters.category;
 
       const res = await api.search.freelancers(debouncedSearch || '', params) as any;
-      const data = Array.isArray(res) ? res : (res?.freelancers || []);
+      const data = Array.isArray(res) ? res : (res?.items || res?.freelancers || []);
 
       const mapped: Freelancer[] = data.map((f: any) => {
         let skillsArray: string[] = [];

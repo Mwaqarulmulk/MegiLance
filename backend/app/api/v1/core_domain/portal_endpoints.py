@@ -293,6 +293,58 @@ async def freelancer_skills(current_user=Depends(get_current_user)):
     return {"items": rows if rows else []}
 
 
+@router.get("/freelancer/seller-stats")
+async def freelancer_seller_stats(current_user=Depends(get_current_user)):
+    user_result = execute_query(
+        "SELECT seller_level, hourly_rate, experience_level FROM users WHERE id = ?",
+        [current_user.id],
+    )
+    user_rows = parse_rows(user_result)
+    user_data = user_rows[0] if user_rows else {}
+
+    completed_result = execute_query(
+        "SELECT COUNT(*) as count FROM contracts WHERE freelancer_id = ? AND status = 'completed'",
+        [current_user.id],
+    )
+    completed = (parse_rows(completed_result) or [{"count": 0}])[0]["count"]
+
+    earnings_result = execute_query(
+        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
+        [current_user.id],
+    )
+    total_earnings = (parse_rows(earnings_result) or [{"total": 0}])[0]["total"]
+
+    reviews_result = execute_query(
+        "SELECT AVG(rating) as avg_rating, COUNT(*) as count FROM reviews WHERE reviewed_user_id = ?",
+        [current_user.id],
+    )
+    rev_rows = parse_rows(reviews_result) or [{"avg_rating": None, "count": 0}]
+    avg_rating = rev_rows[0]["avg_rating"] or 0
+    review_count = rev_rows[0]["count"] or 0
+    jss_score = min(100, int(avg_rating * 20)) if avg_rating else 0
+
+    seller_level = user_data.get("seller_level") or "new_seller"
+    badges = []
+    if completed >= 1:
+        badges.append("first_order")
+    if completed >= 10:
+        badges.append("rising_talent")
+    if completed >= 50 or jss_score >= 90:
+        badges.append("top_rated")
+
+    return {
+        "seller_level": seller_level,
+        "jss_score": jss_score,
+        "total_earnings": float(total_earnings),
+        "total_jobs_done": completed,
+        "avg_rating": round(float(avg_rating), 2),
+        "review_count": review_count,
+        "badges": badges,
+        "hourly_rate": user_data.get("hourly_rate"),
+        "experience_level": user_data.get("experience_level"),
+    }
+
+
 @router.get("/freelancer/earnings")
 async def freelancer_earnings(current_user=Depends(get_current_user)):
     total = execute_query(

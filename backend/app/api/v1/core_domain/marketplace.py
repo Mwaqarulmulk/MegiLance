@@ -14,18 +14,40 @@ async def list_marketplace_freelancers(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     search: Optional[str] = None,
+    q: Optional[str] = None,
     skill: Optional[str] = None,
+    min_rate: Optional[float] = None,
+    max_rate: Optional[float] = None,
+    location: Optional[str] = None,
+    experience_level: Optional[str] = None,
+    availability_status: Optional[str] = None,
 ):
+    query = q or search
     offset = (page - 1) * page_size
     where = "WHERE user_type = 'freelancer' AND is_active = 1"
     params: list = []
 
-    if search:
-        where += " AND (LOWER(name) LIKE ? OR LOWER(headline) LIKE ?)"
-        params.extend([f"%{search.lower()}%", f"%{search.lower()}%"])
+    if query:
+        where += " AND (LOWER(name) LIKE ? OR LOWER(COALESCE(headline, '')) LIKE ? OR LOWER(COALESCE(bio, '')) LIKE ?)"
+        params.extend([f"%{query.lower()}%", f"%{query.lower()}%", f"%{query.lower()}%"])
     if skill:
         where += " AND LOWER(COALESCE(skills, '')) LIKE ?"
         params.append(f"%{skill.lower()}%")
+    if min_rate is not None:
+        where += " AND COALESCE(hourly_rate, 0) >= ?"
+        params.append(min_rate)
+    if max_rate is not None:
+        where += " AND COALESCE(hourly_rate, 0) <= ?"
+        params.append(max_rate)
+    if location:
+        where += " AND LOWER(COALESCE(location, '')) LIKE ?"
+        params.append(f"%{location.lower()}%")
+    if experience_level:
+        where += " AND LOWER(COALESCE(experience_level, '')) = ?"
+        params.append(experience_level.lower())
+    if availability_status:
+        where += " AND LOWER(COALESCE(availability_status, '')) = ?"
+        params.append(availability_status.lower())
 
     count_result = execute_query(
         f"SELECT COUNT(*) as total FROM users {where}", params
@@ -38,14 +60,14 @@ async def list_marketplace_freelancers(
     result = execute_query(
         f"""SELECT id, name, profile_image_url AS avatar, headline,
                    hourly_rate, profile_slug, seller_level, availability_status,
-                   experience_level, updated_at
+                   experience_level, location, skills, bio, updated_at
             FROM users {where}
             ORDER BY updated_at DESC
             LIMIT ? OFFSET ?""",
         params,
     )
     rows = parse_rows(result)
-    return {"items": rows if rows else [], "total": total, "page": page, "page_size": page_size}
+    return {"items": rows if rows else [], "freelancers": rows if rows else [], "total": total, "page": page, "page_size": page_size}
 
 
 @router.get("/marketplace/projects")

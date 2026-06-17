@@ -130,6 +130,26 @@ export default function InvoicesPage() {
     window.print();
   };
 
+  // ── Delete invoice (draft/cancelled only) ────────────────────────────────────
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const handleDeleteInvoice = async (invoiceId: string, invoiceStatus: string) => {
+    if (!["draft", "cancelled"].includes(invoiceStatus)) {
+      alert("Only draft or cancelled invoices can be deleted.");
+      return;
+    }
+    if (!confirm("Delete this invoice permanently?")) return;
+    setDeletingId(invoiceId);
+    try {
+      await apiFetch(`/invoices/${invoiceId}`, { method: "DELETE" });
+      setInvoices((prev) => prev.filter((i) => i.id !== invoiceId));
+      if (selectedInvoice?.id === invoiceId) setSelectedInvoice(null);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete invoice.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   // ── Create Invoice modal state ───────────────────────────────────────────────
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -458,6 +478,16 @@ export default function InvoicesPage() {
                         >
                           <Printer size={14} />
                         </button>
+                        {["draft", "cancelled"].includes(invoice.status) && (
+                          <button
+                            onClick={() => handleDeleteInvoice(invoice.id, invoice.status)}
+                            disabled={deletingId === invoice.id}
+                            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 rounded-lg disabled:opacity-50"
+                            title="Delete invoice"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

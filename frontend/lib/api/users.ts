@@ -139,9 +139,14 @@ export const portalApi = {
       bid_amount: number;
       delivery_time: number;
     }) => {
-      return apiFetch(`/ai/invitations/${data.project_id}/respond`, {
+      return apiFetch("/proposals", {
         method: "POST",
-        body: JSON.stringify({ accept: true, message: data.cover_letter }),
+        body: JSON.stringify({
+          project_id: data.project_id,
+          cover_letter: data.cover_letter,
+          bid_amount: data.bid_amount,
+          estimated_hours: data.delivery_time,
+        }),
       });
     },
     getPortfolio: () => apiFetch("/portal/freelancer/portfolio"),

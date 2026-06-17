@@ -29,14 +29,18 @@ export const messagesApi = {
       body: JSON.stringify(data),
     }),
 
-  sendMessage: (data: { conversation_id?: number; receiver_id?: number; project_id?: number; content: string; message_type?: string }) =>
-    apiFetch('/messages', {
+  sendMessage: (data: { conversation_id?: number; receiver_id?: number; project_id?: number; content: string; message_type?: string }) => {
+    const { conversation_id, content, message_type = 'text' } = data;
+    return apiFetch(`/conversations/${conversation_id}/messages`, {
       method: 'POST',
-      body: JSON.stringify(data),
-    }),
+      body: JSON.stringify({ content, message_type }),
+    });
+  },
 
   getMessages: (conversationId: ResourceId, page = 1, pageSize = 50) =>
-    apiFetch(`/messages?conversation_id=${conversationId}&page=${page}&page_size=${pageSize}`),
+    apiFetch(`/conversations/${conversationId}/messages?page=${page}&page_size=${pageSize}`),
+
+  getContacts: () => apiFetch('/conversations/contacts'),
 
   getMessage: (messageId: ResourceId) =>
     apiFetch(`/messages/${messageId}`),
