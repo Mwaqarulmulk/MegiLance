@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api/core";
 import { downloadInvoicePdf } from "@/lib/api/pdf";
 import {
@@ -58,6 +58,26 @@ interface RawInvoice {
   due_date?: string;
   notes?: string;
   created_at?: string;
+}
+
+// Contract row from GET /contracts (snake_case, wrapped in { items }).
+interface RawContract {
+  id: number | string;
+  job_title?: string;
+  description?: string;
+  client_name?: string;
+  amount?: number;
+  contract_amount?: number;
+  currency?: string;
+  status?: string;
+}
+
+interface ContractOption {
+  id: string;
+  title: string;
+  clientName: string;
+  amount: number;
+  currency: string;
 }
 
 const STATUS_MAP: Record<string, InvoiceStatus> = {
@@ -137,24 +157,28 @@ export default function InvoicesPage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
-  // ── Fetch invoices on mount ──────────────────────────────────────────────────
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await apiFetch<{ items?: RawInvoice[] } | RawInvoice[]>(
-          "/invoices",
-        );
-        const rows = Array.isArray(data) ? data : (data?.items ?? []);
-        setInvoices(rows.map(normalizeInvoice));
-      } catch (err) {
-        setFetchError(
-          err instanceof Error ? err.message : "Failed to load invoices.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    })();
+  // ── Fetch invoices ────────────────────────────────────────────────────────────
+  const loadInvoices = useCallback(async () => {
+    try {
+      const data = await apiFetch<{ items?: RawInvoice[] } | RawInvoice[]>(
+        "/invoices",
+        {},
+        true, // skip cache so a freshly-created invoice shows up
+      );
+      const rows = Array.isArray(data) ? data : (data?.items ?? []);
+      setInvoices(rows.map(normalizeInvoice));
+    } catch (err) {
+      setFetchError(
+        err instanceof Error ? err.message : "Failed to load invoices.",
+      );
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadInvoices();
+  }, [loadInvoices]);
 
   // ── Download invoice PDF ─────────────────────────────────────────────────────
   const [pdfError, setPdfError] = useState<string | null>(null);
@@ -232,6 +256,10 @@ export default function InvoicesPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [contracts, setContracts] = useState<ContractOption[]>([]);
+  const [contractsLoading, setContractsLoading] = useState(false);
+  const [selectedContractId, setSelectedContractId] = useState<string>("");
+  const [sendImmediately, setSendImmediately] = useState(true);
   const [form, setForm] = useState({
     clientName: "",
     clientEmail: "",
@@ -240,6 +268,44 @@ export default function InvoicesPage() {
     notes: "",
     taxRate: 10,
   });
+
+  // Load the freelancer's contracts when the create modal opens — an invoice
+  // must be raised against a real contract (backend requires contract_id).
+  useEffect(() => {
+    if (!showCreateModal || contracts.length > 0) return;
+    setContractsLoading(true);
+    apiFetch<{ items?: RawContract[] } | RawContract[]>("/contracts")
+      .then((data) => {
+        const rows = Array.isArray(data) ? data : (data?.items ?? []);
+        setContracts(
+          rows
+            .filter((c) => ["active", "pending", "in_progress"].includes(String(c.status || "").toLowerCase()))
+            .map((c) => ({
+              id: String(c.id),
+              title: c.job_title || c.description || `Contract #${c.id}`,
+              clientName: c.client_name || "Client",
+              amount: Number(c.amount ?? c.contract_amount) || 0,
+              currency: c.currency || "USD",
+            })),
+        );
+      })
+      .catch(() => setContracts([]))
+      .finally(() => setContractsLoading(false));
+  }, [showCreateModal, contracts.length]);
+
+  const onSelectContract = (id: string) => {
+    setSelectedContractId(id);
+    const c = contracts.find((x) => x.id === id);
+    if (c) {
+      setForm((f) => ({ ...f, clientName: c.clientName, projectTitle: c.title }));
+      // Seed a single line item from the contract value if items are untouched.
+      setItems((prev) =>
+        prev.length === 1 && !prev[0].description && prev[0].unitPrice === 0
+          ? [{ description: c.title, quantity: 1, unitPrice: c.amount }]
+          : prev,
+      );
+    }
+  };
   const [items, setItems] = useState<NewInvoiceItem[]>([
     { description: "", quantity: 1, unitPrice: 0 },
   ]);
@@ -281,62 +347,60 @@ export default function InvoicesPage() {
       taxRate: 10,
     });
     setItems([{ description: "", quantity: 1, unitPrice: 0 }]);
+    setSelectedContractId("");
+    setSendImmediately(true);
     setSubmitError(null);
   };
 
   const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedContractId) {
+      setSubmitError("Select the contract this invoice is for.");
+      return;
+    }
+    if (total <= 0) {
+      setSubmitError("Invoice total must be greater than zero.");
+      return;
+    }
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      await apiFetch("/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          client_name: form.clientName,
-          client_email: form.clientEmail,
-          project_title: form.projectTitle,
-          due_date: form.dueDate,
-          notes: form.notes,
-          tax_rate: form.taxRate,
-          items: items.map((item) => ({
-            description: item.description,
-            quantity: item.quantity,
-            rate: item.unitPrice,
-          })),
-          amount: subtotal,
-          tax_amount: taxAmount,
-          total,
-          currency: "USD",
-          status: "draft",
-        }),
-      });
+      // The backend invoice is tied to a contract. Line items + tax are summed
+      // into the billed amount (the invoices table stores a single amount).
+      const lineSummary = items
+        .filter((i) => i.description)
+        .map((i) => `${i.description} (${i.quantity} × $${i.unitPrice})`)
+        .join("; ");
+      const description = [form.projectTitle, lineSummary, form.notes]
+        .filter(Boolean)
+        .join(" — ");
 
-      // Optimistic local insert
-      const created: Invoice = {
-        id: `inv${Date.now()}`,
-        invoiceNumber: `INV-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(3, "0")}`,
-        clientName: form.clientName,
-        clientEmail: form.clientEmail,
-        freelancerName: "",
-        freelancerEmail: "",
-        projectTitle: form.projectTitle,
-        amount: subtotal,
-        currency: "USD",
-        taxRate: form.taxRate,
-        taxAmount,
-        total,
-        status: "draft",
-        issueDate: new Date().toISOString().split("T")[0],
-        dueDate: form.dueDate,
-        items: items.map((item) => ({
-          description: item.description,
-          quantity: item.quantity,
-          rate: item.unitPrice,
-        })),
-        notes: form.notes,
-      };
-      setInvoices((prev) => [created, ...prev]);
+      const created = await apiFetch<{ invoice_id?: number | string }>(
+        "/invoices",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contract_id: Number(selectedContractId),
+            amount: total,
+            description,
+            due_date: form.dueDate || undefined,
+          }),
+        },
+      );
+
+      // Optionally send straight away so the client can pay it immediately.
+      if (sendImmediately && created?.invoice_id != null) {
+        try {
+          await apiFetch(`/invoices/${created.invoice_id}/send`, {
+            method: "POST",
+          });
+        } catch {
+          // Non-fatal: invoice was created as a draft; freelancer can send later.
+        }
+      }
+
+      await loadInvoices();
       setShowCreateModal(false);
       resetForm();
     } catch (err) {
