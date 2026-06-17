@@ -458,6 +458,20 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
         # Re-raise to prevent proposal from staying "accepted" without a contract
         raise RuntimeError(f"Failed to create contract/escrow for proposal {proposal_id}: {str(e)}")
 
+    # Best-effort: auto-fund the escrow from the client's wallet so the contract
+    # is actually funded the moment the freelancer is hired. If the client's
+    # balance is short, the escrow stays 'pending' and they can fund it later
+    # (via wallet deposit / MetaMask) before paying invoices.
+    try:
+        from app.services.escrow_service import get_user_balance, fund_pending_escrow
+        if get_user_balance(client_id) >= contract_amount:
+            fund_pending_escrow(contract_id, client_id, contract_amount, "Auto-funded at hire")
+            logger.info(f"Escrow auto-funded for contract {contract_id} at hire")
+        else:
+            logger.info(f"Escrow left pending for contract {contract_id} — client balance below contract amount")
+    except Exception as e:
+        logger.warning(f"Escrow auto-fund skipped for contract {contract_id}: {e}")
+
     return get_proposal_raw(proposal_id)
 
 

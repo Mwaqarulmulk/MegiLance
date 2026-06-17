@@ -149,8 +149,10 @@ export default function ClientInvoicesPage() {
   }, []);
 
   // ── Pay invoice ──────────────────────────────────────────────────────────────
+  const [payError, setPayError] = useState<string | null>(null);
   const handlePayInvoice = async (invoiceId: string) => {
     setPayingId(invoiceId);
+    setPayError(null);
     try {
       await apiFetch(`/invoices/${invoiceId}/pay`, { method: "POST" });
       setInvoices((prev) =>
@@ -165,7 +167,11 @@ export default function ClientInvoicesPage() {
         ),
       );
     } catch (err) {
-      console.error("Payment failed:", err);
+      setPayError(
+        err instanceof Error
+          ? err.message
+          : "Payment failed. Please try again.",
+      );
     } finally {
       setPayingId(null);
     }
@@ -378,10 +384,10 @@ export default function ClientInvoicesPage() {
         </div>
       </div>
 
-      {pdfError && (
+      {(pdfError || payError) && (
         <div className="flex items-start gap-2 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
-          {pdfError}
+          {pdfError || payError}
         </div>
       )}
 

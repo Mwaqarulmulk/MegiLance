@@ -189,9 +189,20 @@ async def send_invoice(invoice_id: int, current_user=Depends(get_current_user)):
 
 @router.post("/{invoice_id}/pay")
 async def pay_invoice(invoice_id: int, current_user=Depends(get_current_user)):
-    """Pay an invoice — only the client who received it can mark as paid."""
+    """Pay an invoice (escrow-based).
+
+    Money flow: if the contract's escrow is funded with enough remaining, the
+    invoice amount is released from escrow to the freelancer; otherwise it is
+    pulled from the client's wallet balance (the same balance MetaMask/crypto
+    deposits credit). The platform fee is deducted from the freelancer payout.
+    Everything is written in one atomic batch so a partial payment is impossible.
+    """
+    from app.db.turso_http import get_turso_http
+    from app.services.escrow_service import get_user_balance
+    from app.api.v1.payments_domain.payments import calculate_tiered_fee
+
     result = execute_query(
-        "SELECT id, freelancer_id, client_id, status, amount FROM invoices WHERE id = ?",
+        "SELECT id, contract_id, freelancer_id, client_id, status, amount, currency FROM invoices WHERE id = ?",
         [invoice_id],
     )
     rows = parse_rows(result)
@@ -202,27 +213,120 @@ async def pay_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     if invoice["client_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only the client can pay an invoice")
     if invoice["status"] not in ("sent", "overdue"):
-        raise HTTPException(status_code=400, detail=f"Cannot pay invoice in '{invoice['status']}' status")
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Cannot pay an invoice in '{invoice['status']}' status. "
+                "The freelancer must send the invoice before it can be paid."
+            ),
+        )
+
+    amount = float(invoice["amount"] or 0)
+    if amount <= 0:
+        raise HTTPException(status_code=400, detail="Invoice amount must be greater than zero")
+
+    freelancer_id = invoice["freelancer_id"]
+    if not freelancer_id:
+        raise HTTPException(status_code=400, detail="Invoice has no payee (freelancer) attached")
+
+    currency = invoice.get("currency") or "USD"
+    contract_id = invoice.get("contract_id")
+
+    # Platform fee is charged to the freelancer (clients pay 0%).
+    fee_info = calculate_tiered_fee(amount)
+    platform_fee = float(fee_info["platform_fee"])
+    freelancer_amount = round(amount - platform_fee, 2)
 
     now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE invoices SET status = 'paid', updated_at = ? WHERE id = ?",
-        [now, invoice_id],
+
+    # Look for a funded escrow on this contract to release from.
+    escrow = None
+    if contract_id:
+        er = parse_rows(execute_query(
+            "SELECT id, amount, released_amount, status FROM escrow WHERE contract_id = ? ORDER BY id DESC LIMIT 1",
+            [contract_id],
+        ))
+        if er:
+            escrow = er[0]
+
+    statements: list = []
+    funding_source: str
+
+    escrow_available = 0.0
+    if escrow and escrow.get("status") in ("funded", "active"):
+        escrow_available = float(escrow.get("amount") or 0) - float(escrow.get("released_amount") or 0)
+
+    if escrow and escrow_available >= amount:
+        # Release from escrow.
+        new_released = float(escrow.get("released_amount") or 0) + amount
+        new_status = "released" if new_released >= float(escrow.get("amount") or 0) else escrow.get("status")
+        statements.append({
+            "q": "UPDATE escrow SET released_amount = ?, status = ?, updated_at = ? WHERE id = ?",
+            "params": [new_released, new_status, now, escrow["id"]],
+        })
+        funding_source = "escrow"
+    else:
+        # Fall back to the client's wallet balance (MetaMask/crypto deposits land here).
+        client_balance = get_user_balance(current_user.id)
+        if client_balance < amount:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Insufficient funds to pay this invoice. Fund the contract's escrow "
+                    "or add money to your wallet (deposit) and try again."
+                ),
+            )
+        statements.append({
+            "q": "UPDATE users SET account_balance = account_balance - ? WHERE id = ? AND account_balance >= ?",
+            "params": [amount, current_user.id, amount],
+        })
+        funding_source = "wallet"
+
+    # Credit the freelancer (net of platform fee).
+    statements.append({
+        "q": "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+        "params": [freelancer_amount, freelancer_id],
+    })
+
+    # Record the payment (live payments schema uses client_id/freelancer_id).
+    statements.append({
+        "q": """INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency,
+                       payment_method, status, description, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'completed', ?, ?, ?)""",
+        "params": [
+            contract_id, current_user.id, freelancer_id, amount, currency, funding_source,
+            f"Invoice #{invoice_id} payment (platform fee ${platform_fee:.2f})", now, now,
+        ],
+    })
+
+    # Ledger entry for the freelancer payout.
+    statements.append({
+        "q": """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
+                VALUES (?, 'invoice_payment', ?, ?, ?, 'completed', ?, ?)""",
+        "params": [freelancer_id, freelancer_amount, currency, f"Invoice #{invoice_id} paid", invoice_id, now],
+    })
+
+    # Mark the invoice paid.
+    statements.append({
+        "q": "UPDATE invoices SET status = 'paid', updated_at = ? WHERE id = ?",
+        "params": [now, invoice_id],
+    })
+
+    try:
+        get_turso_http().execute_many(statements)
+    except Exception as e:
+        logger.error(f"invoice_pay_failed invoice={invoice_id} client={current_user.id}: {e}")
+        raise HTTPException(status_code=500, detail="Payment failed — no funds were moved. Please try again.")
+
+    logger.info(
+        f"invoice_paid invoice={invoice_id} client={current_user.id} freelancer={freelancer_id} "
+        f"amount={amount} fee={platform_fee} via={funding_source}"
     )
 
-    # Create payment record
-    execute_query(
-        """INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, description, created_at, updated_at)
-           VALUES ((SELECT contract_id FROM invoices WHERE id = ?), ?, ?, ?, 'USD', 'invoice', 'completed', ?, ?, ?)""",
-        [invoice_id, current_user.id, invoice["freelancer_id"], invoice["amount"], f"Invoice #{invoice_id} payment", now, now],
-    )
-
-    # Update freelancer balance
-    execute_query(
-        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-        [invoice["amount"], invoice["freelancer_id"]],
-    )
-
-    logger.info(f"invoice_paid invoice={invoice_id} client={current_user.id} amount={invoice['amount']}")
-
-    return {"message": "Invoice marked as paid"}
+    return {
+        "message": "Invoice paid",
+        "funding_source": funding_source,
+        "amount": amount,
+        "platform_fee": platform_fee,
+        "freelancer_amount": freelancer_amount,
+    }

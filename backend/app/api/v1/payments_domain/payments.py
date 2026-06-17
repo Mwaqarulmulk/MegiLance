@@ -173,7 +173,7 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
     by the payment webhook handler after verifying the payment with the gateway.
     For development, only admins can manually complete payments."""
     result = execute_query(
-        "SELECT id, status, client_id, amount, currency, payment_method FROM payments WHERE id = ?",
+        "SELECT id, status, client_id, freelancer_id, contract_id, amount, currency, payment_method FROM payments WHERE id = ?",
         [payment_id],
     )
     rows = parse_rows(result)
@@ -185,6 +185,13 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
     is_admin = getattr(current_user, "user_type", "") == "admin" or getattr(current_user, "role", "") == "admin"
     if payment["client_id"] != current_user.id and not is_admin:
         raise HTTPException(status_code=403, detail="Access denied")
+
+    # A contract payment pays the freelancer; a standalone deposit (no contract,
+    # no payee) credits the client's own wallet. Pick the correct payee so we
+    # never credit the wrong party.
+    is_deposit = not payment.get("contract_id") and not payment.get("freelancer_id")
+    payee_id = payment["client_id"] if is_deposit else payment["freelancer_id"]
+    ledger_type = "deposit" if is_deposit else "payment"
 
     if payment["status"] == "completed":
         raise HTTPException(status_code=400, detail="Payment already completed")
@@ -207,10 +214,11 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
     if check_rows and check_rows[0].get("status") != "processing":
         raise HTTPException(status_code=400, detail="Payment cannot be completed in its current state")
 
-    # Atomic balance update
+    # Atomic balance update — credit the resolved payee (freelancer for contract
+    # payments, client for deposits), never blindly the client.
     execute_query(
         "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-        [payment["amount"], payment["client_id"]],
+        [payment["amount"], payee_id],
     )
 
     # Mark as completed
@@ -219,14 +227,14 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
         [now, payment_id],
     )
 
-    # Record wallet transaction
+    # Record wallet transaction for the payee
     execute_query(
         """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
-           VALUES (?, 'deposit', ?, ?, ?, 'completed', ?, ?)""",
-        [payment["client_id"], payment["amount"], currency, f"Payment #{payment_id} completed", payment_id, now],
+           VALUES (?, ?, ?, ?, ?, 'completed', ?, ?)""",
+        [payee_id, ledger_type, payment["amount"], currency, f"Payment #{payment_id} completed", payment_id, now],
     )
 
-    logger.info(f"Payment #{payment_id} completed by user {current_user.id}" + (" (admin)" if is_admin else ""))
+    logger.info(f"Payment #{payment_id} completed by user {current_user.id} → payee {payee_id}" + (" (admin)" if is_admin else ""))
 
     return {"message": "Payment completed", "payment_id": payment_id}
 
