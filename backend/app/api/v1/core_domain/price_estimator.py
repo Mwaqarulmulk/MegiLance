@@ -410,13 +410,36 @@ async def estimate_price(body: EstimateRequest, current_user=Depends(get_current
 
     hourly_rate = max(5, round(base_rate * exp_mult * quality_mult * urgency_mult * region_mult))
 
-    feature_bonus = len(body.features or []) * 8
-    total_hours = max(1, int(body.estimated_hours or round(base_hours * scope_mult)) + feature_bonus)
     team_size = max(1, int(body.team_size or 1))
 
+    # Core hours come from the user's own number, else the scope-adjusted template.
+    base_scope_hours = round(base_hours * scope_mult)
+    core_hours = int(body.estimated_hours) if body.estimated_hours else base_scope_hours
+    # Each listed feature/deliverable adds ~3% of core hours, capped at +50% total
+    # (matches the in-tool guidance shown to users).
+    feature_factor = min(0.5, len(body.features or []) * 0.03)
+    feature_bonus = round(core_hours * feature_factor)
+    # Coordination overhead grows mildly with team size (~8% per extra member, capped +60%).
+    coordination_factor = min(0.6, (team_size - 1) * 0.08)
+    coordination_hours = round((core_hours + feature_bonus) * coordination_factor)
+    total_hours = max(1, core_hours + feature_bonus + coordination_hours)
+
     total_estimate = hourly_rate * total_hours
-    low_estimate = round(total_estimate * 0.82)
-    high_estimate = round(total_estimate * 1.28)
+
+    # Confidence reflects how much context the user supplied — the more signals,
+    # the tighter the price band we can responsibly quote.
+    provided = sum(1 for v in [
+        body.service_type, body.experience_level, body.scope, body.quality_tier,
+        body.estimated_hours, (body.region or body.freelancer_country),
+        (body.description or None), (body.features or None),
+    ] if v)
+    conf_score = min(95, 50 + provided * 6)
+    conf_level = "high" if conf_score >= 80 else "medium" if conf_score >= 65 else "low"
+
+    # Band width scales inversely with confidence: more certainty → narrower range.
+    band = 0.15 if conf_level == "high" else 0.25 if conf_level == "medium" else 0.35
+    low_estimate = round(total_estimate * (1 - band))
+    high_estimate = round(total_estimate * (1 + band))
 
     phases = [
         ("Discovery & Planning", "planning", 0.10), ("Design", "design", 0.18),
@@ -428,9 +451,6 @@ async def estimate_price(body: EstimateRequest, current_user=Depends(get_current
         for (l, c, p) in phases
     ]
 
-    provided = sum(1 for v in [body.service_type, body.experience_level, body.scope, body.quality_tier, body.estimated_hours, (body.region or body.freelancer_country)] if v)
-    conf_score = min(95, 55 + provided * 7)
-    conf_level = "high" if conf_score >= 80 else "medium" if conf_score >= 65 else "low"
     confidence = {
         "score": conf_score,
         "level": conf_level,
@@ -531,6 +551,20 @@ async def estimate_price(body: EstimateRequest, current_user=Depends(get_current
         "timeline": timeline,
         "regional_analysis": regional_analysis,
         "demand_level": demand_level,
+        "methodology": (
+            f"Base rate ${base_rate}/hr for {demand_level.lower()}-demand {category.replace('_', ' ')} work, "
+            f"adjusted by experience (×{exp_mult}), quality (×{quality_mult}), urgency (×{urgency_mult}) "
+            f"and location (×{round(region_mult, 2)}) → ${hourly_rate}/hr. "
+            f"Hours = {core_hours} core + {feature_bonus} features + {coordination_hours} coordination "
+            f"= {total_hours}h. Range is ±{int(band * 100)}% based on {conf_level} confidence."
+        ),
+        "hours_breakdown": {
+            "core_hours": core_hours,
+            "feature_hours": feature_bonus,
+            "coordination_hours": coordination_hours,
+            "total_hours": total_hours,
+            "band_pct": int(band * 100),
+        },
         "meta": {
             "category": category, "service_type": body.service_type or body.project_type,
             "experience_level": body.experience_level or "intermediate", "region": body.region or "global_remote",

@@ -23,6 +23,7 @@ import {
   Meteors,
   celebrate,
 } from '@/app/components/AI/kit';
+import { ExportMenu, UserGuide, type AIReport } from '@/app/components/AI/report';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -475,6 +476,17 @@ export default function RateAdvisor() {
 
       <GuestBanner toolName="Rate Advisor" variant="inline" />
 
+      <div className="relative z-10">
+        <UserGuide
+          isDark={isDark}
+          overview="Find your ideal hourly rate and what it earns you across platforms — in 3 steps."
+          steps={RATE_GUIDE_STEPS}
+          tips={RATE_GUIDE_TIPS}
+          faqs={RATE_GUIDE_FAQS}
+          accuracyNote="Recommendations start from 2025 benchmark rates (Upwork, Fiverr, Toptal, Arc.dev) for your service and experience level, then adjust for your country and portfolio strength. Platform fees and billable-hour assumptions drive the income projections. Real earnings depend on your demand, reviews and negotiation."
+        />
+      </div>
+
       <div className={cs.stepper}>
         {STEPS.map((s, i) => (
           <React.Fragment key={s}>
@@ -507,6 +519,7 @@ export default function RateAdvisor() {
           {step === 2 && result && (
             <div className={cs.actionsBar}>
               <button className={cn(cs.actionBtnSecondary, ts.actionBtnSecondary)} onClick={reset}><RotateCcw size={16} /> New Analysis</button>
+              <ExportMenu report={() => buildRateReport(result)} />
             </div>
           )}
         </div>
@@ -517,4 +530,123 @@ export default function RateAdvisor() {
       </div>
     </div>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/*  User Guide content                                                 */
+/* ------------------------------------------------------------------ */
+
+const RATE_GUIDE_STEPS: { title: string; text: string }[] = [
+  { title: 'Tell us about your work', text: 'Pick your service type, experience level and portfolio strength, and set how many hours you can bill per week.' },
+  { title: 'Add location & platform', text: 'Your country adjusts rates to the local market, and the target platform applies its service fee to your take-home pay.' },
+  { title: 'Review & export', text: 'See your recommended rate, income projections, a platform fee comparison and your market percentile — then export a branded PDF or Word report.' },
+];
+
+const RATE_GUIDE_TIPS = [
+  'Start near the “minimum” rate to win your first few reviews, then climb toward “recommended”.',
+  'Compare platforms: direct clients keep the full rate, while Fiverr takes the largest cut.',
+  'Strong portfolios and high ratings justify premium pricing — invest in both early.',
+  'Re-run this after every 10 reviews; rising demand should push your rate up.',
+];
+
+const RATE_GUIDE_FAQS: { q: string; a: string }[] = [
+  { q: 'How is my rate calculated?', a: 'A benchmark base rate for your service and experience level is adjusted by your country multiplier and portfolio strength, producing a minimum, recommended and premium rate.' },
+  { q: 'What does the percentile mean?', a: 'It estimates where your recommended rate sits among freelancers in your field — higher experience and a stronger portfolio push you toward the top.' },
+  { q: 'Why do platforms show different income?', a: 'Each platform charges a different service fee. The comparison shows your net hourly and monthly income after each platform’s cut.' },
+  { q: 'Can I export this?', a: 'Yes — use “Export Report” for a branded PDF or an editable Word document you can attach to proposals or keep for planning.' },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Report builder                                                     */
+/* ------------------------------------------------------------------ */
+
+function buildRateReport(r: RateResult): AIReport {
+  const cur = r.rates.currency || 'USD';
+  const money = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+  const money2 = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const cap = (s: string) => (s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+  const chosenIdx = r.platform_comparison.findIndex(p => p.platform === r.platform.platform);
+  const proj = r.income.projections;
+
+  return {
+    toolName: 'AI Rate Advisor',
+    title: 'Freelance Rate Report',
+    subtitle: `${cap(r.meta.service_type)} · ${cap(r.meta.experience_level)} — ${r.market_comparison.estimated_percentile}th percentile`,
+    fileBaseName: 'megilance-rate-advice',
+    kpis: [
+      { label: 'Recommended Rate', value: `${money2(r.rates.recommended)}/hr`, hint: `${cur} on ${r.platform.platform}` },
+      { label: 'Rate Range', value: `${money(r.rates.minimum)}–${money(r.rates.premium)}`, hint: 'minimum to premium' },
+      { label: 'Take-home', value: `${money2(r.platform.take_home_rate)}/hr`, hint: `after ${r.platform.fee_pct}% fee` },
+      { label: 'Market Position', value: `${r.market_comparison.estimated_percentile}th`, hint: 'estimated percentile' },
+    ],
+    meta: [
+      { label: 'Service', value: cap(r.meta.service_type) },
+      { label: 'Experience', value: cap(r.meta.experience_level) },
+      { label: 'Country', value: r.meta.country_code },
+      { label: 'Platform', value: r.platform.platform },
+      { label: 'Weekly hours', value: `${r.meta.weekly_hours}h` },
+    ],
+    sections: [
+      {
+        heading: 'Rate Breakdown',
+        description: 'How your recommended rate is built up, step by step.',
+        blocks: [
+          {
+            kind: 'table',
+            columns: ['Step', 'Rate', 'Notes'],
+            rows: r.rate_breakdown.map(s => [s.step, `${money2(s.value)}/hr`, s.description]),
+            highlightRowIndex: r.rate_breakdown.length - 1,
+          },
+        ],
+      },
+      {
+        heading: 'Income Projections',
+        description: `Estimated earnings at your recommended rate, after the ${r.platform.fee_pct}% ${r.platform.platform} fee.`,
+        blocks: [
+          {
+            kind: 'table',
+            columns: ['Scenario', 'Billable/wk', 'Weekly', 'Monthly', 'Annual'],
+            rows: (['conservative', 'average', 'optimistic'] as const).map(k => {
+              const p = proj[k];
+              return [p.label, `${p.billable_hours_week}h`, money(p.weekly), money(p.monthly), money(p.annual)];
+            }),
+            highlightRowIndex: 1,
+          },
+        ],
+      },
+      {
+        heading: 'Platform Comparison',
+        description: 'Your net income after each platform’s service fee.',
+        blocks: [
+          {
+            kind: 'table',
+            columns: ['Platform', 'Fee', 'Net / hr', 'Net / mo', 'Net / yr'],
+            rows: r.platform_comparison.map(p => [
+              p.platform, `${p.fee_pct.toFixed(0)}%`, money2(p.net_hourly), money(p.monthly_estimate), money(p.annual_estimate),
+            ]),
+            highlightRowIndex: chosenIdx >= 0 ? chosenIdx : undefined,
+          },
+        ],
+      },
+      {
+        heading: 'Market Position',
+        blocks: [
+          {
+            kind: 'table',
+            columns: ['Benchmark', 'Rate', 'vs. You'],
+            rows: r.market_comparison.comparisons.map(c => [
+              c.benchmark, `${money2(c.rate)}/hr`, `${c.difference_pct > 0 ? '+' : ''}${c.difference_pct}%`,
+            ]),
+          },
+        ],
+      },
+      {
+        heading: 'Rate Tips',
+        blocks: [{ kind: 'bullets', items: r.tips.map(t => `${t.title}: ${t.detail}`) }],
+      },
+    ],
+    disclaimer:
+      'Rates are based on 2025 market data from Upwork, Fiverr, Toptal and Arc.dev. Individual results vary with demand, reviews, niche and negotiation. Use as guidance, not a guarantee.',
+  };
 }

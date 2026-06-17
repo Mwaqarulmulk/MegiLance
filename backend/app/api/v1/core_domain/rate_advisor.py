@@ -47,9 +47,49 @@ def get_options():
     }
 
 
+# The wizard UI and the deterministic engine historically used different vocabularies.
+# These maps reconcile them so a "Senior" / "no portfolio" freelancer is priced correctly
+# instead of silently falling back to mid-level / neutral defaults.
+_EXPERIENCE_ALIASES = {
+    "junior": "entry", "entry": "entry", "beginner": "entry",
+    "mid": "intermediate", "mid-level": "intermediate", "intermediate": "intermediate",
+    "senior": "expert", "expert": "expert",
+    "lead": "specialist", "principal": "specialist", "specialist": "specialist",
+}
+_PORTFOLIO_ALIASES = {
+    "none": "beginner", "no portfolio": "beginner", "beginner": "beginner",
+    "basic": "moderate", "moderate": "moderate",
+    "solid": "strong", "strong": "strong",
+    "exceptional": "exceptional", "awards": "exceptional",
+}
+_SERVICE_ALIASES = {
+    "web_app": "web_development", "website": "web_development", "frontend": "web_development",
+    "backend": "web_development", "api": "web_development",
+    "mobile_app": "mobile_development", "mobile": "mobile_development",
+    "design": "ui_ux_design", "ui_ux": "ui_ux_design",
+    "data": "data_science", "ml": "data_science", "ai": "data_science",
+    "marketing": "digital_marketing", "seo": "digital_marketing",
+    "writing": "content_writing", "copywriting": "content_writing",
+    "video": "video_editing",
+    "va": "virtual_assistant", "admin": "virtual_assistant",
+}
+
+
+def _normalize_request(req: "RateAdviseRequest") -> "RateAdviseRequest":
+    exp = (req.experience_level or "").strip().lower()
+    req.experience_level = _EXPERIENCE_ALIASES.get(exp, exp if exp in ("entry", "intermediate", "expert", "specialist") else "intermediate")
+    port = (req.portfolio_strength or "").strip().lower()
+    req.portfolio_strength = _PORTFOLIO_ALIASES.get(port, port if port in ("beginner", "moderate", "strong", "exceptional") else "moderate")
+    svc = (req.service_type or "").strip().lower()
+    req.service_type = _SERVICE_ALIASES.get(svc, svc)
+    req.country_code = (req.country_code or "US").strip().upper()[:2]
+    return req
+
+
 @router.post("/advise")
 def advise_rate(req: RateAdviseRequest):
     now = datetime.now(timezone.utc)
+    req = _normalize_request(req)
 
     base_rates = {
         "web_development": {"entry": 20, "intermediate": 40, "expert": 75, "specialist": 120},
@@ -151,7 +191,10 @@ def advise_rate(req: RateAdviseRequest):
                 {"benchmark": "Market Average", "rate": recommended, "your_position": "at", "difference_pct": 0},
                 {"benchmark": "Top 25%", "rate": premium, "your_position": "below" if recommended < premium else "at", "difference_pct": round((premium - recommended) / recommended * 100, 1) if recommended else 0},
             ],
-            "estimated_percentile": 50 + (port_mult - 1) * 100,
+            "estimated_percentile": max(5, min(95, round(
+                {"entry": 25, "intermediate": 50, "expert": 70, "specialist": 85}.get(req.experience_level, 50)
+                + (port_mult - 1) * 40
+            ))),
         },
         "rate_breakdown": [
             {"step": "Base Rate", "value": level_rate, "description": f"Average for {req.experience_level} level"},

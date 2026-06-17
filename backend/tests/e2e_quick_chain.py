@@ -13,10 +13,12 @@ def fail(n, d=""):
 def warn(n, d=""):
     WARNINGS.append(f"{n}: {d}"); print(f"  WARN: {n} - {d}")
 def s(m, u, **k):
-    k.setdefault("timeout", 20)
+    k.setdefault("timeout", 25)
     try: return getattr(requests, m)(u, **k)
     except: return None
 def ah(t): return {"Authorization": f"Bearer {t}"}
+def pause(sec=1.0):
+    time.sleep(sec)
 
 print("=" * 60)
 print("  CORE CHAIN: Register -> Project -> Proposal -> Accept")
@@ -50,12 +52,14 @@ else: fail("Project create"); sys.exit(1)
 # 3. Submit Proposal
 print("\n--- 3. Proposal Submission ---")
 r = s("post", f"{BASE}/proposals", headers=fh, json={"project_id": pid, "cover_letter": "I can do this", "bid_amount": 1500, "estimated_hours": 100, "hourly_rate": 15, "availability": "full-time"})
-prid = r.json().get("id") if r and r.status_code in (200, 201) else None
+prdata = r.json() if r and r.status_code in (200, 201) else {}
+prid = prdata.get("id") or (prdata.get("proposal", {}).get("id") if isinstance(prdata.get("proposal"), dict) else None)
 if prid: ok(f"Proposal submitted id={prid}")
 else: fail("Proposal submit"); sys.exit(1)
 
 # 4. Accept Proposal -> Contract + Escrow
 print("\n--- 4. Accept Proposal -> Contract + Escrow ---")
+pause(1)
 r = s("post", f"{BASE}/proposals/{prid}/accept", headers=ch)
 if r and r.status_code == 200:
     ok(f"Proposal ACCEPTED: {r.json().get('message', '')}")
@@ -89,6 +93,7 @@ else: warn("Escrow", f"{r.status_code if r else 'TIMEOUT'}")
 
 # 7. Freelancer acknowledges
 print("\n--- 7. Contract Acknowledgement ---")
+pause(1)
 if ctid:
     r = s("post", f"{BASE}/contracts/{ctid}/acknowledge", headers=fh, json={"acknowledged": True})
     if r and r.status_code == 200: ok("Freelancer acknowledged contract")
@@ -103,10 +108,12 @@ for title, amt in [("Setup", 500), ("Development", 700), ("Testing", 300)]:
     if r and r.status_code in (200, 201):
         mid = r.json().get("milestone_id"); mids.append(mid); ok(f"Milestone '{title}' id={mid}")
     else: warn(f"Milestone '{title}'", f"{r.status_code if r else 'TIMEOUT'}")
+    pause(0.5)
 
 # 9. Submit Milestones
 print("\n--- 9. Freelancer Submits Milestones ---")
 for mid in mids:
+    pause(1)
     r = s("post", f"{BASE}/milestones/{mid}/submit", headers=fh, json={"deliverables": "Done", "submission_notes": "Complete"})
     if r and r.status_code == 200: ok(f"Milestone {mid} submitted")
     else: warn(f"Submit {mid}", f"{r.status_code if r else 'TIMEOUT'}")
@@ -114,6 +121,7 @@ for mid in mids:
 # 10. Approve Milestones -> Payment
 print("\n--- 10. Client Approves Milestones (Payment Released) ---")
 for mid in mids:
+    pause(1)
     r = s("post", f"{BASE}/milestones/{mid}/approve", headers=ch, json={"approval_notes": "Good"})
     if r and r.status_code == 200: ok(f"Milestone {mid} APPROVED -> payment released")
     else: warn(f"Approve {mid}", f"{r.status_code if r else 'TIMEOUT'}")
@@ -146,7 +154,7 @@ if ctid:
     if r and r.status_code in (200, 201): ok("Client review submitted")
     else: warn("Client review", f"{r.status_code if r else 'TIMEOUT'}")
 
-    r = s("post", f"{BASE}/reviews", headers=fh, json={"contract_id": ctid, "reviewee_id": cid, "rating": 5, "comment": "Great client"})
+    r = s("post", f"{BASE}/reviews", headers=fh, json={"contract_id": ctid, "reviewee_id": cid, "rating": 5, "comment": "Great client!"})
     if r and r.status_code in (200, 201): ok("Freelancer review submitted")
     else: warn("Freelancer review", f"{r.status_code if r else 'TIMEOUT'}")
 

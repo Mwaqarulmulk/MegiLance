@@ -26,6 +26,7 @@ import {
   Meteors,
   celebrate,
 } from '@/app/components/AI/kit';
+import { ExportMenu, UserGuide, type AIReport } from '@/app/components/AI/report';
 
 /* ============================================================================
    Types
@@ -140,6 +141,14 @@ interface EstimateResult {
   timeline: { working_days: number; weeks: number; label: string; team_size: number; hours_per_day: number };
   regional_analysis?: RegionalAnalysis;
   demand_level: string;
+  methodology?: string;
+  hours_breakdown?: {
+    core_hours: number;
+    feature_hours: number;
+    coordination_hours: number;
+    total_hours: number;
+    band_pct: number;
+  };
   meta: {
     category: string;
     service_type: string;
@@ -542,6 +551,16 @@ export default function PriceEstimatorPro() {
           </p>
         </header>
 
+        {/* User Guide */}
+        <UserGuide
+          isDark={isDark}
+          overview="Estimate a fair project price in 4 quick steps — then export a branded report."
+          steps={PRICE_GUIDE_STEPS}
+          tips={PRICE_GUIDE_TIPS}
+          faqs={PRICE_GUIDE_FAQS}
+          accuracyNote="Estimates use real 2025–2026 market rate ranges per service, adjusted by experience, quality, urgency, scope and location (with PPP-aware cross-border analysis). The more details you provide, the higher the confidence score and the tighter the quoted range. Treat the result as a well-grounded reference for budgeting — not a binding quote."
+        />
+
         {/* Stepper */}
         <div className={commonStyles.stepper}>
           {STEP_LABELS.map((label, i) => (
@@ -914,7 +933,7 @@ function StepDetails({ description, setDescription, features, featureInput, setF
               <Briefcase /> Team Size
             </label>
             <p className={cn(cs.fieldHint, ts.fieldHint)}>
-              More team members = coordination overhead (+70% hours per person)
+              More team members add ~8% coordination overhead each (capped +60%)
             </p>
             <input
               type="number"
@@ -1510,6 +1529,7 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
         <button className={cn(cs.actionBtn, ts.actionBtnPrimary)} onClick={onReset}>
           <RotateCcw /> New Estimate
         </button>
+        <ExportMenu report={() => buildPriceReport(result)} />
         <button className={cn(cs.actionBtn, ts.actionBtnSecondary)} onClick={onCopy}>
           <Copy /> Copy to Clipboard
         </button>
@@ -1871,4 +1891,155 @@ function formatLabel(key: string): string {
   return key
     .replace(/_/g, ' ')
     .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/* ============================================================================
+   User Guide content
+   ============================================================================ */
+
+const PRICE_GUIDE_STEPS = [
+  { title: 'Pick a category & service', text: 'This sets the base hourly rate from real market data. Each category has very different rates — software runs $50–200/hr, writing $25–100/hr.' },
+  { title: 'Add project details', text: 'Describe the work and list key features. Each feature adds ~3% to the hours (capped +50%). No idea on hours? Use the built-in Smart Hours Calculator.' },
+  { title: 'Fine-tune the settings', text: 'Experience, quality, urgency, scope and location each apply a multiplier. Selecting client & freelancer countries unlocks PPP-aware cross-border analysis.' },
+  { title: 'Review & export', text: 'You get a cost breakdown, market-tier comparison, timeline and ROI insights. Export it as a branded PDF or editable Word document to share with clients.' },
+];
+
+const PRICE_GUIDE_TIPS = [
+  'Always quote a range, not a single number — the tool gives you a confidence-scaled low/high band.',
+  'Fill in as many fields as you can: more detail raises the confidence score and tightens the range.',
+  'Use the location fields to see how much budget stretches across borders without losing escrow protection.',
+  'Add a 15–25% buffer for revisions and scope creep before committing to a fixed price.',
+];
+
+const PRICE_GUIDE_FAQS = [
+  { q: 'Where do the rates come from?', a: 'Base rates are curated from 2025–2026 freelance market data per service type, then adjusted with documented multipliers for experience, quality, urgency, scope and location.' },
+  { q: 'Why is my range wide?', a: 'The range width is tied to the confidence score. When you provide fewer details, the tool widens the band to stay honest. Add more context to narrow it.' },
+  { q: 'Is this a binding quote?', a: 'No. It is a data-grounded reference for budgeting and negotiation. Final pricing depends on exact requirements and the specific freelancer.' },
+  { q: 'Can I share the result?', a: 'Yes — use “Export Report” to download a branded PDF or an editable .docx Word file, or copy a plain-text summary to your clipboard.' },
+];
+
+/* ============================================================================
+   Report builder — turns an EstimateResult into a branded exportable report
+   ============================================================================ */
+
+function buildPriceReport(result: EstimateResult): AIReport {
+  const { estimate, breakdown, confidence, market_comparison, factors, roi_insights, timeline, regional_analysis, meta, demand_level } = result;
+  const cur = estimate.currency || 'USD';
+  const money = (n: number) => `$${fmt(n)}`;
+
+  const sections: AIReport['sections'] = [];
+
+  // Cost breakdown
+  sections.push({
+    heading: 'Cost Breakdown',
+    description: 'How the total estimate is distributed across project phases.',
+    blocks: [
+      {
+        kind: 'table',
+        columns: ['Phase', 'Hours', 'Cost', 'Share'],
+        rows: breakdown.map(b => [b.label, `${b.hours}h`, money(b.cost), `${b.percentage}%`]),
+      },
+    ],
+  });
+
+  // Market comparison
+  const tierEntries = Object.entries(market_comparison.tiers);
+  const yourIdx = tierEntries.findIndex(([k]) => k === market_comparison.your_position);
+  sections.push({
+    heading: 'Market Comparison',
+    description: `Your estimate sits in the “${market_comparison.your_position_label}” tier for this service.`,
+    blocks: [
+      {
+        kind: 'table',
+        columns: ['Quality Tier', 'Hourly Rate', 'Total Estimate'],
+        rows: tierEntries.map(([, v]) => [v.label, `${money(v.hourly)}/hr`, money(v.total)]),
+        highlightRowIndex: yourIdx >= 0 ? yourIdx : undefined,
+      },
+    ],
+  });
+
+  // Pricing factors
+  sections.push({
+    heading: 'Pricing Factors',
+    description: 'The inputs that shaped your rate and what each one does.',
+    blocks: [
+      { kind: 'keyValue', rows: factors.map(f => ({ label: f.label, value: `${f.value} — ${f.description}` })) },
+    ],
+  });
+
+  // Timeline
+  sections.push({
+    heading: 'Timeline Estimate',
+    blocks: [
+      {
+        kind: 'keyValue',
+        rows: [
+          { label: 'Estimated duration', value: timeline.label },
+          { label: 'Total hours', value: `${estimate.total_hours} hours` },
+          { label: 'Team size', value: `${timeline.team_size} ${timeline.team_size === 1 ? 'person' : 'people'}` },
+          { label: 'Working days', value: `~${timeline.working_days} days @ ${timeline.hours_per_day}h/day` },
+        ],
+      },
+    ],
+  });
+
+  // ROI insights
+  if (roi_insights.length) {
+    sections.push({
+      heading: 'Insights & Recommendations',
+      blocks: [{ kind: 'bullets', items: roi_insights.map(i => `${i.title}: ${i.message}`) }],
+    });
+  }
+
+  // Regional analysis
+  const ra = regional_analysis;
+  if (ra?.has_country_data) {
+    const blocks: AIReport['sections'][number]['blocks'] = [];
+    if (ra.local_value_context) {
+      blocks.push({ kind: 'callout', tone: 'success', title: 'Purchasing power context', text: ra.local_value_context.description });
+    }
+    for (const ctx of ra.pricing_context || []) {
+      blocks.push({ kind: 'callout', tone: ctx.type === 'warning' ? 'warning' : ctx.type === 'success' ? 'success' : 'info', title: ctx.title, text: ctx.message });
+    }
+    if (ra.comparison_countries?.length) {
+      blocks.push({
+        kind: 'table',
+        columns: ['Market', 'Indicative Hourly Rate'],
+        rows: ra.comparison_countries.map(c => [`${c.flag} ${c.name}`, `${money(c.hourly_rate)}/hr`]),
+      });
+    }
+    if (blocks.length) sections.push({ heading: 'Regional Pricing Analysis', blocks });
+  }
+
+  // Methodology
+  if (result.methodology) {
+    sections.push({ heading: 'Methodology', description: 'How this estimate was calculated.', blocks: [{ kind: 'paragraph', text: result.methodology }] });
+  }
+
+  const location = ra?.freelancer_country
+    ? `${ra.freelancer_country.flag} ${ra.freelancer_country.name}`
+    : formatLabel(meta.region || 'global_remote');
+
+  return {
+    toolName: 'AI Price Estimator',
+    title: 'Project Pricing Report',
+    subtitle: `${formatLabel(meta.category)} · ${formatLabel(meta.service_type)} — ${demand_level} demand`,
+    fileBaseName: 'megilance-price-estimate',
+    kpis: [
+      { label: 'Estimated Cost', value: `${money(estimate.low_estimate)}–${money(estimate.high_estimate)}`, hint: `midpoint ${money(estimate.total_estimate)} ${cur}` },
+      { label: 'Hourly Rate', value: `${money(estimate.hourly_rate)}/hr`, hint: `${estimate.total_hours} total hours` },
+      { label: 'Timeline', value: timeline.label.replace('~', '~ '), hint: `team of ${timeline.team_size}` },
+      { label: 'Confidence', value: `${confidence.score}%`, hint: `${confidence.level} confidence` },
+    ],
+    meta: [
+      { label: 'Experience', value: formatLabel(meta.experience_level) },
+      { label: 'Quality', value: formatLabel(meta.quality_tier) },
+      { label: 'Urgency', value: formatLabel(meta.urgency) },
+      { label: 'Scope', value: formatLabel(meta.scope) },
+      { label: 'Location', value: location },
+    ],
+    sections,
+    disclaimer:
+      'Estimates are based on global market rate data and may vary with specific requirements, provider expertise and market conditions. Use as a reference for budgeting, not as a binding quote.',
+  };
 }
