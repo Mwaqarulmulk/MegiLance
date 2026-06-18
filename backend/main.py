@@ -824,9 +824,15 @@ async def lifespan(app: FastAPI):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
                 feedback_type TEXT NOT NULL,
-                content TEXT NOT NULL,
+                content TEXT,
                 rating INTEGER,
                 page_url TEXT,
+                title TEXT DEFAULT '',
+                description TEXT DEFAULT '',
+                category TEXT DEFAULT '',
+                status TEXT DEFAULT 'new',
+                admin_response TEXT,
+                votes INTEGER DEFAULT 0,
                 created_at TEXT NOT NULL
             )""", "user_feedback"),
             ("""CREATE TABLE IF NOT EXISTS user_notes (

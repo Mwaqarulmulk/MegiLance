@@ -55,6 +55,7 @@ interface TransactionResponse {
   id: number | string;
   amount?: number;
   created_at?: string;
+  date?: string;
   description?: string;
   payment_type?: string;
   status?: string;
@@ -276,17 +277,17 @@ export function useFreelancerData() {
 
         // Map Transactions
         const mappedTransactions: FreelancerTransaction[] = (
-          paymentsJson.payments || []
-        ).map((t: TransactionResponse) => ({
-          id: String(t.id),
-          amount: `$${t.amount}`,
-          date: t.created_at,
-          description: t.description || t.payment_type || "Transaction",
-          type: t.payment_type === "withdrawal" ? "Withdrawal" : "Payment",
+          paymentsJson?.payments || []
+        ).filter(Boolean).map((t: TransactionResponse) => ({
+          id: String(t?.id ?? ''),
+          amount: `$${t?.amount ?? 0}`,
+          date: t?.created_at || t?.date || new Date().toISOString(),
+          description: t?.description || t?.payment_type || "Transaction",
+          type: t?.payment_type === "withdrawal" ? "Withdrawal" : "Payment",
           status:
-            t.status === "completed"
+            t?.status === "completed"
               ? "Completed"
-              : t.status === "pending"
+              : t?.status === "pending"
                 ? "Pending"
                 : "Failed",
         }));
@@ -294,18 +295,18 @@ export function useFreelancerData() {
 
         // Map Analytics
         setAnalytics({
-          activeProjects: statsJson.active_projects || 0,
-          pendingProposals: statsJson.pending_proposals || 0,
-          walletBalance: `$${walletJson.balance || 0}`,
-          rank: rankJson.rank || "Silver",
-          totalEarnings: `$${statsJson.total_earnings || 0}`,
-          completedProjects: statsJson.completed_projects || 0,
-          successRate: statsJson.success_rate || 0,
-          averageRating: statsJson.average_rating || 0,
-          profileViews: statsJson.profile_views || 0,
-          availabilityStatus: statsJson.availability_status || undefined,
-          profileCompleteness: statsJson.profile_completeness ?? undefined,
-          headline: statsJson.headline || undefined,
+          activeProjects: statsJson?.active_projects || 0,
+          pendingProposals: statsJson?.pending_proposals || 0,
+          walletBalance: `$${walletJson?.balance || 0}`,
+          rank: rankJson?.rank || "Silver",
+          totalEarnings: `$${statsJson?.total_earnings || 0}`,
+          completedProjects: statsJson?.completed_projects || 0,
+          successRate: statsJson?.success_rate || 0,
+          averageRating: statsJson?.average_rating || 0,
+          profileViews: statsJson?.profile_views || 0,
+          availabilityStatus: statsJson?.availability_status || undefined,
+          profileCompleteness: statsJson?.profile_completeness ?? undefined,
+          headline: statsJson?.headline || undefined,
         });
 
         // Map Monthly Earnings

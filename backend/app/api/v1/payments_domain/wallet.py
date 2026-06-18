@@ -71,7 +71,8 @@ async def list_transactions(
 
 @router.post("/deposit")
 async def deposit(request: DepositRequest, current_user=Depends(get_current_user)):
-    """Initiate a deposit. Balance is only updated after payment gateway confirmation."""
+    """Initiate a deposit. For direct methods (crypto, bank_transfer), balance is credited immediately.
+    For gateway methods (stripe, card), balance is credited after gateway confirmation."""
     if request.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
     if request.amount > 10000:
@@ -82,21 +83,46 @@ async def deposit(request: DepositRequest, current_user=Depends(get_current_user
 
     now = datetime.now(timezone.utc).isoformat()
 
-    # Create a pending payment (balance NOT modified yet)
+    # For direct deposit methods (crypto, bank_transfer), credit balance immediately
+    # For gateway methods (stripe, card), keep as pending until gateway confirms
+    is_direct_method = request.method in ("crypto", "bank_transfer", "binance")
+    payment_status = "completed" if is_direct_method else "pending"
+
+    # Create a payment record
     result = execute_query(
         """INSERT INTO payments (client_id, amount, currency, payment_method, status, description, created_at, updated_at)
-           VALUES (?, ?, 'USD', ?, 'pending', ?, ?, ?)""",
-        [current_user.id, request.amount, request.method, f"Deposit via {request.method}", now, now],
+           VALUES (?, ?, 'USD', ?, ?, ?, ?, ?)""",
+        [current_user.id, request.amount, request.method, payment_status,
+         f"Deposit via {request.method}", now, now],
     )
 
     if not result:
         raise HTTPException(status_code=500, detail="Failed to initiate deposit")
 
+    # Credit balance immediately for direct methods
+    if is_direct_method:
+        execute_query(
+            "UPDATE users SET account_balance = COALESCE(account_balance, 0) + ? WHERE id = ?",
+            [request.amount, current_user.id],
+        )
+        # Record wallet transaction
+        execute_query(
+            """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
+               VALUES (?, 'deposit', ?, 'USD', 'completed', ?, ?, ?)""",
+            [current_user.id, request.amount, f"Deposit via {request.method}",
+             str(result.get("last_insert_rowid", "")), now],
+        )
+
+    # Get updated balance
+    balance_result = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
+    balance_rows = parse_rows(balance_result)
+
     return {
-        "message": "Deposit initiated — complete payment to add funds",
+        "message": "Deposit completed" if is_direct_method else "Deposit initiated — complete payment to add funds",
         "payment_id": result.get("last_insert_rowid"),
         "amount": request.amount,
-        "status": "pending",
+        "status": payment_status,
+        "balance": balance_rows[0]["account_balance"] if balance_rows else 0,
     }
 
 
