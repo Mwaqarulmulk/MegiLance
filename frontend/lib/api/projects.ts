@@ -36,7 +36,7 @@ export const projectsApi = {
     budget_max?: number;
     experience_level?: string;
     estimated_duration?: string;
-    skills?: string[];
+    skills?: string[] | string;
     status?: string;
   }) =>
     apiFetch("/projects", {

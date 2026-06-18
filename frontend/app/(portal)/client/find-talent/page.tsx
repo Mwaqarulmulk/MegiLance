@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
 interface WizardStep {
@@ -168,6 +169,7 @@ function normalizeFallbackFreelancer(
 }
 
 export default function FindTalentPage() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -343,6 +345,10 @@ export default function FindTalentPage() {
       setSelectedFreelancer(
         matches.find((m) => m.freelancer_id === freelancerId),
       );
+      // Redirect to client projects after 2 seconds
+      setTimeout(() => {
+        router.push("/client/projects");
+      }, 2000);
     } catch (e) {
       console.error("Hire failed:", e);
     } finally {
@@ -652,8 +658,7 @@ export default function FindTalentPage() {
                   Successfully Hired!
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400">
-                  {selectedFreelancer?.display_name} has been notified. Check
-                  your messages for updates.
+                  {selectedFreelancer?.display_name} has been notified. Redirecting to your projects...
                 </p>
               </div>
             ) : loading ? (

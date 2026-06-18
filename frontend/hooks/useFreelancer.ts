@@ -171,7 +171,7 @@ export function useFreelancerData() {
           fetchWithFallback(api.portal.freelancer.getProjects(), {
             projects: [],
           }),
-          fetchWithFallback(api.portal.freelancer.getWallet(), { balance: 0 }),
+          fetchWithFallback(api.portal.freelancer.getWallet(), { balance: 0, recent_transactions: [] }),
           fetchWithFallback(api.portal.freelancer.getPayments(), {
             payments: [],
           }),
@@ -192,14 +192,14 @@ export function useFreelancerData() {
 
         if (!mounted) return;
 
-        // Map Projects
+        // Map Projects - handle both contract and project data formats
         const mappedProjects: FreelancerProject[] = (
           projectsJson.projects || []
         ).map((p: ProjectResponse) => ({
           id: String(p.id),
           title: p.title || "Untitled Project",
           clientName: p.client_name || "Unknown Client",
-          budget: `$${p.total_amount}`,
+          budget: `$${p.total_amount || 0}`,
           postedTime: p.start_date || new Date().toISOString(),
           tags: [], // Not available in backend yet
           status:
@@ -249,9 +249,9 @@ export function useFreelancerData() {
           // Tier 3: Fetch open projects from the projects API
           try {
             const openProjects = (await apiFetch(
-              "/projects?status=open&limit=5",
-            )) as { projects?: Array<Record<string, unknown>> };
-            const openList = openProjects.projects || [];
+              "/projects?status=open&page_size=5",
+            )) as { items?: Array<Record<string, unknown>>; projects?: Array<Record<string, unknown>> };
+            const openList = openProjects.items || openProjects.projects || [];
             mappedRecommendedJobs = openList.map(
               (p: Record<string, unknown>) => ({
                 id: String(p.id),
@@ -260,7 +260,9 @@ export function useFreelancerData() {
                 description: p.description ? String(p.description) : undefined,
                 budget: Number(p.budget_max || p.budget_min || 0),
                 postedTime: String(p.created_at || new Date().toISOString()),
-                skills: Array.isArray(p.skills) ? (p.skills as string[]) : [],
+                skills: typeof p.skills === "string"
+                  ? p.skills.split(",").map((s: string) => s.trim()).filter(Boolean)
+                  : Array.isArray(p.skills) ? (p.skills as string[]) : [],
                 status: "Open" as const,
                 matchScore: undefined,
               }),

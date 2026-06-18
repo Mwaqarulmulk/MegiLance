@@ -41,6 +41,8 @@ interface Project {
   progress: number;
   deadline: string;
   created_at: string;
+  project_id?: number;
+  category?: string;
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -69,13 +71,15 @@ export default function FreelancerProjectsPage() {
         
         const mappedProjects = contractsList.map((contract: any) => ({
           id: contract.id?.toString() || '',
-          title: contract.title || contract.project_title || 'Untitled Project',
+          title: contract.project_title || contract.title || contract.job_title || 'Untitled Project',
           client_name: contract.client_name || 'Client',
           status: contract.status || 'active',
-          budget: contract.rate || contract.budget || 0,
+          budget: contract.total_amount || contract.rate || contract.budget || 0,
           progress: contract.progress || 0,
           deadline: contract.end_date || contract.deadline || '',
           created_at: contract.created_at || new Date().toISOString(),
+          project_id: contract.project_id,
+          category: contract.category || '',
         }));
         
         setProjects(mappedProjects);

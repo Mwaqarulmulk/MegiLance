@@ -24,7 +24,7 @@ export interface Freelancer {
 export interface ProjectCardProps {
   id: string;
   title: string;
-  status: 'In Progress' | 'Completed' | 'Pending' | 'Cancelled';
+  status: 'In Progress' | 'Completed' | 'Pending' | 'Cancelled' | 'Open' | 'On Hold' | 'Closed' | string;
   progress: number;
   budget: number;
   paid: number;
@@ -36,11 +36,14 @@ export interface ProjectCardProps {
   tags?: string[];
 }
 
-const statusVariantMap: Record<ProjectCardProps['status'], NonNullable<BadgeProps['variant']>> = {
+const statusVariantMap: Record<string, NonNullable<BadgeProps['variant']>> = {
   'In Progress': 'info',
   'Completed': 'success',
   'Pending': 'warning',
   'Cancelled': 'danger',
+  'Open': 'info',
+  'On Hold': 'warning',
+  'Closed': 'default',
 };
 
 const cardVariants = {

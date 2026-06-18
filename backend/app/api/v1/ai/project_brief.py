@@ -257,8 +257,7 @@ async def confirm_hire(
     project_result = execute_query(
         """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
                   experience_level, estimated_duration, skills, client_id, status, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'in_progress', ?, ?)
-           RETURNING id""",
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'in_progress', ?, ?)""",
         [
             brief.get("title", "AI-Matched Project"),
             brief.get("description", ""),
@@ -278,6 +277,16 @@ async def confirm_hire(
     project_id = None
     if project_result and project_result.get("rows"):
         project_id = project_result["rows"][0][0].get("value") if isinstance(project_result["rows"][0][0], dict) else project_result["rows"][0][0]
+    if not project_id:
+        id_result = execute_query(
+            "SELECT id FROM projects WHERE client_id = ? AND title = ? ORDER BY id DESC LIMIT 1",
+            [client_id, brief.get("title", "AI-Matched Project")],
+        )
+        if id_result and id_result.get("rows"):
+            raw = id_result["rows"][0][0]
+            if isinstance(raw, dict):
+                raw = raw.get("value")
+            project_id = int(raw) if raw else None
 
     if not project_id:
         raise HTTPException(status_code=500, detail="Failed to create project")
@@ -286,8 +295,7 @@ async def confirm_hire(
     contract_result = execute_query(
         """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, currency, status,
                   contract_type, platform_fee, created_at, updated_at)
-           VALUES (?, ?, ?, ?, 'USD', 'pending', 'fixed', 0, ?, ?)
-           RETURNING id""",
+           VALUES (?, ?, ?, ?, 'USD', 'pending', 'fixed', 0, ?, ?)""",
         [
             project_id,
             request.freelancer_id,
@@ -301,6 +309,16 @@ async def confirm_hire(
     contract_id = None
     if contract_result and contract_result.get("rows"):
         contract_id = contract_result["rows"][0][0].get("value") if isinstance(contract_result["rows"][0][0], dict) else contract_result["rows"][0][0]
+    if not contract_id:
+        id_result = execute_query(
+            "SELECT id FROM contracts WHERE project_id = ? AND client_id = ? ORDER BY id DESC LIMIT 1",
+            [project_id, client_id],
+        )
+        if id_result and id_result.get("rows"):
+            raw = id_result["rows"][0][0]
+            if isinstance(raw, dict):
+                raw = raw.get("value")
+            contract_id = int(raw) if raw else None
 
     # Create milestones if provided
     if request.milestone_plan and contract_id:

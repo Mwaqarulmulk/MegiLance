@@ -146,6 +146,12 @@ export function useClientData() {
             freelancers: p.freelancers,
             description: p.description,
             proposals_count: p.proposals_count || 0,
+            skills: Array.isArray(p.skills)
+              ? p.skills
+              : typeof p.skills === "string" && p.skills
+                ? p.skills.split(",").map((s: string) => s.trim()).filter(Boolean)
+                : [],
+            client: p.client_name || p.client,
           };
         },
       );
@@ -154,16 +160,16 @@ export function useClientData() {
       const mappedPayments: ClientPayment[] = (paymentsData || []).map(
         (p: any) => ({
           id: p.id,
-          date: p.date,
+          date: p.date || p.created_at,
           description: p.description,
           amount:
             typeof p.amount === "string" && p.amount.startsWith("$")
               ? p.amount
               : `$${parseFloat(String(p.amount || "0")).toLocaleString()}`,
           status: p.status,
-          type: p.type,
+          type: p.type || p.payment_type || "Payment",
           project: p.project,
-          freelancer: p.freelancer,
+          freelancer: p.freelancer || p.freelancer_name,
           freelancerAvatarUrl: p.freelancerAvatarUrl,
         }),
       );

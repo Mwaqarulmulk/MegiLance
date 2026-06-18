@@ -91,12 +91,14 @@ export default function CreateProjectPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // Send skills as comma-separated string (backend accepts both string and array)
+      const skillsString = formData.skills.split(',').map(s => s.trim()).filter(Boolean).join(',');
       await api.projects.create({
         ...formData,
         budget_min: Number(formData.budget_min),
         budget_max: Number(formData.budget_max),
-        skills: formData.skills.split(',').map(s => s.trim()).filter(Boolean)
-      });
+        skills: skillsString,
+      } as any);
       router.push('/client/projects');
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {

@@ -461,6 +461,74 @@ async def client_payments(
     return {"payments": rows if rows else [], "total": total, "page": page}
 
 
+@router.get("/freelancer/projects")
+async def freelancer_projects(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1),
+    status_filter: Optional[str] = None,
+    current_user=Depends(get_current_user),
+):
+    offset = (page - 1) * page_size
+    where = "WHERE c.freelancer_id = ?"
+    params: list = [current_user.id]
+
+    if status_filter:
+        where += " AND c.status = ?"
+        params.append(status_filter)
+
+    result = execute_query(
+        f"""SELECT c.id, c.project_id, c.amount as total_amount, c.contract_type, c.status,
+                   c.start_date, c.end_date, c.description, c.created_at, c.updated_at,
+                   p.title as project_title, p.category,
+                   u.name as client_name
+            FROM contracts c
+            LEFT JOIN projects p ON c.project_id = p.id
+            LEFT JOIN users u ON c.client_id = u.id
+            {where}
+            ORDER BY c.created_at DESC
+            LIMIT ? OFFSET ?""",
+        params + [page_size, offset],
+    )
+    rows = parse_rows(result)
+    count_result = execute_query(
+        f"SELECT COUNT(*) as count FROM contracts c {where}",
+        params,
+    )
+    count_rows = parse_rows(count_result)
+    total = count_rows[0]["count"] if count_rows else 0
+    return {"projects": rows if rows else [], "total": total, "page": page, "page_size": page_size}
+
+
+@router.get("/freelancer/payments")
+async def freelancer_payments(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1),
+    current_user=Depends(get_current_user),
+):
+    offset = (page - 1) * page_size
+    result = execute_query(
+        """SELECT p.id, p.amount, p.status, p.payment_type, p.description, p.created_at as date,
+                  p.payment_method, p.platform_fee, p.freelancer_amount,
+                  pr.title as project, c.client_id,
+                  u.name as client_name
+           FROM payments p
+           JOIN contracts c ON p.contract_id = c.id
+           LEFT JOIN projects pr ON c.project_id = pr.id
+           LEFT JOIN users u ON c.client_id = u.id
+           WHERE c.freelancer_id = ?
+           ORDER BY p.created_at DESC LIMIT ? OFFSET ?""",
+        [current_user.id, page_size, offset],
+    )
+    rows = parse_rows(result)
+    count_result = execute_query(
+        "SELECT COUNT(*) as count FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ?",
+        [current_user.id],
+    )
+    count_rows = parse_rows(count_result)
+    total = count_rows[0]["count"] if count_rows else 0
+    return {"payments": rows if rows else [], "total": total, "page": page}
+
+
 @router.get("/freelancer/wallet")
 async def freelancer_wallet(current_user=Depends(get_current_user)):
     balance = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])

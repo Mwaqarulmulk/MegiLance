@@ -38,30 +38,47 @@ import common from "./Projects.common.module.css";
 import light from "./Projects.light.module.css";
 import dark from "./Projects.dark.module.css";
 
+// Normalize backend status (open, in_progress, etc.) to display status (Open, In Progress, etc.)
+function normalizeStatus(status: string): string {
+  const map: Record<string, string> = {
+    open: "Open",
+    in_progress: "In Progress",
+    completed: "Completed",
+    cancelled: "Cancelled",
+    on_hold: "On Hold",
+    closed: "Closed",
+    pending: "Pending",
+  };
+  return map[status?.toLowerCase()] || status || "Pending";
+}
+
 // Data transformation
 const transformProjectData = (projects: any[]): ProjectCardProps[] => {
   if (!Array.isArray(projects)) return [];
   return projects.map((p) => ({
     id: p.id,
     title: p.title || "Untitled Project",
-    status: p.status || "Pending",
+    status: normalizeStatus(p.status),
     progress: p.progress ?? 0,
     budget:
       typeof p.budget === "number"
         ? p.budget
-        : parseFloat(String(p.budget).replace(/[$,]/g, "")) || 0,
+        : parseFloat(String(p.budget || p.budget_max || p.budget_min || 0).replace(/[$,]/g, "")) || 0,
     paid: p.paid ?? 0,
     freelancers: p.freelancers || [],
-    updatedAt: p.updatedAt || new Date().toLocaleDateString(),
+    updatedAt: p.updated_at || p.updatedAt || new Date().toLocaleDateString(),
   }));
 };
 
 const STATUS_OPTIONS = [
   { value: "All", label: "All Statuses" },
+  { value: "Open", label: "Open" },
   { value: "In Progress", label: "In Progress" },
   { value: "Completed", label: "Completed" },
   { value: "Pending", label: "Pending" },
   { value: "Cancelled", label: "Cancelled" },
+  { value: "On Hold", label: "On Hold" },
+  { value: "Closed", label: "Closed" },
 ];
 
 const SORT_OPTIONS = [
