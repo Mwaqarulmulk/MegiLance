@@ -149,10 +149,11 @@ def insert_project(title: str, description: str, client_id: int, rate: float,
                    rate_type: str, now: str) -> Optional[int]:
     """Insert a project for direct hire flow. Returns project_id or None."""
     result = execute_query(
-        """INSERT INTO projects (title, description, client_id, budget_min, budget_max, 
-           budget_type, status, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        [title, description, client_id, rate, rate, rate_type, "in_progress", now, now]
+        """INSERT INTO projects (title, description, category, client_id, budget_min, budget_max,
+           budget_type, experience_level, estimated_duration, skills, status, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        [title, description, "General", client_id, rate, rate, rate_type,
+         "intermediate", "1-3 months", "", "in_progress", now, now]
     )
     if not result:
         return None

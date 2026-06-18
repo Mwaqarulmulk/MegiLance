@@ -57,20 +57,21 @@ async def list_payments(
     status_filter: Optional[str] = None,
     current_user=Depends(get_current_user),
 ):
-    where = "WHERE (client_id = ? OR freelancer_id = ?)"
+    where = "WHERE (p.from_user_id = ? OR p.to_user_id = ?)"
     params = [current_user.id, current_user.id]
 
     if status_filter:
-        where += " AND status = ?"
+        where += " AND p.status = ?"
         params.append(status_filter)
 
     offset = (page - 1) * page_size
     params.extend([page_size, offset])
 
     result = execute_query(
-        f"""SELECT p.id, p.contract_id, p.client_id, p.freelancer_id, p.amount,
-                   p.currency, p.payment_method, p.status, p.description,
-                   p.transaction_id, p.created_at, p.updated_at,
+        f"""SELECT p.id, p.contract_id, p.from_user_id AS client_id, p.to_user_id AS freelancer_id,
+                   p.amount, 'USD' AS currency, p.payment_type, p.payment_method, p.status,
+                   p.description, p.platform_fee, p.freelancer_amount, p.transaction_id,
+                   p.created_at, p.updated_at,
                    c.project_id, pr.title as project_title
             FROM payments p
             LEFT JOIN contracts c ON p.contract_id = c.id
@@ -87,11 +88,12 @@ async def list_payments(
 @router.get("/{payment_id}")
 async def get_payment(payment_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
-        """SELECT p.id, p.contract_id, p.client_id, p.freelancer_id, p.amount,
-                  p.currency, p.payment_method, p.status, p.description,
-                  p.transaction_id, p.created_at, p.updated_at
+        """SELECT p.id, p.contract_id, p.from_user_id AS client_id, p.to_user_id AS freelancer_id,
+                  p.amount, 'USD' AS currency, p.payment_type, p.payment_method, p.status,
+                  p.description, p.platform_fee, p.freelancer_amount, p.transaction_id,
+                  p.created_at, p.updated_at
            FROM payments p
-           WHERE p.id = ? AND (p.client_id = ? OR p.freelancer_id = ?)""",
+           WHERE p.id = ? AND (p.from_user_id = ? OR p.to_user_id = ?)""",
         [payment_id, current_user.id, current_user.id],
     )
     rows = parse_rows(result)
@@ -115,14 +117,17 @@ async def create_payment(request: PaymentCreate, current_user=Depends(get_curren
         raise HTTPException(status_code=403, detail="Only the client can initiate payment")
 
     now = datetime.now(timezone.utc).isoformat()
+    fee_info = calculate_tiered_fee(request.amount)
+    platform_fee = float(fee_info["platform_fee"])
+    freelancer_amount = round(request.amount - platform_fee, 2)
     result = execute_query(
-        """INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency,
-                  payment_method, status, description, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)""",
+        """INSERT INTO payments (contract_id, from_user_id, to_user_id, amount, payment_type,
+                  payment_method, status, platform_fee, freelancer_amount, description, created_at, updated_at)
+           VALUES (?, ?, ?, ?, 'payment', ?, 'pending', ?, ?, ?, ?, ?)""",
         [
             request.contract_id, current_user.id, contract["freelancer_id"],
-            request.amount, request.currency, request.payment_method,
-            request.description or "", now, now,
+            request.amount, request.payment_method,
+            platform_fee, freelancer_amount, request.description or "", now, now,
         ],
     )
 
@@ -145,11 +150,14 @@ async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_u
 
     now = datetime.now(timezone.utc).isoformat()
 
-    # Create a pending deposit transaction (balance is NOT modified here)
+    # Create a pending deposit transaction (balance is NOT modified here).
+    # Real payments schema: a deposit has the user as both payer and payee.
     result = execute_query(
-        """INSERT INTO payments (client_id, amount, currency, payment_method, status, description, created_at, updated_at)
-           VALUES (?, ?, 'USD', ?, 'pending', ?, ?, ?)""",
-        [current_user.id, request.amount, request.method, f"Deposit via {request.method}", now, now],
+        """INSERT INTO payments (from_user_id, to_user_id, amount, payment_type, payment_method,
+                  status, platform_fee, freelancer_amount, description, created_at, updated_at)
+           VALUES (?, ?, ?, 'deposit', ?, 'pending', 0, 0, ?, ?, ?)""",
+        [current_user.id, current_user.id, request.amount, request.method,
+         f"Deposit via {request.method}", now, now],
     )
 
     if not result:
@@ -172,7 +180,7 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
     by the payment webhook handler after verifying the payment with the gateway.
     For development, only admins can manually complete payments."""
     result = execute_query(
-        "SELECT id, status, client_id, freelancer_id, contract_id, amount, currency, payment_method FROM payments WHERE id = ?",
+        "SELECT id, status, from_user_id, to_user_id, contract_id, amount, payment_type, payment_method FROM payments WHERE id = ?",
         [payment_id],
     )
     rows = parse_rows(result)
@@ -182,14 +190,13 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
     payment = rows[0]
 
     is_admin = getattr(current_user, "user_type", "") == "admin" or getattr(current_user, "role", "") == "admin"
-    if payment["client_id"] != current_user.id and not is_admin:
+    # The payer is from_user_id; only they (or an admin) may complete the payment.
+    if payment["from_user_id"] != current_user.id and not is_admin:
         raise HTTPException(status_code=403, detail="Access denied")
 
-    # A contract payment pays the freelancer; a standalone deposit (no contract,
-    # no payee) credits the client's own wallet. Pick the correct payee so we
-    # never credit the wrong party.
-    is_deposit = not payment.get("contract_id") and not payment.get("freelancer_id")
-    payee_id = payment["client_id"] if is_deposit else payment["freelancer_id"]
+    # The payee is always to_user_id (for a deposit, payer == payee == the user).
+    is_deposit = payment.get("payment_type") == "deposit" or payment["from_user_id"] == payment["to_user_id"]
+    payee_id = payment["to_user_id"]
     ledger_type = "deposit" if is_deposit else "payment"
 
     if payment["status"] == "completed":

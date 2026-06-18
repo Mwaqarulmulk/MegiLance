@@ -143,8 +143,8 @@ async def stripe_webhook(request: Request):
                         [amount_usd, int(freelancer_id)],
                     )
                     execute_query(
-                        "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'stripe', 'completed', ?, ?, ?)",
-                        [contract_id, client_id or uid, int(freelancer_id), amount_usd, intent.currency or "usd", intent.id, now, now],
+                        "INSERT INTO payments (contract_id, from_user_id, to_user_id, amount, payment_type, payment_method, status, platform_fee, freelancer_amount, transaction_id, created_at, updated_at) VALUES (?, ?, ?, ?, 'payment', 'stripe', 'completed', 0, ?, ?, ?, ?)",
+                        [contract_id, client_id or uid, int(freelancer_id), amount_usd, amount_usd, intent.id, now, now],
                     )
                     execute_query(
                         """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
@@ -159,8 +159,8 @@ async def stripe_webhook(request: Request):
                     [amount_usd, uid],
                 )
                 execute_query(
-                    "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (NULL, ?, NULL, ?, ?, 'stripe', 'completed', ?, ?, ?)",
-                    [uid, amount_usd, intent.currency or "usd", intent.id, now, now],
+                    "INSERT INTO payments (contract_id, from_user_id, to_user_id, amount, payment_type, payment_method, status, platform_fee, freelancer_amount, transaction_id, created_at, updated_at) VALUES (NULL, ?, ?, ?, 'deposit', 'stripe', 'completed', 0, 0, ?, ?, ?)",
+                    [uid, uid, amount_usd, intent.id, now, now],
                 )
                 execute_query(
                     """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
@@ -211,7 +211,7 @@ async def list_stripe_transactions(
 ):
     offset = (page - 1) * page_size
     result = execute_query(
-        "SELECT p.id, p.amount, p.currency, p.status, p.transaction_id, p.created_at FROM payments p WHERE p.client_id = ? AND p.payment_method = 'stripe' ORDER BY p.created_at DESC LIMIT ? OFFSET ?",
+        "SELECT p.id, p.amount, 'USD' AS currency, p.status, p.transaction_id, p.created_at FROM payments p WHERE p.from_user_id = ? AND p.payment_method = 'stripe' ORDER BY p.created_at DESC LIMIT ? OFFSET ?",
         [current_user.id, page_size, offset],
     )
     rows = parse_rows(result)

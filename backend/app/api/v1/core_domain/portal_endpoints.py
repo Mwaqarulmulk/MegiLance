@@ -34,7 +34,7 @@ async def get_dashboard(current_user=Depends(get_current_user)):
         proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ?", [current_user.id])
         contracts = execute_query("SELECT COUNT(*) as count FROM contracts WHERE freelancer_id = ?", [current_user.id])
         earnings = execute_query(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE freelancer_id = ? AND status = 'completed'",
+            "SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE to_user_id = ? AND status = 'completed'",
             [current_user.id],
         )
         return {
@@ -64,7 +64,7 @@ async def client_dashboard_stats(current_user=Depends(get_current_user)):
     )
     contracts = execute_query("SELECT COUNT(*) as count FROM contracts WHERE client_id = ? AND status = 'active'", [current_user.id])
     spending = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.client_id = ? AND p.status = 'completed'",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.client_id = ? AND p.status = 'completed'",
         [current_user.id],
     )
     balance = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
@@ -158,11 +158,11 @@ async def freelancer_dashboard_stats(current_user=Depends(get_current_user)):
     active_proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ? AND status = 'submitted'", [current_user.id])
     contracts = execute_query("SELECT COUNT(*) as count FROM contracts WHERE freelancer_id = ? AND status = 'active'", [current_user.id])
     earnings = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
         [current_user.id],
     )
     pending_earnings = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'pending'",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'pending'",
         [current_user.id],
     )
     return {
@@ -309,7 +309,7 @@ async def freelancer_seller_stats(current_user=Depends(get_current_user)):
     completed = (parse_rows(completed_result) or [{"count": 0}])[0]["count"]
 
     earnings_result = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
         [current_user.id],
     )
     total_earnings = (parse_rows(earnings_result) or [{"total": 0}])[0]["total"]
@@ -348,15 +348,15 @@ async def freelancer_seller_stats(current_user=Depends(get_current_user)):
 @router.get("/freelancer/earnings")
 async def freelancer_earnings(current_user=Depends(get_current_user)):
     total = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
         [current_user.id],
     )
     pending = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'pending'",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'pending'",
         [current_user.id],
     )
     this_month = execute_query(
-        "SELECT COALESCE(SUM(amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed' AND p.created_at >= date('now', 'start of month')",
+        "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed' AND p.created_at >= date('now', 'start of month')",
         [current_user.id],
     )
     return {
@@ -423,13 +423,22 @@ async def client_create_project(data: dict, current_user=Depends(get_current_use
     if not description:
         raise HTTPException(status_code=400, detail="Description is required")
 
+    experience_level = data.get("experience_level") or "intermediate"
+    estimated_duration = data.get("estimated_duration") or "1-3 months"
+    skills = data.get("skills") or ""
+    if isinstance(skills, list):
+        skills = ", ".join(str(s) for s in skills)
+
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         """INSERT INTO projects (client_id, title, description, category, status, budget_type,
-           budget_min, budget_max, created_at, updated_at)
-           VALUES (?, ?, ?, ?, 'open', ?, ?, ?, ?, ?)""",
-        [current_user.id, title, description, category, budget_type, budget_min, budget_max, now, now],
+           budget_min, budget_max, experience_level, estimated_duration, skills, created_at, updated_at)
+           VALUES (?, ?, ?, ?, 'open', ?, ?, ?, ?, ?, ?, ?, ?)""",
+        [current_user.id, title, description, category, budget_type, budget_min, budget_max,
+         experience_level, estimated_duration, skills, now, now],
     )
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to create project")
     return {"message": "Project created", "project_id": result.get("last_insert_rowid")}
 
 

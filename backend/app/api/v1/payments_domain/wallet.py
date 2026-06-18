@@ -88,11 +88,13 @@ async def deposit(request: DepositRequest, current_user=Depends(get_current_user
     is_direct_method = request.method in ("crypto", "bank_transfer", "binance")
     payment_status = "completed" if is_direct_method else "pending"
 
-    # Create a payment record
+    # Create a payment record (real payments schema: a deposit has the user as
+    # both payer and payee — money enters their own wallet).
     result = execute_query(
-        """INSERT INTO payments (client_id, amount, currency, payment_method, status, description, created_at, updated_at)
-           VALUES (?, ?, 'USD', ?, ?, ?, ?, ?)""",
-        [current_user.id, request.amount, request.method, payment_status,
+        """INSERT INTO payments (from_user_id, to_user_id, amount, payment_type, payment_method,
+                  status, platform_fee, freelancer_amount, description, created_at, updated_at)
+           VALUES (?, ?, ?, 'deposit', ?, ?, 0, 0, ?, ?, ?)""",
+        [current_user.id, current_user.id, request.amount, request.method, payment_status,
          f"Deposit via {request.method}", now, now],
     )
 

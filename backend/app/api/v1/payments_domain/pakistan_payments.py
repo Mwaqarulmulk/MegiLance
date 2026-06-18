@@ -133,12 +133,12 @@ async def pk_deposit(request: PKPaymentCreate, current_user=Depends(get_current_
     now = datetime.now(timezone.utc).isoformat()
 
     result = execute_query(
-        """INSERT INTO payments (client_id, amount, currency, payment_method, status, description, transaction_id, created_at, updated_at)
-           VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?)""",
+        """INSERT INTO payments (from_user_id, to_user_id, amount, payment_type, payment_method, status, platform_fee, freelancer_amount, description, transaction_id, created_at, updated_at)
+           VALUES (?, ?, ?, 'deposit', ?, 'pending', 0, 0, ?, ?, ?, ?)""",
         [
             current_user.id,
+            current_user.id,
             request.amount,
-            method["currency"],
             request.method,
             request.description or f"Deposit via {method['name']}",
             f"pk_{secrets.token_urlsafe(16)}",
@@ -174,9 +174,10 @@ async def usdc_deposit(request: USDCPaymentCreate, current_user=Depends(get_curr
 
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
-        """INSERT INTO payments (client_id, amount, currency, payment_method, status, description, transaction_id, created_at, updated_at)
-           VALUES (?, ?, 'USD', 'usdc_bep20', 'pending', ?, ?, ?, ?)""",
+        """INSERT INTO payments (from_user_id, to_user_id, amount, payment_type, payment_method, status, platform_fee, freelancer_amount, description, transaction_id, created_at, updated_at)
+           VALUES (?, ?, ?, 'deposit', 'usdc_bep20', 'pending', 0, 0, ?, ?, ?, ?)""",
         [
+            current_user.id,
             current_user.id,
             request.amount,
             request.description or f"USDC deposit ({request.network})",
