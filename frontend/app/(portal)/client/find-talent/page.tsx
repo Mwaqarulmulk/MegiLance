@@ -184,6 +184,37 @@ export default function FindTalentPage() {
   const [loading, setLoading] = useState(false);
   const [selectedFreelancer, setSelectedFreelancer] = useState<any>(null);
   const [hireSuccess, setHireSuccess] = useState(false);
+  const [budgetSuggesting, setBudgetSuggesting] = useState(false);
+  const [budgetSuggestion, setBudgetSuggestion] = useState<{
+    min: number;
+    max: number;
+    confidence: number;
+    message: string;
+  } | null>(null);
+
+  const suggestBudget = async () => {
+    setBudgetSuggesting(true);
+    try {
+      const params = new URLSearchParams();
+      params.append("title", category || "Project");
+      params.append("description", description || category || "Project");
+      if (category) params.append("category", category);
+      const res = (await apiFetch(`/ai/project/estimate?${params}`)) as {
+        budget_range?: { min: number; max: number };
+        confidence?: number;
+        message?: string;
+      };
+      const min = Math.round(res.budget_range?.min ?? 0);
+      const max = Math.round(res.budget_range?.max ?? 0);
+      setBudgetSuggestion({ min, max, confidence: res.confidence ?? 0, message: res.message || "" });
+      if (min > 0) setBudgetMin(String(min));
+      if (max > 0) setBudgetMax(String(max));
+    } catch {
+      /* non-fatal — user can still enter a budget manually */
+    } finally {
+      setBudgetSuggesting(false);
+    }
+  };
 
   const addSkill = () => {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {
@@ -495,6 +526,41 @@ export default function FindTalentPage() {
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
               Budget & Timeline
             </h2>
+            <div className="mb-4 flex items-center justify-between gap-3 flex-wrap rounded-lg border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/60 dark:bg-indigo-900/10 px-4 py-3">
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                ✨ Not sure what to budget? Let AI estimate from similar projects.
+              </span>
+              <button
+                type="button"
+                onClick={suggestBudget}
+                disabled={budgetSuggesting}
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 disabled:opacity-60"
+              >
+                {budgetSuggesting ? "Estimating…" : "Suggest budget"}
+              </button>
+            </div>
+            {budgetSuggestion && (
+              <div className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+                <strong>
+                  Suggested: ${budgetSuggestion.min.toLocaleString()}–$
+                  {budgetSuggestion.max.toLocaleString()}
+                </strong>{" "}
+                <span
+                  className={
+                    budgetSuggestion.confidence >= 0.7
+                      ? "text-green-600"
+                      : budgetSuggestion.confidence >= 0.45
+                        ? "text-amber-600"
+                        : "text-gray-500"
+                  }
+                >
+                  ({Math.round(budgetSuggestion.confidence * 100)}% confidence)
+                </span>
+                {budgetSuggestion.message && (
+                  <span className="text-gray-500"> — {budgetSuggestion.message}</span>
+                )}
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block mb-1.5 font-medium text-gray-900 dark:text-white">

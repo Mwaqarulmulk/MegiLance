@@ -1,0 +1,165 @@
+/* AI-HINT: WalletConnection component styles — theme-independent base styles */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  font-size: var(--font-size-md);
+}
+
+.title {
+  font-family: var(--font-family-heading);
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 193, 7, 0.1);
+  color: #f59e0b;
+  font-size: var(--font-size-sm);
+}
+
+.connectedSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.connectedIcon {
+  color: #22c55e;
+}
+
+.connectedText {
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.addressRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.addressLabel {
+  font-size: var(--font-size-xs);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.addressValue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-secondary, rgba(128, 128, 128, 0.05));
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-sm);
+}
+
+.addressText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copyBtn,
+.linkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 120ms ease;
+  flex-shrink: 0;
+}
+
+.copyBtn:hover,
+.linkBtn:hover {
+  background: var(--bg-secondary, rgba(128, 128, 128, 0.1));
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  opacity: 0.6;
+}
+
+.value {
+  font-family: var(--font-family-code);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+}
+
+.refreshBtn {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+}
+
+.disconnectedSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.hint {
+  font-size: var(--font-size-sm);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-md);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-size: var(--font-size-sm);
+}
+
+/* Compact variant */
+.compactWrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.connectedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-full, 9999px);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.08);
+  font-size: var(--font-size-sm);
+}

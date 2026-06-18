@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { RichTextEditor, ReadOnlyEditor } from '@/app/components/Editor';
 import { SignaturePad } from '@/app/components/SignaturePad';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { apiFetch } from '@/lib/api/core';
+import api from '@/lib/api';
 import {
   User, Mail, MapPin, Globe, Clock, Star, Award, Briefcase,
   Edit3, Save, Camera, Plus, Trash2, ExternalLink, Download,
   FileText, CheckCircle, AlertCircle, TrendingUp, DollarSign,
-  Eye, Heart, MessageSquare, ChevronDown, ChevronUp
+  Eye, Heart, MessageSquare, ChevronDown, ChevronUp, Loader2, Sparkles
 } from 'lucide-react';
 
 interface FreelancerProfile {
@@ -65,50 +66,33 @@ interface FreelancerProfile {
   };
 }
 
-const defaultProfile: FreelancerProfile = {
-  id: '1',
-  name: 'John Developer',
-  title: 'Senior Full-Stack Developer',
-  email: 'john@example.com',
-  location: 'New York, USA',
-  timezone: 'UTC-5',
-  hourlyRate: 85,
+const emptyProfile: FreelancerProfile = {
+  id: '',
+  name: '',
+  title: '',
+  email: '',
+  location: '',
+  timezone: '',
+  hourlyRate: 0,
   currency: 'USD',
-  bio: 'Experienced full-stack developer with 8+ years building scalable web applications. Specialized in React, Node.js, and cloud architecture. Passionate about clean code and user-centric design.',
-  avatar: '/avatars/default.png',
-  coverImage: '/covers/default.jpg',
-  skills: ['React', 'Node.js', 'TypeScript', 'Python', 'AWS', 'PostgreSQL', 'Docker', 'GraphQL'],
-  experienceLevel: 'Expert',
-  availability: 'Available',
-  languages: [
-    { name: 'English', level: 'Native' },
-    { name: 'Spanish', level: 'Conversational' },
-  ],
-  education: [
-    { school: 'MIT', degree: 'BS', field: 'Computer Science', year: '2016' },
-  ],
-  certifications: [
-    { name: 'AWS Solutions Architect', issuer: 'Amazon', date: '2023', url: '' },
-  ],
-  portfolio: [
-    {
-      id: '1',
-      title: 'E-Commerce Platform',
-      description: 'Built a full-stack e-commerce solution with real-time inventory, payment processing, and admin dashboard.',
-      images: [],
-      link: 'https://example.com',
-      skills: ['React', 'Node.js', 'Stripe'],
-      date: '2024-01-15',
-    },
-  ],
+  bio: '',
+  avatar: '',
+  coverImage: '',
+  skills: [],
+  experienceLevel: '',
+  availability: 'available',
+  languages: [],
+  education: [],
+  certifications: [],
+  portfolio: [],
   workHistory: [],
   stats: {
-    totalEarnings: 125000,
-    completedProjects: 47,
-    avgRating: 4.9,
-    totalReviews: 42,
-    responseTime: '< 2 hours',
-    repeatClients: 18,
+    totalEarnings: 0,
+    completedProjects: 0,
+    avgRating: 0,
+    totalReviews: 0,
+    responseTime: '',
+    repeatClients: 0,
   },
   socialLinks: {
     linkedin: '',
@@ -120,11 +104,151 @@ const defaultProfile: FreelancerProfile = {
 
 export default function FreelancerProfilePage() {
   const { showToast } = useToaster();
-  const [profile, setProfile] = useState<FreelancerProfile>(defaultProfile);
+  const [profile, setProfile] = useState<FreelancerProfile>(emptyProfile);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [showSignaturePad, setShowSignaturePad] = useState(false);
   const [savedSignature, setSavedSignature] = useState<string | null>(null);
+  const [rateSuggesting, setRateSuggesting] = useState(false);
+  const [rateSuggestion, setRateSuggestion] = useState<{
+    rate: number;
+    min: number;
+    max: number;
+    confidence: number;
+    sample: number;
+    message: string;
+  } | null>(null);
+
+  const handleSuggestRate = async () => {
+    setRateSuggesting(true);
+    try {
+      const res = await api.ai.estimateRate({
+        skills: profile.skills,
+        experience_level: profile.experienceLevel || undefined,
+        location: profile.location || undefined,
+      });
+      setRateSuggestion({
+        rate: Math.round(res.estimated_rate ?? 0),
+        min: Math.round(res.range?.min ?? 0),
+        max: Math.round(res.range?.max ?? 0),
+        confidence: res.confidence ?? 0,
+        sample: res.factors?.sample_size ?? 0,
+        message: res.message || '',
+      });
+      if (res.estimated_rate > 0) {
+        setProfile((p) => ({ ...p, hourlyRate: Math.round(res.estimated_rate) }));
+      }
+    } catch {
+      showToast('Could not estimate a rate right now.', 'error');
+    } finally {
+      setRateSuggesting(false);
+    }
+  };
+
+  const loadProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data: any = await api.auth.me();
+
+      const parseJsonField = (field: any): any[] => {
+        if (Array.isArray(field)) return field;
+        if (typeof field === 'string' && field) {
+          try {
+            const parsed = JSON.parse(field);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        }
+        return [];
+      };
+
+      const skills = Array.isArray(data.skills)
+        ? data.skills
+        : typeof data.skills === 'string' && data.skills
+          ? data.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : [];
+
+      const languages = parseJsonField(data.languages).map((l: any) =>
+        typeof l === 'string' ? { name: l, level: '' } : { name: l.name || l.language || '', level: l.level || l.proficiency || '' }
+      );
+
+      const socialLinks = {
+        linkedin: data.linkedin_url || '',
+        github: data.github_url || '',
+        twitter: data.twitter_url || '',
+        website: data.website_url || '',
+      };
+
+      setProfile({
+        id: data.id || '',
+        name: data.name || data.full_name || '',
+        title: data.title || data.headline || '',
+        email: data.email || '',
+        location: data.location || '',
+        timezone: data.timezone || '',
+        hourlyRate: data.hourly_rate || 0,
+        currency: 'USD',
+        bio: data.bio || '',
+        avatar: data.profile_image_url || data.avatar_url || '',
+        coverImage: data.cover_image_url || '',
+        skills,
+        experienceLevel: data.experience_level || '',
+        availability: data.availability_status || 'available',
+        languages,
+        education: parseJsonField(data.education).map((e: any) => ({
+          school: e.school || e.institution || '',
+          degree: e.degree || '',
+          field: e.field || e.field_of_study || '',
+          year: e.year || e.graduation_year || '',
+        })),
+        certifications: parseJsonField(data.certifications).map((c: any) => ({
+          name: c.name || '',
+          issuer: c.issuer || c.organization || '',
+          date: c.date || c.year || '',
+          url: c.url || '',
+        })),
+        portfolio: parseJsonField(data.portfolio_projects).map((p: any) => ({
+          id: p.id || '',
+          title: p.title || '',
+          description: p.description || '',
+          images: Array.isArray(p.images) ? p.images : p.image_url ? [p.image_url] : [],
+          link: p.project_url || p.demo_url || p.url || '',
+          skills: Array.isArray(p.tech_stack) ? p.tech_stack.split(',').map((s: string) => s.trim()) : Array.isArray(p.skills) ? p.skills : [],
+          date: p.year || p.created_at || '',
+        })),
+        workHistory: parseJsonField(data.work_history).map((w: any) => ({
+          id: w.id || '',
+          title: w.role || w.title || '',
+          client: w.company || w.client || '',
+          description: w.description || '',
+          budget: w.budget || 0,
+          status: w.status || 'completed',
+          rating: w.rating || 0,
+          date: w.duration || w.date || '',
+        })),
+        stats: {
+          totalEarnings: data.total_earnings || 0,
+          completedProjects: data.completed_projects || 0,
+          avgRating: data.avg_rating || data.rating || 0,
+          totalReviews: data.total_reviews || 0,
+          responseTime: data.response_time || '',
+          repeatClients: data.repeat_clients || 0,
+        },
+        socialLinks,
+      });
+    } catch (error) {
+      console.error('Failed to load profile:', error);
+      showToast('Failed to load profile data', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [showToast]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   useEffect(() => {
     (async () => {
@@ -327,6 +451,17 @@ export default function FreelancerProfilePage() {
     { id: 'analytics', label: 'Analytics' },
   ];
 
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto p-6 flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="animate-spin text-blue-600" size={32} />
+          <p className="text-gray-500 dark:text-gray-400">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Cover Image & Avatar */}
@@ -361,7 +496,7 @@ export default function FreelancerProfilePage() {
         <div className="flex items-end gap-6">
           <div className="relative">
             <div className="w-32 h-32 rounded-2xl bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-lg overflow-hidden">
-              {profile.avatar && profile.avatar !== '/avatars/default.png' ? (
+              {profile.avatar ? (
                 <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
@@ -607,7 +742,7 @@ export default function FreelancerProfilePage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-32 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${Math.floor(Math.random() * 30) + 70}%` }} />
+                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${70 + (skill.charCodeAt(0) % 30)}%` }} />
                       </div>
                       <span className="text-sm text-gray-500">Expert</span>
                       {editing && (
@@ -632,31 +767,9 @@ export default function FreelancerProfilePage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Documents & Agreements</h3>
               <div className="space-y-3">
-                {[
-                  { name: 'Service Agreement Template', type: 'Contract', status: 'Active', date: '2024-01-01' },
-                  { name: 'NDA Template', type: 'NDA', status: 'Active', date: '2024-01-01' },
-                  { name: 'W-9 Tax Form', type: 'Tax', status: 'Completed', date: '2024-01-15' },
-                ].map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <FileText size={20} className="text-blue-600" />
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">{doc.name}</div>
-                        <div className="text-xs text-gray-500">{doc.type} • {doc.date}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 text-xs rounded-full ${
-                        doc.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {doc.status}
-                      </span>
-                      <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                        <Download size={14} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                  No documents uploaded yet. Uploaded documents will appear here.
+                </p>
               </div>
 
               {/* E-Signature Section */}
@@ -695,15 +808,14 @@ export default function FreelancerProfilePage() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profile Analytics</h3>
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { label: 'Profile Views', value: '1,247', change: '+12%', icon: Eye },
-                  { label: 'Proposal Success', value: '68%', change: '+5%', icon: TrendingUp },
-                  { label: 'Search Appearances', value: '3,891', change: '+8%', icon: AlertCircle },
+                  { label: 'Profile Views', value: profile.stats.totalReviews > 0 ? String(profile.stats.totalReviews) : '0', icon: Eye },
+                  { label: 'Completed Projects', value: profile.stats.completedProjects > 0 ? String(profile.stats.completedProjects) : '0', icon: TrendingUp },
+                  { label: 'Repeat Clients', value: profile.stats.repeatClients > 0 ? String(profile.stats.repeatClients) : '0', icon: AlertCircle },
                 ].map((metric) => (
                   <div key={metric.label} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <metric.icon className="text-blue-600 mb-2" size={20} />
                     <div className="text-2xl font-bold text-gray-900 dark:text-white">{metric.value}</div>
                     <div className="text-sm text-gray-500">{metric.label}</div>
-                    <div className="text-xs text-green-600 mt-1">{metric.change} this month</div>
                   </div>
                 ))}
               </div>
@@ -729,10 +841,57 @@ export default function FreelancerProfilePage() {
                 <Clock size={14} />
                 {profile.availability}
               </div>
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                <DollarSign size={14} />
-                ${profile.hourlyRate}/hr
-              </div>
+              {editing ? (
+                <div className="text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <DollarSign size={14} />
+                    <input
+                      type="number"
+                      min={0}
+                      value={profile.hourlyRate || ''}
+                      onChange={(e) =>
+                        setProfile((p) => ({ ...p, hourlyRate: parseFloat(e.target.value) || 0 }))
+                      }
+                      placeholder="Hourly rate"
+                      className="w-24 px-2 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <span className="text-xs">/hr</span>
+                    <button
+                      type="button"
+                      onClick={handleSuggestRate}
+                      disabled={rateSuggesting}
+                      className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium ml-auto disabled:opacity-60"
+                    >
+                      {rateSuggesting ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                      {rateSuggesting ? 'Estimating…' : 'Suggest'}
+                    </button>
+                  </div>
+                  {rateSuggestion && (
+                    <div className="mt-1.5 text-xs">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        Market: ${rateSuggestion.min}–${rateSuggestion.max}/hr
+                      </span>{' '}
+                      <span
+                        className={
+                          rateSuggestion.confidence >= 0.7
+                            ? 'text-green-600'
+                            : rateSuggestion.confidence >= 0.45
+                              ? 'text-amber-600'
+                              : 'text-gray-500'
+                        }
+                      >
+                        ({Math.round(rateSuggestion.confidence * 100)}% confidence
+                        {rateSuggestion.sample > 0 ? `, ${rateSuggestion.sample} freelancers` : ''})
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <DollarSign size={14} />
+                  ${profile.hourlyRate}/hr
+                </div>
+              )}
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <Award size={14} />
                 {profile.experienceLevel}

@@ -172,16 +172,23 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script {...jsonLdScriptProps(navJsonLd)} />
         <script {...jsonLdScriptProps(ratingJsonLd)} />
         
-        {/* Theme initialization - prevent flash of unstyled content */}
+        {/* Theme initialization - prevent flash of unstyled content.
+            Writes the resolved theme to localStorage so next-themes resolves
+            immediately on mount instead of returning undefined during hydration. */}
         <script
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('megilance-theme');
-                  if (!theme || theme === 'system') {
+                  var key = 'megilance-theme';
+                  var stored = localStorage.getItem(key);
+                  var theme;
+                  if (stored && stored !== 'system') {
+                    theme = stored;
+                  } else {
                     theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    try { localStorage.setItem(key, theme); } catch (_) {}
                   }
                   document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(theme);

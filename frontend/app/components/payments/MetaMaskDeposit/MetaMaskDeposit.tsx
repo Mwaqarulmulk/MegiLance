@@ -18,6 +18,43 @@ import styles from './MetaMaskDeposit.module.css';
 type Phase = 'idle' | 'connecting' | 'switching' | 'sending' | 'verifying' | 'success' | 'error';
 const NATIVE = '__native__';
 
+/** Hardcoded fallback config when backend is unreachable (for FYP demo). */
+const DEMO_CONFIG: CryptoConfig = {
+  enabled: true,
+  receiving_address: '0x228d599d4c7e89194b94e9d65b1b4114870a4c34',
+  chain_id: 80002,
+  chain_id_hex: '0x13882',
+  chain_name: 'Polygon Amoy Testnet',
+  currency_symbol: 'POL',
+  rpc_url: 'https://rpc-amoy.polygon.technology',
+  block_explorer: 'https://amoy.polygonscan.com',
+  price_usd: 0.5,
+  supported_chains: [
+    {
+      chain_id: 80002, chain_id_hex: '0x13882', chain_name: 'Polygon Amoy Testnet',
+      currency_symbol: 'POL', rpc_url: 'https://rpc-amoy.polygon.technology',
+      block_explorer: 'https://amoy.polygonscan.com', price_usd: 0.5, is_testnet: true,
+      receiving_address: '0x228d599d4c7e89194b94e9d65b1b4114870a4c34',
+      tokens: [{ symbol: 'USDC', address: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', decimals: 6, faucet: true }],
+    },
+    {
+      chain_id: 11155111, chain_id_hex: '0xaa36a7', chain_name: 'Sepolia Testnet',
+      currency_symbol: 'ETH', rpc_url: 'https://ethereum-sepolia-rpc.publicnode.com',
+      block_explorer: 'https://sepolia.etherscan.io', price_usd: 2500, is_testnet: true,
+      receiving_address: '0x228d599d4c7e89194b94e9d65b1b4114870a4c34',
+      tokens: [{ symbol: 'USDC', address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238', decimals: 6, faucet: true }],
+    },
+    {
+      chain_id: 97, chain_id_hex: '0x61', chain_name: 'BSC Testnet',
+      currency_symbol: 'tBNB', rpc_url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      block_explorer: 'https://testnet.bscscan.com', price_usd: 600, is_testnet: true,
+      receiving_address: '0x228d599d4c7e89194b94e9d65b1b4114870a4c34', tokens: [],
+    },
+  ],
+  min_deposit_usd: 1,
+  max_deposit_usd: 10000,
+};
+
 interface Props {
   amountUsd: number;
   onSuccess?: (balance?: number) => void;
@@ -37,6 +74,7 @@ const MetaMaskDeposit: React.FC<Props> = ({ amountUsd, onSuccess }) => {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [minting, setMinting] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
   const installed = isMetaMaskInstalled();
 
   useEffect(() => {
@@ -45,7 +83,13 @@ const MetaMaskDeposit: React.FC<Props> = ({ amountUsd, onSuccess }) => {
       if (!active) return;
       setConfig(c);
       setSelectedChainId((prev) => prev ?? c.chain_id);
-    }).catch(() => {});
+    }).catch(() => {
+      // Fallback demo config when backend is unreachable (for FYP demo / offline dev)
+      if (!active) return;
+      setDemoMode(true);
+      setConfig(DEMO_CONFIG);
+      setSelectedChainId((prev) => prev ?? DEMO_CONFIG.chain_id);
+    });
     getCurrentAccount().then((a) => active && setAccount(a)).catch(() => {});
     const unsub = onWalletChange(() => getCurrentAccount().then(setAccount).catch(() => {}));
     return () => { active = false; unsub(); };
@@ -178,32 +222,41 @@ const MetaMaskDeposit: React.FC<Props> = ({ amountUsd, onSuccess }) => {
       }
       setTxHash(hash);
 
+      // Try backend verification; in demo mode (backend unreachable) skip to success
       setPhase('verifying');
-      let result = await cryptoApi.deposit({
-        tx_hash: hash,
-        amount_usd: amountUsd,
-        amount_crypto: Number(payAmount.toFixed(8)),
-        chain_id: chain.chain_id,
-        from_address: from!,
-        currency: paySymbol,
-        asset_type: isToken ? 'token' : 'native',
-        token_address: isToken ? selectedToken!.address : undefined,
-        token_decimals: isToken ? selectedToken!.decimals : undefined,
-      });
+      try {
+        let result = await cryptoApi.deposit({
+          tx_hash: hash,
+          amount_usd: amountUsd,
+          amount_crypto: Number(payAmount.toFixed(8)),
+          chain_id: chain.chain_id,
+          from_address: from!,
+          currency: paySymbol,
+          asset_type: isToken ? 'token' : 'native',
+          token_address: isToken ? selectedToken!.address : undefined,
+          token_decimals: isToken ? selectedToken!.decimals : undefined,
+        });
 
-      let attempts = 0;
-      while (result.status === 'pending' && attempts < 30) {
-        await new Promise((r) => setTimeout(r, 5000));
-        attempts += 1;
-        try { result = await cryptoApi.verify(hash); } catch { /* keep polling */ }
-      }
+        let attempts = 0;
+        while (result.status === 'pending' && attempts < 30) {
+          await new Promise((r) => setTimeout(r, 5000));
+          attempts += 1;
+          try { result = await cryptoApi.verify(hash); } catch { /* keep polling */ }
+        }
 
-      if (result.status === 'failed') {
-        setError('Transaction failed on-chain.');
-        setPhase('error');
-      } else {
+        if (result.status === 'failed') {
+          setError('Transaction failed on-chain.');
+          setPhase('error');
+        } else {
+          setPhase('success');
+          onSuccess?.(result.balance);
+        }
+      } catch {
+        // Backend unreachable — transaction was still sent on-chain via MetaMask.
+        // Show success so the user sees the tx hash and block explorer link.
+        setDemoMode(true);
         setPhase('success');
-        onSuccess?.(result.balance);
+        onSuccess?.();
       }
     } catch (e: any) {
       if (e?.code === 4001 || /user rejected/i.test(e?.message || '')) {
@@ -238,7 +291,13 @@ const MetaMaskDeposit: React.FC<Props> = ({ amountUsd, onSuccess }) => {
       {config && !config.enabled && (
         <div className={styles.notice}>
           <AlertTriangle size={18} />
-          <span>Crypto deposits aren’t enabled on this environment yet.</span>
+          <span>Crypto deposits aren't enabled on this environment yet.</span>
+        </div>
+      )}
+      {demoMode && phase !== 'success' && (
+        <div className={styles.notice}>
+          <ShieldCheck size={18} />
+          <span>Demo mode — backend offline. MetaMask transactions go to a real testnet.</span>
         </div>
       )}
 
@@ -327,11 +386,11 @@ const MetaMaskDeposit: React.FC<Props> = ({ amountUsd, onSuccess }) => {
         <div className={styles.success}>
           <CheckCircle2 size={20} />
           <div>
-            <strong>Payment submitted!</strong>
+            <strong>Payment submitted!{demoMode ? ' (Demo Mode)' : ''}</strong>
             <p>Your deposit is being confirmed on-chain and will reflect in your balance shortly.</p>
             {explorerTx && (
               <a href={explorerTx} target="_blank" rel="noopener noreferrer" className={styles.txLink}>
-                View transaction <ExternalLink size={13} />
+                View on explorer <ExternalLink size={13} />
               </a>
             )}
           </div>

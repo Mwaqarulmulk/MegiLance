@@ -238,12 +238,5 @@ async def complete_payment(payment_id: int, current_user=Depends(get_current_use
     return {"message": "Payment completed", "payment_id": payment_id}
 
 
-@router.post("/create-payment-intent")
-async def create_payment_intent(request: PaymentIntentRequest, current_user=Depends(get_current_user)):
-    """Create a payment intent for Stripe checkout."""
-    return {
-        "client_secret": f"pi_{current_user.id}_{int(datetime.now(timezone.utc).timestamp())}",
-        "amount": request.amount,
-        "currency": request.currency,
-        "status": "requires_payment_method",
-    }
+# NOTE: /create-payment-intent is handled by stripe.py router (real Stripe integration).
+# The duplicate mock endpoint was removed to avoid routing conflicts.

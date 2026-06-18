@@ -88,6 +88,45 @@ export const aiApi = {
       body: JSON.stringify(data),
     }),
 
+  // Market rate estimate from real freelancer data on the platform. Returns a
+  // confidence (0–1) and sample_size so the UI can show how grounded it is.
+  estimateRate: (data: {
+    skills: string[];
+    experience_level?: string;
+    location?: string;
+  }) =>
+    apiFetch<{
+      estimated_rate: number;
+      range: { min: number; max: number };
+      confidence: number;
+      factors: { sample_size?: number; market_avg?: number };
+      message: string;
+    }>("/ai/estimate-rate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  // Budget suggestion for a project, grounded in similar real projects on the
+  // platform. Returns a confidence (0–1) reflecting how much data backed it.
+  estimateProjectBudget: (data: {
+    title: string;
+    description: string;
+    category?: string;
+  }) => {
+    const params = new URLSearchParams();
+    params.append("title", data.title);
+    params.append("description", data.description);
+    if (data.category) params.append("category", data.category);
+    return apiFetch<{
+      estimated_budget: number;
+      budget_range: { min: number; max: number };
+      estimated_duration_days: number;
+      confidence: number;
+      factors: { word_count?: number; category?: string; similar_projects?: number };
+      message: string;
+    }>(`/ai/project/estimate?${params}`);
+  },
+
   estimateFreelancerRate: (
     freelancerId: ResourceId,
     data?: {

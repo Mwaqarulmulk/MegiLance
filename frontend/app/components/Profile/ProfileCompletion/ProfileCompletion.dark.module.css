@@ -1,0 +1,42 @@
+/* @AI-HINT: Dark theme colors for ProfileCompletion */
+.container {
+  color: var(--color-text-primary, #f9fafb);
+}
+
+.title {
+  color: var(--color-text-primary, #f9fafb);
+}
+
+.sectionCard {
+  background: var(--color-bg-secondary, #1a1a2e);
+  border-color: var(--color-border, #2d2d44);
+}
+
+.sectionCard:hover {
+  background: var(--color-bg-secondary, #1a1a2e);
+}
+
+.sectionIcon {
+  background: var(--color-bg-tertiary, #2d2d44);
+  color: var(--color-text-secondary, #9ca3af);
+}
+
+.sectionIconComplete {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.editorPanel {
+  background: var(--color-bg-secondary, #1a1a2e);
+  border-color: var(--color-border, #2d2d44);
+}
+
+.portfolioCard {
+  background: var(--color-bg-primary, #0f0f1a);
+  border-color: var(--color-border, #2d2d44);
+}
+
+.completionFooter {
+  background: var(--color-bg-secondary, #1a1a2e);
+  border-color: var(--color-border, #2d2d44);
+}

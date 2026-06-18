@@ -258,3 +258,98 @@ async def estimate_project(
         "factors": {"word_count": word_count, "category": category, "similar_projects": 0},
         "message": "Estimated from description complexity (no similar projects found)",
     }
+
+
+class InvoiceItemizeRequest(BaseModel):
+    amount: float
+    title: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
+
+
+# Standard delivery-phase weights, lightly adjusted per category. This is a
+# transparent template (not a precise prediction), so confidence is reported
+# accordingly rather than overstated.
+_BASE_PHASES = [
+    ("Discovery & planning", 0.15),
+    ("Design", 0.20),
+    ("Development & implementation", 0.45),
+    ("Testing & QA", 0.12),
+    ("Deployment & handover", 0.08),
+]
+
+_CATEGORY_PHASE_OVERRIDES = {
+    "design": [
+        ("Discovery & research", 0.15),
+        ("Concept & wireframes", 0.25),
+        ("Visual design", 0.40),
+        ("Revisions", 0.12),
+        ("Handover & assets", 0.08),
+    ],
+    "writing": [
+        ("Research & outline", 0.20),
+        ("First draft", 0.45),
+        ("Editing & revisions", 0.25),
+        ("Final delivery", 0.10),
+    ],
+    "marketing": [
+        ("Strategy & planning", 0.25),
+        ("Content & creative", 0.35),
+        ("Campaign execution", 0.30),
+        ("Reporting", 0.10),
+    ],
+}
+
+
+@router.post("/itemize-invoice")
+async def itemize_invoice(request: InvoiceItemizeRequest, current_user=Depends(get_current_user)):
+    """Break a contract/total amount into standard delivery-phase line items.
+
+    Returns a transparent template breakdown the user can edit. Confidence
+    reflects that it is a category template, not a per-item prediction.
+    """
+    total = max(0.0, float(request.amount or 0))
+    if total <= 0:
+        raise HTTPException(status_code=422, detail="A positive amount is required")
+
+    haystack = " ".join(
+        [request.category or "", request.title or "", request.description or ""]
+    ).lower()
+
+    phases = _BASE_PHASES
+    matched_category = None
+    for key, override in _CATEGORY_PHASE_OVERRIDES.items():
+        if key in haystack:
+            phases = override
+            matched_category = key
+            break
+
+    # Allocate amounts, then push any rounding remainder onto the largest line
+    # so the items always sum exactly to the total.
+    items = []
+    allocated = 0.0
+    for label, weight in phases:
+        rate = round(total * weight, 2)
+        allocated = round(allocated + rate, 2)
+        items.append({"description": label, "quantity": 1, "rate": rate})
+    remainder = round(total - allocated, 2)
+    if remainder and items:
+        largest = max(range(len(items)), key=lambda i: items[i]["rate"])
+        items[largest]["rate"] = round(items[largest]["rate"] + remainder, 2)
+
+    confidence = 0.6 if matched_category else 0.5
+
+    return {
+        "items": items,
+        "total": total,
+        "confidence": confidence,
+        "factors": {
+            "matched_category": matched_category,
+            "phase_count": len(items),
+        },
+        "message": (
+            f"Standard {matched_category} project breakdown — adjust line items as needed"
+            if matched_category
+            else "Standard project phase breakdown — adjust line items as needed"
+        ),
+    }

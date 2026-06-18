@@ -1,13 +1,14 @@
 // @AI-HINT: This is the Wallet page for freelancers to manage their earnings and transactions. It is now fully theme-aware and features a premium, production-ready design.
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useTheme } from 'next-themes';
-import { Info, ArrowUpRight, ArrowDownLeft, Plus, TrendingUp, TrendingDown, Filter } from 'lucide-react';
+import { Info, ArrowUpRight, ArrowDownLeft, Plus, TrendingUp, TrendingDown, Filter, Wallet as WalletIcon, DollarSign, Bitcoin } from 'lucide-react';
 import api from '@/lib/api';
 import { apiFetch } from '@/lib/api/core';
 import TransactionRow from '@/app/components/molecules/TransactionRow/TransactionRow';
 import Button from '@/app/components/atoms/Button/Button';
+import Input from '@/app/components/atoms/Input/Input';
 import { useFreelancerData } from '@/hooks/useFreelancer';
 import DataToolbar, { SortOption } from '@/app/components/organisms/DataToolbar/DataToolbar';
 import PaginationBar from '@/app/components/molecules/PaginationBar/PaginationBar';
@@ -18,6 +19,8 @@ import DensityToggle, { Density } from '@/app/components/organisms/DataTableExtr
 import SavedViewsMenu from '@/app/components/organisms/DataTableExtras/SavedViewsMenu';
 import VirtualList from '@/app/components/organisms/DataTableExtras/VirtualList';
 import Modal from '@/app/components/organisms/Modal/Modal';
+import MetaMaskDeposit from '@/app/components/payments/MetaMaskDeposit/MetaMaskDeposit';
+import WalletConnection from '@/app/components/payments/WalletConnection/WalletConnection';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
 import { WalletIllustration } from '@/app/components/Illustrations/Illustrations';
@@ -73,6 +76,9 @@ const Wallet: React.FC = () => {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [withdrawError, setWithdrawError] = useState<string>('');
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState<string>('');
+  const [depositMethod, setDepositMethod] = useState<'metamask' | 'bank_transfer'>('metamask');
 
   interface TxRow {
     id: string;
@@ -196,6 +202,41 @@ const Wallet: React.FC = () => {
     setWithdrawAmount('');
     setWithdrawError('');
     setWithdrawOpen(true);
+  };
+
+  const openDeposit = () => {
+    setDepositAmount('');
+    setDepositMethod('metamask');
+    setDepositOpen(true);
+  };
+
+  const onDepositSubmit = async () => {
+    const amt = parseFloat(depositAmount);
+    if (Number.isNaN(amt) || amt <= 0) {
+      return;
+    }
+    setUiLoading(true);
+    try {
+      await api.wallet.deposit({ amount: amt, method: depositMethod });
+      toaster.notify({
+        title: 'Deposit initiated',
+        description: `Deposit of $${amt.toLocaleString()} initiated successfully.`,
+        variant: 'success',
+        duration: 4000,
+      });
+      setDepositOpen(false);
+      window.location.reload();
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Failed to initiate deposit. Please try again.';
+      toaster.notify({
+        title: 'Deposit failed',
+        description: errorMessage,
+        variant: 'danger',
+        duration: 5000,
+      });
+    } finally {
+      setUiLoading(false);
+    }
   };
 
   const onWithdrawSubmit = async () => {
@@ -329,12 +370,17 @@ const Wallet: React.FC = () => {
                   variant="secondary"
                   size="medium"
                   title="Deposit funds to your wallet"
-                  onClick={() => window.location.href = '/client/wallet'}
+                  onClick={openDeposit}
                   className={styles.actionBtn}
                 >
                   <ArrowDownLeft size={16} />
                   Deposit
                 </Button>
+              </div>
+
+              {/* Wallet Connection Status */}
+              <div style={{ marginTop: 'var(--space-2)' }}>
+                <WalletConnection compact={true} />
               </div>
             </div>
           </ScrollReveal>
@@ -514,6 +560,118 @@ const Wallet: React.FC = () => {
               </div>
             </div>
           </form>
+        </Modal>
+
+        {/* Deposit Modal */}
+        <Modal
+          isOpen={depositOpen}
+          onClose={() => setDepositOpen(false)}
+          title="Deposit Funds"
+          size="medium"
+        >
+          <div className={styles.modalGrid}>
+            {/* Deposit Method Selector */}
+            <div className={styles.filterRow}>
+              <button
+                className={`${styles.filterBtn} ${depositMethod === 'metamask' ? styles.filterBtnActive : ''}`}
+                onClick={() => setDepositMethod('metamask')}
+              >
+                <WalletIcon size={14} /> MetaMask
+              </button>
+              <button
+                className={`${styles.filterBtn} ${depositMethod === 'bank_transfer' ? styles.filterBtnActive : ''}`}
+                onClick={() => setDepositMethod('bank_transfer')}
+              >
+                <DollarSign size={14} /> Bank Transfer
+              </button>
+            </div>
+
+            {depositMethod === 'metamask' ? (
+              <>
+                <label htmlFor="deposit-amount" className={styles.formLabel}>
+                  Deposit Amount (USD)
+                </label>
+                <input
+                  id="deposit-amount"
+                  name="amount"
+                  type="number"
+                  min={1}
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="e.g. 100.00"
+                  className={styles.input}
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                />
+                <div style={{ marginTop: '1rem' }}>
+                  <MetaMaskDeposit
+                    amountUsd={parseFloat(depositAmount) || 0}
+                    onSuccess={() => {
+                      toaster.notify({
+                        title: 'Deposit successful',
+                        description: 'Your MetaMask deposit has been confirmed.',
+                        variant: 'success',
+                        duration: 4000,
+                      });
+                      setTimeout(() => {
+                        setDepositOpen(false);
+                        setDepositAmount('');
+                        window.location.reload();
+                      }, 2500);
+                    }}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <label htmlFor="deposit-amount-bank" className={styles.formLabel}>
+                  Deposit Amount (USD)
+                </label>
+                <input
+                  id="deposit-amount-bank"
+                  name="amount"
+                  type="number"
+                  min={1}
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="e.g. 100.00"
+                  className={styles.input}
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                />
+                <div className={styles.modalActions}>
+                  <Button type="button" variant="secondary" onClick={() => setDepositOpen(false)}>Cancel</Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    disabled={!depositAmount || parseFloat(depositAmount) <= 0}
+                    isLoading={uiLoading}
+                    onClick={onDepositSubmit}
+                  >
+                    Initiate Deposit
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {depositMethod === 'bank_transfer' && depositAmount && parseFloat(depositAmount) > 0 && (
+              <div className={styles.feeBreakdown} role="status" aria-live="polite">
+                <div className={styles.feeRow}>
+                  <span className={styles.feeLabel}>Deposit Amount</span>
+                  <span className={styles.feeValue}>${parseFloat(depositAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                <div className={styles.feeRow}>
+                  <span className={styles.feeLabel}>Processing Fee</span>
+                  <span className={styles.feeValue}>$0.00</span>
+                </div>
+                <div className={styles.feeDivider} />
+                <div className={styles.feeRow}>
+                  <span className={styles.feeLabelBold}>You&apos;ll Receive</span>
+                  <span className={styles.feeValueBold}>${parseFloat(depositAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+            )}
+          </div>
         </Modal>
       </div>
     </PageTransition>

@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { z } from 'zod';
 import { 
   FileText, Banknote, Users, CheckCircle,
-  ArrowRight, ArrowLeft, Clock,
+  ArrowRight, ArrowLeft, Clock, Sparkles, Loader2,
   Code, Smartphone, Paintbrush, PenLine, Megaphone, TrendingUp, Server, MoreHorizontal
 } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
@@ -117,6 +117,16 @@ export default function ProjectWizard() {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [shakeError, setShakeError] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // AI budget suggestion (grounded in similar real projects)
+  const [budgetSuggesting, setBudgetSuggesting] = useState(false);
+  const [budgetSuggestion, setBudgetSuggestion] = useState<{
+    min: number;
+    max: number;
+    confidence: number;
+    message: string;
+    similar: number;
+  } | null>(null);
   
   const [projectData, setProjectData] = useState<ProjectData>({
     title: '',
@@ -130,6 +140,48 @@ export default function ProjectWizard() {
     duration: '',
     attachments: [],
   });
+
+  const handleSuggestBudget = async () => {
+    if (!projectData.title.trim() && !projectData.description.trim()) {
+      setErrors((e) => ({
+        ...e,
+        budgetMin: 'Add a project title/description first so we can estimate.',
+      }));
+      return;
+    }
+    setBudgetSuggesting(true);
+    try {
+      const res = await api.ai.estimateProjectBudget({
+        title: projectData.title || 'Project',
+        description: projectData.description || projectData.title,
+        category: projectData.category || undefined,
+      });
+      const min = Math.round(res.budget_range?.min ?? 0);
+      const max = Math.round(res.budget_range?.max ?? 0);
+      setBudgetSuggestion({
+        min,
+        max,
+        confidence: res.confidence ?? 0,
+        message: res.message || '',
+        similar: res.factors?.similar_projects ?? 0,
+      });
+      // Pre-fill the inputs; the client can still adjust them.
+      setProjectData((prev) => ({
+        ...prev,
+        budgetMin: min > 0 ? String(min) : prev.budgetMin,
+        budgetMax: max > 0 ? String(max) : prev.budgetMax,
+      }));
+      clearFieldError('budgetMin');
+      clearFieldError('budgetMax');
+    } catch {
+      setErrors((e) => ({
+        ...e,
+        budgetMin: 'Could not estimate a budget right now. Please enter one manually.',
+      }));
+    } finally {
+      setBudgetSuggesting(false);
+    }
+  };
 
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
   const styles = {
@@ -501,6 +553,79 @@ export default function ProjectWizard() {
                   </button>
                 </div>
               </StaggerItem>
+
+              {/* AI budget assistant — suggests a data-backed range so clients
+                  don't have to guess. Confidence reflects how much real data
+                  backed the estimate. */}
+              <StaggerItem className={styles.fullWidth}>
+                <div
+                  style={{
+                    border: '1px solid var(--border-light, rgba(0,0,0,0.1))',
+                    borderRadius: 12,
+                    padding: '0.875rem 1rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                    background: 'var(--color-primary-soft, rgba(69,115,223,0.06))',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.875rem', fontWeight: 600 }}>
+                      <Sparkles size={15} /> Not sure what to budget?
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSuggestBudget}
+                      disabled={budgetSuggesting}
+                    >
+                      {budgetSuggesting ? (
+                        <><Loader2 size={14} className="animate-spin" /> Estimating…</>
+                      ) : (
+                        <><Sparkles size={14} /> Suggest budget with AI</>
+                      )}
+                    </Button>
+                  </div>
+                  {budgetSuggestion && (
+                    <div style={{ fontSize: '0.8125rem', opacity: 0.85 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <strong>
+                          Suggested: PKR {budgetSuggestion.min.toLocaleString()} – {budgetSuggestion.max.toLocaleString()}
+                        </strong>
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            fontWeight: 700,
+                            padding: '2px 8px',
+                            borderRadius: 9999,
+                            background:
+                              budgetSuggestion.confidence >= 0.7
+                                ? 'rgba(34,197,94,0.15)'
+                                : budgetSuggestion.confidence >= 0.45
+                                  ? 'rgba(245,158,11,0.15)'
+                                  : 'rgba(148,163,184,0.2)',
+                            color:
+                              budgetSuggestion.confidence >= 0.7
+                                ? '#16a34a'
+                                : budgetSuggestion.confidence >= 0.45
+                                  ? '#d97706'
+                                  : '#64748b',
+                          }}
+                        >
+                          {Math.round(budgetSuggestion.confidence * 100)}% confidence
+                        </span>
+                      </div>
+                      <p style={{ margin: '0.25rem 0 0' }}>
+                        {budgetSuggestion.message}
+                        {budgetSuggestion.similar > 0 &&
+                          ' — accuracy improves as more similar projects are completed on the platform.'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </StaggerItem>
+
               <StaggerItem>
                 <Input
                   name="budgetMin"

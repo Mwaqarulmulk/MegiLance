@@ -120,24 +120,54 @@ async def stripe_webhook(request: Request):
     if event.type == "payment_intent.succeeded":
         intent = event.data.object
         user_id = intent.metadata.get("user_id")
+        contract_id = intent.metadata.get("contract_id")
         if user_id:
             now = datetime.now(timezone.utc).isoformat()
             amount_usd = intent.amount / 100
-            execute_query(
-                "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-                [amount_usd, int(user_id)],
-            )
-            execute_query(
-                "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (NULL, ?, 0, ?, ?, 'stripe', 'completed', ?, ?, ?)",
-                [int(user_id), amount_usd, intent.currency, intent.id, now, now],
-            )
-            # Also log to wallet_transactions so the deposit appears in transaction history
-            execute_query(
-                """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
-                   VALUES (?, 'deposit', ?, ?, 'completed', ?, ?, ?)""",
-                [int(user_id), amount_usd, intent.currency or "USD",
-                 f"Stripe deposit (${amount_usd:.2f})", intent.id, now],
-            )
+            uid = int(user_id)
+
+            if contract_id:
+                # Contract payment: credit the freelancer only (client already paid via Stripe)
+                contract_id = int(contract_id)
+                contract_result = execute_query(
+                    "SELECT freelancer_id, client_id FROM contracts WHERE id = ?",
+                    [contract_id],
+                )
+                from app.db.turso_http import parse_rows as _pr
+                crows = _pr(contract_result)
+                freelancer_id = crows[0].get("freelancer_id") if crows else None
+                client_id = crows[0].get("client_id") if crows else None
+                if freelancer_id:
+                    execute_query(
+                        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+                        [amount_usd, int(freelancer_id)],
+                    )
+                    execute_query(
+                        "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'stripe', 'completed', ?, ?, ?)",
+                        [contract_id, client_id or uid, int(freelancer_id), amount_usd, intent.currency or "usd", intent.id, now, now],
+                    )
+                    execute_query(
+                        """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
+                           VALUES (?, 'escrow_release', ?, ?, 'completed', ?, ?, ?)""",
+                        [int(freelancer_id), amount_usd, intent.currency or "USD",
+                         f"Stripe payment for contract #{contract_id}", intent.id, now],
+                    )
+            else:
+                # Standalone deposit: credit the paying user's wallet
+                execute_query(
+                    "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+                    [amount_usd, uid],
+                )
+                execute_query(
+                    "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (NULL, ?, NULL, ?, ?, 'stripe', 'completed', ?, ?, ?)",
+                    [uid, amount_usd, intent.currency or "usd", intent.id, now, now],
+                )
+                execute_query(
+                    """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
+                       VALUES (?, 'deposit', ?, ?, 'completed', ?, ?, ?)""",
+                    [uid, amount_usd, intent.currency or "USD",
+                     f"Stripe deposit (${amount_usd:.2f})", intent.id, now],
+                )
 
     return {"received": True}
 

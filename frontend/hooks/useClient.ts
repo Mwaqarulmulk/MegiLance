@@ -119,7 +119,7 @@ export function useClientData() {
 
       const projectsData: any[] = Array.isArray(projectsRes)
         ? projectsRes
-        : (projectsRes as any)?.projects || [];
+        : (projectsRes as any)?.items || (projectsRes as any)?.projects || [];
       const paymentsData: any[] = Array.isArray(paymentsRes)
         ? paymentsRes
         : (paymentsRes as any)?.payments || [];

@@ -4,7 +4,7 @@ import type { ResourceId } from './core';
 import type { DisputeUpdateData } from '@/types/api';
 
 export const clientApi = {
-  getProjects: () => apiFetch<Record<string, unknown>[]>('/portal/client/projects'),
+  getProjects: () => apiFetch<{ items: Record<string, unknown>[]; total: number; page: number; page_size: number }>('/portal/client/projects'),
   getPayments: () => apiFetch<Record<string, unknown>[]>('/portal/client/payments'),
   getFreelancers: async () => {
     try {

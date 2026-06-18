@@ -77,6 +77,9 @@ async def deposit(request: DepositRequest, current_user=Depends(get_current_user
     if request.amount > 10000:
         raise HTTPException(status_code=400, detail="Maximum single deposit is $10,000")
 
+    from app.services.wallet_service import ensure_wallet_tables
+    ensure_wallet_tables()
+
     now = datetime.now(timezone.utc).isoformat()
 
     # Create a pending payment (balance NOT modified yet)

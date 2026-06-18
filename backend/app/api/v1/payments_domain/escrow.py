@@ -14,10 +14,21 @@ from app.services.escrow_service import (
     get_user_balance,
     update_user_balance,
     fund_pending_escrow,
+    create_escrow,
+    release_escrow_funds,
+    refund_escrow_funds,
+    get_escrow_core,
+    get_freelancer_id_for_contract,
 )
 
 router = APIRouter()
 
+
+class EscrowCreate(BaseModel):
+    contract_id: int
+    amount: float
+    expires_at: Optional[str] = None
+    notes: Optional[str] = None
 
 class EscrowFund(BaseModel):
     contract_id: int
@@ -59,6 +70,37 @@ async def get_balance(current_user=Depends(get_current_user)):
     return {"user_id": current_user.id, "balance": balance}
 
 
+@router.post("/create")
+async def create_new_escrow(request: EscrowCreate, current_user=Depends(get_current_user)):
+    """Create a new escrow record and lock funds from client balance atomically."""
+    if request.amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive")
+
+    parties = get_contract_parties(request.contract_id)
+    if not parties:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    if parties["client_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the client can create escrow")
+
+    balance = get_user_balance(current_user.id)
+    if balance < request.amount:
+        raise HTTPException(status_code=400, detail="Insufficient balance")
+
+    try:
+        escrow = create_escrow(
+            contract_id=request.contract_id,
+            client_id=current_user.id,
+            amount=request.amount,
+            expires_at=request.expires_at,
+            notes=request.notes,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return {"message": "Escrow created and funds locked", "escrow": escrow}
+
+
 @router.post("/fund")
 async def fund_escrow(request: EscrowFund, current_user=Depends(get_current_user)):
     parties = get_contract_parties(request.contract_id)
@@ -93,52 +135,49 @@ async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
 
 @router.post("/{escrow_id}/release")
 async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id, contract_id, client_id, amount, released_amount, status FROM escrow WHERE id = ?",
-        [escrow_id],
-    )
-    rows = parse_rows(result)
-    if not rows:
+    escrow_core = get_escrow_core(escrow_id)
+    if not escrow_core:
         raise HTTPException(status_code=404, detail="Escrow not found")
 
-    escrow = rows[0]
-    parties = get_contract_parties(escrow["contract_id"])
+    parties = get_contract_parties(escrow_core["contract_id"])
     if not parties:
         raise HTTPException(status_code=404, detail="Contract not found")
 
-    if escrow["client_id"] != current_user.id:
+    if escrow_core["client_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only the client can release escrow")
 
-    if escrow["status"] != "funded":
-        raise HTTPException(status_code=400, detail="Escrow is not funded")
+    if escrow_core["status"] not in ("funded", "active"):
+        raise HTTPException(status_code=400, detail=f"Escrow cannot be released (status: {escrow_core['status']})")
 
-    release_amount = request.amount or (escrow["amount"] - escrow["released_amount"])
+    release_amount = request.amount or (escrow_core["amount"] - escrow_core["released_amount"])
     if release_amount <= 0:
         raise HTTPException(status_code=400, detail="Invalid release amount")
 
+    remaining = escrow_core["amount"] - escrow_core["released_amount"]
+    if release_amount > remaining:
+        raise HTTPException(status_code=400, detail="Release amount exceeds available escrow balance")
+
+    freelancer_id = parties["freelancer_id"]
+    if not freelancer_id:
+        raise HTTPException(status_code=400, detail="No freelancer assigned to contract")
+
+    try:
+        release_escrow_funds(
+            escrow_id=escrow_id,
+            release_amount=release_amount,
+            freelancer_id=freelancer_id,
+            current_released=escrow_core["released_amount"],
+            total_amount=escrow_core["amount"],
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    # Log wallet transaction
     now = datetime.now(timezone.utc).isoformat()
-
-    # Atomic escrow update: only release if funds remain
-    update_result = execute_query(
-        "UPDATE escrow SET released_amount = released_amount + ?, status = CASE WHEN released_amount + ? >= amount THEN 'released' ELSE status END, updated_at = ? WHERE id = ? AND amount - released_amount >= ?",
-        [release_amount, release_amount, now, escrow_id, release_amount],
-    )
-
-    # Check if update actually happened (rows affected)
-    if isinstance(update_result, dict) and update_result.get("rows_affected", 0) == 0:
-        raise HTTPException(status_code=400, detail="Insufficient escrow funds or already fully released")
-
-    # Atomic balance credit: use WHERE clause to prevent negative balance
-    execute_query(
-        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-        [release_amount, parties["freelancer_id"]],
-    )
-
-    # Log the escrow transaction
     execute_query(
         """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
            VALUES (?, 'escrow_release', ?, 'USD', ?, 'completed', ?, ?)""",
-        [parties["freelancer_id"], release_amount, f"Escrow #{escrow_id} released", escrow_id, now],
+        [freelancer_id, release_amount, f"Escrow #{escrow_id} released", escrow_id, now],
     )
 
     return {"message": "Escrow released successfully", "amount": release_amount}
@@ -146,38 +185,32 @@ async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=De
 
 @router.post("/{escrow_id}/refund")
 async def refund_escrow(escrow_id: int, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id, contract_id, client_id, amount, released_amount, status FROM escrow WHERE id = ?",
-        [escrow_id],
-    )
-    rows = parse_rows(result)
-    if not rows:
+    escrow_core = get_escrow_core(escrow_id)
+    if not escrow_core:
         raise HTTPException(status_code=404, detail="Escrow not found")
 
-    escrow = rows[0]
-    if escrow["client_id"] != current_user.id:
+    if escrow_core["client_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only the client can refund escrow")
 
-    if escrow["status"] != "funded":
-        raise HTTPException(status_code=400, detail="Escrow is not funded")
+    if escrow_core["status"] not in ("funded", "active"):
+        raise HTTPException(status_code=400, detail=f"Escrow cannot be refunded (status: {escrow_core['status']})")
 
-    refund_amount = escrow["amount"] - escrow["released_amount"]
+    refund_amount = escrow_core["amount"] - escrow_core["released_amount"]
     if refund_amount <= 0:
         raise HTTPException(status_code=400, detail="No amount to refund")
 
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE escrow SET status = 'refunded', updated_at = ? WHERE id = ?",
-        [now, escrow_id],
-    )
-
-    # Atomic balance credit
-    execute_query(
-        "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-        [refund_amount, current_user.id],
-    )
+    try:
+        refund_escrow_funds(
+            escrow_id=escrow_id,
+            refund_amount=refund_amount,
+            client_id=current_user.id,
+            current_released=escrow_core["released_amount"],
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     # Log the refund transaction
+    now = datetime.now(timezone.utc).isoformat()
     execute_query(
         """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
            VALUES (?, 'escrow_refund', ?, 'USD', ?, 'completed', ?, ?)""",

@@ -228,11 +228,7 @@ export default function PortalLayout({
               — post projects, submit proposals, and more.
             </span>
             <Link
-              href={
-                hookUser?.user_type === "client"
-                  ? "/onboarding/client"
-                  : "/onboarding"
-              }
+              href="/complete-profile"
               className={cn(
                 commonStyles.onboardingBannerBtn,
                 themeStyles.onboardingBannerBtn

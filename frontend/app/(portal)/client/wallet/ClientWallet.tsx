@@ -50,6 +50,7 @@ import {
 } from "lucide-react";
 import ErrorBanner from "@/app/components/molecules/ErrorBanner/ErrorBanner";
 import MetaMaskDeposit from "@/app/components/payments/MetaMaskDeposit/MetaMaskDeposit";
+import WalletConnection from "@/app/components/payments/WalletConnection/WalletConnection";
 import api from "@/lib/api";
 
 type TabKey = "overview" | "transactions" | "budget" | "methods";
@@ -1555,6 +1556,14 @@ export default function ClientWallet() {
                     audited to ensure zero-risk escrowing.
                   </p>
                 </div>
+              </div>
+
+              {/* MetaMask Wallet Connection */}
+              <div style={{ marginTop: '1rem' }}>
+                <WalletConnection
+                  showBalance={true}
+                  compact={false}
+                />
               </div>
             </div>
           </ScrollReveal>

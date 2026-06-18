@@ -1,9 +1,9 @@
-// @AI-HINT: Profile completion page - first-time onboarding for new users
+// @AI-HINT: Profile completion page - visual hub with progress indicator
 'use client';
 
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import ProfileWizard from '@/app/components/Profile/ProfileWizard/ProfileWizard';
+import ProfileCompletion from '@/app/components/Profile/ProfileCompletion/ProfileCompletion';
 import commonStyles from './CompleteProfile.common.module.css';
 import lightStyles from './CompleteProfile.light.module.css';
 import darkStyles from './CompleteProfile.dark.module.css';
@@ -14,7 +14,7 @@ export default function CompleteProfilePage() {
 
   return (
     <div className={cn(commonStyles.wrapper, themeStyles.wrapper)}>
-      <ProfileWizard />
+      <ProfileCompletion />
     </div>
   );
 }

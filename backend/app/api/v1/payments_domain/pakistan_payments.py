@@ -204,39 +204,37 @@ async def pk_withdraw(amount: float, method: str = "jazzcash", current_user=Depe
     if method not in PK_PAYMENT_METHODS:
         raise HTTPException(status_code=400, detail=f"Unsupported withdrawal method: {method}")
 
-    # Check balance
-    balance_result = execute_query(
-        "SELECT account_balance FROM users WHERE id = ?",
-        [current_user.id],
-    )
-    rows = parse_rows(balance_result)
-    balance = rows[0].get("account_balance", 0) if rows else 0
-
-    if balance < amount:
-        raise HTTPException(status_code=400, detail="Insufficient balance")
+    if amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive")
 
     method_info = PK_PAYMENT_METHODS[method]
     fee = amount * (method_info["fee_percent"] / 100)
+    total_deduct = amount + fee
     now = datetime.now(timezone.utc).isoformat()
 
-    # Deduct balance
-    execute_query(
-        "UPDATE users SET account_balance = account_balance - ? WHERE id = ?",
-        [amount + fee, current_user.id],
+    # Atomic balance check and deduction — single UPDATE with WHERE clause
+    # Prevents TOCTOU race condition
+    update_result = execute_query(
+        "UPDATE users SET account_balance = account_balance - ? WHERE id = ? AND account_balance >= ?",
+        [total_deduct, current_user.id, total_deduct],
     )
+
+    if not update_result or update_result.get("rows_affected", 0) == 0:
+        raise HTTPException(status_code=400, detail="Insufficient balance")
 
     # Create withdrawal record
     execute_query(
-        """INSERT INTO wallet_transactions (user_id, type, amount, description, status, created_at)
-           VALUES (?, 'withdrawal', ?, ?, 'pending', ?)""",
-        [current_user.id, amount, f"Withdrawal via {method_info['name']} (fee: {fee})", now],
+        """INSERT INTO wallet_transactions (user_id, type, amount, description, status, reference_id, created_at)
+           VALUES (?, 'withdrawal', ?, ?, 'pending', ?, ?)""",
+        [current_user.id, amount, f"Withdrawal via {method_info['name']} (fee: {fee})",
+         f"pk_wd_{secrets.token_urlsafe(8)}", now],
     )
 
     return {
         "message": f"Withdrawal initiated via {method_info['name']}",
         "amount": amount,
         "fee": round(fee, 2),
-        "total_deducted": round(amount + fee, 2),
+        "total_deducted": round(total_deduct, 2),
         "method": method_info["name"],
         "status": "pending",
     }

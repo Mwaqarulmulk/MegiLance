@@ -1591,19 +1591,32 @@ export default function ChatbotAgent() {
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
     const checkHealth = async () => {
       try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 4000);
-        const res = await fetch('/api/v1/health', { method: 'HEAD', signal: controller.signal });
+        const tid = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch('/api/v1/health/ready', { method: 'GET', signal: controller.signal });
         clearTimeout(tid);
-        if (res.status === 503 || res.status === 500) setChatStatus('degraded');
-        else if (!res.ok && res.status !== 404 && res.status !== 405) setChatStatus('degraded');
+        if (res.ok) {
+          setChatStatus('online');
+        } else if (res.status === 503 || res.status === 500) {
+          setChatStatus('degraded');
+        } else {
+          setChatStatus('degraded');
+        }
       } catch {
         setChatStatus('degraded');
       }
     };
+
     checkHealth();
+    intervalId = setInterval(checkHealth, 30000);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   useEffect(() => {

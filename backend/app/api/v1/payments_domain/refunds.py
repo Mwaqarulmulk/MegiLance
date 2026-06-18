@@ -88,12 +88,74 @@ async def update_refund(refund_id: int, request: RefundUpdate, current_user=Depe
 
 @router.post("/{refund_id}/approve")
 async def approve_refund(refund_id: int, current_user=Depends(require_admin)):
-    now = datetime.now(timezone.utc).isoformat()
-    execute_query(
-        "UPDATE refunds SET status = 'approved', updated_at = ? WHERE id = ?",
-        [now, refund_id],
+    # Fetch refund and original payment details
+    refund_result = execute_query(
+        "SELECT id, payment_id, amount, requested_by, status FROM refunds WHERE id = ?",
+        [refund_id],
     )
-    return {"message": "Refund approved"}
+    from app.db.turso_http import parse_rows as _pr
+    refund_rows = _pr(refund_result)
+    if not refund_rows:
+        raise HTTPException(status_code=404, detail="Refund not found")
+
+    refund = refund_rows[0]
+    if refund["status"] != "pending":
+        raise HTTPException(status_code=400, detail=f"Refund already {refund['status']}")
+
+    # Fetch original payment to find who to debit and who to credit
+    payment_result = execute_query(
+        "SELECT id, client_id, freelancer_id, amount, status FROM payments WHERE id = ?",
+        [refund["payment_id"]],
+    )
+    payment_rows = _pr(payment_result)
+    if not payment_rows:
+        raise HTTPException(status_code=404, detail="Original payment not found")
+
+    payment = payment_rows[0]
+    refund_amount = refund["amount"]
+
+    if refund_amount > payment["amount"]:
+        raise HTTPException(status_code=400, detail="Refund exceeds original payment amount")
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Atomic batch: approve refund + debit freelancer + update payment status
+    from app.db.turso_http import get_turso_http
+    client = get_turso_http()
+
+    # The freelancer received the payment, so they get debited on refund
+    payee_id = payment["freelancer_id"]
+    statements = [
+        {"q": "UPDATE refunds SET status = 'approved', updated_at = ? WHERE id = ?", "params": [now, refund_id]},
+        {"q": "UPDATE users SET account_balance = account_balance - ? WHERE id = ? AND account_balance >= ?", "params": [refund_amount, payee_id, refund_amount]},
+        {"q": "UPDATE payments SET status = 'refunded', updated_at = ? WHERE id = ?", "params": [now, payment["id"]]},
+    ]
+    try:
+        client.execute_many(statements)
+    except Exception as e:
+        logger.error(f"Atomic refund approval failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process refund")
+
+    # Record wallet transaction for the freelancer (debit)
+    execute_query(
+        """INSERT INTO wallet_transactions (user_id, type, amount, description, status, reference_id, created_at)
+           VALUES (?, 'refund', ?, ?, 'completed', ?, ?)""",
+        [payee_id, refund_amount, f"Refund #{refund_id} processed", refund_id, now],
+    )
+
+    # If original payment was a deposit (no contract), credit back to the client
+    if not payment.get("freelancer_id") and payment.get("client_id"):
+        execute_query(
+            "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
+            [refund_amount, payment["client_id"]],
+        )
+        execute_query(
+            """INSERT INTO wallet_transactions (user_id, type, amount, description, status, reference_id, created_at)
+               VALUES (?, 'refund', ?, ?, 'completed', ?, ?)""",
+            [payment["client_id"], refund_amount, f"Refund #{refund_id} credited back", refund_id, now],
+        )
+
+    return {"message": "Refund approved and processed"}
 
 
 @router.post("/{refund_id}/reject")

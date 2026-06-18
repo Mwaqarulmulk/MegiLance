@@ -81,6 +81,45 @@ def ensure_wallet_tables() -> None:
         )
     """)
 
+    execute_query("""
+        CREATE TABLE IF NOT EXISTS payout_methods (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            method_type TEXT NOT NULL,
+            method_name TEXT NOT NULL,
+            details TEXT,
+            is_default INTEGER DEFAULT 0,
+            is_verified INTEGER DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT
+        )
+    """)
+
+    execute_query("""
+        CREATE INDEX IF NOT EXISTS idx_payout_methods_user_id
+        ON payout_methods(user_id)
+    """)
+
+    execute_query("""
+        CREATE TABLE IF NOT EXISTS subscription_invoices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subscription_id INTEGER,
+            amount REAL NOT NULL,
+            currency TEXT DEFAULT 'USD',
+            status TEXT DEFAULT 'pending',
+            description TEXT,
+            stripe_invoice_id TEXT,
+            created_at TEXT,
+            paid_at TEXT
+        )
+    """)
+
+    execute_query("""
+        CREATE INDEX IF NOT EXISTS idx_subscription_invoices_user_id
+        ON subscription_invoices(user_id)
+    """)
+
     _wallet_tables_initialized = True
 
 
