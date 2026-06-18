@@ -111,7 +111,7 @@ const Wallet: React.FC = () => {
           return (
             txDate.getMonth() === d.getMonth() &&
             txDate.getFullYear() === d.getFullYear() &&
-            tx.type === 'earning'
+            tx.type === 'payment'
           );
         })
         .reduce((sum, tx) => sum + parseFloat(tx.amount || '0'), 0);
@@ -132,7 +132,7 @@ const Wallet: React.FC = () => {
 
   const totalEarnings = useMemo(() => {
     return transactionRows
-      .filter((tx) => tx.type === 'earning')
+      .filter((tx) => tx.type === 'payment')
       .reduce((sum, tx) => sum + parseFloat(tx.amount || '0'), 0);
   }, [transactionRows]);
 
@@ -415,7 +415,7 @@ const Wallet: React.FC = () => {
               {/* Transaction Type Filter */}
               <div className={styles.filterRow}>
                 <Filter size={14} className={styles.filterIcon} />
-                {['all', 'earning', 'withdrawal', 'payment'].map((type) => (
+                {['all', 'payment', 'withdrawal'].map((type) => (
                   <button
                     key={type}
                     className={`${styles.filterBtn} ${filterType === type ? styles.filterBtnActive : ''}`}
