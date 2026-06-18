@@ -19,23 +19,23 @@ import darkStyles from './HowItWorks.dark.module.css';
 const steps: Array<Omit<StepCardProps, 'stepNumber' | 'type'>> = [
   {
     icon: <ClipboardList />,
-    title: '1. Post a Job (as a Client)',
-    description: 'Define your project, scope, and budget. Our platform makes it easy to create a comprehensive job post that attracts the right talent.',
+    title: '1. Post a Project',
+    description: 'Describe your project, set your budget, and let our AI suggest the perfect scope and milestones. Get matched with vetted freelancers instantly.',
   },
   {
     icon: <Search />,
-    title: '2. Find Work (as a Freelancer)',
-    description: 'Create a polished profile and browse projects that match your skills. Our smart matching system helps you find the perfect opportunity.',
+    title: '2. AI-Matched Talent',
+    description: 'Our 7-factor algorithm matches you with freelancers based on skills, experience, ratings, and communication. Review proposals with objective ranking scores.',
   },
   {
     icon: <Users />,
     title: '3. Hire & Collaborate',
-    description: 'Clients review proposals and hire the best fit. Freelancers and clients collaborate seamlessly using our built-in tools.',
+    description: 'Hire with confidence using milestone-based escrow. Collaborate in real-time workrooms with file sharing, messaging, and progress tracking.',
   },
   {
     icon: <FileSignature />,
-    title: '4. Manage & Get Paid',
-    description: 'Track milestones and manage deliverables. Our secure payment system ensures freelancers get paid on time, every time.',
+    title: '4. Approve & Get Paid',
+    description: 'Review deliverables, request revisions if needed, and approve milestones. Payment is released instantly to the freelancer upon approval.',
   },
 ];
 
@@ -90,7 +90,7 @@ const HowItWorks: React.FC = () => {
           </motion.div>
           <h2 className={cn(commonStyles.title, themeStyles.title)}>How MegiLance Works</h2>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-            A simple, streamlined process for clients and freelancers to connect, collaborate, and achieve great things.
+            A streamlined process powered by AI — from project posting to secure payment, every step is optimized for quality and trust.
           </p>
         </motion.div>
         

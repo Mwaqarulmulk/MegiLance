@@ -120,7 +120,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
         id: item.id,
         title: item.title,
         description: item.description,
-        imageUrl: item.image_url || '/placeholder-project.jpg',
+        imageUrl: item.image_url || '/images/clients/placeholder.svg',
         projectUrl: item.project_url,
         tags: item.tags || [],
         completedAt: item.created_at,
@@ -137,7 +137,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
       const mappedReviews = (data as any[]).map((item: any) => ({
         id: item.id,
         reviewerName: item.reviewer_name || 'Anonymous',
-        reviewerAvatar: '/default-avatar.png',
+        reviewerAvatar: item.reviewer_avatar || item.reviewer_profile_image_url || '/images/default-avatar.svg',
         rating: item.rating,
         comment: item.review_text,
         projectTitle: item.project_title || 'Project',
@@ -225,7 +225,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
       <header className={cn(commonStyles.header, themed.header)}>
         <div className={commonStyles.avatar}>
           <Image
-            src={profile.avatarUrl || '/default-avatar.png'}
+            src={profile.avatarUrl || '/images/default-avatar.svg'}
             alt={`${profile.name}'s profile photo`}
             width={120}
             height={120}

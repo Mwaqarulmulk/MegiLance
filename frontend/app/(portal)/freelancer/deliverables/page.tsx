@@ -51,71 +51,7 @@ interface Deliverable {
   comments: { id: string; user: string; text: string; date: string }[];
 }
 
-const mockDeliverables: Deliverable[] = [
-  {
-    id: "d1",
-    milestoneId: "m2",
-    milestoneTitle: "Frontend Development",
-    contractTitle: "E-Commerce Platform Development",
-    title: "Homepage & Product Listing Pages",
-    description:
-      "Completed responsive homepage with hero section, product grid, filters, and search functionality.",
-    submissionNotes: "All responsive breakpoints tested. Lighthouse score 95+.",
-    status: "submitted",
-    files: [
-      {
-        id: "f1",
-        name: "homepage-v2.zip",
-        size: 2450000,
-        type: "application/zip",
-        url: "#",
-      },
-      {
-        id: "f2",
-        name: "screenshots.pdf",
-        size: 1200000,
-        type: "application/pdf",
-        url: "#",
-      },
-    ],
-    revisionCount: 0,
-    maxRevisions: 3,
-    submittedAt: "2024-02-15T10:30:00Z",
-    comments: [
-      {
-        id: "c1",
-        user: "Acme Corp",
-        text: "Looks great! Minor padding issue on mobile.",
-        date: "2024-02-16T09:00:00Z",
-      },
-    ],
-  },
-  {
-    id: "d2",
-    milestoneId: "m1",
-    milestoneTitle: "UI/UX Design",
-    contractTitle: "E-Commerce Platform Development",
-    title: "Final Design System",
-    description:
-      "Complete design system with component library, color tokens, and typography scale.",
-    submissionNotes: "Complete design system delivered.",
-    status: "approved",
-    files: [
-      {
-        id: "f3",
-        name: "design-system-v3.figma",
-        size: 5600000,
-        type: "application/octet-stream",
-        url: "#",
-      },
-    ],
-    revisionCount: 1,
-    maxRevisions: 3,
-    submittedAt: "2024-02-01T14:00:00Z",
-    reviewedAt: "2024-02-03T11:00:00Z",
-    comments: [],
-  },
-];
+const mockDeliverables: Deliverable[] = [];
 
 const statusConfig = {
   draft: { label: "Draft", color: "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300", icon: FileText },
@@ -174,11 +110,59 @@ export default function DeliverablesPage() {
   const [revisionNotes, setRevisionNotes] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [loadingDeliverables, setLoadingDeliverables] = useState(true);
+
+  // Fetch real deliverables from API
+  useEffect(() => {
+    const fetchDeliverables = async () => {
+      try {
+        const data = await apiFetch('/deliverables') as any;
+        const items = Array.isArray(data) ? data : (data?.deliverables ?? data?.items ?? []);
+        if (items.length > 0) {
+          setDeliverables(
+            items.map((d: any) => ({
+              id: String(d.id),
+              milestoneId: String(d.milestone_id || d.milestoneId || ''),
+              milestoneTitle: d.milestone_title || d.milestoneTitle || '',
+              contractTitle: d.contract_title || d.contractTitle || '',
+              title: d.title || 'Untitled',
+              description: d.description || '',
+              submissionNotes: d.submission_notes || d.submissionNotes || '',
+              status: d.status || 'submitted',
+              files: (d.files || []).map((f: any) => ({
+                id: String(f.id),
+                name: f.name || f.filename || '',
+                size: f.size || 0,
+                type: f.type || 'application/octet-stream',
+                url: f.url || f.file_url || '',
+              })),
+              rejectionReason: d.rejection_reason || d.rejectionReason,
+              revisionCount: d.revision_count || d.revisionCount || 0,
+              maxRevisions: d.max_revisions || d.maxRevisions || 3,
+              submittedAt: d.submitted_at || d.submittedAt || d.created_at,
+              reviewedAt: d.reviewed_at || d.reviewedAt,
+              comments: (d.comments || []).map((c: any) => ({
+                id: String(c.id),
+                user: c.user || c.user_name || 'User',
+                text: c.text || c.comment || '',
+                date: c.date || c.created_at || '',
+              })),
+            }))
+          );
+        }
+      } catch {
+        // Keep empty array on error
+      } finally {
+        setLoadingDeliverables(false);
+      }
+    };
+    fetchDeliverables();
+  }, []);
 
   // Derive unique milestone options from the existing deliverables data
   const milestoneOptions = Array.from(
     new Map(
-      mockDeliverables.map((d) => [
+      deliverables.map((d) => [
         d.milestoneId,
         {
           id: d.milestoneId,

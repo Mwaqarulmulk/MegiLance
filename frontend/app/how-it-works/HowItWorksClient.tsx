@@ -35,52 +35,58 @@ const clientSteps = [
   {
     stepNumber: 1,
     title: 'Post a Project',
-    description: 'Describe your project requirements, set your budget range, and get AI-powered price recommendations based on market data and project complexity.',
+    description: 'Describe your project requirements, set your budget range, and get AI-powered price recommendations based on market data and project complexity. Our AI scopes your project and suggests milestones automatically.',
     icon: <FileText size={40} />,
   },
   {
     stepNumber: 2,
     title: 'Review AI-Matched Proposals',
-    description: 'Our AI matches your project with top freelancers based on skills, experience, and past performance. Review proposals with objective ranking scores.',
+    description: 'Our 7-factor AI matching algorithm recommends top freelancers based on skills, experience, past performance, communication, and verified reviews. Compare proposals with objective ranking scores.',
     icon: <Brain size={40} />,
   },
   {
     stepNumber: 3,
     title: 'Hire & Fund Escrow',
-    description: 'Accept a proposal to create a smart contract. Fund the escrow with USDC or fiat - funds are locked securely until you approve the work.',
+    description: 'Accept a proposal to create a milestone-based contract. Fund each milestone through Stripe, PayPal, or cryptocurrency - funds are securely held in escrow until you approve the work.',
     icon: <Lock size={40} />,
   },
   {
     stepNumber: 4,
-    title: 'Approve & Release Payment',
-    description: 'Review submitted work. Once satisfied, approve the milestone and payment is instantly released from the blockchain escrow to the freelancer.',
+    title: 'Collaborate & Approve',
+    description: 'Use the built-in workroom for real-time collaboration, file sharing, and progress tracking. Review deliverables, request revisions if needed, and approve milestones when satisfied.',
     icon: <CheckCircle size={40} />,
+  },
+  {
+    stepNumber: 5,
+    title: 'Release Payment',
+    description: 'Once you approve a milestone, payment is instantly released to the freelancer. Leave a review to help other clients find great talent.',
+    icon: <DollarSign size={40} />,
   },
 ];
 
 const freelancerSteps = [
   {
     stepNumber: 1,
-    title: 'Create Your Profile',
-    description: 'Build your professional profile showcasing skills, portfolio, and experience. Your AI Ranking Score grows as you complete projects successfully.',
+    title: 'Build Your Profile',
+    description: 'Create a comprehensive profile showcasing your skills, portfolio, certifications, and work history. Your AI Ranking Score grows as you complete projects and receive positive reviews.',
     icon: <UserCircle size={40} />,
   },
   {
     stepNumber: 2,
-    title: 'Get AI-Matched to Jobs',
-    description: 'Our smart matching algorithm recommends projects that fit your skills. Browse job listings filtered by AI compatibility scores.',
+    title: 'Get AI-Matched to Projects',
+    description: 'Our smart matching algorithm recommends projects that fit your skills and experience level. Browse job listings filtered by AI compatibility scores and your preferences.',
     icon: <Briefcase size={40} />,
   },
   {
     stepNumber: 3,
     title: 'Submit Winning Proposals',
-    description: 'Send professional proposals with AI-assisted pricing guidance. Stand out with your verified credentials and transparent ranking.',
+    description: 'Write professional proposals with AI-assisted pricing guidance. Use the Proposal Writer tool to craft compelling bids. Stand out with your verified credentials and transparent ranking.',
     icon: <MessageSquare size={40} />,
   },
   {
     stepNumber: 4,
-    title: 'Get Paid in Crypto',
-    description: 'Complete the work, get milestone approval, and receive payment instantly in USDC or other cryptocurrencies. Low fees, fast settlement.',
+    title: 'Deliver & Get Paid',
+    description: 'Work in the collaborative workroom, submit deliverables through the platform, and get paid instantly once milestones are approved. Track earnings and manage invoices from your dashboard.',
     icon: <DollarSign size={40} />,
   },
 ];
@@ -88,50 +94,50 @@ const freelancerSteps = [
 const securityFeatures = [
   {
     icon: <Shield size={32} />,
-    title: 'Smart Contract Escrow',
-    description: 'Funds are locked in an immutable blockchain contract until work is approved. No middleman, no delays.',
+    title: 'Escrow Protection',
+    description: 'Funds are securely held in escrow for each milestone. Payment is only released when you approve the delivered work, protecting both clients and freelancers.',
   },
   {
     icon: <Brain size={32} />,
-    title: 'AI Sentiment Analysis',
-    description: 'Reviews are analyzed for sentiment to flag malicious or biased feedback, protecting your reputation.',
+    title: 'AI Fraud Detection',
+    description: 'Our AI analyzes behavioral patterns to identify suspicious accounts, fake reviews, and fraudulent activities before they impact the platform.',
   },
   {
     icon: <Star size={32} />,
     title: 'Objective AI Ranking',
-    description: 'Your score is based on verifiable metrics: completion rate, skills, communication, and verified reviews.',
+    description: 'Your ranking score is based on verifiable metrics: project completion rate, skill proficiency, communication quality, deadline adherence, and verified client reviews.',
   },
   {
     icon: <Gavel size={32} />,
-    title: 'On-Chain Dispute Resolution',
-    description: 'Disputes are logged on the blockchain with transparent resolution processes and admin mediation.',
+    title: 'Dispute Resolution',
+    description: 'Fair dispute resolution process with admin mediation. All interactions and deliverables are logged for transparent conflict resolution.',
   },
 ];
 
 const whyDifferent = [
   {
     icon: <DollarSign size={28} />,
-    title: 'Save 90% on Fees',
-    stat: '<1%',
+    title: 'Transparent Fees',
+    stat: '5-10%',
     description: 'vs 10-20% on traditional platforms',
   },
   {
     icon: <Zap size={28} />,
-    title: 'Instant Payments',
-    stat: '<30s',
-    description: 'vs 3-7 days bank transfers',
+    title: 'AI-Powered Matching',
+    stat: '7-Factor',
+    description: 'algorithm for perfect freelancer matches',
   },
   {
     icon: <Globe size={28} />,
-    title: 'Global Access',
+    title: 'Global Payments',
     stat: '150+',
-    description: 'currencies including USDC',
+    description: 'currencies via Stripe, PayPal & Crypto',
   },
   {
     icon: <Shield size={28} />,
-    title: 'Trustless Security',
+    title: 'Milestone Escrow',
     stat: '100%',
-    description: 'blockchain-verified transactions',
+    description: 'secure milestone-based payments',
   },
 ];
 
@@ -158,8 +164,8 @@ const HowItWorksPage: React.FC = () => {
           <header className={commonStyles.header}>
             <h1 className={cn(commonStyles.title, themeStyles.title)}>How MegiLance Works</h1>
             <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-              A hybrid decentralized platform combining Web2 speed with Web3 security. 
-              AI-powered matching, blockchain escrow, and transparent reputation.
+              A modern freelancing platform combining AI-powered matching, secure escrow payments, 
+              and transparent reputation. Built with Next.js, FastAPI, and Turso.
             </p>
           </header>
         </ScrollReveal>
@@ -171,7 +177,7 @@ const HowItWorksPage: React.FC = () => {
               Why MegiLance is Different
             </h2>
             <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
-              Built to solve the real problems freelancers face: high fees, slow payments, and opaque rankings.
+              Built to solve the real problems freelancers and clients face: high fees, poor matching, and lack of trust.
             </p>
           </ScrollReveal>
           <StaggerContainer className={commonStyles.statsGrid}>
@@ -194,7 +200,7 @@ const HowItWorksPage: React.FC = () => {
                 For Clients
               </h2>
               <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
-                Post a project, get AI-matched proposals, and pay securely via blockchain escrow.
+                Post a project, get AI-matched proposals, collaborate in workrooms, and pay securely with milestone escrow.
               </p>
             </ScrollReveal>
             <StaggerContainer className={commonStyles.grid}>
@@ -213,7 +219,7 @@ const HowItWorksPage: React.FC = () => {
                 For Freelancers
               </h2>
               <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
-                Build your reputation with AI ranking, win projects, and get paid instantly in crypto.
+                Build your reputation with AI ranking, win projects with smart proposals, and get paid reliably.
               </p>
             </ScrollReveal>
             <StaggerContainer className={commonStyles.grid}>
@@ -232,9 +238,9 @@ const HowItWorksPage: React.FC = () => {
             <h2 id="security-trust" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
               Trust & Security Built-In
             </h2>
-            <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
-              Our hybrid Web2/Web3 architecture ensures speed without sacrificing security.
-            </p>
+              <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
+                Built-in protections for both clients and freelancers at every step of the process.
+              </p>
           </ScrollReveal>
           <StaggerContainer className={commonStyles.featuresGrid}>
             {securityFeatures.map((feature, index) => (
@@ -256,34 +262,34 @@ const HowItWorksPage: React.FC = () => {
           </ScrollReveal>
           <div className={cn(commonStyles.architectureCard, themeStyles.architectureCard)}>
             <div className={commonStyles.archLayer}>
-              <h3>🖥️ Frontend Layer</h3>
-              <p><strong>Next.js 16 + TypeScript</strong></p>
-              <p>Fast, SEO-optimized pages with responsive design. SSR + SSG for instant loading.</p>
+              <h3>Frontend Layer</h3>
+              <p><strong>Next.js 16 + React 19 + TypeScript</strong></p>
+              <p>Fast, SEO-optimized pages with responsive design. Server-side rendering and static generation for instant loading. Tailwind CSS for styling.</p>
             </div>
             <div className={commonStyles.archArrow}>↓</div>
             <div className={commonStyles.archLayer}>
-              <h3>⚡ Backend Layer</h3>
-              <p><strong>FastAPI + Python</strong></p>
-              <p>High-performance async API. Pydantic validation. JWT authentication.</p>
+              <h3>Backend Layer</h3>
+              <p><strong>FastAPI + Python 3.11+</strong></p>
+              <p>High-performance async API with Pydantic validation, JWT authentication, rate limiting, and comprehensive error handling.</p>
             </div>
             <div className={commonStyles.archArrow}>↓</div>
             <div className={commonStyles.archLayerSplit}>
               <div className={commonStyles.archLayer}>
-                <h3>🤖 AI Service</h3>
-                <p><strong>Python ML</strong></p>
-                <p>Matching, ranking, sentiment analysis, price prediction.</p>
+                <h3>AI Services</h3>
+                <p><strong>Python ML Pipeline</strong></p>
+                <p>7-factor talent matching, price estimation, sentiment analysis, fraud detection, and proposal generation.</p>
               </div>
               <div className={commonStyles.archLayer}>
-                <h3>🔗 Blockchain</h3>
-                <p><strong>Solidity + Ethereum</strong></p>
-                <p>Smart contract escrow, USDC payments, on-chain records.</p>
+                <h3>Real-time & Payments</h3>
+                <p><strong>Socket.io + Stripe</strong></p>
+                <p>Real-time messaging, notifications, and collaboration. Stripe, PayPal, and cryptocurrency payment processing.</p>
               </div>
             </div>
             <div className={commonStyles.archArrow}>↓</div>
             <div className={commonStyles.archLayer}>
-              <h3>💾 Database</h3>
-              <p><strong>Turso (libSQL)</strong></p>
-              <p>Edge-distributed database for low-latency worldwide. SQLite-compatible.</p>
+              <h3>Database</h3>
+              <p><strong>Turso (libSQL) + MongoDB</strong></p>
+              <p>Edge-distributed SQL database for core data with low-latency worldwide access. MongoDB for blog/CMS content.</p>
             </div>
           </div>
         </section>

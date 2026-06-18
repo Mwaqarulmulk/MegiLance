@@ -35,24 +35,7 @@ interface Deliverable {
   comments: { id: string; user: string; text: string; date: string }[];
 }
 
-const mockDeliverables: Deliverable[] = [
-  {
-    id: "d1",
-    milestoneTitle: "Frontend Development",
-    contractTitle: "E-Commerce Platform Development",
-    freelancerName: "John Developer",
-    title: "Homepage & Product Listing Pages",
-    description:
-      "Completed responsive homepage with hero section, product grid, filters, and search functionality.",
-    status: "submitted",
-    files: [
-      { id: "f1", name: "homepage-v2.zip", size: 2450000 },
-      { id: "f2", name: "screenshots.pdf", size: 1200000 },
-    ],
-    submittedAt: "2024-02-15T10:30:00Z",
-    comments: [],
-  },
-];
+const mockDeliverables: Deliverable[] = [];
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   submitted: {
@@ -87,6 +70,7 @@ export default function ClientDeliverablesPage() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const [loadingDeliverables, setLoadingDeliverables] = useState(true);
 
   const showToast = (
     message: string,
@@ -95,6 +79,47 @@ export default function ClientDeliverablesPage() {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
   };
+
+  // Fetch real deliverables from API
+  useEffect(() => {
+    const fetchDeliverables = async () => {
+      try {
+        const data = await apiFetch('/deliverables') as any;
+        const items = Array.isArray(data) ? data : (data?.deliverables ?? data?.items ?? []);
+        if (items.length > 0) {
+          setDeliverables(
+            items.map((d: any) => ({
+              id: String(d.id),
+              milestoneTitle: d.milestone_title || d.milestoneTitle || '',
+              contractTitle: d.contract_title || d.contractTitle || '',
+              freelancerName: d.freelancer_name || d.freelancerName || '',
+              title: d.title || 'Untitled',
+              description: d.description || '',
+              status: d.status || 'submitted',
+              files: (d.files || []).map((f: any) => ({
+                id: String(f.id),
+                name: f.name || f.filename || '',
+                size: f.size || 0,
+                url: f.url || f.file_url,
+              })),
+              submittedAt: d.submitted_at || d.submittedAt || d.created_at || '',
+              comments: (d.comments || []).map((c: any) => ({
+                id: String(c.id),
+                user: c.user || c.user_name || 'User',
+                text: c.text || c.comment || '',
+                date: c.date || c.created_at || '',
+              })),
+            }))
+          );
+        }
+      } catch {
+        // Keep empty array on error - no mock data fallback
+      } finally {
+        setLoadingDeliverables(false);
+      }
+    };
+    fetchDeliverables();
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

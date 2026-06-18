@@ -38,7 +38,7 @@ const DEFAULT_USER: UserData = {
   fullName: 'User',
   email: '',
   bio: '',
-  avatar: '/mock-avatar.svg',
+  avatar: '/images/default-avatar.svg',
   notificationCount: 0,
 };
 
@@ -52,7 +52,7 @@ function getStoredUser(): UserData {
       fullName: parsed.full_name || parsed.fullName || parsed.name || 'User',
       email: parsed.email || '',
       bio: parsed.bio || parsed.title || '',
-      avatar: parsed.avatar_url || parsed.avatar || parsed.profile_image_url || '/mock-avatar.svg',
+      avatar: parsed.avatar_url || parsed.avatar || parsed.profile_image_url || '/images/default-avatar.svg',
       notificationCount: parsed.notificationCount || 0,
     };
   } catch {
@@ -81,7 +81,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         fullName: authUser.name || 'User',
         email: authUser.email || '',
         bio: authUser.bio || authUser.title || '',
-        avatar: authUser.profile_image_url || authUser.avatar_url || '/mock-avatar.svg',
+        avatar: authUser.profile_image_url || authUser.avatar_url || '/images/default-avatar.svg',
         notificationCount: 0, // Usually fetched from unread counts context
       });
     } else {
