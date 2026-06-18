@@ -9,6 +9,10 @@ logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user_optional
 from app.db.turso_http import execute_query, parse_rows
+from app.services.skill_analyzer_engine import (
+    get_available_skills as engine_get_skills,
+    analyze_skills as engine_analyze,
+)
 
 router = APIRouter()
 
@@ -199,122 +203,72 @@ def _learning_path(user_skills: List[str], target_skills: List[str]) -> dict:
 
 @router.get("/skills")
 def list_skill_categories():
-    """Return all skill categories with their skills for the frontend UI."""
-    categories = []
-    for cat_key, skill_list in SKILL_CATEGORIES.items():
-        categories.append({
-            "key": cat_key,
-            "label": cat_key.replace("_", " ").title(),
-            "skills": [{"key": s, "label": s} for s in skill_list],
-        })
-    return categories
+    """Return all analyzable skills grouped by category for the frontend UI.
+
+    Backed by the market-data engine so the keys returned here match the keys
+    the /analyze endpoint expects (the SkillAnalyzer wizard sends them back).
+    """
+    return engine_get_skills()
 
 
 from pydantic import BaseModel as _BaseModel
 
 class AnalyzeRequest(_BaseModel):
     skills: List[str] = []
-    experience_level: str = "intermediate"
+    experience_level: str = "mid"
+    country_code: Optional[str] = None
     target_role: Optional[str] = None
+
+
+def _map_synergy(syn: dict) -> dict:
+    """Adapt an engine synergy to the shape the SkillAnalyzer UI expects."""
+    missing = syn.get("missing_skills", [])
+    all_skills = syn.get("skills", [])
+    return {
+        "label": syn.get("label", ""),
+        "skills_present": [s for s in all_skills if s not in missing],
+        "skills_needed": missing,
+        "current_match": syn.get("matched_count", 0),
+        "total": syn.get("total_count", len(all_skills)),
+        "rate_premium": syn.get("rate_premium", 1.0),
+        "description": syn.get("description", ""),
+    }
 
 
 @router.post("/analyze")
 def analyze_skills(req: AnalyzeRequest, current_user=Depends(get_current_user_optional)):
-    """Full skill analysis: profile score, gaps, synergies, recommendations. Guest-accessible."""
+    """Full skill analysis: profile score, gaps, synergies, recommendations.
+
+    Delegates to the market-data engine (skill_analyzer_engine) which produces
+    the rich response shape the SkillAnalyzer wizard renders. Guest-accessible.
+    """
     user_skills = req.skills
     if not user_skills and current_user is not None:
-        # Fall back to DB only for logged-in users
+        # Fall back to the user's saved skills only for logged-in users
         result = execute_query("SELECT skills FROM users WHERE id = ?", [current_user.id])
         rows = parse_rows(result) if result else []
         if rows:
+            raw = rows[0].get("skills", "") or ""
             try:
-                user_skills = json.loads(rows[0].get("skills", "[]") or "[]")
-            except Exception:
-                pass
+                user_skills = json.loads(raw)
+            except (json.JSONDecodeError, TypeError):
+                # skills may be stored as a comma-separated string
+                user_skills = [s.strip() for s in raw.split(",") if s.strip()]
 
-    skill_count = len(user_skills)
-
-    # Profile score
-    base_score = min(60, skill_count * 6)
-    exp_bonus = {"entry": 0, "intermediate": 10, "expert": 20}.get(req.experience_level, 10)
-    profile_score = min(100, base_score + exp_bonus)
-    level = "expert" if profile_score > 80 else "advanced" if profile_score > 60 else "intermediate" if profile_score > 40 else "beginner"
-
-    # Skill details
-    skills_analyzed = []
-    for skill in user_skills:
-        cat = _get_skill_category(skill)
-        skills_analyzed.append({
-            "skill": skill,
-            "category": cat or "general",
-            "proficiency": req.experience_level,
-            "market_demand": "high" if cat in ("frontend", "backend", "data") else "medium",
-        })
-
-    # Synergies
-    synergies = []
-    synergy_pairs = [
-        (["React", "TypeScript", "Next.js"], "Full-stack React development"),
-        (["Python", "FastAPI", "Django"], "Python backend development"),
-        (["Docker", "Kubernetes", "AWS"], "Cloud infrastructure"),
-        (["Figma", "UI/UX"], "Design-to-development"),
-    ]
-    user_set = set(user_skills)
-    for pair_skills, label in synergy_pairs:
-        matched = [s for s in pair_skills if s in user_set]
-        if len(matched) >= 2:
-            synergies.append({"skills": matched, "synergy": label, "strength": len(matched) / len(pair_skills)})
-
-    # Gaps from market data
-    gaps_data = _analyze_skill_gaps(user_skills, req.target_role)
-    skill_gaps = gaps_data.get("skill_gaps", [])[:5]
-
-    # Recommendations
-    recommendations = []
-    if skill_gaps:
-        for g in skill_gaps[:3]:
-            recommendations.append({
-                "type": "skill_gap",
-                "skill": g["skill"],
-                "detail": f"High demand ({g['demand']} projects) with low competition",
-                "priority": "high" if g.get("opportunity_score", 0) > 2 else "medium",
-            })
-    if skill_count < 5:
-        recommendations.append({"type": "profile", "skill": "Portfolio", "detail": "Add more skills to improve discoverability", "priority": "high"})
-
-    # Estimated rate
-    avg_rate_result = execute_query(
-        "SELECT AVG(hourly_rate) as avg, MIN(hourly_rate) as min_r, MAX(hourly_rate) as max_r "
-        "FROM users WHERE user_type = 'freelancer' AND is_active = 1 AND hourly_rate > 0"
+    analysis = engine_analyze(
+        user_skills=user_skills,
+        experience_level=req.experience_level,
+        country_code=req.country_code,
+        target_role=req.target_role,
     )
-    avg_rows = parse_rows(avg_rate_result) if avg_rate_result else []
-    if avg_rows and avg_rows[0].get("avg"):
-        avg = float(avg_rows[0]["avg"])
-        hourly_rate = round(avg * (1 + skill_count * 0.05), 2)
-    else:
-        hourly_rate = 35.0
 
-    return {
-        "profile_score": {"score": profile_score, "level": level, "label": f"{level.title()} Profile"},
-        "skill_count": skill_count,
-        "skills_analyzed": skills_analyzed,
-        "synergies": synergies,
-        "skill_gaps": skill_gaps,
-        "recommendations": recommendations,
-        "estimated_rate": {
-            "hourly_rate": hourly_rate,
-            "range_low": round(hourly_rate * 0.7, 2),
-            "range_high": round(hourly_rate * 1.4, 2),
-            "currency": "USD",
-        },
-        "regional_context": {},
-        "unknown_skills": [s for s in user_skills if _get_skill_category(s) is None],
-        "meta": {
-            "experience_level": req.experience_level,
-            "target_role": req.target_role,
-            "data_version": "1.0",
-        },
-    }
+    # Map synergies to the UI contract and guarantee regional_context is an
+    # object (the UI calls Object.entries on it and would crash on null).
+    analysis["synergies"] = [_map_synergy(s) for s in analysis.get("synergies", [])]
+    if analysis.get("regional_context") is None:
+        analysis["regional_context"] = {}
+
+    return analysis
 
 
 @router.get("/gaps/{user_id}")
