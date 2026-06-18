@@ -10,8 +10,9 @@ export const adminApi = {
   getTopFreelancers: (limit = 10) => apiFetch(`/admin/dashboard/top-freelancers?limit=${limit}`),
   getTopClients: (limit = 10) => apiFetch(`/admin/dashboard/top-clients?limit=${limit}`),
   getRecentActivity: (limit = 20) => apiFetch(`/admin/dashboard/recent-activity?limit=${limit}`),
-  
-  getUsers: (filters?: { role?: string; search?: string; page?: number; page_size?: number; limit?: number }) => {
+
+  // ── User Management ──────────────────────────────────────────────────────
+  getUsers: (filters?: { role?: string; search?: string; status?: string; page?: number; page_size?: number; limit?: number }) => {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -20,11 +21,23 @@ export const adminApi = {
     }
     return apiFetch(`/admin/users?${params}`);
   },
-  
-  toggleUserStatus: (userId: ResourceId) => 
+
+  getUser: (userId: ResourceId) => apiFetch(`/admin/users/${userId}`),
+
+  updateUser: (userId: ResourceId, data: { is_active?: boolean; role?: string; email_verified?: boolean }) =>
+    apiFetch(`/admin/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  toggleUserStatus: (userId: ResourceId) =>
     apiFetch(`/admin/users/${userId}/toggle-status`, { method: 'POST' }),
-    
-  getProjects: (filters?: { status?: string; page?: number; page_size?: number; limit?: number }) => {
+
+  deleteUser: (userId: ResourceId) =>
+    apiFetch(`/admin/users/${userId}`, { method: 'DELETE' }),
+
+  // ── Project Management ───────────────────────────────────────────────────
+  getProjects: (filters?: { status?: string; search?: string; page?: number; page_size?: number; limit?: number }) => {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -33,7 +46,25 @@ export const adminApi = {
     }
     return apiFetch(`/admin/projects?${params}`);
   },
-  
+
+  getProject: (projectId: ResourceId) => apiFetch(`/admin/projects/${projectId}`),
+
+  createProject: (data: { title: string; description?: string; category?: string; budget_min?: number; budget_max?: number; skills?: string; status?: string }) =>
+    apiFetch('/admin/projects', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateProject: (projectId: ResourceId, data: { title?: string; description?: string; category?: string; budget_min?: number; budget_max?: number; skills?: string; status?: string }) =>
+    apiFetch(`/admin/projects/${projectId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteProject: (projectId: ResourceId) =>
+    apiFetch(`/admin/projects/${projectId}`, { method: 'DELETE' }),
+
+  // ── Payments ─────────────────────────────────────────────────────────────
   getPayments: (filters?: { status?: string; page?: number; page_size?: number; limit?: number }) => {
     const params = new URLSearchParams();
     if (filters) {
@@ -43,7 +74,8 @@ export const adminApi = {
     }
     return apiFetch(`/admin/payments?${params}`);
   },
-  
+
+  // ── Analytics & Settings ─────────────────────────────────────────────────
   getAnalytics: () => apiFetch('/admin/analytics/overview'),
   getSettings: () => apiFetch('/admin/settings'),
   getPlatformReviewStats: () => apiFetch('/admin/dashboard/reviews'),

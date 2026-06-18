@@ -417,8 +417,11 @@ async def update_me(
 # === Logout ===
 
 @router.post("/logout")
-async def logout(request: Request, current_user=Depends(get_current_user), response: Response = None):
+async def logout(request: Request, response: Response, current_user=Depends(get_current_user)):
+    # Blacklist the token
     token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    if not token:
+        token = request.cookies.get("auth_token", "")
     if token:
         try:
             payload = decode_token(token)
@@ -429,10 +432,12 @@ async def logout(request: Request, current_user=Depends(get_current_user), respo
         except Exception:
             pass
 
-    # Clear auth cookies
-    if response:
-        response.delete_cookie(key="auth_token", path="/")
-        response.delete_cookie(key="refresh_token", path="/")
+    # Clear auth cookies (httpOnly + JS-accessible)
+    response.delete_cookie(key="auth_token", path="/", httponly=True, samesite="lax")
+    response.delete_cookie(key="refresh_token", path="/", httponly=True, samesite="lax")
+    # Also clear JS-accessible copies
+    response.delete_cookie(key="auth_token", path="/")
+    response.delete_cookie(key="refresh_token", path="/")
 
     return {"message": "Logged out successfully"}
 

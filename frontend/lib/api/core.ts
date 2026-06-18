@@ -51,8 +51,11 @@ export function clearAuthData() {
       localStorage.removeItem("user");
       localStorage.removeItem("portal_area");
       localStorage.removeItem("ml_user_role");
-      // Drop JS-accessible auth cookies
+      // Drop all auth-related cookies (path=/ covers the entire site)
       document.cookie = "auth_token=; path=/; max-age=0; SameSite=Lax";
+      document.cookie = "auth_token=; path=/api/v1; max-age=0; SameSite=Lax";
+      document.cookie = "refresh_token=; path=/; max-age=0; SameSite=Lax";
+      document.cookie = "refresh_token=; path=/api/v1; max-age=0; SameSite=Lax";
     } catch (e) {
       console.warn("Storage unavailable:", e);
     }

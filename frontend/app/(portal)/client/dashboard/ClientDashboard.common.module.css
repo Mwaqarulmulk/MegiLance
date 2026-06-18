@@ -948,6 +948,17 @@
 
 .motionWrapper {
     width: 100%;
+    /* Lay the KPI stat cards out in a responsive grid instead of letting them
+       stack full-width (which produced over-long horizontal boxes). */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .motionWrapper {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 .glassPanel {
     backdrop-filter: blur(12px);

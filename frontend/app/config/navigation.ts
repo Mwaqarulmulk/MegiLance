@@ -212,11 +212,18 @@ export const adminNavItems: NavItem[] = [
     href: "/admin/users",
     icon: "Users",
     section: "Management",
+    submenu: [
+      { label: "All Users", href: "/admin/users", icon: "Users" },
+      { label: "Projects", href: "/admin/projects", icon: "Briefcase" },
+      { label: "Disputes", href: "/admin/disputes", icon: "Gavel" },
+      { label: "User Feedback", href: "/admin/feedback", icon: "Flag" },
+      { label: "Messages", href: "/admin/messages", icon: "MessageSquare" },
+    ],
   },
   { label: "Projects", href: "/admin/projects", icon: "Briefcase" },
-  { label: "Messages", href: "/admin/messages", icon: "MessageSquare" },
+  { label: "User Feedback", href: "/admin/feedback", icon: "Flag", section: "Moderation" },
   { label: "Disputes", href: "/admin/disputes", icon: "Gavel" },
-  { label: "User Feedback", href: "/admin/feedback", icon: "Flag" },
+  { label: "Messages", href: "/admin/messages", icon: "MessageSquare" },
   {
     label: "Payments",
     href: "/admin/payments",
@@ -249,6 +256,7 @@ export const adminNavItems: NavItem[] = [
     icon: "ShieldAlert",
     section: "Security",
   },
+  { label: "Fraud Detection", href: "/admin/fraud-detection", icon: "ShieldAlert" },
   { label: "Audit Logs", href: "/admin/audit", icon: "FileText" },
   {
     label: "System Health",
@@ -278,11 +286,12 @@ export const profileMenuItems: ProfileMenuItem[] = [
       if (typeof window !== "undefined") {
         try {
           // Notify backend to blacklist the token
-          const token = localStorage.getItem("auth_token");
+          const token = localStorage.getItem("auth_token") || sessionStorage.getItem("auth_token");
           if (token) {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/auth/logout`, {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${token}` },
+              credentials: 'include',
             }).catch(() => {});
           }
         } catch {
@@ -291,13 +300,19 @@ export const profileMenuItems: ProfileMenuItem[] = [
         // Clear all auth data
         localStorage.removeItem("auth_token");
         localStorage.removeItem("refresh_token");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("user");
         localStorage.removeItem("portal_area");
         localStorage.removeItem("ml_user_role");
+        sessionStorage.removeItem("auth_token");
+        // Drop JS-accessible auth cookies
+        document.cookie = "auth_token=; path=/; max-age=0; SameSite=Lax";
+        document.cookie = "refresh_token=; path=/; max-age=0; SameSite=Lax";
         // Broadcast to other tabs
         try {
-          window.dispatchEvent(new StorageEvent('storage', { key: 'auth_token', newValue: null }));
-        } catch (e) { console.warn('Logout error:', e); }
+          localStorage.setItem("auth_logout_broadcast", "true");
+          localStorage.removeItem("auth_logout_broadcast");
+        } catch (e) { console.warn('Logout broadcast error:', e); }
         window.location.href = "/login";
       }
     },

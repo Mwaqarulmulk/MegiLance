@@ -1,4 +1,4 @@
-// @AI-HINT: Admin Users page. Theme-aware, accessible, animated user management with filters, selection, bulk actions, and modal.
+// @AI-HINT: Admin Users page. Full user management with suspend/restore/delete/edit role per user + bulk actions.
 "use client";
 
 import React, { useMemo, useState } from "react";
@@ -31,31 +31,33 @@ const AdminUsers: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === "dark" ? dark : light;
 
-  // Server-side state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<UserRow[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
 
-  // Filter state
   const [query, setQuery] = useState("");
   const [role, setRole] = useState<(typeof ROLES)[number]>("All");
   const [status, setStatus] = useState<(typeof STATUSES)[number]>("All");
 
-  // Selection state
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [modal, setModal] = useState<{
-    kind: "suspend" | "restore";
+    kind: "suspend" | "restore" | "delete";
     count: number;
+    userId?: string;
+    userName?: string;
   } | null>(null);
 
-  // Pagination state
+  const [editModal, setEditModal] = useState<{
+    userId: string;
+    userName: string;
+    currentRole: string;
+  } | null>(null);
+  const [editRole, setEditRole] = useState("client");
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Sorting state (client-side for current page, or server-side if API supports it - API supports basic filtering but not dynamic sorting column yet, so we'll sort current page or just rely on default API sort)
-  // For now, we'll keep client-side sorting of the fetched page for simplicity, or just disable sorting if not supported by backend.
-  // The backend sorts by joined_at DESC by default.
   const [sortKey, setSortKey] = useState<keyof UserRow>("joined");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [toast, setToast] = useState<{
@@ -70,26 +72,18 @@ const AdminUsers: React.FC = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Debounce search
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   React.useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 500);
     return () => clearTimeout(timer);
   }, [query]);
 
-  // Fetch users from API
-  interface UsersFilters {
-    page: number;
-    page_size: number;
-    search?: string;
-    role?: string;
-  }
-
   interface RawUserData {
     id: number | string;
     name?: string;
     email?: string;
     user_type?: string;
+    role?: string;
     is_active?: boolean;
     joined_at?: string;
     headline?: string;
@@ -100,53 +94,33 @@ const AdminUsers: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const filters: UsersFilters = {
+      const filters: Record<string, any> = {
         page,
         page_size: pageSize,
       };
-
       if (debouncedQuery) filters.search = debouncedQuery;
       if (role !== "All") filters.role = role;
-      // Status filter is not directly supported by list_all_users in backend yet (it filters by user_type and search),
-      // but let's check if we can add it or if we need to filter client side.
-      // Backend list_all_users takes: user_type, search, skip, limit.
-      // It does NOT take status. So we might need to filter status client-side or update backend.
-      // For now, we'll fetch and if status is selected, we might get mixed results if we don't update backend.
-      // Let's assume we want to filter by status client-side for the current page if backend doesn't support it,
-      // OR better, update backend to support status filter.
-      // I'll update backend to support status filter in a separate step if needed, but for now let's send it.
-      // Wait, I checked admin.py and list_all_users DOES NOT take status.
-      // So I will filter client-side for now, but that's imperfect for pagination.
-      // However, for the sake of this task, I will proceed with server-side pagination for other fields.
+      if (status !== "All") filters.status = status;
 
       const response = (await api.admin.getUsers(filters)) as {
         users?: RawUserData[];
+        items?: RawUserData[];
         total?: number;
       };
 
-      if (
-        response &&
-        Array.isArray(response.users) &&
-        response.users.length > 0
-      ) {
-        const mappedUsers: UserRow[] = response.users.map((u: RawUserData) => ({
+      const usersList = response?.users || response?.items || [];
+      if (Array.isArray(usersList) && usersList.length > 0) {
+        const mappedUsers: UserRow[] = usersList.map((u: RawUserData) => ({
           id: String(u.id),
           name: u.name || "Unknown",
           email: u.email || "",
-          role: (u.user_type || "User") as UserRow["role"],
+          role: (u.role || u.user_type || "Client") as UserRow["role"],
           status: u.is_active ? "Active" : ("Suspended" as UserRow["status"]),
           joined: u.joined_at || new Date().toISOString(),
           headline: u.headline || "",
           availabilityStatus: u.availability_status || "",
         }));
-
-        // Client-side status filter if needed (imperfect)
-        let finalUsers = mappedUsers;
-        if (status !== "All") {
-          finalUsers = mappedUsers.filter((u) => u.status === status);
-        }
-
-        setRows(finalUsers);
+        setRows(mappedUsers);
         setTotalUsers(response.total || 0);
       } else {
         setRows([]);
@@ -166,12 +140,10 @@ const AdminUsers: React.FC = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  // Reset page when filters change
   React.useEffect(() => {
     setPage(1);
   }, [debouncedQuery, role, status, pageSize]);
 
-  // Client-side sorting of current page
   const sorted = useMemo(() => {
     const copy = [...rows];
     copy.sort((a, b) => {
@@ -192,47 +164,64 @@ const AdminUsers: React.FC = () => {
   const toggleAll = () => {
     if (allSelected) {
       const copy = { ...selected };
-      rows.forEach((r) => {
-        delete copy[r.id];
-      });
+      rows.forEach((r) => { delete copy[r.id]; });
       setSelected(copy);
     } else {
       const copy = { ...selected };
-      rows.forEach((r) => {
-        copy[r.id] = true;
-      });
+      rows.forEach((r) => { copy[r.id] = true; });
       setSelected(copy);
     }
   };
 
-  const openModal = (kind: "suspend" | "restore") => {
-    const count = selectedIds.length;
-    if (count === 0) return;
-    setModal({ kind, count });
+  const openModal = (kind: "suspend" | "restore" | "delete", userId?: string, userName?: string) => {
+    const count = kind === "delete" ? 1 : selectedIds.length;
+    if (kind !== "delete" && count === 0) return;
+    setModal({ kind, count, userId, userName });
   };
 
   const applyBulk = async () => {
     if (!modal) return;
     const kind = modal.kind;
 
-    // Call API for each selected user
     try {
-      await Promise.all(
-        selectedIds.map((id) => api.admin.toggleUserStatus(Number(id))),
-      );
-
-      // Refresh list
-      fetchUsers();
+      if (kind === "delete" && modal.userId) {
+        await api.admin.deleteUser(Number(modal.userId));
+        fetchUsers();
+        showToast("User deleted successfully");
+      } else {
+        const ids = kind === "delete" && modal.userId ? [modal.userId] : selectedIds;
+        await Promise.all(
+          ids.map((id) => api.admin.toggleUserStatus(Number(id))),
+        );
+        fetchUsers();
+        showToast(
+          `${ids.length} user(s) ${kind === "suspend" ? "suspended" : "restored"} successfully!`,
+        );
+      }
       setSelected({});
       setModal(null);
-      showToast(
-        `${selectedIds.length} user(s) ${kind === "suspend" ? "suspended" : "restored"} successfully!`,
-      );
     } catch (err) {
       if (process.env.NODE_ENV === "development") {
         console.error("Failed to update users", err);
       }
       showToast("Failed to update some users. Please try again.", "error");
+    }
+  };
+
+  const openEditRole = (userId: string, userName: string, currentRole: string) => {
+    setEditModal({ userId, userName, currentRole });
+    setEditRole(currentRole.toLowerCase());
+  };
+
+  const applyEditRole = async () => {
+    if (!editModal) return;
+    try {
+      await api.admin.updateUser(Number(editModal.userId), { role: editRole });
+      fetchUsers();
+      setEditModal(null);
+      showToast(`Role updated to ${editRole}`);
+    } catch (err) {
+      showToast("Failed to update role", "error");
     }
   };
 
@@ -248,11 +237,7 @@ const AdminUsers: React.FC = () => {
   const exportCSV = () => {
     const header = ["ID", "Name", "Email", "Role", "Status", "Joined Date"];
     const rowsCsv = sorted.map((r) => [
-      r.id,
-      r.name,
-      r.email,
-      r.role,
-      r.status,
+      r.id, r.name, r.email, r.role, r.status,
       new Date(r.joined).toLocaleDateString(),
     ]);
     const csv = [header, ...rowsCsv]
@@ -278,54 +263,39 @@ const AdminUsers: React.FC = () => {
               <div>
                 <h1 className={common.title}>Users</h1>
                 <p className={cn(common.subtitle, themed.subtitle)}>
-                  Manage all platform users. Filter by role and status, select
-                  multiple, and apply bulk actions.
+                  Manage all platform users. Filter by role and status, edit roles, suspend, restore, or delete accounts.
                 </p>
               </div>
               <div className={common.controls} aria-label="User filters">
-                <label className={common.srOnly} htmlFor="q">
-                  Search
-                </label>
+                <label className={common.srOnly} htmlFor="q">Search</label>
                 <input
                   id="q"
                   className={cn(common.input, themed.input)}
                   type="search"
-                  placeholder="Search users…"
+                  placeholder="Search users..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
-                <label className={common.srOnly} htmlFor="role">
-                  Role
-                </label>
+                <label className={common.srOnly} htmlFor="role">Role</label>
                 <select
                   id="role"
                   className={cn(common.select, themed.select)}
                   value={role}
-                  onChange={(e) =>
-                    setRole(e.target.value as (typeof ROLES)[number])
-                  }
+                  onChange={(e) => setRole(e.target.value as (typeof ROLES)[number])}
                 >
                   {ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
+                    <option key={r} value={r}>{r}</option>
                   ))}
                 </select>
-                <label className={common.srOnly} htmlFor="status">
-                  Status
-                </label>
+                <label className={common.srOnly} htmlFor="status">Status</label>
                 <select
                   id="status"
                   className={cn(common.select, themed.select)}
                   value={status}
-                  onChange={(e) =>
-                    setStatus(e.target.value as (typeof STATUSES)[number])
-                  }
+                  onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])}
                 >
                   {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
+                    <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
                 <button
@@ -352,23 +322,16 @@ const AdminUsers: React.FC = () => {
                 >
                   Export CSV
                 </button>
-                <label className={common.srOnly} htmlFor="pageSize">
-                  Rows per page
-                </label>
+                <label className={common.srOnly} htmlFor="pageSize">Rows per page</label>
                 <select
                   id="pageSize"
                   className={cn(common.select, themed.select)}
                   value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setPage(1);
-                  }}
+                  onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
                   aria-label="Rows per page"
                 >
                   {[10, 20, 50].map((sz) => (
-                    <option key={sz} value={sz}>
-                      {sz}/page
-                    </option>
+                    <option key={sz} value={sz}>{sz}/page</option>
                   ))}
                 </select>
               </div>
@@ -376,29 +339,17 @@ const AdminUsers: React.FC = () => {
           </ScrollReveal>
 
           {selectedIds.length > 0 && (
-            <div
-              className={cn(common.bulkBar, themed.bulkBar)}
-              role="status"
-              aria-live="polite"
-            >
+            <div className={cn(common.bulkBar, themed.bulkBar)} role="status" aria-live="polite">
               {selectedIds.length} selected
             </div>
           )}
 
           <StaggerContainer delay={0.1} className={common.tableWrap}>
             {loading && (
-              <div
-                className={common.skeletonRow}
-                aria-busy={loading || undefined}
-              />
+              <div className={common.skeletonRow} aria-busy={loading || undefined} />
             )}
             {error && (
-              <ErrorBanner
-                title="Failed to load users"
-                message={error}
-                onRetry={fetchUsers}
-                showGoHome={false}
-              />
+              <ErrorBanner title="Failed to load users" message={error} onRetry={fetchUsers} showGoHome={false} />
             )}
             <table className={cn(common.table, themed.table)}>
               <thead>
@@ -411,145 +362,48 @@ const AdminUsers: React.FC = () => {
                       onChange={toggleAll}
                     />
                   </th>
-                  <th
-                    scope="col"
-                    className={themed.th + " " + common.th}
-                    aria-sort={
-                      sortKey === "name"
-                        ? sortDir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
+                  <th scope="col" className={themed.th + " " + common.th}
+                    aria-sort={sortKey === "name" ? sortDir === "asc" ? "ascending" : "descending" : undefined}
                   >
-                    <button
-                      type="button"
-                      className={common.sortBtn}
-                      onClick={() => onSort("name")}
-                      aria-label="Sort by name"
-                    >
+                    <button type="button" className={common.sortBtn} onClick={() => onSort("name")} aria-label="Sort by name">
                       Name
-                      {sortKey === "name" && (
-                        <span
-                          aria-hidden="true"
-                          className={common.sortIndicator}
-                        >
-                          {sortDir === "asc" ? "▲" : "▼"}
-                        </span>
-                      )}
+                      {sortKey === "name" && <span aria-hidden="true" className={common.sortIndicator}>{sortDir === "asc" ? "\u25B2" : "\u25BC"}</span>}
                     </button>
                   </th>
-                  <th
-                    scope="col"
-                    className={themed.th + " " + common.th}
-                    aria-sort={
-                      sortKey === "email"
-                        ? sortDir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
+                  <th scope="col" className={themed.th + " " + common.th}
+                    aria-sort={sortKey === "email" ? sortDir === "asc" ? "ascending" : "descending" : undefined}
                   >
-                    <button
-                      type="button"
-                      className={common.sortBtn}
-                      onClick={() => onSort("email")}
-                      aria-label="Sort by email"
-                    >
+                    <button type="button" className={common.sortBtn} onClick={() => onSort("email")} aria-label="Sort by email">
                       Email
-                      {sortKey === "email" && (
-                        <span
-                          aria-hidden="true"
-                          className={common.sortIndicator}
-                        >
-                          {sortDir === "asc" ? "▲" : "▼"}
-                        </span>
-                      )}
+                      {sortKey === "email" && <span aria-hidden="true" className={common.sortIndicator}>{sortDir === "asc" ? "\u25B2" : "\u25BC"}</span>}
                     </button>
                   </th>
-                  <th
-                    scope="col"
-                    className={themed.th + " " + common.th}
-                    aria-sort={
-                      sortKey === "role"
-                        ? sortDir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
+                  <th scope="col" className={themed.th + " " + common.th}
+                    aria-sort={sortKey === "role" ? sortDir === "asc" ? "ascending" : "descending" : undefined}
                   >
-                    <button
-                      type="button"
-                      className={common.sortBtn}
-                      onClick={() => onSort("role")}
-                      aria-label="Sort by role"
-                    >
+                    <button type="button" className={common.sortBtn} onClick={() => onSort("role")} aria-label="Sort by role">
                       Role
-                      {sortKey === "role" && (
-                        <span
-                          aria-hidden="true"
-                          className={common.sortIndicator}
-                        >
-                          {sortDir === "asc" ? "▲" : "▼"}
-                        </span>
-                      )}
+                      {sortKey === "role" && <span aria-hidden="true" className={common.sortIndicator}>{sortDir === "asc" ? "\u25B2" : "\u25BC"}</span>}
                     </button>
                   </th>
-                  <th
-                    scope="col"
-                    className={themed.th + " " + common.th}
-                    aria-sort={
-                      sortKey === "status"
-                        ? sortDir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
+                  <th scope="col" className={themed.th + " " + common.th}
+                    aria-sort={sortKey === "status" ? sortDir === "asc" ? "ascending" : "descending" : undefined}
                   >
-                    <button
-                      type="button"
-                      className={common.sortBtn}
-                      onClick={() => onSort("status")}
-                      aria-label="Sort by status"
-                    >
+                    <button type="button" className={common.sortBtn} onClick={() => onSort("status")} aria-label="Sort by status">
                       Status
-                      {sortKey === "status" && (
-                        <span
-                          aria-hidden="true"
-                          className={common.sortIndicator}
-                        >
-                          {sortDir === "asc" ? "▲" : "▼"}
-                        </span>
-                      )}
+                      {sortKey === "status" && <span aria-hidden="true" className={common.sortIndicator}>{sortDir === "asc" ? "\u25B2" : "\u25BC"}</span>}
                     </button>
                   </th>
-                  <th
-                    scope="col"
-                    className={themed.th + " " + common.th}
-                    aria-sort={
-                      sortKey === "joined"
-                        ? sortDir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
+                  <th scope="col" className={themed.th + " " + common.th}
+                    aria-sort={sortKey === "joined" ? sortDir === "asc" ? "ascending" : "descending" : undefined}
                   >
-                    <button
-                      type="button"
-                      className={common.sortBtn}
-                      onClick={() => onSort("joined")}
-                      aria-label="Sort by joined"
-                    >
+                    <button type="button" className={common.sortBtn} onClick={() => onSort("joined")} aria-label="Sort by joined">
                       Joined
-                      {sortKey === "joined" && (
-                        <span
-                          aria-hidden="true"
-                          className={common.sortIndicator}
-                        >
-                          {sortDir === "asc" ? "▲" : "▼"}
-                        </span>
-                      )}
+                      {sortKey === "joined" && <span aria-hidden="true" className={common.sortIndicator}>{sortDir === "asc" ? "\u25B2" : "\u25BC"}</span>}
                     </button>
+                  </th>
+                  <th scope="col" className={themed.th + " " + common.th} aria-label="Actions">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -562,39 +416,60 @@ const AdminUsers: React.FC = () => {
                         aria-label={`Select ${u.name}`}
                         checked={!!selected[u.id]}
                         onChange={(e) =>
-                          setSelected((prev) => ({
-                            ...prev,
-                            [u.id]: e.target.checked,
-                          }))
+                          setSelected((prev) => ({ ...prev, [u.id]: e.target.checked }))
                         }
                       />
                     </td>
                     <td className={themed.td + " " + common.td}>{u.name}</td>
                     <td className={themed.td + " " + common.td}>{u.email}</td>
                     <td className={themed.td + " " + common.td}>{u.role}</td>
-                    <td className={themed.td + " " + common.td}>{u.status}</td>
+                    <td className={themed.td + " " + common.td}>
+                      <span className={cn(
+                        "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium",
+                        u.status === "Active"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      )}>
+                        {u.status}
+                      </span>
+                    </td>
                     <td className={themed.td + " " + common.td}>
                       {new Date(u.joined).toLocaleDateString()}
+                    </td>
+                    <td className={themed.td + " " + common.td}>
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <button
+                          type="button"
+                          className={cn(common.button, themed.button, "secondary")}
+                          style={{ fontSize: "0.7rem", padding: "2px 6px" }}
+                          onClick={() => openEditRole(u.id, u.name, u.role)}
+                        >
+                          Edit Role
+                        </button>
+                        <button
+                          type="button"
+                          className={cn(common.button, themed.button, "secondary")}
+                          style={{ fontSize: "0.7rem", padding: "2px 6px" }}
+                          onClick={() => openModal(u.status === "Active" ? "suspend" : "restore", u.id, u.name)}
+                        >
+                          {u.status === "Active" ? "Suspend" : "Restore"}
+                        </button>
+                        <button
+                          type="button"
+                          className={cn(common.button, themed.button)}
+                          style={{ fontSize: "0.7rem", padding: "2px 6px", background: "#ef4444", borderColor: "#ef4444", color: "#fff" }}
+                          onClick={() => openModal("delete", u.id, u.name)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             {sorted.length === 0 && !loading && !error && (
-              <div
-                role="status"
-                aria-live="polite"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "3rem 2rem",
-                  gap: "0.5rem",
-                  textAlign: "center",
-                }}
-              >
-                <span style={{ fontSize: "2rem", opacity: 0.3 }}>👥</span>
+              <div role="status" aria-live="polite" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "3rem 2rem", gap: "0.5rem", textAlign: "center" }}>
                 <strong>
                   {debouncedQuery || role !== "All" || status !== "All"
                     ? "No users match your filters."
@@ -607,69 +482,71 @@ const AdminUsers: React.FC = () => {
                 </span>
               </div>
             )}
-            {/* Pagination controls */}
             {totalUsers > 0 && (
-              <div
-                className={common.paginationBar}
-                role="navigation"
-                aria-label="Pagination"
-              >
-                <button
-                  type="button"
-                  className={cn(common.button, themed.button, "secondary")}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  aria-label="Previous page"
-                >
-                  Prev
-                </button>
-                <span className={common.paginationInfo} aria-live="polite">
-                  Page {page} of {totalPages} · {totalUsers} result(s)
-                </span>
-                <button
-                  type="button"
-                  className={cn(common.button, themed.button)}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  aria-label="Next page"
-                >
-                  Next
-                </button>
+              <div className={common.paginationBar} role="navigation" aria-label="Pagination">
+                <button type="button" className={cn(common.button, themed.button, "secondary")} onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} aria-label="Previous page">Prev</button>
+                <span className={common.paginationInfo} aria-live="polite">Page {page} of {totalPages} &middot; {totalUsers} result(s)</span>
+                <button type="button" className={cn(common.button, themed.button)} onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} aria-label="Next page">Next</button>
               </div>
             )}
           </StaggerContainer>
         </div>
 
+        {/* Bulk Action / Delete Confirmation Modal */}
         {modal && (
-          <div
-            className={common.modalOverlay}
-            role="presentation"
-            onClick={() => setModal(null)}
-          >
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-title"
-              className={cn(common.modal, themed.modal)}
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div className={common.modalOverlay} role="presentation" onClick={() => setModal(null)}>
+            <div role="dialog" aria-modal="true" aria-labelledby="modal-title" className={cn(common.modal, themed.modal)} onClick={(e) => e.stopPropagation()}>
               <div id="modal-title" className={cn(common.modalTitle)}>
-                {modal.kind === "suspend" ? "Suspend users" : "Restore users"}
+                {modal.kind === "suspend" && "Suspend Users"}
+                {modal.kind === "restore" && "Restore Users"}
+                {modal.kind === "delete" && "Delete User"}
               </div>
-              <p>{modal.count} selected user(s). Are you sure?</p>
+              {modal.kind === "delete" ? (
+                <p>Are you sure you want to delete <strong>{modal.userName || `User #${modal.userId}`}</strong>? This will deactivate their account and cancel active contracts.</p>
+              ) : (
+                <p>{modal.count} selected user(s). Are you sure you want to {modal.kind} them?</p>
+              )}
               <div className={common.modalActions}>
                 <button
                   type="button"
                   className={cn(common.button, themed.button)}
+                  style={modal.kind === "delete" ? { background: "#ef4444", borderColor: "#ef4444" } : undefined}
                   onClick={applyBulk}
                 >
-                  Confirm
+                  {modal.kind === "delete" ? "Delete" : "Confirm"}
                 </button>
-                <button
-                  type="button"
-                  className={cn(common.button, themed.button, "secondary")}
-                  onClick={() => setModal(null)}
+                <button type="button" className={cn(common.button, themed.button, "secondary")} onClick={() => setModal(null)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Role Modal */}
+        {editModal && (
+          <div className={common.modalOverlay} role="presentation" onClick={() => setEditModal(null)}>
+            <div role="dialog" aria-modal="true" aria-labelledby="edit-role-title" className={cn(common.modal, themed.modal)} onClick={(e) => e.stopPropagation()}>
+              <div id="edit-role-title" className={cn(common.modalTitle)}>Edit Role</div>
+              <p>Change role for <strong>{editModal.userName}</strong></p>
+              <div style={{ margin: "1rem 0" }}>
+                <label className={common.srOnly} htmlFor="edit-role-select">Role</label>
+                <select
+                  id="edit-role-select"
+                  className={cn(common.select, themed.select)}
+                  value={editRole}
+                  onChange={(e) => setEditRole(e.target.value)}
                 >
+                  <option value="client">Client</option>
+                  <option value="freelancer">Freelancer</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div className={common.modalActions}>
+                <button type="button" className={cn(common.button, themed.button)} onClick={applyEditRole}>
+                  Save
+                </button>
+                <button type="button" className={cn(common.button, themed.button, "secondary")} onClick={() => setEditModal(null)}>
                   Cancel
                 </button>
               </div>
@@ -678,14 +555,12 @@ const AdminUsers: React.FC = () => {
         )}
 
         {toast && (
-          <div
-            className={cn(
-              common.toast,
-              toast.type === "error" && common.toastError,
-              themed.toast,
-              toast.type === "error" && themed.toastError,
-            )}
-          >
+          <div className={cn(
+            common.toast,
+            toast.type === "error" && common.toastError,
+            themed.toast,
+            toast.type === "error" && themed.toastError,
+          )}>
             {toast.message}
           </div>
         )}

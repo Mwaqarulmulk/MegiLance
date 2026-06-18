@@ -13,6 +13,52 @@ def compute_signature_hash(data: str) -> str:
 
 router = APIRouter(prefix="/signatures", tags=["E-Signatures"])
 
+from app.core.security import get_current_user
+from app.db.turso_http import execute_query, parse_rows
+
+_sig_col_ensured = False
+
+
+def _ensure_signature_column() -> None:
+    """Ensure users.signature_image exists for the reusable saved signature."""
+    global _sig_col_ensured
+    if _sig_col_ensured:
+        return
+    try:
+        execute_query("ALTER TABLE users ADD COLUMN signature_image TEXT", [])
+    except Exception:
+        pass
+    _sig_col_ensured = True
+
+
+class SaveSignature(BaseModel):
+    signature_image: str  # base64 data URL
+
+
+@router.get("/me")
+async def get_my_signature(current_user=Depends(get_current_user)):
+    """Return the current user's saved reusable signature (or null)."""
+    _ensure_signature_column()
+    rows = parse_rows(
+        execute_query("SELECT signature_image FROM users WHERE id = ?", [current_user.id])
+    )
+    image = rows[0].get("signature_image") if rows else None
+    return {"signature_image": image or None}
+
+
+@router.put("/me")
+async def save_my_signature(req: SaveSignature, current_user=Depends(get_current_user)):
+    """Persist the current user's reusable signature so it can be reused."""
+    if not (req.signature_image or "").strip():
+        raise HTTPException(status_code=422, detail="Signature image is required")
+    _ensure_signature_column()
+    now = datetime.now(timezone.utc).isoformat()
+    execute_query(
+        "UPDATE users SET signature_image = ?, updated_at = ? WHERE id = ?",
+        [req.signature_image, now, current_user.id],
+    )
+    return {"message": "Signature saved"}
+
 
 class CreateSignatureRequest(BaseModel):
     document_type: str = Field(..., description="contract, proposal, agreement, nda")

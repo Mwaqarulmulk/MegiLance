@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { RichTextEditor, ReadOnlyEditor } from '@/app/components/Editor';
 import { SignaturePad } from '@/app/components/SignaturePad';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
@@ -124,6 +124,32 @@ export default function FreelancerProfilePage() {
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const [savedSignature, setSavedSignature] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = (await apiFetch('/signatures/me')) as { signature_image?: string | null };
+        if (data?.signature_image) setSavedSignature(data.signature_image);
+      } catch {
+        /* no saved signature yet */
+      }
+    })();
+  }, []);
+
+  const handleSaveSignature = async (dataUrl: string) => {
+    setSavedSignature(dataUrl);
+    setShowSignaturePad(false);
+    try {
+      await apiFetch('/signatures/me', {
+        method: 'PUT',
+        body: JSON.stringify({ signature_image: dataUrl }),
+      });
+      showToast('Signature saved. It will be reused for documents.', 'success');
+    } catch {
+      showToast('Failed to save signature. Please try again.', 'error');
+    }
+  };
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
@@ -609,21 +635,27 @@ export default function FreelancerProfilePage() {
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <h4 className="font-medium text-gray-900 dark:text-white mb-3">Digital Signature</h4>
                 <p className="text-sm text-gray-500 mb-4">Sign documents digitally with your saved signature.</p>
+                {savedSignature && !showSignaturePad && (
+                  <div className="mb-4">
+                    <span className="block text-xs text-gray-500 mb-1">Your saved signature</span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={savedSignature}
+                      alt="Saved signature"
+                      className="h-20 border border-gray-200 dark:border-gray-700 rounded bg-white p-1"
+                    />
+                  </div>
+                )}
                 <button
                   onClick={() => setShowSignaturePad(!showSignaturePad)}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
                 >
                   {showSignaturePad ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                  {showSignaturePad ? 'Hide Signature Pad' : 'Manage Signature'}
+                  {showSignaturePad ? 'Hide Signature Pad' : savedSignature ? 'Update Signature' : 'Add Signature'}
                 </button>
                 {showSignaturePad && (
                   <div className="mt-4">
-                    <SignaturePad
-                      onSignature={(dataUrl) => {
-                        console.log('Signature saved:', dataUrl.substring(0, 50) + '...');
-                        setShowSignaturePad(false);
-                      }}
-                    />
+                    <SignaturePad onSignature={handleSaveSignature} />
                   </div>
                 )}
               </div>

@@ -412,6 +412,10 @@ api_router.include_router(subscription_billing.router, prefix="/subscriptions", 
 # Legal Document Center - NDAs, contracts, e-signatures
 api_router.include_router(legal_documents.router, prefix="/legal-documents", tags=["legal-documents"])
 
+# User document records (client/freelancer document center)
+from app.api.v1.core_domain import documents as user_documents
+api_router.include_router(user_documents.router, prefix="/documents", tags=["documents"])
+
 # Knowledge Base & FAQ - Help center
 api_router.include_router(knowledge_base.router, prefix="/knowledge-base", tags=["knowledge-base"])
 

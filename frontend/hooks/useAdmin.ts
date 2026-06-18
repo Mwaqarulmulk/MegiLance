@@ -64,6 +64,9 @@ export type AdminPayment = {
   description: string;
   amount: string;
   status: string;
+  user?: string;
+  role?: string;
+  type?: string;
 };
 export type AdminSupportTicket = {
   id: string;
@@ -213,6 +216,9 @@ export function useAdminData() {
             description: (p.description || p.payment_type) ?? "",
             amount: `$${p.amount}`,
             status: p.status || "pending",
+            user: p.user,
+            role: p.role,
+            type: p.type || p.payment_type,
           }),
         );
         setPayments(mappedPayments);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api/core';
 import {
   FileText, Download, Eye, Plus, Search,
@@ -121,6 +121,32 @@ export default function ClientDocumentsPage() {
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileDragOver, setFileDragOver] = useState(false);
+
+  // Load the user's real documents; fall back to the sample set if none exist.
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = (await apiFetch('/documents')) as { items?: any[] } | any[];
+        const items = Array.isArray(data) ? data : (data?.items ?? []);
+        if (items.length > 0) {
+          setDocuments(
+            items.map((d: any) => ({
+              id: String(d.id),
+              title: d.title || 'Untitled document',
+              type: (d.type as Document['type']) || 'contract',
+              status: (d.status as Document['status']) || 'draft',
+              relatedProject: d.category || 'N/A',
+              otherParty: '',
+              createdAt: (d.created_at || '').split('T')[0] || '',
+              url: d.file_url || undefined,
+            })),
+          );
+        }
+      } catch {
+        /* keep the sample documents on error */
+      }
+    })();
+  }, []);
 
   // ── Preview modal state ──────────────────────────────────────────────────────
   const [previewDoc, setPreviewDoc] = useState<Document | null>(null);

@@ -1,16 +1,16 @@
-# @AI-HINT: Admin router — user management, platform stats, moderation
+# @AI-HINT: Admin router — user management, project management, platform stats, moderation
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
-import json
-
 from app.core.security import get_current_user, require_admin
 from app.db.turso_http import execute_query, parse_rows, parse_date
+from app.core.security import invalidate_user_cache
 
 router = APIRouter()
 
@@ -19,6 +19,26 @@ class AdminUserUpdate(BaseModel):
     is_active: Optional[bool] = None
     role: Optional[str] = None
     email_verified: Optional[bool] = None
+
+
+class AdminProjectCreate(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    category: Optional[str] = ""
+    budget_min: Optional[float] = None
+    budget_max: Optional[float] = None
+    skills: Optional[str] = None
+    status: Optional[str] = "open"
+
+
+class AdminProjectUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
+    budget_min: Optional[float] = None
+    budget_max: Optional[float] = None
+    skills: Optional[str] = None
+    status: Optional[str] = None
 
 
 # ── Platform settings (single JSON blob persisted in app_settings) ────────────
@@ -61,30 +81,45 @@ async def update_platform_settings(payload: dict, current_user=Depends(require_a
     return {"message": "Settings saved", "updated_at": now}
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# USER MANAGEMENT
+# ══════════════════════════════════════════════════════════════════════════════
+
 @router.get("/users")
 async def list_users(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     role: Optional[str] = None,
     search: Optional[str] = None,
+    status_filter: Optional[str] = Query(None, alias="status"),
     current_user=Depends(require_admin),
 ):
     where = "WHERE 1=1"
     params: list = []
 
     if role:
-        where += " AND role = ?"
-        params.append(role)
+        where += " AND (role = ? OR user_type = ?)"
+        params.extend([role, role])
     if search:
         where += " AND (name LIKE ? OR email LIKE ?)"
         params.extend([f"%{search}%", f"%{search}%"])
+    if status_filter:
+        if status_filter.lower() == "active":
+            where += " AND is_active = 1"
+        elif status_filter.lower() == "suspended":
+            where += " AND is_active = 0"
+
+    # Count total
+    count_result = execute_query(f"SELECT COUNT(*) as total FROM users {where}", params)
+    total = parse_rows(count_result)[0]["total"] if parse_rows(count_result) else 0
 
     offset = (page - 1) * page_size
     params.extend([page_size, offset])
 
     result = execute_query(
         f"""SELECT id, email, name, user_type, role, is_active, email_verified,
-                   profile_image_url, created_at, account_balance
+                   profile_image_url, created_at, account_balance, joined_at,
+                   bio, skills, hourly_rate, location, headline
             FROM users
             {where}
             ORDER BY created_at DESC
@@ -93,16 +128,16 @@ async def list_users(
     )
     rows = parse_rows(result)
 
-    count_result = execute_query(f"SELECT COUNT(*) as total FROM users {where}", [p for p in params[:-2]])
-    total = parse_rows(count_result)[0]["total"] if parse_rows(count_result) else 0
-
-    return {"items": rows if rows else [], "total": total, "page": page}
+    return {"users": rows if rows else [], "items": rows if rows else [], "total": total, "page": page}
 
 
 @router.get("/users/{user_id}")
 async def get_user(user_id: int, current_user=Depends(require_admin)):
     result = execute_query(
-        "SELECT id, email, name, user_type, role, is_active, email_verified, profile_image_url, created_at, account_balance, bio, skills, hourly_rate, location FROM users WHERE id = ?",
+        """SELECT id, email, name, user_type, role, is_active, email_verified,
+                  profile_image_url, created_at, account_balance, bio, skills,
+                  hourly_rate, location, headline, joined_at
+           FROM users WHERE id = ?""",
         [user_id],
     )
     rows = parse_rows(result)
@@ -130,7 +165,47 @@ async def update_user(user_id: int, request: AdminUserUpdate, current_user=Depen
     set_parts = [f"{k} = ?" for k in updates]
     values = list(updates.values()) + [user_id]
     execute_query(f"UPDATE users SET {', '.join(set_parts)} WHERE id = ?", values)
+
+    # Invalidate cached user so next request picks up changes
+    try:
+        user_result = execute_query("SELECT email FROM users WHERE id = ?", [user_id])
+        user_rows = parse_rows(user_result)
+        if user_rows:
+            invalidate_user_cache(user_rows[0]["email"])
+    except Exception:
+        pass
+
     return {"message": "User updated"}
+
+
+@router.post("/users/{user_id}/toggle-status")
+async def toggle_user_status(user_id: int, current_user=Depends(require_admin)):
+    """Toggle a user's active/suspended status."""
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot suspend your own account")
+
+    result = execute_query("SELECT id, is_active FROM users WHERE id = ?", [user_id])
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    current_active = bool(rows[0].get("is_active", 1))
+    new_status = 0 if current_active else 1
+    action = "suspended" if new_status == 0 else "activated"
+
+    execute_query("UPDATE users SET is_active = ? WHERE id = ?", [new_status, user_id])
+
+    # Invalidate cached user
+    try:
+        user_result = execute_query("SELECT email FROM users WHERE id = ?", [user_id])
+        user_rows = parse_rows(user_result)
+        if user_rows:
+            invalidate_user_cache(user_rows[0]["email"])
+    except Exception:
+        pass
+
+    logger.info(f"admin_user_{action} admin={current_user.id} target_user={user_id}")
+    return {"message": f"User {action}", "is_active": bool(new_status)}
 
 
 @router.delete("/users/{user_id}")
@@ -141,7 +216,7 @@ async def delete_user(user_id: int, current_user=Depends(require_admin)):
 
     # Check user exists
     user_result = execute_query("SELECT id, email, name FROM users WHERE id = ?", [user_id])
-    if not user_result or not user_result.get("rows"):
+    if not user_result or not parse_rows(user_result):
         raise HTTPException(status_code=404, detail="User not found")
 
     now = datetime.now(timezone.utc).isoformat()
@@ -170,11 +245,189 @@ async def delete_user(user_id: int, current_user=Depends(require_admin)):
         [now, user_id],
     )
 
-    # Log the action
-    logger.info(f"admin_user_deleted admin={current_user.id} target_user={user_id}")
+    # Invalidate cached user
+    try:
+        invalidate_user_cache(parse_rows(user_result)[0]["email"])
+    except Exception:
+        pass
 
+    logger.info(f"admin_user_deleted admin={current_user.id} target_user={user_id}")
     return {"message": "User deactivated successfully", "user_id": user_id}
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PROJECT MANAGEMENT (admin has full access)
+# ══════════════════════════════════════════════════════════════════════════════
+
+@router.get("/projects")
+async def list_projects(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    status: Optional[str] = None,
+    search: Optional[str] = None,
+    current_user=Depends(require_admin),
+):
+    """List all platform projects for admin management."""
+    where = "WHERE 1=1"
+    params: list = []
+
+    if status and status.lower() != "all":
+        where += " AND p.status = ?"
+        params.append(status.lower())
+    if search:
+        where += " AND (p.title LIKE ? OR p.description LIKE ?)"
+        params.extend([f"%{search}%", f"%{search}%"])
+
+    count_result = execute_query(
+        f"SELECT COUNT(*) as total FROM projects p {where}", params
+    )
+    total = parse_rows(count_result)[0]["total"] if parse_rows(count_result) else 0
+
+    offset = (page - 1) * page_size
+    params.extend([page_size, offset])
+
+    result = execute_query(
+        f"""SELECT p.id, p.title, p.description, p.category, p.status,
+                   p.budget_min, p.budget_max, p.budget_type, p.skills,
+                   p.client_id, p.created_at, p.updated_at,
+                   u.name AS client_name
+            FROM projects p
+            LEFT JOIN users u ON p.client_id = u.id
+            {where}
+            ORDER BY p.created_at DESC
+            LIMIT ? OFFSET ?""",
+        params,
+    )
+    rows = parse_rows(result) or []
+
+    projects = []
+    for r in rows:
+        projects.append({
+            "id": r.get("id"),
+            "title": r.get("title") or "Untitled",
+            "description": r.get("description") or "",
+            "client": r.get("client_name") or f"Client #{r.get('client_id', '?')}",
+            "client_id": r.get("client_id"),
+            "budget": f"${r.get('budget_min', 0) or 0} - ${r.get('budget_max', 0) or 0}",
+            "budget_min": r.get("budget_min"),
+            "budget_max": r.get("budget_max"),
+            "status": r.get("status") or "open",
+            "category": r.get("category") or "",
+            "skills": r.get("skills") or "",
+            "created_at": r.get("created_at") or "",
+            "updated_at": r.get("updated_at") or "",
+        })
+
+    return {"projects": projects, "items": projects, "total": total, "page": page}
+
+
+@router.get("/projects/{project_id}")
+async def get_project(project_id: int, current_user=Depends(require_admin)):
+    """Get a single project for admin."""
+    result = execute_query(
+        """SELECT p.id, p.title, p.description, p.category, p.status,
+                  p.budget_min, p.budget_max, p.budget_type, p.skills,
+                  p.client_id, p.created_at, p.updated_at,
+                  u.name AS client_name
+           FROM projects p
+           LEFT JOIN users u ON p.client_id = u.id
+           WHERE p.id = ?""",
+        [project_id],
+    )
+    rows = parse_rows(result)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Project not found")
+    r = rows[0]
+    return {
+        "id": r.get("id"),
+        "title": r.get("title") or "Untitled",
+        "description": r.get("description") or "",
+        "client": r.get("client_name") or f"Client #{r.get('client_id', '?')}",
+        "client_id": r.get("client_id"),
+        "budget": f"${r.get('budget_min', 0) or 0} - ${r.get('budget_max', 0) or 0}",
+        "budget_min": r.get("budget_min"),
+        "budget_max": r.get("budget_max"),
+        "status": r.get("status") or "open",
+        "category": r.get("category") or "",
+        "skills": r.get("skills") or "",
+        "created_at": r.get("created_at") or "",
+        "updated_at": r.get("updated_at") or "",
+    }
+
+
+@router.post("/projects")
+async def create_project(body: AdminProjectCreate, current_user=Depends(require_admin)):
+    """Admin can create any project on behalf of a client or as platform project."""
+    now = datetime.now(timezone.utc).isoformat()
+    result = execute_query(
+        """INSERT INTO projects (title, description, category, budget_min, budget_max,
+                  skills, status, client_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        [
+            body.title,
+            body.description or "",
+            body.category or "",
+            body.budget_min,
+            body.budget_max,
+            body.skills or "",
+            body.status or "open",
+            current_user.id,
+            now,
+            now,
+        ],
+    )
+    return {"message": "Project created", "id": result.get("last_inserted_id") if result else None}
+
+
+@router.put("/projects/{project_id}")
+async def update_project(project_id: int, body: AdminProjectUpdate, current_user=Depends(require_admin)):
+    """Admin can update any project."""
+    existing = execute_query("SELECT id FROM projects WHERE id = ?", [project_id])
+    if not parse_rows(existing):
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    updates = {k: v for k, v in body.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    set_parts = [f"{k} = ?" for k in updates]
+    values = list(updates.values()) + [project_id]
+    execute_query(f"UPDATE projects SET {', '.join(set_parts)} WHERE id = ?", values)
+    return {"message": "Project updated"}
+
+
+@router.delete("/projects/{project_id}")
+async def delete_project(project_id: int, current_user=Depends(require_admin)):
+    """Admin can delete any project. Cancels associated proposals and contracts."""
+    existing = execute_query("SELECT id FROM projects WHERE id = ?", [project_id])
+    if not parse_rows(existing):
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Cancel associated contracts
+    execute_query(
+        "UPDATE contracts SET status = 'cancelled', updated_at = ? WHERE project_id = ?",
+        [now, project_id],
+    )
+
+    # Withdraw associated proposals
+    execute_query(
+        "UPDATE proposals SET status = 'withdrawn', updated_at = ? WHERE project_id = ?",
+        [now, project_id],
+    )
+
+    # Delete the project
+    execute_query("DELETE FROM projects WHERE id = ?", [project_id])
+
+    logger.info(f"admin_project_deleted admin={current_user.id} project={project_id}")
+    return {"message": "Project deleted", "project_id": project_id}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAYMENTS (admin view)
+# ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/payments")
 async def list_admin_payments(
@@ -225,13 +478,17 @@ async def list_admin_payments(
             "description": r.get("description") or "",
             "payment_type": txn_type,
             "type": txn_type,
-            "user": r.get("client_name") or r.get("freelancer_name") or "—",
+            "user": r.get("client_name") or r.get("freelancer_name") or "\u2014",
             "role": "Client" if r.get("client_id") else "Freelancer",
             "created_at": r.get("created_at") or "",
         })
 
     return {"payments": payments, "total": len(payments), "page": page}
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PLATFORM STATS
+# ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/stats")
 async def get_stats(current_user=Depends(require_admin)):

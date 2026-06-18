@@ -317,13 +317,20 @@ export function useAuth(): UseAuthReturn {
 
     clearAuthData(); // also removes ml_user_role (see core.ts)
     // Broadcast logout to other tabs via localStorage (StorageEvent mechanism)
-    localStorage.setItem("auth_logout_broadcast", "true");
-    localStorage.removeItem("auth_logout_broadcast");
+    try {
+      localStorage.setItem("auth_logout_broadcast", "true");
+      localStorage.removeItem("auth_logout_broadcast");
+    } catch { /* ignore */ }
     if (isMounted.current) setUser(null);
     if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);
     }
-    router.push("/login");
+    // Force hard redirect to /login (clears any stale React state)
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    } else {
+      router.push("/login");
+    }
   }, [router]);
 
   const refreshUser = useCallback(async () => {
