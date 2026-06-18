@@ -236,6 +236,33 @@ export default function FreelancerProfilePage() {
     setProfile((p) => ({ ...p, skills: p.skills.filter((s) => s !== skill) }));
   };
 
+  const updateEducation = (
+    index: number,
+    field: keyof FreelancerProfile['education'][number],
+    value: string,
+  ) => {
+    setProfile((p) => ({
+      ...p,
+      education: p.education.map((e, i) =>
+        i === index ? { ...e, [field]: value } : e,
+      ),
+    }));
+  };
+
+  const addEducation = () => {
+    setProfile((p) => ({
+      ...p,
+      education: [...p.education, { school: '', degree: '', field: '', year: '' }],
+    }));
+  };
+
+  const removeEducation = (index: number) => {
+    setProfile((p) => ({
+      ...p,
+      education: p.education.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleAddProject = () => {
     const title = window.prompt('Project title');
     if (!title || !title.trim()) return;
@@ -271,6 +298,7 @@ export default function FreelancerProfilePage() {
           timezone: profile.timezone,
           hourly_rate: profile.hourlyRate,
           skills: profile.skills,
+          education: profile.education,
           experience_level: profile.experienceLevel,
           availability_status: profile.availability.toLowerCase(),
           profile_image_url: profile.avatar || null,
@@ -727,14 +755,71 @@ export default function FreelancerProfilePage() {
 
           {/* Education */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Education</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-white">Education</h3>
+              {editing && (
+                <button
+                  type="button"
+                  onClick={addEducation}
+                  className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+                >
+                  <Plus size={14} /> Add
+                </button>
+              )}
+            </div>
             <div className="space-y-3">
-              {profile.education.map((edu, i) => (
-                <div key={i}>
-                  <div className="font-medium text-gray-900 dark:text-white">{edu.degree} in {edu.field}</div>
-                  <div className="text-sm text-gray-500">{edu.school} • {edu.year}</div>
-                </div>
-              ))}
+              {editing ? (
+                profile.education.length === 0 ? (
+                  <p className="text-sm text-gray-400">No education added yet. Click “Add”.</p>
+                ) : (
+                  profile.education.map((edu, i) => (
+                    <div
+                      key={i}
+                      className="grid grid-cols-[1fr_1fr_1fr_90px_28px] gap-2 items-center"
+                    >
+                      <input
+                        value={edu.degree}
+                        onChange={(e) => updateEducation(i, 'degree', e.target.value)}
+                        placeholder="Degree"
+                        className="px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      <input
+                        value={edu.field}
+                        onChange={(e) => updateEducation(i, 'field', e.target.value)}
+                        placeholder="Field of study"
+                        className="px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      <input
+                        value={edu.school}
+                        onChange={(e) => updateEducation(i, 'school', e.target.value)}
+                        placeholder="School"
+                        className="px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      <input
+                        value={edu.year}
+                        onChange={(e) => updateEducation(i, 'year', e.target.value)}
+                        placeholder="Year"
+                        className="px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeEducation(i)}
+                        aria-label="Remove education entry"
+                        className="flex items-center justify-center w-7 h-7 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  ))
+                )
+              ) : (
+                profile.education.map((edu, i) => (
+                  <div key={i}>
+                    <div className="font-medium text-gray-900 dark:text-white">{edu.degree} in {edu.field}</div>
+                    <div className="text-sm text-gray-500">{edu.school} • {edu.year}</div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

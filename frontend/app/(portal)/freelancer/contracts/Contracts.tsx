@@ -11,7 +11,7 @@ import React, {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Loader2 } from "lucide-react";
+import { Loader2, FileText, Plus, SearchX } from "lucide-react";
 import { Button } from "@/app/components/atoms/Button";
 import { Badge } from "@/app/components/atoms/Badge";
 import { Modal } from "@/app/components/organisms/Modal";
@@ -1008,10 +1008,64 @@ const Contracts = () => {
                     role="status"
                     aria-live="polite"
                     className={styles.emptyState}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      textAlign: "center",
+                      gap: "0.75rem",
+                      padding: "3rem 1.5rem",
+                    }}
                   >
-                    {contracts.length === 0
-                      ? "No contracts yet. Contracts are created when a client accepts your proposal."
-                      : "No contracts match your current filters. Try adjusting your search or status filter."}
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: 56,
+                        height: 56,
+                        borderRadius: "9999px",
+                        background: "var(--color-primary-soft, rgba(69,115,223,0.12))",
+                        color: "var(--color-primary, #4573df)",
+                      }}
+                    >
+                      {contracts.length === 0 ? (
+                        <FileText size={26} />
+                      ) : (
+                        <SearchX size={26} />
+                      )}
+                    </div>
+                    <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600 }}>
+                      {contracts.length === 0
+                        ? "No contracts yet"
+                        : "No matching contracts"}
+                    </h3>
+                    <p style={{ margin: 0, maxWidth: 420, opacity: 0.7 }}>
+                      {contracts.length === 0
+                        ? "Contracts appear here once a client accepts your proposal — or send one yourself to get started."
+                        : "No contracts match your current filters. Try adjusting your search or status filter."}
+                    </p>
+                    {contracts.length === 0 ? (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => setShowNewContractModal(true)}
+                      >
+                        <Plus size={14} /> New Contract
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setQuery("");
+                          setStatusFilters([]);
+                        }}
+                      >
+                        Clear filters
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
