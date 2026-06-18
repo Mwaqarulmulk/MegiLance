@@ -7,6 +7,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+import json
+
 from app.core.security import get_current_user, require_admin
 from app.db.turso_http import execute_query, parse_rows, parse_date
 
@@ -17,6 +19,46 @@ class AdminUserUpdate(BaseModel):
     is_active: Optional[bool] = None
     role: Optional[str] = None
     email_verified: Optional[bool] = None
+
+
+# ── Platform settings (single JSON blob persisted in app_settings) ────────────
+
+def _ensure_settings_table() -> None:
+    execute_query(
+        """CREATE TABLE IF NOT EXISTS app_settings (
+               id INTEGER PRIMARY KEY,
+               data TEXT NOT NULL DEFAULT '{}',
+               updated_at TEXT
+           )""",
+        [],
+    )
+
+
+@router.get("/settings")
+async def get_platform_settings(current_user=Depends(require_admin)):
+    """Return the persisted platform settings JSON (empty object if unset)."""
+    _ensure_settings_table()
+    rows = parse_rows(execute_query("SELECT data FROM app_settings WHERE id = 1", []))
+    if not rows:
+        return {}
+    try:
+        return json.loads(rows[0].get("data") or "{}")
+    except (ValueError, TypeError):
+        return {}
+
+
+@router.put("/settings")
+async def update_platform_settings(payload: dict, current_user=Depends(require_admin)):
+    """Persist the full platform settings JSON blob (upsert single row)."""
+    _ensure_settings_table()
+    now = datetime.now(timezone.utc).isoformat()
+    data = json.dumps(payload)
+    execute_query(
+        """INSERT INTO app_settings (id, data, updated_at) VALUES (1, ?, ?)
+           ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at""",
+        [data, now],
+    )
+    return {"message": "Settings saved", "updated_at": now}
 
 
 @router.get("/users")
@@ -132,6 +174,63 @@ async def delete_user(user_id: int, current_user=Depends(require_admin)):
     logger.info(f"admin_user_deleted admin={current_user.id} target_user={user_id}")
 
     return {"message": "User deactivated successfully", "user_id": user_id}
+
+
+@router.get("/payments")
+async def list_admin_payments(
+    status_filter: Optional[str] = None,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(100, ge=1, le=500),
+    current_user=Depends(require_admin),
+):
+    """Platform-wide transactions for the admin payments page."""
+    where = "WHERE 1=1"
+    params: list = []
+    if status_filter and status_filter.lower() != "all":
+        where += " AND p.status = ?"
+        params.append(status_filter.lower())
+
+    offset = (page - 1) * page_size
+    params.extend([page_size, offset])
+
+    result = execute_query(
+        f"""SELECT p.id, p.amount, p.currency, p.status, p.description,
+                   p.payment_method, p.created_at, p.client_id, p.freelancer_id,
+                   cl.name AS client_name, fr.name AS freelancer_name
+            FROM payments p
+            LEFT JOIN users cl ON p.client_id = cl.id
+            LEFT JOIN users fr ON p.freelancer_id = fr.id
+            {where}
+            ORDER BY p.created_at DESC
+            LIMIT ? OFFSET ?""",
+        params,
+    )
+    rows = parse_rows(result) or []
+
+    payments = []
+    for r in rows:
+        desc = (r.get("description") or "").lower()
+        method = (r.get("payment_method") or "").lower()
+        if "refund" in desc or "refund" in method or r.get("status") == "refunded":
+            txn_type = "Refund"
+        elif "payout" in desc or "withdraw" in desc:
+            txn_type = "Payout"
+        else:
+            txn_type = "Deposit"
+        payments.append({
+            "id": r.get("id"),
+            "amount": r.get("amount") or 0,
+            "currency": r.get("currency") or "USD",
+            "status": (r.get("status") or "pending").capitalize(),
+            "description": r.get("description") or "",
+            "payment_type": txn_type,
+            "type": txn_type,
+            "user": r.get("client_name") or r.get("freelancer_name") or "—",
+            "role": "Client" if r.get("client_id") else "Freelancer",
+            "created_at": r.get("created_at") or "",
+        })
+
+    return {"payments": payments, "total": len(payments), "page": page}
 
 
 @router.get("/stats")

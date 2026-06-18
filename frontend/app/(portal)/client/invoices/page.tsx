@@ -61,6 +61,27 @@ interface RawInvoice {
   created_at?: string;
 }
 
+// Contract row from GET /contracts (snake_case, wrapped in { items }).
+interface RawContract {
+  id: number | string;
+  job_title?: string;
+  description?: string;
+  freelancer_name?: string;
+  client_name?: string;
+  amount?: number;
+  contract_amount?: number;
+  currency?: string;
+  status?: string;
+}
+
+interface ContractOption {
+  id: string;
+  title: string;
+  freelancerName: string;
+  amount: number;
+  currency: string;
+}
+
 const STATUS_MAP: Record<string, InvoiceStatus> = {
   draft: "pending",
   sent: "pending",
@@ -212,6 +233,9 @@ export default function ClientInvoicesPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [contracts, setContracts] = useState<ContractOption[]>([]);
+  const [contractsLoading, setContractsLoading] = useState(false);
+  const [selectedContractId, setSelectedContractId] = useState<string>("");
   const [form, setForm] = useState({
     freelancerName: "",
     freelancerEmail: "",
@@ -220,6 +244,51 @@ export default function ClientInvoicesPage() {
     notes: "",
     taxRate: 0,
   });
+
+  // Load the client's contracts when the create modal opens — an invoice must
+  // be raised against a real contract (backend requires contract_id).
+  useEffect(() => {
+    if (!showCreateModal || contracts.length > 0) return;
+    setContractsLoading(true);
+    apiFetch<{ items?: RawContract[] } | RawContract[]>("/contracts")
+      .then((data) => {
+        const rows = Array.isArray(data) ? data : (data?.items ?? []);
+        setContracts(
+          rows
+            .filter((c) =>
+              ["active", "pending", "in_progress"].includes(
+                String(c.status || "").toLowerCase(),
+              ),
+            )
+            .map((c) => ({
+              id: String(c.id),
+              title: c.job_title || c.description || `Contract #${c.id}`,
+              freelancerName: c.freelancer_name || "Freelancer",
+              amount: Number(c.amount ?? c.contract_amount) || 0,
+              currency: c.currency || "USD",
+            })),
+        );
+      })
+      .catch(() => setContracts([]))
+      .finally(() => setContractsLoading(false));
+  }, [showCreateModal, contracts.length]);
+
+  const onSelectContract = (id: string) => {
+    setSelectedContractId(id);
+    const c = contracts.find((x) => x.id === id);
+    if (c) {
+      setForm((f) => ({
+        ...f,
+        freelancerName: c.freelancerName,
+        projectTitle: c.title,
+      }));
+      setItems((prev) =>
+        prev.length === 1 && !prev[0].description && prev[0].unitPrice === 0
+          ? [{ description: c.title, quantity: 1, unitPrice: c.amount }]
+          : prev,
+      );
+    }
+  };
   const [items, setItems] = useState<NewInvoiceItem[]>([
     { description: "", quantity: 1, unitPrice: 0 },
   ]);
@@ -261,11 +330,20 @@ export default function ClientInvoicesPage() {
       taxRate: 0,
     });
     setItems([{ description: "", quantity: 1, unitPrice: 0 }]);
+    setSelectedContractId("");
     setSubmitError(null);
   };
 
   const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedContractId) {
+      setSubmitError("Select the contract this invoice is for.");
+      return;
+    }
+    if (total <= 0) {
+      setSubmitError("Invoice total must be greater than zero.");
+      return;
+    }
     setIsSubmitting(true);
     setSubmitError(null);
     try {
@@ -273,22 +351,10 @@ export default function ClientInvoicesPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          freelancer_name: form.freelancerName,
-          freelancer_email: form.freelancerEmail,
-          project_title: form.projectTitle,
-          due_date: form.dueDate,
-          notes: form.notes,
-          tax_rate: form.taxRate,
-          items: items.map((item) => ({
-            description: item.description,
-            quantity: item.quantity,
-            rate: item.unitPrice,
-          })),
-          amount: subtotal,
-          tax_amount: taxAmount,
-          total,
-          role: "client",
-          status: "pending",
+          contract_id: Number(selectedContractId),
+          amount: total,
+          description: form.projectTitle || form.notes || "Invoice",
+          due_date: form.dueDate || undefined,
         }),
       });
 
@@ -661,6 +727,45 @@ export default function ClientInvoicesPage() {
             </div>
 
             <form onSubmit={handleCreateInvoice} className="p-6 space-y-5">
+              {/* Contract selector — an invoice must be tied to a real contract */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5">
+                  Contract <span className="text-red-500">*</span>
+                </label>
+                {contractsLoading ? (
+                  <div className="text-sm text-gray-500 dark:text-gray-400 py-2">
+                    Loading your contracts…
+                  </div>
+                ) : contracts.length === 0 ? (
+                  <div className="text-sm text-amber-600 dark:text-amber-400 py-2">
+                    You have no active contracts yet. An invoice must be raised
+                    against a contract —{" "}
+                    <a
+                      href="/client/contracts"
+                      className="underline font-medium hover:opacity-80"
+                    >
+                      create one first
+                    </a>
+                    .
+                  </div>
+                ) : (
+                  <select
+                    required
+                    value={selectedContractId}
+                    onChange={(e) => onSelectContract(e.target.value)}
+                    className={inputCls}
+                  >
+                    <option value="">Select the contract this invoice is for…</option>
+                    {contracts.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title} — {c.freelancerName} ({c.currency}{" "}
+                        {c.amount.toLocaleString()})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
               {/* Freelancer + project */}
               <div className="grid grid-cols-2 gap-4">
                 <div>

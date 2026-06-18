@@ -16,8 +16,10 @@ import {
   Calendar,
   User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { SignaturePad } from "@/app/components/SignaturePad";
 import { apiFetch, APIError } from "@/lib/api/core";
+import { downloadContractPdf } from "@/lib/api/pdf";
 
 interface ContractMilestone {
   id: string;
@@ -64,9 +66,38 @@ const statusConfig: Record<string, { label: string; color: string }> = {
 type TabKey = "all" | "active" | "pending_signature" | "completed" | "disputed";
 
 export default function ClientContractsPage() {
+  const router = useRouter();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownloadPdf = async (contract: Contract) => {
+    setDownloadingId(contract.id);
+    try {
+      await downloadContractPdf({
+        contract_id: String(contract.id),
+        title: contract.title,
+        client_name: "Client",
+        freelancer_name: contract.freelancerName,
+        scope: contract.title,
+        total_amount: contract.totalAmount,
+        currency: contract.currency,
+        start_date: contract.startDate,
+        end_date: contract.endDate,
+        payment_type: contract.paymentType,
+        milestones: contract.milestones.map((m) => ({
+          title: m.title,
+          amount: m.amount,
+          dueDate: m.dueDate,
+        })),
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to download contract PDF.");
+    } finally {
+      setDownloadingId(null);
+    }
+  };
   const [expandedContract, setExpandedContract] = useState<string | null>(null);
   const [showSignModal, setShowSignModal] = useState(false);
   const [signingContractId, setSigningContractId] = useState<string | null>(null);
@@ -423,10 +454,26 @@ export default function ClientContractsPage() {
 
                     {/* Actions */}
                     <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <button className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <Download size={14} /> Download PDF
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownloadPdf(contract);
+                        }}
+                        disabled={downloadingId === contract.id}
+                        className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-60"
+                      >
+                        <Download size={14} />{" "}
+                        {downloadingId === contract.id ? "Preparing…" : "Download PDF"}
                       </button>
-                      <button className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/client/contracts/${contract.id}`);
+                        }}
+                        className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
                         <Eye size={14} /> View Details
                       </button>
                     </div>

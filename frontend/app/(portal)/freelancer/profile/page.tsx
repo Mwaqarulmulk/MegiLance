@@ -206,14 +206,40 @@ export default function FreelancerProfilePage() {
     }
   };
 
+  const handleRemoveSkill = (skill: string) => {
+    setProfile((p) => ({ ...p, skills: p.skills.filter((s) => s !== skill) }));
+  };
+
+  const handleAddProject = () => {
+    const title = window.prompt('Project title');
+    if (!title || !title.trim()) return;
+    const description = window.prompt('Short description (optional)') || '';
+    setProfile((p) => ({
+      ...p,
+      portfolio: [
+        ...p.portfolio,
+        {
+          id: `proj-${Date.now()}`,
+          title: title.trim(),
+          description: description.trim(),
+          images: [],
+          link: '',
+          skills: [],
+          date: new Date().toISOString().split('T')[0],
+        },
+      ],
+    }));
+    showToast('Project added. Click Save to keep your changes.', 'success');
+  };
+
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
-      await apiFetch('/profiles/me', {
+      await apiFetch('/auth/me', {
         method: 'PUT',
         body: JSON.stringify({
           full_name: profile.name,
-          title: profile.title,
+          headline: profile.title,
           bio: profile.bio,
           location: profile.location,
           timezone: profile.timezone,
@@ -358,7 +384,11 @@ export default function FreelancerProfilePage() {
               )}
               {saving ? 'Saving…' : editing ? 'Save Profile' : 'Edit Profile'}
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+            >
               <Download size={14} />
               Export PDF
             </button>
@@ -481,7 +511,11 @@ export default function FreelancerProfilePage() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Portfolio</h3>
                 {editing && (
-                  <button className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                  <button
+                    type="button"
+                    onClick={handleAddProject}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                  >
                     <Plus size={14} />
                     Add Project
                   </button>
@@ -523,7 +557,13 @@ export default function FreelancerProfilePage() {
                       </div>
                       <span className="text-sm text-gray-500">Expert</span>
                       {editing && (
-                        <button className="text-red-500 hover:text-red-700">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSkill(skill)}
+                          aria-label={`Remove ${skill}`}
+                          title={`Remove ${skill}`}
+                          className="text-red-500 hover:text-red-700"
+                        >
                           <Trash2 size={14} />
                         </button>
                       )}

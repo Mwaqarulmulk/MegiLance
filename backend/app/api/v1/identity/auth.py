@@ -298,6 +298,7 @@ async def get_me(current_user=Depends(get_current_user)):
         "skills": user_data.get("skills", ""),
         "hourly_rate": user_data.get("hourly_rate", 0),
         "profile_image_url": user_data.get("profile_image_url", ""),
+        "cover_image_url": user_data.get("cover_image_url", ""),
         "location": user_data.get("location", ""),
         "headline": user_data.get("headline", ""),
         "tagline": user_data.get("tagline", ""),
@@ -366,7 +367,14 @@ async def update_me(
         "video_intro_url", "resume_url", "profile_visibility", "profile_slug",
         "education", "certifications", "work_history", "achievements",
         "contact_preferences", "testimonials_enabled", "profile_image_url",
+        "cover_image_url",
     }
+    if "cover_image_url" in body:
+        try:
+            from app.services.auth_service import _ensure_cover_column
+            _ensure_cover_column()
+        except Exception:
+            pass
     # NOTE: `portfolio_projects` is intentionally excluded — there is no such
     # column on `users` (portfolio lives in the portfolio_items table). Including
     # it previously made update_user_fields reject the entire request with a 400,

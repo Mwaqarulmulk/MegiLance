@@ -15,6 +15,7 @@ from app.services.contracts_service import (
     fetch_contract_with_joins,
     contract_from_row,
     cancel_contract,
+    insert_project,
 )
 
 router = APIRouter()
@@ -109,6 +110,71 @@ async def create_contract(request: ContractCreate, current_user=Depends(get_curr
         raise HTTPException(status_code=500, detail="Failed to create contract")
 
     return {"message": "Contract created successfully", "contract_id": result.get("last_insert_rowid")}
+
+
+class ContractPropose(BaseModel):
+    title: str
+    client_name: Optional[str] = None
+    client_id: Optional[int] = None
+    amount: float = 0
+    currency: str = "USD"
+    description: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+
+
+@router.post("/propose")
+async def propose_contract(request: ContractPropose, current_user=Depends(get_current_user)):
+    """Freelancer-initiated contract proposal.
+
+    The current user (freelancer) drafts a contract addressed to a client. It is
+    created with status ``pending``; the client then signs it to make it active.
+    A lightweight project record carries the contract title so it displays in
+    listings (contracts have no title column of their own).
+    """
+    now = datetime.now(timezone.utc).isoformat()
+
+    title = (request.title or "").strip()
+    if not title:
+        raise HTTPException(status_code=422, detail="Contract title is required")
+
+    # Resolve the client: explicit id wins, else best-effort match on name.
+    client_id = request.client_id or 0
+    if not client_id and request.client_name:
+        match = execute_query(
+            "SELECT id FROM users WHERE name = ? AND user_type = 'client' LIMIT 1",
+            [request.client_name.strip()],
+        )
+        rows = parse_rows(match)
+        if rows:
+            client_id = int(rows[0]["id"])
+
+    # Create a project to hold the title (client_id may be 0 if unmatched).
+    project_id = insert_project(
+        title, request.description or "", client_id, request.amount, "fixed", now
+    )
+
+    result = execute_query(
+        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_amount,
+                  contract_type, currency, description, terms, milestones, status, start_date, end_date,
+                  created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, 'fixed', ?, ?, '', '', 'pending', ?, ?, ?, ?)""",
+        [
+            project_id, current_user.id, client_id, request.amount, request.amount,
+            request.currency or "USD", request.description or "",
+            request.start_date or now, request.end_date or "",
+            now, now,
+        ],
+    )
+
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to create contract")
+
+    return {
+        "message": "Contract proposal created successfully",
+        "contract_id": result.get("last_insert_rowid"),
+        "status": "pending",
+    }
 
 
 @router.post("/{contract_id}/sign")

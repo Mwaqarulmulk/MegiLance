@@ -4,6 +4,15 @@ import { apiFetch } from "@/lib/api";
 
 // @AI-HINT: Hook to fetch freelancer portal datasets (projects, jobs, wallet, analytics).
 
+// Normalize a match/fit score to a 0–100 percent regardless of whether the
+// backend sends a fraction (0–1) or an already-scaled value (0–100). Prevents
+// bugs like "8500% fit" from blindly multiplying an 0–100 score by 100.
+const toMatchPercent = (raw: unknown): number => {
+  const n = Number(raw) || 0;
+  const scaled = n > 0 && n <= 1 ? n * 100 : n;
+  return Math.max(0, Math.min(100, Math.round(scaled)));
+};
+
 interface ProjectResponse {
   id: number | string;
   title?: string;
@@ -220,7 +229,7 @@ export function useFreelancerData() {
               postedTime: r.created_at,
               skills: [],
               status: "Open" as const,
-              matchScore: Math.round((r.match_score || 0) * 100),
+              matchScore: toMatchPercent(r.match_score),
             }),
           );
         } else if (invitations.length > 0) {
@@ -234,7 +243,7 @@ export function useFreelancerData() {
             postedTime: inv.created_at || inv.sent_date,
             skills: [],
             status: "Open" as const,
-            matchScore: inv.fit_score ? Math.round(inv.fit_score * 100) : undefined,
+            matchScore: inv.fit_score ? toMatchPercent(inv.fit_score) : undefined,
           }));
         } else {
           // Tier 3: Fetch open projects from the projects API

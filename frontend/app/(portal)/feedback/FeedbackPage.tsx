@@ -22,7 +22,7 @@ import {
   HelpCircle,
   ChevronRight,
 } from 'lucide-react';
-import api from '@/lib/api';
+import { apiFetch } from '@/lib/api/core';
 
 type FeedbackType = 'bug_report' | 'feature_request' | 'general' | 'improvement' | 'complaint';
 type Priority = 'low' | 'medium' | 'high' | 'critical';
@@ -97,12 +97,16 @@ export default function FeedbackPage() {
     setSubmitting(true);
     setError('');
     try {
-      await (api as any).post('/feedback', {
-        type: selectedType,
-        title: title.trim(),
-        description: description.trim(),
-        category: priority,
-        metadata: { priority, rating, url: typeof window !== 'undefined' ? window.location.href : '' },
+      await apiFetch('/user-feedback', {
+        method: 'POST',
+        body: JSON.stringify({
+          feedback_type: selectedType,
+          title: title.trim(),
+          description: description.trim(),
+          category: priority,
+          rating: rating > 0 ? rating : null,
+          page_url: typeof window !== 'undefined' ? window.location.href : '',
+        }),
       });
       setSubmitted(true);
     } catch (err: any) {

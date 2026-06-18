@@ -24,10 +24,20 @@
   flex-shrink: 0;
 }
 
+/*
+  The input must cover the whole switch so the visible track/knob is clickable.
+  Previously it was 0×0, leaving the slider (a plain div, not a label) inert —
+  the switch looked toggleable but only the text label actually flipped it.
+*/
 .input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  width: 0;
-  height: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .slider {

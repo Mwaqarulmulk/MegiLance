@@ -16,6 +16,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { RichTextEditor } from "@/app/components/Editor";
+import { apiFetch } from "@/lib/api/core";
 
 interface DeliverableFile {
   id: string;
@@ -224,23 +225,42 @@ export default function DeliverablesPage() {
     }
   }, [showSubmitForm, selectedDeliverable, closeModals]);
 
-  const apiCall = async (url: string, method: string, body?: object) => {
+  // The backend exposes a single POST /deliverables/review endpoint that takes
+  // { deliverable_id, action } and returns the new status. Route through
+  // apiFetch so the auth token + API base are applied (raw fetch to
+  // /api/v1/... had no credentials and hit non-existent per-action routes).
+  const reviewDeliverable = async (
+    action: "approve" | "reject" | "request_revision",
+    extra?: { reviewer_notes?: string; rejection_reason?: string },
+  ) => {
+    if (!selectedDeliverable) return;
     setActionLoading(true);
     try {
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: body ? JSON.stringify(body) : undefined,
-      });
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-      const updated = await res.json();
-      setDeliverables((prev) =>
-        prev.map((d) => (d.id === updated.id ? { ...d, ...updated } : d)),
+      const res = await apiFetch<{ status?: Deliverable["status"] }>(
+        "/deliverables/review",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            deliverable_id: String(selectedDeliverable.id),
+            action,
+            ...extra,
+          }),
+        },
       );
-      if (selectedDeliverable?.id === updated.id) {
-        setSelectedDeliverable({ ...selectedDeliverable, ...updated });
-      }
-      return updated;
+      const newStatus = (res?.status ||
+        (action === "approve"
+          ? "approved"
+          : action === "reject"
+            ? "rejected"
+            : "revision_requested")) as Deliverable["status"];
+      const targetId = selectedDeliverable.id;
+      setDeliverables((prev) =>
+        prev.map((d) => (d.id === targetId ? { ...d, status: newStatus } : d)),
+      );
+      setSelectedDeliverable((cur) =>
+        cur && cur.id === targetId ? { ...cur, status: newStatus } : cur,
+      );
+      return res;
     } catch (err) {
       console.error(err);
       alert("Action failed. Please try again.");
@@ -250,55 +270,67 @@ export default function DeliverablesPage() {
   };
 
   const handleApprove = async () => {
-    if (!selectedDeliverable) return;
-    await apiCall(
-      `/api/v1/deliverables/${selectedDeliverable.id}/approve`,
-      "PATCH",
-    );
-    closeModals();
+    const ok = await reviewDeliverable("approve");
+    if (ok) closeModals();
   };
 
   const handleRequestRevision = async () => {
-    if (!selectedDeliverable) return;
-    await apiCall(
-      `/api/v1/deliverables/${selectedDeliverable.id}/request-revision`,
-      "PATCH",
-      { revision_notes: revisionNotes },
-    );
-    setRevisionNotes("");
+    const ok = await reviewDeliverable("request_revision", {
+      reviewer_notes: revisionNotes,
+    });
+    if (ok) {
+      setRevisionNotes("");
+      closeModals();
+    }
   };
 
   const handleReject = async () => {
-    if (!selectedDeliverable) return;
-    await apiCall(
-      `/api/v1/deliverables/${selectedDeliverable.id}/reject`,
-      "PATCH",
-      { rejection_reason: rejectionReason },
-    );
-    setRejectionReason("");
-    closeModals();
+    const ok = await reviewDeliverable("reject", {
+      rejection_reason: rejectionReason,
+    });
+    if (ok) {
+      setRejectionReason("");
+      closeModals();
+    }
   };
 
   const handleAddComment = async () => {
     if (!selectedDeliverable || !newComment.trim()) return;
-    const comment = await apiCall(
-      `/api/v1/deliverables/${selectedDeliverable.id}/comments`,
-      "POST",
-      { text: newComment.trim() },
-    );
-    if (comment) {
+    setActionLoading(true);
+    try {
+      const res = await apiFetch<{ comment_id?: string; created_at?: string }>(
+        "/deliverables/comment",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            deliverable_id: String(selectedDeliverable.id),
+            comment: newComment.trim(),
+          }),
+        },
+      );
+      const comment = {
+        id: res?.comment_id || `c${Date.now()}`,
+        user: "You",
+        text: newComment.trim(),
+        date: res?.created_at || new Date().toISOString(),
+      };
+      const targetId = selectedDeliverable.id;
       setDeliverables((prev) =>
         prev.map((d) =>
-          d.id === selectedDeliverable.id
-            ? { ...d, comments: [...d.comments, comment] }
-            : d,
+          d.id === targetId ? { ...d, comments: [...d.comments, comment] } : d,
         ),
       );
-      setSelectedDeliverable({
-        ...selectedDeliverable,
-        comments: [...selectedDeliverable.comments, comment],
-      });
+      setSelectedDeliverable((cur) =>
+        cur && cur.id === targetId
+          ? { ...cur, comments: [...cur.comments, comment] }
+          : cur,
+      );
       setNewComment("");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add comment. Please try again.");
+    } finally {
+      setActionLoading(false);
     }
   };
 

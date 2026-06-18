@@ -274,6 +274,12 @@ const nextConfig = {
         destination: '/callback',
         permanent: false,
       },
+      // Singular alias → canonical referrals dashboard
+      {
+        source: '/referral',
+        destination: '/referrals',
+        permanent: true,
+      },
       // Redirect www to non-www
       {
         source: '/:path*',

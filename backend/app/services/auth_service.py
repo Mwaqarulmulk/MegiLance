@@ -128,7 +128,7 @@ def check_email_available(email: str, exclude_user_id: int) -> bool:
 _ALLOWED_USER_COLUMNS = frozenset({
     "email", "hashed_password", "is_active", "is_verified", "email_verified",
     "name", "user_type", "role", "bio", "skills", "hourly_rate",
-    "profile_image_url", "location", "profile_data",
+    "profile_image_url", "cover_image_url", "location", "profile_data",
     "two_factor_enabled", "two_factor_secret", "two_factor_backup_codes",
     "account_balance", "phone", "company", "website", "updated_at",
     "password_reset_token", "password_reset_expires", "email_verification_token",
@@ -170,15 +170,32 @@ def update_user_fields(user_id: int, update_data: Dict[str, Any]) -> Any:
     )
 
 
+_cover_col_ensured = False
+
+
+def _ensure_cover_column() -> None:
+    """Ensure users.cover_image_url exists before /auth/me selects it.
+    Idempotent; the ALTER fails harmlessly when the column already exists."""
+    global _cover_col_ensured
+    if _cover_col_ensured:
+        return
+    try:
+        execute_query("ALTER TABLE users ADD COLUMN cover_image_url TEXT", [])
+    except Exception:
+        pass
+    _cover_col_ensured = True
+
+
 def get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
     """Fetch a user by ID, returning a parsed user dict or None.
 
     Selects the full rich profile so /auth/me hydrates every field the
     freelancer profile editor and public profile rely on.
     """
+    _ensure_cover_column()
     result = execute_query(
         """SELECT id, email, is_active, is_verified, email_verified, name, user_type, role,
-                  bio, skills, hourly_rate, profile_image_url, location, profile_data,
+                  bio, skills, hourly_rate, profile_image_url, cover_image_url, location, profile_data,
                   headline, tagline, experience_level, years_of_experience, languages,
                   timezone, availability_status, availability_hours, preferred_project_size,
                   industry_focus, tools_and_technologies, linkedin_url, github_url,

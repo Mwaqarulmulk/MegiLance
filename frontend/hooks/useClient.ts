@@ -82,12 +82,15 @@ export function useClientData() {
 
     setLoading(true);
     setError(null);
+    // Fail fast to the empty/error state instead of appearing to hang
+    // indefinitely if an upstream request never settles.
     const safetyTimeout = setTimeout(() => {
       if (mountedRef.current) {
         loadingRef.current = false;
         setLoading(false);
+        setError((prev) => prev ?? "Some data took too long to load.");
       }
-    }, 15000);
+    }, 8000);
 
     try {
       const freelancersPromise =

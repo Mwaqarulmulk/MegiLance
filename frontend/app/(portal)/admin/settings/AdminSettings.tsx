@@ -1,7 +1,7 @@
 // @AI-HINT: Enterprise Admin Settings — comprehensive platform configuration: general, security, API, SMTP, file storage, sessions, maintenance, notifications, database
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { apiFetch } from '@/lib/api';
@@ -222,6 +222,66 @@ const AdminSettings: React.FC = () => {
   const [backupEnabled, setBackupEnabled] = useState(true);
   const [backupFrequency, setBackupFrequency] = useState('daily');
   const [backupRetention, setBackupRetention] = useState('30');
+
+  // Hydrate persisted settings on mount so a reload shows saved values
+  // (previously every field reset to its hardcoded default).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = (await apiFetch('/admin/settings')) as any;
+        if (cancelled || !data || typeof data !== 'object') return;
+        const str = (v: any, set: (x: string) => void) => {
+          if (v !== undefined && v !== null) set(String(v));
+        };
+        const bool = (v: any, set: (x: boolean) => void) => {
+          if (typeof v === 'boolean') set(v);
+        };
+        const g = data.general || {};
+        str(g.companyName, setCompanyName); str(g.tagline, setTagline);
+        str(g.supportEmail, setSupportEmail); str(g.siteUrl, setSiteUrl);
+        str(g.defaultLocale, setDefaultLocale); str(g.timezone, setTimezone);
+        bool(g.signupsEnabled, setSignupsEnabled); bool(g.maintenanceMode, setMaintenanceMode);
+        const sec = data.security || {};
+        bool(sec.require2FA, setRequire2FA); str(sec.passwordMinLength, setPasswordMinLength);
+        bool(sec.requireSpecialChars, setRequireSpecialChars); bool(sec.requireUppercase, setRequireUppercase);
+        str(sec.maxLoginAttempts, setMaxLoginAttempts); str(sec.lockoutDuration, setLockoutDuration);
+        str(sec.ipWhitelist, setIpWhitelist); bool(sec.csrfProtection, setCsrfProtection);
+        str(sec.contentSecurityPolicy, setContentSecurityPolicy);
+        const a = data.api || {};
+        bool(a.rateLimitEnabled, setRateLimitEnabled); str(a.rateLimitPerMin, setRateLimitPerMin);
+        str(a.rateLimitBurst, setRateLimitBurst); str(a.apiKeyRotationDays, setApiKeyRotationDays);
+        str(a.corsOrigins, setCorsOrigins); str(a.requestTimeout, setRequestTimeout);
+        str(a.maxPayloadSizeMB, setMaxPayloadSizeMB);
+        const em = data.email || {};
+        str(em.smtpHost, setSmtpHost); str(em.smtpPort, setSmtpPort); str(em.smtpUser, setSmtpUser);
+        bool(em.smtpTls, setSmtpTls); str(em.emailFromName, setEmailFromName);
+        str(em.emailFromAddress, setEmailFromAddress);
+        const st = data.storage || {};
+        str(st.storageProvider, setStorageProvider); str(st.maxFileSize, setMaxFileSize);
+        str(st.allowedFileTypes, setAllowedFileTypes); str(st.s3Bucket, setS3Bucket); str(st.s3Region, setS3Region);
+        const ss = data.sessions || {};
+        str(ss.accessTokenTTL, setAccessTokenTTL); str(ss.refreshTokenTTL, setRefreshTokenTTL);
+        str(ss.sessionConcurrency, setSessionConcurrency); str(ss.idleTimeout, setIdleTimeout);
+        str(ss.rememberMeDays, setRememberMeDays);
+        const mt = data.maintenance || {};
+        str(mt.maintenanceMsg, setMaintenanceMsg); str(mt.maintenanceAllowedIPs, setMaintenanceAllowedIPs);
+        str(mt.maintenanceScheduled, setMaintenanceScheduled);
+        const n = data.notifications || {};
+        bool(n.emailAlerts, setEmailAlerts); bool(n.smsAlerts, setSmsAlerts); str(n.slackWebhook, setSlackWebhook);
+        bool(n.alertOnLogin, setAlertOnLogin); bool(n.alertOnPayment, setAlertOnPayment);
+        bool(n.alertOnDispute, setAlertOnDispute); bool(n.alertOnError, setAlertOnError);
+        bool(n.dailyDigest, setDailyDigest);
+        const db = data.database || {};
+        str(db.dbUrl, setDbUrl); str(db.poolSize, setPoolSize); str(db.queryTimeout, setQueryTimeout);
+        bool(db.backupEnabled, setBackupEnabled); str(db.backupFrequency, setBackupFrequency);
+        str(db.backupRetention, setBackupRetention);
+      } catch {
+        /* keep defaults if settings can't be loaded */
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const sections: SectionMeta[] = useMemo(() => [
     { id: 'general', title: 'General', icon: Settings, description: 'Organization, branding & regional' },

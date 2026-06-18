@@ -68,3 +68,38 @@ export async function downloadInvoicePdf(
 ): Promise<void> {
   await downloadBlob("/pdf/invoice", { ...payload }, `invoice-${payload.invoice_number}.pdf`);
 }
+
+export interface ContractPdfPayload {
+  contract_id: string;
+  title: string;
+  client_name: string;
+  client_email?: string;
+  freelancer_name: string;
+  freelancer_email?: string;
+  scope: string;
+  terms?: string[];
+  total_amount: number;
+  currency?: string;
+  start_date?: string | null;
+  end_date?: string | null;
+  payment_type?: string;
+  milestones?: { title: string; amount: number; dueDate?: string }[];
+}
+
+/** Generate and download a contract PDF via POST /pdf/contract. */
+export async function downloadContractPdf(
+  payload: ContractPdfPayload,
+): Promise<void> {
+  await downloadBlob(
+    "/pdf/contract",
+    {
+      client_email: "",
+      freelancer_email: "",
+      terms: [],
+      currency: "USD",
+      payment_type: "fixed",
+      ...payload,
+    },
+    `contract-${payload.contract_id}.pdf`,
+  );
+}

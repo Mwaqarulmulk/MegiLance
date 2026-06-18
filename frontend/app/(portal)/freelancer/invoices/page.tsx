@@ -826,6 +826,45 @@ export default function InvoicesPage() {
             </div>
 
             <form onSubmit={handleCreateInvoice} className="p-6 space-y-5">
+              {/* Contract selector — an invoice must be tied to a real contract */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5">
+                  Contract <span className="text-red-500">*</span>
+                </label>
+                {contractsLoading ? (
+                  <div className="text-sm text-gray-500 dark:text-gray-400 py-2">
+                    Loading your contracts…
+                  </div>
+                ) : contracts.length === 0 ? (
+                  <div className="text-sm text-amber-600 dark:text-amber-400 py-2">
+                    You have no active contracts yet. An invoice must be raised
+                    against a contract —{" "}
+                    <a
+                      href="/freelancer/contracts"
+                      className="underline font-medium hover:opacity-80"
+                    >
+                      create one first
+                    </a>
+                    .
+                  </div>
+                ) : (
+                  <select
+                    required
+                    value={selectedContractId}
+                    onChange={(e) => onSelectContract(e.target.value)}
+                    className={inputCls}
+                  >
+                    <option value="">Select the contract this invoice is for…</option>
+                    {contracts.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title} — {c.clientName} ({c.currency}{" "}
+                        {c.amount.toLocaleString()})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
               {/* Client info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>

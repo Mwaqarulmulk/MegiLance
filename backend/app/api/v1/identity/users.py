@@ -132,15 +132,32 @@ def autocomplete_freelancers_endpoint(
     return {"items": items}
 
 
+_cover_col_ensured = False
+
+
+def _ensure_cover_column() -> None:
+    """Make sure users.cover_image_url exists before it is selected/updated.
+    Idempotent and safe to call repeatedly (ALTER fails harmlessly if present)."""
+    global _cover_col_ensured
+    if _cover_col_ensured:
+        return
+    try:
+        execute_query("ALTER TABLE users ADD COLUMN cover_image_url TEXT", [])
+    except Exception:
+        pass  # column already exists
+    _cover_col_ensured = True
+
+
 @router.get("/me")
 def get_current_user_profile(
     current_user=Depends(get_current_user)
 ):
     """Get the current user's profile"""
     user_id = current_user.get("user_id")
+    _ensure_cover_column()
     result = execute_query(
         """SELECT id, name, email, user_type, role, bio, skills, hourly_rate,
-                  profile_image_url, location, headline, experience_level,
+                  profile_image_url, cover_image_url, location, headline, experience_level,
                   years_of_experience, availability_status, availability_hours,
                   profile_slug, profile_visibility, profile_views, seller_level,
                   languages, industry_focus, tools_and_technologies,
@@ -174,7 +191,7 @@ def get_current_user_profile(
 # (email, role, hashed_password, account_balance, verification flags, …) are
 # intentionally excluded so they can never be set through this endpoint.
 _EDITABLE_PROFILE_FIELDS = {
-    "name", "bio", "skills", "hourly_rate", "profile_image_url", "location",
+    "name", "bio", "skills", "hourly_rate", "profile_image_url", "cover_image_url", "location",
     "headline", "tagline", "experience_level", "years_of_experience", "languages",
     "availability_status", "availability_hours", "industry_focus",
     "tools_and_technologies", "linkedin_url", "github_url", "website_url",
@@ -209,6 +226,9 @@ def update_current_user_profile(data: dict, current_user=Depends(get_current_use
 
     if not updates:
         raise HTTPException(status_code=400, detail="No valid profile fields to update")
+
+    if "cover_image_url" in updates:
+        _ensure_cover_column()
 
     from datetime import datetime, timezone
     updates["updated_at"] = datetime.now(timezone.utc).isoformat()

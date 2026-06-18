@@ -30,7 +30,9 @@ class FeedbackUpdate(BaseModel):
 @router.post("")
 async def submit_feedback(request: FeedbackCreate, current_user=Depends(get_current_user)):
     """Submit user feedback (NPS, feature request, bug report, etc.)"""
-    if request.feedback_type not in ("nps", "feature_request", "bug_report", "general"):
+    if request.feedback_type not in (
+        "nps", "feature_request", "bug_report", "general", "improvement", "complaint"
+    ):
         raise HTTPException(status_code=400, detail="Invalid feedback type")
 
     if request.rating is not None:

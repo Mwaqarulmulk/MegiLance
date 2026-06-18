@@ -393,21 +393,22 @@ const Contracts = () => {
       return;
     setNewContractLoading(true);
     try {
-      await apiFetch("/contracts", {
+      await apiFetch("/contracts/propose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: newContractForm.projectTitle,
-          client_name: newContractForm.clientName,
+          title: newContractForm.projectTitle.trim(),
+          client_name: newContractForm.clientName.trim(),
           amount: parseFloat(newContractForm.value) || 0,
-          start_date: newContractForm.startDate,
-          end_date: newContractForm.endDate,
+          start_date: newContractForm.startDate || undefined,
+          end_date: newContractForm.endDate || undefined,
           description: newContractForm.description,
         }),
       });
       toaster.notify({
-        title: "Contract created",
-        description: "New contract created successfully.",
+        title: "Contract proposal sent",
+        description:
+          "Your contract was created with status Pending. The client will be asked to accept it.",
         variant: "success",
       });
       setShowNewContractModal(false);

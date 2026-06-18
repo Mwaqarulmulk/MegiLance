@@ -29,6 +29,9 @@ interface AdminPaymentResponse {
   payment_type?: string;
   amount?: number;
   status?: string;
+  user?: string;
+  role?: string;
+  type?: string;
 }
 
 interface AdminTicketResponse {

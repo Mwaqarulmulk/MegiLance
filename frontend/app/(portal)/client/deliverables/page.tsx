@@ -15,6 +15,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
+import { apiFetch } from "@/lib/api/core";
 
 interface Deliverable {
   id: string;
@@ -29,7 +30,7 @@ interface Deliverable {
     | "approved"
     | "rejected"
     | "revision_requested";
-  files: { id: string; name: string; size: number }[];
+  files: { id: string; name: string; size: number; url?: string }[];
   submittedAt: string;
   comments: { id: string; user: string; text: string; date: string }[];
 }
@@ -73,8 +74,6 @@ function formatFileSize(bytes: number): string {
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
 
-const API_BASE = "/api/v1";
-
 export default function ClientDeliverablesPage() {
   const [deliverables, setDeliverables] =
     useState<Deliverable[]>(mockDeliverables);
@@ -107,87 +106,72 @@ export default function ClientDeliverablesPage() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [selectedDeliverable]);
 
-  const handleApprove = async () => {
+  // Single backend endpoint: POST /deliverables/review { deliverable_id, action }.
+  const reviewDeliverable = async (
+    action: "approve" | "reject" | "request_revision",
+    newStatus: Deliverable["status"],
+    extra: { reviewer_notes?: string; rejection_reason?: string },
+    successMsg: string,
+    successType: "success" | "error" = "success",
+  ) => {
     if (!selectedDeliverable) return;
     const id = selectedDeliverable.id;
-    setActionLoading("approve");
+    setActionLoading(action === "request_revision" ? "revision" : action);
     try {
-      const token = localStorage.getItem("auth_token");
-      await fetch(`${API_BASE}/deliverables/${id}/approve`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+      await apiFetch("/deliverables/review", {
+        method: "POST",
+        body: JSON.stringify({ deliverable_id: String(id), action, ...extra }),
       });
+      setDeliverables((prev) =>
+        prev.map((d) => (d.id === id ? { ...d, status: newStatus } : d)),
+      );
+      setSelectedDeliverable(null);
+      setReviewNotes("");
+      showToast(successMsg, successType);
     } catch (err) {
-      showToast("Failed to approve deliverable. Please try again.", "error");
+      showToast("Action failed. Please try again.", "error");
+    } finally {
+      setActionLoading(null);
     }
-    setDeliverables((prev) =>
-      prev.map((d) =>
-        d.id === id ? { ...d, status: "approved" as const } : d,
-      ),
-    );
-    setSelectedDeliverable(null);
-    setReviewNotes("");
-    setActionLoading(null);
-    showToast("Deliverable approved successfully! ✓");
   };
 
-  const handleRequestRevision = async () => {
-    if (!selectedDeliverable) return;
-    const id = selectedDeliverable.id;
-    setActionLoading("revision");
-    try {
-      const token = localStorage.getItem("auth_token");
-      await fetch(`${API_BASE}/deliverables/${id}/request-revision`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ revision_notes: reviewNotes }),
-      });
-    } catch (err) {
-      showToast("Failed to request revision. Please try again.", "error");
-    }
-    setDeliverables((prev) =>
-      prev.map((d) =>
-        d.id === id ? { ...d, status: "revision_requested" as const } : d,
-      ),
-    );
-    setSelectedDeliverable(null);
-    setReviewNotes("");
-    setActionLoading(null);
-    showToast("Revision requested. The freelancer has been notified.");
-  };
+  const handleApprove = () =>
+    reviewDeliverable("approve", "approved", {}, "Deliverable approved successfully! ✓");
 
-  const handleReject = async () => {
-    if (!selectedDeliverable) return;
-    const id = selectedDeliverable.id;
-    setActionLoading("reject");
-    try {
-      const token = localStorage.getItem("auth_token");
-      await fetch(`${API_BASE}/deliverables/${id}/reject`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ rejection_reason: reviewNotes }),
-      });
-    } catch (err) {
-      showToast("Failed to reject deliverable. Please try again.", "error");
-    }
-    setDeliverables((prev) =>
-      prev.map((d) =>
-        d.id === id ? { ...d, status: "rejected" as const } : d,
-      ),
+  const handleRequestRevision = () =>
+    reviewDeliverable(
+      "request_revision",
+      "revision_requested",
+      { reviewer_notes: reviewNotes },
+      "Revision requested. The freelancer has been notified.",
     );
-    setSelectedDeliverable(null);
-    setReviewNotes("");
-    setActionLoading(null);
-    showToast("Deliverable rejected.", "error");
+
+  const handleReject = () =>
+    reviewDeliverable(
+      "reject",
+      "rejected",
+      { rejection_reason: reviewNotes },
+      "Deliverable rejected.",
+      "error",
+    );
+
+  // Open or download a submitted file. Files without a URL (demo data) get a
+  // clear message rather than a dead button.
+  const openFile = (file: { name: string; url?: string }, download = false) => {
+    if (!file.url) {
+      showToast("This file is not available for download yet.", "error");
+      return;
+    }
+    if (download) {
+      const a = document.createElement("a");
+      a.href = file.url;
+      a.download = file.name;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.click();
+    } else {
+      window.open(file.url, "_blank", "noopener");
+    }
   };
 
   return (
@@ -300,10 +284,22 @@ export default function ClientDeliverablesPage() {
                         </span>
                       </div>
                       <div className="flex gap-1">
-                        <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        <button
+                          type="button"
+                          onClick={() => openFile(file, true)}
+                          aria-label={`Download ${file.name}`}
+                          title={`Download ${file.name}`}
+                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                        >
                           <Download size={14} />
                         </button>
-                        <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        <button
+                          type="button"
+                          onClick={() => openFile(file, false)}
+                          aria-label={`View ${file.name}`}
+                          title={`View ${file.name}`}
+                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                        >
                           <Eye size={14} />
                         </button>
                       </div>

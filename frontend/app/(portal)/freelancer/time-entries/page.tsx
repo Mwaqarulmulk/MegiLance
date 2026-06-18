@@ -70,12 +70,45 @@ const formatDate = (dateStr: string): string => {
 };
 
 const statusConfig: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pending", color: "#64748b" },
   running: { label: "Running", color: "#22c55e" },
   paused: { label: "Paused", color: "#f59e0b" },
   completed: { label: "Completed", color: "#3b82f6" },
   approved: { label: "Approved", color: "#8b5cf6" },
   invoiced: { label: "Invoiced", color: "#06b6d4" },
+  rejected: { label: "Rejected", color: "#ef4444" },
 };
+
+// Backend time_entries rows use a different shape (hours/date/description) than
+// this UI expects; normalize so the page never crashes on missing fields.
+const normalizeEntry = (r: any): TimeEntry => {
+  const hours = Number(r?.hours) || 0;
+  return {
+    id: String(r?.id ?? ""),
+    project_id: String(r?.contract_id ?? r?.project_id ?? ""),
+    project_name: r?.project_title || r?.project_name || "Project",
+    task_description: r?.task_description || r?.description || "—",
+    start_time: r?.start_time || r?.date || r?.created_at || new Date().toISOString(),
+    end_time: r?.end_time ?? null,
+    duration_minutes:
+      typeof r?.duration_minutes === "number"
+        ? r.duration_minutes
+        : Math.round(hours * 60),
+    hourly_rate: Number(r?.hourly_rate) || 0,
+    billable: r?.billable ?? true,
+    status: (r?.status as TimeEntry["status"]) || "completed",
+    notes: r?.notes || "",
+    tags: Array.isArray(r?.tags) ? r.tags : [],
+    created_at: r?.date || r?.created_at || new Date().toISOString(),
+  };
+};
+
+const normalizeSummary = (s: any): WeekSummary => ({
+  total_hours: Number(s?.total_hours) || 0,
+  billable_hours: Number(s?.billable_hours ?? s?.total_hours) || 0,
+  total_earnings: Number(s?.total_earnings ?? s?.total_amount) || 0,
+  projects_worked: Number(s?.projects_worked ?? s?.entry_count) || 0,
+});
 
 export default function TimeEntriesPage() {
   const { resolvedTheme } = useTheme();
@@ -134,11 +167,18 @@ export default function TimeEntriesPage() {
       const projectsData = projectsRes.status === "fulfilled" ? projectsRes.value : null;
       const summaryData = summaryRes.status === "fulfilled" ? summaryRes.value : null;
 
-      setEntries(entriesData?.items || entriesData || []);
-      setProjects(projectsData?.items || projectsData || []);
-      if (summaryData) setWeekSummary(summaryData);
+      const rawItems = entriesData?.items || entriesData || [];
+      const items = (Array.isArray(rawItems) ? rawItems : []).map(normalizeEntry);
+      const rawProjects = projectsData?.items || projectsData || [];
+      setEntries(items);
+      setProjects(
+        (Array.isArray(rawProjects) ? rawProjects : []).map((p: any) => ({
+          id: String(p?.id ?? ""),
+          name: p?.name || p?.title || "Untitled project",
+        })),
+      );
+      if (summaryData) setWeekSummary(normalizeSummary(summaryData));
 
-      const items = entriesData?.items || entriesData || [];
       const running = items.find((e: TimeEntry) => e.status === "running");
       if (running) setActiveTimer(running);
     } catch (error) {
