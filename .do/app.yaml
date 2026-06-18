@@ -9,7 +9,7 @@ services:
 # ────────────────────────────────────────────────────────────────
 - name: web
   source_dir: frontend
-  build_command: npm ci --legacy-peer-deps && npm run build
+  build_command: npm ci --legacy-peer-deps && npm install --legacy-peer-deps --no-save autoprefixer@10.4.21 lightningcss-linux-x64-gnu@1.32.0 @tailwindcss/oxide-linux-x64-gnu@4.2.4 && NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true TURBOPACK=0 ./node_modules/.bin/next build
   run_command: PORT=3000 node .next/standalone/server.js
   github:
     repo: ghulam-mujtaba5/MegiLance

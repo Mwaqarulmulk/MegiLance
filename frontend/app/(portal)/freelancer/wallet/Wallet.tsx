@@ -78,7 +78,7 @@ const Wallet: React.FC = () => {
   const [withdrawError, setWithdrawError] = useState<string>('');
   const [depositOpen, setDepositOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState<string>('');
-  const [depositMethod, setDepositMethod] = useState<'metamask' | 'bank_transfer'>('metamask');
+  const [depositMethod, setDepositMethod] = useState<'crypto' | 'bank_transfer'>('crypto');
 
   interface TxRow {
     id: string;
@@ -206,7 +206,7 @@ const Wallet: React.FC = () => {
 
   const openDeposit = () => {
     setDepositAmount('');
-    setDepositMethod('metamask');
+    setDepositMethod('crypto');
     setDepositOpen(true);
   };
 
@@ -573,8 +573,8 @@ const Wallet: React.FC = () => {
             {/* Deposit Method Selector */}
             <div className={styles.filterRow}>
               <button
-                className={`${styles.filterBtn} ${depositMethod === 'metamask' ? styles.filterBtnActive : ''}`}
-                onClick={() => setDepositMethod('metamask')}
+                className={`${styles.filterBtn} ${depositMethod === 'crypto' ? styles.filterBtnActive : ''}`}
+                onClick={() => setDepositMethod('crypto')}
               >
                 <WalletIcon size={14} /> MetaMask
               </button>
@@ -586,7 +586,7 @@ const Wallet: React.FC = () => {
               </button>
             </div>
 
-            {depositMethod === 'metamask' ? (
+            {depositMethod === 'crypto' ? (
               <>
                 <label htmlFor="deposit-amount" className={styles.formLabel}>
                   Deposit Amount (USD)

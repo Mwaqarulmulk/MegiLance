@@ -159,9 +159,7 @@ services:
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-1gb-fixed
   name: ai-service
-- build_command: npm install --legacy-peer-deps --no-save autoprefixer@10.4.21 lightningcss-linux-x64-gnu@1.32.0
-    @tailwindcss/oxide-linux-x64-gnu@4.2.4 && NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true
-    TURBOPACK=0 ./node_modules/.bin/next build
+- build_command: npm ci --legacy-peer-deps && npm install --legacy-peer-deps --no-save autoprefixer@10.4.21 lightningcss-linux-x64-gnu@1.32.0 @tailwindcss/oxide-linux-x64-gnu@4.2.4 && NEXT_TELEMETRY_DISABLED=1 TAILWIND_DISABLE_OPTIMISTIC=true TURBOPACK=0 ./node_modules/.bin/next build
   envs:
   - key: NODE_ENV
     scope: RUN_AND_BUILD_TIME
