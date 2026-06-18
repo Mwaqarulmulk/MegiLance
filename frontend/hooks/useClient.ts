@@ -82,15 +82,17 @@ export function useClientData() {
 
     setLoading(true);
     setError(null);
-    // Fail fast to the empty/error state instead of appearing to hang
-    // indefinitely if an upstream request never settles.
+    // Safety net: if an upstream request hangs well past the per-request
+    // timeout (15s + one retry), stop the spinner so the page can render its
+    // empty/loaded state. Do NOT fabricate an error here — a slow network is
+    // not the same as a failed load, and the real requests will still settle
+    // and set a genuine error if projects actually failed.
     const safetyTimeout = setTimeout(() => {
       if (mountedRef.current) {
         loadingRef.current = false;
         setLoading(false);
-        setError((prev) => prev ?? "Some data took too long to load.");
       }
-    }, 8000);
+    }, 20000);
 
     try {
       const freelancersPromise =
@@ -204,11 +206,20 @@ export function useClientData() {
       );
       setReviews(mappedReviews);
 
-      const hasError =
-        projectsResult.status === "rejected" &&
-        paymentsResult.status === "rejected";
-      if (hasError) {
-        setError("Some data failed to load. Partial results are shown.");
+      // Only surface a blocking error when the PRIMARY dataset (projects)
+      // genuinely failed to load. An empty result is success — the page shows
+      // its "No projects yet" empty state. Payments/reviews/freelancers
+      // failing is non-critical and must not hide a perfectly good (or empty)
+      // projects list behind a scary "couldn't load" banner.
+      if (projectsResult.status === "rejected") {
+        const reason = projectsResult.reason;
+        // A 401 is handled globally (token refresh / redirect); don't surface it.
+        const isAuth =
+          reason instanceof Error && reason.name === "APIError" &&
+          (reason as { status?: number }).status === 401;
+        if (!isAuth) {
+          setError("We couldn't load your projects. Check your connection and try again.");
+        }
       }
     } catch (e: unknown) {
       // Don't update state if unmounted or if it's an abort error

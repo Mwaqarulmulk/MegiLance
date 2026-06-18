@@ -136,8 +136,12 @@ class Settings(BaseSettings):
     BINANCE_PAY_API_KEY: Optional[str] = None
     BINANCE_PAY_SECRET_KEY: Optional[str] = None
     BINANCE_PAY_MERCHANT_ID: Optional[str] = None
-    CRYPTO_WALLET_ADDRESS: Optional[str] = None  # Platform's receiving wallet for crypto deposits
-    CRYPTO_NETWORK: str = "BSC"  # Network name (ETH, BSC, POLYGON, SEPOLIA, BSC_TESTNET)
+    # Platform's receiving wallet for crypto deposits. Defaults to the project's
+    # Polygon Amoy testnet wallet so MetaMask deposits work out-of-the-box for
+    # demos/showcases even when the deployment env var is not set. Override
+    # CRYPTO_WALLET_ADDRESS (and CRYPTO_NETWORK) in production for real funds.
+    CRYPTO_WALLET_ADDRESS: Optional[str] = "0x228d599d4c7e89194b94e9d65b1b4114870a4c34"
+    CRYPTO_NETWORK: str = "AMOY"  # Network name (ETH, BSC, POLYGON, AMOY, SEPOLIA, BSC_TESTNET)
     CRYPTO_CHAIN_ID: Optional[int] = None  # EVM chain id; derived from CRYPTO_NETWORK when unset
     CRYPTO_RPC_URL: Optional[str] = None  # Override JSON-RPC endpoint used to verify transactions
     # Stablecoin (ERC-20) token registry override as JSON, merged over built-in defaults:
