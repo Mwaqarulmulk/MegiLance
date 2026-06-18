@@ -136,7 +136,6 @@ async def create_payment(request: PaymentCreate, current_user=Depends(get_curren
 async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_user)):
     """Redirect to the canonical wallet deposit endpoint.
     This endpoint is kept for backward compatibility."""
-    from app.services.portal_service import create_withdrawal
     from app.db.turso_http import execute_query as eq, parse_rows as pr
 
     if request.amount <= 0:

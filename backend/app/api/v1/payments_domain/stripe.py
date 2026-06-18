@@ -122,13 +122,21 @@ async def stripe_webhook(request: Request):
         user_id = intent.metadata.get("user_id")
         if user_id:
             now = datetime.now(timezone.utc).isoformat()
+            amount_usd = intent.amount / 100
             execute_query(
                 "UPDATE users SET account_balance = account_balance + ? WHERE id = ?",
-                [intent.amount / 100, int(user_id)],
+                [amount_usd, int(user_id)],
             )
             execute_query(
                 "INSERT INTO payments (contract_id, client_id, freelancer_id, amount, currency, payment_method, status, transaction_id, created_at, updated_at) VALUES (NULL, ?, 0, ?, ?, 'stripe', 'completed', ?, ?, ?)",
-                [int(user_id), intent.amount / 100, intent.currency, intent.id, now, now],
+                [int(user_id), amount_usd, intent.currency, intent.id, now, now],
+            )
+            # Also log to wallet_transactions so the deposit appears in transaction history
+            execute_query(
+                """INSERT INTO wallet_transactions (user_id, type, amount, currency, status, description, reference_id, created_at)
+                   VALUES (?, 'deposit', ?, ?, 'completed', ?, ?, ?)""",
+                [int(user_id), amount_usd, intent.currency or "USD",
+                 f"Stripe deposit (${amount_usd:.2f})", intent.id, now],
             )
 
     return {"received": True}

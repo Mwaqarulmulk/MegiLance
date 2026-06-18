@@ -1,14 +1,15 @@
-# @AI-HINT: Wallet router — balance, transactions, deposit, withdraw
+# @AI-HINT: Wallet router — balance, transactions, deposit, withdraw, analytics, pending withdrawals
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user
 from app.db.turso_http import execute_query, parse_rows, parse_date
+from app.services import wallet_service
 
 router = APIRouter()
 
@@ -124,3 +125,38 @@ async def withdraw(request: WithdrawRequest, current_user=Depends(get_current_us
     result = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
     rows = parse_rows(result)
     return {"message": "Withdrawal initiated", "balance": rows[0]["account_balance"] if rows else 0}
+
+
+@router.get("/analytics")
+async def wallet_analytics(
+    period: str = Query("30d", regex="^(7d|30d|90d|1y|all)$"),
+    current_user=Depends(get_current_user),
+):
+    """Get wallet analytics (income, expenses, transaction count) for a given period."""
+    now = datetime.now(timezone.utc)
+    period_map = {
+        "7d": timedelta(days=7),
+        "30d": timedelta(days=30),
+        "90d": timedelta(days=90),
+        "1y": timedelta(days=365),
+        "all": timedelta(days=3650),
+    }
+    start_date = (now - period_map.get(period, timedelta(days=30))).isoformat()
+    analytics = wallet_service.get_wallet_analytics(current_user.id, start_date)
+    return analytics
+
+
+@router.get("/withdrawals/pending")
+async def pending_withdrawals(current_user=Depends(get_current_user)):
+    """Get all pending/processing withdrawal transactions for the current user."""
+    withdrawals = wallet_service.get_pending_withdrawals(current_user.id)
+    return {"withdrawals": withdrawals, "total": len(withdrawals)}
+
+
+@router.post("/withdrawals/{reference_id}/cancel")
+async def cancel_withdrawal(reference_id: str, current_user=Depends(get_current_user)):
+    """Cancel a pending withdrawal and restore balance."""
+    success = wallet_service.cancel_withdrawal_transaction(current_user.id, reference_id)
+    if not success:
+        raise HTTPException(status_code=400, detail="Withdrawal not found or cannot be cancelled")
+    return {"message": "Withdrawal cancelled successfully"}

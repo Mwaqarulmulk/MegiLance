@@ -21,7 +21,7 @@ export const paymentsApi = {
     }),
 
   withdraw: (data: PaymentWithdrawData) =>
-    apiFetch("/withdrawals", {
+    apiFetch("/wallet/withdraw", {
       method: "POST",
       body: JSON.stringify(data),
     }),
@@ -34,7 +34,7 @@ export const paymentsApi = {
 };
 
 export const paymentMethodsApi = {
-  list: () => apiFetch("/payment-methods"),
+  list: () => apiFetch("/stripe/payment-methods"),
 };
 
 export const walletApi = {

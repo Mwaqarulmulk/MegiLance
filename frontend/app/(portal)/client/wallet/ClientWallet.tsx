@@ -528,19 +528,6 @@ export default function ClientWallet() {
                 </div>
               )}
 
-              {depositMethod === "wallet_id" && (
-                <div
-                  className={commonStyles.depositInput}
-                  style={{ marginTop: "1rem" }}
-                >
-                  <Input
-                    label="Freelancer Wallet ID (Direct Transfer)"
-                    type="text"
-                    placeholder="0x..."
-                  />
-                </div>
-              )}
-
               <div className={commonStyles.depositActions}>
                 <Button
                   variant="ghost"
@@ -557,6 +544,20 @@ export default function ClientWallet() {
                     variant="primary"
                     size="sm"
                     disabled={!depositAmount || parseFloat(depositAmount) <= 0}
+                    onClick={async () => {
+                      if (!depositAmount || parseFloat(depositAmount) <= 0) return;
+                      try {
+                        const result = await api.wallet.deposit({
+                          amount: parseFloat(depositAmount),
+                          method: depositMethod as "bank_transfer" | "crypto" | "binance" | "card",
+                        });
+                        setShowDeposit(false);
+                        setDepositAmount("");
+                        window.location.reload();
+                      } catch (e: any) {
+                        console.error("Deposit failed:", e);
+                      }
+                    }}
                   >
                     {depositMethod === "binance" ? (
                       <QrCode size={16} />

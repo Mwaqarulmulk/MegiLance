@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Info, ArrowUpRight, ArrowDownLeft, Send, Plus, TrendingUp, TrendingDown, Filter } from 'lucide-react';
+import { Info, ArrowUpRight, ArrowDownLeft, Plus, TrendingUp, TrendingDown, Filter } from 'lucide-react';
 import api from '@/lib/api';
 import { apiFetch } from '@/lib/api/core';
 import TransactionRow from '@/app/components/molecules/TransactionRow/TransactionRow';
@@ -329,21 +329,11 @@ const Wallet: React.FC = () => {
                   variant="secondary"
                   size="medium"
                   title="Deposit funds to your wallet"
-                  onClick={() => window.location.href = '/portal/freelancer/wallet/deposit'}
+                  onClick={() => window.location.href = '/client/wallet'}
                   className={styles.actionBtn}
                 >
                   <ArrowDownLeft size={16} />
                   Deposit
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="medium"
-                  title="Transfer funds to another user"
-                  onClick={() => window.location.href = '/portal/freelancer/wallet/transfer'}
-                  className={styles.actionBtn}
-                >
-                  <Send size={16} />
-                  Transfer
                 </Button>
               </div>
             </div>
