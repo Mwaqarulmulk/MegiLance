@@ -190,7 +190,23 @@ export default function ContractBuilder() {
               </select>
             </div>
             <div className={commonStyles.formGroup}>
-              <label>Total Value (Optional)</label>
+              <label>Payment Schedule</label>
+              <select
+                name="payment_schedule"
+                className={cn(commonStyles.select, themeStyles.select)}
+                value={formData.payment_schedule}
+                onChange={handleChange}
+              >
+                {options?.payment_schedules && Object.entries(options.payment_schedules).map(([val, label]) => (
+                  <option key={val} value={val}>{label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className={commonStyles.formGroup}>
+              <label>Total Value</label>
               <input
                 type="number"
                 name="total_value"
@@ -199,6 +215,19 @@ export default function ContractBuilder() {
                 value={formData.total_value}
                 onChange={handleChange}
               />
+            </div>
+            <div className={commonStyles.formGroup}>
+              <label>Currency</label>
+              <select
+                name="currency"
+                className={cn(commonStyles.select, themeStyles.select)}
+                value={formData.currency}
+                onChange={handleChange}
+              >
+                {['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'PKR', 'INR'].map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             </div>
           </div>
 

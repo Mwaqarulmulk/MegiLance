@@ -187,6 +187,9 @@ async def sign_contract(contract_id: str, current_user=Depends(get_current_user)
     if contract["client_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only the client can sign this contract")
 
+    if contract["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Only pending contracts can be signed")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?",
@@ -205,6 +208,9 @@ async def acknowledge_contract(contract_id: str, current_user=Depends(get_curren
     if contract["freelancer_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only the freelancer can acknowledge")
 
+    if contract["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Only pending contracts can be acknowledged")
+
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE contracts SET status = 'active', updated_at = ? WHERE id = ?",
@@ -222,6 +228,9 @@ async def complete_contract(contract_id: str, request: ContractComplete, current
     contract = contract_from_row(raw_row)
     if contract["client_id"] != current_user.id and contract["freelancer_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied")
+
+    if contract["status"] != "active":
+        raise HTTPException(status_code=400, detail="Only active contracts can be completed")
 
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -252,13 +261,13 @@ async def create_direct_contract(request: ContractDirectCreate, current_user=Dep
         raise HTTPException(status_code=404, detail="Freelancer not found")
 
     result = execute_query(
-        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_type,
-                  currency, description, terms, milestones, status, start_date, end_date,
+        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, contract_amount,
+                  contract_type, currency, description, terms, milestones, status, start_date, end_date,
                   created_at, updated_at)
-           VALUES (NULL, ?, ?, ?, ?, 'USD', ?, '', '', 'pending', ?, NULL, ?, ?)""",
+           VALUES (NULL, ?, ?, ?, ?, ?, 'USD', ?, '', '', 'pending', ?, NULL, ?, ?)""",
         [
             request.freelancer_id, current_user.id, request.rate,
-            request.rate_type, request.description,
+            request.rate, request.rate_type, request.description,
             request.start_date or now, now, now,
         ],
     )
@@ -282,6 +291,9 @@ async def cancel_contract_endpoint(contract_id: str, request: ContractCancel, cu
     contract = contract_from_row(raw_row)
     if contract["client_id"] != current_user.id and contract["freelancer_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied")
+
+    if contract["status"] in ("completed", "cancelled", "terminated"):
+        raise HTTPException(status_code=400, detail=f"Cannot cancel a contract with status '{contract['status']}'")
 
     now = datetime.now(timezone.utc).isoformat()
     cancel_contract(contract_id, now)

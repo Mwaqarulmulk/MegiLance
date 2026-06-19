@@ -115,11 +115,16 @@ export default function ClientContractsPage() {
   const [newContractForm, setNewContractForm] = useState({
     title: "",
     freelancerName: "",
+    freelancerId: 0,
     totalAmount: "",
     startDate: "",
     endDate: "",
     paymentType: "fixed",
+    description: "",
   });
+  const [freelancerSearchResults, setFreelancerSearchResults] = useState<{ id: number; name: string; email: string }[]>([]);
+  const [freelancerSearchLoading, setFreelancerSearchLoading] = useState(false);
+  const [showFreelancerDropdown, setShowFreelancerDropdown] = useState(false);
 
   const fetchContracts = useCallback(async (status?: string) => {
     setLoading(true);
@@ -192,29 +197,39 @@ export default function ClientContractsPage() {
 
   const handleCreateContract = async () => {
     if (!newContractForm.title.trim()) return;
+    if (!newContractForm.freelancerId) {
+      setError("Please select a freelancer for this contract.");
+      return;
+    }
+    if (!newContractForm.totalAmount || parseFloat(newContractForm.totalAmount) <= 0) {
+      setError("Please enter a valid contract amount.");
+      return;
+    }
     setNewContractLoading(true);
     try {
-      await apiFetch("/contracts", {
+      await apiFetch("/contracts/direct", {
         method: "POST",
         body: JSON.stringify({
-          project_id: 0,
-          freelancer_id: 0,
-          amount: parseFloat(newContractForm.totalAmount) || 0,
-          contract_type: newContractForm.paymentType,
-          description: newContractForm.title,
+          freelancer_id: newContractForm.freelancerId,
+          title: newContractForm.title,
+          description: newContractForm.description || newContractForm.title,
+          rate_type: newContractForm.paymentType === "milestone" ? "fixed" : newContractForm.paymentType,
+          rate: parseFloat(newContractForm.totalAmount) || 0,
           start_date: newContractForm.startDate || undefined,
-          end_date: newContractForm.endDate || undefined,
         }),
       });
       setShowNewContractModal(false);
       setNewContractForm({
         title: "",
         freelancerName: "",
+        freelancerId: 0,
         totalAmount: "",
         startDate: "",
         endDate: "",
         paymentType: "fixed",
+        description: "",
       });
+      setFreelancerSearchResults([]);
       fetchContracts(activeTab);
       fetchTabCounts();
     } catch (err) {
@@ -225,6 +240,28 @@ export default function ClientContractsPage() {
       );
     } finally {
       setNewContractLoading(false);
+    }
+  };
+
+  const searchFreelancers = async (query: string) => {
+    if (!query || query.length < 2) {
+      setFreelancerSearchResults([]);
+      setShowFreelancerDropdown(false);
+      return;
+    }
+    setFreelancerSearchLoading(true);
+    try {
+      const data = (await apiFetch(`/users/freelancers?search=${encodeURIComponent(query)}&page_size=10`)) as {
+        freelancers?: { id: number; name: string; email: string }[];
+        items?: { id: number; name: string; email: string }[];
+      };
+      const results = data.freelancers || data.items || [];
+      setFreelancerSearchResults(results);
+      setShowFreelancerDropdown(results.length > 0);
+    } catch {
+      setFreelancerSearchResults([]);
+    } finally {
+      setFreelancerSearchLoading(false);
     }
   };
 
@@ -522,18 +559,75 @@ export default function ClientContractsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Freelancer Name
+                  Freelancer *
                 </label>
-                <input
-                  type="text"
-                  value={newContractForm.freelancerName}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={newContractForm.freelancerName}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNewContractForm((prev) => ({
+                        ...prev,
+                        freelancerName: val,
+                        freelancerId: 0,
+                      }));
+                      searchFreelancers(val);
+                    }}
+                    onFocus={() => {
+                      if (freelancerSearchResults.length > 0) setShowFreelancerDropdown(true);
+                    }}
+                    onBlur={() => setTimeout(() => setShowFreelancerDropdown(false), 200)}
+                    placeholder="Search freelancer by name..."
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                  {freelancerSearchLoading && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 inline-block w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {showFreelancerDropdown && freelancerSearchResults.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      {freelancerSearchResults.map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setNewContractForm((prev) => ({
+                              ...prev,
+                              freelancerName: f.name,
+                              freelancerId: f.id,
+                            }));
+                            setShowFreelancerDropdown(false);
+                          }}
+                          className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                        >
+                          <div className="font-medium text-gray-900 dark:text-white">{f.name}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{f.email}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {newContractForm.freelancerId > 0 && (
+                  <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+                    Selected: {newContractForm.freelancerName}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={newContractForm.description}
                   onChange={(e) =>
                     setNewContractForm((prev) => ({
                       ...prev,
-                      freelancerName: e.target.value,
+                      description: e.target.value,
                     }))
                   }
-                  placeholder="e.g., Jane Developer"
+                  placeholder="Describe the scope of work..."
+                  rows={3}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
               </div>
@@ -618,7 +712,7 @@ export default function ClientContractsPage() {
               </button>
               <button
                 onClick={handleCreateContract}
-                disabled={newContractLoading || !newContractForm.title.trim()}
+                disabled={newContractLoading || !newContractForm.title.trim() || !newContractForm.freelancerId}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {newContractLoading && (

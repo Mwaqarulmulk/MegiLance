@@ -93,24 +93,22 @@ export const contractsApi = {
 
   update: (contractId: ResourceId, data: Partial<ContractCreateData>) =>
     apiFetch(`/contracts/${contractId}`, {
-      method: "PUT",
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
   accept: (contractId: ResourceId) =>
-    apiFetch(`/contracts/${contractId}`, {
-      method: "PUT",
-      body: JSON.stringify({ status: "active" }),
+    apiFetch(`/contracts/${contractId}/sign`, {
+      method: "POST",
     }),
 
-  // P2-8: Proper endpoint for freelancer to acknowledge contract terms
   acknowledge: (contractId: ResourceId) =>
     apiFetch(`/contracts/${contractId}/acknowledge`, { method: "POST" }),
 
   complete: (contractId: ResourceId) =>
-    apiFetch(`/contracts/${contractId}`, {
-      method: "PUT",
-      body: JSON.stringify({ status: "completed" }),
+    apiFetch(`/contracts/${contractId}/complete`, {
+      method: "POST",
+      body: JSON.stringify({}),
     }),
 
   createDirect: (data: {
@@ -127,8 +125,8 @@ export const contractsApi = {
     }),
 
   cancel: (contractId: ResourceId, reason?: string) =>
-    apiFetch(`/contracts/${contractId}`, {
-      method: "DELETE",
+    apiFetch(`/contracts/${contractId}/cancel`, {
+      method: "POST",
       body: reason ? JSON.stringify({ reason }) : undefined,
     }),
 };

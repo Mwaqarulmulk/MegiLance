@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { useRouter, useParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
-import { ArrowLeft, Download, Loader2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Download, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
 
 import Button from "@/app/components/atoms/Button/Button";
 import Badge from "@/app/components/atoms/Badge/Badge";
@@ -70,6 +70,8 @@ const ContractDetailsPage: React.FC = () => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [acknowledging, setAcknowledging] = useState(false);
+  const [completing, setCompleting] = useState(false);
 
   const styles = useMemo(() => {
     const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
@@ -141,6 +143,51 @@ const ContractDetailsPage: React.FC = () => {
     );
   };
 
+  const handleAcknowledge = async () => {
+    if (!contract) return;
+    setAcknowledging(true);
+    try {
+      await api.contracts.acknowledge(Number(contract.id));
+      toaster.notify({
+        title: "Contract Acknowledged",
+        description: "You have acknowledged the contract terms. It is now active.",
+        variant: "success",
+      });
+      setContract({ ...contract, status: "active" });
+    } catch (err) {
+      toaster.notify({
+        title: "Failed to Acknowledge",
+        description: err instanceof Error ? err.message : "An error occurred",
+        variant: "danger",
+      });
+    } finally {
+      setAcknowledging(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!contract) return;
+    if (!window.confirm("Mark this contract as complete?")) return;
+    setCompleting(true);
+    try {
+      await api.contracts.complete(Number(contract.id));
+      toaster.notify({
+        title: "Contract Completed",
+        description: "The contract has been marked as complete.",
+        variant: "success",
+      });
+      setContract({ ...contract, status: "completed" });
+    } catch (err) {
+      toaster.notify({
+        title: "Failed to Complete",
+        description: err instanceof Error ? err.message : "An error occurred",
+        variant: "danger",
+      });
+    } finally {
+      setCompleting(false);
+    }
+  };
+
   // Parse milestones
   const milestones: Milestone[] = useMemo(() => {
     if (!contract) return [];
@@ -207,6 +254,34 @@ const ContractDetailsPage: React.FC = () => {
         </Button>
 
         <div className={styles.headerActions}>
+          {contract && contract.status.toLowerCase() === "pending" && (
+            <Button
+              variant="primary"
+              onClick={handleAcknowledge}
+              disabled={acknowledging}
+            >
+              {acknowledging ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <CheckCircle size={16} />
+              )}{" "}
+              {acknowledging ? "Acknowledging..." : "Acknowledge Contract"}
+            </Button>
+          )}
+          {contract && contract.status.toLowerCase() === "active" && (
+            <Button
+              variant="primary"
+              onClick={handleComplete}
+              disabled={completing}
+            >
+              {completing ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <CheckCircle size={16} />
+              )}{" "}
+              {completing ? "Completing..." : "Mark as Complete"}
+            </Button>
+          )}
           {contract && (
             <Button
               variant="primary"
