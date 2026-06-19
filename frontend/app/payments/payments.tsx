@@ -51,13 +51,14 @@ const Payments: React.FC = () => {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch wallet balance
-      const walletData = await fetchApi<any>('/wallet/balance');
+      // Fetch wallet balance from root wallet endpoint
+      const walletData = await fetchApi<{ balance?: number; currency?: string }>('/wallet');
       if (walletData) {
+        const bal = walletData.balance || 0;
         setBalance({
-          available: walletData.available || 0,
-          pending: walletData.pending || 0,
-          total: (walletData.available || 0) + (walletData.pending || 0) + (walletData.escrow || 0),
+          available: bal,
+          pending: 0,
+          total: bal,
         });
       }
 

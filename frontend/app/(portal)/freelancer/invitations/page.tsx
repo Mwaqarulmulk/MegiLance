@@ -42,9 +42,9 @@ export default function InvitationsPage() {
   const fetchInvitations = useCallback(async () => {
     const token = localStorage.getItem("auth_token");
 
-    // 1. Try the primary REST invitations endpoint
+    // Primary: AI invitations endpoint
     try {
-      const res = await fetch(`${BASE_URL}/invitations?status=pending`, {
+      const res = await fetch(`${BASE_URL}/ai/invitations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -59,14 +59,16 @@ export default function InvitationsPage() {
       /* fall through */
     }
 
-    // 2. Fallback: AI invitations endpoint
+    // Fallback: REST invitations endpoint (if it exists in future)
     try {
-      const res = await fetch(`${BASE_URL}/ai/invitations`, {
+      const res = await fetch(`${BASE_URL}/invitations?status=pending`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const data = await res.json();
-        setInvitations(data.invitations || []);
+        const items: Invitation[] =
+          data.invitations ?? data.items ?? (Array.isArray(data) ? data : []);
+        setInvitations(items);
       }
     } catch (e) {
       console.error("Failed to fetch invitations:", e);
@@ -79,7 +81,7 @@ export default function InvitationsPage() {
     setSuggestionsLoading(true);
     const token = localStorage.getItem("auth_token");
     try {
-      const res = await fetch(`${BASE_URL}/matching/find-jobs?limit=5`, {
+      const res = await fetch(`${BASE_URL}/matching/recommendations?limit=5`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {

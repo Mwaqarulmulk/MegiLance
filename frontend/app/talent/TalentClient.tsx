@@ -72,7 +72,7 @@ function parseSkills(raw: string | string[] | undefined): string[] {
 async function fetchFreelancers(): Promise<TalentProfile[]> {
   const token = typeof window !== 'undefined' ? getAuthToken() : null;
   try {
-    const res = await fetch('/api/freelancers?limit=48', {
+    const res = await fetch('/api/v1/users/freelancers?limit=48', {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!res.ok) return [];

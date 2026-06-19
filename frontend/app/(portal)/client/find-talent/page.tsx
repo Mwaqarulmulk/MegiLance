@@ -229,15 +229,9 @@ export default function FindTalentPage() {
 
   const getAiBrief = useCallback(async () => {
     setLoading(true);
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     try {
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${baseUrl}/api/v1/ai/project-brief`, {
+      const data = await apiFetch("/ai/project-brief", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           category,
           description,
@@ -251,10 +245,7 @@ export default function FindTalentPage() {
           additional_notes: null,
         }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        setAiBrief(data);
-      }
+      setAiBrief(data);
     } catch (e) {
       console.error("AI brief failed:", e);
     } finally {
@@ -272,19 +263,13 @@ export default function FindTalentPage() {
 
   const getMatches = useCallback(async () => {
     setLoading(true);
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    const token = localStorage.getItem("auth_token");
 
     try {
       // Level 1: POST /ai/smart-match (AI-powered matching)
       try {
         console.log("[FindTalent] Trying Level 1: AI smart-match");
-        const res = await fetch(`${baseUrl}/api/v1/ai/smart-match`, {
+        const data = await apiFetch("/ai/smart-match", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             category,
             skills,
@@ -297,16 +282,11 @@ export default function FindTalentPage() {
             preferences: null,
           }),
         });
-        if (res.ok) {
-          const data = await res.json();
-          const results = data.matches || [];
-          if (results.length > 0) {
-            console.log("[FindTalent] Level 1 succeeded:", results.length, "matches");
-            setMatches(results);
-            return;
-          }
-        } else {
-          console.warn("[FindTalent] Level 1 returned status", res.status);
+        const results = (data as any)?.matches || [];
+        if (results.length > 0) {
+          console.log("[FindTalent] Level 1 succeeded:", results.length, "matches");
+          setMatches(results);
+          return;
         }
       } catch (e) {
         console.warn("[FindTalent] Level 1 failed:", e);
@@ -315,30 +295,23 @@ export default function FindTalentPage() {
       // Level 2: GET /users/freelancers (list freelancers)
       try {
         console.log("[FindTalent] Trying Level 2: users/freelancers");
-        const res = await fetch(`${baseUrl}/api/v1/users/freelancers`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const users: any[] = data.users || data.freelancers || (Array.isArray(data) ? data : []);
-          if (users.length > 0) {
-            console.log("[FindTalent] Level 2 succeeded:", users.length, "freelancers");
-            setMatches(
-              users.map((u: any, i: number) => ({
-                freelancer_id: u.id || i + 1,
-                display_name:
-                  u.name || u.full_name || u.display_name || u.email || `Freelancer ${i + 1}`,
-                headline: u.title || u.headline || "Professional Freelancer",
-                fit_score: Math.max(60, 90 - i * 5),
-                skill_match: 0.8,
-                hourly_rate: u.hourly_rate ?? null,
-                rating: u.rating ?? null,
-              })),
-            );
-            return;
-          }
-        } else {
-          console.warn("[FindTalent] Level 2 returned status", res.status);
+        const data = await apiFetch("/users/freelancers");
+        const users: any[] = (data as any)?.users || (data as any)?.freelancers || (Array.isArray(data) ? data : []);
+        if (users.length > 0) {
+          console.log("[FindTalent] Level 2 succeeded:", users.length, "freelancers");
+          setMatches(
+            users.map((u: any, i: number) => ({
+              freelancer_id: u.id || i + 1,
+              display_name:
+                u.name || u.full_name || u.display_name || u.email || `Freelancer ${i + 1}`,
+              headline: u.title || u.headline || "Professional Freelancer",
+              fit_score: Math.max(60, 90 - i * 5),
+              skill_match: 0.8,
+              hourly_rate: u.hourly_rate ?? null,
+              rating: u.rating ?? null,
+            })),
+          );
+          return;
         }
       } catch (e) {
         console.warn("[FindTalent] Level 2 failed:", e);

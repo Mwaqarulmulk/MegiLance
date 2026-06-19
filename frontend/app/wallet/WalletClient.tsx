@@ -86,14 +86,14 @@ export default function WalletClient() {
   const fetchWalletData = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch balance
-      const balanceData = await walletApi<WalletBalance>('/balance');
+      // Fetch balance from wallet root endpoint (returns { user_id, balance, currency, transactions })
+      const walletRaw = await walletApi<{ user_id: number; balance: number; currency: string; transactions?: unknown[] }>('');
       setBalance({
-        available: balanceData.available || 0,
-        pending: balanceData.pending || 0,
-        escrow: balanceData.escrow || 0,
-        total: balanceData.total || 0,
-        currency: balanceData.currency || 'USD',
+        available: walletRaw.balance || 0,
+        pending: 0,
+        escrow: 0,
+        total: walletRaw.balance || 0,
+        currency: walletRaw.currency || 'USD',
       });
 
       // Fetch transactions
@@ -120,23 +120,21 @@ export default function WalletClient() {
       }));
       setTransactions(mappedTransactions);
 
-      // Fetch payout schedule to see if configured
-      interface PayoutScheduleResponse {
-        is_configured?: boolean;
-        destination_type?: string;
-        destination_details?: string;
+      // Fetch payout methods from the correct endpoint
+      interface PayoutMethodsResponse {
+        items?: Array<{ id: string; type: string; name?: string; last4?: string; is_default?: boolean }>;
       }
-      const payoutData = await walletApi<PayoutScheduleResponse>('/payout-schedule').catch((e: unknown) => { console.error('Payout schedule load failed:', e); return null; });
-      if (payoutData?.is_configured && payoutData.destination_type) {
-        setPayoutMethods([{
-          id: 'default',
-          type: payoutData.destination_type as PayoutMethod['type'],
-          name: payoutData.destination_type === 'bank' ? 'Bank Account' :
-                payoutData.destination_type === 'paypal' ? 'PayPal' : 'Payout Method',
-          last4: payoutData.destination_details?.slice(-4) || '****',
-          isDefault: true,
-        }]);
-        setSelectedMethod('default');
+      const payoutData = await walletApi<PayoutMethodsResponse>('/payout-methods').catch((e: unknown) => { console.error('Payout methods load failed:', e); return null; });
+      if (payoutData?.items && payoutData.items.length > 0) {
+        setPayoutMethods(payoutData.items.map((m) => ({
+          id: m.id,
+          type: m.type as PayoutMethod['type'],
+          name: m.name || (m.type === 'bank' ? 'Bank Account' : m.type === 'paypal' ? 'PayPal' : 'Payout Method'),
+          last4: m.last4 || '****',
+          isDefault: m.is_default ?? false,
+        })));
+        const defaultMethod = payoutData.items.find(m => m.is_default) || payoutData.items[0];
+        if (defaultMethod) setSelectedMethod(defaultMethod.id);
       }
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
