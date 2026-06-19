@@ -27,7 +27,7 @@ class OrganizationUpdate(BaseModel):
 
 
 @router.get("")
-async def list_organizations(current_user=Depends(get_current_user)):
+def list_organizations(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT o.id, o.name, o.description, o.website, o.industry, o.owner_id, o.created_at,
                   COUNT(om.user_id) as member_count
@@ -42,7 +42,7 @@ async def list_organizations(current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_organization(request: OrganizationCreate, current_user=Depends(get_current_user)):
+def create_organization(request: OrganizationCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO organizations (name, description, website, industry, owner_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -57,7 +57,7 @@ async def create_organization(request: OrganizationCreate, current_user=Depends(
 
 
 @router.get("/{org_id}")
-async def get_organization(org_id: int, current_user=Depends(get_current_user)):
+def get_organization(org_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, name, description, website, industry, owner_id, created_at FROM organizations WHERE id = ?",
         [org_id],
@@ -75,7 +75,7 @@ async def get_organization(org_id: int, current_user=Depends(get_current_user)):
 
 
 @router.put("/{org_id}")
-async def update_organization(org_id: int, request: OrganizationUpdate, current_user=Depends(get_current_user)):
+def update_organization(org_id: int, request: OrganizationUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")

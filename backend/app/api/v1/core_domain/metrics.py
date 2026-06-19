@@ -37,7 +37,7 @@ def _iso_days_ago(n: int) -> str:
 
 
 @router.get("/overview")
-async def metrics_overview(period: str = Query("30d"), current_user=Depends(require_admin)):
+def metrics_overview(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = _PERIOD_DAYS.get(period, 30)
     since = _iso_days_ago(days)
     prev_since = _iso_days_ago(days * 2)
@@ -78,7 +78,7 @@ async def metrics_overview(period: str = Query("30d"), current_user=Depends(requ
 
 
 @router.get("/revenue")
-async def metrics_revenue(
+def metrics_revenue(
     start_date: Optional[str] = None, end_date: Optional[str] = None,
     interval: str = "day", current_user=Depends(require_admin),
 ):
@@ -96,7 +96,7 @@ async def metrics_revenue(
 
 
 @router.get("/users")
-async def metrics_users(period: str = Query("30d"), current_user=Depends(require_admin)):
+def metrics_users(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = _PERIOD_DAYS.get(period, 30)
     growth = []
     try:
@@ -112,7 +112,7 @@ async def metrics_users(period: str = Query("30d"), current_user=Depends(require
 
 
 @router.get("/realtime")
-async def metrics_realtime(current_user=Depends(require_admin)):
+def metrics_realtime(current_user=Depends(require_admin)):
     db_ok = True
     try:
         execute_query("SELECT 1", [])
@@ -129,7 +129,7 @@ async def metrics_realtime(current_user=Depends(require_admin)):
 
 
 @router.get("/projects")
-async def metrics_projects(period: str = Query("30d"), current_user=Depends(require_admin)):
+def metrics_projects(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = _PERIOD_DAYS.get(period, 30)
     since = _iso_days_ago(days)
     return {
@@ -144,7 +144,7 @@ async def metrics_projects(period: str = Query("30d"), current_user=Depends(requ
 
 
 @router.get("/conversions")
-async def metrics_conversions(period: str = Query("30d"), current_user=Depends(require_admin)):
+def metrics_conversions(period: str = Query("30d"), current_user=Depends(require_admin)):
     total_projects = _scalar("SELECT COUNT(*) FROM projects")
     with_proposals = _scalar("SELECT COUNT(DISTINCT project_id) FROM proposals")
     hired = _scalar("SELECT COUNT(*) FROM projects WHERE status IN ('in_progress','completed','closed')")

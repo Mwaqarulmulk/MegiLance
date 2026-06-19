@@ -241,7 +241,7 @@ def update_current_user_profile(data: dict, current_user=Depends(get_current_use
 
 
 @router.post("/onboarding-complete")
-async def complete_onboarding(data: dict, current_user=Depends(get_current_user)):
+def complete_onboarding(data: dict, current_user=Depends(get_current_user)):
     """Save onboarding wizard data for a new freelancer."""
     user_id = current_user.get("user_id") or current_user.get("id")
     if not user_id:

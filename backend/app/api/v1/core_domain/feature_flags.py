@@ -46,7 +46,7 @@ def _row_to_flag(row) -> dict:
 
 
 @router.get("/feature-flags/check/{flag_name}")
-async def check_flag(flag_name: str, current_user=Depends(get_current_user)):
+def check_flag(flag_name: str, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT name, is_active, rollout_percentage FROM feature_flags WHERE name = ?", [flag_name]
@@ -60,7 +60,7 @@ async def check_flag(flag_name: str, current_user=Depends(get_current_user)):
 
 
 @router.post("/feature-flags/check-multiple")
-async def check_multiple_flags(body: dict, current_user=Depends(get_current_user)):
+def check_multiple_flags(body: dict, current_user=Depends(get_current_user)):
     _ensure_table()
     flag_names = body.get("flag_names", [])
     if not flag_names:
@@ -78,7 +78,7 @@ async def check_multiple_flags(body: dict, current_user=Depends(get_current_user
 
 
 @router.get("/feature-flags/my-flags")
-async def get_my_flags(current_user=Depends(get_current_user)):
+def get_my_flags(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, name, description, is_active, rollout_percentage, target_roles, created_at, updated_at FROM feature_flags WHERE is_active = 1",
@@ -92,7 +92,7 @@ async def get_my_flags(current_user=Depends(get_current_user)):
 
 
 @router.get("/feature-flags/admin/all")
-async def admin_list_flags(current_user=Depends(require_admin)):
+def admin_list_flags(current_user=Depends(require_admin)):
     _ensure_table()
     result = execute_query(
         "SELECT id, name, description, is_active, rollout_percentage, target_roles, created_at, updated_at FROM feature_flags ORDER BY name",
@@ -106,7 +106,7 @@ async def admin_list_flags(current_user=Depends(require_admin)):
 
 
 @router.get("/feature-flags/admin/{flag_name}")
-async def admin_get_flag(flag_name: str, current_user=Depends(require_admin)):
+def admin_get_flag(flag_name: str, current_user=Depends(require_admin)):
     _ensure_table()
     result = execute_query(
         "SELECT id, name, description, is_active, rollout_percentage, target_roles, created_at, updated_at FROM feature_flags WHERE name = ?",
@@ -127,7 +127,7 @@ class FlagCreate(BaseModel):
 
 
 @router.post("/feature-flags/admin/create", status_code=201)
-async def admin_create_flag(body: FlagCreate, current_user=Depends(require_admin)):
+def admin_create_flag(body: FlagCreate, current_user=Depends(require_admin)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -146,7 +146,7 @@ class FlagUpdate(BaseModel):
 
 
 @router.put("/feature-flags/admin/{flag_name}")
-async def admin_update_flag(flag_name: str, body: FlagUpdate, current_user=Depends(require_admin)):
+def admin_update_flag(flag_name: str, body: FlagUpdate, current_user=Depends(require_admin)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     updates = body.model_dump(exclude_unset=True)
@@ -170,13 +170,13 @@ async def admin_update_flag(flag_name: str, body: FlagUpdate, current_user=Depen
 
 
 @router.delete("/feature-flags/admin/{flag_name}", status_code=204)
-async def admin_delete_flag(flag_name: str, current_user=Depends(require_admin)):
+def admin_delete_flag(flag_name: str, current_user=Depends(require_admin)):
     _ensure_table()
     execute_query("DELETE FROM feature_flags WHERE name = ?", [flag_name])
 
 
 @router.post("/feature-flags/admin/{flag_name}/rollout")
-async def admin_rollout_flag(flag_name: str, body: dict, current_user=Depends(require_admin)):
+def admin_rollout_flag(flag_name: str, body: dict, current_user=Depends(require_admin)):
     _ensure_table()
     percentage = min(100, max(0, int(body.get("percentage", 0))))
     now = datetime.now(timezone.utc).isoformat()
@@ -188,12 +188,12 @@ async def admin_rollout_flag(flag_name: str, body: dict, current_user=Depends(re
 
 
 @router.get("/feature-flags/admin/{flag_name}/analytics")
-async def admin_flag_analytics(flag_name: str, current_user=Depends(require_admin)):
+def admin_flag_analytics(flag_name: str, current_user=Depends(require_admin)):
     return {"flag_name": flag_name, "checks": 0, "enabled_for": 0}
 
 
 @router.get("/feature-flags/admin/analytics/summary")
-async def admin_flags_analytics_summary(current_user=Depends(require_admin)):
+def admin_flags_analytics_summary(current_user=Depends(require_admin)):
     _ensure_table()
     result = execute_query("SELECT COUNT(*) as cnt, SUM(is_active) as active_cnt FROM feature_flags", [])
     total = active = 0

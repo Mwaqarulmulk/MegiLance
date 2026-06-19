@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.get("")
-async def list_tags(search: Optional[str] = None, limit: int = Query(50, ge=1)):
+def list_tags(search: Optional[str] = None, limit: int = Query(50, ge=1)):
     where = ""
     params: list = [limit]
     if search:
@@ -26,14 +26,14 @@ async def list_tags(search: Optional[str] = None, limit: int = Query(50, ge=1)):
 
 
 @router.get("/popular")
-async def get_popular_tags(limit: int = Query(20, ge=1)):
+def get_popular_tags(limit: int = Query(20, ge=1)):
     result = execute_query("SELECT id, name, slug, type, usage_count FROM tags ORDER BY usage_count DESC LIMIT ?", [limit])
     rows = parse_rows(result)
     return {"items": rows if rows else [], "total": len(rows) if rows else 0}
 
 
 @router.post("")
-async def create_tag(name: str, tag_type: str = "skill", current_user=Depends(get_current_user)):
+def create_tag(name: str, tag_type: str = "skill", current_user=Depends(get_current_user)):
     from urllib.parse import quote
     slug = name.lower().replace(" ", "-")
     now = datetime.now(timezone.utc).isoformat()

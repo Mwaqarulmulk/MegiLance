@@ -111,13 +111,13 @@ class USDCPaymentCreate(BaseModel):
 
 
 @router.get("/methods")
-async def list_pk_payment_methods():
+def list_pk_payment_methods():
     """List available payment methods for Pakistan"""
     return {"methods": list(PK_PAYMENT_METHODS.values())}
 
 
 @router.post("/deposit")
-async def pk_deposit(request: PKPaymentCreate, current_user=Depends(get_current_user)):
+def pk_deposit(request: PKPaymentCreate, current_user=Depends(get_current_user)):
     """Create a deposit using a Pakistan-friendly payment method"""
     if request.method not in PK_PAYMENT_METHODS:
         raise HTTPException(status_code=400, detail=f"Unsupported payment method: {request.method}")
@@ -163,7 +163,7 @@ async def pk_deposit(request: PKPaymentCreate, current_user=Depends(get_current_
 
 
 @router.post("/usdc-deposit")
-async def usdc_deposit(request: USDCPaymentCreate, current_user=Depends(get_current_user)):
+def usdc_deposit(request: USDCPaymentCreate, current_user=Depends(get_current_user)):
     """Deposit via USDC on Binance Smart Chain"""
     if request.network not in ("BEP-20", "ERC-20", "TRC-20"):
         raise HTTPException(status_code=400, detail="Supported networks: BEP-20, ERC-20, TRC-20")
@@ -200,7 +200,7 @@ async def usdc_deposit(request: USDCPaymentCreate, current_user=Depends(get_curr
 
 
 @router.post("/withdraw")
-async def pk_withdraw(amount: float, method: str = "jazzcash", current_user=Depends(get_current_user)):
+def pk_withdraw(amount: float, method: str = "jazzcash", current_user=Depends(get_current_user)):
     """Withdraw funds to a Pakistan-friendly payment method"""
     if method not in PK_PAYMENT_METHODS:
         raise HTTPException(status_code=400, detail=f"Unsupported withdrawal method: {method}")
@@ -242,7 +242,7 @@ async def pk_withdraw(amount: float, method: str = "jazzcash", current_user=Depe
 
 
 @router.get("/rates")
-async def get_usd_to_pkr_rate():
+def get_usd_to_pkr_rate():
     """Get current USD to PKR rate"""
     # In production, fetch from a live API
     return {

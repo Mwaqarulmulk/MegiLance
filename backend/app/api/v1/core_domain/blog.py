@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("")
-async def list_posts(
+def list_posts(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     is_published: Optional[bool] = None,
@@ -24,7 +24,7 @@ async def list_posts(
 
 
 @router.get("/{slug_or_id}")
-async def get_post(slug_or_id: str):
+def get_post(slug_or_id: str):
     ensure_blog_table()
     # Try numeric ID first, then slug
     post = None
@@ -39,7 +39,7 @@ async def get_post(slug_or_id: str):
 
 
 @router.post("", status_code=201)
-async def create_post(post: BlogPostCreate, current_user=Depends(require_admin)):
+def create_post(post: BlogPostCreate, current_user=Depends(require_admin)):
     ensure_blog_table()
     created = BlogService.create_post(post)
     if not created:
@@ -48,7 +48,7 @@ async def create_post(post: BlogPostCreate, current_user=Depends(require_admin))
 
 
 @router.put("/{post_id}")
-async def update_post(post_id: int, post: BlogPostUpdate, current_user=Depends(require_admin)):
+def update_post(post_id: int, post: BlogPostUpdate, current_user=Depends(require_admin)):
     ensure_blog_table()
     updated = BlogService.update_post(post_id, post)
     if not updated:
@@ -57,7 +57,7 @@ async def update_post(post_id: int, post: BlogPostUpdate, current_user=Depends(r
 
 
 @router.delete("/{post_id}", status_code=204)
-async def delete_post(post_id: int, current_user=Depends(require_admin)):
+def delete_post(post_id: int, current_user=Depends(require_admin)):
     ensure_blog_table()
     if not BlogService.delete_post(post_id):
         raise HTTPException(status_code=404, detail="Post not found")

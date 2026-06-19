@@ -23,7 +23,7 @@ class TeamInvite(BaseModel):
 
 
 @router.get("")
-async def list_teams(current_user=Depends(get_current_user)):
+def list_teams(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT t.id, t.name, t.description, t.owner_id, t.created_at,
                   COUNT(tm.user_id) as member_count
@@ -39,7 +39,7 @@ async def list_teams(current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_team(request: TeamCreate, current_user=Depends(get_current_user)):
+def create_team(request: TeamCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO teams (name, description, owner_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
@@ -54,7 +54,7 @@ async def create_team(request: TeamCreate, current_user=Depends(get_current_user
 
 
 @router.get("/{team_id}")
-async def get_team(team_id: int, current_user=Depends(get_current_user)):
+def get_team(team_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, name, description, owner_id, created_at FROM teams WHERE id = ?",
         [team_id],
@@ -72,7 +72,7 @@ async def get_team(team_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{team_id}/invite")
-async def invite_member(team_id: int, request: TeamInvite, current_user=Depends(get_current_user)):
+def invite_member(team_id: int, request: TeamInvite, current_user=Depends(get_current_user)):
     result = execute_query("SELECT owner_id FROM teams WHERE id = ?", [team_id])
     rows = parse_rows(result)
     if not rows or rows[0]["owner_id"] != current_user.id:
@@ -87,7 +87,7 @@ async def invite_member(team_id: int, request: TeamInvite, current_user=Depends(
 
 
 @router.delete("/{team_id}/members/{user_id}")
-async def remove_member(team_id: int, user_id: int, current_user=Depends(get_current_user)):
+def remove_member(team_id: int, user_id: int, current_user=Depends(get_current_user)):
     result = execute_query("SELECT owner_id FROM teams WHERE id = ?", [team_id])
     rows = parse_rows(result)
     if not rows or rows[0]["owner_id"] != current_user.id:

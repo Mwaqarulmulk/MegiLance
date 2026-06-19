@@ -17,7 +17,7 @@ class ReviewResponseCreate(BaseModel):
 
 
 @router.get("/{review_id}")
-async def get_response(review_id: int, current_user=Depends(get_current_user)):
+def get_response(review_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, review_id, response, created_at, updated_at FROM review_responses WHERE review_id = ?",
         [review_id],
@@ -29,7 +29,7 @@ async def get_response(review_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{review_id}")
-async def create_response(review_id: int, request: ReviewResponseCreate, current_user=Depends(get_current_user)):
+def create_response(review_id: int, request: ReviewResponseCreate, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, reviewee_id FROM reviews WHERE id = ?",
         [review_id],
@@ -59,7 +59,7 @@ async def create_response(review_id: int, request: ReviewResponseCreate, current
 
 
 @router.put("/{review_id}")
-async def update_response(review_id: int, request: ReviewResponseCreate, current_user=Depends(get_current_user)):
+def update_response(review_id: int, request: ReviewResponseCreate, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM review_responses WHERE review_id = ? AND user_id = ?",
         [review_id, current_user.id],
@@ -76,7 +76,7 @@ async def update_response(review_id: int, request: ReviewResponseCreate, current
 
 
 @router.delete("/{review_id}")
-async def delete_response(review_id: int, current_user=Depends(get_current_user)):
+def delete_response(review_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "DELETE FROM review_responses WHERE review_id = ? AND user_id = ?",
         [review_id, current_user.id],

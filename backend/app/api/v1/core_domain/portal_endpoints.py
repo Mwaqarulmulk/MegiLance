@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/dashboard")
-async def get_dashboard(current_user=Depends(get_current_user)):
+def get_dashboard(current_user=Depends(get_current_user)):
     user_type = current_user.user_type.lower() if current_user.user_type else "client"
 
     if user_type == "client":
@@ -55,7 +55,7 @@ async def get_dashboard(current_user=Depends(get_current_user)):
 
 
 @router.get("/client/dashboard/stats")
-async def client_dashboard_stats(current_user=Depends(get_current_user)):
+def client_dashboard_stats(current_user=Depends(get_current_user)):
     projects = execute_query("SELECT COUNT(*) as count FROM projects WHERE client_id = ?", [current_user.id])
     active_projects = execute_query("SELECT COUNT(*) as count FROM projects WHERE client_id = ? AND status = 'open'", [current_user.id])
     proposals = execute_query(
@@ -80,7 +80,7 @@ async def client_dashboard_stats(current_user=Depends(get_current_user)):
 
 
 @router.get("/client/proposals")
-async def client_proposals(
+def client_proposals(
     status_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
@@ -112,7 +112,7 @@ async def client_proposals(
 
 
 @router.get("/client/spending/monthly")
-async def client_monthly_spending(months: int = Query(6, ge=1, le=24), current_user=Depends(get_current_user)):
+def client_monthly_spending(months: int = Query(6, ge=1, le=24), current_user=Depends(get_current_user)):
     spending = []
     for i in range(months - 1, -1, -1):
         month_start = (datetime.now(timezone.utc) - timedelta(days=30 * i)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -134,7 +134,7 @@ async def client_monthly_spending(months: int = Query(6, ge=1, le=24), current_u
 
 
 @router.get("/client/wallet")
-async def client_wallet(current_user=Depends(get_current_user)):
+def client_wallet(current_user=Depends(get_current_user)):
     balance = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
     rows = parse_rows(balance)
     balance_val = rows[0]["account_balance"] if rows else 0
@@ -153,7 +153,7 @@ async def client_wallet(current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/dashboard/stats")
-async def freelancer_dashboard_stats(current_user=Depends(get_current_user)):
+def freelancer_dashboard_stats(current_user=Depends(get_current_user)):
     proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ?", [current_user.id])
     active_proposals = execute_query("SELECT COUNT(*) as count FROM proposals WHERE freelancer_id = ? AND status = 'submitted'", [current_user.id])
     contracts = execute_query("SELECT COUNT(*) as count FROM contracts WHERE freelancer_id = ? AND status = 'active'", [current_user.id])
@@ -176,7 +176,7 @@ async def freelancer_dashboard_stats(current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/jobs")
-async def freelancer_jobs(
+def freelancer_jobs(
     category: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
@@ -201,7 +201,7 @@ async def freelancer_jobs(
 
 
 @router.get("/freelancer/proposals")
-async def freelancer_proposals(
+def freelancer_proposals(
     status_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
@@ -232,7 +232,7 @@ async def freelancer_proposals(
 
 
 @router.post("/freelancer/proposals")
-async def submit_proposal(data: dict, current_user=Depends(get_current_user)):
+def submit_proposal(data: dict, current_user=Depends(get_current_user)):
     project_id = data.get("project_id")
     cover_letter = data.get("cover_letter", "")
     bid_amount = data.get("bid_amount", 0)
@@ -274,7 +274,7 @@ async def submit_proposal(data: dict, current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/portfolio")
-async def freelancer_portfolio(current_user=Depends(get_current_user)):
+def freelancer_portfolio(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, title, description, image_url, project_url, category, skills, created_at FROM portfolio_items WHERE user_id = ? ORDER BY created_at DESC",
         [current_user.id],
@@ -284,7 +284,7 @@ async def freelancer_portfolio(current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/skills")
-async def freelancer_skills(current_user=Depends(get_current_user)):
+def freelancer_skills(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, name, level, category FROM user_skills WHERE user_id = ? ORDER BY level DESC",
         [current_user.id],
@@ -294,7 +294,7 @@ async def freelancer_skills(current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/seller-stats")
-async def freelancer_seller_stats(current_user=Depends(get_current_user)):
+def freelancer_seller_stats(current_user=Depends(get_current_user)):
     user_result = execute_query(
         "SELECT seller_level, hourly_rate, experience_level FROM users WHERE id = ?",
         [current_user.id],
@@ -346,7 +346,7 @@ async def freelancer_seller_stats(current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/earnings")
-async def freelancer_earnings(current_user=Depends(get_current_user)):
+def freelancer_earnings(current_user=Depends(get_current_user)):
     total = execute_query(
         "SELECT COALESCE(SUM(p.amount), 0) as total FROM payments p JOIN contracts c ON p.contract_id = c.id WHERE c.freelancer_id = ? AND p.status = 'completed'",
         [current_user.id],
@@ -367,7 +367,7 @@ async def freelancer_earnings(current_user=Depends(get_current_user)):
 
 
 @router.get("/freelancer/earnings/monthly")
-async def freelancer_monthly_earnings(months: int = Query(6, ge=1, le=24), current_user=Depends(get_current_user)):
+def freelancer_monthly_earnings(months: int = Query(6, ge=1, le=24), current_user=Depends(get_current_user)):
     earnings = []
     for i in range(months - 1, -1, -1):
         month_start = (datetime.now(timezone.utc) - timedelta(days=30 * i)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -389,7 +389,7 @@ async def freelancer_monthly_earnings(months: int = Query(6, ge=1, le=24), curre
 
 
 @router.get("/client/projects")
-async def client_projects(
+def client_projects(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
     current_user=Depends(get_current_user),
@@ -410,7 +410,7 @@ async def client_projects(
 
 
 @router.post("/client/projects")
-async def client_create_project(data: dict, current_user=Depends(get_current_user)):
+def client_create_project(data: dict, current_user=Depends(get_current_user)):
     title = data.get("title", "").strip()
     description = data.get("description", "").strip()
     category = data.get("category", "").strip()
@@ -443,7 +443,7 @@ async def client_create_project(data: dict, current_user=Depends(get_current_use
 
 
 @router.get("/client/payments")
-async def client_payments(
+def client_payments(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
     current_user=Depends(get_current_user),
@@ -471,7 +471,7 @@ async def client_payments(
 
 
 @router.get("/freelancer/projects")
-async def freelancer_projects(
+def freelancer_projects(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
     status_filter: Optional[str] = None,
@@ -509,7 +509,7 @@ async def freelancer_projects(
 
 
 @router.get("/freelancer/payments")
-async def freelancer_payments(
+def freelancer_payments(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1),
     current_user=Depends(get_current_user),
@@ -539,7 +539,7 @@ async def freelancer_payments(
 
 
 @router.get("/freelancer/wallet")
-async def freelancer_wallet(current_user=Depends(get_current_user)):
+def freelancer_wallet(current_user=Depends(get_current_user)):
     balance = execute_query("SELECT account_balance FROM users WHERE id = ?", [current_user.id])
     rows = parse_rows(balance)
     balance_val = rows[0]["account_balance"] if rows else 0
@@ -558,7 +558,7 @@ async def freelancer_wallet(current_user=Depends(get_current_user)):
 
 
 @router.post("/freelancer/withdraw")
-async def freelancer_withdraw(data: dict, current_user=Depends(get_current_user)):
+def freelancer_withdraw(data: dict, current_user=Depends(get_current_user)):
     amount = data.get("amount", 0)
     if amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")

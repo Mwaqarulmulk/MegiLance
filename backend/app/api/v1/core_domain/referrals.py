@@ -45,7 +45,7 @@ class BulkInvite(BaseModel):
 
 
 @router.get("/me")
-async def get_my_referral_data(current_user=Depends(get_current_user)):
+def get_my_referral_data(current_user=Depends(get_current_user)):
     try:
         _ensure_referral_code_column()
         code_result = execute_query(
@@ -104,7 +104,7 @@ async def get_my_referral_data(current_user=Depends(get_current_user)):
 
 
 @router.get("/campaigns")
-async def get_campaigns(
+def get_campaigns(
     active_only: bool = Query(True),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
@@ -140,7 +140,7 @@ async def get_campaigns(
 
 
 @router.post("/invite")
-async def invite_referral(
+def invite_referral(
     request: ReferralInvite,
     current_user=Depends(get_current_user),
 ):
@@ -183,7 +183,7 @@ async def invite_referral(
 
 
 @router.get("/milestones")
-async def get_milestones(current_user=Depends(get_current_user)):
+def get_milestones(current_user=Depends(get_current_user)):
     try:
         milestones_result = execute_query(
             "SELECT id, name, description, target_count, reward_amount, icon "
@@ -222,7 +222,7 @@ async def get_milestones(current_user=Depends(get_current_user)):
 
 
 @router.get("/history")
-async def get_referral_history(
+def get_referral_history(
     status_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -263,7 +263,7 @@ async def get_referral_history(
 
 
 @router.get("/stats")
-async def get_referral_stats(current_user=Depends(get_current_user)):
+def get_referral_stats(current_user=Depends(get_current_user)):
     try:
         result = execute_query(
             "SELECT COUNT(*) as total, "
@@ -297,7 +297,7 @@ async def get_referral_stats(current_user=Depends(get_current_user)):
 
 
 @router.get("/leaderboard")
-async def get_referral_leaderboard(
+def get_referral_leaderboard(
     period: str = Query("monthly", regex="^(monthly|all_time)$"),
     limit: int = Query(10, ge=1, le=50),
 ):

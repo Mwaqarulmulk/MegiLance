@@ -98,7 +98,7 @@ def _calculate_score(questions: list, answers: dict) -> float:
 # ---------------------------------------------------------------------------
 
 @router.get("")
-async def list_assessments(
+def list_assessments(
     skill_id: Optional[int] = Query(None),
     difficulty: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
@@ -140,7 +140,7 @@ async def list_assessments(
 # ---------------------------------------------------------------------------
 
 @router.get("/my")
-async def my_assessments(
+def my_assessments(
     current_user=Depends(get_current_user),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -176,7 +176,7 @@ async def my_assessments(
 # ---------------------------------------------------------------------------
 
 @router.get("/leaderboard")
-async def leaderboard(
+def leaderboard(
     skill_id: Optional[int] = Query(None),
     limit: int = Query(20, ge=1, le=100),
 ):
@@ -211,7 +211,7 @@ async def leaderboard(
 # ---------------------------------------------------------------------------
 
 @router.get("/{assessment_id}")
-async def get_assessment(assessment_id: int):
+def get_assessment(assessment_id: int):
     _ensure_tables()
     result = execute_query(
         "SELECT id, skill_id, title, description, difficulty, questions_json, "
@@ -235,7 +235,7 @@ async def get_assessment(assessment_id: int):
 # ---------------------------------------------------------------------------
 
 @router.post("/{assessment_id}/start")
-async def start_assessment(assessment_id: int, current_user=Depends(get_current_user)):
+def start_assessment(assessment_id: int, current_user=Depends(get_current_user)):
     _ensure_tables()
 
     # Verify assessment exists and is active
@@ -289,7 +289,7 @@ async def start_assessment(assessment_id: int, current_user=Depends(get_current_
 # ---------------------------------------------------------------------------
 
 @router.post("/{assessment_id}/submit")
-async def submit_assessment(
+def submit_assessment(
     assessment_id: int,
     body: AssessmentSubmit,
     current_user=Depends(get_current_user),
@@ -352,7 +352,7 @@ async def submit_assessment(
 # ---------------------------------------------------------------------------
 
 @router.get("/{assessment_id}/results")
-async def get_results(
+def get_results(
     assessment_id: int,
     current_user=Depends(get_current_user),
 ):
@@ -418,7 +418,7 @@ async def get_results(
 # ---------------------------------------------------------------------------
 
 @router.post("", status_code=201)
-async def create_assessment(body: AssessmentCreate, current_user=Depends(require_admin)):
+def create_assessment(body: AssessmentCreate, current_user=Depends(require_admin)):
     _ensure_tables()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(

@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.get("/project/{project_id}/freelancers")
-async def match_freelancers(
+def match_freelancers(
     project_id: int,
     limit: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -35,7 +35,7 @@ async def match_freelancers(
 
 
 @router.get("/projects")
-async def match_projects(
+def match_projects(
     limit: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
 ):
@@ -50,7 +50,7 @@ async def match_projects(
 
 
 @router.get("/score")
-async def match_score(
+def match_score(
     project_id: int,
     freelancer_id: int,
     current_user=Depends(get_current_user),
@@ -86,7 +86,7 @@ async def match_score(
 
 
 @router.get("/recommendations")
-async def get_recommendations(
+def get_recommendations(
     limit: int = Query(10, ge=1, le=50),
     current_user=Depends(get_current_user),
 ):
@@ -145,7 +145,7 @@ class TrackClickRequest(BaseModel):
 
 
 @router.post("/track-click")
-async def track_click(body: TrackClickRequest, current_user=Depends(get_current_user)):
+def track_click(body: TrackClickRequest, current_user=Depends(get_current_user)):
     """Record that a freelancer clicked a matched project (best-effort analytics signal)."""
     try:
         from datetime import datetime, timezone

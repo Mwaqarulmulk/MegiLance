@@ -26,7 +26,7 @@ class FeedbackUpdate(BaseModel):
 
 
 @router.post("")
-async def submit_feedback(request: FeedbackSubmit, current_user=Depends(get_current_user)):
+def submit_feedback(request: FeedbackSubmit, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO user_feedback (user_id, type, message, page, rating, status, created_at) VALUES (?, ?, ?, ?, ?, 'open', ?)",
@@ -36,7 +36,7 @@ async def submit_feedback(request: FeedbackSubmit, current_user=Depends(get_curr
 
 
 @router.get("")
-async def list_feedback(
+def list_feedback(
     type_filter: Optional[str] = None,
     status_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
@@ -65,7 +65,7 @@ async def list_feedback(
 
 
 @router.get("/{feedback_id}")
-async def get_feedback(feedback_id: int, current_user=Depends(require_admin)):
+def get_feedback(feedback_id: int, current_user=Depends(require_admin)):
     result = execute_query(
         "SELECT f.id, f.user_id, f.type, f.message, f.page, f.rating, f.status, f.admin_response, f.created_at, u.name as user_name, u.email as user_email FROM user_feedback f LEFT JOIN users u ON f.user_id = u.id WHERE f.id = ?",
         [feedback_id],
@@ -77,7 +77,7 @@ async def get_feedback(feedback_id: int, current_user=Depends(require_admin)):
 
 
 @router.put("/{feedback_id}")
-async def update_feedback(feedback_id: int, request: FeedbackUpdate, current_user=Depends(require_admin)):
+def update_feedback(feedback_id: int, request: FeedbackUpdate, current_user=Depends(require_admin)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")

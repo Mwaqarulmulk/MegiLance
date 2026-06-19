@@ -54,7 +54,7 @@ def _verify_contract_access(contract_id: int, user_id: int) -> dict:
 
 
 @router.get("")
-async def list_milestones(contract_id: int = Query(...), current_user=Depends(get_current_user)):
+def list_milestones(contract_id: int = Query(...), current_user=Depends(get_current_user)):
     _verify_contract_access(contract_id, current_user.id)
     result = execute_query(
         """SELECT m.id, m.contract_id, m.title, m.description, m.amount, m.status,
@@ -70,7 +70,7 @@ async def list_milestones(contract_id: int = Query(...), current_user=Depends(ge
 
 
 @router.get("/{milestone_id}")
-async def get_milestone(milestone_id: int, current_user=Depends(get_current_user)):
+def get_milestone(milestone_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, contract_id, title, description, amount, status, due_date, deliverables, submission_notes, approval_notes, rejection_notes, created_at, updated_at FROM milestones WHERE id = ?",
         [milestone_id],
@@ -84,7 +84,7 @@ async def get_milestone(milestone_id: int, current_user=Depends(get_current_user
 
 
 @router.post("")
-async def create_milestone(request: MilestoneCreate, current_user=Depends(get_current_user)):
+def create_milestone(request: MilestoneCreate, current_user=Depends(get_current_user)):
     _verify_contract_access(request.contract_id, current_user.id)
 
     now = datetime.now(timezone.utc).isoformat()
@@ -110,7 +110,7 @@ async def create_milestone(request: MilestoneCreate, current_user=Depends(get_cu
 
 
 @router.patch("/{milestone_id}")
-async def update_milestone(milestone_id: int, request: MilestoneUpdate, current_user=Depends(get_current_user)):
+def update_milestone(milestone_id: int, request: MilestoneUpdate, current_user=Depends(get_current_user)):
     result = execute_query("SELECT contract_id FROM milestones WHERE id = ?", [milestone_id])
     rows = parse_rows(result)
     if not rows:
@@ -131,7 +131,7 @@ async def update_milestone(milestone_id: int, request: MilestoneUpdate, current_
 
 
 @router.delete("/{milestone_id}")
-async def delete_milestone(milestone_id: int, current_user=Depends(get_current_user)):
+def delete_milestone(milestone_id: int, current_user=Depends(get_current_user)):
     result = execute_query("SELECT contract_id FROM milestones WHERE id = ?", [milestone_id])
     rows = parse_rows(result)
     if not rows:
@@ -143,7 +143,7 @@ async def delete_milestone(milestone_id: int, current_user=Depends(get_current_u
 
 
 @router.post("/{milestone_id}/submit")
-async def submit_milestone(milestone_id: int, request: MilestoneSubmit, current_user=Depends(get_current_user)):
+def submit_milestone(milestone_id: int, request: MilestoneSubmit, current_user=Depends(get_current_user)):
     result = execute_query("SELECT contract_id, status FROM milestones WHERE id = ?", [milestone_id])
     rows = parse_rows(result)
     if not rows:
@@ -163,7 +163,7 @@ async def submit_milestone(milestone_id: int, request: MilestoneSubmit, current_
 
 
 @router.post("/{milestone_id}/approve")
-async def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user=Depends(get_current_user)):
+def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user=Depends(get_current_user)):
     result = execute_query("SELECT contract_id, status FROM milestones WHERE id = ?", [milestone_id])
     rows = parse_rows(result)
     if not rows:
@@ -187,7 +187,7 @@ async def approve_milestone(milestone_id: int, request: MilestoneApprove, curren
 
 
 @router.post("/{milestone_id}/reject")
-async def reject_milestone(milestone_id: int, request: MilestoneReject, current_user=Depends(get_current_user)):
+def reject_milestone(milestone_id: int, request: MilestoneReject, current_user=Depends(get_current_user)):
     result = execute_query("SELECT contract_id, status FROM milestones WHERE id = ?", [milestone_id])
     rows = parse_rows(result)
     if not rows:

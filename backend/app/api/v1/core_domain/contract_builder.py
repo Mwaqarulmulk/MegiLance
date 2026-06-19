@@ -131,7 +131,7 @@ class ContractAmend(BaseModel):
 
 
 @router.post("", status_code=201)
-async def create_contract(body: ContractCreate, current_user=Depends(get_current_user)):
+def create_contract(body: ContractCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
 
@@ -174,7 +174,7 @@ async def create_contract(body: ContractCreate, current_user=Depends(get_current
 
 
 @router.get("")
-async def list_contracts(
+def list_contracts(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -208,7 +208,7 @@ async def list_contracts(
 
 
 @router.get("/templates")
-async def list_templates(
+def list_templates(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     category: Optional[str] = None,
@@ -241,7 +241,7 @@ async def list_templates(
 
 
 @router.post("/templates", status_code=201)
-async def create_template(body: TemplateCreate, current_user=Depends(get_current_user)):
+def create_template(body: TemplateCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
 
@@ -267,14 +267,14 @@ async def create_template(body: TemplateCreate, current_user=Depends(get_current
 
 
 @router.get("/{contract_id}")
-async def get_contract(contract_id: int, current_user=Depends(get_current_user)):
+def get_contract(contract_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     contract = _get_contract(contract_id, current_user.id)
     return contract
 
 
 @router.put("/{contract_id}")
-async def update_contract(
+def update_contract(
     contract_id: int,
     body: ContractUpdate,
     current_user=Depends(get_current_user),
@@ -327,7 +327,7 @@ async def update_contract(
 
 
 @router.post("/{contract_id}/sign")
-async def sign_contract(
+def sign_contract(
     contract_id: int,
     body: ContractSign,
     current_user=Depends(get_current_user),
@@ -379,7 +379,7 @@ async def sign_contract(
 
 
 @router.post("/{contract_id}/send")
-async def send_contract(
+def send_contract(
     contract_id: int,
     body: ContractSend,
     current_user=Depends(get_current_user),
@@ -408,7 +408,7 @@ async def send_contract(
 
 
 @router.post("/{contract_id}/amend")
-async def amend_contract(
+def amend_contract(
     contract_id: int,
     body: ContractAmend,
     current_user=Depends(get_current_user),
@@ -453,7 +453,7 @@ async def amend_contract(
 
 
 @router.get("/{contract_id}/history")
-async def contract_history(
+def contract_history(
     contract_id: int,
     current_user=Depends(get_current_user),
 ):

@@ -100,7 +100,7 @@ class ProgressUpdateBody(BaseModel):
 
 
 @router.get("/learning-center/courses")
-async def list_courses(
+def list_courses(
     category: Optional[str] = None,
     skill: Optional[str] = None,
     difficulty: Optional[str] = None,
@@ -140,7 +140,7 @@ async def list_courses(
 
 
 @router.get("/learning-center/courses/{course_id}")
-async def get_course(course_id: int):
+def get_course(course_id: int):
     _ensure_table()
     result = execute_query(
         "SELECT id, title, description, category, skill_slug, difficulty, duration_hours, "
@@ -162,7 +162,7 @@ async def get_course(course_id: int):
 
 
 @router.post("/learning-center/courses/{course_id}/enroll")
-async def enroll_in_course(course_id: int, current_user=Depends(get_current_user)):
+def enroll_in_course(course_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id FROM learning_courses WHERE id = ? AND is_published = 1",
@@ -190,7 +190,7 @@ async def enroll_in_course(course_id: int, current_user=Depends(get_current_user
 
 
 @router.get("/learning-center/my-courses")
-async def my_courses(
+def my_courses(
     status: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -221,7 +221,7 @@ async def my_courses(
 
 
 @router.post("/learning-center/courses/{course_id}/progress")
-async def update_progress(course_id: int, body: ProgressUpdateBody, current_user=Depends(get_current_user)):
+def update_progress(course_id: int, body: ProgressUpdateBody, current_user=Depends(get_current_user)):
     _ensure_table()
     enrollment = _get_user_enrollment(current_user.id, course_id)
     if not enrollment:
@@ -259,7 +259,7 @@ async def update_progress(course_id: int, body: ProgressUpdateBody, current_user
 
 
 @router.get("/learning-center/courses/{course_id}/modules")
-async def list_modules(course_id: int):
+def list_modules(course_id: int):
     _ensure_table()
     result = execute_query(
         "SELECT id, title, description, content_type, order_index, duration_minutes, created_at "
@@ -271,7 +271,7 @@ async def list_modules(course_id: int):
 
 
 @router.get("/learning-center/courses/{course_id}/modules/{module_id}")
-async def get_module(course_id: int, module_id: int):
+def get_module(course_id: int, module_id: int):
     _ensure_table()
     result = execute_query(
         "SELECT id, course_id, title, description, content_type, content_json, order_index, duration_minutes, created_at "
@@ -294,7 +294,7 @@ async def get_module(course_id: int, module_id: int):
 
 
 @router.post("/learning-center/courses/{course_id}/modules/{module_id}/complete")
-async def complete_module(course_id: int, module_id: int, current_user=Depends(get_current_user)):
+def complete_module(course_id: int, module_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     mod_result = execute_query(
         "SELECT id FROM learning_modules WHERE id = ? AND course_id = ?",
@@ -352,7 +352,7 @@ async def complete_module(course_id: int, module_id: int, current_user=Depends(g
 
 
 @router.get("/learning-center/certificates")
-async def list_certificates(
+def list_certificates(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -377,7 +377,7 @@ async def list_certificates(
 
 
 @router.get("/learning-center/certificates/{certificate_id}")
-async def get_certificate(certificate_id: int, current_user=Depends(get_current_user)):
+def get_certificate(certificate_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT cert.id, cert.certificate_number, cert.issued_at, "
@@ -405,7 +405,7 @@ async def get_certificate(certificate_id: int, current_user=Depends(get_current_
 
 
 @router.get("/learning-center/categories")
-async def list_categories():
+def list_categories():
     _ensure_table()
     result = execute_query(
         "SELECT category, COUNT(*) as course_count, AVG(avg_rating) as avg_rating "
@@ -418,7 +418,7 @@ async def list_categories():
 
 
 @router.get("/learning-center/paths")
-async def list_learning_paths():
+def list_learning_paths():
     _ensure_table()
     result = execute_query(
         "SELECT id, title, description, category, skill_slug, difficulty, duration_hours, "

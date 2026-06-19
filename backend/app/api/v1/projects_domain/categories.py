@@ -22,7 +22,7 @@ class CategoryCreate(BaseModel):
 
 
 @router.get("")
-async def list_categories(active_only: bool = True):
+def list_categories(active_only: bool = True):
     where = "WHERE is_active = 1" if active_only else ""
     result = execute_query(
         f"SELECT id, name, slug, description, icon, parent_id, is_active, project_count, sort_order, created_at, updated_at FROM categories {where} ORDER BY sort_order ASC, name ASC",
@@ -33,7 +33,7 @@ async def list_categories(active_only: bool = True):
 
 
 @router.get("/tree")
-async def get_category_tree():
+def get_category_tree():
     result = execute_query(
         "SELECT id, name, slug, description, icon, parent_id, is_active, project_count FROM categories WHERE is_active = 1 ORDER BY sort_order ASC, name ASC",
         [],
@@ -53,7 +53,7 @@ async def get_category_tree():
 
 
 @router.post("")
-async def create_category(request: CategoryCreate, current_user=Depends(require_admin)):
+def create_category(request: CategoryCreate, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO categories (name, slug, description, icon, parent_id, is_active, project_count, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, 0, 0, ?, ?)",

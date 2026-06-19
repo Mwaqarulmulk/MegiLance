@@ -22,7 +22,7 @@ class VideoCallCreate(BaseModel):
 
 
 @router.post("/calls")
-async def create_video_call(request: VideoCallCreate, current_user=Depends(get_current_user)):
+def create_video_call(request: VideoCallCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     room_id = f"room-{secrets.token_hex(8)}"
 
@@ -46,7 +46,7 @@ async def create_video_call(request: VideoCallCreate, current_user=Depends(get_c
 
 
 @router.get("/calls")
-async def get_video_calls(
+def get_video_calls(
     limit: int = Query(50, ge=1, le=100),
     room_id: Optional[str] = None,
     current_user=Depends(get_current_user),
@@ -75,7 +75,7 @@ async def get_video_calls(
 
 
 @router.post("/calls/{call_id}/join")
-async def join_video_call(call_id: int, current_user=Depends(get_current_user)):
+def join_video_call(call_id: int, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE video_call_participants SET status = 'joined', joined_at = ? WHERE call_id = ? AND user_id = ?",
@@ -95,7 +95,7 @@ async def join_video_call(call_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/calls/{call_id}/end")
-async def end_video_call(call_id: int, current_user=Depends(get_current_user)):
+def end_video_call(call_id: int, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE video_calls SET status = 'ended', ended_at = ? WHERE id = ? AND creator_id = ?",
@@ -105,7 +105,7 @@ async def end_video_call(call_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/calls/{call_id}")
-async def get_video_call(call_id: int, current_user=Depends(get_current_user)):
+def get_video_call(call_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, room_id, call_type, status, started_at, ended_at, enable_recording, created_at FROM video_calls WHERE id = ?",
         [call_id],

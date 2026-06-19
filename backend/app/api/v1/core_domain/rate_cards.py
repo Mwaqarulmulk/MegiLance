@@ -33,7 +33,7 @@ def _ensure_table():
 
 
 @router.get("")
-async def list_rate_cards(current_user=Depends(get_current_user)):
+def list_rate_cards(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, user_id, name, hourly_rate, fixed_rate, currency, service_type, description, is_active, created_at, updated_at "
@@ -44,7 +44,7 @@ async def list_rate_cards(current_user=Depends(get_current_user)):
 
 
 @router.get("/my-cards")
-async def get_my_cards(current_user=Depends(get_current_user)):
+def get_my_cards(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, user_id, name, hourly_rate, fixed_rate, currency, service_type, description, is_active, created_at, updated_at "
@@ -55,7 +55,7 @@ async def get_my_cards(current_user=Depends(get_current_user)):
 
 
 @router.get("/calculate")
-async def calculate_rate(
+def calculate_rate(
     hours: float = Query(1.0, ge=0.1),
     card_id: int = Query(...),
     current_user=Depends(get_current_user),
@@ -82,7 +82,7 @@ async def calculate_rate(
 
 
 @router.get("/{card_id}")
-async def get_rate_card(card_id: int, current_user=Depends(get_current_user)):
+def get_rate_card(card_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, user_id, name, hourly_rate, fixed_rate, currency, service_type, description, is_active, created_at, updated_at "
@@ -105,7 +105,7 @@ class RateCardCreate(BaseModel):
 
 
 @router.post("", status_code=201)
-async def create_rate_card(body: RateCardCreate, current_user=Depends(get_current_user)):
+def create_rate_card(body: RateCardCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -127,7 +127,7 @@ class RateCardUpdate(BaseModel):
 
 
 @router.put("/{card_id}")
-async def update_rate_card(card_id: int, body: RateCardUpdate, current_user=Depends(get_current_user)):
+def update_rate_card(card_id: int, body: RateCardUpdate, current_user=Depends(get_current_user)):
     _ensure_table()
     updates = body.model_dump(exclude_unset=True)
     if not updates:
@@ -147,7 +147,7 @@ async def update_rate_card(card_id: int, body: RateCardUpdate, current_user=Depe
 
 
 @router.delete("/{card_id}", status_code=204)
-async def delete_rate_card(card_id: int, current_user=Depends(get_current_user)):
+def delete_rate_card(card_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     execute_query(
         "DELETE FROM rate_cards WHERE id = ? AND user_id = ?", [card_id, current_user.id]

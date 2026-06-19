@@ -50,7 +50,7 @@ def _ensure_tables():
 
 
 @router.get("/settings")
-async def get_settings(current_user=Depends(get_current_user)):
+def get_settings(current_user=Depends(get_current_user)):
     _ensure_tables()
     result = execute_query(
         "SELECT user_id, timezone, buffer_time, max_bookings_per_day, is_accepting_bookings, updated_at FROM availability_settings WHERE user_id = ?",
@@ -81,7 +81,7 @@ class AvailabilitySettings(BaseModel):
 
 
 @router.put("/settings")
-async def update_settings(body: AvailabilitySettings, current_user=Depends(get_current_user)):
+def update_settings(body: AvailabilitySettings, current_user=Depends(get_current_user)):
     _ensure_tables()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -99,7 +99,7 @@ async def update_settings(body: AvailabilitySettings, current_user=Depends(get_c
 
 
 @router.get("/weekly-pattern")
-async def get_weekly_pattern(current_user=Depends(get_current_user)):
+def get_weekly_pattern(current_user=Depends(get_current_user)):
     _ensure_tables()
     result = execute_query(
         "SELECT day_of_week, start_time, end_time, is_available FROM availability_weekly_pattern WHERE user_id = ? ORDER BY id",
@@ -121,7 +121,7 @@ class WeeklyPatternUpdate(BaseModel):
 
 
 @router.put("/weekly-pattern")
-async def update_weekly_pattern(body: WeeklyPatternUpdate, current_user=Depends(get_current_user)):
+def update_weekly_pattern(body: WeeklyPatternUpdate, current_user=Depends(get_current_user)):
     _ensure_tables()
     execute_query("DELETE FROM availability_weekly_pattern WHERE user_id = ?", [current_user.id])
     for day, config in body.pattern.items():
@@ -137,7 +137,7 @@ async def update_weekly_pattern(body: WeeklyPatternUpdate, current_user=Depends(
 
 
 @router.get("/blocks")
-async def get_blocks(current_user=Depends(get_current_user)):
+def get_blocks(current_user=Depends(get_current_user)):
     _ensure_tables()
     result = execute_query(
         "SELECT id, user_id, start_datetime, end_datetime, reason, created_at FROM availability_blocks WHERE user_id = ? ORDER BY start_datetime",
@@ -158,7 +158,7 @@ class BlockCreate(BaseModel):
 
 
 @router.post("/blocks", status_code=201)
-async def add_block(body: BlockCreate, current_user=Depends(get_current_user)):
+def add_block(body: BlockCreate, current_user=Depends(get_current_user)):
     _ensure_tables()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -169,7 +169,7 @@ async def add_block(body: BlockCreate, current_user=Depends(get_current_user)):
 
 
 @router.delete("/blocks/{block_id}", status_code=204)
-async def delete_block(block_id: int, current_user=Depends(get_current_user)):
+def delete_block(block_id: int, current_user=Depends(get_current_user)):
     _ensure_tables()
     execute_query(
         "DELETE FROM availability_blocks WHERE id = ? AND user_id = ?", [block_id, current_user.id]
@@ -177,7 +177,7 @@ async def delete_block(block_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/bookings")
-async def get_bookings(
+def get_bookings(
     status: Optional[str] = None,
     current_user=Depends(get_current_user),
 ):
@@ -204,5 +204,5 @@ async def get_bookings(
 
 
 @router.get("/sync-status")
-async def get_sync_status(current_user=Depends(get_current_user)):
+def get_sync_status(current_user=Depends(get_current_user)):
     return {"synced": False, "provider": None, "last_sync": None}

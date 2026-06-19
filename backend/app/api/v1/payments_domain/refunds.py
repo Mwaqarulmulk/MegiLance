@@ -24,7 +24,7 @@ class RefundUpdate(BaseModel):
 
 
 @router.get("")
-async def list_refunds(
+def list_refunds(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -57,7 +57,7 @@ async def list_refunds(
 
 
 @router.post("")
-async def create_refund(request: RefundCreate, current_user=Depends(get_current_user)):
+def create_refund(request: RefundCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO refunds (payment_id, requested_by, amount, reason, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'pending', ?, ?)",
@@ -67,7 +67,7 @@ async def create_refund(request: RefundCreate, current_user=Depends(get_current_
 
 
 @router.put("/{refund_id}")
-async def update_refund(refund_id: int, request: RefundUpdate, current_user=Depends(require_admin)):
+def update_refund(refund_id: int, request: RefundUpdate, current_user=Depends(require_admin)):
     _ALLOWED_REFUND_COLUMNS = frozenset({"status", "admin_notes"})
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
@@ -87,7 +87,7 @@ async def update_refund(refund_id: int, request: RefundUpdate, current_user=Depe
 
 
 @router.post("/{refund_id}/approve")
-async def approve_refund(refund_id: int, current_user=Depends(require_admin)):
+def approve_refund(refund_id: int, current_user=Depends(require_admin)):
     # Fetch refund and original payment details
     refund_result = execute_query(
         "SELECT id, payment_id, amount, requested_by, status FROM refunds WHERE id = ?",
@@ -159,7 +159,7 @@ async def approve_refund(refund_id: int, current_user=Depends(require_admin)):
 
 
 @router.post("/{refund_id}/reject")
-async def reject_refund(refund_id: int, request: dict, current_user=Depends(require_admin)):
+def reject_refund(refund_id: int, request: dict, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE refunds SET status = 'rejected', admin_notes = ?, updated_at = ? WHERE id = ?",

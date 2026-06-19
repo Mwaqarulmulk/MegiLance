@@ -75,7 +75,7 @@ def _save_report_file(report_type: str, fmt: str, data: list) -> str:
 
 
 @router.get("/types")
-async def get_report_types():
+def get_report_types():
     return {
         "types": [
             {"id": "users", "name": "User Report", "description": "All users with details"},
@@ -88,7 +88,7 @@ async def get_report_types():
 
 
 @router.post("/export")
-async def export_report(request: ReportRequest, current_user=Depends(require_admin)):
+def export_report(request: ReportRequest, current_user=Depends(require_admin)):
     start = request.start_date or (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
     end = request.end_date or datetime.now(timezone.utc).isoformat()
 
@@ -162,7 +162,7 @@ async def export_report(request: ReportRequest, current_user=Depends(require_adm
 
 
 @router.get("/list")
-async def list_reports(current_user=Depends(require_admin)):
+def list_reports(current_user=Depends(require_admin)):
     try:
         if not os.path.exists(REPORT_DIR):
             return {"reports": []}
@@ -186,7 +186,7 @@ async def list_reports(current_user=Depends(require_admin)):
 
 
 @router.get("/{report_id}")
-async def get_report(report_id: str, current_user=Depends(require_admin)):
+def get_report(report_id: str, current_user=Depends(require_admin)):
     try:
         filepath = os.path.join(REPORT_DIR, report_id)
         if not os.path.isfile(filepath):

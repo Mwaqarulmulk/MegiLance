@@ -1512,7 +1512,11 @@ def health_ready():
     status_dict = {"status": "ready", "db": "ok", "components": {}}
 
     try:
-        # Check Database
+        # Check Database. This app uses the Turso HTTP API; a SQLAlchemy
+        # `engine` is not defined at module scope, so resolve it defensively
+        # rather than referencing a bare name (which raised NameError and made
+        # this readiness probe always return 503, destabilizing the deployment).
+        engine = globals().get("engine")
         if engine is not None:
             with engine.connect() as conn:
                 conn.execute(text("SELECT 1"))

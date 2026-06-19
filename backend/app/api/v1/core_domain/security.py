@@ -30,7 +30,7 @@ class SessionRevoke(BaseModel):
 
 
 @router.post("/change-password")
-async def change_password(request: Request, body: PasswordChange, current_user=Depends(get_current_user)):
+def change_password(request: Request, body: PasswordChange, current_user=Depends(get_current_user)):
     if not verify_password(request.current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Current password is incorrect")
 
@@ -68,7 +68,7 @@ async def change_password(request: Request, body: PasswordChange, current_user=D
 
 
 @router.get("/sessions")
-async def list_sessions(current_user=Depends(get_current_user)):
+def list_sessions(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, token, created_at, expires_at, ip_address, user_agent FROM user_sessions WHERE user_id = ? ORDER BY created_at DESC",
         [current_user.id],
@@ -78,7 +78,7 @@ async def list_sessions(current_user=Depends(get_current_user)):
 
 
 @router.post("/sessions/revoke")
-async def revoke_session(request: SessionRevoke, current_user=Depends(get_current_user)):
+def revoke_session(request: SessionRevoke, current_user=Depends(get_current_user)):
     if request.session_id:
         execute_query("DELETE FROM user_sessions WHERE id = ? AND user_id = ?", [request.session_id, current_user.id])
     else:
@@ -87,7 +87,7 @@ async def revoke_session(request: SessionRevoke, current_user=Depends(get_curren
 
 
 @router.get("/login-history")
-async def login_history(
+def login_history(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -102,7 +102,7 @@ async def login_history(
 
 
 @router.post("/logout-all")
-async def logout_all(request: Request, current_user=Depends(get_current_user)):
+def logout_all(request: Request, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM user_sessions WHERE user_id = ?", [current_user.id])
 
     token = request.headers.get("Authorization", "").replace("Bearer ", "")

@@ -27,7 +27,7 @@ class PayoutMethodUpdate(BaseModel):
 
 
 @router.get("")
-async def list_payout_methods(current_user=Depends(get_current_user)):
+def list_payout_methods(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, method_type, name, details, is_default, created_at, updated_at FROM payout_methods WHERE user_id = ? ORDER BY is_default DESC, created_at DESC",
         [current_user.id],
@@ -37,7 +37,7 @@ async def list_payout_methods(current_user=Depends(get_current_user)):
 
 
 @router.get("/{method_id}")
-async def get_payout_method(method_id: int, current_user=Depends(get_current_user)):
+def get_payout_method(method_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, method_type, name, details, is_default, created_at, updated_at FROM payout_methods WHERE id = ? AND user_id = ?",
         [method_id, current_user.id],
@@ -49,7 +49,7 @@ async def get_payout_method(method_id: int, current_user=Depends(get_current_use
 
 
 @router.post("")
-async def create_payout_method(request: PayoutMethodCreate, current_user=Depends(get_current_user)):
+def create_payout_method(request: PayoutMethodCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     import json
 
@@ -64,7 +64,7 @@ async def create_payout_method(request: PayoutMethodCreate, current_user=Depends
 
 
 @router.put("/{method_id}")
-async def update_payout_method(method_id: int, request: PayoutMethodUpdate, current_user=Depends(get_current_user)):
+def update_payout_method(method_id: int, request: PayoutMethodUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -93,6 +93,6 @@ async def update_payout_method(method_id: int, request: PayoutMethodUpdate, curr
 
 
 @router.delete("/{method_id}")
-async def delete_payout_method(method_id: int, current_user=Depends(get_current_user)):
+def delete_payout_method(method_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM payout_methods WHERE id = ? AND user_id = ?", [method_id, current_user.id])
     return {"message": "Payout method deleted"}

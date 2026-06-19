@@ -24,7 +24,7 @@ class WithdrawRequest(BaseModel):
 
 
 @router.get("")
-async def get_wallet(current_user=Depends(get_current_user)):
+def get_wallet(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT account_balance FROM users WHERE id = ?",
         [current_user.id],
@@ -51,7 +51,7 @@ async def get_wallet(current_user=Depends(get_current_user)):
 
 
 @router.get("/transactions")
-async def list_transactions(
+def list_transactions(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -70,7 +70,7 @@ async def list_transactions(
 
 
 @router.post("/deposit")
-async def deposit(request: DepositRequest, current_user=Depends(get_current_user)):
+def deposit(request: DepositRequest, current_user=Depends(get_current_user)):
     """Initiate a deposit. For direct methods (crypto, bank_transfer), balance is credited immediately.
     For gateway methods (stripe, card), balance is credited after gateway confirmation."""
     if request.amount <= 0:
@@ -129,7 +129,7 @@ async def deposit(request: DepositRequest, current_user=Depends(get_current_user
 
 
 @router.post("/withdraw")
-async def withdraw(request: WithdrawRequest, current_user=Depends(get_current_user)):
+def withdraw(request: WithdrawRequest, current_user=Depends(get_current_user)):
     if request.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
     if request.amount > 10000:
@@ -159,7 +159,7 @@ async def withdraw(request: WithdrawRequest, current_user=Depends(get_current_us
 
 
 @router.get("/analytics")
-async def wallet_analytics(
+def wallet_analytics(
     period: str = Query("30d", regex="^(7d|30d|90d|1y|all)$"),
     current_user=Depends(get_current_user),
 ):
@@ -178,14 +178,14 @@ async def wallet_analytics(
 
 
 @router.get("/withdrawals/pending")
-async def pending_withdrawals(current_user=Depends(get_current_user)):
+def pending_withdrawals(current_user=Depends(get_current_user)):
     """Get all pending/processing withdrawal transactions for the current user."""
     withdrawals = wallet_service.get_pending_withdrawals(current_user.id)
     return {"withdrawals": withdrawals, "total": len(withdrawals)}
 
 
 @router.post("/withdrawals/{reference_id}/cancel")
-async def cancel_withdrawal(reference_id: str, current_user=Depends(get_current_user)):
+def cancel_withdrawal(reference_id: str, current_user=Depends(get_current_user)):
     """Cancel a pending withdrawal and restore balance."""
     success = wallet_service.cancel_withdrawal_transaction(current_user.id, reference_id)
     if not success:

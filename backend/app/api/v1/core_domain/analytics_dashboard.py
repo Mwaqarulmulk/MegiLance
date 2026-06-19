@@ -38,7 +38,7 @@ def _safe_float(result, col=0) -> float:
 
 
 @router.get("/analytics/dashboard/summary")
-async def get_dashboard_summary(current_user=Depends(require_admin)):
+def get_dashboard_summary(current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc)
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0).isoformat()
     week_ago = (now - timedelta(days=7)).isoformat()
@@ -70,7 +70,7 @@ async def get_dashboard_summary(current_user=Depends(require_admin)):
 
 
 @router.get("/analytics/platform-health")
-async def get_platform_health(current_user=Depends(require_admin)):
+def get_platform_health(current_user=Depends(require_admin)):
     try:
         db_check = execute_query("SELECT 1 as ok", [])
         db_connected = bool(db_check and db_check.get("rows"))
@@ -137,7 +137,7 @@ async def get_platform_health(current_user=Depends(require_admin)):
 
 
 @router.get("/analytics/user-distribution")
-async def get_user_distribution(
+def get_user_distribution(
     group_by: str = Query("country", regex="^(country|user_type|role|seller_level|experience_level)$"),
     current_user=Depends(require_admin),
 ):
@@ -167,7 +167,7 @@ async def get_user_distribution(
 
 
 @router.get("/analytics/revenue-trends")
-async def get_revenue_trends(
+def get_revenue_trends(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     interval: str = Query("day", regex="^(day|week|month)$"),
@@ -214,7 +214,7 @@ async def get_revenue_trends(
 
 
 @router.get("/analytics/users/registration-trends")
-async def get_registration_trends(
+def get_registration_trends(
     start_date: Optional[str] = None,
     interval: str = Query("day", regex="^(day|week|month)$"),
     current_user=Depends(require_admin),
@@ -230,7 +230,7 @@ async def get_registration_trends(
 
 
 @router.get("/analytics/projects/completion-rate")
-async def get_project_completion_rate(current_user=Depends(require_admin)):
+def get_project_completion_rate(current_user=Depends(require_admin)):
     total = _safe_count(execute_query("SELECT COUNT(*) FROM projects", []))
     completed = _safe_count(execute_query(
         "SELECT COUNT(*) FROM projects WHERE status = 'completed'", []
@@ -240,7 +240,7 @@ async def get_project_completion_rate(current_user=Depends(require_admin)):
 
 
 @router.get("/analytics/revenue/stats")
-async def get_revenue_stats(
+def get_revenue_stats(
     days: int = Query(30, ge=1, le=365),
     current_user=Depends(require_admin),
 ):
@@ -262,7 +262,7 @@ async def get_revenue_stats(
 
 
 @router.get("/analytics/growth/summary")
-async def get_growth_summary(current_user=Depends(require_admin)):
+def get_growth_summary(current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc)
     this_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     last_month = (this_month - timedelta(days=1)).replace(day=1)
@@ -296,7 +296,7 @@ async def get_growth_summary(current_user=Depends(require_admin)):
 
 
 @router.get("/analytics/funnel/conversion")
-async def get_conversion_funnel(current_user=Depends(require_admin)):
+def get_conversion_funnel(current_user=Depends(require_admin)):
     total_users = _safe_count(execute_query("SELECT COUNT(*) FROM users", []))
     posted_project = _safe_count(execute_query("SELECT COUNT(DISTINCT client_id) FROM projects", []))
     got_proposal = _safe_count(execute_query("SELECT COUNT(DISTINCT project_id) FROM proposals", []))

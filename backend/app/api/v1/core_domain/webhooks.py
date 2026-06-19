@@ -26,7 +26,7 @@ class WebhookUpdate(BaseModel):
 
 
 @router.get("")
-async def list_webhooks(current_user=Depends(get_current_user)):
+def list_webhooks(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, url, events, is_active, secret, created_at, updated_at FROM webhooks WHERE user_id = ? ORDER BY created_at DESC",
         [current_user.id],
@@ -36,7 +36,7 @@ async def list_webhooks(current_user=Depends(get_current_user)):
 
 
 @router.get("/events")
-async def get_available_events():
+def get_available_events():
     return {
         "events": [
             "project.created", "project.updated", "project.closed",
@@ -50,7 +50,7 @@ async def get_available_events():
 
 
 @router.post("")
-async def create_webhook(request: WebhookCreate, current_user=Depends(get_current_user)):
+def create_webhook(request: WebhookCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     secret = request.secret or secrets.token_urlsafe(32)
     result = execute_query(
@@ -61,7 +61,7 @@ async def create_webhook(request: WebhookCreate, current_user=Depends(get_curren
 
 
 @router.put("/{webhook_id}")
-async def update_webhook(webhook_id: int, request: WebhookUpdate, current_user=Depends(get_current_user)):
+def update_webhook(webhook_id: int, request: WebhookUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -81,13 +81,13 @@ async def update_webhook(webhook_id: int, request: WebhookUpdate, current_user=D
 
 
 @router.delete("/{webhook_id}")
-async def delete_webhook(webhook_id: int, current_user=Depends(get_current_user)):
+def delete_webhook(webhook_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM webhooks WHERE id = ? AND user_id = ?", [webhook_id, current_user.id])
     return {"message": "Webhook deleted"}
 
 
 @router.get("/delivery-history")
-async def list_webhook_events(
+def list_webhook_events(
     webhook_id: int,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),

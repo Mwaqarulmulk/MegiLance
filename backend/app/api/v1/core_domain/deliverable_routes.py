@@ -31,7 +31,7 @@ class AddComment(BaseModel):
 
 
 @router.post("/submit")
-async def submit_deliverable(req: SubmitDeliverable):
+def submit_deliverable(req: SubmitDeliverable):
     """Submit a deliverable for a milestone."""
     deliverable_id = str(uuid.uuid4())
     return {
@@ -47,7 +47,7 @@ async def submit_deliverable(req: SubmitDeliverable):
 
 
 @router.post("/review")
-async def review_deliverable(req: ReviewDeliverable):
+def review_deliverable(req: ReviewDeliverable):
     """Review and approve/reject a deliverable."""
     if req.action not in ("approve", "reject", "request_revision"):
         raise HTTPException(status_code=400, detail="Action must be approve, reject, or request_revision")
@@ -69,7 +69,7 @@ async def review_deliverable(req: ReviewDeliverable):
 
 
 @router.post("/resubmit")
-async def resubmit_deliverable(deliverable_id: str, submission_notes: str = "", files: list[dict] = []):
+def resubmit_deliverable(deliverable_id: str, submission_notes: str = "", files: list[dict] = []):
     """Resubmit a deliverable after revision."""
     return {
         "deliverable_id": deliverable_id,
@@ -83,7 +83,7 @@ async def resubmit_deliverable(deliverable_id: str, submission_notes: str = "", 
 
 
 @router.post("/comment")
-async def add_comment(req: AddComment):
+def add_comment(req: AddComment):
     """Add a comment to a deliverable."""
     return {
         "comment_id": str(uuid.uuid4()),
@@ -94,7 +94,7 @@ async def add_comment(req: AddComment):
 
 
 @router.get("/milestone/{milestone_id}")
-async def get_milestone_deliverables(milestone_id: str):
+def get_milestone_deliverables(milestone_id: str):
     """Get all deliverables for a milestone."""
     return {
         "milestone_id": milestone_id,
@@ -104,7 +104,7 @@ async def get_milestone_deliverables(milestone_id: str):
 
 
 @router.get("/{deliverable_id}")
-async def get_deliverable(deliverable_id: str):
+def get_deliverable(deliverable_id: str):
     """Get deliverable details with files and comments."""
     return {
         "deliverable_id": deliverable_id,

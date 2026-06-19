@@ -38,7 +38,7 @@ class ReviewResponse(BaseModel):
 
 
 @router.get("")
-async def list_reviews(
+def list_reviews(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     user_id: Optional[int] = None,
@@ -77,7 +77,7 @@ async def list_reviews(
 
 
 @router.get("/{review_id}")
-async def get_review(review_id: int, current_user=Depends(get_current_user)):
+def get_review(review_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT r.id, r.contract_id, r.reviewer_id, r.reviewee_id, r.rating,
                   r.comment, r.communication_rating, r.quality_rating, r.deadline_rating,
@@ -100,7 +100,7 @@ async def get_review(review_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_review(request: ReviewCreate, current_user=Depends(get_current_user)):
+def create_review(request: ReviewCreate, current_user=Depends(get_current_user)):
     contract_result = execute_query(
         "SELECT id, client_id, freelancer_id, status FROM contracts WHERE id = ?",
         [request.contract_id],
@@ -149,7 +149,7 @@ async def create_review(request: ReviewCreate, current_user=Depends(get_current_
 
 
 @router.put("/{review_id}")
-async def update_review(review_id: int, request: ReviewUpdate, current_user=Depends(get_current_user)):
+def update_review(review_id: int, request: ReviewUpdate, current_user=Depends(get_current_user)):
     rows = parse_rows(execute_query("SELECT id, reviewer_id FROM reviews WHERE id = ?", [review_id]))
     if not rows:
         raise HTTPException(status_code=404, detail="Review not found")
@@ -174,7 +174,7 @@ async def update_review(review_id: int, request: ReviewUpdate, current_user=Depe
 
 
 @router.delete("/{review_id}")
-async def delete_review(review_id: int, current_user=Depends(get_current_user)):
+def delete_review(review_id: int, current_user=Depends(get_current_user)):
     rows = parse_rows(execute_query("SELECT id, reviewer_id FROM reviews WHERE id = ?", [review_id]))
     if not rows:
         raise HTTPException(status_code=404, detail="Review not found")
@@ -185,7 +185,7 @@ async def delete_review(review_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{review_id}/respond")
-async def respond_to_review(review_id: int, request: ReviewResponse, current_user=Depends(get_current_user)):
+def respond_to_review(review_id: int, request: ReviewResponse, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, reviewee_id FROM reviews WHERE id = ?",
         [review_id],

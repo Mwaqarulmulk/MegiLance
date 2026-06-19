@@ -81,7 +81,7 @@ class WorkflowConfigureRequest(BaseModel):
 
 
 @router.post("")
-async def create_custom_status(
+def create_custom_status(
     body: CustomStatusCreate,
     current_user=Depends(get_current_user),
 ):
@@ -107,7 +107,7 @@ async def create_custom_status(
 
 
 @router.get("")
-async def list_custom_statuses(
+def list_custom_statuses(
     entity_type: Optional[str] = Query(None),
     current_user=Depends(get_current_user),
 ):
@@ -129,7 +129,7 @@ async def list_custom_statuses(
 
 
 @router.put("/{status_id}")
-async def update_custom_status(
+def update_custom_status(
     status_id: int,
     body: CustomStatusUpdate,
     current_user=Depends(get_current_user),
@@ -169,7 +169,7 @@ async def update_custom_status(
 
 
 @router.delete("/{status_id}")
-async def delete_custom_status(
+def delete_custom_status(
     status_id: int,
     current_user=Depends(get_current_user),
 ):
@@ -193,7 +193,7 @@ async def delete_custom_status(
 
 
 @router.post("/reorder")
-async def reorder_statuses(
+def reorder_statuses(
     body: ReorderRequest,
     current_user=Depends(get_current_user),
 ):
@@ -208,7 +208,7 @@ async def reorder_statuses(
 
 
 @router.get("/workflow")
-async def get_workflow_configuration(
+def get_workflow_configuration(
     entity_type: Optional[str] = Query(None),
     current_user=Depends(get_current_user),
 ):
@@ -230,7 +230,7 @@ async def get_workflow_configuration(
 
 
 @router.post("/workflow")
-async def configure_workflow_transitions(
+def configure_workflow_transitions(
     body: WorkflowConfigureRequest,
     current_user=Depends(get_current_user),
 ):
@@ -266,7 +266,7 @@ async def configure_workflow_transitions(
 
 
 @router.get("/presets")
-async def get_preset_status_sets(
+def get_preset_status_sets(
     entity_type: Optional[str] = Query("project"),
     current_user=Depends(get_current_user),
 ):

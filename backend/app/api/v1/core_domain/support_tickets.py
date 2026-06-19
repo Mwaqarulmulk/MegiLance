@@ -24,7 +24,7 @@ class TicketReply(BaseModel):
 
 
 @router.get("")
-async def list_tickets(
+def list_tickets(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -54,7 +54,7 @@ async def list_tickets(
 
 
 @router.get("/{ticket_id}")
-async def get_ticket(ticket_id: int, current_user=Depends(get_current_user)):
+def get_ticket(ticket_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, user_id, subject, description, category, priority, status, created_at, updated_at FROM support_tickets WHERE id = ? AND user_id = ?",
         [ticket_id, current_user.id],
@@ -72,7 +72,7 @@ async def get_ticket(ticket_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_ticket(request: TicketCreate, current_user=Depends(get_current_user)):
+def create_ticket(request: TicketCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         """INSERT INTO support_tickets (user_id, subject, description, category, priority, status, created_at, updated_at)
@@ -86,7 +86,7 @@ async def create_ticket(request: TicketCreate, current_user=Depends(get_current_
 
 
 @router.post("/{ticket_id}/reply")
-async def reply_ticket(ticket_id: int, request: TicketReply, current_user=Depends(get_current_user)):
+def reply_ticket(ticket_id: int, request: TicketReply, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM support_tickets WHERE id = ? AND user_id = ?",
         [ticket_id, current_user.id],
@@ -104,7 +104,7 @@ async def reply_ticket(ticket_id: int, request: TicketReply, current_user=Depend
 
 
 @router.post("/{ticket_id}/close")
-async def close_ticket(ticket_id: int, current_user=Depends(get_current_user)):
+def close_ticket(ticket_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM support_tickets WHERE id = ? AND user_id = ?",
         [ticket_id, current_user.id],

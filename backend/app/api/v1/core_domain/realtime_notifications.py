@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/online-users")
-async def get_online_users(current_user=Depends(get_current_user)):
+def get_online_users(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM users WHERE is_online = 1 ORDER BY last_seen DESC LIMIT 100",
         [],
@@ -24,7 +24,7 @@ async def get_online_users(current_user=Depends(get_current_user)):
 
 
 @router.get("/user-status/{user_id}")
-async def get_user_status(user_id: int, current_user=Depends(get_current_user)):
+def get_user_status(user_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, is_online, last_seen FROM users WHERE id = ?",
         [user_id],
@@ -36,7 +36,7 @@ async def get_user_status(user_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/heartbeat")
-async def heartbeat(current_user=Depends(get_current_user)):
+def heartbeat(current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE users SET is_online = 1, last_seen = ? WHERE id = ?",
@@ -46,7 +46,7 @@ async def heartbeat(current_user=Depends(get_current_user)):
 
 
 @router.post("/offline")
-async def mark_offline(current_user=Depends(get_current_user)):
+def mark_offline(current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE users SET is_online = 0, last_seen = ? WHERE id = ?",

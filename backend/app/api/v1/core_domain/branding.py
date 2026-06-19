@@ -29,7 +29,7 @@ class BrandingConfigUpdate(BaseModel):
 
 
 @router.get("/config/{organization_id}")
-async def get_branding_config(organization_id: str, current_user=Depends(get_current_user)):
+def get_branding_config(organization_id: str, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, organization_id, primary_color, secondary_color, accent_color, logo_url, favicon_url, custom_css, created_at, updated_at FROM branding_config WHERE organization_id = ?",
         [organization_id],
@@ -41,7 +41,7 @@ async def get_branding_config(organization_id: str, current_user=Depends(get_cur
 
 
 @router.post("/config")
-async def create_branding_config(request: BrandingConfigCreate, current_user=Depends(get_current_user)):
+def create_branding_config(request: BrandingConfigCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO branding_config (organization_id, primary_color, secondary_color, accent_color, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
@@ -51,7 +51,7 @@ async def create_branding_config(request: BrandingConfigCreate, current_user=Dep
 
 
 @router.put("/config/{organization_id}")
-async def update_branding_config(organization_id: str, request: BrandingConfigUpdate, current_user=Depends(get_current_user)):
+def update_branding_config(organization_id: str, request: BrandingConfigUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -65,7 +65,7 @@ async def update_branding_config(organization_id: str, request: BrandingConfigUp
 
 
 @router.post("/config/{organization_id}/logo")
-async def upload_logo(organization_id: str, file: UploadFile = File(...), current_user=Depends(get_current_user)):
+def upload_logo(organization_id: str, file: UploadFile = File(...), current_user=Depends(get_current_user)):
     file_url = f"/uploads/branding/{organization_id}/logo_{file.filename}"
     execute_query(
         "UPDATE branding_config SET logo_url = ?, updated_at = ? WHERE organization_id = ?",
@@ -75,7 +75,7 @@ async def upload_logo(organization_id: str, file: UploadFile = File(...), curren
 
 
 @router.post("/config/{organization_id}/favicon")
-async def upload_favicon(organization_id: str, file: UploadFile = File(...), current_user=Depends(get_current_user)):
+def upload_favicon(organization_id: str, file: UploadFile = File(...), current_user=Depends(get_current_user)):
     file_url = f"/uploads/branding/{organization_id}/favicon_{file.filename}"
     execute_query(
         "UPDATE branding_config SET favicon_url = ?, updated_at = ? WHERE organization_id = ?",
@@ -85,7 +85,7 @@ async def upload_favicon(organization_id: str, file: UploadFile = File(...), cur
 
 
 @router.get("/presets")
-async def get_presets(current_user=Depends(get_current_user)):
+def get_presets(current_user=Depends(get_current_user)):
     return {
         "presets": [
             {"id": "modern", "name": "Modern", "primary_color": "#0066ff", "secondary_color": "#ffffff", "accent_color": "#00cc88"},
@@ -96,7 +96,7 @@ async def get_presets(current_user=Depends(get_current_user)):
 
 
 @router.post("/config/{organization_id}/apply-preset")
-async def apply_preset(organization_id: str, preset_id: str = Query(...), current_user=Depends(get_current_user)):
+def apply_preset(organization_id: str, preset_id: str = Query(...), current_user=Depends(get_current_user)):
     presets = {
         "modern": {"primary_color": "#0066ff", "secondary_color": "#ffffff", "accent_color": "#00cc88"},
         "dark": {"primary_color": "#1a1a2e", "secondary_color": "#16213e", "accent_color": "#e94560"},
@@ -115,7 +115,7 @@ async def apply_preset(organization_id: str, preset_id: str = Query(...), curren
 
 
 @router.get("/config/{organization_id}/preview")
-async def preview_branding(organization_id: str, current_user=Depends(get_current_user)):
+def preview_branding(organization_id: str, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT primary_color, secondary_color, accent_color, logo_url FROM branding_config WHERE organization_id = ?",
         [organization_id],
@@ -127,7 +127,7 @@ async def preview_branding(organization_id: str, current_user=Depends(get_curren
 
 
 @router.post("/config/{organization_id}/custom-domain")
-async def setup_custom_domain(organization_id: str, domain: str = Query(...), current_user=Depends(get_current_user)):
+def setup_custom_domain(organization_id: str, domain: str = Query(...), current_user=Depends(get_current_user)):
     execute_query(
         "UPDATE branding_config SET custom_domain = ?, domain_status = 'pending', updated_at = ? WHERE organization_id = ?",
         [domain, datetime.now(timezone.utc).isoformat(), organization_id],
@@ -136,7 +136,7 @@ async def setup_custom_domain(organization_id: str, domain: str = Query(...), cu
 
 
 @router.get("/config/{organization_id}/domain-status")
-async def check_domain_status(organization_id: str, current_user=Depends(get_current_user)):
+def check_domain_status(organization_id: str, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT custom_domain, domain_status FROM branding_config WHERE organization_id = ?",
         [organization_id],
@@ -148,6 +148,6 @@ async def check_domain_status(organization_id: str, current_user=Depends(get_cur
 
 
 @router.delete("/config/{organization_id}")
-async def delete_branding_config(organization_id: str, current_user=Depends(get_current_user)):
+def delete_branding_config(organization_id: str, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM branding_config WHERE organization_id = ?", [organization_id])
     return {"message": "Branding config deleted"}

@@ -38,7 +38,7 @@ class SkillAssessmentSubmission(BaseModel):
 
 
 @router.get("")
-async def list_skills(
+def list_skills(
     category: Optional[str] = None,
     search: Optional[str] = None,
     limit: int = Query(50, ge=1, le=200),
@@ -63,7 +63,7 @@ async def list_skills(
 
 
 @router.post("")
-async def create_skill(request: SkillCreate, current_user=Depends(require_admin)):
+def create_skill(request: SkillCreate, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO skills (name, category, description, icon_url, is_active, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, 1, 0, ?, ?)",
@@ -73,7 +73,7 @@ async def create_skill(request: SkillCreate, current_user=Depends(require_admin)
 
 
 @router.get("/freelancers/match")
-async def match_freelancers_by_skill(
+def match_freelancers_by_skill(
     skill_slug: str = Query(...),
     industry_slug: Optional[str] = None,
     limit: int = Query(6, ge=1, le=50),
@@ -108,7 +108,7 @@ async def match_freelancers_by_skill(
 
 
 @router.get("/{skill_id}/questions")
-async def get_skill_questions(skill_id: int, level: str = Query("intermediate")):
+def get_skill_questions(skill_id: int, level: str = Query("intermediate")):
     """Get assessment questions for a skill from the database."""
     # Fetch questions from the database
     result = execute_query(
@@ -143,7 +143,7 @@ async def get_skill_questions(skill_id: int, level: str = Query("intermediate"))
 
 
 @router.post("/assessments")
-async def submit_assessment(request: SkillAssessmentSubmission, current_user=Depends(get_current_user)):
+def submit_assessment(request: SkillAssessmentSubmission, current_user=Depends(get_current_user)):
     """Submit a skill assessment and calculate the score."""
     now = datetime.now(timezone.utc).isoformat()
     total_questions = len(request.answers)
@@ -185,7 +185,7 @@ async def submit_assessment(request: SkillAssessmentSubmission, current_user=Dep
 
 
 @router.get("/me/skills")
-async def get_my_skills(current_user=Depends(get_current_user)):
+def get_my_skills(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT us.id, us.skill_id, us.level, us.verified, s.name, s.category FROM user_skills us LEFT JOIN skills s ON us.skill_id = s.id WHERE us.user_id = ? ORDER BY us.level DESC",
         [current_user.id],
@@ -195,7 +195,7 @@ async def get_my_skills(current_user=Depends(get_current_user)):
 
 
 @router.post("/me/skills")
-async def add_my_skill(request: UserSkillAdd, current_user=Depends(get_current_user)):
+def add_my_skill(request: UserSkillAdd, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT OR REPLACE INTO user_skills (user_id, skill_id, level, verified, created_at) VALUES (?, (SELECT id FROM skills WHERE name = ?), ?, 0, ?)",
@@ -205,6 +205,6 @@ async def add_my_skill(request: UserSkillAdd, current_user=Depends(get_current_u
 
 
 @router.delete("/me/skills/{skill_id}")
-async def remove_my_skill(skill_id: int, current_user=Depends(get_current_user)):
+def remove_my_skill(skill_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM user_skills WHERE user_id = ? AND skill_id = ?", [current_user.id, skill_id])
     return {"message": "Skill removed"}

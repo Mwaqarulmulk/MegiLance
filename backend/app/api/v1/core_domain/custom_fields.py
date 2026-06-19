@@ -97,7 +97,7 @@ def _row_to_value(row) -> dict:
 
 
 @router.post("/custom-fields", status_code=201)
-async def create_custom_field(body: CustomFieldCreate, current_user=Depends(get_current_user)):
+def create_custom_field(body: CustomFieldCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     user_id = str(getattr(current_user, "id", ""))
     now = datetime.now(timezone.utc).isoformat()
@@ -113,7 +113,7 @@ async def create_custom_field(body: CustomFieldCreate, current_user=Depends(get_
 
 
 @router.get("/custom-fields")
-async def list_custom_fields(
+def list_custom_fields(
     entity_type: Optional[str] = Query(None),
     limit: int = Query(50, ge=1, le=200),
     current_user=Depends(get_current_user),
@@ -136,7 +136,7 @@ async def list_custom_fields(
 
 
 @router.get("/custom-fields/{field_id}")
-async def get_custom_field(field_id: str, current_user=Depends(get_current_user)):
+def get_custom_field(field_id: str, current_user=Depends(get_current_user)):
     _ensure_table()
     user_id = str(getattr(current_user, "id", ""))
     result = execute_query(
@@ -151,7 +151,7 @@ async def get_custom_field(field_id: str, current_user=Depends(get_current_user)
 
 
 @router.put("/custom-fields/{field_id}")
-async def update_custom_field(field_id: str, body: CustomFieldUpdate, current_user=Depends(get_current_user)):
+def update_custom_field(field_id: str, body: CustomFieldUpdate, current_user=Depends(get_current_user)):
     _ensure_table()
     user_id = str(getattr(current_user, "id", ""))
     now = datetime.now(timezone.utc).isoformat()
@@ -178,7 +178,7 @@ async def update_custom_field(field_id: str, body: CustomFieldUpdate, current_us
 
 
 @router.delete("/custom-fields/{field_id}", status_code=204)
-async def delete_custom_field(field_id: str, current_user=Depends(get_current_user)):
+def delete_custom_field(field_id: str, current_user=Depends(get_current_user)):
     _ensure_table()
     user_id = str(getattr(current_user, "id", ""))
     execute_query("DELETE FROM custom_field_definitions WHERE id = ? AND user_id = ?", [field_id, user_id])
@@ -186,7 +186,7 @@ async def delete_custom_field(field_id: str, current_user=Depends(get_current_us
 
 
 @router.post("/custom-fields/{field_id}/values", status_code=201)
-async def set_custom_field_value(field_id: str, body: CustomFieldValueSet, current_user=Depends(get_current_user)):
+def set_custom_field_value(field_id: str, body: CustomFieldValueSet, current_user=Depends(get_current_user)):
     _ensure_table()
     user_id = str(getattr(current_user, "id", ""))
     result = execute_query(
@@ -219,7 +219,7 @@ async def set_custom_field_value(field_id: str, body: CustomFieldValueSet, curre
 
 
 @router.get("/custom-fields/values")
-async def get_custom_field_values(
+def get_custom_field_values(
     entity_type: str = Query(...),
     entity_id: int = Query(...),
     current_user=Depends(get_current_user),
@@ -238,7 +238,7 @@ async def get_custom_field_values(
 
 
 @router.delete("/custom-fields/values/{value_id}", status_code=204)
-async def delete_custom_field_value(value_id: str, current_user=Depends(get_current_user)):
+def delete_custom_field_value(value_id: str, current_user=Depends(get_current_user)):
     _ensure_table()
     user_id = str(getattr(current_user, "id", ""))
     execute_query(

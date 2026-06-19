@@ -38,7 +38,7 @@ class ContactForm(BaseModel):
 
 @router.post("")
 @public_rate_limit()
-async def submit_contact(request: Request, body: ContactForm):
+def submit_contact(request: Request, body: ContactForm):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -49,7 +49,7 @@ async def submit_contact(request: Request, body: ContactForm):
 
 
 @router.get("/categories")
-async def get_categories():
+def get_categories():
     return {
         "categories": [
             {"id": "general", "label": "General Inquiry"},

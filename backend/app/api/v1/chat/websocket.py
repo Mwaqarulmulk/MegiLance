@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("")
-async def websocket_status():
+def websocket_status():
     """Get WebSocket/Socket.IO connection status and info"""
     return {
         "status": "active",
@@ -30,7 +30,7 @@ async def websocket_status():
 
 
 @router.get("/health")
-async def websocket_health():
+def websocket_health():
     """Health check for WebSocket server"""
     online_count = len(websocket_manager.get_online_users())
     return {
@@ -42,7 +42,7 @@ async def websocket_health():
 
 
 @router.get("/config")
-async def websocket_config(current_user=Depends(get_current_user)):
+def websocket_config(current_user=Depends(get_current_user)):
     """Get WebSocket connection configuration for the current user"""
     is_online = websocket_manager.is_user_online(str(current_user.id))
     return {
@@ -61,7 +61,7 @@ async def websocket_config(current_user=Depends(get_current_user)):
 
 
 @router.get("/online")
-async def get_online_users(current_user=Depends(get_current_user)):
+def get_online_users(current_user=Depends(get_current_user)):
     """Get list of currently online user IDs"""
     return {
         "online_users": websocket_manager.get_online_users(),

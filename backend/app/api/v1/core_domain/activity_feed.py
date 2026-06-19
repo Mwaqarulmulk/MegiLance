@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("")
-async def get_activity_feed(
+def get_activity_feed(
     type_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -38,7 +38,7 @@ async def get_activity_feed(
 
 
 @router.get("/{activity_id}")
-async def get_activity(activity_id: int, current_user=Depends(get_current_user)):
+def get_activity(activity_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, type, title, message, link, is_read, created_at FROM activity_feed WHERE id = ? AND user_id = ?",
         [activity_id, current_user.id],
@@ -50,7 +50,7 @@ async def get_activity(activity_id: int, current_user=Depends(get_current_user))
 
 
 @router.post("/{activity_id}/read")
-async def mark_activity_read(activity_id: int, current_user=Depends(get_current_user)):
+def mark_activity_read(activity_id: int, current_user=Depends(get_current_user)):
     execute_query(
         "UPDATE activity_feed SET is_read = 1 WHERE id = ? AND user_id = ?",
         [activity_id, current_user.id],
@@ -59,7 +59,7 @@ async def mark_activity_read(activity_id: int, current_user=Depends(get_current_
 
 
 @router.post("/read-all")
-async def mark_all_read(current_user=Depends(get_current_user)):
+def mark_all_read(current_user=Depends(get_current_user)):
     execute_query(
         "UPDATE activity_feed SET is_read = 1 WHERE user_id = ? AND is_read = 0",
         [current_user.id],
@@ -68,7 +68,7 @@ async def mark_all_read(current_user=Depends(get_current_user)):
 
 
 @router.get("/unread-count")
-async def get_unread_count(current_user=Depends(get_current_user)):
+def get_unread_count(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT COUNT(*) as count FROM activity_feed WHERE user_id = ? AND is_read = 0",
         [current_user.id],

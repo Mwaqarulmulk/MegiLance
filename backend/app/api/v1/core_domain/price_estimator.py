@@ -372,7 +372,7 @@ class RangeRequest(BaseModel):
 # ── Endpoints ───────────────────────────────────────────────────────────────
 
 @router.post("/estimate")
-async def estimate_price(body: EstimateRequest, current_user=Depends(get_current_user_optional)):
+def estimate_price(body: EstimateRequest, current_user=Depends(get_current_user_optional)):
     # Public lead-gen tool: usable without an account (marketed as "no sign-up required").
     _ensure_table()
 
@@ -578,7 +578,7 @@ async def estimate_price(body: EstimateRequest, current_user=Depends(get_current
 # ── Pro: categories, hours questions, smart hours ───────────────────────────
 
 @router.get("/categories")
-async def get_categories():
+def get_categories():
     categories = [
         {
             "key": c["key"], "label": c["label"], "icon": c.get("icon"), "description": c["description"],
@@ -616,7 +616,7 @@ def _questions_for_category(category: str):
 
 
 @router.get("/hours-questions/{category}")
-async def get_hours_questions(category: str):
+def get_hours_questions(category: str):
     return {"category": category, "questions": _questions_for_category(category)}
 
 
@@ -629,7 +629,7 @@ class EstimateHoursRequest(BaseModel):
 
 
 @router.post("/estimate-hours")
-async def estimate_hours(body: EstimateHoursRequest):
+def estimate_hours(body: EstimateHoursRequest):
     questions = _questions_for_category(body.category or "")
     qmap = {q["id"]: q for q in questions}
 
@@ -676,7 +676,7 @@ async def estimate_hours(body: EstimateHoursRequest):
 
 
 @router.get("/rates/{skill_slug}")
-async def get_market_rates(skill_slug: str, industry: Optional[str] = Query(None)):
+def get_market_rates(skill_slug: str, industry: Optional[str] = Query(None)):
     _ensure_table()
 
     skill = SKILL_BASE_RATES.get(skill_slug)
@@ -716,7 +716,7 @@ async def get_market_rates(skill_slug: str, industry: Optional[str] = Query(None
 
 
 @router.post("/compare")
-async def compare_pricing(body: CompareRequest, current_user=Depends(get_current_user_optional)):
+def compare_pricing(body: CompareRequest, current_user=Depends(get_current_user_optional)):
     _ensure_table()
 
     complexity_mult = COMPLEXITY_MULTIPLIERS.get(body.complexity, 1.0)
@@ -759,7 +759,7 @@ async def compare_pricing(body: CompareRequest, current_user=Depends(get_current
 
 
 @router.get("/trends")
-async def get_pricing_trends(
+def get_pricing_trends(
     skill_slug: Optional[str] = Query(None),
     industry: Optional[str] = Query(None),
     months: int = Query(6, ge=1, le=24),
@@ -804,7 +804,7 @@ async def get_pricing_trends(
 
 
 @router.post("/suggest")
-async def suggest_bid(body: SuggestRequest, current_user=Depends(get_current_user_optional)):
+def suggest_bid(body: SuggestRequest, current_user=Depends(get_current_user_optional)):
     _ensure_table()
 
     skill = SKILL_BASE_RATES.get(body.skill_slug)
@@ -872,7 +872,7 @@ async def suggest_bid(body: SuggestRequest, current_user=Depends(get_current_use
 
 
 @router.get("/industry-rates")
-async def get_industry_rates(industry: Optional[str] = Query(None)):
+def get_industry_rates(industry: Optional[str] = Query(None)):
     _ensure_table()
 
     result = execute_query(
@@ -913,7 +913,7 @@ async def get_industry_rates(industry: Optional[str] = Query(None)):
 
 
 @router.post("/range")
-async def get_price_range(body: RangeRequest, current_user=Depends(get_current_user_optional)):
+def get_price_range(body: RangeRequest, current_user=Depends(get_current_user_optional)):
     _ensure_table()
 
     skill = SKILL_BASE_RATES.get(body.skill_slug)

@@ -99,7 +99,7 @@ def _fetch_user_data(user_id: int, opts: ExportRequest) -> dict:
 
 
 @router.post("/export")
-async def export_user_data(request: ExportRequest, current_user=Depends(get_current_user)):
+def export_user_data(request: ExportRequest, current_user=Depends(get_current_user)):
     _ensure_table()
     try:
         data = _fetch_user_data(current_user.id, request)
@@ -120,7 +120,7 @@ async def export_user_data(request: ExportRequest, current_user=Depends(get_curr
 
 
 @router.post("/import")
-async def import_user_data(request: ImportRequest, current_user=Depends(get_current_user)):
+def import_user_data(request: ImportRequest, current_user=Depends(get_current_user)):
     _ensure_table()
     try:
         parsed = json.loads(request.backup_data)
@@ -152,7 +152,7 @@ async def import_user_data(request: ImportRequest, current_user=Depends(get_curr
 
 
 @router.get("/backups")
-async def list_backups(
+def list_backups(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -176,7 +176,7 @@ async def list_backups(
 
 
 @router.post("/create-backup")
-async def create_backup(request: CreateBackupRequest, current_user=Depends(get_current_user)):
+def create_backup(request: CreateBackupRequest, current_user=Depends(get_current_user)):
     _ensure_table()
     try:
         opts = ExportRequest()
@@ -198,7 +198,7 @@ async def create_backup(request: CreateBackupRequest, current_user=Depends(get_c
 
 
 @router.post("/restore/{backup_id}")
-async def restore_from_backup(backup_id: int, current_user=Depends(get_current_user)):
+def restore_from_backup(backup_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, backup_data, status FROM user_backups WHERE id = ? AND user_id = ?",
@@ -234,7 +234,7 @@ async def restore_from_backup(backup_id: int, current_user=Depends(get_current_u
 
 
 @router.delete("/backups/{backup_id}")
-async def delete_backup(backup_id: int, current_user=Depends(get_current_user)):
+def delete_backup(backup_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id FROM user_backups WHERE id = ? AND user_id = ?",
@@ -249,7 +249,7 @@ async def delete_backup(backup_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/backups/{backup_id}/download")
-async def download_backup(backup_id: int, current_user=Depends(get_current_user)):
+def download_backup(backup_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, backup_name, backup_data, file_size, created_at "
@@ -272,7 +272,7 @@ async def download_backup(backup_id: int, current_user=Depends(get_current_user)
 
 
 @router.get("/status")
-async def get_backup_status(
+def get_backup_status(
     backup_id: Optional[int] = Query(None),
     current_user=Depends(get_current_user),
 ):

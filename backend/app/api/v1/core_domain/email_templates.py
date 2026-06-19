@@ -33,7 +33,7 @@ class EmailTemplateUpdate(BaseModel):
 
 
 @router.get("")
-async def list_templates(
+def list_templates(
     include_inactive: bool = Query(False),
     current_user=Depends(require_admin),
 ):
@@ -47,7 +47,7 @@ async def list_templates(
 
 
 @router.get("/types")
-async def get_template_types(current_user=Depends(require_admin)):
+def get_template_types(current_user=Depends(require_admin)):
     return {
         "types": [
             {"id": "welcome", "name": "Welcome Email", "description": "Sent when a user signs up"},
@@ -60,7 +60,7 @@ async def get_template_types(current_user=Depends(require_admin)):
 
 
 @router.get("/{template_id}")
-async def get_template(template_id: int, current_user=Depends(require_admin)):
+def get_template(template_id: int, current_user=Depends(require_admin)):
     result = execute_query(
         "SELECT id, template_type, name, subject, html_body, text_body, variables, is_active, created_at, updated_at FROM email_templates WHERE id = ?",
         [template_id],
@@ -72,7 +72,7 @@ async def get_template(template_id: int, current_user=Depends(require_admin)):
 
 
 @router.post("")
-async def create_template(request: EmailTemplateCreate, current_user=Depends(require_admin)):
+def create_template(request: EmailTemplateCreate, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     import json
     result = execute_query(
@@ -83,7 +83,7 @@ async def create_template(request: EmailTemplateCreate, current_user=Depends(req
 
 
 @router.put("/{template_id}")
-async def update_template(template_id: int, request: EmailTemplateUpdate, current_user=Depends(require_admin)):
+def update_template(template_id: int, request: EmailTemplateUpdate, current_user=Depends(require_admin)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -110,13 +110,13 @@ async def update_template(template_id: int, request: EmailTemplateUpdate, curren
 
 
 @router.delete("/{template_id}")
-async def delete_template(template_id: int, current_user=Depends(require_admin)):
+def delete_template(template_id: int, current_user=Depends(require_admin)):
     execute_query("DELETE FROM email_templates WHERE id = ?", [template_id])
     return {"message": "Template deleted"}
 
 
 @router.post("/{template_id}/preview")
-async def preview_template(template_id: int, data: dict, current_user=Depends(require_admin)):
+def preview_template(template_id: int, data: dict, current_user=Depends(require_admin)):
     result = execute_query(
         "SELECT subject, html_body FROM email_templates WHERE id = ?",
         [template_id],
@@ -137,7 +137,7 @@ async def preview_template(template_id: int, data: dict, current_user=Depends(re
 
 
 @router.post("/{template_id}/duplicate")
-async def duplicate_template(template_id: int, current_user=Depends(require_admin)):
+def duplicate_template(template_id: int, current_user=Depends(require_admin)):
     result = execute_query(
         "SELECT template_type, name, subject, html_body, text_body, variables FROM email_templates WHERE id = ?",
         [template_id],

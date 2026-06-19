@@ -55,7 +55,7 @@ def _ensure_settings_table() -> None:
 
 
 @router.get("/settings")
-async def get_platform_settings(current_user=Depends(require_admin)):
+def get_platform_settings(current_user=Depends(require_admin)):
     """Return the persisted platform settings JSON (empty object if unset)."""
     _ensure_settings_table()
     rows = parse_rows(execute_query("SELECT data FROM app_settings WHERE id = 1", []))
@@ -68,7 +68,7 @@ async def get_platform_settings(current_user=Depends(require_admin)):
 
 
 @router.put("/settings")
-async def update_platform_settings(payload: dict, current_user=Depends(require_admin)):
+def update_platform_settings(payload: dict, current_user=Depends(require_admin)):
     """Persist the full platform settings JSON blob (upsert single row)."""
     _ensure_settings_table()
     now = datetime.now(timezone.utc).isoformat()
@@ -86,7 +86,7 @@ async def update_platform_settings(payload: dict, current_user=Depends(require_a
 # ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/users")
-async def list_users(
+def list_users(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     role: Optional[str] = None,
@@ -132,7 +132,7 @@ async def list_users(
 
 
 @router.get("/users/{user_id}")
-async def get_user(user_id: int, current_user=Depends(require_admin)):
+def get_user(user_id: int, current_user=Depends(require_admin)):
     result = execute_query(
         """SELECT id, email, name, user_type, role, is_active, email_verified,
                   profile_image_url, created_at, account_balance, bio, skills,
@@ -147,7 +147,7 @@ async def get_user(user_id: int, current_user=Depends(require_admin)):
 
 
 @router.put("/users/{user_id}")
-async def update_user(user_id: int, request: AdminUserUpdate, current_user=Depends(require_admin)):
+def update_user(user_id: int, request: AdminUserUpdate, current_user=Depends(require_admin)):
     _ALLOWED_ADMIN_USER_COLUMNS = frozenset({"is_active", "role", "email_verified"})
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
@@ -179,7 +179,7 @@ async def update_user(user_id: int, request: AdminUserUpdate, current_user=Depen
 
 
 @router.post("/users/{user_id}/toggle-status")
-async def toggle_user_status(user_id: int, current_user=Depends(require_admin)):
+def toggle_user_status(user_id: int, current_user=Depends(require_admin)):
     """Toggle a user's active/suspended status."""
     if user_id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot suspend your own account")
@@ -209,7 +209,7 @@ async def toggle_user_status(user_id: int, current_user=Depends(require_admin)):
 
 
 @router.delete("/users/{user_id}")
-async def delete_user(user_id: int, current_user=Depends(require_admin)):
+def delete_user(user_id: int, current_user=Depends(require_admin)):
     """Soft-delete a user and clean up related data. Prevents self-deletion."""
     if user_id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot delete your own account")
@@ -260,7 +260,7 @@ async def delete_user(user_id: int, current_user=Depends(require_admin)):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/projects")
-async def list_projects(
+def list_projects(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status: Optional[str] = None,
@@ -322,7 +322,7 @@ async def list_projects(
 
 
 @router.get("/projects/{project_id}")
-async def get_project(project_id: int, current_user=Depends(require_admin)):
+def get_project(project_id: int, current_user=Depends(require_admin)):
     """Get a single project for admin."""
     result = execute_query(
         """SELECT p.id, p.title, p.description, p.category, p.status,
@@ -356,7 +356,7 @@ async def get_project(project_id: int, current_user=Depends(require_admin)):
 
 
 @router.post("/projects")
-async def create_project(body: AdminProjectCreate, current_user=Depends(require_admin)):
+def create_project(body: AdminProjectCreate, current_user=Depends(require_admin)):
     """Admin can create any project on behalf of a client or as platform project."""
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
@@ -380,7 +380,7 @@ async def create_project(body: AdminProjectCreate, current_user=Depends(require_
 
 
 @router.put("/projects/{project_id}")
-async def update_project(project_id: int, body: AdminProjectUpdate, current_user=Depends(require_admin)):
+def update_project(project_id: int, body: AdminProjectUpdate, current_user=Depends(require_admin)):
     """Admin can update any project."""
     existing = execute_query("SELECT id FROM projects WHERE id = ?", [project_id])
     if not parse_rows(existing):
@@ -398,7 +398,7 @@ async def update_project(project_id: int, body: AdminProjectUpdate, current_user
 
 
 @router.delete("/projects/{project_id}")
-async def delete_project(project_id: int, current_user=Depends(require_admin)):
+def delete_project(project_id: int, current_user=Depends(require_admin)):
     """Admin can delete any project. Cancels associated proposals and contracts."""
     existing = execute_query("SELECT id FROM projects WHERE id = ?", [project_id])
     if not parse_rows(existing):
@@ -430,7 +430,7 @@ async def delete_project(project_id: int, current_user=Depends(require_admin)):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/payments")
-async def list_admin_payments(
+def list_admin_payments(
     status_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=500),
@@ -491,7 +491,7 @@ async def list_admin_payments(
 # ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/stats")
-async def get_stats(current_user=Depends(require_admin)):
+def get_stats(current_user=Depends(require_admin)):
     users = execute_query("SELECT COUNT(*) as count FROM users", [])
     projects = execute_query("SELECT COUNT(*) as count FROM projects", [])
     proposals = execute_query("SELECT COUNT(*) as count FROM proposals", [])

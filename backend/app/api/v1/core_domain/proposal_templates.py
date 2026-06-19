@@ -41,7 +41,7 @@ def _ensure_table():
 
 
 @router.get("")
-async def list_templates(
+def list_templates(
     category: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
@@ -63,12 +63,12 @@ async def list_templates(
 
 
 @router.get("/variables")
-async def get_variables(current_user=Depends(get_current_user)):
+def get_variables(current_user=Depends(get_current_user)):
     return {"variables": TEMPLATE_VARIABLES}
 
 
 @router.get("/analytics")
-async def get_analytics(current_user=Depends(get_current_user)):
+def get_analytics(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT COUNT(*) as total, SUM(use_count) as total_uses FROM proposal_templates WHERE user_id = ?",
@@ -83,7 +83,7 @@ async def get_analytics(current_user=Depends(get_current_user)):
 
 
 @router.get("/{template_id}")
-async def get_template(template_id: int, current_user=Depends(get_current_user)):
+def get_template(template_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, user_id, name, subject, content, category, use_count, is_shared, created_at, updated_at "
@@ -105,7 +105,7 @@ class TemplateCreate(BaseModel):
 
 
 @router.post("", status_code=201)
-async def create_template(body: TemplateCreate, current_user=Depends(get_current_user)):
+def create_template(body: TemplateCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
@@ -125,7 +125,7 @@ class TemplateUpdate(BaseModel):
 
 
 @router.put("/{template_id}")
-async def update_template(template_id: int, body: TemplateUpdate, current_user=Depends(get_current_user)):
+def update_template(template_id: int, body: TemplateUpdate, current_user=Depends(get_current_user)):
     _ensure_table()
     updates = body.model_dump(exclude_unset=True)
     if not updates:
@@ -145,7 +145,7 @@ async def update_template(template_id: int, body: TemplateUpdate, current_user=D
 
 
 @router.delete("/{template_id}", status_code=204)
-async def delete_template(template_id: int, current_user=Depends(get_current_user)):
+def delete_template(template_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     execute_query(
         "DELETE FROM proposal_templates WHERE id = ? AND user_id = ?",
@@ -154,7 +154,7 @@ async def delete_template(template_id: int, current_user=Depends(get_current_use
 
 
 @router.post("/{template_id}/use")
-async def use_template(template_id: int, current_user=Depends(get_current_user)):
+def use_template(template_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     execute_query(
         "UPDATE proposal_templates SET use_count = use_count + 1 WHERE id = ? AND user_id = ?",

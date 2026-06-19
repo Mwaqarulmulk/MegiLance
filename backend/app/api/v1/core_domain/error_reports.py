@@ -131,7 +131,7 @@ class ErrorReportIn(BaseModel):
 
 
 @router.post("", status_code=201)
-async def capture_error(payload: ErrorReportIn, request: Request, current_user=Depends(get_current_user_optional)):
+def capture_error(payload: ErrorReportIn, request: Request, current_user=Depends(get_current_user_optional)):
     rid = record_error(
         source=payload.source if payload.source in ("frontend", "backend", "manual") else "frontend",
         severity=payload.severity,
@@ -150,7 +150,7 @@ async def capture_error(payload: ErrorReportIn, request: Request, current_user=D
 # ── Admin: list / stats / detail / update / delete ───────────────────────────────
 
 @router.get("")
-async def list_errors(
+def list_errors(
     status: Optional[str] = None,
     source: Optional[str] = None,
     severity: Optional[str] = None,
@@ -186,7 +186,7 @@ async def list_errors(
 
 
 @router.get("/stats/overview")
-async def error_stats(current_user=Depends(require_admin)):
+def error_stats(current_user=Depends(require_admin)):
     _ensure_table()
     def _count(cond: str, p: list):
         r = parse_rows(execute_query(f"SELECT COUNT(*) as c FROM error_reports WHERE {cond}", p))
@@ -207,7 +207,7 @@ async def error_stats(current_user=Depends(require_admin)):
 
 
 @router.get("/{report_id}")
-async def get_error(report_id: int, current_user=Depends(require_admin)):
+def get_error(report_id: int, current_user=Depends(require_admin)):
     _ensure_table()
     rows = parse_rows(execute_query("SELECT * FROM error_reports WHERE id = ?", [report_id]))
     if not rows:
@@ -222,7 +222,7 @@ class ErrorUpdate(BaseModel):
 
 
 @router.patch("/{report_id}")
-async def update_error(report_id: int, request: ErrorUpdate, current_user=Depends(require_admin)):
+def update_error(report_id: int, request: ErrorUpdate, current_user=Depends(require_admin)):
     _ensure_table()
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if "status" in updates and updates["status"] not in VALID_STATUS:
@@ -238,7 +238,7 @@ async def update_error(report_id: int, request: ErrorUpdate, current_user=Depend
 
 
 @router.delete("/{report_id}", status_code=204)
-async def delete_error(report_id: int, current_user=Depends(require_admin)):
+def delete_error(report_id: int, current_user=Depends(require_admin)):
     _ensure_table()
     execute_query("DELETE FROM error_reports WHERE id = ?", [report_id])
     return None

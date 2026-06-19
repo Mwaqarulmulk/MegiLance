@@ -41,7 +41,7 @@ class ContractComplete(BaseModel):
 
 
 @router.get("")
-async def list_contracts(
+def list_contracts(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -57,7 +57,7 @@ async def list_contracts(
 
 
 @router.get("/{contract_id}")
-async def get_contract(contract_id: str, current_user=Depends(get_current_user)):
+def get_contract(contract_id: str, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")
@@ -70,7 +70,7 @@ async def get_contract(contract_id: str, current_user=Depends(get_current_user))
 
 
 @router.post("")
-async def create_contract(request: ContractCreate, current_user=Depends(get_current_user)):
+def create_contract(request: ContractCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
 
     project_result = execute_query(
@@ -124,7 +124,7 @@ class ContractPropose(BaseModel):
 
 
 @router.post("/propose")
-async def propose_contract(request: ContractPropose, current_user=Depends(get_current_user)):
+def propose_contract(request: ContractPropose, current_user=Depends(get_current_user)):
     """Freelancer-initiated contract proposal.
 
     The current user (freelancer) drafts a contract addressed to a client. It is
@@ -178,7 +178,7 @@ async def propose_contract(request: ContractPropose, current_user=Depends(get_cu
 
 
 @router.post("/{contract_id}/sign")
-async def sign_contract(contract_id: str, current_user=Depends(get_current_user)):
+def sign_contract(contract_id: str, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")
@@ -199,7 +199,7 @@ async def sign_contract(contract_id: str, current_user=Depends(get_current_user)
 
 
 @router.post("/{contract_id}/acknowledge")
-async def acknowledge_contract(contract_id: str, current_user=Depends(get_current_user)):
+def acknowledge_contract(contract_id: str, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")
@@ -220,7 +220,7 @@ async def acknowledge_contract(contract_id: str, current_user=Depends(get_curren
 
 
 @router.post("/{contract_id}/complete")
-async def complete_contract(contract_id: str, request: ContractComplete, current_user=Depends(get_current_user)):
+def complete_contract(contract_id: str, request: ContractComplete, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")
@@ -250,7 +250,7 @@ class ContractDirectCreate(BaseModel):
 
 
 @router.post("/direct")
-async def create_direct_contract(request: ContractDirectCreate, current_user=Depends(get_current_user)):
+def create_direct_contract(request: ContractDirectCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
 
     freelancer_result = execute_query(
@@ -283,7 +283,7 @@ class ContractCancel(BaseModel):
 
 
 @router.post("/{contract_id}/cancel")
-async def cancel_contract_endpoint(contract_id: str, request: ContractCancel, current_user=Depends(get_current_user)):
+def cancel_contract_endpoint(contract_id: str, request: ContractCancel, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")
@@ -301,7 +301,7 @@ async def cancel_contract_endpoint(contract_id: str, request: ContractCancel, cu
 
 
 @router.delete("/{contract_id}")
-async def delete_contract(contract_id: str, current_user=Depends(get_current_user)):
+def delete_contract(contract_id: str, current_user=Depends(get_current_user)):
     raw_row = fetch_contract_with_joins(contract_id)
     if not raw_row:
         raise HTTPException(status_code=404, detail="Contract not found")

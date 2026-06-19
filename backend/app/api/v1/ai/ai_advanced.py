@@ -191,25 +191,25 @@ def _market_trends() -> dict:
 
 
 @router.get("/portfolio/{user_id}")
-async def portfolio_analysis(user_id: int, current_user=Depends(get_current_user)):
+def portfolio_analysis(user_id: int, current_user=Depends(get_current_user)):
     """Analyze a freelancer's portfolio strength."""
     return _freelancer_portfolio_analysis(user_id)
 
 
 @router.get("/portfolio")
-async def my_portfolio_analysis(current_user=Depends(get_current_user)):
+def my_portfolio_analysis(current_user=Depends(get_current_user)):
     """Analyze the current user's portfolio."""
     return _freelancer_portfolio_analysis(current_user.id)
 
 
 @router.get("/trends")
-async def market_trends(current_user=Depends(get_current_user)):
+def market_trends(current_user=Depends(get_current_user)):
     """Get marketplace trend analysis."""
     return _market_trends()
 
 
 @router.get("/market-insights")
-async def market_insights(current_user=Depends(get_current_user)):
+def market_insights(current_user=Depends(get_current_user)):
     """Get comprehensive market insights combining trends and supply/demand."""
     trends = _market_trends()
 
@@ -239,7 +239,7 @@ async def market_insights(current_user=Depends(get_current_user)):
 
 
 @router.get("/recommendations/{user_id}")
-async def skill_recommendations(user_id: int, current_user=Depends(get_current_user)):
+def skill_recommendations(user_id: int, current_user=Depends(get_current_user)):
     """Recommend skills to learn based on market demand vs user's current skills."""
     # Get user's current skills
     result = execute_query(

@@ -26,7 +26,7 @@ class VideoCallUpdate(BaseModel):
 
 
 @router.get("")
-async def list_video_calls(
+def list_video_calls(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -48,7 +48,7 @@ async def list_video_calls(
 
 
 @router.post("")
-async def create_video_call(request: VideoCallCreate, current_user=Depends(get_current_user)):
+def create_video_call(request: VideoCallCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     room_id = secrets.token_urlsafe(16)
     room_url = f"https://meet.megilance.com/{room_id}"
@@ -69,7 +69,7 @@ async def create_video_call(request: VideoCallCreate, current_user=Depends(get_c
 
 
 @router.get("/{call_id}")
-async def get_video_call(call_id: int, current_user=Depends(get_current_user)):
+def get_video_call(call_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, host_id, title, status, scheduled_at, duration_minutes, room_url, notes, created_at, updated_at FROM video_calls WHERE id = ?",
         [call_id],
@@ -87,7 +87,7 @@ async def get_video_call(call_id: int, current_user=Depends(get_current_user)):
 
 
 @router.put("/{call_id}")
-async def update_video_call(call_id: int, request: VideoCallUpdate, current_user=Depends(get_current_user)):
+def update_video_call(call_id: int, request: VideoCallUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -101,7 +101,7 @@ async def update_video_call(call_id: int, request: VideoCallUpdate, current_user
 
 
 @router.post("/{call_id}/join")
-async def join_video_call(call_id: int, current_user=Depends(get_current_user)):
+def join_video_call(call_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, host_id, room_url, status FROM video_calls WHERE id = ?",
         [call_id],
@@ -130,7 +130,7 @@ async def join_video_call(call_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{call_id}/end")
-async def end_video_call(call_id: int, current_user=Depends(get_current_user)):
+def end_video_call(call_id: int, current_user=Depends(get_current_user)):
     # Only the host can end a video call
     result = execute_query(
         "SELECT id, host_id FROM video_calls WHERE id = ?",

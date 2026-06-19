@@ -114,7 +114,7 @@ def _render_template(template_text: str, data: dict) -> str:
 
 
 @router.get("/channels")
-async def list_channels(current_user=Depends(get_current_user)):
+def list_channels(current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT id, user_id, channel_type, channel_config, is_active, created_at, updated_at FROM notification_channels WHERE user_id = ? ORDER BY created_at DESC",
@@ -130,7 +130,7 @@ async def list_channels(current_user=Depends(get_current_user)):
 
 
 @router.post("/channels")
-async def create_channel(request: ChannelCreate, current_user=Depends(get_current_user)):
+def create_channel(request: ChannelCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     valid_types = {"email", "push", "sms", "in_app"}
     if request.channel_type not in valid_types:
@@ -146,7 +146,7 @@ async def create_channel(request: ChannelCreate, current_user=Depends(get_curren
 
 
 @router.put("/channels/{channel_id}")
-async def update_channel(channel_id: int, request: ChannelUpdate, current_user=Depends(get_current_user)):
+def update_channel(channel_id: int, request: ChannelUpdate, current_user=Depends(get_current_user)):
     _ensure_table()
     existing = parse_rows(execute_query(
         "SELECT id, user_id FROM notification_channels WHERE id = ?",
@@ -182,7 +182,7 @@ async def update_channel(channel_id: int, request: ChannelUpdate, current_user=D
 
 
 @router.delete("/channels/{channel_id}")
-async def delete_channel(channel_id: int, current_user=Depends(get_current_user)):
+def delete_channel(channel_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     existing = parse_rows(execute_query(
         "SELECT id, user_id FROM notification_channels WHERE id = ?",
@@ -201,7 +201,7 @@ async def delete_channel(channel_id: int, current_user=Depends(get_current_user)
 
 
 @router.get("/templates")
-async def list_templates(
+def list_templates(
     include_inactive: bool = Query(False),
     current_user=Depends(get_current_user),
 ):
@@ -220,7 +220,7 @@ async def list_templates(
 
 
 @router.post("/templates")
-async def create_template(request: TemplateCreate, current_user=Depends(get_current_user)):
+def create_template(request: TemplateCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
@@ -232,7 +232,7 @@ async def create_template(request: TemplateCreate, current_user=Depends(get_curr
 
 
 @router.put("/templates/{template_id}")
-async def update_template(template_id: int, request: TemplateUpdate, current_user=Depends(get_current_user)):
+def update_template(template_id: int, request: TemplateUpdate, current_user=Depends(get_current_user)):
     _ensure_table()
     existing = parse_rows(execute_query("SELECT id FROM notification_templates WHERE id = ?", [template_id]))
     if not existing:
@@ -260,7 +260,7 @@ async def update_template(template_id: int, request: TemplateUpdate, current_use
 
 
 @router.delete("/templates/{template_id}")
-async def delete_template(template_id: int, current_user=Depends(get_current_user)):
+def delete_template(template_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     existing = parse_rows(execute_query("SELECT id FROM notification_templates WHERE id = ?", [template_id]))
     if not existing:
@@ -273,7 +273,7 @@ async def delete_template(template_id: int, current_user=Depends(get_current_use
 
 
 @router.post("/send")
-async def send_notification(request: SendRequest, current_user=Depends(get_current_user)):
+def send_notification(request: SendRequest, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     subject = request.subject
@@ -317,7 +317,7 @@ async def send_notification(request: SendRequest, current_user=Depends(get_curre
 
 
 @router.post("/bulk-send")
-async def bulk_send(request: BulkSendRequest, current_user=Depends(get_current_user)):
+def bulk_send(request: BulkSendRequest, current_user=Depends(get_current_user)):
     _ensure_table()
     if not request.user_ids:
         raise HTTPException(status_code=400, detail="user_ids list cannot be empty")
@@ -362,7 +362,7 @@ async def bulk_send(request: BulkSendRequest, current_user=Depends(get_current_u
 
 
 @router.get("/history")
-async def get_history(
+def get_history(
     user_id: Optional[int] = Query(None),
     channel_type: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
@@ -404,7 +404,7 @@ async def get_history(
 
 
 @router.get("/stats")
-async def get_stats(
+def get_stats(
     user_id: Optional[int] = Query(None),
     current_user=Depends(get_current_user),
 ):

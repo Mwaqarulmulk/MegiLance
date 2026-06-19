@@ -93,7 +93,7 @@ def _map_invoice(row: dict) -> dict:
 
 
 @router.get("")
-async def list_invoices(
+def list_invoices(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -119,7 +119,7 @@ async def list_invoices(
 
 
 @router.get("/{invoice_id}")
-async def get_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+def get_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         f"{_SELECT} WHERE i.id = ? AND (i.from_user_id = ? OR i.to_user_id = ?)",
         [invoice_id, current_user.id, current_user.id],
@@ -131,7 +131,7 @@ async def get_invoice(invoice_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_invoice(request: InvoiceCreate, current_user=Depends(get_current_user)):
+def create_invoice(request: InvoiceCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     invoice_number = f"INV-{int(datetime.now(timezone.utc).timestamp())}"
 
@@ -184,7 +184,7 @@ async def create_invoice(request: InvoiceCreate, current_user=Depends(get_curren
 
 
 @router.put("/{invoice_id}")
-async def update_invoice(invoice_id: int, request: InvoiceUpdate, current_user=Depends(get_current_user)):
+def update_invoice(invoice_id: int, request: InvoiceUpdate, current_user=Depends(get_current_user)):
     rows = parse_rows(execute_query("SELECT id, from_user_id, status FROM invoices WHERE id = ?", [invoice_id]))
     if not rows:
         raise HTTPException(status_code=404, detail="Invoice not found")
@@ -218,7 +218,7 @@ async def update_invoice(invoice_id: int, request: InvoiceUpdate, current_user=D
 
 
 @router.delete("/{invoice_id}")
-async def delete_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+def delete_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     rows = parse_rows(execute_query("SELECT id, from_user_id, status FROM invoices WHERE id = ?", [invoice_id]))
     if not rows:
         raise HTTPException(status_code=404, detail="Invoice not found")
@@ -232,7 +232,7 @@ async def delete_invoice(invoice_id: int, current_user=Depends(get_current_user)
 
 
 @router.post("/{invoice_id}/send")
-async def send_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+def send_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     """Send an invoice — only the freelancer (issuer) who created it can send."""
     rows = parse_rows(execute_query(
         "SELECT id, from_user_id, to_user_id, status FROM invoices WHERE id = ?",
@@ -253,7 +253,7 @@ async def send_invoice(invoice_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{invoice_id}/pay")
-async def pay_invoice(invoice_id: int, current_user=Depends(get_current_user)):
+def pay_invoice(invoice_id: int, current_user=Depends(get_current_user)):
     """Pay an invoice (escrow-first, wallet fallback).
 
     from_user_id = freelancer (payee), to_user_id = client (payer). The invoice

@@ -50,7 +50,7 @@ class ProposalUpdate(BaseModel):
 
 
 @router.get("")
-async def list_my_proposals(
+def list_my_proposals(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -67,7 +67,7 @@ async def list_my_proposals(
 
 
 @router.get("/drafts")
-async def get_draft_proposals(
+def get_draft_proposals(
     project_id: Optional[int] = Query(None),
     current_user=Depends(get_current_user),
 ):
@@ -76,7 +76,7 @@ async def get_draft_proposals(
 
 
 @router.get("/project/{project_id}")
-async def get_proposals_by_project(project_id: int, current_user=Depends(get_current_user)):
+def get_proposals_by_project(project_id: int, current_user=Depends(get_current_user)):
     proposals = list_proposals(
         user_id=current_user.id,
         user_type=current_user.user_type,
@@ -86,7 +86,7 @@ async def get_proposals_by_project(project_id: int, current_user=Depends(get_cur
 
 
 @router.get("/{proposal_id}")
-async def get_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+def get_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_with_joins(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -100,7 +100,7 @@ async def get_proposal(proposal_id: int, current_user=Depends(get_current_user))
 
 
 @router.post("")
-async def create_proposal_endpoint(request: ProposalCreate, current_user=Depends(get_current_user)):
+def create_proposal_endpoint(request: ProposalCreate, current_user=Depends(get_current_user)):
     if not project_exists(request.project_id):
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -125,7 +125,7 @@ async def create_proposal_endpoint(request: ProposalCreate, current_user=Depends
 
 
 @router.post("/draft")
-async def save_draft_proposal(request: ProposalCreate, current_user=Depends(get_current_user)):
+def save_draft_proposal(request: ProposalCreate, current_user=Depends(get_current_user)):
     if not project_exists(request.project_id):
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -140,7 +140,7 @@ async def save_draft_proposal(request: ProposalCreate, current_user=Depends(get_
 
 
 @router.put("/{proposal_id}")
-async def update_proposal(proposal_id: int, request: ProposalUpdate, current_user=Depends(get_current_user)):
+def update_proposal(proposal_id: int, request: ProposalUpdate, current_user=Depends(get_current_user)):
     _ALLOWED_PROPOSAL_COLUMNS = frozenset({
         "cover_letter", "bid_amount", "estimated_hours", "hourly_rate",
         "availability", "attachments",
@@ -173,7 +173,7 @@ async def update_proposal(proposal_id: int, request: ProposalUpdate, current_use
 
 
 @router.delete("/{proposal_id}")
-async def delete_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+def delete_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_raw(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -186,7 +186,7 @@ async def delete_proposal(proposal_id: int, current_user=Depends(get_current_use
 
 
 @router.post("/{proposal_id}/submit")
-async def submit_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+def submit_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_raw(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -206,7 +206,7 @@ async def submit_proposal(proposal_id: int, current_user=Depends(get_current_use
 
 
 @router.post("/{proposal_id}/accept")
-async def accept_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+def accept_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_with_joins(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -243,7 +243,7 @@ async def accept_proposal(proposal_id: int, current_user=Depends(get_current_use
 
 
 @router.post("/{proposal_id}/reject")
-async def reject_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+def reject_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_with_joins(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -261,7 +261,7 @@ async def reject_proposal(proposal_id: int, current_user=Depends(get_current_use
 
 
 @router.post("/{proposal_id}/shortlist")
-async def shortlist_proposal_endpoint(proposal_id: int, current_user=Depends(get_current_user)):
+def shortlist_proposal_endpoint(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_with_joins(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -286,7 +286,7 @@ class CounterOfferCreate(BaseModel):
 
 
 @router.post("/{proposal_id}/counter-offer")
-async def create_counter_offer_endpoint(
+def create_counter_offer_endpoint(
     proposal_id: int, request: CounterOfferCreate, current_user=Depends(get_current_user)
 ):
     proposal = get_proposal_with_joins(proposal_id)
@@ -309,7 +309,7 @@ async def create_counter_offer_endpoint(
 
 
 @router.post("/{proposal_id}/withdraw")
-async def withdraw_proposal(proposal_id: int, current_user=Depends(get_current_user)):
+def withdraw_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     proposal = get_proposal_raw(proposal_id)
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")

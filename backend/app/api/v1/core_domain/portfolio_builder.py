@@ -35,7 +35,7 @@ def _ensure_table():
 
 
 @router.get("/portfolio-showcase/user/{user_id}")
-async def get_user_showcase(user_id: int, current_user=Depends(get_current_user)):
+def get_user_showcase(user_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     result = execute_query(
         "SELECT user_id, template_id, layout_config, is_public, updated_at FROM portfolio_showcase WHERE user_id = ?",
@@ -61,7 +61,7 @@ class ShowcaseLayout(BaseModel):
 
 
 @router.post("/portfolio-showcase/layout")
-async def save_showcase_layout(body: ShowcaseLayout, current_user=Depends(get_current_user)):
+def save_showcase_layout(body: ShowcaseLayout, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
     existing = execute_query(
@@ -96,12 +96,12 @@ async def save_showcase_layout(body: ShowcaseLayout, current_user=Depends(get_cu
 
 
 @router.get("/portfolio-showcase/templates")
-async def get_templates(current_user=Depends(get_current_user)):
+def get_templates(current_user=Depends(get_current_user)):
     return {"templates": SHOWCASE_TEMPLATES}
 
 
 @router.post("/portfolio-showcase/templates/{template_id}/apply")
-async def apply_template(template_id: str, current_user=Depends(get_current_user)):
+def apply_template(template_id: str, current_user=Depends(get_current_user)):
     template = next((t for t in SHOWCASE_TEMPLATES if t["id"] == template_id), None)
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")

@@ -23,7 +23,7 @@ class IntegrationUpdate(BaseModel):
 
 
 @router.get("")
-async def list_integrations(current_user=Depends(get_current_user)):
+def list_integrations(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, provider, is_active, settings, connected_at, updated_at FROM integrations WHERE user_id = ? ORDER BY connected_at DESC",
         [current_user.id],
@@ -33,7 +33,7 @@ async def list_integrations(current_user=Depends(get_current_user)):
 
 
 @router.get("/available")
-async def get_available_integrations():
+def get_available_integrations():
     return {
         "integrations": [
             {"id": "slack", "name": "Slack", "description": "Get notifications in Slack", "category": "communication"},
@@ -47,7 +47,7 @@ async def get_available_integrations():
 
 
 @router.post("/connect")
-async def connect_integration(request: IntegrationConnect, current_user=Depends(get_current_user)):
+def connect_integration(request: IntegrationConnect, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO integrations (user_id, provider, credentials, is_active, settings, connected_at, updated_at) VALUES (?, ?, ?, 1, '{}', ?, ?)",
@@ -57,7 +57,7 @@ async def connect_integration(request: IntegrationConnect, current_user=Depends(
 
 
 @router.put("/{integration_id}")
-async def update_integration(integration_id: int, request: IntegrationUpdate, current_user=Depends(get_current_user)):
+def update_integration(integration_id: int, request: IntegrationUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -77,6 +77,6 @@ async def update_integration(integration_id: int, request: IntegrationUpdate, cu
 
 
 @router.delete("/{integration_id}")
-async def disconnect_integration(integration_id: int, current_user=Depends(get_current_user)):
+def disconnect_integration(integration_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM integrations WHERE id = ? AND user_id = ?", [integration_id, current_user.id])
     return {"message": "Integration disconnected"}

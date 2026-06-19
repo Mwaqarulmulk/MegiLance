@@ -279,7 +279,7 @@ FALLBACK_BLOGS = [
 # ── List blogs ─────────────────────────────────────────────────────────────────
 
 @router.get("")
-async def list_blogs(
+def list_blogs(
     skip: int     = Query(0, ge=0),
     limit: int    = Query(10, ge=1, le=100),
     category: Optional[str] = None,
@@ -340,7 +340,7 @@ async def list_blogs(
 # ── Create blog (admin) ──────────────────────────────────────────────────────────
 
 @router.post("", status_code=201)
-async def create_blog(data: BlogUpsert, current_user=Depends(require_admin)):
+def create_blog(data: BlogUpsert, current_user=Depends(require_admin)):
     col = get_collection()
     if col is None:
         raise HTTPException(
@@ -357,7 +357,7 @@ async def create_blog(data: BlogUpsert, current_user=Depends(require_admin)):
 # ── Update blog (admin) ──────────────────────────────────────────────────────────
 
 @router.put("/{slug}")
-async def update_blog(slug: str, data: BlogUpsert, current_user=Depends(require_admin)):
+def update_blog(slug: str, data: BlogUpsert, current_user=Depends(require_admin)):
     col = get_collection()
     if col is None:
         raise HTTPException(
@@ -377,7 +377,7 @@ async def update_blog(slug: str, data: BlogUpsert, current_user=Depends(require_
 # ── Delete blog (admin) ──────────────────────────────────────────────────────────
 
 @router.delete("/{slug}", status_code=204)
-async def delete_blog(slug: str, current_user=Depends(require_admin)):
+def delete_blog(slug: str, current_user=Depends(require_admin)):
     col = get_collection()
     if col is None:
         raise HTTPException(
@@ -395,7 +395,7 @@ async def delete_blog(slug: str, current_user=Depends(require_admin)):
 # ── Get single blog ────────────────────────────────────────────────────────────
 
 @router.get("/{slug}")
-async def get_blog(slug: str):
+def get_blog(slug: str):
     col = get_collection()
     
     # If MongoDB is not available, search fallback data
@@ -433,7 +433,7 @@ async def get_blog(slug: str):
 # ── Full-text search ───────────────────────────────────────────────────────────
 
 @router.get("/search/query")
-async def search_blogs(
+def search_blogs(
     q:     str = Query(..., min_length=2),
     limit: int = Query(10, ge=1, le=30),
     skip:  int = Query(0, ge=0),
@@ -486,7 +486,7 @@ async def search_blogs(
 # ── Filter by category ─────────────────────────────────────────────────────────
 
 @router.get("/category/{category}")
-async def blogs_by_category(
+def blogs_by_category(
     category: str,
     skip:  int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=50),
@@ -524,7 +524,7 @@ async def blogs_by_category(
 # ── Categories list ────────────────────────────────────────────────────────────
 
 @router.get("/categories/list")
-async def list_categories():
+def list_categories():
     col = get_collection()
     
     # If MongoDB is not available, derive categories from fallback data
@@ -548,7 +548,7 @@ async def list_categories():
 # ── Stats overview ─────────────────────────────────────────────────────────────
 
 @router.get("/stats/overview")
-async def stats_overview():
+def stats_overview():
     col = get_collection()
     
     # If MongoDB is not available, return stats from fallback data

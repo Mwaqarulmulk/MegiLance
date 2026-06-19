@@ -30,7 +30,7 @@ class ApiKeyUpdate(BaseModel):
 
 
 @router.get("")
-async def list_api_keys(current_user=Depends(get_current_user)):
+def list_api_keys(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, name, key_prefix, permissions, is_active, last_used_at, created_at FROM api_keys WHERE user_id = ? ORDER BY created_at DESC",
         [current_user.id],
@@ -40,7 +40,7 @@ async def list_api_keys(current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_api_key(request: ApiKeyCreate, current_user=Depends(get_current_user)):
+def create_api_key(request: ApiKeyCreate, current_user=Depends(get_current_user)):
     key = f"ml_{secrets.token_urlsafe(32)}"
     key_prefix = key[:8]
     key_hash = _hash_api_key(key)
@@ -55,7 +55,7 @@ async def create_api_key(request: ApiKeyCreate, current_user=Depends(get_current
 
 
 @router.put("/{key_id}")
-async def update_api_key(key_id: int, request: ApiKeyUpdate, current_user=Depends(get_current_user)):
+def update_api_key(key_id: int, request: ApiKeyUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -71,6 +71,6 @@ async def update_api_key(key_id: int, request: ApiKeyUpdate, current_user=Depend
 
 
 @router.delete("/{key_id}")
-async def delete_api_key(key_id: int, current_user=Depends(get_current_user)):
+def delete_api_key(key_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM api_keys WHERE id = ? AND user_id = ?", [key_id, current_user.id])
     return {"message": "API key deleted"}

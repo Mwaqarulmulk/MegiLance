@@ -152,7 +152,7 @@ CORE_ENDPOINTS = [
 
 
 @router.get("/full")
-async def status_full():
+def status_full():
     """Aggregate health snapshot consumed by the public /system-status page."""
     database = _check_database()
     llm_gateway = _check_llm_gateway()

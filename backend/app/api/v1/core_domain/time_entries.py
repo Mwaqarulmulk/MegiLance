@@ -27,7 +27,7 @@ class TimeEntryUpdate(BaseModel):
 
 
 @router.get("")
-async def list_time_entries(
+def list_time_entries(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
     contract_id: Optional[int] = None,
@@ -68,7 +68,7 @@ async def list_time_entries(
 
 
 @router.post("")
-async def create_time_entry(request: TimeEntryCreate, current_user=Depends(get_current_user)):
+def create_time_entry(request: TimeEntryCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO time_entries (contract_id, freelancer_id, date, hours, description, hourly_rate, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)",
@@ -78,7 +78,7 @@ async def create_time_entry(request: TimeEntryCreate, current_user=Depends(get_c
 
 
 @router.put("/{entry_id}")
-async def update_time_entry(entry_id: int, request: TimeEntryUpdate, current_user=Depends(get_current_user)):
+def update_time_entry(entry_id: int, request: TimeEntryUpdate, current_user=Depends(get_current_user)):
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
@@ -92,13 +92,13 @@ async def update_time_entry(entry_id: int, request: TimeEntryUpdate, current_use
 
 
 @router.delete("/{entry_id}")
-async def delete_time_entry(entry_id: int, current_user=Depends(get_current_user)):
+def delete_time_entry(entry_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM time_entries WHERE id = ? AND freelancer_id = ?", [entry_id, current_user.id])
     return {"message": "Time entry deleted"}
 
 
 @router.post("/{entry_id}/approve")
-async def approve_time_entry(entry_id: int, current_user=Depends(get_current_user)):
+def approve_time_entry(entry_id: int, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE time_entries SET status = 'approved', updated_at = ? WHERE id = ?",
@@ -108,7 +108,7 @@ async def approve_time_entry(entry_id: int, current_user=Depends(get_current_use
 
 
 @router.get("/summary")
-async def get_time_summary(
+def get_time_summary(
     contract_id: Optional[int] = None,
     current_user=Depends(get_current_user),
 ):
@@ -134,7 +134,7 @@ class TimeEntryStart(BaseModel):
 
 
 @router.post("/start")
-async def start_time_entry(request: TimeEntryStart, current_user=Depends(get_current_user)):
+def start_time_entry(request: TimeEntryStart, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc)
     result = execute_query(
         "INSERT INTO time_entries (contract_id, freelancer_id, date, hours, description, hourly_rate, status, started_at, created_at, updated_at) VALUES (?, ?, ?, 0, ?, ?, 'running', ?, ?, ?)",
@@ -144,7 +144,7 @@ async def start_time_entry(request: TimeEntryStart, current_user=Depends(get_cur
 
 
 @router.post("/{entry_id}/stop")
-async def stop_time_entry(entry_id: int, current_user=Depends(get_current_user)):
+def stop_time_entry(entry_id: int, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc)
     result = execute_query(
         "SELECT started_at, hourly_rate FROM time_entries WHERE id = ? AND freelancer_id = ?",
@@ -166,7 +166,7 @@ async def stop_time_entry(entry_id: int, current_user=Depends(get_current_user))
 
 
 @router.post("/{entry_id}/reject")
-async def reject_time_entry(entry_id: int, data: dict, current_user=Depends(get_current_user)):
+def reject_time_entry(entry_id: int, data: dict, current_user=Depends(get_current_user)):
     reason = data.get("reason", "")
     now = datetime.now(timezone.utc).isoformat()
     execute_query(

@@ -33,7 +33,7 @@ class PushRequest(BaseModel):
 
 
 @router.post("/sms/send")
-async def send_sms(request: SMSRequest, current_user=Depends(require_admin)):
+def send_sms(request: SMSRequest, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO communication_log (channel, recipient, subject, body, status, created_at) VALUES (?, ?, '', ?, 'sent', ?)",
@@ -43,7 +43,7 @@ async def send_sms(request: SMSRequest, current_user=Depends(require_admin)):
 
 
 @router.post("/email/send")
-async def send_email(request: EmailRequest, current_user=Depends(get_current_user)):
+def send_email(request: EmailRequest, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO communication_log (channel, recipient, subject, body, template, status, created_at) VALUES (?, ?, ?, ?, ?, 'sent', ?)",
@@ -53,7 +53,7 @@ async def send_email(request: EmailRequest, current_user=Depends(get_current_use
 
 
 @router.post("/push/send")
-async def send_push(request: PushRequest, current_user=Depends(require_admin)):
+def send_push(request: PushRequest, current_user=Depends(require_admin)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO communication_log (channel, recipient, subject, body, status, created_at) VALUES (?, ?, ?, ?, 'sent', ?)",
@@ -63,7 +63,7 @@ async def send_push(request: PushRequest, current_user=Depends(require_admin)):
 
 
 @router.get("/history")
-async def get_history(
+def get_history(
     channel: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -88,7 +88,7 @@ async def get_history(
 
 
 @router.get("/preferences")
-async def get_preferences(current_user=Depends(get_current_user)):
+def get_preferences(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT email_notifications, push_notifications, sms_notifications FROM notification_preferences WHERE user_id = ?",
         [current_user.id],
@@ -104,7 +104,7 @@ async def get_preferences(current_user=Depends(get_current_user)):
 
 
 @router.put("/preferences")
-async def update_preferences(data: dict, current_user=Depends(get_current_user)):
+def update_preferences(data: dict, current_user=Depends(get_current_user)):
     set_parts = [f"{k} = ?" for k in data]
     values = list(data.values()) + [current_user.id]
 

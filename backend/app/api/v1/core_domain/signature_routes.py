@@ -36,7 +36,7 @@ class SaveSignature(BaseModel):
 
 
 @router.get("/me")
-async def get_my_signature(current_user=Depends(get_current_user)):
+def get_my_signature(current_user=Depends(get_current_user)):
     """Return the current user's saved reusable signature (or null)."""
     _ensure_signature_column()
     rows = parse_rows(
@@ -47,7 +47,7 @@ async def get_my_signature(current_user=Depends(get_current_user)):
 
 
 @router.put("/me")
-async def save_my_signature(req: SaveSignature, current_user=Depends(get_current_user)):
+def save_my_signature(req: SaveSignature, current_user=Depends(get_current_user)):
     """Persist the current user's reusable signature so it can be reused."""
     if not (req.signature_image or "").strip():
         raise HTTPException(status_code=422, detail="Signature image is required")
@@ -85,7 +85,7 @@ class SignatureStatusResponse(BaseModel):
 
 
 @router.post("/create")
-async def create_signature_request(req: CreateSignatureRequest):
+def create_signature_request(req: CreateSignatureRequest):
     """Create a new signature request for a document."""
     request_id = str(uuid.uuid4())
     return {
@@ -100,7 +100,7 @@ async def create_signature_request(req: CreateSignatureRequest):
 
 
 @router.post("/sign")
-async def submit_signature(sig: SubmitSignature):
+def submit_signature(sig: SubmitSignature):
     """Submit a signature for a document."""
     signature_hash = compute_signature_hash(sig.signature_image)
 
@@ -117,7 +117,7 @@ async def submit_signature(sig: SubmitSignature):
 
 
 @router.post("/decline")
-async def decline_signature(request_id: str, signer_email: str, reason: str = ""):
+def decline_signature(request_id: str, signer_email: str, reason: str = ""):
     """Decline to sign a document."""
     return {
         "request_id": request_id,
@@ -129,7 +129,7 @@ async def decline_signature(request_id: str, signer_email: str, reason: str = ""
 
 
 @router.get("/status/{request_id}")
-async def get_signature_status(request_id: str):
+def get_signature_status(request_id: str):
     """Get the status of a signature request."""
     return {
         "request_id": request_id,
@@ -143,7 +143,7 @@ async def get_signature_status(request_id: str):
 
 
 @router.get("/verify/{signature_id}")
-async def verify_signature(signature_id: str):
+def verify_signature(signature_id: str):
     """Verify the integrity of a signature."""
     return {
         "signature_id": signature_id,
@@ -154,7 +154,7 @@ async def verify_signature(signature_id: str):
 
 
 @router.get("/audit-trail/{request_id}")
-async def get_audit_trail(request_id: str):
+def get_audit_trail(request_id: str):
     """Get the complete audit trail for a signature request."""
     return {
         "request_id": request_id,

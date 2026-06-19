@@ -80,7 +80,7 @@ class ReceiptPDFRequest(BaseModel):
 
 
 @router.post("/invoice")
-async def create_invoice_pdf(req: InvoicePDFRequest):
+def create_invoice_pdf(req: InvoicePDFRequest):
     """Generate and download invoice PDF."""
     try:
         pdf_bytes = generate_invoice_pdf(
@@ -111,7 +111,7 @@ async def create_invoice_pdf(req: InvoicePDFRequest):
 
 
 @router.post("/contract")
-async def create_contract_pdf(req: ContractPDFRequest):
+def create_contract_pdf(req: ContractPDFRequest):
     """Generate and download contract PDF."""
     try:
         pdf_bytes = generate_contract_pdf(
@@ -140,7 +140,7 @@ async def create_contract_pdf(req: ContractPDFRequest):
 
 
 @router.post("/proposal")
-async def create_proposal_pdf(req: ProposalPDFRequest):
+def create_proposal_pdf(req: ProposalPDFRequest):
     """Generate and download proposal PDF."""
     try:
         pdf_bytes = generate_proposal_pdf(
@@ -166,7 +166,7 @@ async def create_proposal_pdf(req: ProposalPDFRequest):
 
 
 @router.post("/receipt")
-async def create_receipt_pdf(req: ReceiptPDFRequest):
+def create_receipt_pdf(req: ReceiptPDFRequest):
     """Generate and download payment receipt PDF."""
     try:
         pdf_bytes = generate_receipt_pdf(

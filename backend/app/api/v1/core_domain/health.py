@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("/ready")
-async def health_ready():
+def health_ready():
     try:
         result = execute_query("SELECT 1 as ok", [])
         if result and result.get("rows"):
@@ -22,7 +22,7 @@ async def health_ready():
 
 
 @router.get("/metrics")
-async def health_metrics():
+def health_metrics():
     try:
         users = execute_query("SELECT COUNT(*) as count FROM users", [])
         projects = execute_query("SELECT COUNT(*) as count FROM projects", [])

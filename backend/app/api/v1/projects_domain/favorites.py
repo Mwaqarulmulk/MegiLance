@@ -94,7 +94,7 @@ def _enrich(rows: list[dict]) -> list[dict]:
 
 
 @router.get("")
-async def list_favorites(
+def list_favorites(
     target_type: Optional[str] = Query(None, regex="^(project|freelancer|client)$"),
     current_user=Depends(get_current_user),
 ):
@@ -116,7 +116,7 @@ async def list_favorites(
 
 
 @router.post("")
-async def add_favorite(request: FavoriteCreate, current_user=Depends(get_current_user)):
+def add_favorite(request: FavoriteCreate, current_user=Depends(get_current_user)):
     try:
         target_type, target_id = request.resolve()
     except ValueError as e:
@@ -146,7 +146,7 @@ async def add_favorite(request: FavoriteCreate, current_user=Depends(get_current
 
 
 @router.get("/check/{target_type}/{target_id}")
-async def check_favorite(target_type: str, target_id: int, current_user=Depends(get_current_user)):
+def check_favorite(target_type: str, target_id: int, current_user=Depends(get_current_user)):
     if target_type not in _VALID_TYPES:
         raise HTTPException(status_code=422, detail="Invalid target_type")
     result = execute_query(
@@ -161,6 +161,6 @@ async def check_favorite(target_type: str, target_id: int, current_user=Depends(
 
 
 @router.delete("/{favorite_id}")
-async def remove_favorite(favorite_id: int, current_user=Depends(get_current_user)):
+def remove_favorite(favorite_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM favorites WHERE id = ? AND user_id = ?", [favorite_id, current_user.id])
     return {"message": "Removed from favorites"}

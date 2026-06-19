@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/marketplace/freelancers")
-async def list_marketplace_freelancers(
+def list_marketplace_freelancers(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     search: Optional[str] = None,
@@ -71,7 +71,7 @@ async def list_marketplace_freelancers(
 
 
 @router.get("/marketplace/projects")
-async def list_marketplace_projects(
+def list_marketplace_projects(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status: Optional[str] = "open",
@@ -98,7 +98,7 @@ async def list_marketplace_projects(
 
 
 @router.get("/marketplace/stats")
-async def get_marketplace_stats():
+def get_marketplace_stats():
     freelancer_result = execute_query(
         "SELECT COUNT(*) as count FROM users WHERE user_type = 'freelancer' AND is_active = 1", []
     )
@@ -123,7 +123,7 @@ async def get_marketplace_stats():
 
 
 @router.get("/marketplace/categories")
-async def get_marketplace_categories():
+def get_marketplace_categories():
     result = execute_query(
         "SELECT DISTINCT category, COUNT(*) as count FROM skills WHERE is_active = 1 GROUP BY category ORDER BY count DESC",
         [],
@@ -133,7 +133,7 @@ async def get_marketplace_categories():
 
 
 @router.get("/marketplace/trending/skills")
-async def get_trending_skills(limit: int = Query(10, ge=1, le=50)):
+def get_trending_skills(limit: int = Query(10, ge=1, le=50)):
     result = execute_query(
         """SELECT s.name, s.category, COUNT(us.skill_id) as usage_count
            FROM skills s

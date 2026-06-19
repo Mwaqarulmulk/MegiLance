@@ -19,12 +19,12 @@ LEGAL_DOCS = {
 
 
 @router.get("")
-async def get_documents():
+def get_documents():
     return {"documents": [{"doc_type": k, **v} for k, v in LEGAL_DOCS.items()]}
 
 
 @router.get("/{doc_type}")
-async def get_document(doc_type: str):
+def get_document(doc_type: str):
     if doc_type not in LEGAL_DOCS:
         raise HTTPException(status_code=404, detail="Document not found")
 
@@ -40,7 +40,7 @@ async def get_document(doc_type: str):
 
 
 @router.get("/{doc_type}/versions/{version}")
-async def get_document_version(doc_type: str, version: str):
+def get_document_version(doc_type: str, version: str):
     result = execute_query(
         "SELECT id, doc_type, content, version, created_at FROM legal_documents WHERE doc_type = ? AND version = ?",
         [doc_type, version],
@@ -52,7 +52,7 @@ async def get_document_version(doc_type: str, version: str):
 
 
 @router.post("/{doc_type}/accept")
-async def accept_document(doc_type: str, current_user=Depends(get_current_user)):
+def accept_document(doc_type: str, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT OR REPLACE INTO legal_acceptances (user_id, doc_type, accepted_at) VALUES (?, ?, ?)",
@@ -62,7 +62,7 @@ async def accept_document(doc_type: str, current_user=Depends(get_current_user))
 
 
 @router.get("/acceptance-history")
-async def get_acceptance_history(current_user=Depends(get_current_user)):
+def get_acceptance_history(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT doc_type, accepted_at FROM legal_acceptances WHERE user_id = ? ORDER BY accepted_at DESC",
         [current_user.id],

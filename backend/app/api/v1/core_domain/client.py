@@ -37,7 +37,7 @@ class FavoriteCreate(BaseModel):
 # ── 1. Dashboard ──────────────────────────────────────────────────────────────
 
 @router.get("/dashboard")
-async def get_client_dashboard(current_user=Depends(get_current_user)):
+def get_client_dashboard(current_user=Depends(get_current_user)):
     active_projects = parse_rows(execute_query(
         "SELECT COUNT(*) as count FROM projects WHERE client_id = ? AND status = 'open'",
         [current_user.id],
@@ -82,7 +82,7 @@ async def get_client_dashboard(current_user=Depends(get_current_user)):
 # ── 2. Projects list ──────────────────────────────────────────────────────────
 
 @router.get("/projects")
-async def get_client_projects(
+def get_client_projects(
     status_filter: Optional[str] = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -128,7 +128,7 @@ async def get_client_projects(
 # ── 3. Hiring pipeline ───────────────────────────────────────────────────────
 
 @router.get("/hiring")
-async def get_client_hiring(current_user=Depends(get_current_user)):
+def get_client_hiring(current_user=Depends(get_current_user)):
     proposals_received = parse_rows(execute_query(
         """SELECT pr.id, pr.bid_amount, pr.delivery_time, pr.status, pr.created_at,
                   u.name as freelancer_name, u.profile_image_url, u.seller_level,
@@ -179,7 +179,7 @@ async def get_client_hiring(current_user=Depends(get_current_user)):
 # ── 4. Spending analytics ─────────────────────────────────────────────────────
 
 @router.get("/spending")
-async def get_client_spending(
+def get_client_spending(
     months: int = Query(6, ge=1, le=24),
     current_user=Depends(get_current_user),
 ):
@@ -232,7 +232,7 @@ async def get_client_spending(
 # ── 5. Favorites list ─────────────────────────────────────────────────────────
 
 @router.get("/favorites")
-async def get_client_favorites(current_user=Depends(get_current_user)):
+def get_client_favorites(current_user=Depends(get_current_user)):
     result = parse_rows(execute_query(
         """SELECT cf.id, cf.freelancer_id, cf.notes, cf.created_at,
                   u.name as freelancer_name, u.profile_image_url, u.tagline,
@@ -251,7 +251,7 @@ async def get_client_favorites(current_user=Depends(get_current_user)):
 # ── 6. Add favorite ───────────────────────────────────────────────────────────
 
 @router.post("/favorites")
-async def add_favorite(request: FavoriteCreate, current_user=Depends(get_current_user)):
+def add_favorite(request: FavoriteCreate, current_user=Depends(get_current_user)):
     existing = parse_rows(execute_query(
         "SELECT id FROM users WHERE id = ?",
         [request.freelancer_id],
@@ -279,7 +279,7 @@ async def add_favorite(request: FavoriteCreate, current_user=Depends(get_current
 # ── 7. Remove favorite ────────────────────────────────────────────────────────
 
 @router.delete("/favorites/{freelancer_id}")
-async def remove_favorite(freelancer_id: int, current_user=Depends(get_current_user)):
+def remove_favorite(freelancer_id: int, current_user=Depends(get_current_user)):
     existing = parse_rows(execute_query(
         "SELECT id FROM client_favorites WHERE client_id = ? AND freelancer_id = ?",
         [current_user.id, freelancer_id],
@@ -298,7 +298,7 @@ async def remove_favorite(freelancer_id: int, current_user=Depends(get_current_u
 # ── 8. Recommendations ────────────────────────────────────────────────────────
 
 @router.get("/recommendations")
-async def get_client_recommendations(
+def get_client_recommendations(
     category: Optional[str] = None,
     limit: int = Query(10, ge=1, le=50),
     current_user=Depends(get_current_user),
@@ -363,7 +363,7 @@ async def get_client_recommendations(
 # ── 9. Activity feed ──────────────────────────────────────────────────────────
 
 @router.get("/activity")
-async def get_client_activity(
+def get_client_activity(
     type_filter: Optional[str] = None,
     limit: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),

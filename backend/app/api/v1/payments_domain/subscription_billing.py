@@ -76,13 +76,13 @@ class SubscriptionUpdate(BaseModel):
 
 
 @router.get("/plans")
-async def list_plans():
+def list_plans():
     """List all available subscription plans"""
     return {"plans": list(PLANS.values())}
 
 
 @router.get("/current")
-async def get_current_subscription(current_user=Depends(get_current_user)):
+def get_current_subscription(current_user=Depends(get_current_user)):
     """Get the current user's subscription"""
     result = execute_query(
         """SELECT id, plan_id, status, current_period_start, current_period_end,
@@ -123,7 +123,7 @@ async def get_current_subscription(current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_subscription(request: SubscriptionCreate, current_user=Depends(get_current_user)):
+def create_subscription(request: SubscriptionCreate, current_user=Depends(get_current_user)):
     """Create a new subscription"""
     if request.plan_id not in PLANS:
         raise HTTPException(status_code=400, detail=f"Invalid plan: {request.plan_id}")
@@ -163,7 +163,7 @@ async def create_subscription(request: SubscriptionCreate, current_user=Depends(
 
 
 @router.put("/current")
-async def update_subscription(request: SubscriptionUpdate, current_user=Depends(get_current_user)):
+def update_subscription(request: SubscriptionUpdate, current_user=Depends(get_current_user)):
     """Update or change subscription plan"""
     result = execute_query(
         "SELECT id, plan_id FROM subscriptions WHERE user_id = ? AND status = 'active'",
@@ -195,7 +195,7 @@ async def update_subscription(request: SubscriptionUpdate, current_user=Depends(
 
 
 @router.post("/cancel")
-async def cancel_subscription(current_user=Depends(get_current_user)):
+def cancel_subscription(current_user=Depends(get_current_user)):
     """Cancel the current subscription immediately"""
     result = execute_query(
         "UPDATE subscriptions SET status = 'cancelled', cancelled_at = ? WHERE user_id = ? AND status = 'active'",
@@ -205,7 +205,7 @@ async def cancel_subscription(current_user=Depends(get_current_user)):
 
 
 @router.get("/billing-history")
-async def get_billing_history(
+def get_billing_history(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -225,7 +225,7 @@ async def get_billing_history(
 
 
 @router.post("/webhook")
-async def subscription_webhook(payload: dict):
+def subscription_webhook(payload: dict):
     """Handle Stripe webhook for subscription events"""
     event_type = payload.get("type", "")
     data = payload.get("data", {}).get("object", {})

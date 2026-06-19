@@ -41,7 +41,7 @@ class DocumentCreate(BaseModel):
 
 
 @router.get("")
-async def list_documents(
+def list_documents(
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=200),
     current_user=Depends(get_current_user),
@@ -60,7 +60,7 @@ async def list_documents(
 
 
 @router.post("")
-async def create_document(request: DocumentCreate, current_user=Depends(get_current_user)):
+def create_document(request: DocumentCreate, current_user=Depends(get_current_user)):
     if not (request.title or "").strip():
         raise HTTPException(status_code=422, detail="Document title is required")
     _ensure_documents_table()
@@ -81,7 +81,7 @@ async def create_document(request: DocumentCreate, current_user=Depends(get_curr
 
 
 @router.delete("/{document_id}")
-async def delete_document(document_id: int, current_user=Depends(get_current_user)):
+def delete_document(document_id: int, current_user=Depends(get_current_user)):
     _ensure_documents_table()
     rows = parse_rows(execute_query("SELECT user_id FROM documents WHERE id = ?", [document_id]))
     if not rows:

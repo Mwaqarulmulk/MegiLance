@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/overview")
-async def get_overview(period: str = Query("30d"), current_user=Depends(require_admin)):
+def get_overview(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = {"7d": 7, "30d": 30, "90d": 90, "1y": 365}.get(period, 30)
     since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
 
@@ -34,7 +34,7 @@ async def get_overview(period: str = Query("30d"), current_user=Depends(require_
 
 
 @router.get("/users")
-async def get_user_analytics(period: str = Query("30d"), current_user=Depends(require_admin)):
+def get_user_analytics(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = {"7d": 7, "30d": 30, "90d": 90, "1y": 365}.get(period, 30)
     since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
 
@@ -52,7 +52,7 @@ async def get_user_analytics(period: str = Query("30d"), current_user=Depends(re
 
 
 @router.get("/projects")
-async def get_project_analytics(period: str = Query("30d"), current_user=Depends(require_admin)):
+def get_project_analytics(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = {"7d": 7, "30d": 30, "90d": 90, "1y": 365}.get(period, 30)
     since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
 
@@ -70,7 +70,7 @@ async def get_project_analytics(period: str = Query("30d"), current_user=Depends
 
 
 @router.get("/revenue")
-async def get_revenue_analytics(period: str = Query("30d"), current_user=Depends(require_admin)):
+def get_revenue_analytics(period: str = Query("30d"), current_user=Depends(require_admin)):
     days = {"7d": 7, "30d": 30, "90d": 90, "1y": 365}.get(period, 30)
     since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
 

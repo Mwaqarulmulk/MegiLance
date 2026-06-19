@@ -116,7 +116,7 @@ class PartialRelease(BaseModel):
 
 
 @router.post("/create", status_code=201)
-async def create_escrow(body: EscrowCreate, current_user=Depends(get_current_user)):
+def create_escrow(body: EscrowCreate, current_user=Depends(get_current_user)):
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
 
@@ -162,7 +162,7 @@ async def create_escrow(body: EscrowCreate, current_user=Depends(get_current_use
 
 
 @router.get("/my")
-async def list_my_escrows(
+def list_my_escrows(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -198,7 +198,7 @@ async def list_my_escrows(
 
 
 @router.get("/{escrow_id}")
-async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
+def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     escrow = _get_escrow(escrow_id, current_user.id)
     escrow["milestones"] = _get_milestones(escrow_id)
@@ -206,7 +206,7 @@ async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{escrow_id}/fund")
-async def fund_escrow(escrow_id: int, body: EscrowFund, current_user=Depends(get_current_user)):
+def fund_escrow(escrow_id: int, body: EscrowFund, current_user=Depends(get_current_user)):
     _ensure_table()
     escrow = _get_escrow(escrow_id, current_user.id)
 
@@ -237,7 +237,7 @@ async def fund_escrow(escrow_id: int, body: EscrowFund, current_user=Depends(get
 
 
 @router.post("/{escrow_id}/milestones/{milestone_id}/release")
-async def release_milestone(
+def release_milestone(
     escrow_id: int,
     milestone_id: int,
     body: MilestoneRelease,
@@ -296,7 +296,7 @@ async def release_milestone(
 
 
 @router.post("/{escrow_id}/dispute")
-async def dispute_escrow(escrow_id: int, body: EscrowDispute, current_user=Depends(get_current_user)):
+def dispute_escrow(escrow_id: int, body: EscrowDispute, current_user=Depends(get_current_user)):
     _ensure_table()
     escrow = _get_escrow(escrow_id, current_user.id)
 
@@ -323,7 +323,7 @@ async def dispute_escrow(escrow_id: int, body: EscrowDispute, current_user=Depen
 
 
 @router.post("/{escrow_id}/cancel")
-async def cancel_escrow(escrow_id: int, current_user=Depends(get_current_user)):
+def cancel_escrow(escrow_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     escrow = _get_escrow(escrow_id, current_user.id)
 
@@ -353,7 +353,7 @@ async def cancel_escrow(escrow_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/{escrow_id}/transactions")
-async def get_escrow_transactions(escrow_id: int, current_user=Depends(get_current_user)):
+def get_escrow_transactions(escrow_id: int, current_user=Depends(get_current_user)):
     _ensure_table()
     _get_escrow(escrow_id, current_user.id)
 
@@ -367,7 +367,7 @@ async def get_escrow_transactions(escrow_id: int, current_user=Depends(get_curre
 
 
 @router.post("/{escrow_id}/partial-release")
-async def partial_release(escrow_id: int, body: PartialRelease, current_user=Depends(get_current_user)):
+def partial_release(escrow_id: int, body: PartialRelease, current_user=Depends(get_current_user)):
     _ensure_table()
     escrow = _get_escrow(escrow_id, current_user.id)
 

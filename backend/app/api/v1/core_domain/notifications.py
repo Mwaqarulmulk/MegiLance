@@ -32,7 +32,7 @@ class NotificationPreferences(BaseModel):
 
 
 @router.get("")
-async def list_notifications(
+def list_notifications(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     unread_only: bool = False,
@@ -68,7 +68,7 @@ async def list_notifications(
 
 
 @router.get("/unread-count")
-async def unread_count(current_user=Depends(get_current_user)):
+def unread_count(current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0",
         [current_user.id],
@@ -78,7 +78,7 @@ async def unread_count(current_user=Depends(get_current_user)):
 
 
 @router.get("/preferences")
-async def get_preferences(current_user=Depends(get_current_user)):
+def get_preferences(current_user=Depends(get_current_user)):
     try:
         result = execute_query(
             "SELECT email_notifications, push_notifications, proposal_alerts, "
@@ -102,7 +102,7 @@ async def get_preferences(current_user=Depends(get_current_user)):
 
 
 @router.put("/preferences")
-async def update_preferences(request: NotificationPreferences, current_user=Depends(get_current_user)):
+def update_preferences(request: NotificationPreferences, current_user=Depends(get_current_user)):
     try:
         execute_query("""CREATE TABLE IF NOT EXISTS notification_preferences (
             user_id INTEGER PRIMARY KEY,
@@ -136,7 +136,7 @@ async def update_preferences(request: NotificationPreferences, current_user=Depe
 
 
 @router.get("/{notification_id}")
-async def get_notification(notification_id: int, current_user=Depends(get_current_user)):
+def get_notification(notification_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id, user_id, notification_type, title, content, action_url, "
         "data, is_read, read_at, priority, created_at "
@@ -150,7 +150,7 @@ async def get_notification(notification_id: int, current_user=Depends(get_curren
 
 
 @router.post("/{notification_id}/read")
-async def mark_read(notification_id: int, current_user=Depends(get_current_user)):
+def mark_read(notification_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM notifications WHERE id = ? AND user_id = ?",
         [notification_id, current_user.id],
@@ -166,7 +166,7 @@ async def mark_read(notification_id: int, current_user=Depends(get_current_user)
 
 
 @router.put("/{notification_id}")
-async def update_notification(notification_id: int, current_user=Depends(get_current_user)):
+def update_notification(notification_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM notifications WHERE id = ? AND user_id = ?",
         [notification_id, current_user.id],
@@ -182,7 +182,7 @@ async def update_notification(notification_id: int, current_user=Depends(get_cur
 
 
 @router.post("/mark-all-read")
-async def mark_all_read(current_user=Depends(get_current_user)):
+def mark_all_read(current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
         "UPDATE notifications SET is_read = 1, read_at = ? WHERE user_id = ? AND is_read = 0",
@@ -192,7 +192,7 @@ async def mark_all_read(current_user=Depends(get_current_user)):
 
 
 @router.delete("/{notification_id}")
-async def delete_notification(notification_id: int, current_user=Depends(get_current_user)):
+def delete_notification(notification_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM notifications WHERE id = ? AND user_id = ?",
         [notification_id, current_user.id],

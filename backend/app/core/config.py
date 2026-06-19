@@ -171,8 +171,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     # Connection Pool
-    turso_pool_connections: int = 10
-    turso_pool_maxsize: int = 20
+    # Sized to match Starlette's default threadpool (40 workers) so that sync
+    # route handlers - which each make blocking Turso HTTP calls - don't churn
+    # connections under concurrent load.
+    turso_pool_connections: int = 20
+    turso_pool_maxsize: int = 40
 
     # Redis (Optional — caching/sessions)
     redis_host: Optional[str] = None

@@ -51,7 +51,7 @@ class PaymentIntentRequest(BaseModel):
 
 
 @router.get("")
-async def list_payments(
+def list_payments(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = None,
@@ -86,7 +86,7 @@ async def list_payments(
 
 
 @router.get("/{payment_id}")
-async def get_payment(payment_id: int, current_user=Depends(get_current_user)):
+def get_payment(payment_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT p.id, p.contract_id, p.from_user_id AS client_id, p.to_user_id AS freelancer_id,
                   p.amount, 'USD' AS currency, p.payment_type, p.payment_method, p.status,
@@ -103,7 +103,7 @@ async def get_payment(payment_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("")
-async def create_payment(request: PaymentCreate, current_user=Depends(get_current_user)):
+def create_payment(request: PaymentCreate, current_user=Depends(get_current_user)):
     contract_result = execute_query(
         "SELECT id, client_id, freelancer_id, amount FROM contracts WHERE id = ?",
         [request.contract_id],
@@ -138,7 +138,7 @@ async def create_payment(request: PaymentCreate, current_user=Depends(get_curren
 
 
 @router.post("/add-funds")
-async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_user)):
+def add_funds(request: AddFundsRequest, current_user=Depends(get_current_user)):
     """Redirect to the canonical wallet deposit endpoint.
     This endpoint is kept for backward compatibility."""
     from app.db.turso_http import execute_query as eq, parse_rows as pr
@@ -175,7 +175,7 @@ async def add_funds(request: AddFundsRequest, current_user=Depends(get_current_u
 
 
 @router.post("/{payment_id}/complete")
-async def complete_payment(payment_id: int, current_user=Depends(get_current_user)):
+def complete_payment(payment_id: int, current_user=Depends(get_current_user)):
     """Mark a payment as completed. In production, this should only be called
     by the payment webhook handler after verifying the payment with the gateway.
     For development, only admins can manually complete payments."""

@@ -272,7 +272,7 @@ def analyze_skills(req: AnalyzeRequest, current_user=Depends(get_current_user_op
 
 
 @router.get("/gaps/{user_id}")
-async def skill_gaps(user_id: int, current_user=Depends(get_current_user_optional)):
+def skill_gaps(user_id: int, current_user=Depends(get_current_user_optional)):
     """Analyze skill gaps for a freelancer. Guest-accessible for public profiles."""
     result = execute_query("SELECT skills FROM users WHERE id = ?", [user_id])
     rows = parse_rows(result)
@@ -289,7 +289,7 @@ async def skill_gaps(user_id: int, current_user=Depends(get_current_user_optiona
 
 
 @router.get("/gaps")
-async def my_skill_gaps(current_user=Depends(get_current_user_optional)):
+def my_skill_gaps(current_user=Depends(get_current_user_optional)):
     """Analyze skill gaps for the current user. Returns empty for guests."""
     if current_user is None:
         return {"user_id": None, "skill_gaps": [], "strengths": [], "category_coverage": {}, "total_skills": 0, "message": "Sign in to see your personal skill gaps"}
@@ -305,7 +305,7 @@ async def my_skill_gaps(current_user=Depends(get_current_user_optional)):
 
 
 @router.get("/learning-path/{user_id}")
-async def get_learning_path(
+def get_learning_path(
     user_id: int,
     target_skills: str = Query(..., description="Comma-separated target skills"),
     current_user=Depends(get_current_user_optional),
@@ -327,7 +327,7 @@ async def get_learning_path(
 
 
 @router.get("/compare")
-async def compare_skills(
+def compare_skills(
     skill_a: str = Query(...),
     skill_b: str = Query(...),
     current_user=Depends(get_current_user_optional),

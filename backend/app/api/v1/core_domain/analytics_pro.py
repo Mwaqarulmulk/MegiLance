@@ -86,7 +86,7 @@ _ensure_table()
 # ===========================================================================
 
 @router.get("/analytics-pro/overview")
-async def get_overview(current_user=Depends(require_admin)):
+def get_overview(current_user=Depends(require_admin)):
     now = _now_utc()
     month_start = _iso(now.replace(day=1, hour=0, minute=0, second=0, microsecond=0))
     week_ago = _iso(now - timedelta(days=7))
@@ -146,7 +146,7 @@ async def get_overview(current_user=Depends(require_admin)):
 # ===========================================================================
 
 @router.get("/analytics-pro/revenue")
-async def get_revenue_analytics(
+def get_revenue_analytics(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     interval: str = Query("day", regex="^(day|week|month)$"),
@@ -238,7 +238,7 @@ async def get_revenue_analytics(
 # ===========================================================================
 
 @router.get("/analytics-pro/user-growth")
-async def get_user_growth(
+def get_user_growth(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     interval: str = Query("day", regex="^(day|week|month)$"),
@@ -303,7 +303,7 @@ async def get_user_growth(
 # ===========================================================================
 
 @router.get("/analytics-pro/project-metrics")
-async def get_project_metrics(
+def get_project_metrics(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     current_user=Depends(require_admin),
@@ -406,7 +406,7 @@ async def get_project_metrics(
 # ===========================================================================
 
 @router.get("/analytics-pro/freelancer-performance")
-async def get_freelancer_performance(
+def get_freelancer_performance(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     limit: int = Query(20, ge=1, le=100),
@@ -498,7 +498,7 @@ async def get_freelancer_performance(
 # ===========================================================================
 
 @router.get("/analytics-pro/market-trends")
-async def get_market_trends(
+def get_market_trends(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     current_user=Depends(require_admin),
@@ -585,7 +585,7 @@ class ForecastRequest(BaseModel):
 
 
 @router.post("/analytics-pro/forecast")
-async def get_forecast(
+def get_forecast(
     request: ForecastRequest,
     current_user=Depends(require_admin),
 ):
@@ -672,7 +672,7 @@ async def get_forecast(
 # ===========================================================================
 
 @router.get("/analytics-pro/cohort")
-async def get_cohort_analysis(
+def get_cohort_analysis(
     cohort_type: str = Query("monthly", regex="^(weekly|monthly)$"),
     months_back: int = Query(12, ge=1, le=24),
     current_user=Depends(require_admin),
@@ -753,7 +753,7 @@ async def get_cohort_analysis(
 # ===========================================================================
 
 @router.get("/analytics-pro/funnel")
-async def get_conversion_funnel(
+def get_conversion_funnel(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     current_user=Depends(require_admin),
@@ -843,7 +843,7 @@ async def get_conversion_funnel(
 # ===========================================================================
 
 @router.get("/analytics-pro/realtime")
-async def get_realtime_metrics(current_user=Depends(require_admin)):
+def get_realtime_metrics(current_user=Depends(require_admin)):
     now = _now_utc()
     one_hour_ago = _iso(now - timedelta(hours=1))
     one_day_ago = _iso(now - timedelta(days=1))

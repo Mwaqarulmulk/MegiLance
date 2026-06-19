@@ -21,7 +21,7 @@ class RateEstimateRequest(BaseModel):
 
 
 @router.post("/estimate-rate")
-async def estimate_rate(request: RateEstimateRequest, current_user=Depends(get_current_user)):
+def estimate_rate(request: RateEstimateRequest, current_user=Depends(get_current_user)):
     """Estimate market rate based on actual freelancer data in the platform."""
     skill_list = [s.strip().lower() for s in request.skills if s.strip()]
 
@@ -115,7 +115,7 @@ async def estimate_rate(request: RateEstimateRequest, current_user=Depends(get_c
 
 
 @router.get("/skills/analysis")
-async def analyze_skills(
+def analyze_skills(
     skills: str = Query(..., description="Comma-separated skills"),
     current_user=Depends(get_current_user),
 ):
@@ -181,7 +181,7 @@ async def analyze_skills(
 
 
 @router.get("/project/estimate")
-async def estimate_project(
+def estimate_project(
     title: str = Query(...),
     description: str = Query(...),
     category: Optional[str] = None,
@@ -302,7 +302,7 @@ _CATEGORY_PHASE_OVERRIDES = {
 
 
 @router.post("/itemize-invoice")
-async def itemize_invoice(request: InvoiceItemizeRequest, current_user=Depends(get_current_user)):
+def itemize_invoice(request: InvoiceItemizeRequest, current_user=Depends(get_current_user)):
     """Break a contract/total amount into standard delivery-phase line items.
 
     Returns a transparent template breakdown the user can edit. Confidence

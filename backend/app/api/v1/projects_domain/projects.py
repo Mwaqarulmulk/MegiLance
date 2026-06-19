@@ -81,7 +81,7 @@ def _project_from_row(row) -> dict:
 
 
 @router.get("")
-async def list_projects(
+def list_projects(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     category: Optional[str] = None,
@@ -140,7 +140,7 @@ async def list_projects(
 
 
 @router.get("/my-projects")
-async def my_projects(current_user=Depends(get_current_user)):
+def my_projects(current_user=Depends(get_current_user)):
     result = execute_query(
         """SELECT p.id, p.title, p.description, p.category, p.budget_type,
                   p.budget_min, p.budget_max, p.skills, p.estimated_duration, p.experience_level,
@@ -159,7 +159,7 @@ async def my_projects(current_user=Depends(get_current_user)):
 
 
 @router.get("/{project_id}")
-async def get_project(project_id: str):
+def get_project(project_id: str):
     result = execute_query(
         """SELECT p.id, p.title, p.description, p.category, p.budget_type,
                   p.budget_min, p.budget_max, p.skills, p.estimated_duration, p.experience_level,
@@ -178,7 +178,7 @@ async def get_project(project_id: str):
 
 
 @router.post("")
-async def create_project(request: ProjectCreate, current_user=Depends(get_current_user)):
+def create_project(request: ProjectCreate, current_user=Depends(get_current_user)):
     # RBAC: only clients (and admins) may post projects; freelancers submit proposals instead.
     role = (getattr(current_user, "role", "") or "").lower()
     if role not in ("client", "admin"):
@@ -220,7 +220,7 @@ async def create_project(request: ProjectCreate, current_user=Depends(get_curren
 
 
 @router.put("/{project_id}")
-async def update_project(project_id: str, request: ProjectUpdate, current_user=Depends(get_current_user)):
+def update_project(project_id: str, request: ProjectUpdate, current_user=Depends(get_current_user)):
     _ALLOWED_PROJECT_COLUMNS = frozenset({
         "title", "description", "category", "budget_type",
         "budget_min", "budget_max", "skills", "estimated_duration",
@@ -251,7 +251,7 @@ async def update_project(project_id: str, request: ProjectUpdate, current_user=D
 
 
 @router.delete("/{project_id}")
-async def delete_project(project_id: str, current_user=Depends(get_current_user)):
+def delete_project(project_id: str, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM projects WHERE id = ? AND client_id = ?",
         [project_id, current_user.id],
@@ -264,7 +264,7 @@ async def delete_project(project_id: str, current_user=Depends(get_current_user)
 
 
 @router.post("/{project_id}/close")
-async def close_project(project_id: str, current_user=Depends(get_current_user)):
+def close_project(project_id: str, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT id FROM projects WHERE id = ? AND client_id = ?",
         [project_id, current_user.id],

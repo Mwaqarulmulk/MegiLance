@@ -24,7 +24,7 @@ class CommentUpdate(BaseModel):
 
 
 @router.get("")
-async def list_comments(
+def list_comments(
     entity_type: str = Query(...),
     entity_id: int = Query(...),
     page: int = Query(1, ge=1),
@@ -58,7 +58,7 @@ async def list_comments(
 
 
 @router.post("")
-async def create_comment(request: CommentCreate, current_user=Depends(get_current_user)):
+def create_comment(request: CommentCreate, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     result = execute_query(
         "INSERT INTO comments (entity_type, entity_id, user_id, content, parent_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -68,7 +68,7 @@ async def create_comment(request: CommentCreate, current_user=Depends(get_curren
 
 
 @router.put("/{comment_id}")
-async def update_comment(comment_id: int, request: CommentUpdate, current_user=Depends(get_current_user)):
+def update_comment(comment_id: int, request: CommentUpdate, current_user=Depends(get_current_user)):
     execute_query(
         "UPDATE comments SET content = ?, updated_at = ? WHERE id = ? AND user_id = ?",
         [request.content, datetime.now(timezone.utc).isoformat(), comment_id, current_user.id],
@@ -77,6 +77,6 @@ async def update_comment(comment_id: int, request: CommentUpdate, current_user=D
 
 
 @router.delete("/{comment_id}")
-async def delete_comment(comment_id: int, current_user=Depends(get_current_user)):
+def delete_comment(comment_id: int, current_user=Depends(get_current_user)):
     execute_query("DELETE FROM comments WHERE id = ? AND user_id = ?", [comment_id, current_user.id])
     return {"message": "Comment deleted"}

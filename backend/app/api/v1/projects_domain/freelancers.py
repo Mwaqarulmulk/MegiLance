@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("/id/{user_id}")
-async def get_freelancer_by_id(user_id: int):
+def get_freelancer_by_id(user_id: int):
     result = execute_query(
         """SELECT u.id, u.name, u.email, u.user_type, u.bio, u.profile_image_url, u.hourly_rate, u.location,
                   u.is_verified, u.created_at, u.seller_level, u.tagline, u.experience_level,
@@ -27,7 +27,7 @@ async def get_freelancer_by_id(user_id: int):
 
 
 @router.get("/slug/{slug}")
-async def get_freelancer_by_slug(slug: str):
+def get_freelancer_by_slug(slug: str):
     result = execute_query(
         """SELECT u.id, u.name, u.email, u.user_type, u.bio, u.profile_image_url, u.hourly_rate, u.location,
                   u.is_verified, u.created_at, u.seller_level, u.tagline, u.experience_level,
@@ -43,7 +43,7 @@ async def get_freelancer_by_slug(slug: str):
 
 
 @router.get("/featured")
-async def get_featured_freelancers(
+def get_featured_freelancers(
     limit: int = Query(10, ge=1, le=50),
     skills: Optional[str] = None,
     location: Optional[str] = None,
@@ -89,7 +89,7 @@ async def get_featured_freelancers(
 
 
 @router.get("/{user_id}/stats")
-async def get_freelancer_stats(user_id: int):
+def get_freelancer_stats(user_id: int):
     result = execute_query(
         """SELECT u.id, u.name, u.hourly_rate, u.is_verified,
                   u.seller_level, u.skills,
@@ -106,7 +106,7 @@ async def get_freelancer_stats(user_id: int):
 
 
 @router.get("/{user_id}/portfolio")
-async def get_freelancer_portfolio(user_id: int):
+def get_freelancer_portfolio(user_id: int):
     result = execute_query(
         "SELECT id, title, description, image_url, project_url, created_at FROM portfolio_items WHERE freelancer_id = ? ORDER BY created_at DESC LIMIT 10",
         [user_id],
@@ -116,7 +116,7 @@ async def get_freelancer_portfolio(user_id: int):
 
 
 @router.get("/{user_id}/reviews")
-async def get_freelancer_reviews(
+def get_freelancer_reviews(
     user_id: int,
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=50),

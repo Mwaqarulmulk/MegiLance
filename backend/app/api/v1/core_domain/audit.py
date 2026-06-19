@@ -59,7 +59,7 @@ def _row_to_event(row) -> dict:
 
 
 @router.get("/events")
-async def list_events(
+def list_events(
     event_type: Optional[str] = None,
     user_id: Optional[int] = None,
     resource_type: Optional[str] = None,
@@ -111,7 +111,7 @@ async def list_events(
 
 
 @router.get("/events/{event_id}")
-async def get_event(event_id: int, current_user=Depends(require_admin)):
+def get_event(event_id: int, current_user=Depends(require_admin)):
     _ensure_table()
     result = execute_query(
         "SELECT id, user_id, event_type, resource_type, resource_id, action, description, "
@@ -135,7 +135,7 @@ class AuditEventCreate(BaseModel):
 
 
 @router.post("/events", status_code=201)
-async def log_event(body: AuditEventCreate, current_user=Depends(get_current_user)):
+def log_event(body: AuditEventCreate, current_user=Depends(get_current_user)):
     import json
     _ensure_table()
     now = datetime.now(timezone.utc).isoformat()
@@ -150,7 +150,7 @@ async def log_event(body: AuditEventCreate, current_user=Depends(get_current_use
 
 
 @router.get("/summary")
-async def get_summary(days: int = Query(30, ge=1, le=365), current_user=Depends(require_admin)):
+def get_summary(days: int = Query(30, ge=1, le=365), current_user=Depends(require_admin)):
     _ensure_table()
     since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
     result = execute_query(
@@ -175,7 +175,7 @@ async def get_summary(days: int = Query(30, ge=1, le=365), current_user=Depends(
 
 
 @router.get("/user/{user_id}/activity")
-async def get_user_activity(
+def get_user_activity(
     user_id: int,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -198,7 +198,7 @@ async def get_user_activity(
 
 
 @router.get("/resource/{resource_type}/{resource_id}/history")
-async def get_resource_history(
+def get_resource_history(
     resource_type: str, resource_id: str, current_user=Depends(require_admin)
 ):
     _ensure_table()
@@ -217,7 +217,7 @@ async def get_resource_history(
 
 
 @router.post("/export")
-async def export_events(
+def export_events(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     current_user=Depends(require_admin),
@@ -226,12 +226,12 @@ async def export_events(
 
 
 @router.get("/export/{export_id}/status")
-async def get_export_status(export_id: str, current_user=Depends(require_admin)):
+def get_export_status(export_id: str, current_user=Depends(require_admin)):
     return {"export_id": export_id, "status": "pending"}
 
 
 @router.get("/compliance/report")
-async def get_compliance_report(
+def get_compliance_report(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     current_user=Depends(require_admin),
@@ -259,12 +259,12 @@ async def get_compliance_report(
 
 
 @router.get("/retention/policy")
-async def get_retention_policy(current_user=Depends(require_admin)):
+def get_retention_policy(current_user=Depends(require_admin)):
     return {"retention_days": 365, "policy": "Events older than 365 days are archived"}
 
 
 @router.put("/retention/policy")
-async def update_retention_policy(
+def update_retention_policy(
     retention_days: int = Query(365, ge=30, le=3650),
     current_user=Depends(require_admin),
 ):

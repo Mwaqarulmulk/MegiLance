@@ -28,7 +28,7 @@ class FeedbackUpdate(BaseModel):
 
 
 @router.post("")
-async def submit_feedback(request: FeedbackCreate, current_user=Depends(get_current_user)):
+def submit_feedback(request: FeedbackCreate, current_user=Depends(get_current_user)):
     """Submit user feedback (NPS, feature request, bug report, etc.)"""
     if request.feedback_type not in (
         "nps", "feature_request", "bug_report", "general", "improvement", "complaint"
@@ -71,7 +71,7 @@ async def submit_feedback(request: FeedbackCreate, current_user=Depends(get_curr
 
 
 @router.get("")
-async def list_feedback(
+def list_feedback(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     feedback_type: Optional[str] = None,
@@ -103,7 +103,7 @@ async def list_feedback(
 
 
 @router.get("/stats")
-async def get_feedback_stats(current_user=Depends(get_current_user)):
+def get_feedback_stats(current_user=Depends(get_current_user)):
     """Get feedback statistics for the current user"""
     result = execute_query(
         """SELECT feedback_type, COUNT(*) as count, AVG(rating) as avg_rating
@@ -148,7 +148,7 @@ async def get_feedback_stats(current_user=Depends(get_current_user)):
 
 
 @router.get("/feature-requests")
-async def list_feature_requests(
+def list_feature_requests(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     sort_by: Optional[str] = "newest",
@@ -177,7 +177,7 @@ async def list_feature_requests(
 
 
 @router.post("/{feedback_id}/vote")
-async def vote_feature_request(feedback_id: int, current_user=Depends(get_current_user)):
+def vote_feature_request(feedback_id: int, current_user=Depends(get_current_user)):
     """Vote for a feature request"""
     # Check if already voted
     existing = execute_query(

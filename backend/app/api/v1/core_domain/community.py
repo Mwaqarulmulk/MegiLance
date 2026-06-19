@@ -26,7 +26,7 @@ class PostUpdate(BaseModel):
 
 
 @router.get("/hubs")
-async def list_hubs(
+def list_hubs(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
 ):
@@ -47,7 +47,7 @@ async def list_hubs(
 
 
 @router.get("/hubs/{hub_id}")
-async def get_hub(hub_id: str):
+def get_hub(hub_id: str):
     try:
         result = execute_query(
             "SELECT id, name, description, icon, member_count, post_count, created_at "
@@ -66,7 +66,7 @@ async def get_hub(hub_id: str):
 
 
 @router.get("/posts")
-async def list_posts(
+def list_posts(
     hub_id: Optional[str] = None,
     post_type: Optional[str] = None,
     author_id: Optional[int] = None,
@@ -127,7 +127,7 @@ async def list_posts(
 
 
 @router.post("/posts")
-async def create_post(
+def create_post(
     post: PostCreate,
     current_user=Depends(get_current_user),
 ):
@@ -161,7 +161,7 @@ async def create_post(
 
 
 @router.get("/posts/{post_id}")
-async def get_post(post_id: int, current_user=Depends(get_current_user)):
+def get_post(post_id: int, current_user=Depends(get_current_user)):
     try:
         result = execute_query(
             "SELECT p.id, p.title, p.content, p.hub_id, p.post_type, p.author_id, "
@@ -209,7 +209,7 @@ async def get_post(post_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/posts/{post_id}/like")
-async def like_post(post_id: int, current_user=Depends(get_current_user)):
+def like_post(post_id: int, current_user=Depends(get_current_user)):
     now = datetime.now(timezone.utc).isoformat()
     try:
         existing = execute_query(
@@ -252,7 +252,7 @@ async def like_post(post_id: int, current_user=Depends(get_current_user)):
 
 
 @router.get("/stats")
-async def get_community_stats():
+def get_community_stats():
     try:
         hubs_result = execute_query("SELECT COUNT(*) as total FROM community_hubs", [])
         hubs = parse_rows(hubs_result)

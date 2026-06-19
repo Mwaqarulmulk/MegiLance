@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.get("/categories")
-async def get_categories():
+def get_categories():
     return {
         "categories": [
             {"id": 1, "name": "Getting Started", "slug": "getting-started", "article_count": 5},
@@ -27,7 +27,7 @@ async def get_categories():
 
 
 @router.get("/articles")
-async def get_articles(
+def get_articles(
     category_id: Optional[int] = None,
     search: Optional[str] = None,
 ):
@@ -50,7 +50,7 @@ async def get_articles(
 
 
 @router.get("/articles/{article_id}")
-async def get_article(article_id: int):
+def get_article(article_id: int):
     result = execute_query(
         "SELECT id, category_id, title, slug, content, excerpt, views, created_at, updated_at FROM knowledge_articles WHERE id = ? AND is_published = 1",
         [article_id],
@@ -64,7 +64,7 @@ async def get_article(article_id: int):
 
 
 @router.get("/search")
-async def search_articles(q: str = Query(..., min_length=1)):
+def search_articles(q: str = Query(..., min_length=1)):
     result = execute_query(
         "SELECT id, category_id, title, slug, excerpt, views FROM knowledge_articles WHERE is_published = 1 AND (title LIKE ? OR content LIKE ?) ORDER BY views DESC LIMIT 20",
         [f"%{q}%", f"%{q}%"],
@@ -74,7 +74,7 @@ async def search_articles(q: str = Query(..., min_length=1)):
 
 
 @router.get("/popular")
-async def get_popular_articles():
+def get_popular_articles():
     result = execute_query(
         "SELECT id, category_id, title, slug, excerpt, views FROM knowledge_articles WHERE is_published = 1 ORDER BY views DESC LIMIT 10",
         [],
@@ -84,7 +84,7 @@ async def get_popular_articles():
 
 
 @router.post("/articles/{article_id}/rate")
-async def rate_article(article_id: int, data: dict, current_user=Depends(get_current_user)):
+def rate_article(article_id: int, data: dict, current_user=Depends(get_current_user)):
     helpful = data.get("helpful", False)
     now = datetime.now(timezone.utc).isoformat()
 

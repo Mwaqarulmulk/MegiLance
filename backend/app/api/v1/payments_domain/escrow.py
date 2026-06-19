@@ -42,7 +42,7 @@ class EscrowRelease(BaseModel):
 
 
 @router.get("")
-async def list_escrow(
+def list_escrow(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(get_current_user),
@@ -65,13 +65,13 @@ async def list_escrow(
 
 
 @router.get("/balance")
-async def get_balance(current_user=Depends(get_current_user)):
+def get_balance(current_user=Depends(get_current_user)):
     balance = get_user_balance(current_user.id)
     return {"user_id": current_user.id, "balance": balance}
 
 
 @router.post("/create")
-async def create_new_escrow(request: EscrowCreate, current_user=Depends(get_current_user)):
+def create_new_escrow(request: EscrowCreate, current_user=Depends(get_current_user)):
     """Create a new escrow record and lock funds from client balance atomically."""
     if request.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
@@ -102,7 +102,7 @@ async def create_new_escrow(request: EscrowCreate, current_user=Depends(get_curr
 
 
 @router.post("/fund")
-async def fund_escrow(request: EscrowFund, current_user=Depends(get_current_user)):
+def fund_escrow(request: EscrowFund, current_user=Depends(get_current_user)):
     parties = get_contract_parties(request.contract_id)
     if not parties:
         raise HTTPException(status_code=404, detail="Contract not found")
@@ -122,7 +122,7 @@ async def fund_escrow(request: EscrowFund, current_user=Depends(get_current_user
 
 
 @router.get("/{escrow_id}")
-async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
+def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
     result = execute_query(
         "SELECT e.id, e.contract_id, e.client_id, e.amount, e.status, e.released_amount, e.released_at, e.expires_at, e.created_at, e.updated_at FROM escrow e WHERE e.id = ? AND (e.client_id = ? OR EXISTS (SELECT 1 FROM contracts c WHERE c.id = e.contract_id AND c.freelancer_id = ?))",
         [escrow_id, current_user.id, current_user.id],
@@ -134,7 +134,7 @@ async def get_escrow(escrow_id: int, current_user=Depends(get_current_user)):
 
 
 @router.post("/{escrow_id}/release")
-async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=Depends(get_current_user)):
+def release_escrow(escrow_id: int, request: EscrowRelease, current_user=Depends(get_current_user)):
     escrow_core = get_escrow_core(escrow_id)
     if not escrow_core:
         raise HTTPException(status_code=404, detail="Escrow not found")
@@ -184,7 +184,7 @@ async def release_escrow(escrow_id: int, request: EscrowRelease, current_user=De
 
 
 @router.post("/{escrow_id}/refund")
-async def refund_escrow(escrow_id: int, current_user=Depends(get_current_user)):
+def refund_escrow(escrow_id: int, current_user=Depends(get_current_user)):
     escrow_core = get_escrow_core(escrow_id)
     if not escrow_core:
         raise HTTPException(status_code=404, detail="Escrow not found")
