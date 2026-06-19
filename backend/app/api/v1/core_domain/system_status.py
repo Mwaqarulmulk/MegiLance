@@ -1,4 +1,5 @@
 # @AI-HINT: System Status router — real-time health and API endpoint status for /system-status page
+import os
 import time
 from datetime import datetime, timezone
 
@@ -7,6 +8,81 @@ from fastapi import APIRouter
 from app.db.turso_http import execute_query
 
 router = APIRouter()
+
+# Track app start time for uptime calculation
+_APP_START_TIME = time.time()
+
+
+def _check_storage() -> dict:
+    """Check external storage (S3/R2) or local storage configuration."""
+    try:
+        from app.core.config import settings
+
+        if getattr(settings, "aws_access_key_id", None) and getattr(
+            settings, "aws_bucket_name", None
+        ):
+            return {
+                "name": "File Storage (S3/R2)",
+                "healthy": True,
+                "message": "Cloud storage configured",
+                "response_time_ms": 0,
+            }
+        elif getattr(settings, "upload_dir", None):
+            return {
+                "name": "File Storage (Local)",
+                "healthy": True,
+                "message": "Local storage configured",
+                "response_time_ms": 0,
+            }
+        else:
+            return {
+                "name": "File Storage",
+                "healthy": False,
+                "message": "Not configured",
+                "response_time_ms": 0,
+            }
+    except Exception as exc:
+        return {
+            "name": "File Storage",
+            "healthy": False,
+            "message": f"Check failed: {type(exc).__name__}",
+            "response_time_ms": 0,
+        }
+
+
+def _check_email() -> dict:
+    """Check email service (SMTP or Resend) configuration."""
+    try:
+        from app.core.config import settings
+
+        if getattr(settings, "RESEND_API_KEY", None):
+            return {
+                "name": "Email Service (Resend)",
+                "healthy": True,
+                "message": "Resend API configured",
+                "response_time_ms": 0,
+            }
+        elif getattr(settings, "SMTP_USER", None):
+            return {
+                "name": "Email Service (SMTP)",
+                "healthy": True,
+                "message": "SMTP configured",
+                "response_time_ms": 0,
+            }
+        else:
+            return {
+                "name": "Email Service",
+                "healthy": False,
+                "message": "Not configured",
+                "response_time_ms": 0,
+            }
+    except Exception as exc:
+        return {
+            "name": "Email Service",
+            "healthy": False,
+            "message": f"Check failed: {type(exc).__name__}",
+            "response_time_ms": 0,
+        }
 
 
 def _check_database() -> dict:
@@ -80,16 +156,35 @@ async def status_full():
     """Aggregate health snapshot consumed by the public /system-status page."""
     database = _check_database()
     llm_gateway = _check_llm_gateway()
+    storage = _check_storage()
+    email = _check_email()
 
     critical_healthy = database["healthy"]
     ai_available = llm_gateway["healthy"]
+    storage_healthy = storage["healthy"]
+    email_healthy = email["healthy"]
 
-    if critical_healthy and ai_available:
-        system_status = "healthy"
-    elif critical_healthy:
+    # System is healthy only if all critical services are up
+    # Degraded if non-critical services (storage/email) are down
+    # Offline if database is down
+    if not critical_healthy:
+        system_status = "offline"
+    elif not ai_available or not storage_healthy or not email_healthy:
         system_status = "degraded"
     else:
-        system_status = "offline"
+        system_status = "healthy"
+
+    # Calculate uptime
+    uptime_seconds = int(time.time() - _APP_START_TIME)
+    days = uptime_seconds // 86400
+    hours = (uptime_seconds % 86400) // 3600
+    minutes = (uptime_seconds % 3600) // 60
+    if days > 0:
+        uptime_display = f"{days}d {hours}h {minutes}m"
+    elif hours > 0:
+        uptime_display = f"{hours}h {minutes}m"
+    else:
+        uptime_display = f"{minutes}m"
 
     endpoints = {
         "ai_services": AI_SERVICE_ENDPOINTS,
@@ -100,17 +195,33 @@ async def status_full():
 
     total = sum(len(v) for v in endpoints.values())
 
+    # Get environment info
+    try:
+        from app.core.config import settings
+        environment = getattr(settings, "environment", "unknown")
+    except Exception:
+        environment = "unknown"
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "system_status": system_status,
         "version": "2.0",
+        "environment": environment,
+        "uptime": {
+            "seconds": uptime_seconds,
+            "display": uptime_display,
+        },
         "services": {
             "database": database,
             "llm_gateway": llm_gateway,
+            "storage": storage,
+            "email": email,
         },
         "summary": {
             "critical_services_healthy": critical_healthy,
             "ai_services_available": ai_available,
+            "storage_available": storage_healthy,
+            "email_available": email_healthy,
             "total_endpoints": total,
             "ai_endpoints_count": len(AI_SERVICE_ENDPOINTS),
             "public_tools_count": len(PUBLIC_TOOL_ENDPOINTS),

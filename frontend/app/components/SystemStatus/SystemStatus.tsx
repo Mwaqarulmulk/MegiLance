@@ -20,13 +20,22 @@ interface StatusData {
   timestamp: string;
   system_status: 'healthy' | 'degraded' | 'offline';
   version: string;
+  environment: string;
+  uptime: {
+    seconds: number;
+    display: string;
+  };
   services: {
     database: ServiceHealth;
     llm_gateway: ServiceHealth;
+    storage: ServiceHealth;
+    email: ServiceHealth;
   };
   summary: {
     critical_services_healthy: boolean;
     ai_services_available: boolean;
+    storage_available: boolean;
+    email_available: boolean;
     total_endpoints: number;
     ai_endpoints_count: number;
     public_tools_count: number;
@@ -129,8 +138,20 @@ export default function SystemStatus() {
         </p>
       </div>
 
-      {/* Summary Stats */}
+      {/* System Info */}
       <div className={styles.summary}>
+        <div className={styles.statBox}>
+          <span className={styles.statLabel}>Version</span>
+          <span className={styles.statValue}>v{status.version}</span>
+        </div>
+        <div className={styles.statBox}>
+          <span className={styles.statLabel}>Environment</span>
+          <span className={styles.statValue}>{status.environment}</span>
+        </div>
+        <div className={styles.statBox}>
+          <span className={styles.statLabel}>Uptime</span>
+          <span className={styles.statValue}>{status.uptime?.display || 'N/A'}</span>
+        </div>
         <div className={styles.statBox}>
           <span className={styles.statLabel}>Total Endpoints</span>
           <span className={styles.statValue}>{status.summary.total_endpoints}</span>
@@ -144,7 +165,7 @@ export default function SystemStatus() {
           <span className={styles.statValue}>{status.summary.public_tools_count}</span>
         </div>
         <div className={styles.statBox}>
-          <span className={styles.statLabel}>Chatbot Endpoints</span>
+          <span className={styles.statLabel}>Chatbot</span>
           <span className={styles.statValue}>{status.summary.chatbot_endpoints_count}</span>
         </div>
         <div className={styles.statBox}>
@@ -155,7 +176,7 @@ export default function SystemStatus() {
 
       {/* Services Health */}
       <div className={styles.card}>
-        <h2>Critical Services</h2>
+        <h2>Services Health</h2>
         <div className={styles.servicesList}>
           {Object.entries(status.services).map(([key, service]) => (
             <div key={key} className={styles.serviceItem}>
@@ -164,7 +185,9 @@ export default function SystemStatus() {
                 <div className={styles.serviceInfo}>
                   <h3>{service.name}</h3>
                   <p>{service.message}</p>
-                  <small>{service.response_time_ms.toFixed(2)}ms</small>
+                  {service.response_time_ms > 0 && (
+                    <small>{service.response_time_ms.toFixed(2)}ms</small>
+                  )}
                 </div>
               </div>
             </div>
