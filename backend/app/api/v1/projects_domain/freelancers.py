@@ -108,7 +108,7 @@ def get_freelancer_stats(user_id: int):
 @router.get("/{user_id}/portfolio")
 def get_freelancer_portfolio(user_id: int):
     result = execute_query(
-        "SELECT id, title, description, image_url, project_url, created_at FROM portfolio_items WHERE freelancer_id = ? ORDER BY created_at DESC LIMIT 10",
+        "SELECT id, title, description, image_url, project_url, created_at FROM portfolio_items WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
         [user_id],
     )
     rows = parse_rows(result)

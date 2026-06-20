@@ -46,7 +46,7 @@ export const usersApi = {
   get: (userId: ResourceId) => apiFetch(`/users/${userId}`),
 
   completeProfile: (data: Record<string, unknown>) =>
-    apiFetch("/users/me/complete-profile", {
+    apiFetch("/users/me", {
       method: "PUT",
       body: JSON.stringify(data),
     }),

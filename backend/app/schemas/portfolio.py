@@ -53,7 +53,7 @@ class PortfolioItemUpdate(BaseModel):
 
 class PortfolioItemRead(PortfolioItemBase):
     id: int
-    freelancer_id: int
+    user_id: int
     created_at: datetime
     updated_at: datetime
 

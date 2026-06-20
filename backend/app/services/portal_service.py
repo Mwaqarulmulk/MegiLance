@@ -505,7 +505,7 @@ def get_freelancer_portfolio_items(freelancer_id: int) -> List[dict]:
     result = execute_query(
         """SELECT id, title, description, image_url, project_url, created_at
            FROM portfolio_items
-           WHERE freelancer_id = ?
+           WHERE user_id = ?
            ORDER BY created_at DESC""",
         [freelancer_id]
     )

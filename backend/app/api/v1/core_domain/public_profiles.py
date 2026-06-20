@@ -171,7 +171,7 @@ def get_freelancer_stats(user_id: int):
 
     # Get portfolio stats
     portfolio_result = execute_query(
-        "SELECT COUNT(*) as portfolio_count FROM portfolio_items WHERE freelancer_id = ?",
+        "SELECT COUNT(*) as portfolio_count FROM portfolio_items WHERE user_id = ?",
         [user_id]
     )
 

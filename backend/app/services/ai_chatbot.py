@@ -686,7 +686,7 @@ class AIChatbotService:
 
             if field_key == "portfolio_items":
                 p_result = execute_query(
-                    "SELECT COUNT(*) as cnt FROM portfolio_items WHERE freelancer_id = ?",
+                    "SELECT COUNT(*) as cnt FROM portfolio_items WHERE user_id = ?",
                     [user_id]
                 )
                 p_rows = parse_rows(p_result)
@@ -1220,7 +1220,7 @@ class AIChatbotService:
                 response["actions"] = [{"type": "suggest_login", "redirect": "/login"}]
             else:
                 p_result = execute_query(
-                    "SELECT COUNT(*) as cnt FROM portfolio_items WHERE freelancer_id = ?",
+                    "SELECT COUNT(*) as cnt FROM portfolio_items WHERE user_id = ?",
                     [user_id]
                 )
                 p_rows = parse_rows(p_result)

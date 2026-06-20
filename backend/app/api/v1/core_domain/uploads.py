@@ -105,6 +105,23 @@ async def upload_cover(
     return {"message": "Cover uploaded", "url": url, "file_url": url, "path": url}
 
 
+@router.post("/portfolio")
+async def upload_portfolio_image(
+    file: UploadFile = File(...),
+    current_user=Depends(get_current_user),
+):
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail=f"Allowed types: {', '.join(ALLOWED_IMAGE_TYPES)}")
+
+    contents = await file.read()
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="File too large (max 10MB)")
+
+    key = f"portfolio/{uuid.uuid4().hex[:12]}.{_sanitize_extension(file.filename)}"
+    url = store_bytes(contents, key, file.content_type or "image/jpeg")
+    return {"message": "Portfolio image uploaded", "url": url, "file_url": url, "path": url}
+
+
 @router.post("/document")
 async def upload_document(
     file: UploadFile = File(...),

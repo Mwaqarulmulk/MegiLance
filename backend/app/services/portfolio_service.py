@@ -64,7 +64,7 @@ def create_portfolio_item_record(user_id, title, description, image_url, project
     now = datetime.now(timezone.utc).isoformat()
 
     result = execute_query(
-        """INSERT INTO portfolio_items (freelancer_id, title, description, image_url, project_url, created_at, updated_at, tags)
+        """INSERT INTO portfolio_items (user_id, title, description, image_url, project_url, created_at, updated_at, tags)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         [user_id, title, description, image_url, project_url, now, now, tags_json]
     )

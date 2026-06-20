@@ -461,13 +461,13 @@ const Profile: React.FC = () => {
         testimonials_enabled: testimonialsEnabled,
         profile_visibility: profileVisibility,
       };
-      await apiFetch("/profiles/me", {
+      await apiFetch("/users/me", {
         method: "PUT",
         body: JSON.stringify(payload),
       });
       setStatus("Profile saved successfully!");
       showToast("Profile saved successfully!", "success");
-      const updated: any = await apiFetch("/profiles/me");
+      const updated: any = await apiFetch("/users/me");
       setProfileSlug(updated.profile_slug || "");
     } catch (error: any) {
       const errMsg = error.message || "Failed to save profile";

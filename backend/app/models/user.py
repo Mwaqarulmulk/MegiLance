@@ -39,6 +39,7 @@ class User(Base):
     skills: Mapped[str] = mapped_column(Text, nullable=True)  # JSON string of skills
     hourly_rate: Mapped[float] = mapped_column(Float, nullable=True)
     profile_image_url: Mapped[str] = mapped_column(String(500), nullable=True)
+    cover_image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     location: Mapped[str] = mapped_column(String(100), nullable=True)
     profile_data: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Stored as JSON string for portability
     notification_preferences: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON string for notification settings

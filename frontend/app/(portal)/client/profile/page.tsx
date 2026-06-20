@@ -128,7 +128,7 @@ export default function ClientProfilePage() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      await apiFetch("/profiles/me", {
+      await apiFetch("/users/me", {
         method: "PUT",
         body: JSON.stringify({
           full_name: profile.name,
