@@ -11,9 +11,9 @@ import darkStyles from './Hero.dark.module.css';
 
 // Ideally, these would come from an API call such as: `const stats = await fetch('/api/v1/analytics/aggregates')`
 const defaultStats = [
-  { label: 'Active Projects', value: '12K+' },
-  { label: 'Top Freelancers', value: '50K+' },
-  { label: 'Saved in Fees', value: '$2M+' },
+  { label: 'Demo Projects', value: '11' },
+  { label: 'Freelancer Profiles', value: '28' },
+  { label: 'Escrow Prototype', value: '100%' },
 ];
 
 export default function Hero({ stats = defaultStats }) {
@@ -35,14 +35,14 @@ export default function Hero({ stats = defaultStats }) {
         </div>
 
         <h1 id="hero-title" className={cn(commonStyles.title, themeStyles.title)}>
-          Hire the best talent. <br />
-          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>Zero commission.</span>
+          Hire top global talent. <br />
+          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>Zero-anxiety escrow. Direct market rates.</span>
         </h1>
         
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-          MegiLance fixes what&apos;s broken in freelancing: AI matches you with vetted talent at a
-          fair price, milestone escrow protects every payment — even cross-border — and transparent
-          pricing means no overpaying, no surprises, and no late projects.
+          MegiLance aligns the psychology of trust with modern business efficiency. Our AI instantly
+          matches you with vetted specialists at true market value, while decentralized escrow eliminates
+          payment anxiety. No middleman margins, no hidden platform taxes, just pure collaborative autonomy.
         </p>
 
         <div className={cn(commonStyles.actions, themeStyles.actions)}>

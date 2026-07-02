@@ -14,39 +14,39 @@ import { useThemeMode } from '@/app/hooks/useThemeMode';
 const ITEMS = [
   {
     icon: Globe2,
-    pain: 'Cross-border payments are slow, costly & risky',
+    pain: 'Cross-border payment friction & banking barriers',
     solution:
-      'Blockchain-backed escrow with USDC settles instantly worldwide — no PayPal bans, no bank delays, no chargebacks. Funds release only when you approve the work.',
+      'On-chain escrow settles instantly. Bypass high wire fees, unstable local currencies, and banking restrictions. Funds release automatically upon verified milestone completion.',
   },
   {
     icon: Calculator,
-    pain: 'No idea what a project should cost — so you overpay',
+    pain: 'Pricing asymmetry & budget guesswork',
     solution:
-      'The free AI Price Estimator gives market-aware, location-adjusted pricing in seconds, so you budget with confidence and never overpay.',
+      'Our AI Price Estimator analyzes real-time market indices, location data, and skill complexity, giving you fair, location-adjusted pricing in seconds.',
   },
   {
     icon: ShieldCheck,
-    pain: 'You can’t tell who to trust',
+    pain: 'Reputation risk & credential inflation',
     solution:
-      'Verified profiles, real reviews, and AI fraud detection vet every freelancer. Milestone escrow means your money is protected at every step.',
+      'Every freelancer is vetted through smart reputation tracking and fraud detection. Zero fake reviews or inflated portfolios—only verifiable skills.',
   },
   {
     icon: CalendarClock,
-    pain: 'Projects run late and scope creeps',
+    pain: 'Milestone anxiety & scope misalignment',
     solution:
-      'AI matching finds the right fit fast, while milestones, a shared workroom, and tracked deliverables keep timelines honest from day one.',
+      'Break projects into clear deliverables. Funds lock in escrow for each phase, aligning client and freelancer incentives and protecting work quality.',
   },
   {
     icon: Receipt,
-    pain: 'Hidden fees eat 20–27% of your budget',
+    pain: 'High platform commission taxing your budget',
     solution:
-      'Transparent, low 5–10% fees — clearly shown up front. More of your budget reaches the talent doing the work.',
+      'We cut out excessive marketplace fees with transparent 5–8% platform rates. More of your capital directly incentivizes the expert doing the work.',
   },
   {
     icon: BadgeCheck,
-    pain: 'Finding genuinely high-quality talent takes forever',
+    pain: 'Screening fatigue & matching mismatch',
     solution:
-      'AI talent matching surfaces vetted, relevant professionals instantly — quality candidates without the endless searching and screening.',
+      'Skip the endless resume sorting. Our semantic AI matching connects you with professionals based on objective capability, work style, and project requirements.',
   },
 ];
 
@@ -69,12 +69,11 @@ export default function PainSolutions() {
           Why MegiLance
         </span>
         <h2 className={cn('text-3xl md:text-4xl font-bold tracking-tight', heading)}>
-          Every freelancing headache — <span style={{ color: '#4573df' }}>solved</span>
+          Aligning market forces, <span style={{ color: '#4573df' }}>engineered for trust</span>
         </h2>
         <p className={cn('mt-3 text-base md:text-lg', muted)}>
-          Hiring online shouldn&apos;t mean payment risk, guesswork pricing, or missed deadlines.
-          We rebuilt the freelance marketplace around the things that actually go wrong — and fixed
-          each one.
+          Traditional marketplaces thrive on friction, high fees, and information asymmetry. MegiLance
+          rebuilds the freelancer-client relationship around transparency, psychological safety, and direct economic value.
         </p>
       </div>
 

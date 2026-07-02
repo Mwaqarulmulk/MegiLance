@@ -34,7 +34,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Brain size={24} />,
     title: 'AI-Powered Matching',
-    description: 'Our ML engine analyzes skills, experience, and project requirements to find perfect freelancer-client matches with 95%+ accuracy.',
+    description: 'Our semantic ML engine analyzes skills, experience, and project requirements to find perfect freelancer-client matches with 95%+ accuracy.',
     category: 'AI & Matching',
     highlights: ['Skill gap analysis', 'Budget optimization', 'Culture fit scoring'],
     status: 'live',
@@ -42,7 +42,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Sparkles size={24} />,
     title: 'AI Proposal Assistant',
-    description: 'Generate compelling proposals with AI copilot that analyzes job requirements and crafts personalized, winning responses.',
+    description: 'Generate compelling proposals with an AI copilot that analyzes requirements and helps draft clear milestones to align expectations.',
     category: 'AI & Matching',
     highlights: ['Auto-drafting', 'Tone adjustment', 'Competitive analysis'],
     status: 'live',
@@ -50,7 +50,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Search size={24} />,
     title: 'Smart Search & Discovery',
-    description: 'Find the right talent or projects with semantic search that understands intent, not just keywords.',
+    description: 'Find the right talent or projects with semantic search that understands project intent and context, not just keywords.',
     category: 'AI & Matching',
     highlights: ['Natural language queries', 'Filter by availability', 'Saved searches'],
     status: 'live',
@@ -58,7 +58,7 @@ const FEATURES: Feature[] = [
   {
     icon: <CreditCard size={24} />,
     title: 'Secure Escrow Payments',
-    description: 'Funds are held securely in escrow until milestones are approved.  Both parties are protected at every step.',
+    description: 'Smart contract escrow holds funds securely, removing payment anxiety. Funds release only upon verified milestone completion.',
     category: 'Payments',
     highlights: ['Milestone-based release', 'Dispute protection', 'Auto-invoicing'],
     status: 'live',
@@ -66,7 +66,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Globe size={24} />,
     title: 'Multi-Currency Support',
-    description: 'Pay and get paid in 50+ currencies with competitive exchange rates and low conversion fees.',
+    description: 'Pay and get paid worldwide. Bypass local banking barriers using stablecoins or competitive fiat channels with minimal fees.',
     category: 'Payments',
     highlights: ['PKR, USD, EUR, GBP', 'JazzCash & Easypaisa', 'Crypto payouts'],
     status: 'live',
@@ -74,7 +74,7 @@ const FEATURES: Feature[] = [
   {
     icon: <BarChart3 size={24} />,
     title: 'Earnings Analytics',
-    description: 'Track income, expenses, and trends with detailed breakdowns, charts, and CSV exports.',
+    description: 'Track income, platform fees, and tax metrics with clear charts. Maximize take-home earnings with 92-95% efficiency.',
     category: 'Payments',
     highlights: ['Period comparison', 'Tax-ready reports', 'Withdrawal tracking'],
     status: 'live',
@@ -82,7 +82,7 @@ const FEATURES: Feature[] = [
   {
     icon: <MessageSquare size={24} />,
     title: 'Real-Time Messaging',
-    description: 'Communicate instantly with built-in chat, file sharing, typing indicators, and conversation search.',
+    description: 'Communicate instantly with built-in chat, file sharing, and project channels. Retain context without third-party tool hopping.',
     category: 'Collaboration',
     highlights: ['File attachments', 'Read receipts', 'Message search'],
     status: 'live',
@@ -90,7 +90,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Layers size={24} />,
     title: 'Project Workspaces',
-    description: 'Organize work with dedicated project spaces including milestones, timelines, and deliverable tracking.',
+    description: 'Organize work inside dedicated workspaces that track milestones, timelines, and deliverables for total transparency.',
     category: 'Collaboration',
     highlights: ['Milestone boards', 'Progress tracking', 'File management'],
     status: 'live',
@@ -98,7 +98,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Clock size={24} />,
     title: 'Time Tracking',
-    description: 'Built-in time tracker with screenshots, activity logs, and automatic timesheet generation.',
+    description: 'Track active hours transparently for hourly contracts, logging activity levels to preserve client visibility and trust.',
     category: 'Collaboration',
     highlights: ['Activity monitoring', 'Auto timesheets', 'Idle detection'],
     status: 'beta',
@@ -106,7 +106,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Shield size={24} />,
     title: 'Enterprise Security',
-    description: 'Bank-grade encryption, SOC 2 compliance, and continuous monitoring protect your data 24/7.',
+    description: 'Bank-grade encryption, secure session management, and continuous network protection safeguard intellectual property.',
     category: 'Security',
     highlights: ['AES-256 encryption', '2FA authentication', 'Session management'],
     status: 'live',
@@ -114,7 +114,7 @@ const FEATURES: Feature[] = [
   {
     icon: <Lock size={24} />,
     title: 'Fraud Detection',
-    description: 'AI-powered fraud detection identifies suspicious activity, fake profiles, and payment anomalies in real-time.',
+    description: 'AI security engines analyze behaviors, verify identity claims, and check reviews to block fake credentials and scams.',
     category: 'Security',
     highlights: ['Behavioral analysis', 'Identity verification', 'Risk scoring'],
     status: 'live',
@@ -122,7 +122,7 @@ const FEATURES: Feature[] = [
   {
     icon: <FileText size={24} />,
     title: 'Smart Contracts',
-    description: 'Auto-generated contracts with clear terms, milestone definitions, and legally sound templates.',
+    description: 'Legally sound, automated contracts define clear milestones, ownership rights, and dispute resolutions to protect both parties.',
     category: 'Security',
     highlights: ['Template library', 'E-signatures', 'Version history'],
     status: 'live',

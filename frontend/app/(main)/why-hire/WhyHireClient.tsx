@@ -1,7 +1,7 @@
 // @AI-HINT: Why Hire client component — shows value props, savings calculator, testimonials, FAQs.
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -21,19 +21,23 @@ type FAQ = { question: string; answer: string };
 export default function WhyHireClient({ faqs }: { faqs: FAQ[] }) {
   const { resolvedTheme } = useTheme();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  if (!resolvedTheme) return null;
-  const theme = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const theme = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
 
   const reasons = [
-    { icon: <Bot size={24} />, title: 'AI-Powered Matching', desc: 'Our AI analyzes your project and matches you with the best-fit freelancers in minutes, not days. 98% match accuracy.' },
-    { icon: <DollarSign size={24} />, title: 'Save 40-60% vs Full-Time', desc: 'No office costs, no benefits overhead. Pay only for the work you need, when you need it.' },
-    { icon: <Shield size={24} />, title: 'Payment Protection', desc: 'Every payment is held in escrow until you approve. Milestone payments for complex projects. Zero risk.' },
-    { icon: <Clock size={24} />, title: 'Hire in 24 Hours', desc: 'Average time to hire is just 24 hours. Get proposals within 1-2 hours of posting.' },
-    { icon: <Star size={24} />, title: 'Verified Talent', desc: 'Every freelancer passes skill assessments and identity verification. No fake profiles.' },
-    { icon: <Globe size={24} />, title: 'Global Talent Pool', desc: 'Access 100,000+ freelancers across 150+ countries. Find the perfect specialist for any project.' },
-    { icon: <Zap size={24} />, title: 'Zero Commission', desc: 'Freelancers pay 0% commission — they offer better rates because they keep more. You save too.' },
-    { icon: <TrendingUp size={24} />, title: 'Scale On Demand', desc: 'Need 1 developer or 20? Scale your team instantly without HR overhead or long-term commitments.' },
+    { icon: <Bot size={24} />, title: 'AI-Powered Match Precision', desc: 'Skip manual vetting. Our algorithm matches projects with verified specialists based on capability alignment, code assessments, and domain experience.' },
+    { icon: <DollarSign size={24} />, title: 'Direct Economic ROI', desc: 'Save 40-60% compared to agency markups and fixed full-time salaries. Scale your overhead dynamically by paying only for active deliverables.' },
+    { icon: <Shield size={24} />, title: 'Zero-Anxiety Milestone Escrow', desc: 'Mitigate financial risk. Funds are secured in smart contract escrow for each phase and released only when you approve the work.' },
+    { icon: <Clock size={24} />, title: 'Instant Team Assembly', desc: 'Hire vetted talent within 24 hours. Receive context-aware proposals from professionals who are ready to hit the ground running.' },
+    { icon: <Star size={24} />, title: 'Eliminating Credential Inflation', desc: "Every freelancer's track record, technical competency, and communication feedback are audited. No synthetic reviews." },
+    { icon: <Globe size={24} />, title: 'Bypassing Geographic Constraints', desc: 'Tap into top-tier experts across the Global South. Overcome local talent deficits and connect with high-caliber professionals.' },
+    { icon: <Zap size={24} />, title: 'Frictionless 0% Client Fees', desc: 'We do not tax your hiring budget. Post projects and build teams with zero client-side fees, while freelancers keep up to 95% of their rates.' },
+    { icon: <TrendingUp size={24} />, title: 'Elastic Scale & Flexibility', desc: 'Scale up or down instantly. Manage project scope dynamically without the operational friction of traditional employment contracts.' },
   ];
 
   const savings = [
@@ -52,8 +56,8 @@ export default function WhyHireClient({ faqs }: { faqs: FAQ[] }) {
             <span className={cn(commonStyles.gradient, theme.gradient)}>Freelancers on MegiLance</span>
           </h1>
           <p className={cn(commonStyles.heroDesc, theme.heroDesc)}>
-            Save 40-60% on hiring costs. Get AI-matched with verified experts in 24 hours.
-            Zero commissions, secure payments, and quality guaranteed.
+            Leverage top-tier talent with optimized ROI. Access AI-matched, vetted experts
+            under secure milestone escrow. Zero client-side fees and high-speed execution.
           </p>
           <div className={commonStyles.heroCtas}>
             <Link href="/client/find-talent">
@@ -93,7 +97,7 @@ export default function WhyHireClient({ faqs }: { faqs: FAQ[] }) {
             How Much Can You Save?
           </h2>
           <p className={cn(commonStyles.sectionSub, theme.sectionSub)}>
-            Compare the cost of a full-time hire vs freelance talent on MegiLance
+            Maximize operational efficiency by shifting fixed headcount costs into elastic, value-driven deliverables.
           </p>
           <div className={cn(commonStyles.savingsTable, theme.savingsTable)}>
             <div className={cn(commonStyles.savingsRow, commonStyles.savingsHeader, theme.savingsHeader)}>

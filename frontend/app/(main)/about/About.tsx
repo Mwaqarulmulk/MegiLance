@@ -68,9 +68,9 @@ const About: React.FC = () => {
               <div className={common.heroContent}>
                 <h1 id="about-title" className={styles.title}>About MegiLance</h1>
                 <p className={styles.subtitle}>
-                  A hybrid decentralized freelancing platform that integrates Artificial Intelligence
-                  for smart matching and Blockchain technology for secure, trustless transactions. Built to
-                  empower freelancers worldwide with fair pay and low-cost payments.
+                  MegiLance is a hybrid decentralized freelancing ecosystem designed to align the economics of remote work
+                  with the psychology of trust. By integrating AI for objective competency matching and blockchain smart contracts
+                  for secure escrow, we eliminate traditional market friction and empower global professionals to collaborate with absolute peace of mind.
                 </p>
               </div>
               {/* Brand illustration — Our Story, Mission, Vision, AI+Blockchain, Secure Trust, Fair Pay, Global Freelancing */}
@@ -98,26 +98,26 @@ const About: React.FC = () => {
           <StaggerContainer className={styles.grid}>
             <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="problem-fees-title">
               <DollarSign size={32} className={common.iconError} />
-              <h3 id="problem-fees-title" className={styles.cardTitle}>High Platform Fees</h3>
+              <h3 id="problem-fees-title" className={styles.cardTitle}>Economic Extortion</h3>
               <p className={styles.cardBody}>
-                Major platforms charge 10-20% commission, significantly reducing freelancer earnings
-                and disproportionately impacting professionals in emerging markets.
+                Traditional platforms take 10-20% of a freelancer's hard-earned income. This heavy tax
+                disproportionately penalizes talented professionals, driving up client costs and squeezing freelancer margins.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="problem-payments-title">
               <Globe size={32} className={common.iconWarning} />
-              <h3 id="problem-payments-title" className={styles.cardTitle}>Payment Barriers</h3>
+              <h3 id="problem-payments-title" className={styles.cardTitle}>Financial Exclusion</h3>
               <p className={styles.cardBody}>
-                Pakistani freelancers can&apos;t access PayPal and rely on slower alternatives with
-                steep withdrawal costs, poor exchange rates, and days-long processing times.
+                Freelancers in the Global South face severe payment barriers, often blocked from main gateways.
+                They suffer through high transfer fees, delayed wire clearings, and extreme exchange rate inflation.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="problem-trust-title">
               <Shield size={32} className={common.iconAccent} />
-              <h3 id="problem-trust-title" className={styles.cardTitle}>Trust Deficit</h3>
+              <h3 id="problem-trust-title" className={styles.cardTitle}>Payment & Work Anxiety</h3>
               <p className={styles.cardBody}>
-                Centralized platforms use opaque algorithms for ranking and disputes. Freelancers lack 
-                control over their reputation and visibility.
+                Both clients and freelancers carry significant transaction anxiety. Clients fear unfinished milestones;
+                freelancers fear unpaid invoices. Opaque platform bidding wars and arbitrary dispute reviews worsen this trust deficit.
               </p>
             </StaggerItem>
           </StaggerContainer>
@@ -134,28 +134,26 @@ const About: React.FC = () => {
           <StaggerContainer className={styles.grid}>
             <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="solution-ai-title">
               <Brain size={32} className={common.iconPrimary} />
-              <h3 id="solution-ai-title" className={styles.cardTitle}>AI-Powered Intelligence</h3>
+              <h3 id="solution-ai-title" className={styles.cardTitle}>Objectivity & Market Intelligence</h3>
               <p className={styles.cardBody}>
-                Machine learning analyzes skills, project history, and reviews to generate 
-                objective ranking scores. NLP-based sentiment analysis and data-driven price forecasting 
-                help everyone work fairly.
+                We use machine learning to rank talent based on actual, verified performance rather than ad spend.
+                Our AI Price Estimator uses live global indices to align budget expectations fairly for both sides.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="solution-blockchain-title">
               <Lock size={32} className={common.iconSuccess} />
-              <h3 id="solution-blockchain-title" className={styles.cardTitle}>Blockchain Security</h3>
+              <h3 id="solution-blockchain-title" className={styles.cardTitle}>Smart Contract Escrow</h3>
               <p className={styles.cardBody}>
-                Smart Contract Escrow guarantees trustless payments. Funds lock when 
-                contracts start and release only when work is approved. Immutable records 
-                provide transparent proof of all activity.
+                MetaMask web3 wallets and smart contracts guarantee secure escrow. Payments are locked at milestone start
+                and release immediately upon deliverable approval—creating a risk-free, transparent agreement.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="solution-speed-title">
               <Zap size={32} className={common.iconWarning} />
-              <h3 id="solution-speed-title" className={styles.cardTitle}>Modern Tech Stack</h3>
+              <h3 id="solution-speed-title" className={styles.cardTitle}>Global High-Speed Edge</h3>
               <p className={styles.cardBody}>
-                Next.js 16 for fast, SEO-optimized pages. FastAPI for high-performance 
-                async backend. Turso edge database for worldwide low-latency.
+                Built on Next.js 16, async FastAPI, and Turso Edge SQL databases to deliver a sub-second response time
+                for users worldwide, facilitating fluid collaboration.
               </p>
             </StaggerItem>
           </StaggerContainer>
@@ -171,21 +169,21 @@ const About: React.FC = () => {
           </ScrollReveal>
           <StaggerContainer className={styles.valuesGrid}>
             <StaggerItem className={styles.valueItem} aria-labelledby="value-equity-title">
-              <h3 id="value-equity-title" className={styles.valueTitle}>Financial Equity</h3>
+              <h3 id="value-equity-title" className={styles.valueTitle}>Financial Autonomy</h3>
               <p className={styles.valueDesc}>
-                Reduce transaction costs to less than 1% using blockchain, so freelancers keep more of what they earn.
+                We drive transaction overhead close to zero by utilizing blockchain, ensuring that professionals keep the true value of their labor.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.valueItem} aria-labelledby="value-merit-title">
-              <h3 id="value-merit-title" className={styles.valueTitle}>Merit-Based Discovery</h3>
+              <h3 id="value-merit-title" className={styles.valueTitle}>Eliminating Bias</h3>
               <p className={styles.valueDesc}>
-                AI ranking promotes talent based on verifiable skills and performance, not who pays for visibility.
+                Our AI matching promotes freelancers solely based on skill, responsiveness, and work history, bypassing favoritism.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.valueItem} aria-labelledby="value-transparency-title">
-              <h3 id="value-transparency-title" className={styles.valueTitle}>Radical Transparency</h3>
+              <h3 id="value-transparency-title" className={styles.valueTitle}>Mutual Safety</h3>
               <p className={styles.valueDesc}>
-                On-chain transactions and clear ranking algorithms mean no hidden fees or opaque decisions.
+                We replace transaction anxiety with structural certainty. Secure escrow and milestone-based approvals mean peace of mind at every step.
               </p>
             </StaggerItem>
           </StaggerContainer>
