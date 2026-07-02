@@ -29,7 +29,7 @@ interface SecurityBadge {
 
 const trustIndicators: TrustIndicator[] = [
   { id: 1, icon: <Users size={24} />, value: 5, label: "Average Proposals", suffix: "+" },
-  { id: 2, icon: <Award size={24} />, value: 0, label: "Platform Fee", suffix: "%" },
+  { id: 2, icon: <Award size={24} />, value: 8, label: "Min Platform Fee", suffix: "%" },
   { id: 3, icon: <Zap size={24} />, value: 24, label: "Hour Avg. Response", suffix: "h" },
   { id: 4, icon: <Shield size={24} />, value: 100, label: "Escrow Protected", suffix: "%" },
 ];

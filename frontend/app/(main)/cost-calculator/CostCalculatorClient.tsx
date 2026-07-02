@@ -1,7 +1,7 @@
 // @AI-HINT: Interactive cost calculator client — lets users input role, hours, compare full-time vs freelance
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -34,6 +34,11 @@ export default function CostCalculatorClient({ faqs }: { faqs: FAQ[] }) {
   const [hoursPerWeek, setHoursPerWeek] = useState(40);
   const [weeks, setWeeks] = useState(12);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const role = ROLES[selectedRole];
 
@@ -50,9 +55,7 @@ export default function CostCalculatorClient({ faqs }: { faqs: FAQ[] }) {
     return { ftTotal, freelanceTotal, upworkTotal, savings, savingsPercent, upworkSavings };
   }, [role, hoursPerWeek, weeks]);
 
-  // Early return after all hooks
-  if (!resolvedTheme) return null;
-  const theme = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const theme = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
 
   const fmt = (n: number) => '$' + Math.round(n).toLocaleString();
 

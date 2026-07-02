@@ -17,6 +17,7 @@ import {
 import commonStyles from './PriceEstimatorPro.common.module.css';
 import lightStyles from './PriceEstimatorPro.light.module.css';
 import darkStyles from './PriceEstimatorPro.dark.module.css';
+import { DEFAULT_CATEGORIES_DATA } from './static_data';
 import {
   AuroraBackground,
   ShineBadge,
@@ -74,7 +75,7 @@ interface RegionGroupInfo {
   }[];
 }
 
-interface CategoriesData {
+export interface CategoriesData {
   categories: CategoryInfo[];
   experience_levels: string[];
   regions: RegionGroupInfo[];
@@ -280,8 +281,8 @@ export default function PriceEstimatorPro() {
 
   /* ----- State ----- */
   const [step, setStep] = useState(0);
-  const [categories, setCategories] = useState<CategoriesData | null>(null);
-  const [loadingCats, setLoadingCats] = useState(true);
+  const [categories, setCategories] = useState<CategoriesData | null>(DEFAULT_CATEGORIES_DATA);
+  const [loadingCats, setLoadingCats] = useState(false);
   const [loadingEstimate, setLoadingEstimate] = useState(false);
   const [result, setResult] = useState<EstimateResult | null>(null);
   const [error, setError] = useState<string | null>(null);

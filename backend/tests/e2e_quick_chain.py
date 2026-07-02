@@ -160,13 +160,17 @@ if ctid:
 
 # 15. Messaging
 print("\n--- 15. Messaging ---")
-r = s("post", f"{BASE}/messages", headers=ch, json={"receiver_id": fid, "content": "Thanks!"})
-if r and r.status_code in (200, 201): ok("Message client->freelancer")
-else: warn("Message", f"{r.status_code if r else 'TIMEOUT'}")
+r = s("post", f"{BASE}/conversations", headers=ch, json={"freelancer_id": fid, "project_id": pid, "initial_message": "Thanks!"})
+conv_id = None
+if r and r.status_code in (200, 201):
+    conv_id = r.json().get("conversation_id")
+    ok(f"Conversation created id={conv_id}")
+else: warn("Create conversation", f"{r.status_code if r else 'TIMEOUT'}")
 
-r = s("post", f"{BASE}/messages", headers=fh, json={"receiver_id": cid, "content": "Thank you!"})
-if r and r.status_code in (200, 201): ok("Message freelancer->client")
-else: warn("Reply", f"{r.status_code if r else 'TIMEOUT'}")
+if conv_id:
+    r = s("post", f"{BASE}/conversations/{conv_id}/messages", headers=fh, json={"content": "Thank you!"})
+    if r and r.status_code in (200, 201): ok("Reply freelancer->client")
+    else: warn("Reply", f"{r.status_code if r else 'TIMEOUT'}")
 
 # 16. Dashboards
 print("\n--- 16. Dashboards ---")

@@ -110,10 +110,15 @@ function availColor(status: string): string {
 
 const TalentDirectoryPage = () => {
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [q, setQ] = useState('');
   const [category, setCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<TalentProfile[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const loadProfiles = useCallback(async () => {
     setLoading(true);
@@ -148,8 +153,7 @@ const TalentDirectoryPage = () => {
     });
   }, [profiles, q, category, catKeywords]);
 
-  if (!resolvedTheme) return null;
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const themed = (mounted && resolvedTheme === 'light') ? light : dark;
 
   return (
     <PageTransition>

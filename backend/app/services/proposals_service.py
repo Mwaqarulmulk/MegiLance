@@ -432,7 +432,7 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
             [
                 project_id, freelancer_id, client_id, proposal_id,
                 "fixed", contract_amount, "USD", contract_amount, platform_fee,
-                "active", start_date, end_date,
+                "pending", start_date, end_date,
                 f"Contract for: {project_title}\n\n{project_description[:500] if project_description else 'N/A'}",
                 now, now
             ]

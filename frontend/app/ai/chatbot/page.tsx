@@ -1,11 +1,13 @@
 // @AI-HINT: This is the Next.js route file for the AI Chatbot page. Uses the enhanced V2 chatbot with
 // real-time status monitoring, offline mode support, and modern UI.
-'use client';
-
+import { Metadata } from 'next';
 import ChatbotEnhanced from './ChatbotEnhanced';
 
-const ChatbotPage = () => {
-  return <ChatbotEnhanced />;
+export const metadata: Metadata = {
+  title: 'AI Assistant Chatbot | MegiLance Escrow & Matching Copilot',
+  description: 'Chat with our AI Copilot to scope projects, estimate prices, match with vetted freelancers, and understand escrow protocols in real-time.',
 };
 
-export default ChatbotPage;
+export default function ChatbotPage() {
+  return <ChatbotEnhanced />;
+}

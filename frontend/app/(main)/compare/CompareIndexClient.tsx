@@ -1,6 +1,7 @@
 // @AI-HINT: Compare index client — grid of competitor comparison cards
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -14,8 +15,13 @@ interface Competitor { slug: string; name: string; desc: string; }
 
 export default function CompareIndexClient({ competitors }: { competitors: Competitor[] }) {
   const { resolvedTheme } = useTheme();
-  if (!resolvedTheme) return null;
-  const theme = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const theme = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
 
   return (
     <div className={cn(commonStyles.page, theme.page)}>

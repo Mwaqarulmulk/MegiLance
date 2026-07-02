@@ -1,3 +1,12 @@
-// @AI-HINT: Rate Advisor tool page wrapper
+import { Metadata } from 'next';
 import RateAdvisor from './RateAdvisor';
-export default function RateAdvisorPage() { return <RateAdvisor />; }
+
+export const metadata: Metadata = {
+  title: 'AI Freelancer Rate Advisor | MegiLance Tools',
+  description: 'Find your optimal hourly rate with AI pricing intelligence. Compare platform averages, set comfort rates, and project your monthly billable income.',
+  keywords: ['rate advisor', 'freelance hourly rate calculator', 'how much to charge freelance', 'AI rate calculator', 'MegiLance tools'],
+};
+
+export default function RateAdvisorPage() {
+  return <RateAdvisor />;
+}

@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from datetime import datetime, timezone
 
 from main import app
-from app.core.security import get_current_active_user
+from app.core.security import get_current_user
 
 # Disable startup hooks
 app.router.on_startup.clear()
@@ -51,9 +51,12 @@ class FakeTurso:
 
         # SELECT queries on projects table
         if sql_u.startswith("SELECT") and "FROM PROJECTS" in sql_u:
+            # Count query
+            if "COUNT(*) AS TOTAL" in sql_u or sql_u.startswith("SELECT COUNT(*)"):
+                return {"columns": ["total"], "rows": [[len(self._projects)]]}
             # Single project by ID
-            if "WHERE ID = ?" in sql_u:
-                pid = params[0] if params else -1
+            if "WHERE ID = ?" in sql_u or "WHERE P.ID = ?" in sql_u:
+                pid = int(params[0]) if params else -1
                 rows = [p for p in self._projects if p[0] == pid]
                 return {"columns": PROJECT_COLUMNS, "rows": rows}
             # Last inserted by client_id (after INSERT)
@@ -105,7 +108,7 @@ class _FakeUser:
         self.id = kw.get("id", 1)
         self.email = kw.get("email", "client@test.com")
         self.user_type = kw.get("user_type", "client")
-        self.role = kw.get("role", "User")
+        self.role = kw.get("role", self.user_type)
         self.name = kw.get("name", "Test Client")
         self.bio = kw.get("bio", "Experienced client looking for quality work.")
         self.location = kw.get("location", "New York")
@@ -120,6 +123,11 @@ class _FakeUser:
         self.last_name = None
         self.joined_at = _NOW
 
+    def get(self, key, default=None):
+        if key == "user_id":
+            return self.id
+        return getattr(self, key, default)
+
 
 _client_user = _FakeUser(user_type="client")
 _freelancer_user = _FakeUser(id=2, email="freelancer@test.com", user_type="freelancer")
@@ -132,7 +140,7 @@ _freelancer_user = _FakeUser(id=2, email="freelancer@test.com", user_type="freel
 def _mock_turso(monkeypatch):
     """Patch get_turso_http for the projects router."""
     fake = FakeTurso()
-    monkeypatch.setattr("app.api.v1.projects_domain.projects.get_turso_http", lambda: fake)
+    monkeypatch.setattr("app.db.turso_http.TursoHTTP.get_instance", lambda: fake)
     yield
     app.dependency_overrides.clear()
 
@@ -146,16 +154,19 @@ def test_list_projects():
     resp = client.get("/api/projects")
     assert resp.status_code == 200
     data = resp.json()
-    assert isinstance(data, list)
-    assert len(data) >= 1
-    assert data[0]["title"] == "Build REST API"
+    assert isinstance(data, dict)
+    assert "items" in data
+    assert len(data["items"]) >= 1
+    assert data["items"][0]["title"] == "Build REST API"
 
 
 def test_list_projects_with_search():
     """GET /api/projects?search=REST filters results."""
     resp = client.get("/api/projects", params={"search": "REST"})
     assert resp.status_code == 200
-    assert isinstance(resp.json(), list)
+    data = resp.json()
+    assert isinstance(data, dict)
+    assert "items" in data
 
 
 def test_get_project_by_id():
@@ -163,7 +174,7 @@ def test_get_project_by_id():
     resp = client.get("/api/projects/1")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["id"] == 1
+    assert int(data["id"]) == 1
     assert data["title"] == "Build REST API"
 
 
@@ -175,7 +186,7 @@ def test_get_project_not_found():
 
 def test_create_project_as_client():
     """POST /api/projects with valid client auth creates a project."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client_user
+    app.dependency_overrides[get_current_user] = lambda: _client_user
     payload = {
         "title": "New Website",
         "description": "Build a modern website",
@@ -211,14 +222,14 @@ def test_create_project_no_auth():
 
 def test_create_project_invalid_data():
     """POST /api/projects with missing required fields returns 422."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client_user
+    app.dependency_overrides[get_current_user] = lambda: _client_user
     resp = client.post("/api/projects", json={"title": "Only title"})
     assert resp.status_code == 422
 
 
 def test_create_project_as_freelancer_forbidden():
     """POST /api/projects as freelancer returns 403."""
-    app.dependency_overrides[get_current_active_user] = lambda: _freelancer_user
+    app.dependency_overrides[get_current_user] = lambda: _freelancer_user
     payload = {
         "title": "Freelancer Project",
         "description": "Should be rejected",

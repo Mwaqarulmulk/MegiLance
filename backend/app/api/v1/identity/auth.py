@@ -154,7 +154,7 @@ async def login(request: Request, body: LoginRequest, response: Response):
 
 # === Register ===
 
-@router.post("/register")
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 @auth_rate_limit()
 async def register(request: Request, body: RegisterRequest, response: Response):
     if check_email_exists(body.email):

@@ -1,7 +1,7 @@
 // @AI-HINT: Client-side comparison page — shows MegiLance vs competitor with table, FAQs, CTAs.
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -33,9 +33,13 @@ type CompareData = {
 export default function CompareClient({ data }: { data: CompareData }) {
   const { resolvedTheme } = useTheme();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  if (!resolvedTheme) return null;
-  const theme = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const theme = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
 
   return (
     <div className={cn(commonStyles.page, theme.page)}>

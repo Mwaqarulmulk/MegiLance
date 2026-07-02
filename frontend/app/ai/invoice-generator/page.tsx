@@ -1,10 +1,12 @@
-// @AI-HINT: Route for AI Invoice Generator — standalone public invoice builder
-'use client';
-
+import { Metadata } from 'next';
 import InvoiceGenerator from './InvoiceGenerator';
 
-const InvoiceGeneratorPage = () => {
-  return <InvoiceGenerator />;
+export const metadata: Metadata = {
+  title: 'Free AI Invoice Generator | MegiLance Tools',
+  description: 'Create professional, branded invoices instantly with our free AI-powered invoice generator. Supports multiple currencies, custom taxes, and client formatting.',
+  keywords: ['invoice generator', 'freelance invoice', 'free invoice creator', 'AI invoice generator', 'MegiLance tools'],
 };
 
-export default InvoiceGeneratorPage;
+export default function InvoiceGeneratorPage() {
+  return <InvoiceGenerator />;
+}

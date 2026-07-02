@@ -22,18 +22,18 @@ TEST_PASSWORD = "E2eTestP@ss123!"
 
 def log_pass(test_name, detail=""):
     RESULTS["passed"] += 1
-    print(f"  ✅ PASS: {test_name}" + (f" - {detail}" if detail else ""))
+    print(f"  [PASS] {test_name}" + (f" - {detail}" if detail else ""))
 
 
 def log_fail(test_name, detail=""):
     RESULTS["failed"] += 1
     RESULTS["errors"].append(f"{test_name}: {detail}")
-    print(f"  ❌ FAIL: {test_name}" + (f" - {detail}" if detail else ""))
+    print(f"  [FAIL] {test_name}" + (f" - {detail}" if detail else ""))
 
 
 def log_warn(test_name, detail=""):
     RESULTS["warnings"].append(f"{test_name}: {detail}")
-    print(f"  ⚠️  WARN: {test_name}" + (f" - {detail}" if detail else ""))
+    print(f"  [WARN] {test_name}" + (f" - {detail}" if detail else ""))
 
 
 def log_section(title):
@@ -42,17 +42,23 @@ def log_section(title):
     print(f"{'='*70}")
 
 
+class SafeResponse:
+    def __init__(self, resp):
+        self._resp = resp
+    def __bool__(self):
+        return True
+    def __len__(self):
+        return len(self._resp.content) if self._resp else 0
+    def __getattr__(self, item):
+        return getattr(self._resp, item)
+
 def safe_request(method, url, **kwargs):
     """Make a request with error handling and timeout."""
     kwargs.setdefault("timeout", 15)
     try:
         resp = getattr(requests, method)(url, **kwargs)
-        return resp
-    except requests.exceptions.Timeout:
-        return None
-    except requests.exceptions.ConnectionError:
-        return None
-    except Exception:
+        return SafeResponse(resp) if resp is not None else None
+    except Exception as e:
         return None
 
 
@@ -370,11 +376,11 @@ def test_client_journey(tokens):
         log_warn("Client notifications", f"status={r.status_code if r else 'NO RESPONSE'}")
 
     # 3j. View messages
-    r = safe_request("get", f"{BASE_URL}/messages", headers=h)
+    r = safe_request("get", f"{BASE_URL}/conversations", headers=h)
     if r and r.status_code == 200:
-        log_pass("Client messages")
+        log_pass("Client conversations")
     else:
-        log_warn("Client messages", f"status={r.status_code if r else 'NO RESPONSE'}")
+        log_warn("Client conversations", f"status={r.status_code if r else 'NO RESPONSE'}")
 
     # 3k. View contracts
     r = safe_request("get", f"{BASE_URL}/contracts", headers=h)
@@ -738,7 +744,7 @@ def test_authenticated_features(tokens):
 
         endpoints = [
             ("GET", "/notifications", f"{role}: Notifications"),
-            ("GET", "/messages", f"{role}: Messages"),
+            ("GET", "/conversations", f"{role}: Conversations"),
             ("GET", "/contracts", f"{role}: Contracts"),
             ("GET", "/invoices", f"{role}: Invoices"),
             ("GET", "/payments", f"{role}: Payments"),
@@ -1030,28 +1036,33 @@ def test_cross_role_flows(tokens, client_created, freelancer_created):
         else:
             log_warn("Client views proposals", f"status={r.status_code if r else 'NO RESPONSE'}")
 
-    # 10b. Client sends message to freelancer
+    # 10b. Client sends message to freelancer via conversations API
     r = safe_request("get", f"{BASE_URL}/auth/me", headers=auth_header(tokens["freelancer"]))
     freelancer_id = None
     if r and r.status_code == 200:
         freelancer_id = r.json().get("id")
 
+    conversation_id = None
     if freelancer_id:
-        r = safe_request("post", f"{BASE_URL}/messages", headers=client_h, json={
-            "receiver_id": freelancer_id,
-            "content": f"Hi! I'd like to discuss the project. (E2E test {TEST_ID})"
+        # Create a conversation first
+        r = safe_request("post", f"{BASE_URL}/conversations", headers=client_h, json={
+            "freelancer_id": freelancer_id,
+            "project_id": project_id,
+            "initial_message": f"Hi! I'd like to discuss the project. (E2E test {TEST_ID})"
         })
         if r and r.status_code in (200, 201):
-            log_pass("Client sends message to freelancer")
+            data = r.json()
+            conversation_id = data.get("conversation_id")
+            log_pass("Client creates conversation with freelancer", f"conv_id={conversation_id}")
         else:
-            log_warn("Client message send", f"status={r.status_code if r else 'NO RESPONSE'}")
+            log_warn("Client create conversation", f"status={r.status_code if r else 'NO RESPONSE'}")
 
-    # 10c. Freelancer views received messages
-    r = safe_request("get", f"{BASE_URL}/messages", headers=freelancer_h)
+    # 10c. Freelancer views conversations
+    r = safe_request("get", f"{BASE_URL}/conversations", headers=freelancer_h)
     if r and r.status_code == 200:
-        log_pass("Freelancer views messages (inbox)")
+        log_pass("Freelancer views conversations (inbox)")
     else:
-        log_warn("Freelancer messages", f"status={r.status_code if r else 'NO RESPONSE'}")
+        log_warn("Freelancer conversations", f"status={r.status_code if r else 'NO RESPONSE'}")
 
     # 10d. Client creates a contract (if proposal was accepted)
     proposal_id = freelancer_created.get("proposal_id")
@@ -1248,7 +1259,7 @@ def main():
 
     # 1. Health checks
     if not test_health_and_infrastructure():
-        print("\n❌ Backend is not healthy. Cannot proceed with E2E tests.")
+        print("\n[FAIL] Backend is not healthy. Cannot proceed with E2E tests.")
         sys.exit(1)
 
     # 2. Auth flows
@@ -1295,21 +1306,21 @@ def main():
     print("  FINAL E2E TEST REPORT")
     print("="*70)
     print(f"  Total tests:  {total}")
-    print(f"  ✅ Passed:     {RESULTS['passed']}")
-    print(f"  ❌ Failed:     {RESULTS['failed']}")
-    print(f"  ⚠️  Warnings:  {len(RESULTS['warnings'])}")
+    print(f"  [PASS] Passed:     {RESULTS['passed']}")
+    print(f"  [FAIL] Failed:     {RESULTS['failed']}")
+    print(f"  [WARN] Warnings:  {len(RESULTS['warnings'])}")
     print(f"  Duration:     {duration:.1f}s")
     print(f"  Pass rate:    {(RESULTS['passed']/total*100):.1f}%" if total > 0 else "  Pass rate: N/A")
 
     if RESULTS["errors"]:
         print(f"\n  FAILURES ({len(RESULTS['errors'])}):")
         for err in RESULTS["errors"]:
-            print(f"    ❌ {err}")
+            print(f"    [FAIL] {err}")
 
     if RESULTS["warnings"]:
         print(f"\n  WARNINGS ({len(RESULTS['warnings'])}):")
         for warn in RESULTS["warnings"]:
-            print(f"    ⚠️  {warn}")
+            print(f"    [WARN] {warn}")
 
     print("\n" + "="*70)
 

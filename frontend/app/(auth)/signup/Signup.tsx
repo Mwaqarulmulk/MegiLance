@@ -231,8 +231,14 @@ const Signup: React.FC = () => {
     }
   };
 
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const styles = useMemo(() => {
-    const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+    const themeStyles = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
     const merge = (key: keyof typeof commonStyles) => cn((commonStyles as Record<string, string>)[key], (themeStyles as Record<string, string>)[key]);
     return {
       loginPage: merge('loginPage'),
@@ -265,7 +271,7 @@ const Signup: React.FC = () => {
       signupPrompt: merge('signupPrompt'),
       generalError: merge('generalError'),
     } as const;
-  }, [resolvedTheme]);
+  }, [mounted, resolvedTheme]);
 
   return (
     <PageTransition className={styles.loginPage}>

@@ -24,6 +24,7 @@ import {
   sideCannons,
 } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
+import { ExportMenu, type AIReport } from '@/app/components/AI/report';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -262,9 +263,46 @@ function ProcessingView({ cs, ts }: { cs: typeof commonStyles; ts: typeof lightS
   );
 }
 
+function buildProposalReport(r: ProposalResult, projectTitle?: string): AIReport {
+  return {
+    toolName: 'AI Proposal Writer',
+    title: 'Freelance Proposal Document',
+    subtitle: `Generated for project: ${projectTitle || 'Freelance Project'}`,
+    fileBaseName: 'megilance-proposal',
+    kpis: [
+      { label: 'Proposal Score', value: `${r.proposal_score.total}/${r.proposal_score.max}`, hint: r.proposal_score.level },
+      { label: 'Word Count', value: `${r.word_count || r.meta.word_count || 0} words` },
+      { label: 'Primary Category', value: r.detected_project_type.primary.replace(/_/g, ' ') },
+    ],
+    sections: [
+      {
+        heading: 'Proposal Text',
+        blocks: [
+          {
+            kind: 'paragraph',
+            text: r.proposal,
+          }
+        ]
+      },
+      {
+        heading: 'Score Breakdown',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: Object.entries(r.proposal_score.breakdown).map(([name, score]) => ({
+              label: name,
+              value: `${score}/25`
+            }))
+          }
+        ]
+      }
+    ]
+  };
+}
+
 function ResultsDashboard({
-  cs, ts, result,
-}: { cs: typeof commonStyles; ts: typeof lightStyles; result: ProposalResult }) {
+  cs, ts, result, projectTitle,
+}: { cs: typeof commonStyles; ts: typeof lightStyles; result: ProposalResult; projectTitle?: string }) {
   const [copied, setCopied] = useState(false);
   const proposalRef = useRef<HTMLDivElement>(null);
 
@@ -323,9 +361,12 @@ function ResultsDashboard({
           <div className={cs.resultCardHeader}>
             <div className={cn(cs.resultCardIcon, ts.resultCardIcon)}><FileText size={18} /></div>
             <h4 className={cn(cs.resultCardTitle, ts.resultCardTitle)}>Your Proposal</h4>
-            <button className={cn(cs.copyBtn, ts.copyBtn)} onClick={handleCopy}>
-              {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
-            </button>
+            <div className="flex gap-2 items-center">
+              <button className={cn(cs.copyBtn, ts.copyBtn)} onClick={handleCopy}>
+                {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
+              </button>
+              <ExportMenu report={() => buildProposalReport(result, projectTitle)} size="sm" />
+            </div>
           </div>
           <div ref={proposalRef} className={cn(cs.proposalText, ts.proposalText)}>
             {result.proposal.split('\n').map((line, i) => (
@@ -524,7 +565,7 @@ export default function ProposalWriter() {
           {step === 0 && options && <StepProject cs={cs} ts={ts} form={form} tones={options.tones} lengths={options.lengths} onChange={handleChange} />}
           {step === 1 && <StepProfile cs={cs} ts={ts} form={form} onChange={handleChange} />}
           {step === 2 && loading && <ProcessingView cs={cs} ts={ts} />}
-          {step === 2 && !loading && result && <ResultsDashboard cs={cs} ts={ts} result={result} />}
+          {step === 2 && !loading && result && <ResultsDashboard cs={cs} ts={ts} result={result} projectTitle={form.project_title} />}
         </motion.div>
       </AnimatePresence>
 

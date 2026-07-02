@@ -113,7 +113,7 @@ export default function QuickLogin() {
           variant="glass"
         >
           <div className={commonStyles.closeButtonWrapper}>
-             <Button variant="ghost" size="icon" className={commonStyles.closeButton} onClick={() => setIsOpen(false)}>
+             <Button variant="ghost" size="icon" className={commonStyles.closeButton} onClick={() => setIsOpen(false)} aria-label="Close quick login">
               <X className={commonStyles.icon} />
             </Button>
           </div>
@@ -152,12 +152,13 @@ export default function QuickLogin() {
         </Card>
       )}
       
-      <Button 
+      <Button
         className={cn(
           commonStyles.toggleButton,
           isOpen ? themeStyles.toggleButtonOpen : themeStyles.toggleButtonClosed
         )}
         size="icon"
+        aria-label={isOpen ? "Close quick login panel" : "Open quick login panel"}
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <ChevronRight /> : <Shield className={commonStyles.toggleIcon} />}

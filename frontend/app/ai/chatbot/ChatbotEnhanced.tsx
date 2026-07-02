@@ -82,7 +82,7 @@ const ChatbotEnhanced: React.FC = () => {
     pingInterval: 20000,
   });
 
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recognitionAvailable, setRecognitionAvailable] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -226,16 +226,7 @@ const ChatbotEnhanced: React.FC = () => {
     });
   };
 
-  if (!mounted) {
-    return (
-      <div className={cn(commonStyles.container, lightStyles.container)}>
-        <div className={commonStyles.loadingState}>
-          <img src="/assets/chatbot/chatbot-icon.png" alt="Loading" className={commonStyles.loadingIcon} />
-          <span>Loading AI Chat...</span>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <PageTransition>

@@ -1,7 +1,7 @@
 // @AI-HINT: Teams page — Build distributed teams, staff augmentation, hiring freelancer squads.
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { PageTransition, ScrollReveal, StaggerContainer, StaggerItem } from '@/app/components/Animations';
@@ -38,8 +38,13 @@ const capabilities = [
 
 const Teams: React.FC = () => {
   const { resolvedTheme } = useTheme();
-  if (!resolvedTheme) return null;
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const themed = (mounted && resolvedTheme === 'light') ? light : dark;
 
   return (
     <PageTransition>

@@ -4,8 +4,8 @@ import { buildMeta, buildBreadcrumbJsonLd, jsonLdScriptProps, getKeywordsForPage
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMeta({
-    title: 'Security Center - Enterprise-Grade Protection for Your Freelance Projects',
-    description: 'MegiLance employs enterprise-grade security: blockchain escrow payments, end-to-end encryption, 2FA authentication, identity verification, smart contract protection, and regular security audits. Your data and payments are always safe.',
+    title: 'Trust & Security Center | MegiLance Escrow & Protection',
+    description: 'MegiLance employs enterprise-grade security: smart contract escrow payments, end-to-end encryption, 2-factor authentication, identity verification, and regular audits. Your data and payments are always safe.',
     path: '/security',
     keywords: getKeywordsForPage(['features'], [
       'freelance platform security', 'secure freelance payments', 'blockchain escrow',
@@ -19,7 +19,7 @@ export default function Page() {
   return (
     <>
       <script {...jsonLdScriptProps(
-        buildBreadcrumbJsonLd([{ name: 'Security', path: '/security' }])
+        buildBreadcrumbJsonLd([{ name: 'Trust & Security Center', path: '/security' }])
       )} />
       <SecurityClient />
     </>

@@ -11,7 +11,7 @@ client = TestClient(app)
 
 def test_health_basic():
     """Basic health endpoint returns 200."""
-    resp = client.get("/api/health/")
+    resp = client.get("/health")
     assert resp.status_code == 200
     data = resp.json()
     assert data.get("status") in ("healthy", "ok", True)
@@ -19,5 +19,5 @@ def test_health_basic():
 
 def test_health_ready():
     """Readiness endpoint returns 200."""
-    resp = client.get("/api/health/ready")
+    resp = client.get("/api/v1/health/ready")
     assert resp.status_code == 200

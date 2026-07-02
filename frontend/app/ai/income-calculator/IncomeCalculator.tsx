@@ -15,6 +15,7 @@ import lightStyles from './IncomeCalculator.light.module.css';
 import darkStyles from './IncomeCalculator.dark.module.css';
 import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
+import { ExportMenu, type AIReport } from '@/app/components/AI/report';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -327,6 +328,113 @@ function ResultsDashboard({
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
 
+function buildIncomeReport(r: IncomeResult): AIReport {
+  const cur = r.meta.currency;
+  const cap = (s: string) => (s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return {
+    toolName: 'AI Income Calculator',
+    title: 'Freelance Income Projection Report',
+    subtitle: `Projected Net Income for Freelancing in ${r.meta.country}`,
+    fileBaseName: 'megilance-income-report',
+    kpis: [
+      { label: 'Annual Net Income', value: `${cur} ${r.net_income.annual.toLocaleString()}`, hint: `${cur} ${r.net_income.monthly.toLocaleString()}/mo` },
+      { label: 'Gross Annual Income', value: `${cur} ${r.income.gross_annual.toLocaleString()}` },
+      { label: 'Effective Rate', value: `${cur} ${r.effective_rates.hourly.toLocaleString()}/hr` },
+      { label: 'Financial Health', value: `${r.health.score}/100`, hint: r.health.level },
+    ],
+    meta: [
+      { label: 'Country', value: r.meta.country },
+      { label: 'Income Type', value: cap(r.income.breakdown[0]?.source || 'freelance') },
+    ],
+    sections: [
+      {
+        heading: 'Income Breakdown',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: r.income.breakdown.map(b => ({ label: b.source, value: `${cur} ${b.annual.toLocaleString()}` })),
+          }
+        ]
+      },
+      {
+        heading: 'Expenses & Deductions',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Annual Expenses', value: `${cur} ${r.expenses.annual.toLocaleString()}` },
+              { label: 'Expense Ratio', value: `${r.expenses.expense_ratio}%` },
+              ...r.expenses.breakdown.map(b => ({ label: b.label, value: `${cur} ${b.annual.toLocaleString()}/yr` }))
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Taxes Obligations',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Income Tax', value: `${cur} ${r.taxes.income_tax.toLocaleString()}` },
+              { label: 'Self-Employment Tax', value: `${cur} ${r.taxes.self_employment_tax.toLocaleString()}` },
+              { label: 'State Tax', value: `${cur} ${r.taxes.state_tax.toLocaleString()}` },
+              { label: 'Total Tax', value: `${cur} ${r.taxes.total_tax.toLocaleString()}` },
+              { label: 'Effective Tax Rate', value: `${r.taxes.effective_rate}%` },
+              { label: 'Quarterly Estimated Payment', value: `${cur} ${r.taxes.quarterly_estimate.toLocaleString()}` },
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Financial Recommendations',
+        blocks: [
+          {
+            kind: 'bullets',
+            items: r.health.insights.map(i => `${i.title}: ${i.message}`)
+          }
+        ]
+      }
+    ]
+  };
+}
+
+const getSummaryText = (result: IncomeResult) => {
+  const cur = result.meta.currency;
+  return `MEGILANCE INCOME PROJECTION REPORT
+--------------------------------------
+Country: ${result.meta.country}
+Currency: ${cur}
+
+Gross Annual Income: ${cur} ${result.income.gross_annual.toLocaleString()}
+Gross Monthly Income: ${cur} ${result.income.gross_monthly.toLocaleString()}
+
+Total Annual Expenses: ${cur} ${result.expenses.annual.toLocaleString()}
+Expense Ratio: ${result.expenses.expense_ratio}%
+
+Tax Breakdown:
+- Income Tax: ${cur} ${result.taxes.income_tax.toLocaleString()}
+- Self-Employment Tax: ${cur} ${result.taxes.self_employment_tax.toLocaleString()}
+- State Tax: ${cur} ${result.taxes.state_tax.toLocaleString()}
+- Total Tax: ${cur} ${result.taxes.total_tax.toLocaleString()}
+- Effective Tax Rate: ${result.taxes.effective_rate}%
+- Quarterly Estimate: ${cur} ${result.taxes.quarterly_estimate.toLocaleString()}
+
+Net Income:
+- Annual Net: ${cur} ${result.net_income.annual.toLocaleString()}
+- Monthly Net: ${cur} ${result.net_income.monthly.toLocaleString()}
+- Weekly Net: ${cur} ${result.net_income.weekly.toLocaleString()}
+- Daily Net: ${cur} ${result.net_income.daily.toLocaleString()}
+
+Rate Recommendations:
+- Break-Even: ${cur} ${result.rate_recommendations.break_even_hourly.toLocaleString()}/hr
+- Comfortable: ${cur} ${result.rate_recommendations.comfortable_hourly.toLocaleString()}/hr
+- Premium: ${cur} ${result.rate_recommendations.premium_hourly.toLocaleString()}/hr
+
+Financial Health Score: ${result.health.score}/100 (${result.health.level})
+Generated by MegiLance AI Tools (megilance.com)
+`;
+};
+
 export default function IncomeCalculator() {
   const { resolvedTheme } = useTheme();
   const [step, setStep] = useState(0);
@@ -458,9 +566,18 @@ export default function IncomeCalculator() {
           {step < 2 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => setStep(step + 1)}>Next <ArrowRight size={16} /></button>}
           {step === 2 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={handleSubmit}>Calculate <ArrowRight size={16} /></button>}
           {step === 3 && result && (
-            <div className={cs.actionsBar}>
+            <div className={cn(cs.actionsBar, "flex flex-wrap gap-2 items-center")}>
               <button className={cn(cs.actionBtnSecondary, ts.actionBtnSecondary)} onClick={reset}><RotateCcw size={16} /> Recalculate</button>
-              <button className={cn(cs.actionBtnPrimary, ts.actionBtnPrimary)} onClick={() => window.print()}><Download size={16} /> Export</button>
+              <button 
+                className={cn(cs.actionBtnSecondary, ts.actionBtnSecondary, "flex items-center gap-1.5")} 
+                onClick={() => {
+                  navigator.clipboard.writeText(getSummaryText(result));
+                  alert("Summary copied to clipboard!");
+                }}
+              >
+                Copy Summary
+              </button>
+              <ExportMenu report={() => buildIncomeReport(result)} />
             </div>
           )}
         </div>

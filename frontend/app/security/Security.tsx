@@ -34,8 +34,8 @@ const Security: React.FC = () => {
         <div className={common.container}>
           <ScrollReveal>
             <header className={common.header}>
-              <h1 className={common.title}>Security Overview</h1>
-              <p className={common.subtitle} aria-label="Last updated">Last Updated: January 15, 2025</p>
+               <h1 className={common.title}>Trust & Security Center</h1>
+               <p className={common.subtitle} aria-label="Last updated">Last Updated: March 24, 2026</p>
             </header>
           </ScrollReveal>
 
@@ -77,7 +77,59 @@ const Security: React.FC = () => {
             </article>
           </StaggerContainer>
 
+          {/* Smart Contract Escrow Section */}
+          <ScrollReveal className={common.section} delay={0.15}>
+            <h2 className={common.sectionTitle}>Smart Contract Escrow Flow</h2>
+            <p className={common.cardDesc} style={{ marginBottom: '2rem' }}>
+              MegiLance uses decentralized smart contracts to protect payments. Work is funded upfront and held in escrow, releasing automatically upon approval or milestone completion.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', padding: '2rem', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
+                <div style={{ textAlign: 'center', padding: '1.25rem', background: 'rgba(59, 130, 246, 0.08)', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.25)' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#60a5fa' }}>1. Deposit</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.95, lineHeight: '1.5' }}>Client funds the project milestone. USDC is locked in the Escrow Smart Contract.</div>
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '1.5rem', opacity: 0.5, transform: 'rotate(0deg)' }}>➡️</div>
+                <div style={{ textAlign: 'center', padding: '1.25rem', background: 'rgba(139, 92, 246, 0.08)', borderRadius: '12px', border: '1px solid rgba(139, 92, 246, 0.25)' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#a78bfa' }}>2. Deliver</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.95, lineHeight: '1.5' }}>Freelancer submits files/work. Client reviews deliverables directly on MegiLance.</div>
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '1.5rem', opacity: 0.5 }}>➡️</div>
+                <div style={{ textAlign: 'center', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#34d399' }}>3. Release</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.95, lineHeight: '1.5' }}>Client approves work. Contract triggers, instantly transferring funds to freelancer.</div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* Platform Environment Disclaimer */}
           <ScrollReveal className={common.section} delay={0.2}>
+            <h2 className={common.sectionTitle}>Platform Execution Environment</h2>
+            <div style={{ padding: '1.5rem', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '12px' }}>
+              <h3 style={{ fontSize: '1.1rem', color: '#fbbf24', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                ⚠️ Demo / Testnet Operation
+              </h3>
+              <p className={common.cardDesc} style={{ fontSize: '0.925rem', lineHeight: '1.6' }}>
+                MegiLance is currently configured in <strong>Demo/Testnet mode</strong> for final year project (FYP) evaluation. Payment transactions are simulated using USDC test tokens on Base Sepolia Testnet, and credit card processing is conducted via Stripe Sandbox. No real currency is charged or transferred.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          {/* Dispute Resolution Section */}
+          <ScrollReveal className={common.section} delay={0.25}>
+            <h2 className={common.sectionTitle}>Dispute Resolution & Refunds</h2>
+            <p className={common.cardDesc}>
+              In the event of a disagreement, MegiLance provides a structured dispute window. Clients can request revisions or file a formal dispute before milestone approval. If a dispute is opened:
+            </p>
+            <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', lineHeight: '1.6' }}>
+              <li><strong>Arbitration Period:</strong> The escrowed funds remain locked in the contract, inaccessible to both parties.</li>
+              <li><strong>Resolution:</strong> Our admin panel allows neutral mediators to review project milestones, chat logs, and deliverables to allocate funds fairly.</li>
+              <li><strong>Refunds:</strong> If a mutual cancellation is agreed upon, the contract returns 100% of the milestone funds to the client's wallet.</li>
+            </ul>
+          </ScrollReveal>
+
+          <ScrollReveal className={common.section} delay={0.3}>
             <h2 className={common.sectionTitle}>Responsible Disclosure</h2>
             <p className={common.cardDesc}>
               If you discover a security vulnerability, please report it to us at security@megilance.com. We appreciate

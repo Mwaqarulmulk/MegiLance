@@ -91,7 +91,7 @@ export default async function FreelancerProfilePage({ params }: { params: Promis
     <>
       <script {...jsonLdScriptProps(breadcrumb)} />
       {personJsonLd && <script {...jsonLdScriptProps(personJsonLd)} />}
-      <UserProfile userId={id} />
+      <UserProfile userId={id} initialProfile={freelancer} />
     </>
   );
 }

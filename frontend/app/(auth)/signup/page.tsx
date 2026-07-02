@@ -1,14 +1,13 @@
 // @AI-HINT: This is the Next.js route file for the Signup page under the (auth) route group.
-'use client';
-
+import { Metadata } from 'next';
 import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
 import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
+import Signup from './Signup';
 
-// Dynamically import the Signup component
-const Signup = dynamic(() => import('./Signup'), {
-  loading: () => <Skeleton className="w-full h-96" />
-});
+export const metadata: Metadata = {
+  title: 'Sign Up | MegiLance',
+  description: 'Create your MegiLance account today to start hiring top-tier freelancers or finding high-paying remote development projects with secure smart contract escrow.',
+};
 
 export default function SignupPage() {
   return (

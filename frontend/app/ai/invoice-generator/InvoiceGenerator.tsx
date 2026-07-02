@@ -18,6 +18,7 @@ import lightStyles from './InvoiceGenerator.light.module.css';
 import darkStyles from './InvoiceGenerator.dark.module.css';
 import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
+import { ExportMenu, type AIReport } from '@/app/components/AI/report';
 
 /* ============================================================================
    Types
@@ -804,6 +805,72 @@ interface ResultsDashboardProps {
   cs: typeof commonStyles; ts: typeof lightStyles;
 }
 
+function buildInvoiceReport(r: InvoiceResult): AIReport {
+  const sym = r.currency.symbol;
+  return {
+    toolName: 'AI Invoice Generator',
+    title: `Invoice ${r.invoice.number}`,
+    subtitle: `Issued: ${r.invoice.issue_date} · Due: ${r.invoice.due_date}`,
+    fileBaseName: `invoice-${r.invoice.number}`,
+    kpis: [
+      { label: 'Grand Total', value: `${sym}${r.calculations.grand_total.toLocaleString()}` },
+      { label: 'Subtotal', value: `${sym}${r.calculations.subtotal.toLocaleString()}` },
+      { label: 'Tax Total', value: `${sym}${r.calculations.tax.amount.toLocaleString()}`, hint: `${r.calculations.tax.rate}% rate` },
+      { label: 'Payment Terms', value: r.invoice.payment_terms },
+    ],
+    meta: [
+      { label: 'Sender', value: r.sender.name || 'N/A' },
+      { label: 'Recipient', value: r.recipient.name || 'N/A' },
+    ],
+    sections: [
+      {
+        heading: 'Invoice Details',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Invoice Number', value: r.invoice.number },
+              { label: 'Issue Date', value: r.invoice.issue_date },
+              { label: 'Due Date', value: r.invoice.due_date },
+              { label: 'Payment Terms', value: r.invoice.payment_terms },
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Line Items',
+        blocks: [
+          {
+            kind: 'table',
+            columns: ['Description', 'Qty', 'Rate', 'Total'],
+            rows: r.items.map(item => [
+              item.description,
+              item.quantity,
+              `${sym}${item.rate.toLocaleString()}`,
+              `${sym}${item.total.toLocaleString()}`,
+            ]),
+          }
+        ]
+      },
+      {
+        heading: 'Totals & Summary',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Subtotal', value: `${sym}${r.calculations.subtotal.toLocaleString()}` },
+              ...(r.calculations.discount.amount > 0 ? [{ label: r.calculations.discount.label, value: `-${sym}${r.calculations.discount.amount.toLocaleString()}` }] : []),
+              ...(r.calculations.tax.amount > 0 ? [{ label: `${r.calculations.tax.label} (${r.calculations.tax.rate}%)`, value: `${sym}${r.calculations.tax.amount.toLocaleString()}` }] : []),
+              { label: 'Grand Total', value: `${sym}${r.calculations.grand_total.toLocaleString()}` },
+              { label: 'Amount in Words', value: r.calculations.amount_in_words },
+            ]
+          }
+        ]
+      }
+    ]
+  };
+}
+
 function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardProps) {
   const { invoice, sender, recipient, items, calculations, currency: curr, template: tmpl, summary } = result;
   const sym = curr.symbol;
@@ -957,13 +1024,14 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
       </div>
 
       {/* Actions */}
-      <div className={cs.actionsBar}>
+      <div className={cn(cs.actionsBar, "flex flex-wrap gap-2 items-center")}>
         <button className={cn(cs.actionBtn, ts.actionBtnPrimary)} onClick={onReset}>
           <RotateCcw size={18} /> New Invoice
         </button>
         <button className={cn(cs.actionBtn, ts.actionBtnSecondary)} onClick={onCopy}>
           <Copy size={18} /> Copy to Clipboard
         </button>
+        <ExportMenu report={() => buildInvoiceReport(result)} />
       </div>
     </div>
   );

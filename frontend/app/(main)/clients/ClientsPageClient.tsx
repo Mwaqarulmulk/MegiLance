@@ -1,6 +1,6 @@
 // @AI-HINT: Clients directory - for companies looking to hire talent — fully theme-aware via 3-file CSS module system
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,13 @@ import darkStyles from "./Clients.dark.module.css";
 export default function ClientsPageClient() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
-  if (!resolvedTheme) return null;
-  const t = resolvedTheme === "light" ? lightStyles : darkStyles;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const t = (mounted && resolvedTheme === "light") ? lightStyles : darkStyles;
 
   return (
     <main className={cn(commonStyles.container, t.container)}>

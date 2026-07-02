@@ -51,20 +51,54 @@ interface Review {
 
 interface UserProfileProps {
   userId: string | number;
+  initialProfile?: any;
 }
 
-export default function UserProfile({ userId }: UserProfileProps) {
+function normalizeProfile(data: any) {
+  if (!data) return null;
+  return {
+    ...data,
+    avatarUrl: data.avatarUrl || data.profile_image_url || data.avatar,
+    hourlyRate: data.hourlyRate || data.hourly_rate || 0,
+    joinedAt: data.joinedAt || data.joined_at,
+    title: data.headline || data.title || data.user_type || 'Freelancer',
+    tagline: data.tagline,
+    skills: Array.isArray(data.skills) ? data.skills : (typeof data.skills === 'string' ? data.skills.split(',').map((s: string) => s.trim()) : (data.skills ? [data.skills] : [])),
+    linkedinUrl: data.linkedin_url || data.linkedinUrl,
+    githubUrl: data.github_url || data.githubUrl,
+    websiteUrl: data.website_url || data.websiteUrl,
+    twitterUrl: data.twitter_url || data.twitterUrl,
+    dribbbleUrl: data.dribbble_url || data.dribbbleUrl,
+    behanceUrl: data.behance_url || data.behanceUrl,
+    stackoverflowUrl: data.stackoverflow_url || data.stackoverflowUrl,
+    phone: data.phone_number || data.phone,
+    experienceLevel: data.experience_level || data.experienceLevel,
+    yearsOfExperience: data.years_of_experience || data.yearsOfExperience,
+    availabilityStatus: data.availability_status || data.availabilityStatus,
+    languages: data.languages,
+    timezone: data.timezone,
+    videoIntroUrl: data.video_intro_url || data.videoIntroUrl,
+    availabilityHours: data.availability_hours || data.availabilityHours,
+  };
+}
+
+export default function UserProfile({ userId, initialProfile }: UserProfileProps) {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
   const { user: currentUser, isAuthenticated } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(!initialProfile);
+  const [profile, setProfile] = useState<any>(initialProfile ? normalizeProfile(initialProfile) : null);
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [selectedPortfolioItem, setSelectedPortfolioItem] = useState<PortfolioItem | null>(null);
   const [contactLoading, setContactLoading] = useState(false);
 
-  const themed = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const themed = (mounted && resolvedTheme === 'light') ? lightStyles : darkStyles;
 
   useEffect(() => {
     loadProfile();

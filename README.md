@@ -1,866 +1,690 @@
----
-title: Project Overview (Root)
-doc_version: 1.0.0
-last_updated: 2025-11-25
-status: active
-owners: ["architecture", "backend", "frontend"]
-related: ["docs/README.md", "docs/Architecture.md", "backend/README.md", "frontend/README.md"]
-description: High-level platform overview, quick start, architecture summary, and development workflow.
----
+<div align="center">
 
-# MegiLance 2.0 🚀
+<img src="frontend/public/images/logo.png" alt="MegiLance Logo" width="120" height="120" />
 
-> @AI-HINT: Full-stack freelancing platform — Next.js + FastAPI + Turso
+# MegiLance 2.0
 
-> **AI-Powered Freelancing Platform**
+### AI-Powered Freelancing Platform
+
+**Next.js 16 · FastAPI · Turso · LLM AI · MetaMask Web3**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform Version](https://img.shields.io/badge/version-2.0-brightgreen)](docs/IMPLEMENTATION_COMPLETE.md)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Deployed on DigitalOcean](https://img.shields.io/badge/Deployed-DigitalOcean-0080FF?logo=digitalocean&logoColor=white)](https://megilance.site)
 
-## 🎓 Project Background (FYP)
+**[Live Demo](https://megilance.site) · [API Docs](https://megilance.site/api/docs) · [FYP Report](docs/FYP_COMPLETE_REPORT.md)**
 
-**MegiLance** is a Final Year Project (Session 2022-2026) from the Department of Computer Science at COMSATS University Islamabad, Lahore Campus. Supervised by **Dr. Junaid**, this project addresses critical inefficiencies in the global gig economy.
-
-### The Problem
-The global gig economy (forecast to surpass **$455 billion**) is hindered by:
-- **Financial Friction**: Platform fees of 10-20%, steep withdrawal costs, poor exchange rates
-- **Payment Barriers**: Pakistani freelancers can't access PayPal, forced to use slower alternatives
-- **Trust Deficit**: Centralized platforms with opaque ranking algorithms and dispute resolution
-- **Market Opacity**: New freelancers underprice work due to lack of market intelligence
-
-### Our Solution: Hybrid Decentralized Platform
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| **Web2** | Next.js 16 + FastAPI | Speed, UX, scalability for profiles/projects/messaging |
-| **Web3** | Solidity Smart Contracts | Trustless escrow, USDC payments, on-chain reputation |
-| **AI** | Python ML Services | Talent ranking, sentiment analysis, price forecasting |
-
-### Key Objectives
-1. ✅ **Smart Contract Escrow** - Guarantee low-cost, trustless payments
-2. ✅ **AI Ranking System** - Objective freelancer scoring based on verified metrics
-3. ✅ **Sentiment Analysis** - Protect reputation from malicious reviews
-4. ✅ **Price Prediction** - Data-driven pricing guidance for new freelancers
-
-### Team
-- **Team Lead**: Architecture design, AI integration, full-stack development
-- **Muhammad Waqar Ul Mulk**: Backend development, database design, security
-- **Mujtaba**: Frontend development, UI/UX design, theme implementation
-
-### Documentation
-- **Complete FYP Report**: See **[docs/FYP_COMPLETE_REPORT.md](docs/FYP_COMPLETE_REPORT.md)** for the full academic report with all diagrams and details
-- **Report Summary**: See **[docs/FYP_REPORT_SUMMARY.md](docs/FYP_REPORT_SUMMARY.md)** for abstract and architecture overview
-- **Test Cases**: See **[docs/TEST_CASES.md](docs/TEST_CASES.md)** for 28 system acceptance test cases
-
-**The only freelancing platform with:**
-- 🤖 Deep Learning AI Matching (Neural Networks)
-- 💰 150+ Currencies + 7 Cryptocurrencies
-- 📹 Built-in Video Calls & Screen Sharing
-- 🔒 6-Method Multi-Factor Authentication
-- 🌍 Multi-Currency with Real-Time Exchange Rates
-- 🎯 ML-Powered Fraud Detection
-- 📊 Advanced Business Intelligence
-- ⚡ Sub-100ms API Response Times
-
-## 🏆 Why MegiLance 2.0 is #1
-
-### vs. Upwork
-✅ **Lower Fees**: 10% vs 20%  
-✅ **Crypto Payments**: BTC, ETH, USDC, USDT  
-✅ **Better AI**: Deep learning vs basic algorithms  
-✅ **Video Built-in**: WebRTC vs third-party  
-✅ **Instant Payouts**: Real-time vs 3-7 days  
-
-### vs. Fiverr
-✅ **Full Projects**: Not just gigs  
-✅ **Video Collaboration**: Built-in communication  
-✅ **Smart Contracts**: Blockchain escrow  
-✅ **AI Matching**: ML-powered vs keyword  
-✅ **150+ Currencies**: vs USD only  
-
-### vs. Freelancer.com
-✅ **Modern UI**: 2025 design vs 2010  
-✅ **Advanced Security**: 6 MFA methods  
-✅ **Real Analytics**: Business intelligence  
-✅ **Quality AI**: Automated work assessment  
-✅ **Better Search**: Semantic + visual  
-
-### vs. Toptal
-✅ **Open Platform**: For all skill levels  
-✅ **Self-Service**: No gatekeepers  
-✅ **Lower Cost**: Flexible pricing  
-✅ **More Features**: 250+ vs 50  
-✅ **Global Reach**: 150+ countries  
-
-**Result**: MegiLance 2.0 offers **80% more features** than any competitor!
+</div>
 
 ---
 
-## 🎯 Turso Database (Primary Storage)
+## Table of Contents
 
-**Using Turso for database?** → See **[docs/TURSO_SETUP.md](docs/TURSO_SETUP.md)** 🚀  
-**Professor Showcase** → See **[docs/PROFESSOR_SHOWCASE.md](docs/PROFESSOR_SHOWCASE.md)** 🎓
-
-**Quick Demo Start:** 
-```powershell
-# Automated setup with demo data
-.\start-demo.ps1
-
-# Or manual setup
-cd backend
-python scripts/seed_demo_comprehensive.py
-python -m uvicorn main:app --reload
-```
-
-## 🎯 Core Platform Features
-
-### 🤖 AI & Machine Learning
-- ✅ **Deep Learning Matching** - Neural networks for 10-factor scoring (NEW)
-- ✅ **Semantic Skill Matching** - NLP-based similarity analysis (NEW)
-- ✅ **ML Fraud Detection** - Anomaly detection for safety (NEW)
-- ✅ **Quality Assessment AI** - Automated work quality scoring (NEW)
-- ✅ **Price Optimization** - Reinforcement learning pricing (NEW)
-- ✅ **Churn Prediction** - Predictive analytics (NEW)
-- ✅ **FTS5 Full-Text Search** - Lightning-fast search (< 5ms)
-
-### 💰 Financial Excellence
-- ✅ **150+ Fiat Currencies** - Global payment support (NEW)
-- ✅ **7+ Cryptocurrencies** - BTC, ETH, USDC, USDT, BNB, SOL, MATIC (NEW)
-- ✅ **Real-Time Exchange Rates** - Live conversion (NEW)
-- ✅ **Multi-Network Blockchain** - Ethereum, Polygon, Bitcoin, Solana (NEW)
-- ✅ **Instant Payouts** - Real-time fund transfers (NEW)
-- ✅ **Dynamic Pricing** - AI-powered rate suggestions (NEW)
-- ✅ **Tax Automation** - 190+ country support (NEW)
-- ✅ **Stripe Integration** - Secure payment processing
-- ✅ **Escrow System** - Milestone-based payments
-
-### 📹 Communication & Collaboration
-- ✅ **WebRTC Video Calls** - HD 1-on-1 & group calls (up to 50) (NEW)
-- ✅ **Screen Sharing** - Real-time collaboration (NEW)
-- ✅ **Virtual Whiteboard** - Interactive brainstorming (NEW)
-- ✅ **Call Recording** - 30-day retention (NEW)
-- ✅ **Meeting Scheduler** - Availability-based booking (NEW)
-- ✅ **File Collaboration** - Version control & annotations (NEW)
-- ✅ **Real-Time WebSocket** - Live notifications & chat
-- ✅ **Code Collaboration** - Live coding sessions (NEW)
-
-### 🔐 Security & Trust
-- ✅ **6 MFA Methods** - TOTP, SMS, Email, WebAuthn, Hardware Keys (NEW)
-- ✅ **Risk-Based Auth** - Adaptive authentication (NEW)
-- ✅ **Device Fingerprinting** - Unique device tracking (NEW)
-- ✅ **Session Management** - Remote logout capability (NEW)
-- ✅ **IP Whitelisting** - Enterprise security (NEW)
-- ✅ **Security Audit Logs** - Complete event tracking (NEW)
-- ✅ **Zero-Trust Architecture** - Maximum security (NEW)
-- ✅ **Fraud Detection** - ML-powered protection (NEW)
-
-### 📊 Analytics & Intelligence
-- ✅ **Business Intelligence** - Real-time dashboards
-- ✅ **Predictive Analytics** - Revenue forecasting (NEW)
-- ✅ **Custom Reports** - Drag-and-drop builder (NEW)
-- ✅ **Benchmark Analytics** - Market comparisons (NEW)
-- ✅ **Cohort Analysis** - User behavior tracking (NEW)
-- ✅ **A/B Testing** - Built-in experimentation (NEW)
-- ✅ **Market Intelligence** - Skill demand forecasting (NEW)
-
-**Benefits:**
-- ✅ Edge replication for global low latency
-- ✅ SQLite-compatible syntax and queries
-- ✅ Simple provisioning (URL + auth token)
-- ✅ Efficient for serverless & container platforms
-- ✅ No local database needed - cloud-native from day one
-- ✅ Free tier includes 500MB storage, 1 billion row reads/month
-
-Environment variables (example):
-```
-TURSO_DATABASE_URL=libsql://<db-name>-<org>.turso.io
-TURSO_AUTH_TOKEN=sk_turso_...
-```
-
-See **[docs/TURSO_SETUP.md](docs/TURSO_SETUP.md)** for full guide.
+- [Project Overview](#project-overview)
+- [FYP Context](#fyp-context)
+- [Problem & Solution](#problem--solution)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [API Reference](#api-reference)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Team](#team)
+- [License](#license)
 
 ---
 
-## ⚡ Advanced Features (NEW!)
+## Project Overview
 
-**5 Premium Components Built for Maximum Functionality:**
+MegiLance is a **production-grade, full-stack freelancing marketplace** that combines a traditional Web2 platform with AI intelligence and Web3 blockchain payments. It was designed to address real problems faced by freelancers in the Global South — particularly payment access barriers, pricing opacity, and trust deficits — and to demonstrate what a modern AI-era platform looks like in practice.
 
-1. **PasswordStrengthMeter** - Real-time password validation with visual feedback
-2. **AdvancedSearch** - Autocomplete search with FTS5, keyboard navigation
-3. **RealTimeNotifications** - WebSocket-powered live notifications with badges
-4. **AdvancedFileUpload** - Drag-drop multi-file uploads with previews
-5. **AnalyticsDashboard** - Comprehensive analytics with charts and metrics
+| Metric | Value |
+|--------|-------|
+| Frontend Pages | 229 |
+| Frontend Components | 522 |
+| Backend API Endpoints | 750+ |
+| AI Services | 12 |
+| Database Tables | 80+ |
+| Git Commits | 788 |
+| CSS Module Files | 1,321 |
+| Domain Packages | 7 |
 
-**Documentation:**
-- 📘 **[Integration Guide](docs/ADVANCED_FEATURES_INTEGRATION_GUIDE.md)** - How to use components
-- 📋 **[Enhancement Plan](docs/COMPREHENSIVE_FEATURE_ENHANCEMENTS.md)** - 148-page enhancement strategy
-- 📊 **[Final Report](docs/PLATFORM_ENHANCEMENT_FINAL_REPORT.md)** - Implementation summary
-- 🎯 **[Quick Reference](docs/QUICK_REFERENCE_ADVANCED_FEATURES.md)** - Quick start guide
+**Live at:** [megilance.site](https://megilance.site)
 
-**Import and use:**
-```tsx
-import {
-  PasswordStrengthMeter,
-  AdvancedSearch,
-  RealTimeNotifications,
-  AdvancedFileUpload,
-  AnalyticsDashboard
-} from '@/app/components/AdvancedFeatures';
+---
+
+## FYP Context
+
+> **Final Year Project — BS Software Engineering (Session 2022–2026)**
+> COMSATS University Islamabad, Lahore Campus
+> Supervisor: **Dr. Junaid Akram** | Co-Supervisor: **Khula Qadeer**
+
+This project was submitted as a capstone demonstrating full software engineering competencies: system design, full-stack implementation, AI integration, blockchain, security, testing, and production deployment.
+
+**Academic documentation:**
+- [FYP Complete Report](docs/FYP_COMPLETE_REPORT.md)
+- [FYP Report Summary](docs/FYP_REPORT_SUMMARY.md)
+- [Test Cases (28 acceptance tests)](docs/TEST_CASES.md)
+- [Architecture Decision Records](docs/adr/)
+- [Presentation Data](FYP_PRESENTATION_DATA.md)
+
+---
+
+## Problem & Solution
+
+### The Problems
+
+The global freelance economy (projected to surpass **$455 billion**) suffers from:
+
+| Problem | Impact |
+|---------|--------|
+| **Payment Barriers** | Pakistani freelancers blocked from Stripe/PayPal — no viable gateway |
+| **Financial Friction** | Platform fees of 10–20%; expensive cross-border transfers |
+| **Trust Deficit** | Opaque ranking algorithms; no fraud detection; fake reviews |
+| **Pricing Opacity** | No market intelligence for new freelancers — leads to undercharging |
+| **Communication Gap** | Video calls, collaboration, and messaging all require third-party tools |
+
+### Our Solution: Hybrid Web2 + AI + Web3
+
+MegiLance solves these problems with three integrated layers:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  WEB2 LAYER — Marketplace Foundation                     │
+│  Next.js 16 frontend + FastAPI backend + Turso database  │
+│  Profiles, proposals, contracts, payments, messaging     │
+├──────────────────────────────────────────────────────────┤
+│  AI LAYER — Intelligence Services                        │
+│  12 AI services · 65 AI endpoints · LLM via DO AI       │
+│  Price estimation, fraud detection, matching, chatbot    │
+├──────────────────────────────────────────────────────────┤
+│  WEB3 LAYER — Blockchain Payments                        │
+│  Solidity smart contracts (MockUSDC) on Polygon/ETH      │
+│  MetaMask integration · 8 EVM chains · stablecoins       │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🚀 Quick Start
+## Architecture
 
-### New Feature Quick Start (NEW! 2.0)
+### System Architecture Diagram
 
-**Try Multi-Currency Payments:**
-```python
-from app.services.multicurrency_payments import multi_currency_service
-
-# Accept payment in any of 150+ currencies
-payment = await multi_currency_service.create_payment(
-    amount=100.00,
-    currency="EUR",  # Or JPY, GBP, INR, AUD...
-    user_id="user123"
-)
-
-# Pay in Bitcoin
-crypto_payment = await multi_currency_service.create_crypto_payment(
-    amount=0.001,
-    cryptocurrency="BTC",
-    wallet_address="bc1q..."
-)
+```
+                     ┌────────────────────────────────────┐
+                     │        Next.js 16 Frontend         │
+                     │   TypeScript · Tailwind · 229 pg   │
+                     │   App Router · Dark/Light Themes   │
+                     └─────────────────┬──────────────────┘
+                                       │  HTTPS / REST / WebSocket
+                     ┌─────────────────▼──────────────────┐
+                     │          FastAPI Backend            │
+                     │  750+ endpoints · 7 domain pkgs    │
+                     │  ┌──────────┐  ┌──────────────┐    │
+                     │  │  Auth &  │  │  AI Services │    │
+                     │  │ Security │  │  12 modules  │    │
+                     │  └──────────┘  └──────────────┘    │
+                     │  ┌──────────┐  ┌──────────────┐    │
+                     │  │Payments  │  │ Real-Time    │    │
+                     │  │ Wallet   │  │ WebSocket    │    │
+                     │  └──────────┘  └──────────────┘    │
+                     └────┬──────────────────┬────────────┘
+                          │                  │
+           ┌──────────────▼───┐   ┌──────────▼──────────┐
+           │   Turso (libSQL) │   │   External Services  │
+           │   Cloud Edge DB  │   │  DigitalOcean AI LLM │
+           │   80+ tables     │   │  Stripe · Socket.io  │
+           │   Edge replicas  │   │  MetaMask · Web3.py  │
+           └──────────────────┘   └─────────────────────┘
 ```
 
-**Enable Multi-Factor Authentication:**
-```python
-from app.services.advanced_security import advanced_security_service
+### Domain Package Structure (Backend)
 
-# Setup TOTP (Google Authenticator)
-mfa = await advanced_security_service.setup_mfa(
-    user_id="user123",
-    method="totp"
-)
-# Returns QR code for scanning
+| Domain | Endpoints | Key Routers |
+|--------|-----------|-------------|
+| **Auth** | 17 | auth, OAuth, 2FA, passwordless |
+| **Core** | 460+ | portal, workroom, admin, analytics, notifications |
+| **AI** | 65 | chatbot, fraud-detection, matching, price-estimator |
+| **Payments** | 66 | wallet, invoices, escrow, stripe, crypto, JazzCash |
+| **Chat** | 21 | messages, video-comms, WebSocket, comments |
+| **Reviews** | 18 | disputes, reviews, user-feedback |
+| **Marketplace** | — | gigs, freelancers, projects, proposals |
 
-# Or use SMS/Email/WebAuthn
-mfa = await advanced_security_service.setup_mfa(
-    user_id="user123",
-    method="sms",
-    phone_number="+1234567890"
-)
+### Frontend Route Architecture (229 Pages)
+
+| Route Group | Pages | Description |
+|------------|-------|-------------|
+| `(auth)/` | 9 | Login, signup, password reset, 2FA |
+| `(main)/` | 26 | Landing, about, pricing, features |
+| `(portal)/admin/` | 44 | Admin management, audit, moderation |
+| `(portal)/freelancer/` | 51 | Dashboard, portfolio, proposals |
+| `(portal)/client/` | 28 | Projects, hiring, contracts |
+| `ai/` | 12 | AI tool suite for all users |
+| Root | 38 | Blog, hire, compare, support |
+
+---
+
+## Tech Stack
+
+### Backend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Python | 3.11+ | Runtime |
+| FastAPI | 0.115.6 | Web framework |
+| Uvicorn | 0.34.0 | ASGI server |
+| SQLAlchemy | 2.0.36 | ORM |
+| Turso (libSQL) | latest | Primary database (edge SQLite) |
+| MongoDB (pymongo) | 4.10.1 | Blog CMS |
+| Pydantic | 2.10.6 | Data validation |
+| python-jose | 3.3.0 | JWT tokens |
+| bcrypt | 4.0.1 | Password hashing |
+| pyotp | 2.9.0 | TOTP 2FA |
+| SlowAPI | 0.1.9 | Rate limiting |
+| Stripe | 11.5.0 | Payment processing |
+| python-socketio | 5.14.3 | WebSocket / real-time |
+| boto3 | 1.42.4 | Cloudflare R2 / S3 storage |
+| litellm | ≥1.0.0 | LLM abstraction (DO AI gateway) |
+| httpx | 0.28.1 | Async HTTP client |
+
+### Frontend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Next.js | 16 | React framework (App Router) |
+| React | 19 | UI library |
+| TypeScript | Strict | Type safety |
+| Tailwind CSS | 4.x | Utility styling |
+| CSS Modules | — | Component-scoped styles (3-file pattern) |
+| Framer Motion | 12.x | Animations |
+| Radix UI | — | Accessible primitives |
+| @react-three/fiber | 9.x | 3D scenes (Three.js) |
+| Tiptap | 3.x | Rich text editor |
+| Recharts / Chart.js | — | Data visualization |
+| Stripe.js | 8.x | Payment UI |
+| @monaco-editor/react | — | In-browser code editor |
+| Playwright | 1.58 | E2E testing |
+| Jest | 30.x | Unit testing |
+
+### Infrastructure
+
+| Component | Technology |
+|-----------|------------|
+| Hosting | DigitalOcean App Platform |
+| Frontend CDN | Vercel (optional) |
+| Database | Turso cloud (edge-replicated libSQL) |
+| File Storage | Cloudflare R2 (S3-compatible) |
+| AI/LLM | DigitalOcean AI Gateway (llama3.3-70b) |
+| Reverse Proxy | Nginx with SSL termination |
+| SSL | Certbot (auto-renewing) |
+| Containers | Docker + Docker Compose |
+| CI/CD | GitHub (manual deploy trigger) |
+
+---
+
+## Features
+
+### AI Services (12 Modules · 65 Endpoints)
+
+| Service | Description |
+|---------|-------------|
+| **Price Estimator** | Category + hours → detailed cost breakdown with PPP cross-border analysis |
+| **Rate Advisor** | Analyzes real freelancer profile; grounded LLM advice for competitive pricing |
+| **Talent Matching** | Multi-factor scoring to match freelancers to projects |
+| **Fraud Detection** | ML narrative reports on users, disputes, invoices |
+| **Sentiment Analysis** | Review quality assessment to catch malicious ratings |
+| **AI Chatbot** | Portal-aware assistant; knows platform context |
+| **Skill Analyzer** | Profile skill gap analysis and recommendations |
+| **Client Assistant** | Guided project scoping and brief generation |
+| **AI Writing Tools** | Blog, proposal, cover letter generators via DO LLM |
+| **Quality Assessment** | Code, design, and content quality scoring |
+| **Job Description AI** | Generate optimized job postings |
+| **Contract AI** | Smart contract clause suggestions |
+
+### Authentication & Security
+
+- **6 Auth Methods**: Email/Password · Google OAuth · GitHub OAuth · TOTP 2FA · Email magic links · Phone verification
+- **JWT**: 30-min access tokens + 7-day refresh tokens (HS256)
+- **Rate Limiting**: 60 req/min per IP (SlowAPI)
+- **Account lockout**: After 5 failed attempts (15-min cooldown)
+- **5-layer middleware**: RequestID · CORS · Security Headers (CSP/HSTS) · GZip · Request Size Limit
+- **Audit logging**: 90-day retention, 14 action types
+- **Parameterized queries**: SQL injection prevention via Turso HTTP client
+- **Pydantic schemas**: Input validation on all endpoints
+
+### Payment System
+
+- **Fiat**: Stripe integration with 150+ currencies
+- **Crypto**: MetaMask wallet · USDC/USDT stablecoins · 8 EVM chains (Polygon, Ethereum, BSC…)
+- **Pakistan-local**: JazzCash, EasyPaisa (addressing local payment barrier)
+- **Escrow**: Milestone-based fund release with dispute resolution
+- **Invoicing**: PDF invoice generation via backend renderer
+- **Wallet**: In-platform balance, withdraw, deposit, transaction history
+
+### Freelancer Portal (51 Pages)
+
+Profile & portfolio · Proposal builder · Contract management · Invoice creator · Earnings dashboard · Skill badges · Rate advisor · Workroom · Time tracker · Reviews · Learning center
+
+### Client Portal (28 Pages)
+
+Project posting · Talent search · Proposal review · Contract signing · Milestone management · Payment release · Dispute filing · Analytics dashboard · Saved freelancers · Messaging
+
+### Admin Panel (44 Pages)
+
+User management · Content moderation · Dispute resolution · Analytics · Feature flags · Audit logs · Issue reporting · System health · Fraud reports · Platform settings
+
+### Real-Time Features
+
+- **WebSocket messaging**: Socket.io powered live chat
+- **Video calls**: WebRTC peer-to-peer (STUN/TURN)
+- **Notifications**: Live badge updates without polling
+- **Workroom**: Collaborative project space
+
+---
+
+## Project Structure
+
+```
+MegiLance/
+├── backend/
+│   ├── app/
+│   │   ├── api/v1/           # Route definitions (97+ routers)
+│   │   ├── core/             # Config, security, dependencies
+│   │   ├── db/               # Database connection & migrations
+│   │   ├── domains/          # 7 domain packages
+│   │   ├── models/           # SQLAlchemy ORM models (80+ tables)
+│   │   ├── schemas/          # Pydantic request/response schemas
+│   │   ├── services/         # Business logic (AI, payments, storage)
+│   │   └── templates/        # Jinja2 email/PDF templates
+│   ├── tests/                # pytest unit + integration tests
+│   ├── alembic/              # Database migration scripts
+│   ├── requirements.txt
+│   ├── main.py               # FastAPI entry point
+│   └── Dockerfile
+│
+├── frontend/
+│   ├── app/
+│   │   ├── (auth)/           # 9 authentication pages
+│   │   ├── (main)/           # 26 public pages
+│   │   ├── (portal)/         # 123 portal pages (admin/client/freelancer)
+│   │   ├── ai/               # 12 AI tool pages
+│   │   ├── components/       # 522 shared components
+│   │   │   ├── AI/           # AI UI kit (aurora, particles, confetti)
+│   │   │   ├── Button/       # Atom components
+│   │   │   └── ...
+│   │   └── globals.css
+│   ├── hooks/                # Custom React hooks
+│   ├── lib/                  # Utilities, API client, formatters
+│   ├── services/             # Frontend API service layer
+│   ├── e2e/                  # Playwright E2E tests
+│   ├── next.config.js
+│   ├── package.json
+│   └── Dockerfile
+│
+├── docs/                     # 41+ documentation files
+│   ├── Architecture.md
+│   ├── API_Overview.md
+│   ├── DATABASE_SCHEMA.md
+│   ├── DEPLOYMENT_RUNBOOK.md
+│   ├── adr/                  # Architecture Decision Records
+│   └── ...
+│
+├── nginx/                    # Nginx reverse proxy config
+├── docker-compose.yml        # Production
+├── docker-compose.dev.yml    # Development (hot reload)
+├── do-spec.yaml              # DigitalOcean App Platform spec
+└── FYP_PRESENTATION_DATA.md  # Verified technical metrics
 ```
 
-**Start Video Call:**
-```python
-from app.api.v1.video_communication import video_service
+### CSS Module Convention
 
-# Create 1-on-1 call
-call = await video_service.create_call(
-    creator_id="user123",
-    participants=["user456"],
-    call_type="one_on_one"
-)
+Every component follows the **3-file pattern**:
 
-# Enable screen sharing
-await video_service.enable_screen_share(
-    call_id=call.id,
-    user_id="user123"
-)
+```
+Button/
+  Button.tsx
+  Button.common.module.css   ← layout, structure, motion
+  Button.light.module.css    ← light-mode colors
+  Button.dark.module.css     ← dark-mode colors
 ```
 
-**AI Matching:**
-```python
-from app.services.advanced_ai import advanced_ai_service
+This produces 1,321 CSS files across the project — ensuring true theme isolation with zero global CSS leakage.
 
-# Get top freelancer matches
-matches = await advanced_ai_service.match_freelancers_to_project(
-    project_id="proj123",
-    max_results=10
-)
-# Returns ML-scored matches with 10-factor analysis
-```
+---
 
-### Local Development
-
-```bash
-# Start all services
-docker compose up -d
-
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000/api/docs
-# Backend Health: http://localhost:8000/api/health/ready
-```
-
-## 📋 Documentation
-
-### New Features (2.0)
-- **[docs/IMPLEMENTATION_COMPLETE.md](docs/IMPLEMENTATION_COMPLETE.md)** - ⭐ Complete feature list (250+ enhancements)
-- **[docs/MARKET_COMPETITIVE_ENHANCEMENTS.md](docs/MARKET_COMPETITIVE_ENHANCEMENTS.md)** - Strategic 12-phase roadmap
-- **[docs/DEVELOPER_QUICK_REFERENCE.md](docs/DEVELOPER_QUICK_REFERENCE.md)** - API examples & quick start
-- **[backend/app/db/advanced_schema.sql](backend/app/db/advanced_schema.sql)** - Database schema for new features
-
-### Core Documentation
-- **[docs/ENGINEERING_STANDARDS_2025.md](docs/ENGINEERING_STANDARDS_2025.md)** - Coding standards & best practices
-- **[docs/Architecture.md](docs/Architecture.md)** - System architecture details
-- **[docs/API_Overview.md](docs/API_Overview.md)** - Complete API documentation
-
-### Setup & Deployment
-- **[docs/TURSO_SETUP.md](docs/TURSO_SETUP.md)** - Turso database setup and management
-- **[docs/DeploymentGuide.md](docs/DeploymentGuide.md)** - Production deployment guide
-- **[docs/MAINTENANCE.md](docs/MAINTENANCE.md)** - Maintenance scripts and tasks
-
-### Component Documentation
-- **[backend/README.md](backend/README.md)** - Backend API documentation
-- **[frontend/README.md](frontend/README.md)** - Frontend architecture & patterns
-- **[docs/ADVANCED_FEATURES_INTEGRATION_GUIDE.md](docs/ADVANCED_FEATURES_INTEGRATION_GUIDE.md)** - Advanced component integration
-
-## 🏗️ Architecture
-
-### 2.0 Enhanced Architecture
-```
-                    ┌─────────────────────────────┐
-                    │   Next.js 14 Frontend       │
-                    │   (React 19 + TypeScript)   │
-                    └──────────────┬──────────────┘
-                                   │
-                    ┌──────────────▼──────────────┐
-                    │    FastAPI Backend          │
-                    │  ┌──────────────────────┐   │
-                    │  │ Advanced Services:   │   │
-                    │  │ • Multi-Currency     │   │
-                    │  │ • Advanced Security  │   │
-                    │  │ • Advanced AI        │   │
-                    │  │ • Video Communication│   │
-                    │  └──────────────────────┘   │
-                    └──────┬──────────────┬───────┘
-                           │              │
-                ┌──────────▼───┐    ┌────▼──────────┐
-                │ Turso libSQL │    │ External APIs │
-                │ (25+ tables) │    │ • CoinGecko   │
-                │ • Projects   │    │ • ExchangeRate│
-                │ • Users      │    │ • Twilio SMS  │
-                │ • Payments   │    │ • TURN Server │
-                │ • Video Calls│    │ • Blockchain  │
-                └──────────────┘    └───────────────┘
-```
-
-### Tech Stack
-
-**Backend (FastAPI):**
-- Python 3.11+ with async/await
-- Turso (libSQL) - Distributed SQLite
-- JWT Authentication (30min access, 7 days refresh)
-- **NEW**: Multi-currency payments (150+ fiat + 7 crypto)
-- **NEW**: WebRTC video calls with signaling
-- **NEW**: Deep learning AI services
-- **NEW**: 6-method MFA security
-- Local file storage (upgradeable to S3/R2)
-- Circle API for USDC payments
-- OpenAI for AI features
-
-**Frontend (Next.js):**
-- Next.js 14 (App Router) + React 19
-- TypeScript for type safety
-- **3-File CSS Modules** (common/light/dark)
-- Responsive design (mobile-first)
-- **NEW**: Video call UI with WebRTC
-- **NEW**: Multi-currency selector
-- **NEW**: MFA setup/verification UI
-- **NEW**: Real-time fraud alerts
-
-**Infrastructure:**
-- Docker Compose for local development
-- Turso database (edge replicated)
-- **NEW**: WebSocket server for video signaling
-- **NEW**: STUN/TURN servers for NAT traversal
-- **NEW**: Redis cache for exchange rates
-- Observability-ready (structured logging, rate limiting)
-
-**New Dependencies (2.0):**
-```
-Backend:
-- pyotp==2.9.0              # TOTP MFA
-- qrcode==7.4.2             # QR code generation
-- twilio==8.11.1            # SMS MFA
-- web3==6.15.1              # Blockchain integration
-- httpx==0.26.0             # Async HTTP client
-
-Frontend:
-- simple-peer (WebRTC)
-- react-webcam (Camera access)
-- crypto-js (Client-side encryption)
-```
-
-## 💻 Local Development
+## Getting Started
 
 ### Prerequisites
-- Docker Desktop (recommended)
-- Node.js 18+ (for standalone)
-- Python 3.11+ (for standalone)
-- **NEW**: TURN server credentials (for video calls)
-- **NEW**: Twilio account (for SMS MFA)
-- **NEW**: CoinGecko API key (for crypto rates)
 
-### Environment Setup (2.0)
+| Requirement | Minimum |
+|-------------|---------|
+| Node.js | 18+ |
+| Python | 3.11+ |
+| Docker Desktop | latest |
+| Turso account | free tier |
 
-Create `.env` file with new variables:
-```env
-# Existing
-TURSO_DATABASE_URL=libsql://your-db.turso.io
-TURSO_AUTH_TOKEN=sk_turso_...
-SECRET_KEY=your-secret-key
+### Option A — Docker Compose (Recommended)
 
-# NEW: Multi-Currency
-EXCHANGERATE_API_KEY=your-key          # ExchangeRate-API.io
-COINGECKO_API_KEY=your-key             # CoinGecko Pro (optional)
-
-# NEW: SMS MFA
-TWILIO_ACCOUNT_SID=ACxxxxx
-TWILIO_AUTH_TOKEN=xxxxx
-TWILIO_PHONE_NUMBER=+1234567890
-
-# NEW: Video Calls
-TURN_SERVER_URL=turn:your-turn-server.com:3478
-TURN_SERVER_USERNAME=username
-TURN_SERVER_CREDENTIAL=password
-STUN_SERVER_URL=stun:stun.l.google.com:19302
-
-# NEW: Blockchain (optional)
-WEB3_PROVIDER_URL=https://mainnet.infura.io/v3/YOUR-KEY
-ETHEREUM_NETWORK=mainnet
-POLYGON_NETWORK=mainnet
-```
-
-### Development Mode (Hot Reloading) ⚡
-
-**Recommended for development** - Code changes automatically reload:
-
-```pwsh
-# Start with hot reloading
-.\start-dev.ps1
-
-# Or manually
-docker compose -f docker-compose.dev.yml up --build
-```
-
-**Features:**
-- ✅ Frontend hot reloading (Next.js Fast Refresh)
-- ✅ Backend hot reloading (Uvicorn auto-reload)
-- ✅ Instant code changes without rebuild
-- ✅ Volume mounts for live development
-- ✅ **NEW**: WebSocket server for video signaling
-- ✅ **NEW**: Redis cache for exchange rates
-
-**Services:**
-- Frontend: http://localhost:3000 (Hot Reload: ✓)
-- Backend API: http://localhost:8000/api/docs (Hot Reload: ✓)
-- **NEW**: Video Signaling: ws://localhost:8000/ws/video
-- Database: Turso cloud database (libSQL) - REQUIRED for all environments
-
-**Test New Features:**
 ```bash
-# Test multi-currency API
+# 1. Clone the repository
+git clone https://github.com/ghulam-mujtaba5/MegiLance.git
+cd MegiLance
+
+# 2. Copy environment file and fill in values
+cp .env.example .env
+
+# 3. Start with hot reloading (development)
+docker compose -f docker-compose.dev.yml up --build
+
+# 4. Open in browser
+#    Frontend:   http://localhost:3000
+#    API Docs:   http://localhost:8000/api/docs
+#    API Health: http://localhost:8000/api/health/ready
+```
+
+### Option B — Manual Setup
+
+**Backend:**
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 8000
+```
+
+**Frontend:**
+
+```bash
+cd frontend
+npm install
+npm run dev                        # http://localhost:3000
+```
+
+### Seed Demo Data
+
+```bash
+cd backend
+python seed_data.py
+```
+
+### Demo Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@megilance.com | demo123 |
+| Freelancer | freelancer@demo.com | demo123 |
+| Client | client@demo.com | demo123 |
+
+> Demo login is also available directly on the home page hero section.
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the project root (or `backend/.env`):
+
+```env
+# ── Database ──────────────────────────────────────────────
+TURSO_DATABASE_URL=libsql://<db-name>-<org>.turso.io
+TURSO_AUTH_TOKEN=sk_turso_...
+
+# ── Auth ──────────────────────────────────────────────────
+SECRET_KEY=your-256-bit-secret-key-here
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# ── AI / LLM ──────────────────────────────────────────────
+DO_AI_API_KEY=doa_...                  # DigitalOcean AI Gateway
+# Model: llama3.3-70b (only DO open models supported on this key)
+
+# ── Payments ──────────────────────────────────────────────
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# ── Storage ───────────────────────────────────────────────
+R2_ACCOUNT_ID=...                      # Cloudflare R2
+R2_ACCESS_KEY_ID=...
+R2_SECRET_ACCESS_KEY=...
+R2_BUCKET_NAME=megilance-media
+# Leave R2_* empty to fall back to local /uploads storage
+
+# ── Blog Database (MongoDB) ───────────────────────────────
+MONGODB_URI=mongodb+srv://...
+
+# ── Email ─────────────────────────────────────────────────
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASSWORD=app-password
+
+# ── Frontend ──────────────────────────────────────────────
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+```
+
+See [docs/TURSO_SETUP.md](docs/TURSO_SETUP.md) for Turso database provisioning.
+
+---
+
+## API Reference
+
+Interactive API documentation is auto-generated by FastAPI:
+
+- **Swagger UI**: `/api/docs`
+- **ReDoc**: `/api/redoc`
+- **OpenAPI JSON**: `/api/openapi.json`
+
+### Core Endpoint Groups
+
+| Group | Base Path | Description |
+|-------|-----------|-------------|
+| Auth | `/auth/*` | Login, signup, refresh, 2FA |
+| Users | `/users/*` | Profile, avatar, settings |
+| Projects | `/projects/*` | CRUD, proposals, milestones |
+| Contracts | `/contracts/*` | Builder, sign, PDF export |
+| Payments | `/payments/*` | Wallet, invoices, stripe, crypto |
+| AI Tools | `/ai/*` | All 12 AI service endpoints |
+| Admin | `/admin/*` | Moderation, analytics, system |
+| Portal | `/portal/*` | Dashboard aggregation endpoints |
+| Health | `/api/health/*` | `/live` (liveness) · `/ready` (readiness) |
+
+### Example Requests
+
+```bash
+# Health check
+curl http://localhost:8000/api/health/ready
+
+# Get AI price estimate
+curl -X POST http://localhost:8000/api/v1/price-estimator/estimate \
+  -H "Content-Type: application/json" \
+  -d '{"category": "web-development", "hours": 40, "complexity": "medium"}'
+
+# Get freelancer match score
+curl -X POST http://localhost:8000/api/v1/matching/match \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"project_id": "proj_123"}'
+
+# List supported currencies
 curl http://localhost:8000/api/v1/payments/currencies
-
-# Test MFA setup
-curl -X POST http://localhost:8000/api/v1/security/mfa/setup \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{"method": "totp"}'
-
-# Test video call creation
-curl -X POST http://localhost:8000/api/v1/video/calls \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{"call_type": "one_on_one", "participants": ["user456"]}'
 ```
 
-**View logs:**
-```pwsh
-docker compose -f docker-compose.dev.yml logs -f
-docker compose -f docker-compose.dev.yml logs -f frontend
-docker compose -f docker-compose.dev.yml logs -f backend
+Full documentation: [docs/API_Overview.md](docs/API_Overview.md)
+
+---
+
+## Testing
+
+### Run All Tests
+
+```bash
+# Backend
+cd backend
+pytest tests/ -v --cov=app --cov-report=term-missing
+
+# Frontend unit
+cd frontend
+npm run test:unit
+
+# E2E (requires running app)
+npm run test:e2e
+
+# Accessibility audit
+npm run test:a11y
+
+# Lighthouse CI performance
+npm run test:lighthouse
 ```
 
-**Stop services:**
-```pwsh
-docker compose -f docker-compose.dev.yml down
+### Test Coverage Summary
+
+| Layer | Framework | Tests |
+|-------|-----------|-------|
+| Backend Unit | pytest + pytest-asyncio | 9 files |
+| Backend Integration | pytest + httpx | 2 files |
+| Frontend Unit | Jest + @testing-library/react | 7 files |
+| E2E | Playwright 1.58 | 4 files |
+| Accessibility | axe-core + Playwright | 1 file |
+| CSS Compliance | Custom validator | 1 file |
+| Performance | Lighthouse CI | 1 config |
+
+### Core API Pass Rate
+
+| Domain | Tests | Status |
+|--------|-------|--------|
+| Authentication | 5/5 | ✅ 100% |
+| Contracts | 8/8 | ✅ 100% |
+| Projects | 6/6 | ✅ 100% |
+| Health Checks | 2/2 | ✅ 100% |
+
+---
+
+## Deployment
+
+### Production Stack
+
+```
+GitHub → DigitalOcean App Platform
+         ├── Frontend container (Next.js, port 3000)
+         ├── Backend container (FastAPI, port 8000, 2 CPU / 1 GB RAM)
+         └── Nginx (reverse proxy + SSL via Certbot)
+         
+Turso ──── Cloud database (edge replicated globally)
+R2    ──── Media storage (images, uploads)
+MongoDB ── Blog CMS data
 ```
 
-### Production Mode
+### Deploy to DigitalOcean
 
-**For production-like testing:**
+```bash
+# Deploy using the App Platform spec
+doctl apps create --spec do-spec.yaml
 
-```pwsh
-# Start in production mode
-.\start-prod.ps1
+# Or update an existing app
+doctl apps update <APP_ID> --spec do-spec.yaml
+```
 
-# Or manually
+### Docker Production Build
+
+```bash
 docker compose up --build -d
-```
 
-**Services:**
-- Frontend: http://localhost:3000
-- Backend: http://localhost:8000/api/docs
-- Database: Turso cloud endpoint
+# View logs
+docker compose logs -f backend
+docker compose logs -f frontend
 
-**Stop services:**
-```pwsh
+# Stop
 docker compose down
 ```
 
----
+### Security Hardening (Production)
 
-## 🎯 API Endpoints (2.0)
-
-### New Endpoints
-
-**Multi-Currency Payments** (`/api/v1/payments/`)
-- `GET /currencies` - List 150+ supported currencies
-- `GET /cryptocurrencies` - List 7+ supported cryptos
-- `POST /convert` - Convert between currencies
-- `POST /crypto-payment` - Create crypto payment
-- `GET /exchange-rate/{from}/{to}` - Get live exchange rate
-
-**Advanced Security** (`/api/v1/security/`)
-- `POST /mfa/setup` - Setup MFA (TOTP/SMS/Email/WebAuthn)
-- `POST /mfa/verify` - Verify MFA code
-- `POST /mfa/disable` - Disable MFA
-- `GET /risk-assessment` - Get login risk score
-- `GET /sessions` - List active sessions
-- `DELETE /sessions/{id}` - Remote session logout
-
-**Video Communication** (`/api/v1/video/`)
-- `POST /calls` - Create video call
-- `POST /calls/{id}/join` - Join call
-- `POST /calls/{id}/end` - End call
-- `POST /calls/{id}/screen-share` - Start screen sharing
-- `POST /calls/{id}/whiteboard` - Enable whiteboard
-- `GET /calls/{id}/recording` - Get call recording
-
-**Advanced AI** (`/api/v1/ai/`)
-- `POST /match-freelancers` - ML-powered matching
-- `POST /detect-fraud` - Fraud risk analysis
-- `POST /assess-quality` - Quality assessment (code/design/content)
-- `POST /optimize-price` - AI price suggestions
-- `POST /predict-success` - Project success prediction
-
-**Analytics** (`/api/v1/analytics/`)
-- `GET /dashboard` - Real-time metrics
-- `POST /custom-report` - Generate custom report
-- `GET /benchmarks` - Market benchmarks
-- `GET /cohort-analysis` - User cohort data
-
-See **[docs/API_Overview.md](docs/API_Overview.md)** for complete documentation.
+- All containers run as **non-root users**
+- All Linux capabilities **dropped** (`cap_drop: ALL`)
+- `no-new-privileges` flag **enabled**
+- Health checks on every service (30-second interval)
+- HTTPS-only with HSTS headers
+- CSP headers via middleware
 
 ---
 
-## 🔐 Security Features (2.0)
+## Challenges & Limitations
 
-### Multi-Factor Authentication
-- **TOTP** - Google Authenticator, Authy
-- **SMS** - Via Twilio
-- **Email** - Verification codes
-- **WebAuthn** - Biometric/hardware keys
-- **Hardware Keys** - YubiKey, FIDO2
-- **Backup Codes** - One-time recovery
+| Challenge | Solution |
+|-----------|----------|
+| Stripe/PayPal blocked in Pakistan | Added JazzCash, EasyPaisa, USDC via MetaMask |
+| Event-loop blocking with Turso sync client | Converted all 552 async handlers to sync `def` |
+| AI model hosting costs | DigitalOcean AI gateway (llama3.3-70b) with template fallbacks |
+| Real-time communication | Socket.io for messaging; WebRTC for video |
+| Blockchain gas fees | Used Polygon (low fees) for USDC |
+| 750+ endpoints organization | 7 domain packages, 97+ routers |
+| Dark mode CSS | 3-file CSS module system per component |
 
-### Risk-Based Authentication
-- Device fingerprinting (30+ browser attributes)
-- IP reputation scoring
-- Behavioral analysis (typing patterns, mouse movement)
-- Anomaly detection (unusual login times/locations)
-- Automated account lockout
-- Security event logging
-
-### Session Management
-- JWT tokens (30min access, 7 days refresh)
-- Remote session termination
-- IP whitelisting
-- Concurrent session limits
-- Session replay protection
+**Current Limitations:**
+- Smart contracts deployed on testnet only (not mainnet yet)
+- Redis cache is optional — deployed only when env vars present
+- No automated CI/CD pipeline committed to repo
 
 ---
 
-## 💰 Payment Features (2.0)
+## Roadmap
 
-### Supported Currencies
-
-**Fiat (150+):**
-USD, EUR, GBP, JPY, AUD, CAD, CHF, CNY, INR, AED, SGD, HKD, NZD, SEK, NOK, DKK, PLN, CZK, HUF, RON, TRY, ZAR, BRL, MXN, KRW, THB, MYR, IDR, PHP, VND, and 120+ more
-
-**Cryptocurrencies (7+):**
-- **Bitcoin (BTC)** - Layer 1
-- **Ethereum (ETH)** - Smart contracts
-- **USDC** - Stablecoin (Circle)
-- **USDT** - Stablecoin (Tether)
-- **BNB** - Binance Chain
-- **SOL** - Solana
-- **MATIC** - Polygon
-
-### Payment Features
-- Real-time exchange rates (5min cache)
-- Multi-network blockchain (Ethereum, Polygon, Bitcoin, Solana)
-- Instant payouts (< 1 minute)
-- Dynamic pricing engine (ML-based)
-- Tax automation (190+ countries)
-- Payment routing optimization
-- Fraud detection (ML-powered)
-- Chargeback protection
+| Area | Planned |
+|------|---------|
+| Blockchain | Deploy contracts to Polygon mainnet; full on-chain escrow |
+| Mobile | React Native app (iOS/Android) |
+| AI | Fine-tune models on freelancing data; voice chatbot |
+| Analytics | Real-time predictive dashboard |
+| Learning | Full LMS with video courses and certifications |
+| API | Public developer portal with API keys |
+| Performance | CDN edge caching; database read replicas |
+| Security | Penetration testing; SOC 2 compliance |
 
 ---
 
-## 📹 Video Features (2.0)
+## Team
 
-### Video Calling
-- **1-on-1 Calls** - HD video up to 1080p
-- **Group Calls** - Up to 50 participants
-- **Screen Sharing** - Full screen or window
-- **Virtual Whiteboard** - Real-time collaboration
-- **Call Recording** - 30-day retention
-- **Meeting Scheduler** - Availability-based
-- **File Sharing** - During calls
-- **Live Chat** - Text alongside video
+| Name | Role | Student ID |
+|------|------|------------|
+| **Ghulam Mujtaba** | Team Lead — Architecture, AI Integration, Full-Stack | FA22-BSE-199 |
+| **Muhammad Waqar Ul Mulk** | Backend Development, Database Design, Security | FA22-BSE-153 |
 
-### Technical Details
-- **Protocol**: WebRTC with STUN/TURN
-- **Codec**: VP9/H.264 video, Opus audio
-- **Bandwidth**: Adaptive (256kbps - 2Mbps)
-- **Latency**: < 150ms peer-to-peer
-- **Quality**: Auto-adjusts based on network
+**Supervisor:** Dr. Junaid Akram
+**Co-Supervisor:** Khula Qadeer
+**Department:** Computer Science, COMSATS University Islamabad, Lahore Campus
 
 ---
 
-## 🤖 AI Features (2.0)
+## Acknowledgments
 
-### Deep Learning Matching
-- 10-factor neural network scoring
-- Semantic skill matching (NLP)
-- Portfolio analysis (computer vision)
-- Success prediction (>85% accuracy)
-- Real-time ranking updates
-
-### Fraud Detection
-- Anomaly detection (ML models)
-- Pattern recognition (>95% accuracy)
-- Risk scoring (0-100 scale)
-- Automated flagging
-- Human-in-the-loop review
-
-### Quality Assessment
-- **Code Quality**: Complexity, maintainability, security
-- **Design Quality**: Aesthetics, usability, consistency
-- **Content Quality**: Grammar, clarity, originality
-- Automated feedback generation
-- Performance benchmarking
+- **FastAPI** and **Next.js** communities for excellent frameworks
+- **Turso** for edge-replicated SQLite that made global low-latency feasible
+- **DigitalOcean** for App Platform hosting and AI gateway
+- **Cloudflare** for R2 media storage
+- **Radix UI** and **Framer Motion** for accessible, animated components
+- Upwork, Fiverr, and Toptal for inspiration on freelancing platform patterns
 
 ---
 
-## 📊 Business Impact (2.0)
+## License
 
-### Projected Growth
-- **+300% User Acquisition** - Advanced features attract more users
-- **+400% Revenue Growth** - Multi-currency + crypto unlocks global markets
-- **+250% Retention** - Video/collaboration keeps users engaged
-- **+180% Trust** - Advanced security reduces fraud
-- **+150% Transaction Volume** - Easier payments increase activity
-
-### Competitive Advantages
-- **80% More Features** than Upwork
-- **10x Better AI** than Fiverr
-- **5x Lower Fees** than Toptal
-- **Global Currency Support** (vs USD-only competitors)
-- **Built-in Video** (vs third-party integrations)
-
-### Market Position
-Position MegiLance as the **#1 Choice** for:
-1. **Global Freelancers** - Accept payments in 150+ currencies
-2. **Enterprise Clients** - Advanced security + compliance
-3. **Tech Teams** - Built-in video + collaboration tools
-4. **Crypto Enthusiasts** - Native blockchain support
-5. **AI-First Users** - Deep learning matching
-
----
-
-## 🚀 Next Steps
-
-### For Developers
-1. Read **[docs/IMPLEMENTATION_COMPLETE.md](docs/IMPLEMENTATION_COMPLETE.md)** - Full feature list
-2. Review **[docs/DEVELOPER_QUICK_REFERENCE.md](docs/DEVELOPER_QUICK_REFERENCE.md)** - API examples
-3. Check **[backend/app/db/advanced_schema.sql](backend/app/db/advanced_schema.sql)** - Database schema
-4. Explore **[docs/ENGINEERING_STANDARDS_2025.md](docs/ENGINEERING_STANDARDS_2025.md)** - Coding standards
-
-### For Product Teams
-1. Review **[docs/MARKET_COMPETITIVE_ENHANCEMENTS.md](docs/MARKET_COMPETITIVE_ENHANCEMENTS.md)** - Strategic roadmap
-2. Analyze competitive advantages vs Upwork/Fiverr/Freelancer/Toptal
-3. Plan marketing campaigns highlighting 250+ new features
-4. Prepare go-to-market strategy for 2.0 launch
-
-### For Users
-1. **Try Multi-Currency** - Pay/receive in your local currency
-2. **Enable MFA** - Secure your account with 6 methods
-3. **Start Video Calls** - Built-in collaboration
-4. **Explore AI Matching** - Get perfect freelancer matches
-
----
-
-## 📝 Notes
-
-- **Frontend proxy**: Requests to `/backend/*` route to FastAPI backend
-  ```ts
-  const res = await fetch('/backend/api/health/live');
-  const data = await res.json();
-  ```
-
-- **Health endpoints**: `/api/health/live` (liveness) and `/api/health/ready` (readiness)
-- **Hot reload**: Development mode auto-reloads on code changes
-- **System tests**: Run `python comprehensive_test.py` for full system validation
-- **Standards**: Follow `docs/ENGINEERING_STANDARDS_2025.md` for all code
-- **3-File CSS Pattern**: Every component needs common/light/dark CSS modules
-- **API First**: All new features require service layer implementation before routes
-
----
-
-## 📜 License
-
-MIT License - See [LICENSE](LICENSE) for details
-
----
-
-## 🙏 Acknowledgments
-
-**Built with:**
-- FastAPI & Next.js teams for excellent frameworks
-- Turso for distributed SQLite magic
-- CoinGecko & ExchangeRate-API for real-time rates
-- Twilio for SMS infrastructure
-- WebRTC community for video standards
-
-**Inspired by the best:**
-- Upwork, Fiverr, Freelancer.com for platform ideas
-- Toptal for quality standards
-- Linear, Vercel for UI excellence
-- Stripe for payment UX
-
----
-
-## 📞 Contact
-
-- **Website**: [megilance.com](https://megilance.com)
-- **Support**: support@megilance.com
-- **Sales**: sales@megilance.com
-- **Security**: security@megilance.com
+MIT License — see [LICENSE](LICENSE) for full text.
 
 ---
 
 <div align="center">
 
-**MegiLance 2.0** - *The Future of Freelancing is Here* 🚀
+**MegiLance 2.0** — *Built for the AI era. Deployed for the world.*
 
-[Get Started](docs/QUICK_START.md) • [Documentation](docs/README.md) • [API Docs](docs/API_Overview.md) • [Roadmap](docs/MARKET_COMPETITIVE_ENHANCEMENTS.md)
+[Live Demo](https://megilance.site) · [API Docs](https://megilance.site/api/docs) · [GitHub](https://github.com/ghulam-mujtaba5/MegiLance)
 
 </div>
-
-# MegiLance Frontend
-
-A premium, production-ready frontend for the MegiLance platform built with Next.js (App Router), TypeScript, CSS Modules, and a theme-aware design system.
-
-## Vision
-- Pixel-perfect, modern UI matching products like Linear, Vercel, GitHub, Toptal, and Figma.
-- Three-role system: Admin, Client, Freelancer.
-- Strictly frontend-first until explicitly approved to start backend work.
-
-## Tech Stack
-- Next.js (App Router), React, TypeScript
-- CSS Modules (common/light/dark per component)
-- next-themes for theming
-- recharts for data viz
-- lucide-react & react-icons for icons
-
-## Project Structure
-```
-frontend/
-  app/
-    Home/
-      Home.tsx
-      Home.common.module.css
-      Home.light.module.css
-      Home.dark.module.css
-      components/
-        Hero.tsx
-        Features.tsx
-        AIShowcase.tsx
-        BlockchainShowcase.tsx
-        HowItWorks.tsx
-        GlobalImpact.tsx
-        Testimonials.tsx
-        CTA.tsx
-        ...theme css files per component
-    (auth)/
-      login/
-      signup/
-    (portal)/
-      client/
-      freelancer/
-    components/
-      Button/
-      Input/
-      Tabs/
-      UserAvatar/
-      ...
-```
-
-## Design System
-- Colors
-  - Primary: #4573df (MegiLance Blue)
-  - Accent: #ff9800, Success: #27AE60, Error: #e81123, Warning: #F2C94C
-- Fonts: Poppins (headings), Inter (body), JetBrains Mono (code)
-- Shadows: subtle, layered, motion-aware
-- Spacing grid: 4/8px scale, section rhythm unified via `homeSection` + `sectionContainer`
-- Components are theme-aware via three CSS modules per component:
-  - `*.common.module.css` (structure, layout, motion)
-  - `*.light.module.css` (colors for light)
-  - `*.dark.module.css` (colors for dark)
-
-## Buttons
-- Variants: primary, secondary, success, warning, danger, outline, ghost, social
-- Sizes: sm, md, lg, icon (legacy aliases: small, medium, large)
-- Social variant supports `provider="google|github"` for subtle brand accenting.
-- All variants have micro-interactions, focus rings, and accessible states.
-
-## Theming
-- `useTheme()` with `next-themes`
-- CSS modules reference CSS variables for light/dark where applicable
-- No global CSS except theme variables
-
-## Homepage UX
-- Unified section container for consistent layout: `Home.common.module.css -> .sectionContainer`
-- Sections wrapped in `Home.tsx` for perfect rhythm and width constraints
-- CTA primary button fixed for visibility on hover (forced white text in theme files)
-
-## Conventions
-- Add `// @AI-HINT:` comments at top of components to describe intentions
-- No overuse of global components that would disrupt existing polished UI
-- Prefer composition: small, reusable parts over monoliths
-- Ensure ARIA roles/labels for interactive elements
-
-## Scripts
-- `pnpm dev` or `npm run dev` – start dev server
-- `pnpm build` – build production bundle
-- `pnpm start` – run production server
-- `pnpm lint` – lint
-
-## Contributing
-- Use per-component CSS structure (.common/.light/.dark)
-- Keep components theme-aware and responsive
-- Maintain consistent spacing and typography
-- Avoid breaking variant/size contracts in shared components (e.g., `Button`)
-
-## Status
-- Admin, Client, Freelancer portals modernized
-- Homepage modernized with unified layout container; sections are premium and theme-aware
-- Auth pages upgraded with social buttons (glass/gradient)
-
-## Roadmap (Frontend)
-- Continue polishing micro-interactions and motion
-- Expand documentation in `/docs` (Design tokens, iconography, accessibility)
-

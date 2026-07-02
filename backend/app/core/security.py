@@ -340,7 +340,7 @@ def get_current_user(
 
 def get_current_user_from_token(
     request: Request, token: str = Depends(oauth2_scheme)
-) -> dict:
+) -> UserProxy:
     """Get user info directly from token without database lookup"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -364,8 +364,11 @@ def get_current_user_from_token(
         if "user_id" in payload and "id" not in payload:
             payload["id"] = payload["user_id"]
 
-        # Note: expiry is already validated by jwt.decode() in decode_token()
-        return payload
+        # Alias sub as email for UserProxy compatibility
+        if "sub" in payload and "email" not in payload:
+            payload["email"] = payload["sub"]
+
+        return UserProxy(payload)
 
     except HTTPException:
         raise
@@ -375,7 +378,7 @@ def get_current_user_from_token(
 
 def get_current_user_optional(
     request: Request, token: str = Depends(oauth2_scheme)
-) -> Optional[dict]:
+) -> Optional[UserProxy]:
     """Get user info from token, but don't fail if not provided - returns None if no valid token"""
     token = _token_from_request(request, token)
 

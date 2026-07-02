@@ -1,7 +1,7 @@
 # @AI-HINT: Projects router — CRUD for projects, listing, details, status management
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Union
 from datetime import datetime, timezone
 import logging
 
@@ -21,7 +21,7 @@ class ProjectCreate(BaseModel):
     budget_type: str = "fixed"
     budget_min: Optional[float] = None
     budget_max: Optional[float] = None
-    skills: Optional[str] = None
+    skills: Optional[Union[str, List[str]]] = None
     duration: Optional[str] = None
     estimated_duration: Optional[str] = None
     experience_level: Optional[str] = None
@@ -34,7 +34,7 @@ class ProjectUpdate(BaseModel):
     budget_type: Optional[str] = None
     budget_min: Optional[float] = None
     budget_max: Optional[float] = None
-    skills: Optional[str] = None
+    skills: Optional[Union[str, List[str]]] = None
     duration: Optional[str] = None
     experience_level: Optional[str] = None
     status: Optional[str] = None
@@ -177,7 +177,7 @@ def get_project(project_id: str):
     return _project_from_row(rows[0])
 
 
-@router.post("")
+@router.post("", status_code=201)
 def create_project(request: ProjectCreate, current_user=Depends(get_current_user)):
     # RBAC: only clients (and admins) may post projects; freelancers submit proposals instead.
     role = (getattr(current_user, "role", "") or "").lower()
@@ -216,7 +216,7 @@ def create_project(request: ProjectCreate, current_user=Depends(get_current_user
             raw = raw.get("value")
         project_id = int(raw) if raw else None
 
-    return {"message": "Project created successfully", "project_id": project_id}
+    return {"message": "Project created successfully", "project_id": project_id, "title": request.title}
 
 
 @router.put("/{project_id}")

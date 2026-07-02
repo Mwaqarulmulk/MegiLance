@@ -251,6 +251,9 @@ class ContractDirectCreate(BaseModel):
 
 @router.post("/direct")
 def create_direct_contract(request: ContractDirectCreate, current_user=Depends(get_current_user)):
+    if getattr(current_user, "user_type", None) != "client":
+        raise HTTPException(status_code=403, detail="Only clients can create contracts")
+
     now = datetime.now(timezone.utc).isoformat()
 
     freelancer_result = execute_query(

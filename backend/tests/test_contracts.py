@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from datetime import datetime, timezone
 
 from main import app
-from app.core.security import get_current_active_user
+from app.core.security import get_current_user
 
 # Disable startup hooks
 app.router.on_startup.clear()
@@ -173,7 +173,7 @@ def _mock_db(monkeypatch):
     """Patch execute_query at all import locations used by contracts."""
     targets = [
         "app.db.turso_http.execute_query",
-        "app.api.v1.contracts.execute_query",
+        "app.api.v1.projects_domain.contracts.execute_query",
         "app.services.contracts_service.execute_query",
         "app.core.security.execute_query",
         "app.services.token_blacklist_service.execute_query",
@@ -192,23 +192,24 @@ def _mock_db(monkeypatch):
 # ---------------------------------------------------------------------------
 
 def test_list_contracts_with_auth():
-    """GET /api/contracts/ with auth returns 200."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client
-    resp = client.get("/api/contracts/")
+    """GET /api/contracts with auth returns 200."""
+    app.dependency_overrides[get_current_user] = lambda: _client
+    resp = client.get("/api/contracts")
     assert resp.status_code == 200
     data = resp.json()
-    assert isinstance(data, list)
+    assert isinstance(data, dict)
+    assert isinstance(data.get("items"), list)
 
 
 def test_list_contracts_no_auth():
-    """GET /api/contracts/ without auth returns 401 or 403."""
-    resp = client.get("/api/contracts/")
+    """GET /api/contracts without auth returns 401 or 403."""
+    resp = client.get("/api/contracts")
     assert resp.status_code in (401, 403)
 
 
 def test_get_contract_invalid_id():
     """GET /api/contracts/not-a-uuid returns 400."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client
+    app.dependency_overrides[get_current_user] = lambda: _client
     resp = client.get("/api/contracts/not-a-uuid")
     assert resp.status_code == 404
     assert "Contract not found" in resp.json()["detail"]
@@ -216,7 +217,7 @@ def test_get_contract_invalid_id():
 
 def test_get_contract_not_found():
     """GET /api/contracts/{uuid} returns 404 when contract doesn't exist."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client
+    app.dependency_overrides[get_current_user] = lambda: _client
     missing_uuid = str(uuid.uuid4())
     resp = client.get(f"/api/contracts/{missing_uuid}")
     assert resp.status_code == 404
@@ -224,7 +225,7 @@ def test_get_contract_not_found():
 
 def test_get_contract_found():
     """GET /api/contracts/{uuid} returns contract when authorized."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client
+    app.dependency_overrides[get_current_user] = lambda: _client
     resp = client.get(f"/api/contracts/{_VALID_UUID}")
     assert resp.status_code == 200
 
@@ -236,10 +237,10 @@ def test_delete_contract_no_auth():
 
 
 def test_delete_contract_with_auth():
-    """DELETE /api/contracts/{uuid} with owner auth returns 204."""
-    app.dependency_overrides[get_current_active_user] = lambda: _client
+    """DELETE /api/contracts/{uuid} with owner auth returns 200."""
+    app.dependency_overrides[get_current_user] = lambda: _client
     resp = client.delete(f"/api/contracts/{_VALID_UUID}")
-    assert resp.status_code == 204
+    assert resp.status_code == 200
 
 
 def test_create_direct_contract_no_auth():
@@ -257,7 +258,7 @@ def test_create_direct_contract_no_auth():
 
 def test_create_contract_as_freelancer_forbidden():
     """POST /api/contracts/direct as freelancer returns 403."""
-    app.dependency_overrides[get_current_active_user] = lambda: _freelancer
+    app.dependency_overrides[get_current_user] = lambda: _freelancer
     payload = {
         "freelancer_id": 3,
         "title": "Direct hire by freelancer",

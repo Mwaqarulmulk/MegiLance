@@ -148,7 +148,7 @@ const Login: React.FC = () => {
   }, []);
 
   const styles = React.useMemo(() => {
-    const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
+    const themeStyles = (mounted && resolvedTheme === "light") ? lightStyles : darkStyles;
     const merge = (key: keyof typeof commonStyles) =>
       cn(
         (commonStyles as Record<string, string>)[key],
@@ -376,15 +376,7 @@ const Login: React.FC = () => {
     }
   };
 
-  if (!mounted) {
-    return (
-      <div className={cn(commonStyles.loginPage)}>
-        <div className={commonStyles.loadingContainer}>
-          <div className={commonStyles.loadingSpinner} />
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <PageTransition>

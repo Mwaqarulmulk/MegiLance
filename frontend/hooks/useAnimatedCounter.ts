@@ -17,10 +17,21 @@ const useAnimatedCounter = (
   decimals: number = 0,
   ref: React.RefObject<HTMLElement | null>
 ): string => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
+  const [mounted, setMounted] = useState(false);
   const hasAnimated = useRef(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    if (!hasAnimated.current) {
+      setCount(0);
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated.current) {
@@ -36,14 +47,14 @@ const useAnimatedCounter = (
             if (progress < 1) {
               requestAnimationFrame(step);
             } else {
-              setCount(target); // Ensure it ends exactly on the target
+              setCount(target);
             }
           };
 
           requestAnimationFrame(step);
         }
       },
-      { threshold: 0.1 } // Trigger when 10% of the element is visible
+      { threshold: 0.1 }
     );
 
     const currentRef = ref.current;
@@ -56,7 +67,7 @@ const useAnimatedCounter = (
         observer.unobserve(currentRef);
       }
     };
-  }, [target, duration, ref, decimals]);
+  }, [target, duration, ref, decimals, mounted]);
 
   return count.toFixed(decimals);
 };

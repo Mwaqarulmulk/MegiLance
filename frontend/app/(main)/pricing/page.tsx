@@ -77,6 +77,24 @@ export default function PricingPage() {
         </div>
       </section>
 
+      <section style={{ padding: '4rem 2rem', maxWidth: '900px', margin: '4rem auto 0', background: 'transparent' }}>
+         <h2 style={{ fontSize: '2rem', marginBottom: '2rem', textAlign: 'center', color: 'var(--text-primary, #0f172a)' }}>Platform Fees & Policy Breakdown</h2>
+         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+            <div style={{ padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-light, #e2e8f0)', background: 'var(--bg-card, white)' }}>
+               <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', color: 'var(--text-primary, #0f172a)' }}>No Hidden Fees</h3>
+               <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary, #64748b)', lineHeight: '1.5' }}>Our model is fully transparent. Clients post projects for free. Freelancers pay a flat service fee based on their membership tier.</p>
+            </div>
+            <div style={{ padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-light, #e2e8f0)', background: 'var(--bg-card, white)' }}>
+               <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', color: 'var(--text-primary, #0f172a)' }}>Escrow & Payments</h3>
+               <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary, #64748b)', lineHeight: '1.5' }}>Escrow service protection is fully included in the service fee. No extra transaction charges are levied on standard milestone payouts.</p>
+            </div>
+            <div style={{ padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-light, #e2e8f0)', background: 'var(--bg-card, white)' }}>
+               <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', color: 'var(--text-primary, #0f172a)' }}>Crypto Withdrawals</h3>
+               <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary, #64748b)', lineHeight: '1.5' }}>USDC and crypto payments feature 0% additional processing markup. Freelancers only cover network gas fees during contract payout withdrawals.</p>
+            </div>
+         </div>
+      </section>
+
       <section style={{ padding: '6rem 2rem', textAlign: 'center', background: 'var(--bg-secondary, #f8fafc)', marginTop: '4rem' }}>
          <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>Interested in Enterprise Solutions?</h2>
          <p style={{ color: 'var(--text-secondary, #64748b)', marginBottom: '2rem' }}>We offer custom hiring plans and dedicated account managers for large teams.</p>

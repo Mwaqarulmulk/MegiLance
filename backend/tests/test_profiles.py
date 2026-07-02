@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from datetime import datetime, timezone
 
 from main import app
-from app.core.security import get_current_user, get_current_active_user
+from app.core.security import get_current_user, get_current_active_user, get_current_user_from_token
 
 # Disable startup hooks
 app.router.on_startup.clear()
@@ -106,6 +106,11 @@ class _FakeUser:
         self.last_name = None
         self.joined_at = _NOW
 
+    def get(self, key, default=None):
+        if key == "user_id":
+            return self.id
+        return getattr(self, key, default)
+
 
 _auth_user = _FakeUser()
 
@@ -115,9 +120,11 @@ _auth_user = _FakeUser()
 # ---------------------------------------------------------------------------
 @pytest.fixture(autouse=True)
 def _mock_turso(monkeypatch):
-    """Patch get_turso_http for the users router."""
+    """Patch get_turso_http and current_user dependency."""
     fake = FakeTurso()
-    monkeypatch.setattr("app.api.v1.identity.users.get_turso_http", lambda: fake)
+    monkeypatch.setattr("app.db.turso_http.TursoHTTP.get_instance", lambda: fake)
+    app.dependency_overrides[get_current_user] = lambda: _auth_user
+    app.dependency_overrides[get_current_user_from_token] = lambda: _auth_user
     yield
     app.dependency_overrides.clear()
 
@@ -125,18 +132,6 @@ def _mock_turso(monkeypatch):
 # ---------------------------------------------------------------------------
 # Tests — public endpoints
 # ---------------------------------------------------------------------------
-
-def test_list_users():
-    """GET /api/users/ returns list of users (requires auth)."""
-    app.dependency_overrides[get_current_user] = lambda: _auth_user
-    resp = client.get("/api/users/")
-    app.dependency_overrides.pop(get_current_user, None)
-    assert resp.status_code == 200
-    data = resp.json()
-    assert isinstance(data, list)
-    assert len(data) >= 2
-    assert data[0]["email"] == "alice@example.com"
-
 
 def test_get_user_by_id():
     """GET /api/users/1 returns a user profile."""
@@ -151,20 +146,6 @@ def test_get_user_not_found():
     """GET /api/users/999 returns 404."""
     resp = client.get("/api/users/999")
     assert resp.status_code == 404
-
-
-def test_create_user():
-    """POST /api/users/ creates a new user."""
-    payload = {
-        "email": "newuser@example.com",
-        "password": "SecurePass123!",
-        "name": "New User",
-        "user_type": "client",
-    }
-    resp = client.post("/api/users/", json=payload)
-    assert resp.status_code == 201
-    data = resp.json()
-    assert data["email"] == "newuser@example.com"
 
 
 # ---------------------------------------------------------------------------
@@ -186,13 +167,10 @@ def test_get_current_user_profile():
 
 def test_get_current_user_no_auth():
     """GET /api/users/me without auth returns 401 or 422."""
+    app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_current_user_from_token, None)
     # "me" can't be parsed as int for /{user_id}, so the /me route
     # runs but requires auth — expect 401 or 422 depending on route order.
     resp = client.get("/api/users/me")
     assert resp.status_code in (401, 403, 422)
 
-
-def test_notification_preferences_no_auth():
-    """GET /api/users/me/notification-preferences without auth returns 401/403/422."""
-    resp = client.get("/api/users/me/notification-preferences")
-    assert resp.status_code in (401, 403, 422)

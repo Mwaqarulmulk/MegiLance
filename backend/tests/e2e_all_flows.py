@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+2#!/usr/bin/env python3
 """
 MegiLance Comprehensive E2E Test Suite - All User Flows & Features
 Tests every role (client, freelancer, admin) across all 110+ feature areas.

@@ -15,6 +15,7 @@ import lightStyles from './ExpenseTaxCalculator.light.module.css';
 import darkStyles from './ExpenseTaxCalculator.dark.module.css';
 import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
+import { ExportMenu, type AIReport } from '@/app/components/AI/report';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -307,6 +308,136 @@ function ResultsDashboard({
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
 
+function buildExpenseReport(r: TaxResult): AIReport {
+  const cur = r.meta.currency;
+  return {
+    toolName: 'AI Expense & Tax Calculator',
+    title: 'Freelance Expense & Tax Report',
+    subtitle: `Tax Year: ${r.meta.tax_year} · Filing Status: ${r.meta.filing_status}`,
+    fileBaseName: 'megilance-expense-tax-report',
+    kpis: [
+      { label: 'Total Tax Liability', value: `${cur} ${r.taxes.total_tax.toLocaleString()}`, hint: `${r.taxes.effective_rate}% effective` },
+      { label: 'Total Deductions', value: `${cur} ${r.deductions.total_deductions.toLocaleString()}` },
+      { label: 'Net Profit', value: `${cur} ${r.profit_loss.net_profit.toLocaleString()}`, hint: `${r.profit_loss.profit_margin}% margin` },
+      { label: 'Quarterly Estimated', value: `${cur} ${r.quarterly.estimated_quarterly.toLocaleString()}` },
+    ],
+    meta: [
+      { label: 'Region', value: r.meta.region.toUpperCase() },
+      { label: 'Filing Status', value: r.meta.filing_status },
+    ],
+    sections: [
+      {
+        heading: 'Income & Expenses (P&L)',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Gross Freelance Revenue', value: `${cur} ${r.profit_loss.revenue.toLocaleString()}` },
+              { label: 'Operating Expenses', value: `-${cur} ${r.profit_loss.operating_expenses.toLocaleString()}` },
+              { label: 'Taxes', value: `-${cur} ${r.profit_loss.taxes.toLocaleString()}` },
+              { label: 'Net Profit', value: `${cur} ${r.profit_loss.net_profit.toLocaleString()}` },
+              { label: 'Profit Margin', value: `${r.profit_loss.profit_margin}%` },
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Tax Deductions Breakdown',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Business Expenses', value: `${cur} ${r.deductions.business_expenses.toLocaleString()}` },
+              { label: 'Self-Employment Tax Deduction', value: `${cur} ${r.deductions.se_tax_deduction.toLocaleString()}` },
+              { label: 'Retirement Contribution', value: `${cur} ${r.deductions.retirement_contribution.toLocaleString()}` },
+              { label: 'Health Insurance Premium', value: `${cur} ${r.deductions.health_insurance.toLocaleString()}` },
+              { label: 'Standard Deduction', value: `${cur} ${r.deductions.standard_deduction.toLocaleString()}` },
+              { label: 'Total Deductions', value: `${cur} ${r.deductions.total_deductions.toLocaleString()}` },
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Tax Obligations',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Self-Employment Tax', value: `${cur} ${r.taxes.self_employment_tax.toLocaleString()}` },
+              { label: 'Federal/Income Tax', value: `${cur} ${r.taxes.federal_income_tax.toLocaleString()}` },
+              { label: 'State Tax', value: `${cur} ${r.taxes.state_tax.toLocaleString()}` },
+              { label: 'Total Tax', value: `${cur} ${r.taxes.total_tax.toLocaleString()}` },
+              { label: 'Effective Rate', value: `${r.taxes.effective_rate}%` },
+              { label: 'Marginal Rate', value: `${r.taxes.marginal_rate}%` },
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Quarterly Estimates',
+        blocks: [
+          {
+            kind: 'keyValue',
+            rows: [
+              { label: 'Total Estimated', value: `${cur} ${r.quarterly.estimated_quarterly.toLocaleString()}` },
+              { label: 'Already Paid', value: `${cur} ${r.quarterly.taxes_already_paid.toLocaleString()}` },
+              { label: 'Remaining Tax', value: `${cur} ${r.quarterly.remaining_tax.toLocaleString()}` },
+              { label: 'Per Remaining Quarter', value: `${cur} ${r.quarterly.per_remaining_quarter.toLocaleString()}` },
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Recommendations & Savings',
+        blocks: [
+          {
+            kind: 'bullets',
+            items: r.recommendations.map(re => `${re.title}: ${re.message} (Potential Savings: ${cur} ${re.potential_savings.toLocaleString()})`)
+          }
+        ]
+      }
+    ]
+  };
+}
+
+const getExpenseSummaryText = (result: TaxResult) => {
+  const cur = result.meta.currency;
+  return `MEGILANCE EXPENSE & TAX PROJECTION REPORT
+-----------------------------------------
+Tax Year: ${result.meta.tax_year}
+Filing Status: ${result.meta.filing_status}
+Region: ${result.meta.region.toUpperCase()}
+
+INCOME:
+- Gross Revenue: ${cur} ${result.profit_loss.revenue.toLocaleString()}
+- Operating Expenses: ${cur} ${result.profit_loss.operating_expenses.toLocaleString()}
+- Taxes: ${cur} ${result.profit_loss.taxes.toLocaleString()}
+- Net Profit: ${cur} ${result.profit_loss.net_profit.toLocaleString()} (${result.profit_loss.profit_margin}% margin)
+
+DEDUCTIONS:
+- Business Expenses: ${cur} ${result.deductions.business_expenses.toLocaleString()}
+- Self-Employment Tax Deduction: ${cur} ${result.deductions.se_tax_deduction.toLocaleString()}
+- Retirement: ${cur} ${result.deductions.retirement_contribution.toLocaleString()}
+- Health Insurance: ${cur} ${result.deductions.health_insurance.toLocaleString()}
+- Standard Deduction: ${cur} ${result.deductions.standard_deduction.toLocaleString()}
+- Total Deductions: ${cur} ${result.deductions.total_deductions.toLocaleString()}
+
+TAXES:
+- Self-Employment Tax: ${cur} ${result.taxes.self_employment_tax.toLocaleString()}
+- Federal/Income Tax: ${cur} ${result.taxes.federal_income_tax.toLocaleString()}
+- State Tax: ${cur} ${result.taxes.state_tax.toLocaleString()}
+- Total Tax Liability: ${cur} ${result.taxes.total_tax.toLocaleString()}
+- Effective Tax Rate: ${result.taxes.effective_rate}%
+- Marginal Tax Rate: ${result.taxes.marginal_rate}%
+
+QUARTERLY PAYMENTS:
+- Estimated Per Quarter: ${cur} ${result.quarterly.per_remaining_quarter.toLocaleString()}
+- Remaining Tax Obligation: ${cur} ${result.quarterly.remaining_tax.toLocaleString()}
+
+Generated by MegiLance AI Tools (megilance.com)
+`;
+};
+
 export default function ExpenseTaxCalculator() {
   const { resolvedTheme } = useTheme();
   const [step, setStep] = useState(0);
@@ -431,9 +562,18 @@ export default function ExpenseTaxCalculator() {
           {step < 2 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => setStep(step + 1)}>Next <ArrowRight size={16} /></button>}
           {step === 2 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={handleSubmit}>Calculate <ArrowRight size={16} /></button>}
           {step === 3 && result && (
-            <div className={cs.actionsBar}>
+            <div className={cn(cs.actionsBar, "flex flex-wrap gap-2 items-center")}>
               <button className={cn(cs.actionBtnSecondary, ts.actionBtnSecondary)} onClick={reset}><RotateCcw size={16} /> Recalculate</button>
-              <button className={cn(cs.actionBtnPrimary, ts.actionBtnPrimary)} onClick={() => window.print()}><Download size={16} /> Export</button>
+              <button 
+                className={cn(cs.actionBtnSecondary, ts.actionBtnSecondary, "flex items-center gap-1.5")} 
+                onClick={() => {
+                  navigator.clipboard.writeText(getExpenseSummaryText(result));
+                  alert("Summary copied to clipboard!");
+                }}
+              >
+                Copy Summary
+              </button>
+              <ExportMenu report={() => buildExpenseReport(result)} />
             </div>
           )}
         </div>

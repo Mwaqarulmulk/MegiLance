@@ -150,7 +150,7 @@ def _mock_turso(monkeypatch):
     _reset_db()
     targets = [
         "app.db.turso_http.execute_query",
-        "app.api.v1.auth.execute_query",
+        "app.api.v1.identity.auth.execute_query",
         "app.services.auth_service.execute_query",
         "app.core.security.execute_query",
         "app.services.token_blacklist_service.execute_query",
@@ -168,7 +168,7 @@ def _mock_turso(monkeypatch):
 def test_list_refunds_empty():
     """List refunds returns empty when none exist."""
     uid, token = _seed_user()
-    resp = client.get("/api/refunds/", headers={"Authorization": f"Bearer {token}"})
+    resp = client.get("/api/refunds", headers={"Authorization": f"Bearer {token}"})
     # May return 200 with empty list or 500 if service needs specific setup
     assert resp.status_code in (200, 500)
 
@@ -176,17 +176,17 @@ def test_list_refunds_empty():
 def test_list_invoices_empty():
     """List invoices returns empty when none exist."""
     uid, token = _seed_user()
-    resp = client.get("/api/invoices/", headers={"Authorization": f"Bearer {token}"})
+    resp = client.get("/api/invoices", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code in (200, 500)
 
 
 def test_refund_requires_auth():
     """Refund endpoints require authentication."""
-    resp = client.get("/api/refunds/")
+    resp = client.get("/api/refunds")
     assert resp.status_code in (401, 403)
 
 
 def test_invoice_requires_auth():
     """Invoice endpoints require authentication."""
-    resp = client.get("/api/invoices/")
+    resp = client.get("/api/invoices")
     assert resp.status_code in (401, 403)
