@@ -896,6 +896,11 @@
     gap: 1.25rem;
     margin-bottom: 1.5rem;
 }
+@media (max-width: 1024px) {
+    .chartsGrid {
+        grid-template-columns: 1fr;
+    }
+}
 .insightViewLink {
     margin-left: auto;
     font-size: 0.75rem;
@@ -907,49 +912,82 @@
 .spendingBarChart {
     display: flex;
     align-items: flex-end;
-    gap: 0.4rem;
-    height: 72px;
-    margin-top: 0.75rem;
+    gap: 0.5rem;
+    height: 90px;
+    margin-top: 1rem;
+    padding-bottom: 0.25rem;
+}
+.chartBarContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+}
+.chartBar {
+    width: 100%;
+    max-width: 32px;
+    border-radius: 6px 6px 0 0;
+    transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.25s ease,
+                background-color 0.2s ease;
+}
+.chartBarActive {
+    background: var(--ml-blue);
+    box-shadow: 0 4px 12px rgba(69, 115, 223, 0.25);
+}
+.chartBarInactive {
+    background: var(--border-light);
+}
+.chartBarLabel {
+    font-size: 0.65rem;
+    opacity: 0.65;
+    font-weight: 600;
 }
 .chartFootnote {
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
     font-size: 0.75rem;
     opacity: 0.65;
 }
 .funnelList {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
+    gap: 0.75rem;
+    margin-top: 1rem;
 }
 .funnelRow {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 .funnelLabel {
-    font-size: 0.7rem;
-    opacity: 0.65;
-    width: 120px;
+    font-size: 0.75rem;
+    opacity: 0.75;
+    font-weight: 500;
+    width: 130px;
     flex-shrink: 0;
 }
 .funnelTrack {
     flex: 1;
-    height: 8px;
-    border-radius: 4px;
+    height: 10px;
+    border-radius: var(--radius-full);
     overflow: hidden;
 }
+.funnelBar {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
 .funnelValue {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.8125rem;
+    font-weight: 700;
     width: 24px;
     text-align: right;
 }
 
 .motionWrapper {
     width: 100%;
-    /* Lay the KPI stat cards out in a responsive grid instead of letting them
-       stack full-width (which produced over-long horizontal boxes). */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.25rem;
@@ -976,3 +1014,4 @@
     transform: translateY(-4px) scale(1.01);
     z-index: 10;
 }
+

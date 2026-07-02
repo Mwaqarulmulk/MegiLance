@@ -91,6 +91,16 @@ const ClientDashboard: React.FC = () => {
   const themeStyles =
     mounted && resolvedTheme === "dark" ? darkStyles : lightStyles;
 
+  // Generate timezone-aware greeting (client-only to avoid hydration mismatch)
+  const greeting = useMemo(() => {
+    if (!mounted) return "Welcome back 👋";
+    const hours = new Date().getHours();
+    const name = user?.name ? `, ${user.name.split(" ")[0]}` : "";
+    if (hours < 12) return `Good morning${name} 🌅`;
+    if (hours < 17) return `Good afternoon${name} ☀️`;
+    return `Good evening${name} 🌙`;
+  }, [user?.name, mounted]);
+
   const displayProjects = useMemo(() => {
     if (!Array.isArray(projects)) return [];
     return projects;
@@ -414,10 +424,7 @@ const ClientDashboard: React.FC = () => {
             <div
               className={cn(commonStyles.welcomeText, themeStyles.welcomeText)}
             >
-              <h1>
-                Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}{" "}
-                👋
-              </h1>
+              <h1>{greeting}</h1>
               <p>Here&apos;s what&apos;s happening with your projects today.</p>
             </div>
             <div className={commonStyles.headerActions}>
@@ -635,34 +642,26 @@ const ClientDashboard: React.FC = () => {
                       return monthlySpendingTrend.map((m, i) => (
                         <div
                           key={i}
-                          style={{
-                            flex: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            gap: 4,
-                            height: "100%",
-                          }}
+                          className={commonStyles.chartBarContainer}
                         >
                           <div
                             title={`${m.label}: $${m.amount.toLocaleString()}`}
+                            className={cn(
+                              commonStyles.chartBar,
+                              m.amount > 0
+                                ? commonStyles.chartBarActive
+                                : commonStyles.chartBarInactive,
+                            )}
                             style={{
-                              width: "100%",
-                              background:
-                                m.amount > 0
-                                  ? "var(--color-primary, #4573df)"
-                                  : "var(--color-border, #e2e8f0)",
-                              borderRadius: "4px 4px 0 0",
                               height: `${Math.max((m.amount / max) * 100, m.amount > 0 ? 8 : 4)}%`,
                               opacity:
                                 i === monthlySpendingTrend.length - 1
                                   ? 1
                                   : 0.55 +
                                     (i / monthlySpendingTrend.length) * 0.45,
-                              transition: "height 0.3s ease",
                             }}
                           />
-                          <span style={{ fontSize: "0.6rem", opacity: 0.6 }}>
+                          <span className={commonStyles.chartBarLabel}>
                             {m.label}
                           </span>
                         </div>
@@ -745,12 +744,10 @@ const ClientDashboard: React.FC = () => {
                           )}
                         >
                           <div
+                            className={commonStyles.funnelBar}
                             style={{
-                              height: "100%",
                               width: `${Math.max((step.value / step.max) * 100, step.value > 0 ? 6 : 0)}%`,
                               background: step.color,
-                              borderRadius: 4,
-                              transition: "width 0.4s ease",
                             }}
                           />
                         </div>

@@ -1,10 +1,20 @@
 /* @AI-HINT: Dark theme styles for AppLayout */
 
-.layoutWrapper {
-  background-color: var(--color-background-dark, var(--bg-primary-dark));
-  color: var(--color-text-dark, var(--text-primary-dark));
+.appLayout {
+  background-color: var(--bg-primary-dark);
+  color: var(--text-primary-dark);
 }
 
 .mainContent {
-  background: radial-gradient(circle at top right, rgba(69, 115, 223, 0.1) 0%, transparent 400px);
+  background: radial-gradient(circle at top right, rgba(69, 115, 223, 0.08) 0%, transparent 600px);
 }
+
+.mobileOverlay {
+  background: rgba(2, 6, 23, 0.6);
+}
+
+.skipLink {
+  background: var(--ml-blue);
+  color: white;
+}
+

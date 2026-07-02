@@ -38,31 +38,13 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
             {job.clientName}
           </span>
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            gap: 4,
-          }}
-        >
+        <div className={commonStyles.budgetWrapper}>
           <div className={cn(commonStyles.budget, themeStyles.budget)}>
             {job.budget != null ? `$${job.budget.toLocaleString()}` : "—"}
           </div>
           {job.matchScore != null && (
             <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 3,
-                padding: "2px 8px",
-                borderRadius: 20,
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                background: "linear-gradient(135deg, #4573df, #7c3aed)",
-                color: "#fff",
-                whiteSpace: "nowrap",
-              }}
+              className={commonStyles.matchBadge}
               title={`AI match score: ${job.matchScore}%`}
             >
               <Sparkles size={10} aria-hidden="true" />

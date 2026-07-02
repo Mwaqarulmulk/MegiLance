@@ -1,18 +1,17 @@
 /* @AI-HINT: Freelancer JobCard — layout & animations */
 
 .card {
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  transition: transform 0.22s cubic-bezier(.4,0,.2,1),
-              box-shadow 0.22s cubic-bezier(.4,0,.2,1),
-              border-color 0.22s cubic-bezier(.4,0,.2,1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
 }
 
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.01);
 }
 
 .header {
@@ -168,3 +167,30 @@
     font-size: 0.6875rem;
   }
 }
+
+.budgetWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.matchBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  color: white;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.matchBadge:hover {
+  transform: scale(1.05);
+}
+

@@ -1,26 +1,32 @@
 /* @AI-HINT: PortalLayout dark theme — email verification & onboarding banner colors */
 
 .verifyBanner {
-  background: #3d2a00;
-  border-color: #5c4000;
-  color: #fbbf24;
+  background: rgba(61, 42, 0, 0.65);
+  border-color: rgba(251, 191, 36, 0.25);
+  color: #fde68a;
 }
 
 .verifyResendBtn {
-  color: #fbbf24;
+  background: #fbbf24;
+  color: #1e293b;
 }
 
 .verifyDismissBtn {
-  color: #fbbf24;
+  color: #fde68a;
+}
+
+.verifyDismissBtn:hover {
+  background: rgba(253, 230, 138, 0.1);
 }
 
 .onboardingBanner {
-  background: #1e3a5f;
-  border-color: #2563eb;
-  color: #93c5fd;
+  background: rgba(30, 58, 95, 0.65);
+  border-color: rgba(37, 99, 235, 0.25);
+  color: #bfdbfe;
 }
 
 .onboardingBannerBtn {
-  background: #2563eb;
+  background: #3b82f6;
   color: white;
 }
+

@@ -215,6 +215,16 @@ const Dashboard: React.FC = () => {
   const themeStyles =
     mounted && resolvedTheme === "dark" ? darkStyles : lightStyles;
 
+  // Generate timezone-aware greeting (client-only to avoid hydration mismatch)
+  const greeting = useMemo(() => {
+    if (!mounted) return "Welcome back";
+    const hours = new Date().getHours();
+    const name = user?.name ? `, ${user.name.split(" ")[0]}` : "";
+    if (hours < 12) return `Good morning${name} 🌅`;
+    if (hours < 17) return `Good afternoon${name} ☀️`;
+    return `Good evening${name} 🌙`;
+  }, [user?.name, mounted]);
+
   const metrics = useMemo(
     () => ({
       earnings: analytics?.totalEarnings || "$0",
@@ -421,9 +431,7 @@ const Dashboard: React.FC = () => {
       <div className={commonStyles.headerSection}>
         <div className={cn(commonStyles.welcomeText, themeStyles.welcomeText)}>
           <div className={commonStyles.welcomeRow}>
-            <h1>
-              Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}
-            </h1>
+            <h1>{greeting}</h1>
             {analytics?.availabilityStatus === "available" && (
               <span
                 className={cn(

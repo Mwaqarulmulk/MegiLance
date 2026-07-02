@@ -120,13 +120,14 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1.125rem;
-  border-radius: 0.875rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: var(--radius-xl);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  will-change: transform, box-shadow;
 }
 
-.statCard:hover { transform: translateY(-2px); }
+.statCard:hover { transform: translateY(-4px) scale(1.01); }
 
 .statCardTop {
   display: flex;

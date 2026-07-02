@@ -165,10 +165,13 @@
 \n
 /* ── Charts ────────────────────────────── */
 .funnelTrack {
-    background: #e2e8f0;
+    background: #edf0f5;
+}
+.chartBarInactive {
+    background-color: #e2e8f0;
 }
 .insightViewLink {
-    color: #4573df;
+    color: var(--ml-blue);
 }
 
 .glassPanel {
@@ -178,3 +181,4 @@
 .cardHover:hover {
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
 }
+

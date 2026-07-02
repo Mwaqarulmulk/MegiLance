@@ -372,6 +372,17 @@ const AdminDashboard: React.FC = () => {
 
   const themeStyles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
+  // Generate timezone-aware greeting (client-only to avoid hydration mismatch)
+  const greeting = useMemo(() => {
+    if (!mounted) return "Command Center";
+    const hours = new Date().getHours();
+    const name = user?.name ? `${user.name.split(' ')[0]}'s Command Center` : "Command Center";
+    let greetingPrefix = "Good morning";
+    if (hours >= 12 && hours < 17) greetingPrefix = "Good afternoon";
+    else if (hours >= 17) greetingPrefix = "Good evening";
+    return `${greetingPrefix}, ${name}`;
+  }, [user?.name, mounted]);
+
   const stats = useMemo(() => {
     return [
       { title: 'System Health', value: healthData.apiStatus === 'healthy' ? '99.9%' : 'Degraded', trend: healthData.apiStatus === 'healthy' ? '+0.1%' : '-2.4%', icon: Activity, accent: 'green' as const, sparkline: undefined, subtitle: 'API Uptime (30d)' },
@@ -407,7 +418,7 @@ const AdminDashboard: React.FC = () => {
             <div className={commonStyles.welcomeText}>
               <div className={commonStyles.headerTitleRow}>
                 <h1 className={cn(commonStyles.headerTitle, themeStyles.headerTitle)}>
-                  {user?.name ? `${user.name.split(' ')[0]}'s Command Center` : 'Command Center'}
+                  {greeting}
                 </h1>
                 <span className={cn(commonStyles.envBadge, themeStyles.envBadge)}>Production</span>
               </div>

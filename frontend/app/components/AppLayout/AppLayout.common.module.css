@@ -1,10 +1,11 @@
 /* @AI-HINT: Common layout and structural styles for AppLayout */
 
-.layoutWrapper {
+.appLayout {
   display: flex;
   min-height: 100vh;
   width: 100%;
-  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .mainContent {
@@ -13,34 +14,82 @@
   flex-direction: column;
   position: relative;
   width: 100%;
+  min-width: 0;
+  padding-left: 260px;
   transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.pageContainer {
-  flex: 1;
-  width: 100%;
-  padding: 1.5rem;
-  max-width: 1440px;
-  margin: 0 auto;
-  min-height: calc(100vh - 64px - 80px); /* rough header+footer subtraction */
+.mainContentCollapsed {
+  padding-left: 70px;
 }
 
-/* Base header/sidebar interaction spacing */
-@media (min-width: 1024px) {
-  .mainContent {
-    padding-left: var(--sidebar-width, 260px);
+.pageContent {
+  flex: 1;
+  width: 100%;
+  padding: 1.5rem 2rem 3rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+}
+
+/* Mobile overlay backdrop */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.25s ease-out;
+}
+
+.mobileOverlayVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Skip link for keyboard accessibility */
+.skipLink {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  z-index: 10000;
+  box-shadow: var(--shadow-lg);
+  transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skipLink:focus {
+  top: 0;
+}
+
+/* Accessibility screen-reader only class */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mainContent,
+  .mainContentCollapsed {
+    padding-left: 0;
+    padding-bottom: 64px;
+  }
+
+  .pageContent {
+    padding: 1rem 1rem 2rem;
   }
 }
 
-.portalShell {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.portalScrollable {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-}
