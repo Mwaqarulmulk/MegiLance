@@ -69,7 +69,7 @@ export default function CostCalculatorClient({ faqs }: { faqs: FAQ[] }) {
             Freelance Cost <span className={cn(commonStyles.gradient, theme.gradient)}>Calculator</span>
           </h1>
           <p className={cn(commonStyles.heroDesc, theme.heroDesc)}>
-            See exactly how much you save hiring freelancers on MegiLance vs full-time employees or other platforms
+            Calculate your direct talent ROI. Compare the total cost of standard full-time employment (including benefits and administrative overhead) against hiring direct global experts on MegiLance, bypassing the 15% middleman markups charged by legacy platforms.
           </p>
         </div>
       </section>
@@ -135,12 +135,12 @@ export default function CostCalculatorClient({ faqs }: { faqs: FAQ[] }) {
                 </div>
                 <div className={cn(commonStyles.resultCard, theme.resultCardUpwork)}>
                   <DollarSign size={20} />
-                  <span className={commonStyles.resultLabel}>Upwork Cost</span>
+                  <span className={commonStyles.resultLabel}>Legacy Platform Cost</span>
                   <span className={cn(commonStyles.resultValue, theme.resultValueUpwork)}>{fmt(results.upworkTotal)}</span>
                 </div>
                 <div className={cn(commonStyles.resultCard, theme.resultCardMgl)}>
                   <TrendingDown size={20} />
-                  <span className={commonStyles.resultLabel}>MegiLance Cost</span>
+                  <span className={commonStyles.resultLabel}>MegiLance (Direct)</span>
                   <span className={cn(commonStyles.resultValue, theme.resultValueMgl)}>{fmt(results.freelanceTotal)}</span>
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function CostCalculatorClient({ faqs }: { faqs: FAQ[] }) {
                 </div>
                 {results.upworkSavings > 0 && (
                   <div className={cn(commonStyles.upworkSaving, theme.upworkSaving)}>
-                    + {fmt(results.upworkSavings)} more vs Upwork (0% commission)
+                    + {fmt(results.upworkSavings)} more saved vs legacy platforms (0% client commission)
                   </div>
                 )}
               </div>

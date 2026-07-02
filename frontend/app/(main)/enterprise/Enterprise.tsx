@@ -31,48 +31,48 @@ import dark from './Enterprise.dark.module.css';
 
 // Enterprise stats
 const stats = [
-  { label: 'Enterprise Features', value: 'Full Suite', icon: Building2, description: 'Built-in capabilities' },
-  { label: 'Talent Pool', value: 'Global', icon: Users, description: 'Vetted professionals' },
-  { label: 'Reach', value: 'Worldwide', icon: Globe, description: 'International coverage' },
-  { label: 'Platform', value: 'Reliable', icon: TrendingUp, description: 'High availability' },
+  { label: 'Workforce Efficiency', value: '+45%', icon: Building2, description: 'Increased output velocity' },
+  { label: 'Platform Commission', value: '2-5%', icon: Users, description: 'Low transactional friction' },
+  { label: 'Compliance Overhead', value: 'Zero', icon: Globe, description: 'Automated NDAs & tax forms' },
+  { label: 'Talent Match Time', value: '<24h', icon: TrendingUp, description: 'Rapid, precise sourcing' },
 ];
 
 // Core features
 const coreFeatures = [
   {
     icon: Shield,
-    title: 'Enterprise-Grade Security',
-    description: 'SOC 2 Type II certified, end-to-end encryption, and advanced threat protection. Your data is protected by bank-level security standards.',
+    title: 'Risk Mitigation & IP Protection',
+    description: 'Enterprise-level encryption, SOC 2 compliance, and automated, legally sound IP transfer contracts. Secure your intellectual capital.',
     highlight: 'Secure'
   },
   {
     icon: Users,
-    title: 'Dedicated Account Team',
-    description: 'Personal success manager, priority technical support, and quarterly business reviews to ensure your success.',
+    title: 'Contractor Compliance Sourcing',
+    description: 'Personal success managers handle tax compliance, localized payouts to global contractors, and priority conflict resolution.',
     highlight: '24/7 Support'
   },
   {
     icon: BarChart3,
-    title: 'Advanced Analytics',
-    description: 'Real-time dashboards, custom reports, and AI-powered insights to optimize your workforce utilization and spending.',
+    title: 'Workforce ROI Analytics',
+    description: 'Real-time cost tracking, contractor utilization dashboards, and comparative platform savings data in a single dashboard.',
     highlight: 'Real-time Data'
   },
   {
     icon: Settings,
-    title: 'Custom Integrations',
-    description: 'Seamless integration with your existing tools - SAP, Workday, Oracle, Salesforce, and custom REST/GraphQL APIs.',
+    title: 'Enterprise API Integration',
+    description: 'Seamlessly integrate contractor workflows and milestone releases into your existing tools like Slack, Jira, and enterprise databases.',
     highlight: 'API Ready'
   },
   {
     icon: Lock,
-    title: 'Compliance & Governance',
-    description: 'GDPR, CCPA, and industry-specific compliance. Custom approval workflows and audit trails for complete visibility.',
+    title: 'Automated Contractor Governance',
+    description: 'Automate KYC, CCPA/GDPR compliance checks, and multi-tier approval workflows to manage hundreds of active milestones safely.',
     highlight: 'Full Compliance'
   },
   {
     icon: Zap,
-    title: 'AI-Powered Matching',
-    description: 'Our proprietary AI analyzes skills, experience, and work style to find the perfect talent match in minutes, not weeks.',
+    title: 'Semantic Skill Sourcing',
+    description: 'Our proprietary AI maps your project requirements to verified freelancer portfolios, bypassing credential inflation and vetting fatigue.',
     highlight: 'AI-Powered'
   },
 ];
@@ -187,8 +187,8 @@ const Enterprise: React.FC = () => {
                 Talent Solutions
               </h1>
               <p className={cn(common.heroSubtitle, themed.heroSubtitle)}>
-                Leading organizations can use MegiLance to access the world&apos;s best freelance talent. 
-                Security-first, AI-powered, and built for the enterprise.
+                Empower your engineering and design teams with direct access to top global contractors.
+                Manage security, compliance, escrow payments, and AI sourcing under a single, premium governance layer.
               </p>
               <div className={common.heroCtas}>
                 <Link href="/contact" className={cn(common.primaryBtn, themed.primaryBtn)}>

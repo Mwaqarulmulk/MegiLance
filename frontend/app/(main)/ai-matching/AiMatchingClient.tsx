@@ -44,13 +44,12 @@ export default function AiMatchingClient() {
             🤖 Powered by Advanced Machine Learning
           </div>
 
-          <h1 className={commonStyles.heroTitle}>Smart Talent Discovery</h1>
+          <h1 className={commonStyles.heroTitle}>Objective Capability Mapping</h1>
 
           <p className={cn(commonStyles.heroDesc, t.heroDesc)}>
-            Stop scrolling through endless profiles. Tell our AI what you need
-            to build, and it will instantly compile a shortlist of the perfect
-            freelancers for the job based on past performance, skills, and
-            success rates.
+            Bypass resume inflation and screening bias. Describe your project requirements,
+            and our machine learning engine will map them directly to freelancers' verified code history,
+            technical assessments, and past client reviews, delivering a shortlist based purely on capability.
           </p>
 
           <div className={cn(commonStyles.searchBox, t.searchBox)}>
