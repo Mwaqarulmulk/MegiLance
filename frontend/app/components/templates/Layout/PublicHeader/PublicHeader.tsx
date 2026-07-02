@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
-import { Menu, X, ChevronDown, Users, Briefcase, Zap, Shield, Sparkles } from 'lucide-react';
+import { Menu, X, ChevronDown, Users, Briefcase, Zap, Shield, Sparkles, LucideIcon } from 'lucide-react';
 
 import { MegiLanceLogo } from '@/app/components/atoms/MegiLanceLogo/MegiLanceLogo';
 import Button from '@/app/components/atoms/Button/Button';
@@ -16,7 +16,21 @@ import commonStyles from './PublicHeader.common.module.css';
 import lightStyles from './PublicHeader.light.module.css';
 import darkStyles from './PublicHeader.dark.module.css';
 
-const navLinks = [
+interface NavLinkItem {
+  name: string;
+  href: string;
+  status?: FeatureStatus;
+}
+
+interface ServiceDropdownItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  description: string;
+  status?: FeatureStatus;
+}
+
+const navLinks: NavLinkItem[] = [
   { name: 'How It Works', href: '/how-it-works' },
   { name: 'Project Demo', href: '/project-demo' },
   { name: 'Features', href: '/#features' },
@@ -24,7 +38,7 @@ const navLinks = [
   { name: 'Blog', href: '/blog' },
 ];
 
-const servicesDropdown = [
+const servicesDropdown: ServiceDropdownItem[] = [
   { name: 'For Freelancers', href: '/freelancers', icon: Users, description: 'Find work and build your career' },
   { name: 'For Clients', href: '/clients', icon: Briefcase, description: 'Hire top talent for your projects' },
   { name: 'Talent Directory', href: '/talent', icon: Sparkles, description: 'Browse our top rated talent' },
