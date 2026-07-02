@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Cpu, ShieldCheck, Globe, Wallet } from 'lucide-react';
+import { Cpu, ShieldCheck, Lock, Calculator, Briefcase, Users } from 'lucide-react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 
 import FeatureCard from './FeatureCard';
@@ -15,28 +15,36 @@ import darkStyles from './Features.dark.module.css';
 
 const featuresData = [
   {
+    icon: <Calculator />,
+    title: 'AI Price Estimator',
+    description: 'Suggests project budgets, complexity ratings, and automated milestone structures using market-aware ML analysis.',
+  },
+  {
     icon: <Cpu />,
-    title: 'AI-Powered Matching',
-    description: 'Get matched with the right freelancers based on skills, budget, availability, and past project success — automatically.',
+    title: 'Talent Matching Score',
+    description: 'Scores proposals based on verified developer experience, skill overlap, availability, and client ratings.',
   },
   {
     icon: <ShieldCheck />,
-    title: 'Secure Escrow Payments',
-    description: 'Funds are held in escrow and released only when milestones are approved. No risk for either side.',
+    title: 'Fraud Risk Check',
+    description: 'Identifies suspicious keywords, budget anomalies, and payment verification red flags in real-time.',
   },
   {
-    icon: <Globe />,
-    title: 'Global Talent Pool',
-    description: 'Access developers, designers, and writers worldwide. Filter by skills, timezone, and hourly rate.',
+    icon: <Lock />,
+    title: 'Smart Contract Escrow',
+    description: 'Milestone payments are locked securely in smart-contract escrow, releasing only upon client approval of deliverables.',
   },
   {
-    icon: <Wallet />,
-    title: 'Transparent Pricing',
-    description: 'Clear fee structure with no hidden costs. Track every payment, milestone, and invoice from your dashboard.',
+    icon: <Briefcase />,
+    title: 'Client Dashboard',
+    description: 'Post projects, browse AI-ranked proposals, manage active milestones, track budgets, and message freelancers.',
+  },
+  {
+    icon: <Users />,
+    title: 'Freelancer Dashboard',
+    description: 'Manage profiles, submit proposals, track earnings, generate smart invoices, and deliver milestones.',
   },
 ];
-
-
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -67,7 +75,6 @@ const Features: React.FC = () => {
   const mode = useThemeMode();
   const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
-  const [heroFeature, ...secondaryFeatures] = featuresData;
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
@@ -93,7 +100,7 @@ const Features: React.FC = () => {
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Why MegiLance?
+            Proof of Concept
           </motion.span>
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -114,7 +121,7 @@ const Features: React.FC = () => {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            Everything You Need to Get Work Done
+            What MegiLance Actually Includes
           </motion.h2>
           <motion.p 
             className={cn(commonStyles.subtitle, themeStyles.subtitle)}
@@ -122,7 +129,7 @@ const Features: React.FC = () => {
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            Post projects, find talent, manage contracts, and pay securely — all in one platform.
+            Our full-stack implementation includes all the core features needed for a fully functional freelance marketplace.
           </motion.p>
         </motion.div>
         
@@ -132,36 +139,20 @@ const Features: React.FC = () => {
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          <motion.div 
-            className={cn(commonStyles.heroCardWrapper)}
-            variants={itemVariants}
-            whileHover={{ scale: 1.01, rotateX: 2, rotateY: -2, zIndex: 10 }}
-            transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
-            style={{ perspective: 1000 }}
-          >
-            <FeatureCard
-              variant="hero"
-              icon={heroFeature.icon}
-              title={heroFeature.title}
-              description={heroFeature.description}
-            />
-          </motion.div>
-          <div className={cn(commonStyles.secondaryGrid)}>
-            {secondaryFeatures.map((feature, i) => (
-              <motion.div 
-                key={feature.title}
-                variants={itemVariants}
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: 'spring' as const, stiffness: 300 }}
-              >
-                <FeatureCard
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                />
-              </motion.div>
-            ))}
-          </div>
+          {featuresData.map((feature, i) => (
+            <motion.div 
+              key={feature.title}
+              variants={itemVariants}
+              whileHover={{ y: -5, scale: 1.02 }}
+              transition={{ type: 'spring' as const, stiffness: 300 }}
+            >
+              <FeatureCard
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+              />
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

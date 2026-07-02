@@ -9,10 +9,12 @@ import { cn } from '@/lib/utils';
 import Hero from './components/Hero/Hero';
 import PainSolutions from './components/PainSolutions/PainSolutions';
 import TrustIndicators from './components/TrustIndicators';
+import DashboardShowcase from './components/DashboardShowcase/DashboardShowcase';
 import AIToolsHub from './components/AIToolsHub';
 import Features from './components/Features';
 import AIShowcase from './components/AIShowcase';
 import HowItWorks from './components/HowItWorks';
+import ProjectDemo from './components/ProjectDemo';
 import Testimonials from './components/Testimonials';
 import { ScrollReveal } from '../components/Animations/ScrollReveal';
 
@@ -63,6 +65,15 @@ const Home: React.FC = () => {
             </div>
           </section>
 
+          {/* Interactive Interface Showcase */}
+          <section className={commonStyles.homeSection} aria-label="Interactive dashboard showcase">
+            <div className={commonStyles.sectionContainer}>
+              <ScrollReveal width="100%" direction="up" delay={0.1}>
+                <DashboardShowcase />
+              </ScrollReveal>
+            </div>
+          </section>
+
           {/* Trust Indicators */}
           <section className={commonStyles.homeSection} aria-label="Trust indicators">
             <div className={commonStyles.sectionContainer}>
@@ -104,6 +115,15 @@ const Home: React.FC = () => {
             <div className={commonStyles.sectionContainer}>
               <ScrollReveal width="100%" direction="left">
                 <HowItWorks />
+              </ScrollReveal>
+            </div>
+          </section>
+
+          {/* Project Demo codebase section */}
+          <section id="project-demo" className={commonStyles.homeSection} aria-label="Project demo and codebase">
+            <div className={commonStyles.sectionContainer}>
+              <ScrollReveal width="100%" direction="up" delay={0.1}>
+                <ProjectDemo />
               </ScrollReveal>
             </div>
           </section>

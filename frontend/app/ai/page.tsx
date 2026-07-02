@@ -250,7 +250,9 @@ const AIHubPage = () => {
                   )}
                 >
                   <div className={cn("text-2xl md:text-3xl font-bold", commonStyles.highlightText, themeStyles.highlightText)}>
-                    {stat.num != null ? (
+                    {!mounted ? (
+                      stat.value
+                    ) : stat.num != null ? (
                       <NumberTicker value={stat.num} suffix={stat.suffix} />
                     ) : (
                       stat.value

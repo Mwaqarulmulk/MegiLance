@@ -253,6 +253,54 @@ const HowItWorksPage: React.FC = () => {
           </StaggerContainer>
         </section>
 
+        {/* How Matching Score Works */}
+        <section className={commonStyles.section} aria-labelledby="matching-score">
+          <ScrollReveal>
+            <h2 id="matching-score" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
+              How MegiLance Matching Score Works
+            </h2>
+            <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
+              Our 7-factor semantic algorithm calculates an objective compatibility score for every proposal.
+            </p>
+          </ScrollReveal>
+          
+          <div className="max-w-4xl mx-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm my-8">
+            <div className="grid md:grid-cols-2 gap-8 items-center text-left">
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Algorithmic Weighted Model</h3>
+                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                  Instead of paying to rank higher, MegiLance enforces meritocracy. Proposals are ranked using a multi-dimensional analysis pipeline that combines text embeddings, historical execution metrics, and reputation vectors.
+                </p>
+                <div className="p-4 bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-100 dark:border-slate-850 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong>Evaluation Defense Note:</strong> This matching model ensures clients receive vetted matches automatically, saving hours of manual review.
+                </div>
+              </div>
+              
+              <div className="space-y-3.5">
+                {[
+                  { name: 'Skill Match', weight: 35, color: 'bg-blue-500', desc: 'Syntax & semantic skill vector compatibility' },
+                  { name: 'Past Project Relevance', weight: 20, color: 'bg-indigo-500', desc: 'Historical project similarity & category fit' },
+                  { name: 'Ratings & Reviews', weight: 15, color: 'bg-emerald-500', desc: 'Verified client feedback & milestone success' },
+                  { name: 'Budget Fit', weight: 10, color: 'bg-amber-500', desc: 'Bid alignment with project target estimates' },
+                  { name: 'Availability & Speed', weight: 10, color: 'bg-teal-500', desc: 'Working capacity & response times' },
+                  { name: 'Communication Quality', weight: 5, color: 'bg-pink-500', desc: 'Activity rate in collaborative workspaces' },
+                  { name: 'Fraud & Compliance', weight: 5, color: 'bg-rose-500', desc: 'Verification status & risk score checks' },
+                ].map((factor) => (
+                  <div key={factor.name} className="space-y-1">
+                    <div className="flex justify-between text-xs font-semibold">
+                      <span className="text-slate-800 dark:text-slate-200">{factor.name}</span>
+                      <span className="text-slate-900 dark:text-white">{factor.weight}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                      <div className={cn("h-full rounded-full", factor.color)} style={{ width: `${factor.weight}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Technical Architecture Overview */}
         <section className={commonStyles.section} aria-labelledby="architecture">
           <ScrollReveal>

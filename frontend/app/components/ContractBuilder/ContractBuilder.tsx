@@ -127,6 +127,10 @@ export default function ContractBuilder() {
       <div className={commonStyles.header}>
         <h1>Smart Contract Builder</h1>
         <p>Generate professional, tailored legal agreements in seconds using AI.</p>
+        <div className="mt-4 p-3 border border-amber-200 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 text-xs rounded-xl max-w-xl mx-auto flex items-center justify-center gap-2">
+          <AlertTriangle size={14} className="flex-shrink-0" />
+          <span><strong>Legal Disclaimer:</strong> Generated contracts are starting templates only. Review with a qualified legal professional before use.</span>
+        </div>
       </div>
 
       <div className={commonStyles.grid}>

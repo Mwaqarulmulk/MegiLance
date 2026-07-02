@@ -73,35 +73,20 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 3rem;
-  position: relative;
-  /* Removed transform-style to prevent layout issues */
-}
-
-.heroCardWrapper {
-  grid-column: span 12;
-  margin-bottom: 3rem;
-  /* Removed transform-style */
-}
-
-.secondaryGrid {
-  grid-column: span 12;
-  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
-  /* Removed transform-style */
+  position: relative;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
   .featuresSection { padding: 6rem 0; }
-  .secondaryGrid { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
   .featuresSection { padding: 4rem 0; }
-  .secondaryGrid { grid-template-columns: 1fr; gap: 2rem; }
+  .grid { grid-template-columns: 1fr; gap: 2rem; }
   .title { font-size: 2.5rem; }
   .header { margin-bottom: 3rem; }
 }

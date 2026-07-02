@@ -200,7 +200,11 @@ export default function Header() {
                     if (e.key === 'Escape') setActiveMenu(null);
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      activeMenu === key ? setActiveMenu(null) : handleMenuEnter(key);
+                      if (activeMenu === key) {
+                        setActiveMenu(null);
+                      } else {
+                        handleMenuEnter(key);
+                      }
                     }
                   }}
                   aria-haspopup="true"

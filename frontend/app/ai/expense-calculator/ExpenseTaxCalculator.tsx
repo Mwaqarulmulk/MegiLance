@@ -517,6 +517,10 @@ export default function ExpenseTaxCalculator() {
         </span>
         <h1 className={cn(cs.title, ts.title)}><AnimatedGradientText>Expense & Tax Calculator</AnimatedGradientText></h1>
         <p className={cn(cs.subtitle, ts.subtitle)}>Track expenses, deductions, and estimate your tax obligations</p>
+        <div className="mt-3 p-3 border border-amber-200 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 text-xs rounded-xl max-w-xl mx-auto flex items-center justify-center gap-2">
+          <AlertTriangle size={14} className="flex-shrink-0" />
+          <span><strong>Financial Disclaimer:</strong> This tool provides educational estimates only and does not replace professional tax or financial advice.</span>
+        </div>
       </header>
 
       <GuestBanner toolName="Expense & Tax Calculator" variant="inline" />

@@ -308,8 +308,11 @@ const ProjectDetail: React.FC = () => {
                   <Skeleton height={100} width='100%' />
                 </div>
               ) : proposals.length === 0 ? (
-                <div className={cn(common.emptyState, themed.emptyState)}>
-                  <p>No proposals received yet. Share your project to attract freelancers!</p>
+                <div className={cn(common.emptyState, themed.emptyState, "p-8 text-center border border-dashed rounded-2xl bg-slate-50 dark:bg-slate-900/40")}>
+                  <p className="font-semibold text-slate-800 dark:text-slate-200">No proposals received yet</p>
+                  <p className="text-xs text-slate-500 mt-1.5 max-w-md mx-auto leading-relaxed">
+                    Once freelancers submit proposals, MegiLance will automatically rank them using our 7-factor semantic matching score (evaluating skill match, price fit, delivery history, and risk score) to help you choose the best candidate.
+                  </p>
                 </div>
               ) : (
                 <div className={common.proposalsList}>

@@ -24,7 +24,7 @@ const industryStats = [
   { icon: Users, number: "1M+", label: "Pakistani Freelancers", description: "Pakistan ranks 4th globally in freelancing (source: Oxford Internet Institute)." },
   { icon: Globe, number: "180+", label: "Countries Connected", description: "The global freelance marketplace connects talent across continents." },
   { icon: LineChart, number: "$455B+", label: "Global Market Size", description: "Worldwide freelancing market size per Statista 2025 report." },
-  { icon: Star, number: "8%", label: "Platform Fee", description: "Freelancers pay just 8% (clients 0%) — vs the 20%+ charged by traditional platforms." }
+  { icon: Star, number: "10%", label: "Platform Fee", description: "Freelancers pay just 10% (clients 0%) on the free tier — vs the 20%+ charged by traditional platforms." }
 ];
 
 interface SuccessStory {

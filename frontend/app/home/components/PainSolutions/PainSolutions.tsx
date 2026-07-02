@@ -40,7 +40,7 @@ const ITEMS = [
     icon: Receipt,
     pain: 'High platform commission taxing your budget',
     solution:
-      'We cut out excessive marketplace fees with transparent 5–8% platform rates. More of your capital directly incentivizes the expert doing the work.',
+      'We cut out excessive marketplace fees with transparent 5–10% platform rates. More of your capital directly incentivizes the expert doing the work.',
   },
   {
     icon: BadgeCheck,

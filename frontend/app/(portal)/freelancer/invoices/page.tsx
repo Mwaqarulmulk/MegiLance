@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api/core";
 import { downloadInvoicePdf } from "@/lib/api/pdf";
 import {
@@ -839,12 +840,12 @@ export default function InvoicesPage() {
                   <div className="text-sm text-amber-600 dark:text-amber-400 py-2">
                     You have no active contracts yet. An invoice must be raised
                     against a contract —{" "}
-                    <a
+                    <Link
                       href="/freelancer/contracts"
                       className="underline font-medium hover:opacity-80"
                     >
                       create one first
-                    </a>
+                    </Link>
                     .
                   </div>
                 ) : (

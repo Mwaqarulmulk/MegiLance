@@ -5,6 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
+import { useAuth } from '@/hooks/useAuth';
 import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
@@ -18,40 +19,71 @@ const defaultStats = [
 
 export default function Hero({ stats = defaultStats }) {
   const mode = useThemeMode();
+  const { user, isAuthenticated } = useAuth();
 
   const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
+
+  // Determine dashboard link based on role
+  const dashboardLink = user?.user_type === 'client' 
+    ? '/client/dashboard' 
+    : user?.user_type === 'admin' 
+    ? '/admin/dashboard' 
+    : '/freelancer/dashboard';
 
   return (
     <section className={cn(commonStyles.hero, themeStyles.hero)}>
       <div className={cn(commonStyles.content, themeStyles.content)}>
         
         <div className={cn(commonStyles.badges, themeStyles.badges)}>
-          <span className={cn(commonStyles.badge, themeStyles.badge)}>
-            ✨ AI-Powered Matching
-          </span>
-          <span className={cn(commonStyles.badge, themeStyles.badge)}>
-            🛡️ Escrow Protection
-          </span>
+          {isAuthenticated && user ? (
+            <span className={cn(commonStyles.badge, themeStyles.badge, "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300 font-bold")}>
+              👋 Welcome Back, {user.name}
+            </span>
+          ) : (
+            <>
+              <span className={cn(commonStyles.badge, themeStyles.badge)}>
+                ✨ AI-Powered Matching
+              </span>
+              <span className={cn(commonStyles.badge, themeStyles.badge)}>
+                🛡️ Escrow Protection
+              </span>
+            </>
+          )}
         </div>
 
         <h1 id="hero-title" className={cn(commonStyles.title, themeStyles.title)}>
-          Hire top global talent. <br />
-          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>Zero-anxiety escrow. Direct market rates.</span>
+          AI-powered freelancing with <br />
+          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>smarter matching, safer payments, and fairer pricing.</span>
         </h1>
         
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-          MegiLance aligns the psychology of trust with modern business efficiency. Our AI instantly
-          matches you with vetted specialists at true market value, while decentralized escrow eliminates
-          payment anxiety. No middleman margins, no hidden platform taxes, just pure collaborative autonomy.
+          {isAuthenticated ? (
+            `You are logged in as a ${user?.user_type}. Access your collaboration workrooms, manage active escrow payments, or check your proposal status from your dashboard.`
+          ) : (
+            "MegiLance helps clients estimate project budgets, match with relevant freelancers, manage milestones, and protect payments through smart-contract escrow — all inside one modern freelancing platform."
+          )}
         </p>
 
         <div className={cn(commonStyles.actions, themeStyles.actions)}>
-          <Link href="/client/find-talent" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
-            Find Talent
-          </Link>
-          <Link href="/explore" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
-            Find Work
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link href={dashboardLink} className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
+                Go to Dashboard
+              </Link>
+              <Link href="/contracts" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
+                View Active Contracts
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/explore" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
+                Explore Platform
+              </Link>
+              <Link href="/ai/price-estimator" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
+                Try Price Estimator
+              </Link>
+            </>
+          )}
         </div>
 
         <div className={cn(commonStyles.stats, themeStyles.stats)} aria-label="Platform statistics">

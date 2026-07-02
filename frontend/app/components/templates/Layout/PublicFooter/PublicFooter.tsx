@@ -97,7 +97,7 @@ const PublicFooter = () => {
                 { icon: ShieldCheck, label: 'Secure escrow' },
                 { icon: Percent, label: 'Low 5–10% fees' },
                 { icon: BadgeCheck, label: 'Verified talent' },
-                { icon: Headphones, label: '24/7 support' },
+                { icon: Headphones, label: 'Help Center' },
               ].map(({ icon: Icon, label }) => (
                 <li
                   key={label}

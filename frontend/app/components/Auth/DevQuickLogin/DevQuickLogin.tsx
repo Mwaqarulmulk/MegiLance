@@ -10,7 +10,7 @@ import commonStyles from './DevQuickLogin.common.module.css';
 import lightStyles from './DevQuickLogin.light.module.css';
 import darkStyles from './DevQuickLogin.dark.module.css';
 
-const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true' || process.env.NODE_ENV === 'development';
+const SHOW_DEMO_LOGIN = true; // Always enable for public showcase/portfolio evaluations
 
 interface DevCredential {
   email: string;
@@ -54,7 +54,7 @@ interface DevQuickLoginProps {
 
 const DevQuickLogin: React.FC<DevQuickLoginProps> = ({ onCredentialSelect, onAutoLogin }) => {
   const { resolvedTheme } = useTheme();
-  const [autoLoginMode, setAutoLoginMode] = React.useState(false);
+  const [autoLoginMode, setAutoLoginMode] = React.useState(true);
   const [mounted, setMounted] = React.useState(false);
 
   const styles = React.useMemo(() => {
@@ -101,21 +101,10 @@ const DevQuickLogin: React.FC<DevQuickLoginProps> = ({ onCredentialSelect, onAut
     <div className={styles.container}>
       <div className={styles.header}>
         <Rocket className={styles.title} size={18} />
-        <h3 className={styles.title}>Quick Demo Login</h3>
+        <h3 className={styles.title}>Explore in Demo Mode</h3>
         <p className={styles.subtitle}>
-          {autoLoginMode ? 'Click to instantly login' : 'Click to auto-fill credentials'}
+          Click a role below to log in instantly and browse the live dashboards.
         </p>
-        <div className={styles.toggleContainer}>
-          <input
-            type="checkbox"
-            id="autoLoginMode"
-            checked={autoLoginMode}
-            onChange={(e) => setAutoLoginMode(e.target.checked)}
-          />
-          <label htmlFor="autoLoginMode" className={styles.toggleLabel}>
-            Auto-login on click
-          </label>
-        </div>
       </div>
       <div className={styles.buttonGrid}>
         {DEV_CREDENTIALS.map((credential) => {

@@ -1,0 +1,212 @@
+.section {
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(69, 115, 223, 0.12);
+  color: #4573df;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(69, 115, 223, 0.2);
+}
+
+.title {
+  font-family: var(--font-heading, inherit);
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+}
+
+.card {
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cardDesc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: #4573df;
+  color: white;
+}
+
+.btnPrimary:hover {
+  background: #3660c9;
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  border: 1px solid;
+  background: transparent;
+}
+
+.btnSecondary:hover {
+  transform: translateY(-1px);
+}
+
+.techList {
+  margin-top: auto;
+  border-top: 1px solid;
+  padding-top: 1.5rem;
+}
+
+.techListTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.badgesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.techBadge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.featureList li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.featureList li::before {
+  content: "•";
+  color: #4573df;
+  font-size: 1.5rem;
+  position: absolute;
+  left: 0;
+  top: -0.15rem;
+}
+
+/* Light / Dark Themes */
+.light {
+  background: #f8fafc;
+}
+.light .title { color: #0f172a; }
+.light .subtitle { color: #64748b; }
+.light .card { background: white; border-color: #e2e8f0; box-shadow: 0 4px 20px -8px rgba(0,0,0,0.08); }
+.light .cardTitle { color: #0f172a; }
+.light .icon { color: #4573df; }
+.light .cardDesc { color: #475569; }
+.light .btnSecondary { border-color: #cbd5e1; color: #334155; }
+.light .btnSecondary:hover { background: #f1f5f9; }
+.light .techList { border-color: #f1f5f9; }
+.light .techListTitle { color: #94a3b8; }
+.light .techBadge { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+.light .featureList li { color: #475569; }
+
+.dark {
+  background: #090d16;
+}
+.dark .title { color: white; }
+.dark .subtitle { color: #94a3b8; }
+.dark .card { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+.dark .cardTitle { color: white; }
+.dark .icon { color: #6390f0; }
+.dark .cardDesc { color: #94a3b8; }
+.dark .btnSecondary { border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
+.dark .btnSecondary:hover { background: rgba(255,255,255,0.04); }
+.dark .techList { border-color: rgba(255,255,255,0.05); }
+.dark .techListTitle { color: #64748b; }
+.dark .techBadge { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); color: #cbd5e1; }
+.dark .featureList li { color: #cbd5e1; }
+
+@media (max-width: 768px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .card {
+    padding: 1.75rem;
+  }
+}

@@ -355,7 +355,9 @@ export default function ProfileCompletion() {
     await handleSaveSection();
     try {
       localStorage.setItem("onboarding_complete", "true");
-    } catch {}
+    } catch (e) {
+      // Ignore storage errors
+    }
     const role = localStorage.getItem("portal_area") || "freelancer";
     router.push(role === "client" ? "/client/dashboard" : "/freelancer/dashboard");
   };

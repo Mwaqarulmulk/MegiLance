@@ -28,30 +28,46 @@ const useAnimatedCounter = (
   useEffect(() => {
     if (!mounted) return;
 
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setCount(target);
+      return;
+    }
+
     if (!hasAnimated.current) {
       setCount(0);
     }
 
+    let animationFrameId: number;
+
+    const startAnimation = () => {
+      if (hasAnimated.current) return;
+      hasAnimated.current = true;
+      let start: number | null = null;
+
+      const step = (timestamp: number) => {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        const newCount = progress * target;
+        setCount(newCount);
+
+        if (progress < 1) {
+          animationFrameId = requestAnimationFrame(step);
+        } else {
+          setCount(target);
+        }
+      };
+
+      animationFrameId = requestAnimationFrame(step);
+    };
+
+    // Fallback timer: if observer doesn't fire within 1000ms, start the animation
+    const fallbackTimeout = setTimeout(startAnimation, 1000);
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          let start: number | null = null;
-
-          const step = (timestamp: number) => {
-            if (!start) start = timestamp;
-            const progress = Math.min((timestamp - start) / duration, 1);
-            const newCount = progress * target;
-            setCount(newCount);
-
-            if (progress < 1) {
-              requestAnimationFrame(step);
-            } else {
-              setCount(target);
-            }
-          };
-
-          requestAnimationFrame(step);
+        if (entries[0].isIntersecting) {
+          clearTimeout(fallbackTimeout);
+          startAnimation();
         }
       },
       { threshold: 0.1 }
@@ -63,6 +79,10 @@ const useAnimatedCounter = (
     }
 
     return () => {
+      clearTimeout(fallbackTimeout);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
       if (currentRef) {
         observer.unobserve(currentRef);
       }

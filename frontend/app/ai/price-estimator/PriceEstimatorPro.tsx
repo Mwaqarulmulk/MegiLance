@@ -1394,6 +1394,37 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
           </div>
         </motion.div>
 
+        {/* AI Estimation Rationale */}
+        <motion.div
+          className={cn(cs.resultCard, ts.resultCard)}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className={cs.resultCardHeader}>
+            <div className={cn(cs.resultCardIcon, ts.resultCardIcon)}><Lightbulb /></div>
+            <h3 className={cn(cs.resultCardTitle, ts.resultCardTitle)}>Estimation Rationale</h3>
+          </div>
+          <div className="space-y-4 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            <p className="font-semibold text-slate-900 dark:text-white mb-2">Why this estimate?</p>
+            <ul className="space-y-2 list-disc pl-4">
+              <li><strong>Project Type:</strong> {result.meta.service_type || 'Custom Service'}</li>
+              <li><strong>Complexity &amp; Scope:</strong> {result.meta.scope || 'Medium'}</li>
+              <li><strong>Timeline:</strong> {timeline.label || `~${timeline.weeks} weeks`}</li>
+              <li><strong>Experience Level:</strong> {result.meta.experience_level || 'Intermediate'}</li>
+              <li><strong>Risk Level:</strong> {confidence.score < 70 ? 'High (Requires clarification)' : confidence.score < 85 ? 'Medium' : 'Low'}</li>
+              <li>
+                <strong>Suggested Milestones:</strong>
+                <ol className="list-decimal pl-4 mt-1.5 space-y-1">
+                  {breakdown.slice(0, 3).map((b, idx) => (
+                    <li key={idx}><strong>{b.label}:</strong> {b.hours}h (${b.cost.toLocaleString()})</li>
+                  ))}
+                </ol>
+              </li>
+            </ul>
+          </div>
+        </motion.div>
+
         {/* Market Comparison Card */}
         <motion.div
           className={cn(cs.resultCard, ts.resultCard)}

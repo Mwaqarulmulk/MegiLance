@@ -172,12 +172,16 @@ const ReviewsPage: React.FC = () => {
   const handleSubmitResponse = async (reviewId: number) => {
     if (!responseText.trim()) return;
     try {
-      await (api.reviews as any).respond?.(reviewId, responseText) 
-        || await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api'}/reviews/${reviewId}/respond`, {
+      const respondFunc = (api.reviews as any).respond;
+      if (respondFunc) {
+        await respondFunc(reviewId, responseText);
+      } else {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api'}/reviews/${reviewId}/respond`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ response: responseText }),
         });
+      }
       setReviews(prev => prev.map(r => r.id === reviewId ? { ...r, response_text: responseText } : r));
     } catch (err) {
       console.error('Failed to submit response:', err);

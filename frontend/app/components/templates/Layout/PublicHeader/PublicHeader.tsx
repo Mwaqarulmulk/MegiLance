@@ -17,19 +17,20 @@ import lightStyles from './PublicHeader.light.module.css';
 import darkStyles from './PublicHeader.dark.module.css';
 
 const navLinks = [
-  { name: 'How It Works', href: '/how-it-works', status: 'complete' },
-  { name: 'Features', href: '/#features', status: 'complete' },
-  { name: 'Pricing', href: '/pricing', status: 'complete' },
-  { name: 'Blog', href: '/blog', status: 'working' },
+  { name: 'How It Works', href: '/how-it-works' },
+  { name: 'Project Demo', href: '/project-demo' },
+  { name: 'Features', href: '/#features' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'Blog', href: '/blog' },
 ];
 
 const servicesDropdown = [
-  { name: 'For Freelancers', href: '/freelancers', icon: Users, description: 'Find work and build your career', status: 'complete' },
-  { name: 'For Clients', href: '/clients', icon: Briefcase, description: 'Hire top talent for your projects', status: 'complete' },
-  { name: 'Talent Directory', href: '/talent', icon: Sparkles, description: 'Browse our top rated talent', status: 'complete' },
-  { name: 'Teams', href: '/teams', icon: Users, description: 'Build your dream team', status: 'working' },
-  { name: 'AI Tools', href: '/ai', icon: Zap, description: 'Powered by AI matching', status: 'working' },
-  { name: 'Enterprise', href: '/enterprise', icon: Shield, description: 'Scale your team globally', status: 'incomplete' },
+  { name: 'For Freelancers', href: '/freelancers', icon: Users, description: 'Find work and build your career' },
+  { name: 'For Clients', href: '/clients', icon: Briefcase, description: 'Hire top talent for your projects' },
+  { name: 'Talent Directory', href: '/talent', icon: Sparkles, description: 'Browse our top rated talent' },
+  { name: 'Teams', href: '/teams', icon: Users, description: 'Build your dream team' },
+  { name: 'AI Tools', href: '/ai', icon: Zap, description: 'Powered by AI matching' },
+  { name: 'Enterprise', href: '/enterprise', icon: Shield, description: 'Scale your team globally' },
 ];
 
 const PublicHeader = () => {

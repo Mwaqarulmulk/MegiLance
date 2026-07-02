@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Why Hire on MegiLance | AI Matching, 5% Fee & Verified Talent',
-  description: 'Discover why 10,000+ businesses hire on MegiLance. AI-powered matching, flat 5% service fee, secure milestone escrow, verified freelancer profiles, fraud detection, and 24/7 support.',
+  title: 'Why Hire on MegiLance | AI Matching, Low Fees & Verified Talent',
+  description: 'Discover why businesses hire on MegiLance. AI-powered matching, transparent 5-10% service fees, secure milestone escrow, verified freelancer profiles, fraud detection, and 24/7 support.',
   path: '/why-hire',
   keywords: getKeywordsForPage(['transactional', 'features', 'longTail'], [
     'why use megilance', 'best place to hire freelancers', 'hire verified freelancers',
@@ -31,8 +31,8 @@ const reasons = [
     description: "Funds are held in escrow and released only when you approve milestones. Your money is always protected.",
   },
   {
-    title: "5% Flat Fee",
-    description: "No sliding scales or hidden charges. A simple 5% service fee — up to 75% cheaper than competitors.",
+    title: "Low Platform Fees",
+    description: "Transparent platform commission of just 5-10% (clients pay 0%). No hidden charges, significantly cheaper than legacy platforms.",
   },
   {
     title: "Built-in Compliance",

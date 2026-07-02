@@ -30,15 +30,15 @@ const plans = [
       'Real-time collaborative workspaces',
       'Smart contract milestone escrow',
       'Community support & advice',
-      'Just 8% freelancer fee — clients pay 0%',
+      'Just 10% freelancer fee — clients pay 0%',
     ],
     ctaText: 'Get Started Free',
     ctaLink: '/signup?plan=free',
   },
   {
-    tier: 'Standard',
+    tier: 'Pro Freelancer',
     description: 'For established professionals seeking optimized profit margins and priority platform exposure.',
-    price: '$29',
+    price: '$19',
     pricePeriod: '/mo',
     features: [
       'Everything in Free (incl. all AI tools)',
@@ -50,8 +50,8 @@ const plans = [
       'Priority human support',
     ],
     isPopular: true,
-    ctaText: 'Upgrade to Standard',
-    ctaLink: '/signup?plan=standard',
+    ctaText: 'Upgrade to Pro',
+    ctaLink: '/signup?plan=pro',
   },
   {
     tier: 'Enterprise',
@@ -59,7 +59,7 @@ const plans = [
     price: 'Custom',
     pricePeriod: '',
     features: [
-      'Everything in Standard',
+      'Everything in Pro Freelancer',
       'Dedicated Sourcing Partner',
       'Compliance, NDA & IP transfer templates',
       'Elastic staff augmentation',
@@ -88,12 +88,12 @@ const comparisonFeatures = [
   { name: 'Staff Augmentation', free: false, standard: false, enterprise: true },
   { name: 'Custom Talent Sourcing', free: false, standard: false, enterprise: true },
   { name: 'Client Fee', free: '0%', standard: '0%', enterprise: '0%' },
-  { name: 'Freelancer Platform Fee', free: '8%', standard: '5%', enterprise: 'Negotiable' },
+  { name: 'Freelancer Platform Fee', free: '10%', standard: '5%', enterprise: 'Negotiable' },
 ];
 
 const faqs = [
   { q: 'Are the AI features really free?', a: 'Yes. To align with modern market demands, our complete AI tooling—including price estimating, proposal writing, and fraud detection—is free for both sides to ensure fair transactions. No credit card, no usage fees.' },
-  { q: 'How does the fee model work?', a: 'Clients pay 0% commission. Posting contracts is entirely free. Freelancers pay a minimal 5% or 8% commission only upon successful milestone release, which is significantly lower than legacy platform margins (10-20%).' },
+  { q: 'How does the fee model work?', a: 'Clients pay 0% commission. Posting contracts is entirely free. Freelancers pay a minimal 5% or 10% commission only upon successful milestone release, which is significantly lower than legacy platform margins (10-20%).' },
   { q: 'What is Staff Augmentation?', a: 'With our Enterprise plan, we source and embed dedicated freelancers into your team on a contract basis. This includes NDA agreements, managed onboarding, and ongoing support — like having an extended team without the overhead.' },
   { q: 'Can I switch plans anytime?', a: 'Yes, you can upgrade or downgrade at any time. When upgrading, you get immediate access to the new features. When downgrading, your current plan stays active until the end of the billing period.' },
   { q: 'Is there a contract for the Enterprise plan?', a: 'Enterprise plans are based on custom agreements tailored to your needs. We work with you to define scope, SLAs, and pricing. Typical contracts are month-to-month or annual depending on your preference.' },
@@ -127,8 +127,8 @@ const Pricing: React.FC = () => {
             <span className={commonStyles.heroBadge}>All AI features free · Clients pay 0%</span>
             <h1 className={styles.title}>Simple pricing. Free AI for everyone.</h1>
             <p className={styles.subtitle}>
-              Clients post and hire for free. Freelancers keep more — just an 8% fee on completed
-              work (5% on Standard), well below the 20% you&apos;d pay elsewhere. Our full AI toolkit
+              Clients post and hire for free. Freelancers keep more — just a 10% fee on completed
+              work (5% on Pro Freelancer), well below the 20% you&apos;d pay elsewhere. Our full AI toolkit
               is included free while we grow.
             </p>
           </div>

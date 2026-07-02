@@ -29,7 +29,7 @@ const AIToolsHub: React.FC = () => {
         <div className={commonStyles.header}>
           <span className={cn(commonStyles.badge, themeStyles.badge)}>
             <Sparkles size={13} />
-            9 AI-powered tools
+            11 AI-powered tools
           </span>
           <h2 className={cn(commonStyles.title, themeStyles.title)}>AI Tools Hub</h2>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>

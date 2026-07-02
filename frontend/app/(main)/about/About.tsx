@@ -210,21 +210,21 @@ const About: React.FC = () => {
           </ScrollReveal>
           <StaggerContainer className={styles.valuesGrid}>
             <StaggerItem className={styles.valueItem}>
-              <h3 className={styles.valueTitle}>Ghulam Ahmed</h3>
+              <h3 className={styles.valueTitle}>Ghulam Mujtaba</h3>
               <p className={styles.valueDesc}>
-                Founder &amp; Lead Engineer. Architecture design, AI integration, and full-stack development.
+                Founder &amp; Lead Engineer. System architecture, AI matching integration, and full-stack development.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.valueItem}>
               <h3 className={styles.valueTitle}>Muhammad Waqar Ul Mulk</h3>
               <p className={styles.valueDesc}>
-                Co-Founder &amp; Backend Lead. Database design, API implementation, and security hardening.
+                Co-Founder &amp; Backend Lead. Database schemas, remote API routes, security audits, and deployment.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.valueItem}>
-              <h3 className={styles.valueTitle}>Mujtaba</h3>
+              <h3 className={styles.valueTitle}>Supervisors</h3>
               <p className={styles.valueDesc}>
-                Co-Founder &amp; Design Lead. UI/UX design, responsive layouts, and theme implementation.
+                <strong>Dr. Junaid Akram</strong> (Supervisor) &amp; <strong>Khula Qadeer</strong> (Co-Supervisor) — Academic Advising and Evaluation Guidance.
               </p>
             </StaggerItem>
           </StaggerContainer>
@@ -239,7 +239,7 @@ const About: React.FC = () => {
                   Start Freelancing Today
                 </button>
               </Link>
-              <span className={styles.sectionNote}>Zero fees for freelancers. Blockchain-secured payments.</span>
+              <span className={styles.sectionNote}>Low platform fees. Blockchain-secured payments.</span>
             </div>
           </ScrollReveal>
         </section>

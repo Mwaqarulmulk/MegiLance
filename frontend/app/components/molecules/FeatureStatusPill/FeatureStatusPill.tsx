@@ -37,17 +37,17 @@ const statusConfig: Record<string, {
   styleKey: string;
 }> = {
   complete: { 
-    label: 'Complete', 
+    label: '', 
     icon: Check,
     styleKey: 'complete'
   },
   verified: { 
-    label: 'Verified', 
+    label: '', 
     icon: ShieldCheck,
     styleKey: 'complete'
   },
   advanced: { 
-    label: 'Advanced AI', 
+    label: 'AI Tool', 
     icon: Zap,
     styleKey: 'advanced'
   },
@@ -62,12 +62,12 @@ const statusConfig: Record<string, {
     styleKey: 'basic'
   },
   development: { 
-    label: 'Coming Soon', 
+    label: 'Preview', 
     icon: Clock,
     styleKey: 'development'
   },
   pending: { 
-    label: 'Coming Soon', 
+    label: 'Preview', 
     icon: Clock,
     styleKey: 'development'
   },
@@ -96,6 +96,10 @@ export default function FeatureStatusPill({
   
   // Normalize status to lowercase
   const normalizedStatus = status.toLowerCase();
+  
+  if (normalizedStatus === 'complete' || normalizedStatus === 'verified') {
+    return null;
+  }
   
   // Get config or default to basic
   const config = statusConfig[normalizedStatus] || statusConfig.basic;

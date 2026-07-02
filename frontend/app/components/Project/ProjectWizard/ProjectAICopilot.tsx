@@ -85,7 +85,7 @@ export default function ProjectAICopilot({ onApply }: ProjectAICopilotProps) {
       const categoryMatch = content.match(/(?:category|type)[:\s]*(.+)/i);
       const category = categoryMatch ? categoryMatch[1].trim().toUpperCase().replace(/\s+/g, '_') : undefined;
 
-      const budgetMatch = content.match(/(?:budget|estimated? cost)[:\s]*[\$₹]?([\d,]+)(?:\s*[-–to]+\s*[\$₹]?([\d,]+))?/i);
+      const budgetMatch = content.match(/(?:budget|estimated? cost)[:\s]*[$₹]?([\d,]+)(?:\s*[-–to]+\s*[$₹]?([\d,]+))?/i);
       const budgetMin = budgetMatch ? budgetMatch[1].replace(/,/g, '') : undefined;
       const budgetMax = budgetMatch && budgetMatch[2] ? budgetMatch[2].replace(/,/g, '') : undefined;
 
