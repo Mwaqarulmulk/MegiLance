@@ -5,8 +5,8 @@
 type EventParams = Record<string, string | number | boolean | undefined>;
 
 const GA_ID = typeof window !== 'undefined'
-  ? (window as any).__GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
-  : undefined;
+  ? (window as any).__GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-69YYHP1LPF'
+  : 'G-69YYHP1LPF';
 
 function gtag(...args: unknown[]) {
   if (typeof window !== 'undefined' && (window as any).gtag) {

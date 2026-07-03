@@ -208,6 +208,9 @@ services:
   - key: NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     scope: RUN_AND_BUILD_TIME
     value: AiJ_ApfC0MGXqy36O_JGpOol_z0i0b8X0J3x3YuyhKs
+  - key: NEXT_PUBLIC_GA_MEASUREMENT_ID
+    scope: RUN_AND_BUILD_TIME
+    value: G-69YYHP1LPF
   - key: NEXT_PUBLIC_DEV_ADMIN_EMAIL
     scope: RUN_AND_BUILD_TIME
     value: admin@megilance.com

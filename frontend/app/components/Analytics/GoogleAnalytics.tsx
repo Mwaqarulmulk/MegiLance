@@ -3,7 +3,7 @@
 
 import Script from 'next/script';
 
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-69YYHP1LPF';
 
 export default function GoogleAnalytics() {
   // Don't render if no measurement ID is configured
