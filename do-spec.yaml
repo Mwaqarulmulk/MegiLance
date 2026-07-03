@@ -24,12 +24,7 @@ ingress:
     match:
       path:
         prefix: /health
-  - component:
-      name: ai-service
-      preserve_path_prefix: true
-    match:
-      path:
-        prefix: /ai-api
+
   - component:
       name: frontend
     match:
@@ -180,15 +175,7 @@ services:
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-0.5gb
   name: backend
-- dockerfile_path: ai/Dockerfile
-  github:
-    branch: main
-    deploy_on_push: true
-    repo: umair-fa22/MegiLance
-  http_port: 8001
-  instance_count: 1
-  instance_size_slug: apps-s-1vcpu-1gb
-  name: ai-service
+
 - dockerfile_path: frontend/Dockerfile
   envs:
   - key: NODE_ENV
