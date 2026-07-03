@@ -310,7 +310,26 @@ const TalentDirectoryPage = () => {
 const WrappedTalentDirectoryPage = () => {
   const [isClient, setIsClient] = useState(false);
   useEffect(() => { setIsClient(true); }, []);
-  if (!isClient) return null;
+  if (!isClient) {
+    return (
+      <main className="min-h-screen bg-slate-50 dark:bg-slate-900 py-16 px-4">
+        <header className="text-center max-w-3xl mx-auto mb-10">
+          <span className="inline-block bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+            AI-Ranked Directory
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+            Explore Top Talent
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Loading AI-ranked freelancers scored on skill depth, delivery speed, and client satisfaction...
+          </p>
+        </header>
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      </main>
+    );
+  }
   return <TalentDirectoryPage />;
 };
 

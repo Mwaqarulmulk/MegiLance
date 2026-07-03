@@ -8,6 +8,9 @@ import { BASE_URL, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemLi
 
 // ============ SKILL DATA (synced with sitemap.ts HIRE_SKILLS) ============
 const SKILLS: Record<string, { name: string; category: string; avgRate: number }> = {
+  'ai-developers': { name: 'AI Developer', category: 'AI/ML', avgRate: 95 },
+  'web-developers': { name: 'Web Developer', category: 'Frontend', avgRate: 75 },
+  'automation-experts': { name: 'Automation Expert', category: 'Backend', avgRate: 85 },
   'react-developer': { name: 'React Developer', category: 'Frontend', avgRate: 75 },
   'python-developer': { name: 'Python Developer', category: 'Backend', avgRate: 80 },
   'nodejs-developer': { name: 'Node.js Developer', category: 'Backend', avgRate: 70 },

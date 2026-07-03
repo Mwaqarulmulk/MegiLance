@@ -7,10 +7,15 @@ const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
 
 async function fetchClient(id: string) {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
     const res = await fetch(`${BACKEND}/api/users/${id}/public`, {
       next: { revalidate: 300 },
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -24,8 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   if (!client) {
     return buildMeta({
-      title: 'Client Profile',
-      description: 'View client profile, job history, and ratings on MegiLance.',
+      title: `Client Profile #${id}`,
+      description: `View remote client profile #${id}, active projects, hiring reviews, and job listings on MegiLance.`,
       path: `/clients/${id}`,
     });
   }

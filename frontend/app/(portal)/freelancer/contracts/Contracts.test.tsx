@@ -87,6 +87,9 @@ jest.mock('@/app/components/DataDisplay', () => ({
 // Mock lucide-react
 jest.mock('lucide-react', () => ({
   Loader2: (props: any) => <svg {...props} data-testid="loader" />,
+  FileText: (props: any) => <svg {...props} data-testid="file-text" />,
+  Plus: (props: any) => <svg {...props} data-testid="plus" />,
+  SearchX: (props: any) => <svg {...props} data-testid="search-x" />,
 }));
 
 import Contracts from './Contracts';

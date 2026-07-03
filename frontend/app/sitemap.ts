@@ -99,9 +99,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/referral', changeFrequency: 'monthly', priority: 0.62 },
     { path: '/install', changeFrequency: 'yearly', priority: 0.5 },
 
-    // Auth (low priority but discoverable)
-    { path: '/login', changeFrequency: 'yearly', priority: 0.4 },
-    { path: '/signup', changeFrequency: 'yearly', priority: 0.45 },
+    // Free AI Tools (High ROI traffic magnets)
+    { path: '/tools/ai-project-cost-estimator', changeFrequency: 'weekly', priority: 0.95 },
+    { path: '/tools/freelance-rate-calculator', changeFrequency: 'weekly', priority: 0.90 },
+    { path: '/tools/project-scope-generator', changeFrequency: 'weekly', priority: 0.90 },
+    { path: '/tools/milestone-generator', changeFrequency: 'weekly', priority: 0.88 },
+    { path: '/tools/proposal-reviewer', changeFrequency: 'weekly', priority: 0.88 },
+    { path: '/tools/freelancer-match-score', changeFrequency: 'weekly', priority: 0.85 },
+    { path: '/tools/freelance-risk-checker', changeFrequency: 'weekly', priority: 0.85 },
 
     // Legal pages
     { path: '/privacy', changeFrequency: 'monthly', priority: 0.35 },
@@ -111,8 +116,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Public showcase / portfolio
     { path: '/profile', changeFrequency: 'daily', priority: 0.68 },
 
-    // Status page
-    { path: '/status', changeFrequency: 'daily', priority: 0.45 },
+    // Status page (redirect corrected)
+    { path: '/system-status', changeFrequency: 'weekly', priority: 0.50 },
 
     // AI/LLM discoverability
     { path: '/llms.txt', changeFrequency: 'monthly', priority: 0.3 },

@@ -1,9 +1,11 @@
 import SystemStatus from '@/app/components/SystemStatus/SystemStatus';
+import { buildMeta } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = buildMeta({
   title: 'System Status | MegiLance',
-  description: 'Real-time system health and API endpoint status',
-};
+  description: 'Real-time system health and API endpoint status for the MegiLance freelancing platform.',
+  path: '/system-status',
+});
 
 export default function SystemStatusPage() {
   return (

@@ -31,9 +31,14 @@ async function fetchFreelancers(query = '', page = 1, pageSize = 20) {
     });
     if (query) params.set('search', query);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
     const res = await fetch(`${API_URL}/api/v1/users/freelancers?${params}`, {
       next: { revalidate: 60 },
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (!res.ok) return { items: [], total: 0 };
     return await res.json();
   } catch {

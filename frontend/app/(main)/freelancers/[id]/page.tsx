@@ -7,15 +7,27 @@ const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
 
 async function fetchFreelancer(id: string) {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
     const res = await fetch(`${BACKEND}/api/users/${id}/public`, {
       next: { revalidate: 300 },
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
+
     if (!res.ok) {
       // Fallback: try search endpoint
+      const controllerFallback = new AbortController();
+      const timeoutIdFallback = setTimeout(() => controllerFallback.abort(), 4000);
+
       const searchRes = await fetch(`${BACKEND}/api/search/freelancers?q=&limit=100`, {
         next: { revalidate: 300 },
+        signal: controllerFallback.signal,
       });
+      clearTimeout(timeoutIdFallback);
+
       if (!searchRes.ok) return null;
       const data = await searchRes.json();
       const list = Array.isArray(data) ? data : data.freelancers || [];
@@ -33,8 +45,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   if (!freelancer) {
     return buildMeta({
-      title: 'Freelancer Profile',
-      description: 'View freelancer profile, portfolio, and skills on MegiLance.',
+      title: `Freelancer Profile #${id}`,
+      description: `View freelance expert profile #${id}, verified skills, project reviews, and portfolio on MegiLance.`,
       path: `/freelancers/${id}`,
     });
   }

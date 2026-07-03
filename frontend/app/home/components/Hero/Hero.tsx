@@ -52,15 +52,15 @@ export default function Hero({ stats = defaultStats }) {
         </div>
 
         <h1 id="hero-title" className={cn(commonStyles.title, themeStyles.title)}>
-          AI-powered freelancing with <br />
-          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>smarter matching, safer payments, and fairer pricing.</span>
+          AI-Powered Freelancing with <br />
+          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>Smarter Matching & Milestone Escrow</span>
         </h1>
         
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
           {isAuthenticated ? (
             `You are logged in as a ${user?.user_type}. Access your collaboration workrooms, manage active escrow payments, or check your proposal status from your dashboard.`
           ) : (
-            "MegiLance helps clients estimate project budgets, match with relevant freelancers, manage milestones, and protect payments through smart-contract escrow — all inside one modern freelancing platform."
+            "MegiLance helps clients scope, price, match, and manage freelance projects with AI-powered tools and milestone escrow."
           )}
         </p>
 

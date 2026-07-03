@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useAIChat } from '@/app/hooks/useAIChat';
 import AIStatusIndicator from '@/app/components/AI/AIStatusIndicator/AIStatusIndicator';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
+import Image from 'next/image';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { AuroraBackground, BorderBeam } from '@/app/components/AI/kit';
 import {
@@ -239,7 +240,7 @@ const ChatbotEnhanced: React.FC = () => {
             <header className={cn(commonStyles.header, themeStyles.header)}>
               <div className={commonStyles.headerLeft}>
                 <div className={cn(commonStyles.aiAvatar, themeStyles.aiAvatar, isSpeaking && commonStyles.speaking)}>
-                  <img src="/assets/chatbot/chatbot-icon.png" alt="MegiBot" className={commonStyles.avatarImage} />
+                  <Image src="/assets/chatbot/chatbot-icon.png" alt="MegiBot" className={commonStyles.avatarImage} width={56} height={56} priority />
                   <div className={cn(commonStyles.avatarPulse, themeStyles.avatarPulse)} />
                 </div>
                 <div className={commonStyles.headerInfo}>
@@ -365,7 +366,7 @@ const ChatbotEnhanced: React.FC = () => {
                     {/* Avatar */}
                     {msg.role === 'assistant' && (
                       <div className={cn(commonStyles.messageAvatar, themeStyles.messageAvatar, isSpeaking && commonStyles.speaking)}>
-                        <img src="/assets/chatbot/chatbot-icon.png" alt="AI" className={commonStyles.avatarImageSmall} />
+                        <Image src="/assets/chatbot/chatbot-icon.png" alt="AI" className={commonStyles.avatarImageSmall} width={32} height={32} />
                       </div>
                     )}
 
@@ -481,7 +482,7 @@ const ChatbotEnhanced: React.FC = () => {
                     className={cn(commonStyles.messageWrapper, commonStyles.messageBot)}
                   >
                     <div className={cn(commonStyles.messageAvatar, themeStyles.messageAvatar, isSpeaking && commonStyles.speaking)}>
-                      <img src="/assets/chatbot/chatbot-icon.png" alt="AI" className={commonStyles.avatarImageSmall} />
+                      <Image src="/assets/chatbot/chatbot-icon.png" alt="AI" className={commonStyles.avatarImageSmall} width={32} height={32} />
                     </div>
                     <div className={cn(commonStyles.typingIndicator, themeStyles.typingIndicator)}>
                       <div className={commonStyles.typingDots}>
