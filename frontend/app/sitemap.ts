@@ -191,7 +191,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const hirePages: MetadataRoute.Sitemap = [...allCombos].map((combo) => ({
-    url: `${baseUrl}/client/find-talent/${combo}`,
+    url: `${baseUrl}/hire/${combo}`,
     lastModified: currentDate,
     changeFrequency: 'weekly' as const,
     priority: 0.75,
