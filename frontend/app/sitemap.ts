@@ -56,11 +56,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ── Static / marketing pages ──────────────────────────────────────────
   const topLevelPaths = [
-    // Core marketing (highest priority)
+    // Core marketing
     { path: '/', changeFrequency: 'daily', priority: 1.0 },
-    { path: '/client/find-talent', changeFrequency: 'daily', priority: 0.95 },
-    { path: '/freelancer/projects', changeFrequency: 'daily', priority: 0.9 },
-    
 
     // Key landing pages
     { path: '/how-it-works', changeFrequency: 'monthly', priority: 0.85 },
@@ -87,8 +84,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/careers', changeFrequency: 'monthly', priority: 0.62 },
     { path: '/press', changeFrequency: 'monthly', priority: 0.6 },
 
-    // Growth / acquisition
-    { path: '/client/find-talent', changeFrequency: 'weekly', priority: 0.92 },
     { path: '/why-hire', changeFrequency: 'monthly', priority: 0.88 },
     { path: '/cost-calculator', changeFrequency: 'monthly', priority: 0.82 },
     { path: '/compare', changeFrequency: 'monthly', priority: 0.85 },
@@ -219,5 +214,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...skillPages, ...hirePages, ...jobPages, ...freelancerPages, ...blogPages];
+  return [...staticPages, ...skillPages, ...hirePages, ...freelancerPages, ...blogPages];
 }
