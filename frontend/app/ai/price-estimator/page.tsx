@@ -1,11 +1,13 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import PriceEstimatorPro from './PriceEstimatorPro';
+import { buildMeta } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMeta({
   title: 'AI Price Estimator | MegiLance Pricing Intelligence',
   description: 'Estimate project development costs instantly with our AI-powered price estimator. Grounded in real market rates across categories, experience levels, and regions.',
-};
+  path: '/tools/ai-project-cost-estimator',
+});
 
 const PriceEstimatorFallback = () => (
   <div className="max-w-4xl mx-auto my-10 p-8 border rounded-2xl bg-white dark:bg-slate-950 shadow-sm text-center">

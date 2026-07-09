@@ -100,7 +100,14 @@ def list_marketplace_projects(
 @router.get("/marketplace/stats")
 def get_marketplace_stats():
     freelancer_result = execute_query(
-        "SELECT COUNT(*) as count FROM users WHERE user_type = 'freelancer' AND is_active = 1", []
+        """SELECT COUNT(*) as count FROM users 
+           WHERE user_type = 'freelancer' AND is_active = 1
+             AND email NOT LIKE '%@example.com'
+             AND email NOT LIKE 'test_%'
+             AND (profile_visibility IS NULL OR profile_visibility = 'public')
+             AND (hourly_rate > 0 
+                  OR (skills IS NOT NULL AND skills NOT IN ('', '[]', 'null'))
+                  OR (bio IS NOT NULL AND TRIM(bio) != ''))""", []
     )
     client_result = execute_query(
         "SELECT COUNT(*) as count FROM users WHERE user_type = 'client' AND is_active = 1", []

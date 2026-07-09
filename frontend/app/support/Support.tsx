@@ -46,7 +46,7 @@ const Support: React.FC = () => {
                 <ul className={common.list}>
                   <li><a className={common.link} href="/faq#account">Reset password</a></li>
                   <li><a className={common.link} href="/security">Enable 2FA</a></li>
-                  <li><a className={common.link} href="/legal/privacy">Privacy settings</a></li>
+                  <li><a className={common.link} href="/privacy">Privacy settings</a></li>
                 </ul>
               </article>
 

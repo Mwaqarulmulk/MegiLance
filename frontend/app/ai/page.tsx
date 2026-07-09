@@ -136,7 +136,7 @@ const aiFeatures = [
     title: 'Contract Builder',
     description: 'Generate legally-sound freelance contracts with customizable clauses, IP terms, and jurisdiction support.',
     icon: Shield,
-    href: '/ai/contract-builder',
+    href: '/tools/contract-builder',
     status: 'Live',
     color: 'teal',
     stats: 'Legal clauses',

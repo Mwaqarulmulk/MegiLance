@@ -116,14 +116,6 @@ export const metadata: Metadata = {
     },
   },
   
-  alternates: {
-    canonical: BASE_URL,
-    languages: {
-      'en-US': BASE_URL,
-      'x-default': BASE_URL,
-    },
-  },
-  
   other: {
     'msapplication-TileColor': '#4573df',
     'apple-mobile-web-app-capable': 'yes',

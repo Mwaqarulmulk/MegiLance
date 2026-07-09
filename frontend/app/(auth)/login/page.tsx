@@ -1,13 +1,14 @@
-// @AI-HINT: This is the Next.js route file for the Login page. It delegates to the Login component and passes theme via context/props only.
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 import Login from './Login';
+import { buildMeta } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMeta({
   title: 'Sign In | MegiLance',
   description: 'Log in to your MegiLance account to post projects, manage contracts, communicate with freelancers, and approve escrow payments securely.',
-};
+  path: '/login',
+  noindex: true,
+});
 
 const LoginFallback = () => (
   <div className="max-w-md mx-auto my-10 p-8 border rounded-2xl bg-white dark:bg-slate-950 shadow-sm text-center">

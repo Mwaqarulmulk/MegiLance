@@ -30,6 +30,8 @@ interface AuthUser {
   two_factor_enabled?: boolean;
   profile_visibility?: string;
   contact_preferences?: { show_contact_info?: boolean };
+  profile_completed?: boolean;
+  onboarding_completed?: boolean;
 }
 
 interface LoginResponse {

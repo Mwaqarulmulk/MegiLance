@@ -163,7 +163,7 @@ def get_current_user_profile(
                   languages, industry_focus, tools_and_technologies,
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
-                  video_intro_url, resume_url, created_at
+                  video_intro_url, resume_url, created_at, onboarding_completed
            FROM users WHERE id = ?""",
         [user_id]
     )
@@ -184,6 +184,7 @@ def get_current_user_profile(
                 # so fall back to splitting instead of dropping to an empty list.
                 user[field] = [s.strip() for s in val.split(",") if s.strip()]
 
+    user["profile_completed"] = bool(user.get("onboarding_completed", 0))
     return user
 
 
@@ -199,6 +200,7 @@ _EDITABLE_PROFILE_FIELDS = {
     "video_intro_url", "resume_url", "phone_number", "timezone",
     "preferred_project_size", "certifications", "education", "work_history",
     "achievements", "profile_visibility", "profile_slug", "contact_preferences",
+    "profile_completed", "onboarding_completed",
 }
 # Stored as comma-separated strings so LIKE-based search keeps matching.
 _CSV_PROFILE_FIELDS = {"skills", "languages", "tools_and_technologies", "industry_focus"}
@@ -223,6 +225,11 @@ def update_current_user_profile(data: dict, current_user=Depends(get_current_use
         elif key in _JSON_PROFILE_FIELDS and not isinstance(value, (str, type(None))):
             value = json.dumps(value)
         updates[key] = value
+
+    if "profile_completed" in data:
+        updates["onboarding_completed"] = 1 if data["profile_completed"] else 0
+    elif "onboarding_completed" in data:
+        updates["onboarding_completed"] = 1 if data["onboarding_completed"] else 0
 
     if not updates:
         raise HTTPException(status_code=400, detail="No valid profile fields to update")

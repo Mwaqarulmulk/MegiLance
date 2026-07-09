@@ -280,6 +280,26 @@ const nextConfig = {
         destination: '/referrals',
         permanent: true,
       },
+      {
+        source: '/status',
+        destination: '/system-status',
+        permanent: true,
+      },
+      {
+        source: '/ai/contract-builder',
+        destination: '/tools/contract-builder',
+        permanent: true,
+      },
+      {
+        source: '/legal/privacy',
+        destination: '/privacy',
+        permanent: true,
+      },
+      {
+        source: '/legal/terms',
+        destination: '/terms',
+        permanent: true,
+      },
       // Redirect www to non-www
       {
         source: '/:path*',

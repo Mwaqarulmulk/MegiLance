@@ -1,5 +1,6 @@
 // @AI-HINT: Public freelancer profile page with dynamic SEO metadata & Person JSON-LD
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import UserProfile from '@/app/components/Profile/UserProfile/UserProfile';
 import { buildMeta, buildBreadcrumbJsonLd, jsonLdScriptProps, BASE_URL } from '@/lib/seo';
 
@@ -77,7 +78,11 @@ export default async function FreelancerProfilePage({ params }: { params: Promis
   const { id } = await params;
   const freelancer = await fetchFreelancer(id);
 
-  const name = freelancer?.name || freelancer?.full_name || 'Freelancer';
+  if (!freelancer) {
+    notFound();
+  }
+
+  const name = freelancer.name || freelancer.full_name || 'Freelancer';
   const skills = freelancer && Array.isArray(freelancer.skills) ? freelancer.skills : [];
 
   // Person JSON-LD

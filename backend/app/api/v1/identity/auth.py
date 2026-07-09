@@ -341,6 +341,7 @@ async def get_me(current_user=Depends(get_current_user)):
         "achievements": user_data.get("achievements", []),
         "portfolio_projects": user_data.get("portfolio_projects", []),
         "testimonials_enabled": user_data.get("testimonials_enabled", True),
+        "profile_completed": bool(user_data.get("onboarding_completed", 0) or user_data.get("profile_completed", 0)),
     }
 
 
@@ -367,7 +368,7 @@ async def update_me(
         "video_intro_url", "resume_url", "profile_visibility", "profile_slug",
         "education", "certifications", "work_history", "achievements",
         "contact_preferences", "testimonials_enabled", "profile_image_url",
-        "cover_image_url",
+        "cover_image_url", "profile_completed", "onboarding_completed",
     }
     if "cover_image_url" in body:
         try:
@@ -381,6 +382,11 @@ async def update_me(
     # which silently broke every profile save.
 
     update_data = {k: v for k, v in body.items() if k in allowed_fields and v is not None}
+
+    if "profile_completed" in body:
+        update_data["onboarding_completed"] = 1 if body["profile_completed"] else 0
+    elif "onboarding_completed" in body:
+        update_data["onboarding_completed"] = 1 if body["onboarding_completed"] else 0
 
     # Keep tag-style fields in the platform's legacy comma-separated format so
     # existing readers (freelancer search, AI matching) keep working; structured

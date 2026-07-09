@@ -1,7 +1,7 @@
 // @AI-HINT: Project creation wizard - guides clients through posting a project. Enhanced with Zod validation, animated transitions, and premium animations.
 'use client';
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -140,6 +140,25 @@ export default function ProjectWizard() {
     duration: '',
     attachments: [],
   });
+
+  // Load pre-filled project data from sessionStorage if redirected from price estimator
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pending = sessionStorage.getItem('megilance_pending_project');
+      if (pending) {
+        try {
+          const parsed = JSON.parse(pending);
+          setProjectData(prev => ({
+            ...prev,
+            ...parsed
+          }));
+          sessionStorage.removeItem('megilance_pending_project');
+        } catch (e) {
+          console.error('Failed to parse pending project data:', e);
+        }
+      }
+    }
+  }, []);
 
   const handleSuggestBudget = async () => {
     if (!projectData.title.trim() && !projectData.description.trim()) {

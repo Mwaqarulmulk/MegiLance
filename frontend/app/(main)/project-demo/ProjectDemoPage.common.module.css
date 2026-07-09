@@ -103,7 +103,7 @@
 
 /* Themes Styling */
 .light {
-  background: #f8fafc;
+  background: var(--bg-secondary-light);
 }
 .light .title { color: #0f172a; }
 .light .subtitle { color: #64748b; }
@@ -116,7 +116,7 @@
 .light .contentArea { background: white; border-color: #e2e8f0; box-shadow: 0 4px 24px -10px rgba(0,0,0,0.04); }
 
 .dark {
-  background: #090d16;
+  background: var(--bg-secondary-dark);
 }
 .dark .title { color: white; }
 .dark .subtitle { color: #94a3b8; }

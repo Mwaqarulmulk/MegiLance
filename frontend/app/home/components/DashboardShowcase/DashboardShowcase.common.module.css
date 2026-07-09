@@ -136,7 +136,7 @@
 
 /* Light / Dark Themes */
 .light {
-  background: white;
+  background: var(--bg-primary-light);
 }
 .light .title { color: #0f172a; }
 .light .subtitle { color: #64748b; }
@@ -149,7 +149,7 @@
 .light .browserUrl { bg-color: #f1f5f9; color: #64748b; background: #f1f5f9; }
 
 .dark {
-  background: #090d16;
+  background: var(--bg-primary-dark);
 }
 .dark .title { color: white; }
 .dark .subtitle { color: #94a3b8; }

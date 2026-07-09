@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_current_user_optional
 from app.services.ai_writing import AIWritingService, ToneStyle, WritingContentType
 
 router = APIRouter()
@@ -68,10 +68,10 @@ class UpsellRequest(BaseModel):
 # ── Endpoints ────────────────────────────────────────────────────────────────────
 
 @router.post("/generate/proposal")
-async def generate_proposal(request: ProposalRequest, current_user=Depends(get_current_user)):
+async def generate_proposal(request: ProposalRequest, current_user=Depends(get_current_user_optional)):
     try:
         result = await writing_service.generate_proposal(
-            user_id=current_user.id,
+            user_id=current_user.id if current_user else 0,
             project_title=request.project_title,
             project_description=request.project_description,
             user_skills=request.user_skills,
@@ -87,10 +87,10 @@ async def generate_proposal(request: ProposalRequest, current_user=Depends(get_c
 
 
 @router.post("/generate/project-description")
-async def generate_project_description(request: ProjectDescriptionRequest, current_user=Depends(get_current_user)):
+async def generate_project_description(request: ProjectDescriptionRequest, current_user=Depends(get_current_user_optional)):
     try:
         result = await writing_service.generate_project_description(
-            user_id=current_user.id,
+            user_id=current_user.id if current_user else 0,
             project_type=request.project_type,
             key_features=request.key_features,
             target_audience=request.target_audience,
@@ -104,10 +104,10 @@ async def generate_project_description(request: ProjectDescriptionRequest, curre
 
 
 @router.post("/improve")
-async def improve(request: ImproveRequest, current_user=Depends(get_current_user)):
+async def improve(request: ImproveRequest, current_user=Depends(get_current_user_optional)):
     try:
         result = await writing_service.improve_content(
-            user_id=current_user.id,
+            user_id=current_user.id if current_user else 0,
             content=request.content,
             content_type=_content_type(request.content_type),
             improvements=request.improvements,
@@ -120,10 +120,10 @@ async def improve(request: ImproveRequest, current_user=Depends(get_current_user
 
 
 @router.post("/analyze/feasibility")
-async def analyze_feasibility(request: FeasibilityRequest, current_user=Depends(get_current_user)):
+async def analyze_feasibility(request: FeasibilityRequest, current_user=Depends(get_current_user_optional)):
     try:
         return await writing_service.analyze_feasibility(
-            user_id=current_user.id,
+            user_id=current_user.id if current_user else 0,
             project_description=request.project_description,
             budget_min=request.budget_min,
             budget_max=request.budget_max,
@@ -135,10 +135,10 @@ async def analyze_feasibility(request: FeasibilityRequest, current_user=Depends(
 
 
 @router.post("/generate/upsell")
-async def generate_upsell(request: UpsellRequest, current_user=Depends(get_current_user)):
+async def generate_upsell(request: UpsellRequest, current_user=Depends(get_current_user_optional)):
     try:
         result = await writing_service.generate_upsell_suggestions(
-            user_id=current_user.id,
+            user_id=current_user.id if current_user else 0,
             project_description=request.project_description,
             proposal_content=request.proposal_content,
         )

@@ -253,6 +253,7 @@ const Onboarding: React.FC = () => {
         profile_image_url: data.avatarUrl || undefined,
         experience_level: data.experienceLevel || undefined,
         headline: data.title || undefined,
+        profile_completed: true,
       });
     } catch {
       // Continue even if API fails — user can update profile later

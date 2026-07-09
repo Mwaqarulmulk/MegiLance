@@ -91,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/compare/fiverr', changeFrequency: 'monthly', priority: 0.82 },
     { path: '/compare/toptal', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/compare/freelancer-com', changeFrequency: 'monthly', priority: 0.78 },
-    { path: '/referral', changeFrequency: 'monthly', priority: 0.62 },
+    { path: '/referrals', changeFrequency: 'monthly', priority: 0.62 },
     { path: '/install', changeFrequency: 'yearly', priority: 0.5 },
 
     // Free AI Tools (High ROI traffic magnets)
@@ -107,9 +107,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/privacy', changeFrequency: 'monthly', priority: 0.35 },
     { path: '/terms', changeFrequency: 'monthly', priority: 0.35 },
     { path: '/cookies', changeFrequency: 'monthly', priority: 0.3 },
-
-    // Public showcase / portfolio
-    { path: '/profile', changeFrequency: 'daily', priority: 0.68 },
 
     // Status page (redirect corrected)
     { path: '/system-status', changeFrequency: 'weekly', priority: 0.50 },

@@ -31,6 +31,7 @@ interface ServiceDropdownItem {
 }
 
 const navLinks: NavLinkItem[] = [
+  { name: 'AI Tools', href: '/ai' },
   { name: 'How It Works', href: '/how-it-works' },
   { name: 'Project Demo', href: '/project-demo' },
   { name: 'Features', href: '/#features' },

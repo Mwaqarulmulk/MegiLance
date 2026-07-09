@@ -1,14 +1,15 @@
 // @AI-HINT: This is the Next.js route file for the AI Chatbot page. Uses the enhanced V2 chatbot with
 // real-time status monitoring, offline mode support, and modern UI.
 import { Metadata } from 'next';
-import ChatbotEnhanced from './ChatbotEnhanced';
-
 import { Suspense } from 'react';
+import ChatbotEnhanced from './ChatbotEnhanced';
+import { buildMeta } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMeta({
   title: 'AI Assistant Chatbot | MegiLance Escrow & Matching Copilot',
   description: 'Chat with our AI Copilot to scope projects, estimate prices, match with vetted freelancers, and understand escrow protocols in real-time.',
-};
+  path: '/ai/chatbot',
+});
 
 const ChatbotFallback = () => (
   <div className="max-w-4xl mx-auto my-10 p-8 border rounded-2xl bg-white dark:bg-slate-950 shadow-sm text-center">

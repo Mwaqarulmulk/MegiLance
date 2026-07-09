@@ -98,7 +98,7 @@ const aiTools = [
   {
     title: "Contract Builder",
     description: "Generate legally-sound freelance contracts with customizable clauses, IP terms, and jurisdiction support.",
-    href: "/ai/contract-builder",
+    href: "/tools/contract-builder",
     icon: Shield,
     tag: null,
     tagColor: "",

@@ -1,13 +1,14 @@
-// @AI-HINT: This is the Next.js route file for the Signup page under the (auth) route group.
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 import Signup from './Signup';
+import { buildMeta } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMeta({
   title: 'Sign Up | MegiLance',
   description: 'Create your MegiLance account today to start hiring top-tier freelancers or finding high-paying remote development projects with secure smart contract escrow.',
-};
+  path: '/signup',
+  noindex: true,
+});
 
 const SignupFallback = () => (
   <div className="max-w-md mx-auto my-10 p-8 border rounded-2xl bg-white dark:bg-slate-950 shadow-sm text-center">

@@ -441,13 +441,17 @@ class AIChatbotService:
         sentiment = self._analyze_sentiment(message)
 
         flow_state = conversation.get("context", {}).get("flow_state")
-        if flow_action and flow_state:
-            if flow_action == "step_complete":
-                await self._advance_flow(conversation_id, flow_state, message)
-            elif flow_action == "flow_cancel":
+        if flow_state:
+            if message.lower().strip() in ("cancel", "stop", "exit", "quit"):
                 await self._cancel_flow(conversation_id)
-            elif flow_action == "flow_start":
-                pass
+                flow_state = None
+                intent = ChatIntent.HELP
+            else:
+                await self._advance_flow(conversation_id, flow_state, message)
+                # Re-fetch conversation to keep everything in sync
+                conversation = await self._get_conversation(conversation_id)
+        elif flow_action and flow_action == "flow_cancel":
+            await self._cancel_flow(conversation_id)
         
         execute_query(
             """INSERT INTO chatbot_messages (conversation_id, role, content, intent, sentiment, created_at)
@@ -947,6 +951,12 @@ class AIChatbotService:
         user_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Generate response based on intent."""
+        conversation = await self._get_conversation(conversation_id)
+        if conversation:
+            flow_state = conversation.get("context", {}).get("flow_state")
+            if flow_state:
+                return await self._generate_flow_response(conversation_id, flow_state, user_id, user_context)
+
         response = {
             "message": "",
             "suggestions": [],
@@ -1219,37 +1229,13 @@ class AIChatbotService:
                 response["suggestions"] = ["Create a freelancer account", "What is a portfolio?"]
                 response["actions"] = [{"type": "suggest_login", "redirect": "/login"}]
             else:
-                p_result = execute_query(
-                    "SELECT COUNT(*) as cnt FROM portfolio_items WHERE user_id = ?",
-                    [user_id]
+                await self.start_flow(conversation_id, "build_portfolio", user_id)
+                response["message"] = (
+                    "Let's add a new portfolio piece! I'll guide you step by step.\n\n"
+                    "**Step 1: Title** — What's the title of this portfolio piece? (e.g., 'E-commerce Redesign', 'Brand Identity Package')"
                 )
-                p_rows = parse_rows(p_result)
-                count = int(p_rows[0]["cnt"]) if p_rows else 0
-
-                if count >= 5:
-                    response["message"] = (
-                        f"You already have **{count} portfolio items** — great job!\n\n"
-                        "To make your portfolio even stronger:\n"
-                        "• Add detailed descriptions to each item\n"
-                        "• Include before/after examples\n"
-                        "• Add client testimonials\n"
-                        "• Update your skills list\n\n"
-                        "Want me to start a portfolio improvement flow?"
-                    )
-                    response["suggestions"] = ["Improve my profile", "Add another portfolio item"]
-                else:
-                    response["message"] = (
-                        f"You have **{count} portfolio items** so far. "
-                        f"Profiles with 3+ portfolio items get 3x more views!\n\n"
-                        "Let me guide you through adding a new portfolio piece. I'll walk you through:\n"
-                        "1. Project title\n"
-                        "2. Description of what you did\n"
-                        "3. Skills demonstrated\n"
-                        "4. Media/link attachments\n\n"
-                        "Ready to start?"
-                    )
-                    response["suggestions"] = ["Yes, start portfolio flow", "What skills should I add?"]
-                    response["actions"] = [{"type": "suggest_flow", "flow": "build_portfolio"}]
+                response["suggestions"] = ["Cancel"]
+                response["actions"] = [{"type": "suggest_flow", "flow": "build_portfolio"}]
 
         elif intent == ChatIntent.SIGN_IN_REQUIRED:
             response["message"] = (
@@ -1275,13 +1261,14 @@ class AIChatbotService:
                 response["suggestions"] = ["Create a client account", "How does posting work?"]
                 response["actions"] = [{"type": "suggest_login", "redirect": "/login"}]
             else:
+                await self.start_flow(conversation_id, "post_project", user_id)
                 response["message"] = (
                     "Let's create your project! I'll guide you through each step:\n\n"
                     "**Step 1: Category** — What type of project is this?\n"
                     "• Web Development\n• Mobile App\n• Design & Creative\n• Writing\n• Data Science\n• Other\n\n"
                     "Which category fits best?"
                 )
-                response["suggestions"] = ["Web Development", "Design & Creative", "Mobile App"]
+                response["suggestions"] = ["Web Development", "Design & Creative", "Mobile App", "Cancel"]
                 response["actions"] = [{"type": "suggest_flow", "flow": "post_project"}]
 
         elif intent == ChatIntent.IMPROVE_PROFILE:
@@ -1569,6 +1556,137 @@ class AIChatbotService:
         summary += f"Last message: {user_messages[-1].get('content', '')[:100]}..."
         
         return summary
+
+    async def _generate_flow_response(
+        self,
+        conversation_id: str,
+        flow_state: Dict,
+        user_id: Optional[int] = None,
+        user_context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        flow_type = flow_state.get("flow_type")
+        current_step = flow_state.get("current_step", 1)
+        flow_def = self.FLOW_DEFINITIONS.get(flow_type, {})
+        
+        if not flow_def:
+            if flow_type == "improve_profile":
+                await self._cancel_flow(conversation_id)
+                return await self._generate_response(conversation_id, "", ChatIntent.IMPROVE_PROFILE, SentimentLevel.NEUTRAL, user_id, user_context)
+            return {"message": "Flow completed or unknown."}
+            
+        steps = flow_def.get("steps", [])
+        total_steps = flow_def.get("total_steps", 0)
+        
+        if current_step <= total_steps:
+            next_step = steps[current_step - 1]
+            suggestions = ["Cancel"]
+            if flow_type == "post_project" and next_step["name"] == "category":
+                suggestions = ["Web Development", "Mobile App", "Design & Creative", "Writing", "Data Science", "Cancel"]
+            elif flow_type == "post_project" and next_step["name"] == "budget":
+                suggestions = ["$500-$1000", "Hourly $30-$50/hr", "Fixed $750", "Cancel"]
+            elif flow_type == "post_project" and next_step["name"] == "timeline":
+                suggestions = ["2 weeks", "1 month", "ASAP", "Flexible", "Cancel"]
+            elif flow_type == "build_portfolio" and next_step["name"] == "skills":
+                suggestions = ["React, Node.js, Figma", "Writing, SEO", "Python, FastAPI", "Cancel"]
+                
+            return {
+                "message": next_step["prompt"],
+                "suggestions": suggestions,
+                "actions": []
+            }
+        else:
+            data = flow_state.get("data", {})
+            action_result = ""
+            
+            if flow_type == "post_project" and user_id:
+                category = data.get("category", "General")
+                title = data.get("title", "Untitled Project")
+                description = data.get("description", "No description provided.")
+                budget_raw = data.get("budget", "")
+                timeline = data.get("timeline", "Flexible")
+                
+                budget_min, budget_max, budget_type = self._parse_budget(budget_raw)
+                
+                from app.services.portal_service import create_project
+                from datetime import datetime, timezone
+                now_str = datetime.now(timezone.utc).isoformat()
+                
+                skills = self._infer_skills(title, description, category)
+                
+                project = create_project(
+                    client_id=user_id,
+                    title=title,
+                    description=description,
+                    budget_min=budget_min,
+                    budget_max=budget_max,
+                    budget_type=budget_type,
+                    category=category,
+                    timeline=timeline,
+                    skills=skills,
+                    now=now_str
+                )
+                
+                if project:
+                    action_result = f"Project **'{title}'** has been successfully created! You can view it in your dashboard."
+                else:
+                    action_result = "There was an error creating your project. Please try again."
+                    
+            elif flow_type == "build_portfolio" and user_id:
+                title = data.get("title", "Untitled Portfolio Piece")
+                description = data.get("description", "")
+                skills_raw = data.get("skills", "")
+                media = data.get("media", "")
+                
+                skills_list = [s.strip() for s in skills_raw.split(",") if s.strip()]
+                skills_str = json.dumps(skills_list)
+                
+                from datetime import datetime, timezone
+                now_str = datetime.now(timezone.utc).isoformat()
+                
+                result = execute_query(
+                    """INSERT INTO portfolio_items (user_id, title, description, image_url, project_url, category, skills, views, created_at, updated_at)
+                       VALUES (?, ?, ?, ?, ?, 'General', ?, 0, ?, ?)""",
+                    [user_id, title, description, media if media.startswith("http") else None, media if media.startswith("http") else None, skills_str, now_str, now_str]
+                )
+                if result:
+                    action_result = f"Portfolio piece **'{title}'** has been successfully added to your profile!"
+                else:
+                    action_result = "There was an error adding your portfolio piece. Please try again."
+            else:
+                action_result = "Action could not be completed. Make sure you are signed in first."
+                
+            await self._cancel_flow(conversation_id)
+            
+            return {
+                "message": f"🎉 **Flow Completed!**\n\n{action_result}",
+                "suggestions": ["Show me AI tools", "Go to Dashboard"],
+                "actions": [{"type": "flow_complete", "flow_type": flow_type}]
+            }
+
+    def _parse_budget(self, budget_raw: str) -> tuple[float, float, str]:
+        budget_raw_lower = budget_raw.lower()
+        budget_type = "fixed"
+        if "hourly" in budget_raw_lower or "/hr" in budget_raw_lower:
+            budget_type = "hourly"
+            
+        numbers = [float(x) for x in re.findall(r'\d+(?:\.\d+)?', budget_raw)]
+        if len(numbers) >= 2:
+            return numbers[0], numbers[1], budget_type
+        elif len(numbers) == 1:
+            return numbers[0], numbers[0], budget_type
+        else:
+            return 100.0, 500.0, budget_type
+
+    def _infer_skills(self, title: str, description: str, category: str) -> list[str]:
+        text = f"{title} {description} {category}".lower()
+        skills_db = ["react", "next.js", "node.js", "python", "fastapi", "django", "typescript", "javascript", "figma", "ui/ux", "writer", "seo", "tailwind", "aws", "docker", "postgresql", "sql", "ai", "machine learning"]
+        inferred = []
+        for s in skills_db:
+            if s in text:
+                inferred.append(s)
+        if not inferred:
+            inferred = [category]
+        return inferred
 
 
 _chatbot_service: Optional[AIChatbotService] = None

@@ -45,8 +45,8 @@ export const footerNavItems = {
     { label: "FAQ", href: "/faq" },
   ],
   legal: [
-    { label: "Privacy Policy", href: "/legal/privacy" },
-    { label: "Terms of Service", href: "/legal/terms" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
   ],
 };
 

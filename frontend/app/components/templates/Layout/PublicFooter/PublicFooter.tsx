@@ -40,8 +40,8 @@ const footerSections = {
     { name: 'Support', href: '/support' },
     { name: 'Contact Us', href: '/contact' },
     { name: 'Community', href: '/community' },
-    { name: 'Status', href: '/status' },
-    { name: 'Referral Program', href: '/referral' },
+    { name: 'Status', href: '/system-status' },
+    { name: 'Referral Program', href: '/referrals' },
   ],
   'Legal': [
     { name: 'Terms of Service', href: '/terms' },

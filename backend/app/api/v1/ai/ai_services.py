@@ -7,7 +7,7 @@ import json
 
 logger = logging.getLogger(__name__)
 
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_current_user_optional
 from app.db.turso_http import execute_query, parse_rows
 from app.services.matching_engine import normalize_skill, SKILL_CATEGORIES
 
@@ -21,7 +21,7 @@ class RateEstimateRequest(BaseModel):
 
 
 @router.post("/estimate-rate")
-def estimate_rate(request: RateEstimateRequest, current_user=Depends(get_current_user)):
+def estimate_rate(request: RateEstimateRequest, current_user=Depends(get_current_user_optional)):
     """Estimate market rate based on actual freelancer data in the platform."""
     skill_list = [s.strip().lower() for s in request.skills if s.strip()]
 
@@ -117,7 +117,7 @@ def estimate_rate(request: RateEstimateRequest, current_user=Depends(get_current
 @router.get("/skills/analysis")
 def analyze_skills(
     skills: str = Query(..., description="Comma-separated skills"),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_optional),
 ):
     """Analyze skills based on actual market demand from the platform data."""
     skill_list = [s.strip() for s in skills.split(",") if s.strip()]
@@ -185,7 +185,7 @@ def estimate_project(
     title: str = Query(...),
     description: str = Query(...),
     category: Optional[str] = None,
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_optional),
 ):
     """Estimate project budget and duration based on similar completed projects."""
     word_count = len(description.split())
@@ -302,7 +302,7 @@ _CATEGORY_PHASE_OVERRIDES = {
 
 
 @router.post("/itemize-invoice")
-def itemize_invoice(request: InvoiceItemizeRequest, current_user=Depends(get_current_user)):
+def itemize_invoice(request: InvoiceItemizeRequest, current_user=Depends(get_current_user_optional)):
     """Break a contract/total amount into standard delivery-phase line items.
 
     Returns a transparent template breakdown the user can edit. Confidence

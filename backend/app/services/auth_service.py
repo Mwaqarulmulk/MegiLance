@@ -44,6 +44,9 @@ def _user_from_row(row: list, cols: list) -> dict:
             except (json.JSONDecodeError, TypeError):
                 pass
 
+    if "onboarding_completed" in data:
+        data["profile_completed"] = bool(data["onboarding_completed"])
+
     return data
 
 
@@ -141,6 +144,7 @@ _ALLOWED_USER_COLUMNS = frozenset({
     "industry_focus", "tools_and_technologies", "achievements",
     "testimonials_enabled", "contact_preferences", "profile_visibility",
     "profile_slug", "profile_views", "seller_level",
+    "onboarding_completed",
 })
 
 
@@ -203,7 +207,7 @@ def get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
                   phone_number, video_intro_url, resume_url, profile_slug, profile_visibility,
                   profile_views, seller_level, education, certifications, work_history,
                   achievements, contact_preferences, testimonials_enabled,
-                  two_factor_enabled, account_balance, joined_at
+                  two_factor_enabled, account_balance, joined_at, onboarding_completed
            FROM users WHERE id = ?""",
         [user_id]
     )

@@ -3,13 +3,15 @@
 
 import React, { useState, useEffect, useCallback, useMemo, KeyboardEvent } from 'react';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, ChevronLeft, ChevronRight, Check, Loader2, ArrowLeft,
   Code, Palette, Megaphone, PenTool, Video, Briefcase, BarChart3,
   Settings, GraduationCap, Camera, DollarSign, Clock, TrendingUp,
-  Target, Layers, MapPin, Shield, Zap, Star, RotateCcw, Copy,
+  Target, Layers, MapPin, Shield, Zap, Star, RotateCcw, Copy, Bookmark,
   Info, X, Plus, AlertTriangle, HelpCircle, BookOpen, Calculator,
   ChevronDown, ChevronUp, Lightbulb
 } from 'lucide-react';
@@ -1312,6 +1314,11 @@ interface ResultsDashboardProps {
 function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardProps) {
   const { estimate, breakdown, confidence, market_comparison, factors: pricingFactors, roi_insights, timeline, regional_analysis } = result;
 
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const [showGateModal, setShowGateModal] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
   // Celebrate the reveal of a fresh estimate
   useEffect(() => {
     celebrate();
@@ -1324,6 +1331,98 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
   const tierMaxTotal = Math.max(
     ...tierEntries.map(([, v]) => v.total)
   );
+
+  const handlePostProject = () => {
+    // Map category to ProjectWizard schema
+    const catLower = (result.meta.category || '').toLowerCase();
+    const serviceLower = (result.meta.service_type || '').toLowerCase();
+    const checkStr = `${catLower} ${serviceLower}`;
+    
+    let mappedCategory = 'OTHER';
+    if (checkStr.includes('web') || checkStr.includes('software') || checkStr.includes('api') || checkStr.includes('backend') || checkStr.includes('frontend') || checkStr.includes('code')) {
+      mappedCategory = 'WEB_DEVELOPMENT';
+    } else if (checkStr.includes('mobile') || checkStr.includes('app') || checkStr.includes('ios') || checkStr.includes('android') || checkStr.includes('phone')) {
+      mappedCategory = 'MOBILE_DEVELOPMENT';
+    } else if (checkStr.includes('design') || checkStr.includes('ui') || checkStr.includes('ux') || checkStr.includes('graphic') || checkStr.includes('brand') || checkStr.includes('illustrator')) {
+      mappedCategory = 'DESIGN';
+    } else if (checkStr.includes('write') || checkStr.includes('copy') || checkStr.includes('content') || checkStr.includes('technical_writing')) {
+      mappedCategory = 'WRITING';
+    } else if (checkStr.includes('market') || checkStr.includes('seo') || checkStr.includes('sale') || checkStr.includes('ads')) {
+      mappedCategory = 'MARKETING';
+    } else if (checkStr.includes('data') || checkStr.includes('analytics') || checkStr.includes('science') || checkStr.includes('machine') || checkStr.includes('ml') || checkStr.includes('ai') || checkStr.includes('model')) {
+      mappedCategory = 'DATA_SCIENCE';
+    } else if (checkStr.includes('devops') || checkStr.includes('cloud') || checkStr.includes('infra') || checkStr.includes('server') || checkStr.includes('kubernetes') || checkStr.includes('k8s') || checkStr.includes('cicd')) {
+      mappedCategory = 'DEVOPS';
+    }
+
+    // Determine default skills based on service type
+    let skills: string[] = [];
+    if (checkStr.includes('web_application') || checkStr.includes('website') || checkStr.includes('web-app') || checkStr.includes('web development')) {
+      skills = ['React', 'TypeScript', 'Node.js', 'Next.js'];
+    } else if (checkStr.includes('mobile_app') || checkStr.includes('mobile app') || checkStr.includes('mobile development')) {
+      skills = ['React Native', 'Flutter', 'iOS', 'Android'];
+    } else if (checkStr.includes('api_backend') || checkStr.includes('backend-development') || checkStr.includes('api / backend')) {
+      skills = ['Python', 'FastAPI', 'Node.js', 'REST API'];
+    } else if (checkStr.includes('ecommerce') || checkStr.includes('e-commerce')) {
+      skills = ['Shopify', 'WooCommerce', 'React', 'Stripe'];
+    } else if (checkStr.includes('ml_model') || checkStr.includes('llm') || checkStr.includes('computer_vision') || checkStr.includes('machine-learning') || checkStr.includes('machine learning')) {
+      skills = ['Python', 'Machine Learning', 'AI Integration', 'LLM'];
+    } else if (checkStr.includes('ui_ux') || checkStr.includes('design_system') || checkStr.includes('branding') || checkStr.includes('ui-ux')) {
+      skills = ['UI/UX Design', 'Figma', 'Wireframing', 'Prototyping'];
+    } else if (checkStr.includes('graphic_design') || checkStr.includes('graphic design') || checkStr.includes('illustrator')) {
+      skills = ['Graphic Design', 'Adobe Illustrator', 'Adobe Photoshop'];
+    } else if (checkStr.includes('dashboard') || checkStr.includes('data_engineering') || checkStr.includes('data_viz') || checkStr.includes('data science')) {
+      skills = ['Data Engineering', 'SQL', 'Tableau', 'Power BI'];
+    } else if (checkStr.includes('cloud') || checkStr.includes('cicd') || checkStr.includes('k8s') || checkStr.includes('devops')) {
+      skills = ['AWS', 'Docker', 'Kubernetes', 'CI/CD'];
+    } else if (checkStr.includes('seo') || checkStr.includes('ads') || checkStr.includes('growth') || checkStr.includes('marketing')) {
+      skills = ['SEO', 'Google Ads', 'Growth Marketing', 'Google Analytics'];
+    } else if (checkStr.includes('writing') || checkStr.includes('copy')) {
+      skills = ['Content Writing', 'Copywriting', 'Technical Writing', 'SEO Writing'];
+    } else if (checkStr.includes('video') || checkStr.includes('motion') || checkStr.includes('animation')) {
+      skills = ['Video Editing', 'After Effects', 'Premiere Pro', '3D Animation'];
+    } else if (checkStr.includes('contract') || checkStr.includes('dapp') || checkStr.includes('tokenomics') || checkStr.includes('blockchain')) {
+      skills = ['Solidity', 'Ethereum', 'Smart Contracts', 'Web3.js'];
+    } else {
+      skills = ['Software Development', 'Project Management'];
+    }
+
+    const descriptionText = `Project Scope: ${result.meta.scope || 'Moderate'}
+Estimated Budget: $${result.estimate.low_estimate.toLocaleString()} - $${result.estimate.high_estimate.toLocaleString()}
+Estimated Timeframe: ${result.timeline.label}
+Estimated Hours: ${result.estimate.total_hours}h
+
+Methodology and Deliverables:
+${result.methodology}
+
+Requirements & Features:
+${result.hours_breakdown ? `• Core Development: ${result.hours_breakdown.core_hours}h\n• Additional Features: ${result.hours_breakdown.feature_hours}h\n• Project Coordination: ${result.hours_breakdown.coordination_hours}h` : ''}
+`;
+
+    const pendingProject = {
+      title: `Hire developer for ${result.meta.service_type || result.meta.category || 'project'}`,
+      description: descriptionText,
+      category: mappedCategory,
+      skills: skills,
+      budgetMin: String(result.estimate.low_estimate),
+      budgetMax: String(result.estimate.high_estimate),
+      budgetType: 'fixed',
+      experienceLevel: result.meta.experience_level === 'entry' ? 'entry' : result.meta.experience_level === 'expert' ? 'expert' : 'intermediate',
+      duration: result.timeline.weeks <= 2 ? '1_month' : result.timeline.weeks <= 4 ? '1_to_3_months' : '3_to_6_months',
+    };
+
+    sessionStorage.setItem('megilance_pending_project', JSON.stringify(pendingProject));
+    router.push('/create-project');
+  };
+
+  const handleSaveEstimate = () => {
+    if (isAuthenticated) {
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } else {
+      setShowGateModal(true);
+    }
+  };
 
   return (
     <div className={cs.resultsContainer}>
@@ -1558,14 +1657,88 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
 
       {/* Action Buttons */}
       <div className={cs.actionsBar}>
-        <button className={cn(cs.actionBtn, ts.actionBtnPrimary)} onClick={onReset}>
-          <RotateCcw /> New Estimate
+        <button className={cn(cs.actionBtn, ts.actionBtnPrimary)} onClick={handlePostProject}>
+          <Sparkles /> Post this Project
+        </button>
+        <button className={cn(cs.actionBtn, ts.actionBtnSecondary)} onClick={handleSaveEstimate}>
+          <Bookmark /> Save to Dashboard
         </button>
         <ExportMenu report={() => buildPriceReport(result)} />
         <button className={cn(cs.actionBtn, ts.actionBtnSecondary)} onClick={onCopy}>
           <Copy /> Copy to Clipboard
         </button>
+        <button className={cn(cs.actionBtn, ts.actionBtnSecondary)} onClick={onReset}>
+          <RotateCcw /> New Estimate
+        </button>
       </div>
+
+      {/* Save to Dashboard Gating Modal */}
+      <AnimatePresence>
+        {showGateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div 
+              className="relative w-full max-w-md bg-white dark:bg-slate-950 p-6 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+            >
+              <button 
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350"
+                onClick={() => setShowGateModal(false)}
+              >
+                <X size={18} />
+              </button>
+              
+              <div className="flex flex-col items-center text-center">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 mb-4">
+                  <Bookmark size={24} />
+                </div>
+                
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Save Estimate to Dashboard</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+                  Join MegiLance to save unlimited estimates, track project budget changes, export reports, and instantly hire matched freelancers.
+                </p>
+                
+                <div className="w-full space-y-3">
+                  <button 
+                    className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition duration-150"
+                    onClick={() => router.push('/signup?redirect=/tools/ai-project-cost-estimator')}
+                  >
+                    Sign Up Free
+                  </button>
+                  <button 
+                    className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-xl transition duration-150"
+                    onClick={() => router.push('/login?redirect=/tools/ai-project-cost-estimator')}
+                  >
+                    Log In
+                  </button>
+                  <button 
+                    className="w-full py-2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-medium transition"
+                    onClick={() => setShowGateModal(false)}
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Save Success Banner */}
+      <AnimatePresence>
+        {saveSuccess && (
+          <motion.div 
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 py-3 px-5 rounded-xl border border-emerald-100 dark:border-emerald-900/50 shadow-md"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+          >
+            <Check size={16} className="bg-emerald-600 text-white rounded-full p-0.5" />
+            <span className="text-sm font-semibold">Estimate saved to your dashboard history!</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

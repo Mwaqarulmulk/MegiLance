@@ -83,7 +83,7 @@ const megaMenuData = {
         title: 'Company',
         items: [
           { name: 'About Us', href: '/about', icon: Globe, description: 'Our mission', status: 'complete' as FeatureStatus },
-          { name: 'System Status', href: '/status', icon: Activity, description: 'Platform health', status: 'complete' as FeatureStatus },
+          { name: 'System Status', href: '/system-status', icon: Activity, description: 'Platform health', status: 'complete' as FeatureStatus },
         ]
       }
     ]
