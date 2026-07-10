@@ -1,0 +1,152 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+.title {
+  font-family: var(--font-family-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.description {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.reviewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-family-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.reviewItem {
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+}
+
+.reviewValue {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.attachmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.attachmentItem {
+  font-size: 0.875rem;
+}
+
+.termsSection {
+  padding-top: 1rem;
+  border-top: 1px solid;
+}
+
+.termsAgreement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.termsIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.termsText {
+  font-weight: 500;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .reviewGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reviewItem {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 374px) {
+  .title {
+    font-size: 1.125rem;
+  }
+
+  .sectionTitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .header, .headerActions, .filterBar, .kpiGrid, .statsRow, .quickActionsGrid, .tabBar, .cardHeader, .metaGroup, .cardFooter, .actionRow, .stepRow, .termsRow, .grid, .flexRow, .row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+  .kpiGrid, .grid, .statsRow {
+    grid-template-columns: 1fr !important;
+  }
+  .container, .card, .wrapper {
+    padding: 1rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.25rem !important;
+  }
+  .subtitle, :global(p) {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .container, .card, .wrapper {
+    padding: 0.75rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.15rem !important;
+  }
+  .subtitle, :global(p), :global(span) {
+    font-size: 0.8rem !important;
+  }
+  :global(button), .btn, .tab, .filterBtn {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+    width: 100% !important;
+  }
+}

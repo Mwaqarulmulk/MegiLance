@@ -1,0 +1,86 @@
+﻿.container {
+  background-color: var(--bg-secondary-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.description {
+  color: var(--text-tertiary-dark);
+}
+
+.toggleAllRow {
+  color: var(--text-tertiary-dark);
+}
+
+.toggleAllButton {
+  background-color: var(--bg-secondary-dark);
+  color: var(--text-tertiary-dark);
+}
+
+.toggleAllButton:hover {
+  background-color: #6b8de6;
+  color: white;
+}
+
+.termsSection {
+  background-color: var(--bg-primary-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.sectionHeader {
+  background-color: var(--bg-primary-dark);
+  color: var(--text-primary-dark);
+}
+
+.sectionHeader:hover {
+  background-color: var(--bg-secondary-dark);
+}
+
+.sectionTitleWrapper {
+  color: var(--text-primary-dark);
+}
+
+.sectionIcon {
+  color: #6b8de6;
+}
+
+.sectionTitle {
+  color: var(--text-primary-dark);
+}
+
+.termsList {
+  background-color: var(--bg-primary-dark);
+}
+
+.termsItem {
+  color: var(--text-tertiary-dark);
+}
+
+.itemIcon {
+  color: #6b8de6;
+}
+
+.agreement {
+  background-color: var(--bg-primary-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.agreementAccepted {
+  background-color: rgba(39, 174, 96, 0.15);
+  border-color: #22c55e;
+}
+
+.agreementLabel {
+  color: var(--text-primary-dark);
+}
+
+.error {
+  color: #f87171;
+}
+
+.successMessage {
+  background-color: rgba(39, 174, 96, 0.15);
+  color: #22c55e;
+}

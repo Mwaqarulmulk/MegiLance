@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
-import CompareClient from './CompareClient';
+import CompareIndexClient from './CompareIndexClient';
 
 export const metadata: Metadata = buildMeta({
   title: 'MegiLance vs Upwork vs Fiverr | Best Freelance Platform Comparison 2026',
@@ -14,6 +14,29 @@ export const metadata: Metadata = buildMeta({
   ]),
 });
 
+const COMPETITORS = [
+  {
+    slug: 'upwork',
+    name: 'Upwork',
+    desc: 'Compare commission structures, contract initiation fees, connects cost, and escrow payment protection.',
+  },
+  {
+    slug: 'fiverr',
+    name: 'Fiverr',
+    desc: 'See how MegiLance compares for complex milestone projects vs Gig-based micro-services.',
+  },
+  {
+    slug: 'toptal',
+    name: 'Toptal',
+    desc: 'Compare elite vetting mechanisms, platform deposits, and overall startup hiring costs.',
+  },
+  {
+    slug: 'freelancer-com',
+    name: 'Freelancer.com',
+    desc: 'Analyze bid-boosting fees, spam control, and on-chain escrow payment safety.',
+  },
+];
+
 export default function ComparePage() {
-  return <CompareClient />;
+  return <CompareIndexClient competitors={COMPETITORS} />;
 }

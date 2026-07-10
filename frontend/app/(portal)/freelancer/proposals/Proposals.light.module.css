@@ -1,0 +1,46 @@
+﻿/* @AI-HINT: Light theme styles for Proposals page. */
+
+.container {
+  background-color: var(--bg-primary-light);
+}
+
+.title {
+  color: var(--text-primary-light);
+}
+
+.subtitle {
+  color: var(--color-text-secondary-light);
+}
+
+.toolbarContainer {
+  background-color: var(--bg-secondary-light);
+  border: 1px solid var(--border-light);
+}
+
+.input { background: var(--bg-primary-light); border-color: var(--border-light); color: var(--text-primary-light); }
+.select { background: var(--bg-primary-light); border-color: var(--border-light); color: var(--text-primary-light); }
+.button { background: var(--ml-blue); color: var(--bg-primary-light); }
+.button:hover { filter: brightness(0.95); }
+
+.tableWrap { background: var(--bg-primary-light); box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04); }
+.table thead th { background: var(--bg-secondary-light); color: var(--text-primary-light); border-bottom: 1px solid var(--border-light); }
+.table td { border-top: 1px solid var(--bg-tertiary-light); }
+
+.emptyState {
+  background-color: var(--bg-secondary-light);
+  border: 1px dashed var(--border-light);
+}
+
+.emptyTitle {
+  color: var(--text-primary-light);
+}
+
+.emptyText {
+  color: var(--color-text-secondary-light);
+}
+
+.modalText {
+    color: var(--color-text-secondary-light);
+}
+
+.status { background: #eef2ff; color: #3730a3; }

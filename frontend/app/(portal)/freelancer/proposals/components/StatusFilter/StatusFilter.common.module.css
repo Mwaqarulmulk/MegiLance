@@ -1,0 +1,80 @@
+/* @AI-HINT: Common styles for the StatusFilter component. Defines the layout for the button group. */
+
+.filterGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.filterButton {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+  border: 1px solid;
+}
+
+.filterButton:hover {
+  transform: translateY(-2px);
+}
+
+.selected {
+  font-weight: 600;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 374px) {
+  .filterGroup {
+    gap: 0.5rem;
+  }
+
+  .filterButton {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+
+@media (max-width: 380px) {
+  .header, .headerActions, .filterBar, .kpiGrid, .statsRow, .quickActionsGrid, .tabBar, .cardHeader, .metaGroup, .cardFooter, .actionRow, .stepRow, .termsRow, .grid, .flexRow, .row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+  .kpiGrid, .grid, .statsRow {
+    grid-template-columns: 1fr !important;
+  }
+  .container, .card, .wrapper {
+    padding: 1rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.25rem !important;
+  }
+  .subtitle, :global(p) {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .container, .card, .wrapper {
+    padding: 0.75rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.15rem !important;
+  }
+  .subtitle, :global(p), :global(span) {
+    font-size: 0.8rem !important;
+  }
+  :global(button), .btn, .tab, .filterBtn {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+    width: 100% !important;
+  }
+}

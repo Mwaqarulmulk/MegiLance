@@ -1,0 +1,128 @@
+﻿/* @AI-HINT: Light theme colors for GigCard component */
+.theme {
+  background-color: var(--bg-primary-light);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.theme:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #cbd5e1;
+}
+
+.proLabel {
+  background-color: #1dbf73;
+  color: var(--bg-primary-light);
+}
+
+.levelBadge {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
+}
+
+.levelBadge.bronze {
+  background-color: #cd7f32;
+  color: var(--bg-primary-light);
+}
+
+.levelBadge.silver {
+  background-color: #c0c0c0;
+  color: #1f2937;
+}
+
+.levelBadge.gold {
+  background-color: #ffd700;
+  color: #1f2937;
+}
+
+.levelBadge.platinum {
+  background-color: #e5e4e2;
+  color: #1f2937;
+}
+
+.favoriteButton {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: var(--color-text-secondary-light);
+}
+
+.favoriteButton:hover {
+  background-color: var(--bg-primary-light);
+  color: #ef4444;
+}
+
+.favoriteButton.active {
+  color: #ef4444;
+}
+
+.sellerName {
+  color: #1f2937;
+}
+
+.sellerName:hover {
+  color: var(--ml-blue);
+}
+
+.sellerLevel {
+  color: var(--color-text-secondary-light);
+}
+
+.sellerLevel.topRated {
+  color: #f59e0b;
+}
+
+.title {
+  color: #404145;
+}
+
+.title:hover {
+  color: var(--ml-blue);
+}
+
+.ratingRow {
+  color: #1f2937;
+}
+
+.starIcon {
+  color: #ffb33e;
+}
+
+.ratingCount {
+  color: var(--color-text-secondary-light);
+}
+
+.footer {
+  border-top: 1px solid var(--border-light);
+}
+
+.priceLabel {
+  color: var(--color-text-secondary-light);
+}
+
+.priceValue {
+  color: #1f2937;
+}
+
+.tag {
+  background-color: var(--bg-tertiary-light);
+  color: #4b5563;
+}
+
+.quickActions {
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.85));
+}
+
+.quickActionBtn {
+  background-color: var(--ml-blue);
+  color: var(--bg-primary-light);
+}
+
+.quickActionBtn.secondary {
+  background-color: var(--bg-primary-light);
+  color: #1f2937;
+  border: 1px solid var(--border-light);
+}
+
+.sellerAvatarFallback {
+  background-color: var(--ml-blue);
+  color: var(--bg-primary-light);
+}

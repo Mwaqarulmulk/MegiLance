@@ -1,0 +1,41 @@
+.container {
+  background-color: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.title {
+  color: #0369a1;
+}
+
+.item {
+  background-color: var(--bg-primary-light);
+  border: 1px solid #e0f2fe;
+}
+
+.itemTitle {
+  color: #0c4a6e;
+}
+
+.itemDesc {
+  color: var(--color-text-secondary-light);
+}
+
+.iconRocket {
+  color: #a855f7;
+}
+
+.iconLightbulb {
+  color: #eab308;
+}
+
+.loadingState {
+  color: var(--color-text-secondary-light);
+}
+
+.addButton {
+  color: #2563eb;
+}
+
+.addButton:hover {
+  background-color: #eff6ff;
+}

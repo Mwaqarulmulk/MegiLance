@@ -1,0 +1,10 @@
+.container {
+  background-color: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.previewArea {
+  background-color: var(--bg-primary-light);
+  border-color: var(--border-light);
+  color: #334155;
+}

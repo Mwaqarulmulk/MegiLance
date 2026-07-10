@@ -1,0 +1,128 @@
+﻿/* @AI-HINT: Dark theme colors for GigCard component */
+.theme {
+  background-color: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.theme:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: #475569;
+}
+
+.proLabel {
+  background-color: #1dbf73;
+  color: #ffffff;
+}
+
+.levelBadge {
+  background-color: rgba(30, 30, 30, 0.95);
+  color: #f3f4f6;
+}
+
+.levelBadge.bronze {
+  background-color: #cd7f32;
+  color: #ffffff;
+}
+
+.levelBadge.silver {
+  background-color: #c0c0c0;
+  color: var(--bg-secondary-dark);
+}
+
+.levelBadge.gold {
+  background-color: #ffd700;
+  color: var(--bg-secondary-dark);
+}
+
+.levelBadge.platinum {
+  background-color: #e5e4e2;
+  color: var(--bg-secondary-dark);
+}
+
+.favoriteButton {
+  background-color: rgba(30, 30, 30, 0.95);
+  color: var(--text-tertiary-dark);
+}
+
+.favoriteButton:hover {
+  background-color: var(--border-dark);
+  color: #ef4444;
+}
+
+.favoriteButton.active {
+  color: #ef4444;
+}
+
+.sellerName {
+  color: #f3f4f6;
+}
+
+.sellerName:hover {
+  color: var(--ml-blue);
+}
+
+.sellerLevel {
+  color: var(--text-tertiary-dark);
+}
+
+.sellerLevel.topRated {
+  color: #fbbf24;
+}
+
+.title {
+  color: #e2e8f0;
+}
+
+.title:hover {
+  color: var(--ml-blue);
+}
+
+.ratingRow {
+  color: #f3f4f6;
+}
+
+.starIcon {
+  color: #fbbf24;
+}
+
+.ratingCount {
+  color: var(--text-tertiary-dark);
+}
+
+.footer {
+  border-top: 1px solid var(--border-dark);
+}
+
+.priceLabel {
+  color: var(--text-tertiary-dark);
+}
+
+.priceValue {
+  color: #f3f4f6;
+}
+
+.tag {
+  background-color: var(--border-dark);
+  color: var(--text-tertiary-dark);
+}
+
+.quickActions {
+  background: linear-gradient(to top, rgba(30, 30, 30, 0.98), rgba(30, 30, 30, 0.85));
+}
+
+.quickActionBtn {
+  background-color: var(--ml-blue);
+  color: #ffffff;
+}
+
+.quickActionBtn.secondary {
+  background-color: var(--border-dark);
+  color: #f3f4f6;
+  border: 1px solid #475569;
+}
+
+.sellerAvatarFallback {
+  background-color: var(--ml-blue);
+  color: #ffffff;
+}

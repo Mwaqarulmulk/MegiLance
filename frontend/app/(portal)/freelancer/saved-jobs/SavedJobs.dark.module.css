@@ -1,0 +1,56 @@
+/* @AI-HINT: Dark theme for enhanced Saved Jobs page */
+.container { background: var(--bg-primary-dark); }
+.title { color: var(--color-text-primary-dark); }
+.subtitle { color: var(--text-tertiary-dark); }
+
+/* Stats */
+.statCard { background: var(--bg-secondary-dark); border-color: var(--border-dark); }
+.statValue { color: var(--color-text-primary-dark); }
+.statLabel { color: #64748b; }
+
+/* Toolbar */
+.toolbar { background: transparent; }
+.searchInput { background: var(--bg-secondary-dark); border-color: var(--border-dark); color: var(--color-text-primary-dark); }
+.sortSelect { background: var(--bg-secondary-dark); border-color: var(--border-dark); color: var(--text-secondary-dark); }
+.filterToggle { border-color: var(--border-dark); color: var(--text-tertiary-dark); }
+.filterToggle:hover { background: var(--border-dark); }
+
+/* Filter Panel */
+.filterPanel { background: var(--bg-secondary-dark); border: 1px solid var(--border-dark); }
+.filterLabel { color: var(--text-secondary-dark); }
+.filterChip { color: var(--text-tertiary-dark); }
+.filterChip:hover { background: var(--border-dark); }
+.filterChipActive { background: var(--ml-blue); color: #ffffff; }
+
+/* Bulk / Select */
+.bulkBar { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.selectAllRow { color: var(--text-tertiary-dark); }
+
+/* Empty */
+.emptyState { background: var(--bg-secondary-dark); color: var(--text-tertiary-dark); }
+.emptyState h3 { color: var(--color-text-primary-dark); }
+
+/* Cards */
+.jobCard {
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+}
+.jobCard:hover {
+  border-color: var(--ml-blue);
+  background: var(--bg-secondary-dark);
+  transform: translateY(-1px);
+}
+.jobCardSelected { border-color: #60a5fa; background: rgba(69,115,223,0.1); }
+.jobTitle { color: var(--color-text-primary-dark); }
+.savedTime { color: var(--text-tertiary-dark); background: var(--border-dark); padding: 2px 8px; border-radius: 4px; }
+.clientName { color: var(--text-tertiary-dark); }
+.description { color: var(--text-secondary-dark); }
+.skill { background: rgba(69,115,223,0.15); color: #6b9fff; }
+.budget { color: var(--color-text-primary-dark); }
+.budgetType { background: var(--border-dark); color: var(--text-tertiary-dark); }
+.proposals { color: var(--text-tertiary-dark); }
+.jobFooter { border-color: var(--border-dark); }
+
+/* Notes */
+.noteInput { background: var(--bg-primary-dark); border-color: var(--border-dark); color: var(--color-text-primary-dark); }
+.noteDisplay { background: rgba(251,191,36,0.1); color: #fbbf24; }

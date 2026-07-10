@@ -1,0 +1,75 @@
+﻿/* @AI-HINT: Light theme colors for GigGrid component */
+.theme {
+  color: #1f2937;
+}
+
+.title {
+  color: #1f2937;
+}
+
+.subtitle {
+  color: var(--color-text-secondary-light);
+}
+
+.resultsCount {
+  color: var(--color-text-secondary-light);
+}
+
+.sortDropdown {
+  background-color: var(--bg-primary-light);
+  border: 1px solid var(--border-light);
+  color: #1f2937;
+}
+
+.sortDropdown:focus {
+  outline: 2px solid var(--ml-blue);
+  outline-offset: 2px;
+}
+
+.viewButton {
+  background-color: var(--bg-tertiary-light);
+  color: var(--color-text-secondary-light);
+}
+
+.viewButton.active {
+  background-color: var(--ml-blue);
+  color: var(--bg-primary-light);
+}
+
+.viewButton:hover:not(.active) {
+  background-color: var(--border-light);
+}
+
+.emptyIcon {
+  background-color: var(--bg-tertiary-light);
+  color: var(--text-tertiary-light);
+}
+
+.emptyTitle {
+  color: #1f2937;
+}
+
+.emptyDescription {
+  color: var(--color-text-secondary-light);
+}
+
+.skeletonCard {
+  background-color: var(--bg-tertiary-light);
+}
+
+.pageButton {
+  background-color: var(--bg-primary-light);
+  border: 1px solid var(--border-light);
+  color: #1f2937;
+}
+
+.pageButton:hover:not(:disabled) {
+  border-color: var(--ml-blue);
+  color: var(--ml-blue);
+}
+
+.pageButton.active {
+  background-color: var(--ml-blue);
+  border-color: var(--ml-blue);
+  color: var(--bg-primary-light);
+}

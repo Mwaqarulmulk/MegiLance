@@ -1,0 +1,92 @@
+﻿.main {
+  background-color: var(--bg-secondary-dark);
+}
+
+.jobBanner {
+  background-color: var(--bg-primary-dark);
+  border-color: var(--border-dark);
+  color: var(--text-primary-dark);
+}
+
+.jobBannerTitle {
+  color: var(--text-primary-dark);
+}
+
+.jobBannerClient {
+  color: var(--text-tertiary-dark);
+}
+
+.jobBannerBadge {
+  background-color: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+  color: var(--text-tertiary-dark);
+}
+
+.jobBannerDesc {
+  color: var(--text-tertiary-dark);
+}
+
+.progressBar {
+  background-color: var(--bg-secondary-dark);
+}
+
+.progressFill {
+  background: linear-gradient(90deg, #6b8de6, var(--ml-orange));
+}
+
+.headerTop {
+  color: var(--text-primary-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.savedIndicator {
+  background-color: #22c55e;
+  color: white;
+}
+
+.estimatedTotal {
+  background-color: var(--bg-primary-dark);
+  border: 1px solid var(--border-dark);
+  color: var(--text-primary-dark);
+}
+
+.footer {
+  border-top-color: var(--border-dark);
+}
+
+.footerLeft,
+.footerRight {
+  color: var(--text-primary-dark);
+}
+
+.result_card {
+  background-color: var(--bg-primary-dark);
+  border: 1px solid var(--border-dark);
+}
+
+.result_title {
+  color: var(--text-primary-dark);
+}
+
+.result_message {
+  color: var(--text-tertiary-dark);
+}
+
+.result_actions {
+  color: var(--text-primary-dark);
+}
+
+.success_icon {
+  color: #22c55e;
+}
+
+.error_icon {
+  color: #f87171;
+}

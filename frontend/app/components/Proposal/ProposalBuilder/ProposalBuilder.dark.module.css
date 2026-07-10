@@ -1,0 +1,38 @@
+/* Dark theme for ProposalBuilder */
+
+.container {
+  background-color: var(--bg-primary-dark);
+}
+
+.title {
+  color: var(--text-primary-dark);
+}
+
+.subtitle {
+  color: var(--text-tertiary-dark);
+}
+
+.templateCard {
+  background-color: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+}
+
+.templateCard:hover {
+  background-color: var(--bg-primary-dark);
+  border-color: var(--ml-blue);
+}
+
+.tip {
+  background-color: #422006;
+  border: 1px solid #78350f;
+  color: #fef3c7;
+}
+
+.formSection {
+  background-color: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+}
+
+.sectionTitle {
+  color: var(--color-text-primary-dark);
+}

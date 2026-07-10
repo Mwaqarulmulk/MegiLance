@@ -1,0 +1,125 @@
+/* Layout and structure for ProposalBuilder */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-family-heading);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-family: var(--font-family-body);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.templateCard {
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.templateCard h4 {
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: var(--font-family-body);
+}
+
+.tip {
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  font-family: var(--font-family-body);
+  line-height: 1.5;
+}
+
+.tip strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.mainForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formSection {
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-family: var(--font-family-heading);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .mainForm {
+    order: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+}

@@ -1,0 +1,99 @@
+/* @AI-HINT: Common, role-agnostic styles for the Freelancer Proposals page. Keep layout tokens and structure here; theme colors go in light/dark files. */
+
+.container { display: grid; gap: 24px; }
+.header { display: grid; gap: 8px; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.input { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; min-width: 240px; }
+.select { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid transparent; }
+.button { height: 36px; padding: 0 12px; border-radius: 8px; font-weight: 500; border: 1px solid transparent; }
+
+/* Extras row for column visibility and density toggle */
+.extrasRow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+/* Status chip filters */
+.statusFilters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-right: auto; }
+
+.tableWrap { overflow: auto; border-radius: 12px; max-height: 520px; }
+.table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.table th, .table td { padding: 12px 14px; text-align: left; white-space: nowrap; }
+.table tbody tr { transition: background-color 140ms ease; }
+.table tbody tr:hover { background-color: var(--muted); }
+.table tbody tr:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.table thead th { font-weight: 600; font-size: 0.9rem; position: sticky; top: 0; z-index: 1; }
+/* Provide a solid surface for sticky headers; actual colors come from themed files */
+.table thead tr { background: inherit; }
+.table thead th { background: inherit; border-bottom: 1px solid; transition: border-color 140ms ease, background-color 140ms ease; }
+
+/* Density support */
+.table[data-density="compact"] th,
+.table[data-density="compact"] td { padding: 8px 10px; font-size: 0.9rem; }
+
+/* Selection checkbox cell */
+.checkboxCell { width: 40px; }
+
+.emptyState { padding: 24px; text-align: center; border-radius: 12px; }
+.paginationBar { display: flex; align-items: center; justify-content: center; gap: 12px; padding-top: 12px; }
+.paginationInfo { color: var(--muted-foreground); font-size: 0.875rem; }
+
+.status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+
+/* Row actions */
+.rowActions { display: flex; align-items: center; gap: 8px; }
+
+/* Modal copy and actions */
+.modalBodyCopy { padding: 8px 0 12px; }
+.modalActions { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .toolbar { gap: 8px; }
+  .input { min-width: 0; width: 100%; }
+  .table th, .table td { padding: 8px 10px; font-size: 0.85rem; }
+  .tableWrap { max-height: 400px; }
+  .paginationBar { flex-wrap: wrap; gap: 8px; }
+}
+
+@media (max-width: 374px) {
+  .container { gap: 16px; }
+  .table th, .table td { padding: 6px 8px; font-size: 0.8rem; }
+}
+
+
+@media (max-width: 380px) {
+  .header, .headerActions, .filterBar, .kpiGrid, .statsRow, .quickActionsGrid, .tabBar, .cardHeader, .metaGroup, .cardFooter, .actionRow, .stepRow, .termsRow, .grid, .flexRow, .row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+  .kpiGrid, .grid, .statsRow {
+    grid-template-columns: 1fr !important;
+  }
+  .container, .card, .wrapper {
+    padding: 1rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.25rem !important;
+  }
+  .subtitle, :global(p) {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .container, .card, .wrapper {
+    padding: 0.75rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.15rem !important;
+  }
+  .subtitle, :global(p), :global(span) {
+    font-size: 0.8rem !important;
+  }
+  :global(button), .btn, .tab, .filterBtn {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+    width: 100% !important;
+  }
+}

@@ -1,0 +1,217 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+.title {
+  font-family: var(--font-family-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.description {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Toggle All Button */
+.toggleAllRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.toggleAllButton {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.toggleAllButton:hover {
+  transform: translateY(-1px);
+}
+
+/* Terms Section */
+.termsSection {
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.sectionTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sectionIcon {
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-family: var(--font-family-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.termsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0 1rem 1rem 1rem;
+  list-style: none;
+}
+
+.termsItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+/* Agreement Section */
+.agreement {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: var(--border-radius-md);
+  margin-top: 1rem;
+  transition: transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.agreementAccepted {
+  transform: scale(1.01);
+}
+
+.agreementLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  padding-left: 1.75rem;
+}
+
+/* Success Message */
+.successMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-md);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .sectionHeader {
+    padding: 0.75rem;
+  }
+  
+  .termsList {
+    padding: 0 0.75rem 0.75rem 0.75rem;
+  }
+  
+  .termsItem {
+    font-size: 0.8rem;
+  }
+}
+
+.overflowHidden {
+  overflow: hidden;
+}
+
+@media (max-width: 380px) {
+  .header, .headerActions, .filterBar, .kpiGrid, .statsRow, .quickActionsGrid, .tabBar, .cardHeader, .metaGroup, .cardFooter, .actionRow, .stepRow, .termsRow, .grid, .flexRow, .row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+  .kpiGrid, .grid, .statsRow {
+    grid-template-columns: 1fr !important;
+  }
+  .container, .card, .wrapper {
+    padding: 1rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.25rem !important;
+  }
+  .subtitle, :global(p) {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .container, .card, .wrapper {
+    padding: 0.75rem !important;
+  }
+  .title, :global(h1), :global(h2) {
+    font-size: 1.15rem !important;
+  }
+  .subtitle, :global(p), :global(span) {
+    font-size: 0.8rem !important;
+  }
+  :global(button), .btn, .tab, .filterBtn {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+    width: 100% !important;
+  }
+}
