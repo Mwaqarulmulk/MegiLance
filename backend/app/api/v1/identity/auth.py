@@ -51,7 +51,8 @@ class LoginRequest(BaseModel):
 class RegisterRequest(BaseModel):
     email: str
     password: str
-    name: str
+    name: Optional[str] = None
+    full_name: Optional[str] = None
     role: str = "client"
     user_type: Optional[str] = None
     bio: str = ""
@@ -183,11 +184,13 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         "availability_status": "available",
     }
 
+    name = body.name or body.full_name or "User"
+
     result = insert_user(
         email=body.email,
         hashed_password=hashed_password,
         is_active=True,
-        name=body.name,
+        name=name,
         user_type=user_type,
         bio=body.bio,
         skills=body.skills,

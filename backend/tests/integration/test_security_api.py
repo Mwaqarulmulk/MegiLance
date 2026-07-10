@@ -308,7 +308,7 @@ async def auth_headers(client: AsyncClient):
     login_response = await client.post(
         "/api/auth/login",
         json={
-            "email": register_response.json()["email"],
+            "email": register_response.json()["user"]["email"],
             "password": "TestPassword123!"
         }
     )

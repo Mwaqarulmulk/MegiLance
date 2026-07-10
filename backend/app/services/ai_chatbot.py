@@ -130,13 +130,13 @@ class AIChatbotService:
             r'\b(which role)\b'
         ],
         ChatIntent.PORTFOLIO_BUILD: [
-            r'\b(build portfolio|add portfolio|create portfolio|show my work)\b'
+            r'\b(build (my )?portfolio|add (to )?portfolio|create (my )?portfolio|show my work)\b'
         ],
         ChatIntent.SIGN_IN_REQUIRED: [
             r'\b(sign in required|need to log in|must be logged in)\b'
         ],
         ChatIntent.POST_PROJECT_FLOW: [
-            r'\b(post a project|create project|start project|new job)\b'
+            r'\b(post a (new )?project|create (a )?project|start (a )?project|new job|post project)\b'
         ],
         ChatIntent.IMPROVE_PROFILE: [
             r'\b(improve profile|boost profile|enhance profile|better profile)\b'

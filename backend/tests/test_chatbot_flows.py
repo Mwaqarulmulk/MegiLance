@@ -68,6 +68,14 @@ def _fake_execute_query(sql: str, params=None):
         })
         return {"columns": [], "rows": []}
 
+    if "FROM users WHERE id = ?".upper() in sql_upper:
+        return {
+            "columns": ["name", "bio", "skills", "hourly_rate", "profile_image_url", "location", "headline", "certifications", "education"],
+            "rows": [[
+                "Bob", "Freelancer bio", "python, fastapi", 50.0, "http://example.com/avatar.jpg", "USA", "Python Developer", None, None
+            ]]
+        }
+
     return {"columns": [], "rows": []}
 
 

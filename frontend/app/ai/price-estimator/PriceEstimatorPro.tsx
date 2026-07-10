@@ -5,6 +5,7 @@ import React, { useState, useEffect, useCallback, useMemo, KeyboardEvent } from 
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useExitIntent } from '@/hooks/useExitIntent';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -1318,6 +1319,18 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
   const { isAuthenticated } = useAuth();
   const [showGateModal, setShowGateModal] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const [exitIntentDismissed, setExitIntentDismissed] = useState(false);
+
+  // Trigger exit intent callback if client is unauthenticated
+  useExitIntent(
+    useCallback(() => {
+      if (!isAuthenticated && !exitIntentDismissed && !showGateModal && !showExitIntent) {
+        setShowExitIntent(true);
+      }
+    }, [isAuthenticated, exitIntentDismissed, showGateModal, showExitIntent]),
+    !isAuthenticated && !exitIntentDismissed
+  );
 
   // Celebrate the reveal of a fresh estimate
   useEffect(() => {
@@ -1737,6 +1750,69 @@ ${result.hours_breakdown ? `• Core Development: ${result.hours_breakdown.core_
             <Check size={16} className="bg-emerald-600 text-white rounded-full p-0.5" />
             <span className="text-sm font-semibold">Estimate saved to your dashboard history!</span>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Exit Intent Gating Modal */}
+      <AnimatePresence>
+        {showExitIntent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div 
+              className="relative w-full max-w-md bg-white dark:bg-slate-950 p-6 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+            >
+              <button 
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350"
+                onClick={() => {
+                  setShowExitIntent(false);
+                  setExitIntentDismissed(true);
+                }}
+              >
+                <X size={18} />
+              </button>
+              
+              <div className="flex flex-col items-center text-center">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 mb-4">
+                  <TrendingUp size={24} />
+                </div>
+                
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Don't Lose Your Cost Estimate!</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+                  Save this project scope and budget calculations to your dashboard to compare bids, export reports, and hire developers with secure escrow locks.
+                </p>
+                
+                <div className="w-full space-y-3">
+                  <button 
+                    className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition duration-150"
+                    onClick={() => {
+                      sessionStorage.setItem('megilance_pending_project', JSON.stringify({
+                        title: `Hire developer for ${result.meta.service_type || result.meta.category || 'project'}`,
+                        description: `Grounded project scope cost estimate details created via MegiLance price calculator. Budget Range: $${result.estimate.low_estimate} - $${result.estimate.high_estimate}. Experience: ${result.meta.experience_level || 'mid'}.`,
+                        category: result.meta.category === 'web' ? 'WEB_DEVELOPMENT' : 'OTHER',
+                        budgetMin: String(result.estimate.low_estimate),
+                        budgetMax: String(result.estimate.high_estimate),
+                        budgetType: 'fixed',
+                      }));
+                      router.push('/signup?redirect=/tools/ai-project-cost-estimator');
+                    }}
+                  >
+                    Save Estimate &amp; Sign Up
+                  </button>
+                  <button 
+                    className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-xl transition duration-150"
+                    onClick={() => {
+                      setShowExitIntent(false);
+                      setExitIntentDismissed(true);
+                    }}
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
