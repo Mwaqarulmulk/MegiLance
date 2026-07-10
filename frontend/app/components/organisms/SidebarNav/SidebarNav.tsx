@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import styles from './SidebarNav.common.module.css';
 import lightStyles from './SidebarNav.light.module.css';
 import darkStyles from './SidebarNav.dark.module.css';
+import Tooltip from '@/app/components/atoms/Tooltip/Tooltip';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -227,46 +228,61 @@ export default function SidebarNav({
                   <li className={cn(styles.sidebarNavSectionDivider, themeStyles.sidebarNavSectionDivider)} aria-hidden="true" />
                 )}
                 <li className={styles.sidebarNavItem}>
-                  <Link
-                    href={item.submenu ? '#' : item.href}
-                    className={cn(
-                      styles.sidebarNavLink,
-                      themeStyles.navLinkInactive,
-                      isActive && styles.sidebarNavLinkActive,
-                      isActive && themeStyles.navLinkActive
-                    )}
-                    aria-current={isActive ? 'page' : undefined}
-                    title={isCollapsed ? item.label : undefined}
-                    data-testid={`sidebar-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                    onClick={(e) => {
-                      if (item.submenu) {
-                        e.preventDefault();
-                        toggleSubmenu(item.href);
-                      }
-                    }}
-                  >
-                    <span className={cn(styles.sidebarNavIcon, isActive && styles.sidebarNavIconActive)} aria-hidden>
-                      {item.icon}
-                    </span>
-                    {!isCollapsed && (
-                      <>
-                        <span className={styles.sidebarNavLabel}>{item.label}</span>
-                        {item.badge && (
-                          <span className={cn(styles.badge, themeStyles.badge)}>{item.badge}</span>
+                  {isCollapsed ? (
+                    <Tooltip text={item.label} position="right" delay={50}>
+                      <Link
+                        href={item.submenu ? '#' : item.href}
+                        className={cn(
+                          styles.sidebarNavLink,
+                          themeStyles.navLinkInactive,
+                          isActive && styles.sidebarNavLinkActive,
+                          isActive && themeStyles.navLinkActive
                         )}
-                        {item.submenu && (
-                          <span className={cn(styles.sidebarNavIcon, styles.sidebarNavChevron)}>
-                            {isSubmenuOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </Link>
-                  {/* Tooltip for collapsed state */}
-                  {isCollapsed && (
-                    <span className={cn(styles.tooltip, themeStyles.tooltip)} role="tooltip">
-                      {item.label}
-                    </span>
+                        aria-current={isActive ? 'page' : undefined}
+                        data-testid={`sidebar-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                        onClick={(e) => {
+                          if (item.submenu) {
+                            e.preventDefault();
+                            toggleSubmenu(item.href);
+                          }
+                        }}
+                      >
+                        <span className={cn(styles.sidebarNavIcon, isActive && styles.sidebarNavIconActive)} aria-hidden>
+                          {item.icon}
+                        </span>
+                      </Link>
+                    </Tooltip>
+                  ) : (
+                    <Link
+                      href={item.submenu ? '#' : item.href}
+                      className={cn(
+                        styles.sidebarNavLink,
+                        themeStyles.navLinkInactive,
+                        isActive && styles.sidebarNavLinkActive,
+                        isActive && themeStyles.navLinkActive
+                      )}
+                      aria-current={isActive ? 'page' : undefined}
+                      data-testid={`sidebar-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                      onClick={(e) => {
+                        if (item.submenu) {
+                          e.preventDefault();
+                          toggleSubmenu(item.href);
+                        }
+                      }}
+                    >
+                      <span className={cn(styles.sidebarNavIcon, isActive && styles.sidebarNavIconActive)} aria-hidden>
+                        {item.icon}
+                      </span>
+                      <span className={styles.sidebarNavLabel}>{item.label}</span>
+                      {item.badge && (
+                        <span className={cn(styles.badge, themeStyles.badge)}>{item.badge}</span>
+                      )}
+                      {item.submenu && (
+                        <span className={cn(styles.sidebarNavIcon, styles.sidebarNavChevron)}>
+                          {isSubmenuOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </span>
+                      )}
+                    </Link>
                   )}
                 </li>
                 {item.submenu && !isCollapsed && isSubmenuOpen && (
