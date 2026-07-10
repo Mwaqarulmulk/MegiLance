@@ -14,6 +14,7 @@ import ErrorBoundary from '@/app/components/organisms/ErrorBoundary/ErrorBoundar
 import OnboardingTour from './components/molecules/OnboardingTour/OnboardingTour';
 import { WebSocketProvider } from '@/lib/websocket';
 import { I18nProvider } from '@/lib/i18n/I18nContext';
+import GlobalNotificationListener from './components/organisms/GlobalNotificationListener/GlobalNotificationListener';
 
 const ClientRoot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -33,6 +34,7 @@ const ClientRoot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <AppChrome>
                   {children}
                 </AppChrome>
+                <GlobalNotificationListener />
                 <QuickLogin />
                 <StructuredData />
                 <WebVitalsReporter />

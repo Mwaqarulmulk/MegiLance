@@ -59,6 +59,8 @@ export default function NotificationPreferences() {
     quietHoursEnd: '08:00',
   });
 
+  const [playChime, setPlayChime] = useState(true);
+
   const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
   const styles = {
     container: cn(commonStyles.container, themeStyles.container),
@@ -101,6 +103,11 @@ export default function NotificationPreferences() {
     } catch {
       // Failed to load preferences, use defaults
     } finally {
+      // Load sound preference from localStorage
+      const soundSetting = localStorage.getItem('megilance_notification_sound');
+      if (soundSetting !== null) {
+        setPlayChime(soundSetting !== 'false');
+      }
       setLoading(false);
     }
   };
@@ -120,7 +127,7 @@ export default function NotificationPreferences() {
     setSaving(true);
     try {
       await (api.users as any).updateNotificationPreferences?.({ preferences, digest });
-
+      localStorage.setItem('megilance_notification_sound', String(playChime));
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch {
@@ -215,6 +222,25 @@ export default function NotificationPreferences() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>Sound Preferences</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
+          <input
+            type="checkbox"
+            id="playChimeToggle"
+            className={styles.checkbox}
+            checked={playChime}
+            onChange={(e) => {
+              setPlayChime(e.target.checked);
+              setSaved(false);
+            }}
+          />
+          <label htmlFor="playChimeToggle" className={styles.fieldLabel} style={{ margin: 0, cursor: 'pointer' }}>
+            Enable ambient audio chime for real-time notifications
+          </label>
         </div>
       </div>
 

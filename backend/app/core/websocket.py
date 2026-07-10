@@ -169,6 +169,32 @@ class WebSocketManager:
                     payload,
                     exclude_sid=sid
                 )
+
+        @self.sio.event
+        async def code_change(sid, data):
+            """Relay real-time code modifications in a contract workroom"""
+            contract_id = data.get('contract_id')
+            code = data.get('code')
+            if contract_id:
+                await self.broadcast_to_chat(
+                    str(contract_id),
+                    'code_updated',
+                    {'code': code},
+                    exclude_sid=sid
+                )
+
+        @self.sio.event
+        async def draw_change(sid, data):
+            """Relay real-time whiteboard drawing data in a contract workroom"""
+            contract_id = data.get('contract_id')
+            drawing = data.get('drawing')
+            if contract_id:
+                await self.broadcast_to_chat(
+                    str(contract_id),
+                    'draw_updated',
+                    {'drawing': drawing},
+                    exclude_sid=sid
+                )
     
     # ===== Connection Management =====
     

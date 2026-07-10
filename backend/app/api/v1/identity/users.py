@@ -294,6 +294,73 @@ def complete_onboarding(data: dict, current_user=Depends(get_current_user)):
     return {"message": "Onboarding completed successfully"}
 
 
+@router.get("/me/notification-preferences")
+def get_user_notification_preferences(current_user=Depends(get_current_user)):
+    user_id = current_user.get("user_id") or current_user.get("id")
+    # Get settings from database
+    result = execute_query(
+        "SELECT settings_json FROM user_notification_settings WHERE user_id = ?",
+        [user_id]
+    )
+    rows = parse_rows(result)
+    if rows and rows[0].get("settings_json"):
+        try:
+            return json.loads(rows[0]["settings_json"])
+        except Exception:
+            pass
+    
+    # Return default preferences matching the structure expected by frontend
+    return {
+        "preferences": {
+            "projectUpdates": { "email": True, "push": True, "sms": False, "inApp": True },
+            "proposals": { "email": True, "push": True, "sms": True, "inApp": True },
+            "messages": { "email": True, "push": True, "sms": False, "inApp": True },
+            "payments": { "email": True, "push": True, "sms": True, "inApp": True },
+            "reviews": { "email": True, "push": False, "sms": False, "inApp": True },
+            "marketing": { "email": False, "push": False, "sms": False, "inApp": False },
+        },
+        "digest": {
+            "frequency": "realtime",
+            "quietHoursStart": "22:00",
+            "quietHoursEnd": "08:00",
+        }
+    }
+
+
+@router.put("/me/notification-preferences")
+def update_user_notification_preferences(data: dict, current_user=Depends(get_current_user)):
+    user_id = current_user.get("user_id") or current_user.get("id")
+    # Ensure table exists
+    execute_query("""
+        CREATE TABLE IF NOT EXISTS user_notification_settings (
+            user_id INTEGER PRIMARY KEY,
+            settings_json TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        )
+    """, [])
+    
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat()
+    settings_json = json.dumps(data)
+    
+    # Check if exists
+    result = execute_query(
+        "SELECT user_id FROM user_notification_settings WHERE user_id = ?",
+        [user_id]
+    )
+    if parse_rows(result):
+        execute_query(
+            "UPDATE user_notification_settings SET settings_json = ?, updated_at = ? WHERE user_id = ?",
+            [settings_json, now, user_id]
+        )
+    else:
+        execute_query(
+            "INSERT INTO user_notification_settings (user_id, settings_json, updated_at) VALUES (?, ?, ?)",
+            [user_id, settings_json, now]
+        )
+    return {"message": "Notification preferences updated successfully"}
+
+
 # NOTE: This catch-all `/{user_id}` route MUST stay declared AFTER every static
 # path (/me, /freelancers, /trending, …). FastAPI matches in declaration order,
 # so if it came first, "me" would be parsed as user_id (int) and GET /users/me
