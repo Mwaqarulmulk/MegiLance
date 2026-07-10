@@ -44,9 +44,9 @@ const GuestQuickLogin: React.FC<GuestQuickLoginProps> = ({ onAutoLogin, isLoadin
 
   // Predefined guest accounts
   const guestFreelancerEmail = process.env.NEXT_PUBLIC_DEV_FREELANCER_EMAIL || 'freelancer1@example.com';
-  const guestFreelancerPassword = process.env.NEXT_PUBLIC_DEV_FREELANCER_PASSWORD || 'password123';
+  const guestFreelancerPassword = process.env.NEXT_PUBLIC_DEV_FREELANCER_PASSWORD || 'Freelancer@123';
   const guestClientEmail = process.env.NEXT_PUBLIC_DEV_CLIENT_EMAIL || 'client1@example.com';
-  const guestClientPassword = process.env.NEXT_PUBLIC_DEV_CLIENT_PASSWORD || 'password123';
+  const guestClientPassword = process.env.NEXT_PUBLIC_DEV_CLIENT_PASSWORD || 'Client@123';
 
   return (
     <div className={styles.container}>

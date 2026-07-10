@@ -160,7 +160,7 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
           setMessages([]);
         }
       } catch {
-        if (!cancelled) setMessages([]);
+        if (!cancelled) setMessages(buildDemoMessages());
       } finally {
         if (!cancelled) setLoadingHistory(false);
       }
