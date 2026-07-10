@@ -119,9 +119,23 @@ export function useClientData() {
       const freelancersData = settle(freelancersResult, [] as any[]);
       const reviewsData = settle(reviewsResult, [] as any[]);
 
-      const projectsData: any[] = Array.isArray(projectsRes)
+      let projectsData: any[] = Array.isArray(projectsRes)
         ? projectsRes
         : (projectsRes as any)?.items || (projectsRes as any)?.projects || [];
+
+      if (typeof window !== "undefined") {
+        try {
+          const mocksStr = localStorage.getItem("mock_projects");
+          if (mocksStr) {
+            const mocks = JSON.parse(mocksStr);
+            if (Array.isArray(mocks)) {
+              projectsData = [...mocks, ...projectsData];
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse mock_projects", e);
+        }
+      }
       const paymentsData: any[] = Array.isArray(paymentsRes)
         ? paymentsRes
         : (paymentsRes as any)?.payments || [];

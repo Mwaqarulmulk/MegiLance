@@ -19,6 +19,16 @@ export default function Workroom({ contractId }: WorkroomProps) {
   const { resolvedTheme, theme } = useTheme();
   const [activeTab, setActiveTab] = useState<'editor' | 'whiteboard'>('editor');
   const [isLoading, setIsLoading] = useState(true);
+  const [dashboardUrl, setDashboardUrl] = useState('/dashboard');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const area = localStorage.getItem('portal_area');
+      if (area) {
+        setDashboardUrl(`/${area}/dashboard`);
+      }
+    }
+  }, []);
 
   // Wait for theme to resolve
   useEffect(() => {
@@ -47,7 +57,7 @@ export default function Workroom({ contractId }: WorkroomProps) {
     <div className={cn(commonStyles.container, themeStyles.container)}>
       <div className={commonStyles.header}>
         <div className={commonStyles.headerLeft}>
-          <Link href="/dashboard" className={themeStyles.backButton}>
+          <Link href={dashboardUrl} className={themeStyles.backButton}>
             <ArrowLeft size={16} /> Back to Dashboard
           </Link>
           <h2>Live Collaboration Room</h2>

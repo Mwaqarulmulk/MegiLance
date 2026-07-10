@@ -510,7 +510,7 @@ const ClientDashboard: React.FC = () => {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className={commonStyles.motionWrapper}
+            className={commonStyles.statsGrid}
           >
             <motion.div
               variants={itemVariants}
