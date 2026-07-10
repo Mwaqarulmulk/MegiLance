@@ -1,0 +1,33 @@
+.container {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  color: #1f2937;
+}
+
+.subtitle {
+  color: #4b5563;
+}
+
+.roleButton {
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #374151;
+}
+
+.roleButton:hover:not(:disabled) {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.04);
+  color: #7c3aed;
+}
+
+.roleIcon {
+  background: rgba(0, 0, 0, 0.03);
+  color: #6b7280;
+}
+
+.roleButton:hover:not(:disabled) .roleIcon {
+  background: rgba(168, 85, 247, 0.1);
+  color: #a855f7;
+}

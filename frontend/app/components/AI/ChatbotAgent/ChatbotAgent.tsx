@@ -1645,6 +1645,13 @@ export default function ChatbotAgent() {
 
   // ── Render: Loading State ──────────────────────────────────────────────
 
+  const userType = (user?.user_type || user?.role || '').toLowerCase();
+  const isClientOrFreelancer = isAuthenticated && ['client', 'freelancer'].includes(userType);
+
+  if (isClientOrFreelancer) {
+    return null;
+  }
+
   if (!mounted) {
     return (
       <div className={commonStyles.chatbotContainer}>

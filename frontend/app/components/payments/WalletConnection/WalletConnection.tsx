@@ -38,7 +38,15 @@ const WalletConnection: React.FC<WalletConnectionProps> = ({
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const installed = isMetaMaskInstalled();
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    setInstalled(isMetaMaskInstalled());
+    const t = setTimeout(() => {
+      setInstalled(isMetaMaskInstalled());
+    }, 500);
+    return () => clearTimeout(t);
+  }, []);
 
   const detectAccount = useCallback(async () => {
     try {

@@ -104,7 +104,13 @@ const AppChromeClient: React.FC<{ children: React.ReactNode }> = ({ children }) 
         <ChatbotAgent />
       </FloatingActionButtons>
       {/* Left-side floating actions - ALWAYS VISIBLE */}
-      <FloatingActionButtons position="left" className={isMinimalChrome ? commonStyles.portalOffset : undefined}>
+      <FloatingActionButtons
+        position="left"
+        className={cn(
+          isMinimalChrome && commonStyles.portalOffset,
+          isMinimalChrome && commonStyles.portalOffsetLeft
+        )}
+      >
         <ThemeToggleButton />
         <LanguageSwitcher />
       </FloatingActionButtons>

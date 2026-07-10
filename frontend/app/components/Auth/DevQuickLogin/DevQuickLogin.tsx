@@ -10,7 +10,7 @@ import commonStyles from './DevQuickLogin.common.module.css';
 import lightStyles from './DevQuickLogin.light.module.css';
 import darkStyles from './DevQuickLogin.dark.module.css';
 
-const SHOW_DEMO_LOGIN = true; // Always enable for public showcase/portfolio evaluations
+const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true';
 
 interface DevCredential {
   email: string;

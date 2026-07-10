@@ -21,6 +21,7 @@ import Button from "@/app/components/atoms/Button/Button";
 import Input from "@/app/components/atoms/Input/Input";
 import AuthBrandingPanel from "@/app/components/Auth/BrandingPanel/BrandingPanel";
 import DevQuickLogin from "@/app/components/Auth/DevQuickLogin/DevQuickLogin";
+import GuestQuickLogin from "@/app/components/Auth/GuestQuickLogin/GuestQuickLogin";
 import Checkbox from "@/app/components/atoms/Checkbox/Checkbox";
 import { PageTransition } from "@/app/components/Animations/PageTransition";
 import {
@@ -475,10 +476,17 @@ const Login: React.FC = () => {
             </StaggerItem>
 
             <StaggerItem>
-              <DevQuickLogin
-                onCredentialSelect={handleDevQuickLogin}
-                onAutoLogin={handleDevAutoLogin}
-              />
+              {process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === "true" ? (
+                <DevQuickLogin
+                  onCredentialSelect={handleDevQuickLogin}
+                  onAutoLogin={handleDevAutoLogin}
+                />
+              ) : (
+                <GuestQuickLogin
+                  onAutoLogin={handleDevAutoLogin}
+                  isLoading={loading}
+                />
+              )}
             </StaggerItem>
 
             <StaggerItem>

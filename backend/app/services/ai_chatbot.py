@@ -121,16 +121,16 @@ class AIChatbotService:
             r'\b(proposal|write proposal|draft proposal|proposal help|cover letter)\b',
             r'\b(write bid|bid help|draft bid|win project)\b'
         ],
+        ChatIntent.PORTFOLIO_BUILD: [
+            r'\b(build (my )?portfolio|add (to )?portfolio|create (my )?portfolio|show my work|portfolio piece|add portfolio)\b'
+        ],
         ChatIntent.PROFILE_ONBOARDING: [
-            r'\b(profile|portfolio|build profile|complete profile|my profile)\b',
+            r'\b(build profile|complete profile|setup profile|my profile|set up profile|onboard)\b',
             r'\b(improve profile)\b'
         ],
         ChatIntent.ROLE_SELECTION: [
             r'\b(i\'?m a client|i\'?m a freelancer|client or freelancer)\b',
             r'\b(which role)\b'
-        ],
-        ChatIntent.PORTFOLIO_BUILD: [
-            r'\b(build (my )?portfolio|add (to )?portfolio|create (my )?portfolio|show my work)\b'
         ],
         ChatIntent.SIGN_IN_REQUIRED: [
             r'\b(sign in required|need to log in|must be logged in)\b'
@@ -309,7 +309,7 @@ class AIChatbotService:
                 {"step": 1, "name": "title", "prompt": "What's the title of this portfolio piece? (e.g., 'E-commerce Redesign', 'Brand Identity Package')"},
                 {"step": 2, "name": "description", "prompt": "Describe the project — what you did, tools used, and the outcome:"},
                 {"step": 3, "name": "skills", "prompt": "What skills does this showcase? (comma-separated, e.g., React, Node.js, Figma)"},
-                {"step": 4, "name": "media", "prompt": "Add a project URL or image. You can also upload files later from your portfolio page."},
+                {"step": 4, "name": "media", "prompt": "Add a media link: project URL or image URL. You can also upload files later from your portfolio page."},
             ]
         },
         "improve_profile": {
@@ -441,10 +441,12 @@ class AIChatbotService:
         sentiment = self._analyze_sentiment(message)
 
         flow_state = conversation.get("context", {}).get("flow_state")
+        in_active_flow = bool(flow_state)
         if flow_state:
             if message.lower().strip() in ("cancel", "stop", "exit", "quit"):
                 await self._cancel_flow(conversation_id)
                 flow_state = None
+                in_active_flow = False
                 intent = ChatIntent.HELP
             else:
                 await self._advance_flow(conversation_id, flow_state, message)
@@ -471,7 +473,8 @@ class AIChatbotService:
         conversation["intents_detected"] = intents
         conversation["sentiment_history"] = sentiments
         
-        should_escalate = self._check_escalation_triggers(conversation, intent, sentiment)
+        # Never escalate when the user is inside an active wizard flow
+        should_escalate = (not in_active_flow) and self._check_escalation_triggers(conversation, intent, sentiment)
         if should_escalate:
             return await self._escalate_to_agent(conversation_id, message)
         

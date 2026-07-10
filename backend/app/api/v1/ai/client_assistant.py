@@ -1711,6 +1711,53 @@ async def action_update_profile(body: dict, current_user=Depends(get_current_use
     }
 
 
+class AddPortfolioAction(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    skills: Optional[list] = []
+    media: Optional[str] = ""
+
+
+@router.post("/client-assistant/actions/add-portfolio")
+async def action_add_portfolio(body: AddPortfolioAction, current_user=Depends(get_current_user)):
+    """Guided action: save a portfolio piece the build_portfolio flow collected.
+    Only freelancers may add portfolio items."""
+    import json
+
+    role = getattr(current_user, "role", None) or getattr(current_user, "user_type", "freelancer")
+    role = (role or "freelancer").lower()
+    if role not in ("freelancer",):
+        raise HTTPException(status_code=403, detail="Only freelancer accounts can add portfolio items.")
+
+    title = (body.title or "").strip()
+    if not title:
+        raise HTTPException(status_code=400, detail="A portfolio title is required.")
+
+    description = (body.description or "").strip()
+    skills_list = [s.strip() for s in (body.skills or []) if str(s).strip()]
+    skills_str = json.dumps(skills_list)
+
+    media_url = (body.media or "").strip()
+    image_url = media_url if media_url.startswith("http") else None
+    project_url = media_url if media_url.startswith("http") else None
+
+    now = datetime.now(timezone.utc).isoformat()
+    result = execute_query(
+        """INSERT INTO portfolio_items (user_id, title, description, image_url, project_url,
+               category, skills, views, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, 'General', ?, 0, ?, ?)""",
+        [current_user.id, title, description, image_url, project_url, skills_str, now, now],
+    )
+    if result is None:
+        raise HTTPException(status_code=500, detail="Failed to save the portfolio item. Please try again.")
+
+    return {
+        "message": f"🎉 Portfolio piece **'{title}'** added to your profile!",
+        "url": "/freelancer/profile",
+    }
+
+
+
 @router.post("/client-assistant/guest-chat")
 async def guest_chat(body: ChatRequest, request: Request = None):
     """Public, unauthenticated agent for visitors. Uses a safe read-only toolset

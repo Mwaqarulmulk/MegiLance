@@ -15,12 +15,12 @@
   position: relative;
   width: 100%;
   min-width: 0;
-  padding-left: 260px;
+  padding-left: 272px;
   transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mainContentCollapsed {
-  padding-left: 70px;
+  padding-left: 72px;
 }
 
 .pageContent {
@@ -36,7 +36,7 @@
 .mobileOverlay {
   position: fixed;
   inset: 0;
-  z-index: 998;
+  z-index: var(--z-overlay, 900);
   opacity: 0;
   pointer-events: none;
   backdrop-filter: blur(4px);

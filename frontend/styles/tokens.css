@@ -223,12 +223,12 @@
      Z-INDEX LAYERS
      ======================================== */
   --z-base: 0;
-  --z-header: 20;
-  --z-sidebar: 100;
+  --z-header: 500;
+  --z-sidebar: 700;
   --z-dropdown: 400;
   --z-sticky: 500;
-  --z-modal: 900;
-  --z-overlay: 950;
+  --z-modal: 1000;
+  --z-overlay: 900;
   --z-toast: 9999;
   --z-3d-back: -1;
   --z-3d-front: 1;

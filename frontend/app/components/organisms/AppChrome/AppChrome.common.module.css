@@ -67,3 +67,10 @@
     bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+/* Offset left-side floating actions on desktop when the portal sidebar is present */
+@media (min-width: 769px) {
+  .portalOffsetLeft {
+    left: calc(272px + 1.5rem) !important;
+  }
+}

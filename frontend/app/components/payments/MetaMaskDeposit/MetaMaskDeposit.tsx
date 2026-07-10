@@ -75,7 +75,15 @@ const MetaMaskDeposit: React.FC<Props> = ({ amountUsd, onSuccess }) => {
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [minting, setMinting] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
-  const installed = isMetaMaskInstalled();
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    setInstalled(isMetaMaskInstalled());
+    const t = setTimeout(() => {
+      setInstalled(isMetaMaskInstalled());
+    }, 500);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     let active = true;
