@@ -232,7 +232,7 @@ export default function SavedJobsPage() {
                   {stats.total} job{stats.total !== 1 ? 's' : ''} saved for later
                 </p>
               </div>
-              <Button variant="primary" size="sm" onClick={() => router.push('/freelancer/jobs')}>
+              <Button variant="primary" size="sm" onClick={() => router.push('/explore')}>
                 <Briefcase size={16} /> Browse More Jobs
               </Button>
             </div>
@@ -350,7 +350,7 @@ export default function SavedJobsPage() {
               <Bookmark size={48} strokeWidth={1.5} opacity={0.5} />
               <h3>No Saved Jobs</h3>
               <p>Browse projects and save interesting ones for later</p>
-              <Button variant="primary" onClick={() => router.push('/freelancer/jobs')}>
+              <Button variant="primary" onClick={() => router.push('/explore')}>
                 Browse Jobs
               </Button>
             </div>
@@ -470,7 +470,7 @@ export default function SavedJobsPage() {
                           <Button
                             variant="primary"
                             size="sm"
-                            onClick={() => router.push(`/freelancer/jobs/${job.id}`)}
+                            onClick={() => router.push(`/projects/${job.id}`)}
                           >
                             <ExternalLink size={14} /> View & Apply
                           </Button>

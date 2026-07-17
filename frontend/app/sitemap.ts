@@ -48,8 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date();
 
   // ── Fetch dynamic content in parallel ─────────────────────────────────
-  const [projects, freelancers, blogPosts] = await Promise.all([
-    fetchPublicList<{ id: number; updated_at?: string }>('/projects', { status: 'open' }),
+  const [freelancers, blogPosts] = await Promise.all([
     fetchPublicList<{ id: number; updated_at?: string }>('/marketplace/freelancers'),
     fetchPublicList<{ slug: string; updated_at?: string; created_at?: string }>('/blog', { is_published: 'true' }),
   ]);
@@ -190,13 +189,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── Dynamic content pages ────────────────────────────────────────────
-  const jobPages: MetadataRoute.Sitemap = projects.map((p) => ({
-    url: `${baseUrl}/client/projects/${p.id}`,
-    lastModified: p.updated_at ? new Date(p.updated_at) : currentDate,
-    changeFrequency: 'daily' as const,
-    priority: 0.8,
-  }));
-
   const freelancerPages: MetadataRoute.Sitemap = freelancers.map((f) => ({
     url: `${baseUrl}/freelancers/${f.id}`,
     lastModified: f.updated_at ? new Date(f.updated_at) : currentDate,

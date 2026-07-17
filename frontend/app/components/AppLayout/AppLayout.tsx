@@ -112,6 +112,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     setIsMobileOpen(false);
   }, [pathname]);
 
+  // Prevent the page behind the drawer from scrolling on touch devices.
+  // Without this, a swipe inside the open sidebar can move the dashboard
+  // underneath it and make the shell feel visually detached.
+  useEffect(() => {
+    if (!isMobileOpen || typeof document === 'undefined') return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobileOpen]);
+
   // Ctrl+K / Cmd+K command palette shortcut
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -331,7 +331,7 @@ const Proposals: React.FC = () => {
   };
 
   const handleView = (id: string, projectId: string) => {
-    router.push(`/jobs/${projectId}`);
+    router.push(`/projects/${projectId}`);
   };
 
   const handleEdit = (id: string, projectId: string) => {

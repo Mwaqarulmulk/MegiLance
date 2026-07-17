@@ -186,7 +186,7 @@ const JobCard: React.FC<JobCardProps> = ({
           >
             <Heart size={18} fill={isSaved ? "currentColor" : "none"} />
           </button>
-          <Link href={`/jobs/${id}`}>
+          <Link href="/explore">
             <Button variant="outline" size="sm">View Details</Button>
           </Link>
           {hasApplied ? (

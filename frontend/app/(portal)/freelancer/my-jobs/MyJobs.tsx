@@ -253,7 +253,7 @@ const MyJobs: React.FC = () => {
               <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)}>
                 <Filter size={16} /> Filters {showFilters ? <ChevronDown size={14} /> : null}
               </Button>
-              <Button variant="primary" size="sm" onClick={() => window.location.href = '/freelancer/jobs'}>
+              <Button variant="primary" size="sm" onClick={() => window.location.href = '/explore'}>
                 <Briefcase size={16} /> Browse Jobs
               </Button>
             </div>
@@ -384,7 +384,7 @@ const MyJobs: React.FC = () => {
                     <Briefcase size={40} strokeWidth={1.5} opacity={0.5} />
                     <h3>No Active Jobs</h3>
                     <p>Start browsing projects to find your next opportunity.</p>
-                    <Button variant="primary" onClick={() => window.location.href = '/freelancer/jobs'}>Browse Jobs</Button>
+                    <Button variant="primary" onClick={() => window.location.href = '/explore'}>Browse Projects</Button>
                   </div>
                 ) : (
                   <PaginatedJobGrid

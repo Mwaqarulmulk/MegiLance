@@ -137,6 +137,7 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
   const [showActivityLog, setShowActivityLog] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loadingActivity, setLoadingActivity] = useState(false);
+  const [inviteStatus, setInviteStatus] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -425,8 +426,14 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
     }
   };
 
-  const handleInviteMember = () => {
-    alert("Invite member feature will be available soon. You can share the contract link with team members.");
+  const handleInviteMember = async () => {
+    setInviteStatus(null);
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setInviteStatus("Workroom link copied");
+    } catch {
+      setInviteStatus("Copy failed — use the browser address bar to share this workroom.");
+    }
   };
 
   const handleSubmitDispute = async () => {
@@ -545,6 +552,11 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
           <Button variant="secondary" size="sm" onClick={handleInviteMember}>
             Invite Member
           </Button>
+          {inviteStatus && (
+            <span className={commonStyles.inviteStatus} role="status" aria-live="polite">
+              {inviteStatus}
+            </span>
+          )}
           <Button variant="primary" size="sm" onClick={() => { setShowActivityLog(true); loadActivity(); }}>
             Activity Log
           </Button>

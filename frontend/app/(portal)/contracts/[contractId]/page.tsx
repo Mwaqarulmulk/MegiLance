@@ -380,7 +380,11 @@ export default function ContractDetailPage() {
         variant: "success",
       });
     } catch {
-      alert("Failed to acknowledge contract");
+      toaster.notify({
+        title: "Failed to acknowledge contract",
+        description: "Please try again. If the problem continues, contact support.",
+        variant: "danger",
+      });
     } finally {
       setAcknowledging(false);
     }
@@ -432,7 +436,11 @@ export default function ContractDetailPage() {
       setNewMilestone({ title: "", amount: 0, description: "" });
       setShowAddMilestone(false);
     } catch {
-      /* ignore */
+      toaster.notify({
+        title: "Failed to add milestone",
+        description: "The milestone was not saved. Please try again.",
+        variant: "danger",
+      });
     } finally {
       setAddingMilestone(false);
     }
@@ -448,7 +456,11 @@ export default function ContractDetailPage() {
       });
       await refreshMilestones();
     } catch {
-      alert("Failed to submit milestone");
+      toaster.notify({
+        title: "Failed to submit milestone",
+        description: "Your submission was not saved. Please try again.",
+        variant: "danger",
+      });
     }
   };
 
@@ -457,7 +469,11 @@ export default function ContractDetailPage() {
       await milestonesApi.approve(id, { approval_notes: "Approved" });
       await refreshMilestones();
     } catch {
-      alert("Failed to approve milestone");
+      toaster.notify({
+        title: "Failed to approve milestone",
+        description: "The approval was not saved. Please try again.",
+        variant: "danger",
+      });
     }
   };
 
@@ -468,7 +484,11 @@ export default function ContractDetailPage() {
       await milestonesApi.reject(id, reason);
       await refreshMilestones();
     } catch {
-      alert("Failed to reject milestone");
+      toaster.notify({
+        title: "Failed to reject milestone",
+        description: "The rejection was not saved. Please try again.",
+        variant: "danger",
+      });
     }
   };
 

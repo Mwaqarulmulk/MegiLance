@@ -52,7 +52,15 @@
 
 .headerActions {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
+}
+
+.inviteStatus {
+    max-width: 14rem;
+    color: var(--color-success, #15803d);
+    font-size: 0.75rem;
+    line-height: 1.3;
 }
 
 /* ============ TABS ============ */

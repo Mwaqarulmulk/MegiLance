@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { RichTextEditor } from "@/app/components/Editor";
 import { apiFetch } from "@/lib/api/core";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
+import { contractsApi, milestonesApi } from "@/lib/api/projects";
 
 interface DeliverableFile {
   id: string;
@@ -29,6 +31,7 @@ interface DeliverableFile {
 interface Deliverable {
   id: string;
   milestoneId: string;
+  contractId: string;
   milestoneTitle: string;
   contractTitle: string;
   title: string;
@@ -94,6 +97,7 @@ function formatFileSize(bytes: number): string {
 }
 
 export default function DeliverablesPage() {
+  const toaster = useToaster();
   const [deliverables, setDeliverables] =
     useState<Deliverable[]>(mockDeliverables);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
@@ -111,6 +115,9 @@ export default function DeliverablesPage() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [loadingDeliverables, setLoadingDeliverables] = useState(true);
+  const [milestoneOptions, setMilestoneOptions] = useState<
+    { id: string; contractId: string; title: string; contract: string }[]
+  >([]);
 
   // Fetch real deliverables from API
   useEffect(() => {
@@ -123,6 +130,7 @@ export default function DeliverablesPage() {
             items.map((d: any) => ({
               id: String(d.id),
               milestoneId: String(d.milestone_id || d.milestoneId || ''),
+              contractId: String(d.contract_id || d.contractId || ''),
               milestoneTitle: d.milestone_title || d.milestoneTitle || '',
               contractTitle: d.contract_title || d.contractTitle || '',
               title: d.title || 'Untitled',
@@ -159,19 +167,36 @@ export default function DeliverablesPage() {
     fetchDeliverables();
   }, []);
 
-  // Derive unique milestone options from the existing deliverables data
-  const milestoneOptions = Array.from(
-    new Map(
-      deliverables.map((d) => [
-        d.milestoneId,
-        {
-          id: d.milestoneId,
-          title: d.milestoneTitle,
-          contract: d.contractTitle,
-        },
-      ]),
-    ).values(),
-  );
+  // Load real milestones for the submit form. Existing deliverables alone
+  // cannot provide options for a first submission.
+  useEffect(() => {
+    const fetchMilestones = async () => {
+      try {
+        const response = await contractsApi.list();
+        const contracts = Array.isArray(response)
+          ? response
+          : (response as any)?.items || (response as any)?.contracts || [];
+        const groups = await Promise.all(
+          contracts.map(async (contract: any) => {
+            const milestonesResponse = await milestonesApi.list(contract.id);
+            const milestones = Array.isArray(milestonesResponse)
+              ? milestonesResponse
+              : (milestonesResponse as any)?.items || [];
+            return milestones.map((milestone: any) => ({
+              id: String(milestone.id),
+              contractId: String(contract.id),
+              title: milestone.title || "Untitled milestone",
+              contract: contract.title || contract.name || `Contract #${contract.id}`,
+            }));
+          }),
+        );
+        setMilestoneOptions(groups.flat());
+      } catch {
+        setMilestoneOptions([]);
+      }
+    };
+    fetchMilestones();
+  }, []);
 
   const handleFileUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -337,37 +362,86 @@ export default function DeliverablesPage() {
     e.stopPropagation();
   };
 
-  const handleSubmit = () => {
-    const newDeliverable: Deliverable = {
-      id: "d" + Date.now(),
-      milestoneId: "m2",
-      milestoneTitle: "Frontend Development",
-      contractTitle: "E-Commerce Platform Development",
-      title: submitForm.title,
-      description: submitForm.description,
-      submissionNotes: submitForm.submissionNotes,
-      status: "submitted",
-      files: submitForm.files.map((f, i) => ({
-        id: "f" + Date.now() + i,
-        name: f.name,
-        size: f.size,
-        type: f.type,
-        url: "#",
-      })),
-      revisionCount: 0,
-      maxRevisions: 3,
-      submittedAt: new Date().toISOString(),
-      comments: [],
-    };
-    setDeliverables((prev) => [newDeliverable, ...prev]);
-    setShowSubmitForm(false);
-    setSubmitForm({
-      milestoneId: "",
-      title: "",
-      description: "",
-      submissionNotes: "",
-      files: [],
-    });
+  const handleSubmit = async () => {
+    const selectedMilestone = milestoneOptions.find(
+      (milestone) => milestone.id === submitForm.milestoneId,
+    );
+    if (!selectedMilestone?.id || !selectedMilestone.contractId) {
+      toaster.notify({
+        title: "Select a milestone first",
+        description: "Choose the contract milestone this deliverable belongs to.",
+        variant: "warning",
+      });
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      const response = await apiFetch<{
+        deliverable_id?: string;
+        submitted_at?: string;
+      }>("/deliverables/submit", {
+        method: "POST",
+        body: JSON.stringify({
+          milestone_id: selectedMilestone.id,
+          contract_id: selectedMilestone.contractId,
+          title: submitForm.title.trim(),
+          description: submitForm.description,
+          submission_notes: submitForm.submissionNotes.trim(),
+          files: submitForm.files.map((file) => ({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+          })),
+        }),
+      });
+
+      const newDeliverable: Deliverable = {
+        id: response?.deliverable_id || `d-${Date.now()}`,
+        milestoneId: selectedMilestone.id,
+        contractId: selectedMilestone.contractId,
+        milestoneTitle: selectedMilestone.title,
+        contractTitle: selectedMilestone.contract,
+        title: submitForm.title.trim(),
+        description: submitForm.description,
+        submissionNotes: submitForm.submissionNotes,
+        status: "submitted",
+        files: submitForm.files.map((file, index) => ({
+          id: `f-${Date.now()}-${index}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: "",
+        })),
+        revisionCount: 0,
+        maxRevisions: 3,
+        submittedAt: response?.submitted_at || new Date().toISOString(),
+        comments: [],
+      };
+
+      setDeliverables((prev) => [newDeliverable, ...prev]);
+      setShowSubmitForm(false);
+      setSubmitForm({
+        milestoneId: "",
+        title: "",
+        description: "",
+        submissionNotes: "",
+        files: [],
+      });
+      toaster.notify({
+        title: "Deliverable submitted",
+        description: "Your client can now review the submitted work.",
+        variant: "success",
+      });
+    } catch (error) {
+      toaster.notify({
+        title: "Submission failed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "danger",
+      });
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   return (
@@ -621,10 +695,10 @@ export default function DeliverablesPage() {
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!submitForm.title || submitForm.files.length === 0}
+                disabled={actionLoading || !submitForm.milestoneId || !submitForm.title || submitForm.files.length === 0}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Submit Deliverable
+                {actionLoading ? "Submitting…" : "Submit Deliverable"}
               </button>
             </div>
           </div>

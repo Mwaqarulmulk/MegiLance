@@ -106,6 +106,9 @@ class Settings(BaseSettings):
     do_ai_api_key: Optional[str] = None            # DO_AI_API_KEY
     do_ai_api_base: Optional[str] = "https://inference.do-ai.run/v1"
     do_ai_model: Optional[str] = "llama3.3-70b-instruct"
+    do_ai_agent_endpoint: Optional[str] = None      # DO_AI_AGENT_ENDPOINT
+    do_ai_agent_key: Optional[str] = None           # DO_AI_AGENT_KEY
+    do_ai_kb_id: Optional[str] = None               # DO_AI_KB_ID
 
     # Email & Notifications
     ses_region: Optional[str] = None

@@ -191,6 +191,10 @@ export function middleware(request: NextRequest) {
 
   // Prevent browser/CDN caching of authenticated portal pages
   if (isProtectedPath) {
+    // Private portal URLs can still be discovered through links, redirects,
+    // or stale crawls. Make the indexing policy explicit at the response
+    // boundary instead of relying only on robots.txt.
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
     response.headers.set(
       "Cache-Control",
       "no-store, no-cache, must-revalidate, private",

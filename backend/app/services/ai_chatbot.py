@@ -1340,7 +1340,7 @@ class AIChatbotService:
         prompt: str,
         user_context: Optional[Dict[str, Any]] = None
     ) -> Optional[str]:
-        """Generate response using Advanced LLM Gateway with role-aware context."""
+        """Generate response using DigitalOcean GenAI (Agent / KB RAG / chatbot routing)."""
         from app.services.llm_gateway import llm_gateway
         try:
             role_info = ""
@@ -1356,17 +1356,49 @@ class AIChatbotService:
                     role_info += f" Their name is: {name}."
                 if profile_completed is not None:
                     profile_info = f" Profile completed: {profile_completed}."
+
+            # 1. Retrieve context from DigitalOcean Knowledge Base (RAG)
+            kb_context = ""
+            if llm_gateway.do_ai_kb_id:
+                try:
+                    chunks = await llm_gateway.retrieve_from_knowledge_base(prompt, limit=3)
+                    if chunks:
+                        kb_context = "\n\nRelevant Platform Documentation/FAQ Context:\n"
+                        for idx, chunk in enumerate(chunks):
+                            text = chunk.get("text") or chunk.get("content") or ""
+                            if text:
+                                kb_context += f"[{idx+1}] {text.strip()}\n"
+                except Exception as e:
+                    logger.warning(f"Failed to retrieve context from DO GenAI KB: {e}")
+
             system_message = (
                 "You are MegiBot, the official helpful AI support assistant for the freelancing platform MegiLance. "
                 "Be polite, concise, and helpful. Provide actionable advice specific to MegiLance's features. "
-                f"{role_info}{profile_info}{flow_info}"
+                "Use the provided documentation context to answer accurately if available. If the context does not contain the answer, "
+                "rely on your knowledge of general freelancing and software engineering practices to assist the user.\n"
+                f"{role_info}{profile_info}{flow_info}{kb_context}"
             )
+
+            # 2. Try Deployed DigitalOcean GenAI Agent
+            if llm_gateway.do_ai_agent_endpoint:
+                try:
+                    messages = [
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": prompt}
+                    ]
+                    response = await llm_gateway.query_agent(messages)
+                    if response:
+                        return response
+                except Exception as e:
+                    logger.warning(f"Error querying DO GenAI Agent, falling back: {e}")
+
+            # 3. Default to Multi-model chatbot routing task (prioritizing deepseek-v4-pro / qwen3.5-397b-a17b)
             response = await llm_gateway.generate_text(
                 prompt=prompt,
                 system_message=system_message,
-                max_tokens=250,
+                max_tokens=300,
                 temperature=0.6,
-                task="general"
+                task="chatbot"
             )
             if response:
                 return response

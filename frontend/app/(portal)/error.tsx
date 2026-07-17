@@ -30,7 +30,17 @@ export default function PortalError({
 
   const dashboardHref = useMemo(() => {
     if (typeof window === 'undefined') return '/client/dashboard';
-    const role = localStorage.getItem('ml_user_role') || 'client';
+    const storedUser = localStorage.getItem('user');
+    let role = localStorage.getItem('portal_area') || 'client';
+
+    try {
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      role = user?.user_type || user?.role || role;
+    } catch {
+      // Keep the safe client dashboard fallback for malformed storage.
+    }
+
+    if (!['client', 'freelancer', 'admin'].includes(role)) role = 'client';
     return `/${role}/dashboard`;
   }, []);
 

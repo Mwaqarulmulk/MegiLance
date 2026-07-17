@@ -12,6 +12,7 @@ import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
 import { apiFetch } from '@/lib/api/core';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 
 interface FileItem {
   id: string;
@@ -81,6 +82,7 @@ function formatDate(dateStr: string): string {
 
 export default function FilesPage() {
   const { resolvedTheme } = useTheme();
+  const toaster = useToaster();
   const [mounted, setMounted] = useState(false);
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,7 +183,11 @@ export default function FilesPage() {
       await apiFetch(`/portfolio/files/${file.id}`, { method: 'DELETE' });
       setFiles(prev => prev.filter(f => f.id !== file.id));
     } catch {
-      alert('Failed to delete file');
+      toaster.notify({
+        title: 'Failed to delete file',
+        description: 'The file was not deleted. Please try again.',
+        variant: 'danger',
+      });
     }
   };
 

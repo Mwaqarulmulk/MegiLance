@@ -69,6 +69,11 @@ export const freelancerNavItems: NavItem[] = [
     section: "Work",
   },
   {
+    label: "Find Projects",
+    href: "/explore",
+    icon: "Search",
+  },
+  {
     label: "My Projects",
     href: "/freelancer/projects",
     icon: "Briefcase",

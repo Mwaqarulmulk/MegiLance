@@ -47,6 +47,8 @@ TASK_MODELS: Dict[str, List[str]] = {
     "coding": ["qwen3-coder-flash", "router:software-engineering", "deepseek-v4-pro"],
     # Cheap deterministic classification / labelling
     "classify": ["llama3.3-70b-instruct", "gemma-4-31B-it"],
+    # Chatbot reasoning and support automation
+    "chatbot": ["deepseek-v4-pro", "qwen3.5-397b-a17b", "llama3.3-70b-instruct"],
     # General default
     "general": ["router:general", "llama3.3-70b-instruct"],
 }
@@ -71,10 +73,19 @@ class LLMGateway:
         # Backwards-compatible single default model (still referenced elsewhere).
         self.do_model = getattr(settings, "do_ai_model", None) or os.getenv("DO_AI_MODEL", "llama3.3-70b-instruct")
 
+        # DigitalOcean GenAI Agent & Knowledge Base configuration
+        self.do_ai_agent_endpoint = _resolve_key(getattr(settings, "do_ai_agent_endpoint", None) or os.getenv("DO_AI_AGENT_ENDPOINT"))
+        self.do_ai_agent_key = _resolve_key(getattr(settings, "do_ai_agent_key", None) or os.getenv("DO_AI_AGENT_KEY") or self.do_api_key)
+        self.do_ai_kb_id = _resolve_key(getattr(settings, "do_ai_kb_id", None) or os.getenv("DO_AI_KB_ID"))
+
         if self.do_api_key:
             self.provider = "digitalocean"
             self.is_active = True
             logger.info(f"✓ LLM Gateway: DigitalOcean AI (default={self.do_model}, multi-model routing enabled)")
+            if self.do_ai_agent_endpoint:
+                logger.info(f"✓ LLM Gateway Agent: Deployed Agent at {self.do_ai_agent_endpoint}")
+            if self.do_ai_kb_id:
+                logger.info(f"✓ LLM Gateway KB: Deployed Knowledge Base ID {self.do_ai_kb_id}")
         else:
             self.provider = None
             self.is_active = False
@@ -289,6 +300,56 @@ class LLMGateway:
             messages.append({"role": "system", "content": system_message})
         messages.append({"role": "user", "content": prompt})
         return await self.chat(messages, task=task, max_tokens=max_tokens, temperature=temperature, retries=retries)
+
+    async def retrieve_from_knowledge_base(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+        """Retrieve context chunks from a DigitalOcean GenAI Knowledge Base."""
+        if not self.is_active or not self.do_ai_kb_id:
+            return []
+        try:
+            url = f"https://kbaas.do-ai.run/v1/{self.do_ai_kb_id}/retrieve"
+            payload = {
+                "query": query,
+                "num_results": limit,
+                "alpha": 0.5
+            }
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                resp = await client.post(
+                    url,
+                    headers={"Authorization": f"Bearer {self.do_api_key}", "Content-Type": "application/json"},
+                    json=payload
+                )
+            if resp.status_code == 200:
+                # DigitalOcean KB retrieve returns a list of results
+                return resp.json().get("results", [])
+            logger.error(f"DO KB Retrieve error {resp.status_code}: {resp.text[:160]}")
+        except Exception as e:
+            logger.warning(f"DO KB Retrieve exception: {type(e).__name__}: {e}")
+        return []
+
+    async def query_agent(self, messages: List[Dict[str, str]], max_tokens: int = 1000, temperature: float = 0.7) -> Optional[str]:
+        """Send a chat prompt directly to a deployed DigitalOcean GenAI Agent."""
+        if not self.do_ai_agent_endpoint:
+            return None
+        base_url = self.do_ai_agent_endpoint.rstrip("/")
+        url = f"{base_url}/api/v1/chat/completions"
+        payload = {
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature
+        }
+        headers = {
+            "Authorization": f"Bearer {self.do_ai_agent_key}",
+            "Content-Type": "application/json"
+        }
+        try:
+            async with httpx.AsyncClient(timeout=45.0) as client:
+                resp = await client.post(url, headers=headers, json=payload)
+            if resp.status_code == 200:
+                return resp.json().get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+            logger.error(f"DO GenAI Agent error {resp.status_code}: {resp.text[:160]}")
+        except Exception as e:
+            logger.warning(f"DO GenAI Agent exception: {type(e).__name__}: {e}")
+        return None
 
 
 def _extract_json(raw: Optional[str]) -> Optional[dict]:

@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { proposalsApi, projectsApi } from "@/lib/api";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
 import Button from "@/app/components/atoms/Button/Button";
 import {
   ArrowLeft,
@@ -70,6 +71,7 @@ export default function ProjectProposalsPage() {
   const { id } = useParams();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
+  const toaster = useToaster();
 
   const [project, setProject] = useState<any>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -117,7 +119,11 @@ export default function ProjectProposalsPage() {
       );
     } catch (e) {
       console.error("Failed to accept proposal:", e);
-      alert("Failed to accept proposal. Please try again.");
+      toaster.notify({
+        title: "Failed to accept proposal",
+        description: "No changes were saved. Please try again.",
+        variant: "danger",
+      });
     } finally {
       setAccepting(null);
     }
@@ -134,7 +140,11 @@ export default function ProjectProposalsPage() {
       );
     } catch (e) {
       console.error("Failed to reject proposal:", e);
-      alert("Failed to reject proposal. Please try again.");
+      toaster.notify({
+        title: "Failed to reject proposal",
+        description: "No changes were saved. Please try again.",
+        variant: "danger",
+      });
     } finally {
       setRejecting(null);
     }

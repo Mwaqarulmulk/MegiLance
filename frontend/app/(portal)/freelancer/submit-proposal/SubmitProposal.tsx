@@ -91,7 +91,7 @@ const SubmitProposal: React.FC = () => {
   // Fetch job details and validate jobId on mount
   useEffect(() => {
     if (!jobIdParam) {
-      router.replace("/freelancer/jobs");
+      router.replace("/explore");
       return;
     }
     (async () => {
@@ -379,7 +379,7 @@ const SubmitProposal: React.FC = () => {
             <div className={cn(common.result_actions, themed.result_actions)}>
               <Button
                 variant="primary"
-                onClick={() => router.push("/freelancer/jobs")}
+                onClick={() => router.push("/explore")}
               >
                 <Briefcase size={18} />
                 Browse Jobs
@@ -423,7 +423,7 @@ const SubmitProposal: React.FC = () => {
             <div className={cn(common.result_actions, themed.result_actions)}>
               <Button
                 variant="primary"
-                onClick={() => router.push("/freelancer/jobs")}
+                onClick={() => router.push("/explore")}
               >
                 <Briefcase size={18} />
                 Browse More Jobs
@@ -480,7 +480,7 @@ const SubmitProposal: React.FC = () => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => router.push("/freelancer/jobs")}
+                onClick={() => router.push("/explore")}
               >
                 <Briefcase size={18} />
                 Browse Jobs
