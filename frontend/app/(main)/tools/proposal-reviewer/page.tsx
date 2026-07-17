@@ -5,7 +5,7 @@ import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -38,7 +38,13 @@ const faqs = [
 
 export default function ProposalReviewerPage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "AI Proposal Writer & Reviewer",
+      "Write and audit freelance proposals instantly using AI. Check matching percentage, proposal quality scores, and receive tips to win more projects.",
+      "/tools/proposal-reviewer",
+      "4.9",
+      "210"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

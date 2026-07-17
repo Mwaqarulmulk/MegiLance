@@ -5,7 +5,7 @@ import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -38,7 +38,13 @@ const faqs = [
 
 export default function ProjectScopeGeneratorPage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "AI Project Scope Generator",
+      "Generate comprehensive project briefs, timelines, deliverable lists, and scope documents instantly using AI planning intelligence.",
+      "/tools/project-scope-generator",
+      "4.8",
+      "95"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

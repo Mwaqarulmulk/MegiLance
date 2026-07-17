@@ -5,7 +5,7 @@ import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -38,7 +38,13 @@ const faqs = [
 
 export default function FreelanceRateCalculatorPage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "Freelance Rate Calculator",
+      "Calculate your optimal freelance hourly rate and project self-employed billings. Compare rates across skills, experience, and global platforms.",
+      "/tools/freelance-rate-calculator",
+      "4.8",
+      "145"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

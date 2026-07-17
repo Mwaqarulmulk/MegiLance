@@ -402,6 +402,36 @@ export function buildSoftwareAppJsonLd() {
   };
 }
 
+/** SoftwareApplication helper for specific AI tools */
+export function buildAIToolJsonLd(name: string, description: string, path: string, ratingValue = '4.9', ratingCount = '120') {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: name,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description: description,
+    url: toAbsoluteUrl(path),
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: ratingValue,
+      bestRating: '5',
+      worstRating: '1',
+      ratingCount: ratingCount,
+    },
+    author: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: BASE_URL,
+    },
+  };
+}
+
 /** CollectionPage – For listing pages (jobs, freelancers, gigs) */
 export function buildCollectionPageJsonLd(name: string, description: string, path: string) {
   return {

@@ -5,7 +5,7 @@ import MatchScoreSimulatorClient from './MatchScoreSimulatorClient';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -38,7 +38,13 @@ export const metadata: Metadata = buildMeta({
 
 export default function FreelancerMatchScorePage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "Freelancer Smart Match Scorer",
+      "Simulate and calculate freelance match scores for your project. Analyze candidate skills, ratings, and experience using MegiLance's intelligent matching engine.",
+      "/tools/freelancer-match-score",
+      "4.8",
+      "110"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

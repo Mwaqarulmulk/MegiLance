@@ -5,7 +5,7 @@ import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -38,7 +38,13 @@ const faqs = [
 
 export default function MilestoneGeneratorPage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "AI Project Milestone Generator",
+      "Generate smart milestone payments, tasks, and schedules. Break your freelance projects into clear timeline phases, deliverables, and payment milestones.",
+      "/tools/milestone-generator",
+      "4.7",
+      "85"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

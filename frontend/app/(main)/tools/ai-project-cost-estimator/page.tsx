@@ -5,7 +5,7 @@ import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -39,7 +39,13 @@ const faqs = [
 
 export default function AiProjectCostEstimatorPage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "AI Project Cost Estimator",
+      "Estimate software development, web builds, mobile apps, and creative design project budgets instantly using real market rates and data-driven project scoping.",
+      "/tools/ai-project-cost-estimator",
+      "4.9",
+      "180"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

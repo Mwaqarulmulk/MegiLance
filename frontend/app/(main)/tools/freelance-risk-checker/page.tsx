@@ -5,7 +5,7 @@ import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
 import { 
   buildMeta, 
   buildFAQJsonLd, 
-  buildSoftwareAppJsonLd, 
+  buildAIToolJsonLd, 
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -38,7 +38,13 @@ const faqs = [
 
 export default function FreelanceRiskCheckerPage() {
   const jsonLd = [
-    buildSoftwareAppJsonLd(),
+    buildAIToolJsonLd(
+      "Freelance Fraud & Risk Checker",
+      "Analyze freelance project descriptions and messages for suspicious patterns, fake payment terms, and red flags using AI security intelligence.",
+      "/tools/freelance-risk-checker",
+      "4.9",
+      "70"
+    ),
     buildFAQJsonLd(faqs),
   ];
 

@@ -79,6 +79,7 @@ from .v1.core_domain import (
     reports,
     review_responses,
     saved_searches,
+    se_ranking,
     scheduler,
     scope_change,
     scope_planner,
@@ -209,6 +210,7 @@ api_router.include_router(project_brief.router, prefix="/ai", tags=["ai-project-
 
 # Analytics and reporting
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+api_router.include_router(se_ranking.router, prefix="", tags=["SEO & SE Ranking"])
 
 # Advanced Analytics Pro - ML predictions and BI
 api_router.include_router(

@@ -188,6 +188,10 @@ class Settings(BaseSettings):
     # Token Aliases (prefer canonical fields above)
     refresh_token_expire_days: int = 7
 
+    # SE Ranking API configuration
+    se_ranking_api_key: Optional[str] = None
+    se_ranking_site_id: Optional[str] = None
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
