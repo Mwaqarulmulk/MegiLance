@@ -1,4 +1,4 @@
-// @AI-HINT: Global search page — searches Freelancers, Projects, and Jobs with URL-driven ?q= query and 350ms debounce
+// @AI-HINT: Global search page — searches Freelancers, Projects, and Jobs with URL-driven ?q= and ?tab= queries with 350ms debounce
 "use client";
 
 import React, { useState, useEffect, useCallback, Suspense } from "react";
@@ -48,6 +48,10 @@ interface ProjectResult {
   status?: string;
   created_at?: string;
   category_name?: string;
+  is_external?: boolean;
+  source?: string;
+  apply_url?: string;
+  company?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -136,30 +140,36 @@ function SearchContent() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    // Sync tab from URL param if present on mount
+    const tabParam = searchParams.get("tab") as Tab;
+    if (tabParam && ["freelancers", "projects", "jobs"].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   // ── Push query to URL (debounced) ──────────────────────────────────────────
   const updateUrl = useCallback(
-    (q: string) => {
+    (q: string, tab: Tab) => {
       const params = new URLSearchParams(searchParams.toString());
       if (q) {
         params.set("q", q);
       } else {
         params.delete("q");
       }
+      params.set("tab", tab);
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     },
     [searchParams, router, pathname],
   );
 
-  // 350ms debounce: update debouncedQuery + URL on inputValue changes
+  // 350ms debounce: update debouncedQuery + URL on inputValue changes or tab change
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(inputValue);
-      updateUrl(inputValue);
+      updateUrl(inputValue, activeTab);
     }, 350);
     return () => clearTimeout(timer);
-  }, [inputValue, updateUrl]);
+  }, [inputValue, activeTab, updateUrl]);
 
   // ── Fetch data on tab or query change ─────────────────────────────────────
   useEffect(() => {
@@ -187,24 +197,54 @@ function SearchContent() {
           if (debouncedQuery) params.set("search", debouncedQuery);
           const data = (await apiFetch(`/projects?${params}`)) as {
             projects?: ProjectResult[];
+            items?: ProjectResult[];
             total?: number;
           };
           if (controller.signal.aborted) return;
-          const results = data.projects ?? [];
+          const results = data.projects ?? data.items ?? [];
           setProjects(results);
           setResultsCount(data.total ?? results.length);
         } else {
-          // Jobs tab: open projects only
-          const params = new URLSearchParams({ status: "open", limit: "20" });
+          // Jobs tab: merge open internal projects and external jobs
+          const params = new URLSearchParams({ status: "open", limit: "15" });
           if (debouncedQuery) params.set("search", debouncedQuery);
-          const data = (await apiFetch(`/projects?${params}`)) as {
-            projects?: ProjectResult[];
-            total?: number;
-          };
+          
+          const extParams = new URLSearchParams({ page_size: "15" });
+          if (debouncedQuery) extParams.set("query", debouncedQuery);
+
+          const [internalRes, externalRes] = await Promise.all([
+            apiFetch(`/projects?${params}`),
+            apiFetch(`/external-projects?${extParams}`).catch(() => ({ projects: [] }))
+          ]);
+
           if (controller.signal.aborted) return;
-          const results = data.projects ?? [];
-          setJobs(results);
-          setResultsCount(data.total ?? results.length);
+
+          // Process internal jobs
+          const internalData = internalRes as { projects?: ProjectResult[]; items?: ProjectResult[]; total?: number };
+          const internalList = internalData.projects ?? internalData.items ?? [];
+
+          // Process external jobs
+          const externalData = externalRes as { projects?: Record<string, any>[] };
+          const externalList = (externalData.projects || []).map((p: any) => ({
+            id: `ext_${p.id}`,
+            title: p.title,
+            description: p.description_plain || p.description,
+            budget_min: p.budget_min,
+            budget_max: p.budget_max,
+            skills: p.tags,
+            status: "open",
+            created_at: p.posted_at || p.scraped_at,
+            category_name: p.category || "General",
+            is_external: true,
+            source: p.source,
+            apply_url: p.apply_url,
+            company: p.company
+          }));
+
+          // Merge lists
+          const merged = [...internalList, ...externalList];
+          setJobs(merged);
+          setResultsCount(merged.length);
         }
       } catch {
         if (controller.signal.aborted) return;
@@ -220,6 +260,16 @@ function SearchContent() {
     fetchData();
     return () => controller.abort();
   }, [activeTab, debouncedQuery, mounted]);
+
+  // ── Track Click on External Job Card ──────────────────────────────────────
+  const handleExternalClick = async (projectId: string | number) => {
+    try {
+      const cleanId = String(projectId).replace("ext_", "");
+      await apiFetch(`/external-projects/${cleanId}/click`, { method: "POST" });
+    } catch (e) {
+      console.warn("Failed to track external job click:", e);
+    }
+  };
 
   // ── Theme ─────────────────────────────────────────────────────────────────
   const themeStyles =
@@ -304,7 +354,7 @@ function SearchContent() {
               )}
             >
               {resultsCount > 0
-                ? `${resultsCount} result${resultsCount !== 1 ? "s" : ""}${debouncedQuery ? ` for "${debouncedQuery}"` : ""}`
+                ? `${resultsCount} result${resultsCount !== 1 ? "s" : ""} found${debouncedQuery ? ` for "${debouncedQuery}"` : ""}`
                 : debouncedQuery
                   ? `No results for "${debouncedQuery}"`
                   : "Enter a search term above"}
@@ -449,6 +499,64 @@ function SearchContent() {
                             : p.budget_min != null
                               ? `From $${p.budget_min.toLocaleString()}`
                               : null;
+
+                      // If external job, wrap inside a standard anchor linking to target blank, tracking clicks
+                      if (p.is_external) {
+                        return (
+                          <a
+                            key={p.id}
+                            href={p.apply_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => handleExternalClick(p.id)}
+                            className={cn(commonStyles.card, themeStyles.card, "hover:scale-[1.01] transition-transform duration-200")}
+                          >
+                            <div className={commonStyles.cardInfo}>
+                              <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
+                                <p className={cn(commonStyles.cardName, themeStyles.cardName)}>
+                                  {p.title ?? "Untitled Project"}
+                                </p>
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30">
+                                  External ({p.source})
+                                </span>
+                              </div>
+                              <p className="text-xs font-semibold text-slate-500 mb-1">
+                                {p.company ? `at ${p.company}` : ""}
+                              </p>
+                              {p.category_name && (
+                                <p className={cn(commonStyles.cardTitle, themeStyles.cardTitle)}>
+                                  {p.category_name}
+                                </p>
+                              )}
+                            </div>
+
+                            {p.description && (
+                              <p className={cn(commonStyles.cardDescription, themeStyles.cardDescription)}>
+                                {p.description.substring(0, 160)}...
+                              </p>
+                            )}
+
+                            <div className={commonStyles.cardMeta}>
+                              {budgetLabel && (
+                                <span className={cn(commonStyles.cardMetaItem, themeStyles.cardMetaItem)}>
+                                  <DollarSign size={13} aria-hidden="true" />
+                                  {budgetLabel}
+                                </span>
+                              )}
+                            </div>
+
+                            {skills.length > 0 && (
+                              <div className={commonStyles.tags}>
+                                {skills.slice(0, 4).map((s) => (
+                                  <span key={s} className={cn(commonStyles.tag, themeStyles.tag)}>
+                                    {s}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </a>
+                        );
+                      }
 
                       return (
                         <Link

@@ -70,6 +70,22 @@ export const SEO_KEYWORDS = {
     'hire freelance graphic designer', 'hire freelance web developer',
     'hire freelance developers', 'hire a python programmer',
     'freelance mobile app developer', 'hire a javascript developer',
+    // Semrush Pro Keyword Builder transactional additions
+    'designer web freelance', 'web freelance work', 'web programming freelance',
+    'web developers for hire', 'hire designers', 'website design freelancer',
+    'freelance web development', 'freelance marketplaces', 'freelancing online',
+    'web developer hire', 'web developer for hire', 'free lance web designers',
+    'top freelance jobs', 'hire marketing freelancer', 'top 10 freelance platforms',
+    'freelance coding websites', 'freelance front end web developer jobs',
+    'hire freelance app developer', 'digital freelance jobs', 'freelancer usa',
+    'freelance worker', 'freelancing sites', 'freelance platforms',
+    'jobs at freelance', 'freelance job search engine', 'freelance work opportunities',
+    'freelance job portal', 'freelance work platforms', 'freelance marketplace',
+    'freelancing opportunities', 'freelance careers', 'freelance work jobs',
+    'finding freelance work', 'jobs on freelancer', 'freelance roles',
+    'freelance employment', 'become a freelance', 'find freelance gigs',
+    'popular freelance jobs', 'freelance services marketplace',
+    'freelance employment opportunities', 'freelance career'
   ],
 
   // COMPARISON & INFORMATIONAL keywords (competitor-positioning)
@@ -84,6 +100,11 @@ export const SEO_KEYWORDS = {
     'best platform for freelancers', 'AI powered freelancing',
     'zero fee freelancing platform', 'zero commission freelance platform',
     'freelance marketplace comparison', 'best freelancing website 2026',
+    // Semrush Pro Keyword Builder informational additions
+    'how to do freelance work', 'how to hire web developers', 'freelance dev web',
+    'hire freelancer marketers', 'where to get freelance work', 'where can i find freelance work',
+    'how to find freelance jobs', 'freelance jobs near me', 'freelance work near me',
+    'freelance business'
   ],
 
   // Industry/niche keywords (service-category targeting)

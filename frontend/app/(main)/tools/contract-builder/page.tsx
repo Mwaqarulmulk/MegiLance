@@ -10,10 +10,11 @@ import {
 } from '@/lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Free AI Freelance Contract Builder | Legal Agreement Maker',
-  description: 'Generate legally-sound freelance contracts, NDAs, and service agreements instantly with customizable legal clauses and jurisdiction support.',
+  title: 'Free AI Freelance Contract Builder | Business & Services Agreement Templates',
+  description: 'Generate legally-sound business contract templates, services agreement contract templates, NDAs, and service agreements instantly with customizable legal clauses.',
   path: '/tools/contract-builder',
   keywords: getKeywordsForPage(['longTail', 'features'], [
+    'services agreement contract template', 'business contract template',
     'freelance contract builder', 'generate freelance contract',
     'AI legal contract creator', 'freelance NDA template', 'freelancer service agreement'
   ]),

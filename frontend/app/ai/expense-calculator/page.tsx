@@ -3,10 +3,10 @@ import ExpenseTaxCalculator from './ExpenseTaxCalculator';
 import { buildMeta } from '@/lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Freelance Expense & Tax Calculator | MegiLance Tools',
-  description: 'Estimate quarterly taxes, calculate self-employment write-offs, and track freelance business expenses with country-specific tax rules.',
+  title: 'Freelance Expense & Tax Calculator | MegiLance Free Tax Tools',
+  description: 'Manage self-employed write-offs and calculate obligations with the ultimate freelance expense & tax calculator. Try our free tax tools on MegiLance.',
   path: '/ai/expense-calculator',
-  keywords: ['expense calculator', 'tax write-off calculator', 'self-employed tax estimator', 'freelancer quarterly tax', 'MegiLance tools'],
+  keywords: ['freelance expense and tax calculator', 'free tax calculator', 'expense calculator', 'tax write-off calculator', 'self-employed tax estimator'],
 });
 
 export default function ExpenseTaxPage() {

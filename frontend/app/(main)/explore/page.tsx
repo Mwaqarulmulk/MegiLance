@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Explore MegiLance | Discover Top Freelancers, Open Gigs & Projects',
-  description: 'Explore the MegiLance platform. Browse top-rated freelancers, active service gigs, open projects, and trending skills. Find your perfect project match using AI-powered search.',
+  title: 'Explore MegiLance | Discover Freelance Jobs, Gigs & Platforms',
+  description: 'Search MegiLance, the leading freelance job search engine and platform. Browse open freelance jobs near me, find job freelancer matches, explore active service gigs, and connect with top talent.',
   path: '/explore',
   keywords: getKeywordsForPage(['transactional', 'informational'], [
+    'freelance jobs', 'jobs at freelance', 'freelance platforms', 'freelance jobs near me',
+    'find job freelancer', 'freelance job search engine', 'freelancer job', 'become a freelance',
     'explore freelancers', 'browse open projects', 'discover freelance talent',
-    'find freelance gigs', 'search freelance marketplace', 'explore gig services',
-    'trending freelance skills', 'open remote projects',
   ]),
 });
 
@@ -92,7 +92,7 @@ function ExploreClient() {
             </span>
           </Link>
 
-          <Link href="/freelancer/projects" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
+          <Link href="/search?tab=jobs" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#fefce8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
               <Briefcase size={24} style={{ color: '#ca8a04' }} />
             </div>
@@ -181,7 +181,7 @@ async function LiveDataSections() {
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.25rem' }}>Open Projects</h2>
                 <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Apply now and start earning</p>
               </div>
-              <Link href="/freelancer/projects" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
+              <Link href="/search?tab=jobs" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
                 View All <ArrowRight size={14} />
               </Link>
             </div>

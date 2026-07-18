@@ -13,12 +13,11 @@ import Link from 'next/link';
 
 export const metadata: Metadata = buildMeta({
   title: 'Free AI Project Cost Estimator | Calculate Development Budgets',
-  description: 'Estimate your software development or design project cost instantly. Uses AI model analysis and real-time freelancing market rate database.',
+  description: 'Estimate your software development or design project budget instantly. MegiLance provides a free AI project cost estimator powered by real market data.',
   path: '/tools/ai-project-cost-estimator',
   keywords: getKeywordsForPage(['longTail', 'features'], [
-    'AI project cost estimator', 'project budget calculator', 
-    'software development cost calculator', 'freelance project price estimator', 
-    'website build cost estimate'
+    'free ai project cost estimator', 'AI project cost estimator',
+    'project budget calculator', 'software development cost calculator'
   ]),
 });
 

@@ -12,8 +12,9 @@ import {
   Linkedin, Github, Globe, Mail, Phone,
   Calendar, Award, ThumbsUp, MessageCircle,
   Briefcase, GraduationCap, Languages, Video, ExternalLink,
-  Twitter, Palette, Layers
+  Twitter, Palette, Layers, RotateCcw, AlertCircle
 } from 'lucide-react';
+import { apiFetch } from '@/lib/api';
 import Button from '@/app/components/atoms/Button/Button';
 import StarRating from '@/app/components/molecules/StarRating/StarRating';
 import Loading from '@/app/components/atoms/Loading/Loading';
@@ -92,8 +93,13 @@ export default function UserProfile({ userId, initialProfile }: UserProfileProps
   const [reviews, setReviews] = useState<Review[]>([]);
   const [selectedPortfolioItem, setSelectedPortfolioItem] = useState<PortfolioItem | null>(null);
   const [contactLoading, setContactLoading] = useState(false);
-
   const [mounted, setMounted] = useState(false);
+  const [gig, setGig] = useState<any | null>(null);
+  const [loadingGig, setLoadingGig] = useState(true);
+  const [selectedTier, setSelectedTier] = useState<'basic' | 'standard' | 'premium'>('basic');
+  const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
+  const [orderLoading, setOrderLoading] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -104,6 +110,7 @@ export default function UserProfile({ userId, initialProfile }: UserProfileProps
     loadProfile();
     loadPortfolio();
     loadReviews();
+    loadGig();
   }, [userId]);
 
   const loadProfile = async () => {
@@ -186,6 +193,57 @@ export default function UserProfile({ userId, initialProfile }: UserProfileProps
       setReviews(mappedReviews);
     } catch {
       // Failed to load reviews
+    }
+  };
+
+  const loadGig = async () => {
+    setLoadingGig(true);
+    try {
+      const data = await apiFetch(`/gigs?seller_id=${userId}`);
+      const items = (data as any)?.items || [];
+      if (items.length > 0) {
+        setGig(items[0]);
+      } else {
+        setGig(null);
+      }
+    } catch (err) {
+      console.warn("Failed to load seller gig:", err);
+      setGig(null);
+    } finally {
+      setLoadingGig(false);
+    }
+  };
+
+  const handleOrderPackage = async (packageTier: 'basic' | 'standard' | 'premium') => {
+    if (!isAuthenticated || !currentUser) {
+      router.push('/login?redirect=' + encodeURIComponent(`/freelancers/${userId}`));
+      return;
+    }
+    
+    // Prevent ordering own gig
+    if (Number(currentUser.id) === Number(userId)) {
+      setOrderError("You cannot order your own service package.");
+      return;
+    }
+
+    setOrderLoading(true);
+    setOrderSuccess(null);
+    setOrderError(null);
+
+    try {
+      const res = await apiFetch("/gigs/orders", {
+        method: "POST",
+        body: JSON.stringify({
+          gig_id: gig.id,
+          package: packageTier,
+        }),
+      }) as { id?: number; price?: number };
+
+      setOrderSuccess(`Your order for the ${packageTier} package ($${res.price || 0}) has been placed successfully! Order ID: #${res.id || 0}.`);
+    } catch (err: any) {
+      setOrderError(err?.message || "Failed to place order. Please try again.");
+    } finally {
+      setOrderLoading(false);
     }
   };
 
@@ -522,6 +580,94 @@ export default function UserProfile({ userId, initialProfile }: UserProfileProps
                 {typeof achievement === 'string' ? achievement : achievement.title || achievement.name}
               </span>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Service Gigs Tier Section */}
+      {gig && (
+        <section className={cn(commonStyles.section, themed.section)} aria-labelledby="packages-heading">
+          <h2 id="packages-heading" className={cn(commonStyles.sectionTitle, themed.sectionTitle)}>
+            Service Packages
+          </h2>
+          
+          <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm mt-4">
+            {/* Packages Tabs */}
+            <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20">
+              {(['basic', 'standard', 'premium'] as const).map((tier) => {
+                const isActive = selectedTier === tier;
+                const price = gig[`${tier}_price`] || 0;
+                return (
+                  <button
+                    key={tier}
+                    type="button"
+                    onClick={() => { setSelectedTier(tier); setOrderSuccess(null); setOrderError(null); }}
+                    className={cn(
+                      "flex-1 py-4 text-center text-xs font-bold uppercase tracking-wider border-b-2 transition-all",
+                      isActive
+                        ? "border-blue-500 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900"
+                        : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                    )}
+                  >
+                    {tier} (${price})
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Package Contents */}
+            <div className="p-6 space-y-6">
+              <div className="flex justify-between items-start gap-4">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                    {gig[`${selectedTier}_title`] || `${selectedTier.slice(0, 1).toUpperCase() + selectedTier.slice(1)} Package`}
+                  </h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl">
+                    {gig[`${selectedTier}_description`] || "No description provided for this package."}
+                  </p>
+                </div>
+                <div className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                  ${gig[`${selectedTier}_price`] || 0}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-6 text-xs font-semibold text-slate-500 dark:text-slate-400 border-t border-b border-slate-100 dark:border-slate-850 py-3.5">
+                <div className="flex items-center gap-1.5">
+                  <Clock size={14} className="text-slate-400" />
+                  <span>{gig[`${selectedTier}_delivery_days`] || 3} Days Delivery</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <RotateCcw size={14} className="text-slate-400" />
+                  <span>{gig[`${selectedTier}_revisions`] || 1} Revisions</span>
+                </div>
+              </div>
+
+              {/* Order Messaging Feedbacks */}
+              {orderSuccess && (
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/10 border border-emerald-200/50 dark:border-emerald-900/30 text-xs font-medium text-emerald-800 dark:text-emerald-400 flex items-start gap-2">
+                  <CheckCircle size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span>{orderSuccess}</span>
+                </div>
+              )}
+
+              {orderError && (
+                <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/10 border border-rose-200/50 dark:border-rose-900/30 text-xs font-medium text-rose-800 dark:text-rose-400 flex items-start gap-2">
+                  <AlertCircle size={16} className="text-rose-500 flex-shrink-0 mt-0.5" />
+                  <span>{orderError}</span>
+                </div>
+              )}
+
+              <div className="flex justify-end pt-2">
+                <Button
+                  variant="primary"
+                  onClick={() => handleOrderPackage(selectedTier)}
+                  disabled={orderLoading || orderSuccess !== null}
+                  className="px-8 py-2.5 rounded-xl font-bold shadow-md shadow-blue-500/10"
+                >
+                  {orderLoading ? "Processing Order..." : `Order ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)} Package`}
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
       )}

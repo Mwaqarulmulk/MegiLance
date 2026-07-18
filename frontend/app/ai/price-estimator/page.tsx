@@ -4,9 +4,10 @@ import PriceEstimatorPro from './PriceEstimatorPro';
 import { buildMeta } from '@/lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'AI Price Estimator | MegiLance Pricing Intelligence',
-  description: 'Estimate project development costs instantly with our AI-powered price estimator. Grounded in real market rates across categories, experience levels, and regions.',
-  path: '/tools/ai-project-cost-estimator',
+  title: 'AI Price Estimator | MegiLance Pricing & Budget Forecasting',
+  description: 'Estimate project development budgets instantly with the AI price estimator. Leverage price forecasting and real-time market data across global regions.',
+  path: '/ai/price-estimator',
+  keywords: ['ai price estimator', 'price forecasting', 'freelance project price estimator', 'project cost estimator', 'budget forecasting'],
 });
 
 const PriceEstimatorFallback = () => (

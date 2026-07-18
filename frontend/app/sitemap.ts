@@ -65,23 +65,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/faq', changeFrequency: 'weekly', priority: 0.82 },
     { path: '/contact', changeFrequency: 'monthly', priority: 0.75 },
     { path: '/explore', changeFrequency: 'daily', priority: 0.82 },
+    { path: '/freelance-payroll', changeFrequency: 'monthly', priority: 0.80 },
+    { path: '/free-tax-calculator', changeFrequency: 'monthly', priority: 0.80 },
+    { path: '/freelance-work-from-home', changeFrequency: 'monthly', priority: 0.80 },
+    { path: '/example-of-work-portfolio', changeFrequency: 'monthly', priority: 0.80 },
+    { path: '/designer-web-freelance', changeFrequency: 'monthly', priority: 0.82 },
+    { path: '/freelancing-websites', changeFrequency: 'monthly', priority: 0.85 },
+    { path: '/freelance-writer-rates', changeFrequency: 'monthly', priority: 0.80 },
+    { path: '/hire-marketing-freelancers', changeFrequency: 'monthly', priority: 0.82 },
+    { path: '/fraud-detection-services', changeFrequency: 'monthly', priority: 0.80 },
+    { path: '/freelancer-payment', changeFrequency: 'monthly', priority: 0.82 },
 
     // Product / feature pages
-    { path: '/clients', changeFrequency: 'monthly', priority: 0.8 },
+    { path: '/clients', changeFrequency: 'monthly', priority: 0.80 },
     { path: '/teams', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/enterprise', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/security', changeFrequency: 'monthly', priority: 0.72 },
     { path: '/testimonials', changeFrequency: 'weekly', priority: 0.75 },
-    { path: '/support', changeFrequency: 'monthly', priority: 0.7 },
+    { path: '/support', changeFrequency: 'monthly', priority: 0.70 },
     { path: '/ai', changeFrequency: 'monthly', priority: 0.72 },
+    { path: '/ai-talent-matching', changeFrequency: 'monthly', priority: 0.80 },
 
     // Content & community
     { path: '/blog', changeFrequency: 'daily', priority: 0.85 },
-    { path: '/blog/search', changeFrequency: 'daily', priority: 0.6 },
-    { path: '/blog/feed.xml', changeFrequency: 'daily', priority: 0.3 },
+    { path: '/blog/search', changeFrequency: 'daily', priority: 0.60 },
+    { path: '/blog/feed.xml', changeFrequency: 'daily', priority: 0.30 },
     { path: '/community', changeFrequency: 'weekly', priority: 0.72 },
     { path: '/careers', changeFrequency: 'monthly', priority: 0.62 },
-    { path: '/press', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/press', changeFrequency: 'monthly', priority: 0.60 },
 
     { path: '/why-hire', changeFrequency: 'monthly', priority: 0.88 },
     { path: '/cost-calculator', changeFrequency: 'monthly', priority: 0.82 },
@@ -91,7 +102,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/compare/toptal', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/compare/freelancer-com', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/referrals', changeFrequency: 'monthly', priority: 0.62 },
-    { path: '/install', changeFrequency: 'yearly', priority: 0.5 },
+    { path: '/install', changeFrequency: 'yearly', priority: 0.50 },
 
     // Free AI Tools (High ROI traffic magnets)
     { path: '/tools/ai-project-cost-estimator', changeFrequency: 'weekly', priority: 0.95 },
@@ -101,17 +112,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/tools/proposal-reviewer', changeFrequency: 'weekly', priority: 0.88 },
     { path: '/tools/freelancer-match-score', changeFrequency: 'weekly', priority: 0.85 },
     { path: '/tools/freelance-risk-checker', changeFrequency: 'weekly', priority: 0.85 },
+    { path: '/tools/proposal-creator', changeFrequency: 'weekly', priority: 0.88 },
+    { path: '/tools/business-contract-template', changeFrequency: 'weekly', priority: 0.88 },
+    { path: '/tools/freelance-invoice-template', changeFrequency: 'weekly', priority: 0.90 },
 
     // Legal pages
     { path: '/privacy', changeFrequency: 'monthly', priority: 0.35 },
     { path: '/terms', changeFrequency: 'monthly', priority: 0.35 },
-    { path: '/cookies', changeFrequency: 'monthly', priority: 0.3 },
+    { path: '/cookies', changeFrequency: 'monthly', priority: 0.30 },
 
     // Status page (redirect corrected)
     { path: '/system-status', changeFrequency: 'weekly', priority: 0.50 },
 
     // AI/LLM discoverability
-    { path: '/llms.txt', changeFrequency: 'monthly', priority: 0.3 },
+    { path: '/llms.txt', changeFrequency: 'monthly', priority: 0.30 },
   ];
 
   const staticPages: MetadataRoute.Sitemap = topLevelPaths.map(({ path, changeFrequency, priority }) => ({

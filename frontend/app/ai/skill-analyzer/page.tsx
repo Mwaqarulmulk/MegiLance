@@ -4,9 +4,9 @@ import { buildMeta } from '@/lib/seo';
 
 export const metadata: Metadata = buildMeta({
   title: 'AI Freelancer Skill Analyzer | MegiLance Tools',
-  description: 'Analyze your freelance skill set against real-world market demand. Identify high-ROI skills, discover learning resources, and view salary multipliers.',
-  path: '/tools/freelancer-match-score',
-  keywords: ['skill analyzer', 'freelancer skills test', 'AI skill assessment', 'freelance career growth roadmap', 'MegiLance tools'],
+  description: 'Evaluate your freelance capabilities with the AI freelancer skill analyzer. Detect high-demand skills, view salary multipliers, and map your growth roadmap.',
+  path: '/ai/skill-analyzer',
+  keywords: ['ai freelancer skill analyzer', 'skill analyzer', 'freelancer skills test', 'AI skill assessment', 'freelance career growth roadmap'],
 });
 
 export default function SkillAnalyzerPage() {

@@ -4,9 +4,9 @@ import type { Metadata } from 'next';
 import { buildWebSiteJsonLd, buildOrganizationJsonLd, buildFAQJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  title: 'MegiLance — AI-Powered Freelancing Platform',
-  description: 'Connect with top AI-vetted freelancers worldwide. Secure escrow payments, smart matching, and real-time collaboration. The future of freelancing starts here.',
-  keywords: ['freelance platform', 'AI matching', 'escrow payments', 'hire freelancers', 'remote work', 'gig economy'],
+  title: 'MegiLance — AI-Powered Freelancer Website & Freelancing Platform',
+  description: 'Connect with top AI-vetted freelancers on MegiLance, the ultimate freelancer website. Find freelance jobs online and hire developers, designers, or writers with zero commission. The future of freelancing starts here.',
+  keywords: ['freelancer website', 'freelance jobs online', 'freelancing websites', 'freelancing sites', 'best freelance websites', 'hire freelancers', 'AI freelancing'],
   alternates: {
     canonical: 'https://megilance.site',
   },

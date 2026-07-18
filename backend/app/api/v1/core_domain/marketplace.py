@@ -25,6 +25,13 @@ def list_marketplace_freelancers(
     query = q or search
     offset = (page - 1) * page_size
     where = "WHERE user_type = 'freelancer' AND is_active = 1"
+    
+    # Quality gate: hide automated test/junk accounts and incomplete profiles
+    where += " AND email NOT LIKE '%@example.com'"
+    where += " AND email NOT LIKE 'test_%'"
+    where += " AND (profile_visibility IS NULL OR profile_visibility = 'public')"
+    where += " AND (hourly_rate > 0 OR (skills IS NOT NULL AND skills NOT IN ('', '[]', 'null')) OR (bio IS NOT NULL AND TRIM(bio) != ''))"
+    
     params: list = []
 
     if query:

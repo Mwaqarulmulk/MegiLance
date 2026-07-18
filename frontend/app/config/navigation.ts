@@ -78,6 +78,7 @@ export const freelancerNavItems: NavItem[] = [
     href: "/freelancer/projects",
     icon: "Briefcase",
   },
+  { label: "Service Package", href: "/freelancer/gigs", icon: "Tag" },
   { label: "Contracts", href: "/freelancer/contracts", icon: "FolderGit2" },
   { label: "Deliverables", href: "/freelancer/deliverables", icon: "Upload" },
   { label: "Time Entries", href: "/freelancer/time-entries", icon: "Clock" },

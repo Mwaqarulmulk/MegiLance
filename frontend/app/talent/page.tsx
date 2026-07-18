@@ -4,13 +4,13 @@ import { buildMeta, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, buildItemL
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMeta({
-    title: 'Freelancer Website Directory - Browse Verified Freelance Experts',
-    description: 'Explore MegiLance\'s freelancer website directory with verified experts. Find freelance web developers, freelance website designers, UI/UX designers, AI/ML engineers, and 50+ skill categories. Best freelance websites for hiring talent.',
+    title: 'Freelancer Website Directory | Hire Software Developers & Designers',
+    description: 'Browse MegiLance\'s directory of verified freelance workers. Hire software developers, graphic designers, UI/UX experts, and writers. Top platform to hire verified freelancers.',
     path: '/talent',
     keywords: getKeywordsForPage(['transactional', 'technology', 'industry'], [
-      'freelancer website', 'best freelance websites', 'freelance web developer',
-      'freelance website designer', 'freelancer directory', 'top rated freelancers',
-      'verified freelancers', 'hire remote talent', 'global freelancer marketplace',
+      'freelance worker', 'hire software developers', 'hire designers',
+      'freelancer website', 'best freelance websites', 'freelancer directory',
+      'vetted freelancers', 'global freelancer marketplace',
     ]),
   });
 }

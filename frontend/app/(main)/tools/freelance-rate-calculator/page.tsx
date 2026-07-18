@@ -12,12 +12,12 @@ import {
 import Link from 'next/link';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Free Freelance Rate Calculator | Find Your Hourly Rate',
-  description: 'Calculate your optimal freelance hourly rate and project self-employed billings. Compare rates across skills, experience, and global platforms.',
+  title: 'Free Freelance Rate Calculator | Find Your Hourly & Freelance Writer Rates',
+  description: 'Use our free freelance rate calculator to discover your ideal hourly rates, freelance writer rates, and designer wages based on expenses and net targets.',
   path: '/tools/freelance-rate-calculator',
   keywords: getKeywordsForPage(['longTail', 'features'], [
-    'freelance rate calculator', 'freelancer hourly rate calculator', 
-    'calculate freelance rates', 'freelancer rate advisor', 'how much to charge hourly freelance'
+    'free freelance rate calculator', 'freelance writer rates', 'freelance rate calculator',
+    'freelancer hourly rate calculator', 'calculate freelance rates', 'freelancer rate advisor'
   ]),
 });
 

@@ -27,12 +27,12 @@ const faqs = [
 ];
 
 export const metadata: Metadata = buildMeta({
-  title: 'Free AI Freelancer Match Score Simulator | MegiLance',
-  description: 'Simulate and calculate freelance match scores for your project. Analyze candidate skills, ratings, and experience using MegiLance\'s intelligent matching engine.',
+  title: 'Free AI Freelancer Match Score Simulator & Talent Matching | MegiLance',
+  description: 'Simulate and calculate freelance match scores for your project. Leverage AI talent matching to analyze candidate skills, ratings, and experience.',
   path: '/tools/freelancer-match-score',
   keywords: getKeywordsForPage(['longTail', 'features'], [
-    'freelancer match score', 'calculate freelancer match score',
-    'simulate candidate match', 'AI freelance matching engine', 'find developers matching score'
+    'ai talent matching', 'freelancer match score', 'calculate freelancer match score',
+    'simulate candidate match', 'AI freelance matching engine'
   ]),
 });
 

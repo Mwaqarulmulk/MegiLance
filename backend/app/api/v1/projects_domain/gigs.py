@@ -50,13 +50,29 @@ def list_gigs(
     max_price: Optional[float] = Query(None),
     seller_level: Optional[str] = Query(None),
     min_rating: Optional[float] = Query(None),
+    seller_id: Optional[int] = Query(None),
     sort_by: Optional[str] = Query("newest"),
     query: Optional[str] = Query(None),
+    status: Optional[str] = Query("active"),
 ):
     """List published gigs with filtering and pagination"""
     offset = (page - 1) * page_size
-    conditions = ["g.status = 'active'"]
-    params: list = []
+    
+    # Map frontend status 'published' to database status 'active'
+    query_status = "active"
+    if status:
+        mapped_status = status.lower()
+        if mapped_status in ("published", "active"):
+            query_status = "active"
+        else:
+            query_status = mapped_status
+
+    conditions = ["g.status = ?"]
+    params: list = [query_status]
+
+    if seller_id:
+        conditions.append("g.seller_id = ?")
+        params.append(seller_id)
 
     if category_id:
         conditions.append("g.category_id = ?")
@@ -74,7 +90,7 @@ def list_gigs(
         conditions.append("u.seller_level = ?")
         params.append(seller_level)
     if min_rating is not None:
-        conditions.append("g.average_rating >= ?")
+        conditions.append("g.rating_average >= ?")
         params.append(min_rating)
     if query:
         conditions.append("(g.title LIKE ? OR g.description LIKE ?)")
@@ -85,8 +101,8 @@ def list_gigs(
         "oldest": "g.created_at ASC",
         "price_low": "g.basic_price ASC",
         "price_high": "g.basic_price DESC",
-        "rating": "g.average_rating DESC",
-        "popular": "g.orders_count DESC",
+        "rating": "g.rating_average DESC",
+        "popular": "g.orders_completed DESC",
     }
     order = sort_map.get(sort_by, "g.created_at DESC")
 
@@ -148,7 +164,7 @@ def get_gig_by_slug(slug: str):
     # Get reviews
     review_result = execute_query(
         """SELECT r.*, u.name as reviewer_name, u.profile_image_url as reviewer_avatar
-           FROM gig_reviews r JOIN users u ON r.buyer_id = u.id
+           FROM gig_reviews r JOIN users u ON r.reviewer_id = u.id
            WHERE r.gig_id = ? ORDER BY r.created_at DESC LIMIT 10""",
         [gig["id"]]
     )
@@ -461,11 +477,13 @@ def request_revision(order_id: int, revision_data: dict, current_user=Depends(ge
     if order["status"] != "delivered":
         raise HTTPException(status_code=400, detail="Order must be in 'delivered' status to request revision")
 
+    count_res = execute_query("SELECT COUNT(*) as count FROM gig_revisions WHERE order_id = ?", [order_id])
+    rev_num = (parse_rows(count_res)[0].get("count", 0) + 1) if (count_res and count_res.get("rows")) else 1
+
     execute_query(
-        """INSERT INTO gig_revisions (order_id, buyer_id, revision_message, created_at)
-           VALUES (?, ?, ?, ?)""",
-        [order_id, user_id,
-         revision_data.get("message", ""), datetime.now(timezone.utc).isoformat()]
+        """INSERT INTO gig_revisions (order_id, revision_number, requester_id, request_description, created_at)
+           VALUES (?, ?, ?, ?, ?)""",
+        [order_id, rev_num, user_id, revision_data.get("message", "Revision requested"), datetime.now(timezone.utc).isoformat()]
     )
     execute_query("UPDATE gig_orders SET status = 'revision_requested' WHERE id = ?", [order_id])
     return {"status": "revision_requested"}
@@ -479,30 +497,40 @@ def create_review(review_data: dict, current_user=Depends(get_current_user)):
     user_id = current_user.get("user_id")
     now = datetime.now(timezone.utc).isoformat()
 
+    communication = int(review_data.get("communication_rating", 5))
+    service = int(review_data.get("service_rating", 5))
+    delivery = int(review_data.get("delivery_rating", 5))
+    recommendation = int(review_data.get("recommendation_rating", 5))
+    overall = round((communication + service + delivery + recommendation) / 4.0, 2)
+
     result = execute_query(
-        """INSERT INTO gig_reviews (gig_id, order_id, buyer_id, seller_id, rating,
-            communication_rating, service_rating, recommendation_rating, comment, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO gig_reviews (gig_id, order_id, reviewer_id, seller_id, 
+            rating_communication, rating_service, rating_delivery, rating_recommendation, 
+            rating_overall, review_text, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         [
             review_data.get("gig_id"),
             review_data.get("order_id"),
             user_id,
             review_data.get("seller_id"),
-            review_data.get("rating", 5),
-            review_data.get("communication_rating", 5),
-            review_data.get("service_rating", 5),
-            review_data.get("recommendation_rating", 5),
-            review_data.get("comment", ""),
+            communication,
+            service,
+            delivery,
+            recommendation,
+            overall,
+            review_data.get("review_text", review_data.get("comment", "")),
+            now,
             now,
         ]
     )
 
     # Update gig stats
     execute_query(
-        """UPDATE gigs SET total_reviews = total_reviews + 1,
-                  average_rating = ((average_rating * (total_reviews - 1)) + ?) / total_reviews
+        """UPDATE gigs 
+           SET rating_average = ((rating_average * rating_count) + ?) / (rating_count + 1),
+               rating_count = rating_count + 1
            WHERE id = ?""",
-        [review_data.get("rating", 5), review_data.get("gig_id")]
+        [overall, review_data.get("gig_id")]
     )
 
     id_result = execute_query("SELECT last_insert_rowid() as id", [])
@@ -516,7 +544,7 @@ def get_gig_reviews(gig_id: int, page: int = Query(1, ge=1), page_size: int = Qu
     offset = (page - 1) * page_size
     result = execute_query(
         """SELECT r.*, u.name as reviewer_name, u.profile_image_url as reviewer_avatar
-           FROM gig_reviews r JOIN users u ON r.buyer_id = u.id
+           FROM gig_reviews r JOIN users u ON r.reviewer_id = u.id
            WHERE r.gig_id = ? ORDER BY r.created_at DESC LIMIT ? OFFSET ?""",
         [gig_id, page_size, offset]
     )

@@ -132,6 +132,7 @@ def list_projects(
 
     return {
         "items": projects,
+        "projects": projects,
         "total": total,
         "page": page,
         "page_size": page_size,

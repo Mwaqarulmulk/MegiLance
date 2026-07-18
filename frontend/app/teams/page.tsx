@@ -4,13 +4,12 @@ import { buildMeta, buildBreadcrumbJsonLd, jsonLdScriptProps } from '@/lib/seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMeta({
-    title: 'Hire Freelancers for Teams - Scale with Remote Developers & Designers',
-    description: 'Build distributed teams by hiring freelancers on MegiLance. Hire web developers, graphic designers, virtual assistants for your team. Enterprise-grade tools, unified billing, bulk hiring. Best freelance marketplace for teams.',
+    title: 'Hire Freelancers for Teams | Scale Distributed Teams & Agencies',
+    description: 'Build distributed teams and hire marketing freelancers or developers on MegiLance. Streamline bulk hiring, unified collaboration, and scale remote teams with zero friction.',
     path: '/teams',
     keywords: [
-      'hire freelancers', 'hire remote teams', 'hire web developer',
-      'hire a virtual assistant', 'enterprise freelancing', 'scale remote workforce',
-      'bulk hire freelancers', 'distributed teams', 'freelance marketplace teams',
+      'hire freelancers for teams', 'hire marketing freelancers', 'hire freelancer marketers',
+      'distributed teams', 'hire remote teams', 'hire freelancers', 'enterprise freelancing'
     ],
   });
 }

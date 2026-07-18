@@ -2,13 +2,12 @@ import type { Metadata } from 'next';
 import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Hire Top Freelancers Online | Browse Expert Talent — MegiLance',
-  description: 'Browse and hire top-rated freelancers online on MegiLance. Vetted web developers, designers, data scientists, writers & 500+ skills. AI-matched talent, secure escrow, trusted by 10,000+ clients.',
+  title: 'Hire Top Freelancers Online | Vetted Web Developers & Designers for Hire',
+  description: 'Browse and hire top-rated freelancers online on MegiLance. Find web developers for hire, freelance web designers, programmers, and writers vetted by AI. Secure escrow payments.',
   path: '/freelancers',
   keywords: getKeywordsForPage(['transactional', 'technology', 'longTail'], [
-    'hire freelancers online', 'browse top freelancers', 'find verified freelancers',
-    'vetted remote developers', 'top rated freelancers', 'expert freelancers for hire',
-    'hire remote talent', 'freelancer profiles marketplace',
+    'web developers for hire', 'web developer for hire', 'free lance web designers',
+    'hire freelancers online', 'browse top freelancers', 'vetted remote developers'
   ]),
 });
 

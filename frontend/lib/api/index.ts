@@ -87,6 +87,9 @@ export {
   reviewResponsesApi,
 } from "./marketplace";
 
+// Gigs
+export { gigsApi } from "./gigs";
+
 // Features
 export {
   referralApi,
@@ -230,6 +233,7 @@ import {
 } from "./content";
 import { workroomApi } from "./workroom";
 import { dataExportApi } from "./dataExport";
+import { gigsApi } from "./gigs";
 
 export default {
   auth: authApi,
@@ -251,6 +255,7 @@ export default {
   payments: paymentsApi,
   crypto: cryptoApi,
   reviews: reviewsApi,
+  gigs: gigsApi,
   portal: portalApi,
   admin: adminApi,
   client: clientApi,
