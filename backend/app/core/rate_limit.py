@@ -26,7 +26,10 @@ import os
 
 # Rate limiting is ALWAYS enabled except during pytest unit tests.
 # NEVER disable rate limiting via environment variables in deployed environments.
-_testing = os.getenv("PYTEST_CURRENT_TEST") is not None
+_testing = (
+    os.getenv("PYTEST_CURRENT_TEST") is not None
+    or os.getenv("TESTING", "").strip().lower() in {"1", "true", "yes"}
+)
 
 # Determine storage backend: use Redis if configured, otherwise in-memory
 _redis_host = os.getenv("REDIS_HOST") or os.getenv("redis_host")

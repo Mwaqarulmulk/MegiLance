@@ -322,12 +322,13 @@ def insert_file_record(contract_id: int, uploaded_by: int, unique_filename: str,
                        original_name: str, file_path: str, file_size: int,
                        content_type: str, description: Optional[str], now: str):
     """Insert a file record into workroom_files."""
-    execute_query("""
+    result = execute_query("""
         INSERT INTO workroom_files (contract_id, uploaded_by, filename, original_name, file_path,
                                     file_size, mime_type, description, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [contract_id, uploaded_by, unique_filename, original_name, file_path,
           file_size, content_type, description, now, now])
+    return int(result.get("last_insert_rowid") or 0) if result else 0
 
 
 def get_file_info(file_id: int) -> Optional[dict]:

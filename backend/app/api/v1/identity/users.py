@@ -163,7 +163,9 @@ def get_current_user_profile(
                   languages, industry_focus, tools_and_technologies,
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
-                  video_intro_url, resume_url, created_at, onboarding_completed
+                  video_intro_url, resume_url, tagline, phone_number, timezone,
+                  preferred_project_size, education, certifications, work_history,
+                  achievements, contact_preferences, created_at, onboarding_completed
            FROM users WHERE id = ?""",
         [user_id]
     )
@@ -174,7 +176,7 @@ def get_current_user_profile(
     rows = parse_rows(result)
     user = rows[0]
 
-    for field in ("skills", "languages", "tools_and_technologies"):
+    for field in ("skills", "languages", "tools_and_technologies", "industry_focus"):
         val = user.get(field)
         if isinstance(val, str):
             try:
@@ -183,6 +185,14 @@ def get_current_user_profile(
                 # Stored as a comma-separated string (search uses LIKE on these),
                 # so fall back to splitting instead of dropping to an empty list.
                 user[field] = [s.strip() for s in val.split(",") if s.strip()]
+
+    for field in _JSON_PROFILE_FIELDS:
+        val = user.get(field)
+        if isinstance(val, str):
+            try:
+                user[field] = json.loads(val)
+            except (json.JSONDecodeError, TypeError):
+                user[field] = [] if field != "contact_preferences" else {}
 
     user["profile_completed"] = bool(user.get("onboarding_completed", 0))
     return user

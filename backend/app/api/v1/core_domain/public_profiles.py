@@ -12,6 +12,17 @@ from app.services.reviews_service import get_reviews_for_user
 router = APIRouter()
 
 
+def _require_visible_freelancer(user_id: int) -> None:
+    result = execute_query(
+        """SELECT id FROM users
+           WHERE id = ? AND user_type = 'freelancer'
+             AND COALESCE(profile_visibility, 'public') != 'private'""",
+        [user_id],
+    )
+    if not result or not result.get("rows"):
+        raise HTTPException(status_code=404, detail="Freelancer not found")
+
+
 @router.get("/")
 def list_freelancers(
     limit: int = Query(48, ge=1, le=100),
@@ -21,7 +32,7 @@ def list_freelancers(
 ):
     """Public freelancer directory listing — no auth required."""
     offset = (page - 1) * limit
-    where = "WHERE user_type = 'freelancer' AND is_active = 1"
+    where = "WHERE user_type = 'freelancer' AND is_active = 1 AND COALESCE(profile_visibility, 'public') = 'public'"
     params: list = []
 
     if q:
@@ -98,7 +109,7 @@ def get_public_profile(user_id: int):
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
                   video_intro_url, resume_url, created_at
-           FROM users WHERE id = ? AND user_type = 'freelancer'""",
+           FROM users WHERE id = ? AND user_type = 'freelancer' AND COALESCE(profile_visibility, 'public') != 'private'""",
         [user_id]
     )
 
@@ -127,7 +138,7 @@ def get_public_profile_by_slug(slug: str):
                   linkedin_url, github_url, website_url, twitter_url,
                   dribbble_url, behance_url, stackoverflow_url,
                   video_intro_url, resume_url, created_at
-           FROM users WHERE profile_slug = ? AND user_type = 'freelancer'""",
+           FROM users WHERE profile_slug = ? AND user_type = 'freelancer' AND COALESCE(profile_visibility, 'public') != 'private'""",
         [slug]
     )
 
@@ -142,7 +153,8 @@ def get_freelancer_stats(user_id: int):
     """Get freelancer statistics (jobs, reviews, rating, earnings)"""
     # Check user exists and is freelancer
     user_result = execute_query(
-        "SELECT id, user_type FROM users WHERE id = ?",
+        """SELECT id, user_type FROM users WHERE id = ?
+           AND COALESCE(profile_visibility, 'public') != 'private'""",
         [user_id]
     )
     if not user_result or not user_result.get("rows"):
@@ -196,6 +208,7 @@ def get_freelancer_portfolio(
     page_size: int = Query(12, ge=1, le=50)
 ):
     """Get a freelancer's public portfolio items"""
+    _require_visible_freelancer(user_id)
     offset = (page - 1) * page_size
     items = portfolio_service.list_public_portfolio(user_id, offset, page_size)
     return {"items": items, "total": len(items), "page": page}
@@ -208,6 +221,7 @@ def get_freelancer_reviews(
     page_size: int = Query(10, ge=1, le=50)
 ):
     """Get reviews for a freelancer"""
+    _require_visible_freelancer(user_id)
     offset = (page - 1) * page_size
     reviews = get_reviews_for_user(user_id, offset, page_size)
     return {"items": reviews, "total": len(reviews), "page": page}

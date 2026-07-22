@@ -5,7 +5,7 @@ import { RichTextEditor, ReadOnlyEditor } from '@/app/components/Editor';
 import { SignaturePad } from '@/app/components/SignaturePad';
 import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { apiFetch } from '@/lib/api/core';
-import api from '@/lib/api';
+import api, { portfolioApi } from '@/lib/api';
 import {
   User, Mail, MapPin, Globe, Clock, Star, Award, Briefcase,
   Edit3, Save, Camera, Plus, Trash2, ExternalLink, Download,
@@ -149,7 +149,10 @@ export default function FreelancerProfilePage() {
   const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
-      const data: any = await api.auth.me();
+      const [data, portfolioResponse]: any[] = await Promise.all([
+        api.auth.me(),
+        portfolioApi.list().catch(() => ({ items: [] })),
+      ]);
 
       const parseJsonField = (field: any): any[] => {
         if (Array.isArray(field)) return field;
@@ -209,13 +212,13 @@ export default function FreelancerProfilePage() {
           date: c.date || c.year || '',
           url: c.url || '',
         })),
-        portfolio: parseJsonField(data.portfolio_projects).map((p: any) => ({
+        portfolio: (portfolioResponse?.items || []).map((p: any) => ({
           id: p.id || '',
           title: p.title || '',
           description: p.description || '',
           images: Array.isArray(p.images) ? p.images : p.image_url ? [p.image_url] : [],
           link: p.project_url || p.demo_url || p.url || '',
-          skills: Array.isArray(p.tech_stack) ? p.tech_stack.split(',').map((s: string) => s.trim()) : Array.isArray(p.skills) ? p.skills : [],
+          skills: Array.isArray(p.skills) ? p.skills : typeof p.skills === 'string' ? p.skills.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
           date: p.year || p.created_at || '',
         })),
         workHistory: parseJsonField(data.work_history).map((w: any) => ({
@@ -387,26 +390,17 @@ export default function FreelancerProfilePage() {
     }));
   };
 
-  const handleAddProject = () => {
+  const handleAddProject = async () => {
     const title = window.prompt('Project title');
     if (!title || !title.trim()) return;
     const description = window.prompt('Short description (optional)') || '';
-    setProfile((p) => ({
-      ...p,
-      portfolio: [
-        ...p.portfolio,
-        {
-          id: `proj-${Date.now()}`,
-          title: title.trim(),
-          description: description.trim(),
-          images: [],
-          link: '',
-          skills: [],
-          date: new Date().toISOString().split('T')[0],
-        },
-      ],
-    }));
-    showToast('Project added. Click Save to keep your changes.', 'success');
+    try {
+      await portfolioApi.createItem({ title: title.trim(), description: description.trim() });
+      await loadProfile();
+      showToast('Portfolio project added.', 'success');
+    } catch {
+      showToast('Failed to add portfolio project.', 'error');
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -415,14 +409,17 @@ export default function FreelancerProfilePage() {
       await apiFetch('/auth/me', {
         method: 'PUT',
         body: JSON.stringify({
-          full_name: profile.name,
+          name: profile.name,
           headline: profile.title,
           bio: profile.bio,
           location: profile.location,
           timezone: profile.timezone,
           hourly_rate: profile.hourlyRate,
           skills: profile.skills,
+          languages: profile.languages.map((language) => language.name).filter(Boolean),
           education: profile.education,
+          certifications: profile.certifications,
+          work_history: profile.workHistory,
           experience_level: profile.experienceLevel,
           availability_status: profile.availability.toLowerCase(),
           profile_image_url: profile.avatar || null,

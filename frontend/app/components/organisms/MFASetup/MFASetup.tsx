@@ -12,7 +12,7 @@ import commonStyles from './MFASetup.common.module.css';
 import lightStyles from './MFASetup.light.module.css';
 import darkStyles from './MFASetup.dark.module.css';
 
-type MFAMethod = 'totp' | 'sms' | 'email' | 'webauthn';
+type MFAMethod = 'totp';
 
 interface MFASetupProps {
   onComplete?: () => void;
@@ -23,12 +23,11 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
   const { resolvedTheme } = useTheme();
   const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
 
-  const [selectedMethod, setSelectedMethod] = useState<MFAMethod>('totp');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const selectedMethod: MFAMethod = 'totp';
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [secret, setSecret] = useState<string | null>(null);
   const [verificationCode, setVerificationCode] = useState('');
-  const [step, setStep] = useState<'select' | 'setup' | 'verify'>('select');
+  const [step, setStep] = useState<'select' | 'verify'>('select');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
@@ -46,8 +45,7 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
         },
         credentials: 'include',
         body: JSON.stringify({
-          method: selectedMethod,
-          phone_number: selectedMethod === 'sms' ? phoneNumber : null
+          method: selectedMethod
         })
       });
 
@@ -116,7 +114,6 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
           selectedMethod === 'totp' && commonStyles.selected,
           selectedMethod === 'totp' && themeStyles.selected
         )}
-        onClick={() => setSelectedMethod('totp')}
       >
         <div className={commonStyles.methodIcon}>🔐</div>
         <h3 className={commonStyles.methodTitle}>Authenticator App</h3>
@@ -125,63 +122,16 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
         </p>
       </div>
 
-      <div
-        className={cn(
-          commonStyles.methodCard,
-          themeStyles.methodCard,
-          selectedMethod === 'sms' && commonStyles.selected,
-          selectedMethod === 'sms' && themeStyles.selected
-        )}
-        onClick={() => setSelectedMethod('sms')}
-      >
-        <div className={commonStyles.methodIcon}>📱</div>
-        <h3 className={commonStyles.methodTitle}>SMS</h3>
-        <p className={commonStyles.methodDesc}>
-          Receive codes via text message
-        </p>
-      </div>
-
-      <div
-        className={cn(
-          commonStyles.methodCard,
-          themeStyles.methodCard,
-          selectedMethod === 'email' && commonStyles.selected,
-          selectedMethod === 'email' && themeStyles.selected
-        )}
-        onClick={() => setSelectedMethod('email')}
-      >
-        <div className={commonStyles.methodIcon}>📧</div>
-        <h3 className={commonStyles.methodTitle}>Email</h3>
-        <p className={commonStyles.methodDesc}>
-          Receive codes via email
-        </p>
-      </div>
-
-      <div
-        className={cn(
-          commonStyles.methodCard,
-          themeStyles.methodCard,
-          selectedMethod === 'webauthn' && commonStyles.selected,
-          selectedMethod === 'webauthn' && themeStyles.selected
-        )}
-        onClick={() => setSelectedMethod('webauthn')}
-      >
-        <div className={commonStyles.methodIcon}>🔑</div>
-        <h3 className={commonStyles.methodTitle}>Security Key</h3>
-        <p className={commonStyles.methodDesc}>
-          Use biometric or hardware security keys
-        </p>
-      </div>
     </div>
   );
 
-  const renderSetup = () => (
-    <div className={cn(commonStyles.setupContainer, themeStyles.setupContainer)}>
-      {selectedMethod === 'totp' && qrCode && (
+  const renderVerify = () => (
+    <div className={cn(commonStyles.verifyContainer, themeStyles.verifyContainer)}>
+      {qrCode && (
         <div className={commonStyles.qrSection}>
           <h3 className={commonStyles.setupTitle}>Scan QR Code</h3>
           <div className={commonStyles.qrCodeWrapper}>
-            <img src={qrCode} alt="QR Code" className={commonStyles.qrCode} />
+            <img src={qrCode} alt="Authenticator setup QR code" className={commonStyles.qrCode} />
           </div>
           {secret && (
             <div className={commonStyles.secretSection}>
@@ -191,30 +141,6 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
           )}
         </div>
       )}
-
-      {selectedMethod === 'sms' && (
-        <div className={commonStyles.phoneSection}>
-          <Input
-            label="Phone Number"
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder="+1 234 567 8900"
-            required
-          />
-        </div>
-      )}
-
-      {selectedMethod === 'email' && (
-        <div className={commonStyles.infoSection}>
-          <p>A verification code will be sent to your registered email address.</p>
-        </div>
-      )}
-    </div>
-  );
-
-  const renderVerify = () => (
-    <div className={cn(commonStyles.verifyContainer, themeStyles.verifyContainer)}>
       <h3 className={commonStyles.verifyTitle}>Enter Verification Code</h3>
       <Input
         type="text"
@@ -260,7 +186,6 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
       )}
 
       {step === 'select' && renderSelectMethod()}
-      {step === 'setup' && renderSetup()}
       {step === 'verify' && renderVerify()}
 
       <div className={commonStyles.actions}>
@@ -269,13 +194,7 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
             <Button variant="outline" onClick={onCancel}>Cancel</Button>
             <Button 
               variant="primary" 
-              onClick={() => {
-                if (selectedMethod === 'sms' && !phoneNumber) {
-                  setStep('setup');
-                } else {
-                  setupMFA();
-                }
-              }}
+              onClick={setupMFA}
               isLoading={loading}
             >
               Continue
@@ -283,18 +202,9 @@ export default function MFASetup({ onComplete, onCancel }: MFASetupProps) {
           </>
         )}
 
-        {step === 'setup' && (
-          <>
-            <Button variant="outline" onClick={() => setStep('select')}>Back</Button>
-            <Button variant="primary" onClick={setupMFA} isLoading={loading}>
-              Next
-            </Button>
-          </>
-        )}
-
         {step === 'verify' && (
           <>
-            <Button variant="outline" onClick={() => setStep('setup')}>Back</Button>
+            <Button variant="outline" onClick={() => setStep('select')}>Back</Button>
             <Button 
               variant="primary" 
               onClick={verifyMFA} 

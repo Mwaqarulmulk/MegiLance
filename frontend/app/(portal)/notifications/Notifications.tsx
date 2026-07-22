@@ -195,29 +195,19 @@ export default function Notifications() {
         prev.map((n) => (n.id === id ? { ...n, unread: false } : n)),
       );
     } catch {
-      // Local fallback
-      setNotifs((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, unread: false } : n)),
-      );
+      notify({ title: "Error", description: "Could not mark this notification as read.", variant: "error" });
     }
   };
 
   const handleArchive = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Fire-and-forget: optimistic removal regardless of backend response
-    notificationsApi
-      .delete(id)
-      .catch((archiveErr: unknown) =>
-        process.env.NODE_ENV === "development"
-          ? console.warn("[Notifications] Archive failed:", archiveErr)
-          : archiveErr,
-      );
-    setNotifs((prev) => prev.filter((n) => n.id !== id));
-    notify({
-      title: "Archived",
-      description: "Notification removed.",
-      variant: "info",
-    });
+    try {
+      await notificationsApi.delete(id);
+      setNotifs((prev) => prev.filter((n) => n.id !== id));
+      notify({ title: "Archived", description: "Notification removed.", variant: "info" });
+    } catch {
+      notify({ title: "Error", description: "Could not archive this notification.", variant: "error" });
+    }
   };
 
   const containerVariants = {

@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import logging
 
@@ -16,6 +17,8 @@ from app.services import workroom_service as ws
 router = APIRouter()
 
 UPLOAD_DIR = os.environ.get("WORKROOM_UPLOAD_DIR", "/tmp/workroom_files")
+MAX_WORKROOM_FILE_SIZE = 25 * 1024 * 1024
+BLOCKED_FILE_EXTENSIONS = {".exe", ".dll", ".bat", ".cmd", ".com", ".msi", ".ps1", ".scr"}
 
 
 def _ensure_upload_dir():
@@ -167,17 +170,23 @@ async def upload_file(
     _check_contract_access(contract_id, current_user.id)
     _ensure_upload_dir()
 
-    ext = os.path.splitext(file.filename or "")[1]
+    ext = os.path.splitext(file.filename or "")[1].lower()
+    if ext in BLOCKED_FILE_EXTENSIONS:
+        raise HTTPException(status_code=400, detail="This file type is not allowed")
     unique_filename = f"{uuid.uuid4()}{ext}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
     content = await file.read()
     file_size = len(content)
+    if file_size == 0:
+        raise HTTPException(status_code=400, detail="Cannot upload an empty file")
+    if file_size > MAX_WORKROOM_FILE_SIZE:
+        raise HTTPException(status_code=413, detail="File must be 25 MB or smaller")
 
     with open(file_path, "wb") as f:
         f.write(content)
 
     now = datetime.now(timezone.utc).isoformat()
-    ws.insert_file_record(
+    file_id = ws.insert_file_record(
         contract_id=contract_id,
         uploaded_by=current_user.id,
         unique_filename=unique_filename,
@@ -188,9 +197,23 @@ async def upload_file(
         description=description,
         now=now,
     )
-    ws.log_activity(contract_id, current_user.id, "file_uploaded", "file", None,
+    if not file_id:
+        try:
+            os.remove(file_path)
+        except OSError:
+            pass
+        raise HTTPException(status_code=500, detail="Failed to save uploaded file")
+    ws.log_activity(contract_id, current_user.id, "file_uploaded", "file", file_id,
                     f"Uploaded file: {file.filename}")
-    return {"message": "File uploaded", "filename": unique_filename, "size": file_size}
+    return {
+        "id": file_id,
+        "message": "File uploaded",
+        "filename": unique_filename,
+        "original_name": file.filename or unique_filename,
+        "file_size": file_size,
+        "content_type": file.content_type or "application/octet-stream",
+        "created_at": now,
+    }
 
 
 @router.get("/files/{file_id}/download")
@@ -199,12 +222,14 @@ async def download_file(file_id: int, current_user=Depends(get_current_user)):
     if not file_info:
         raise HTTPException(status_code=404, detail="File not found")
     _check_contract_access(file_info["contract_id"], current_user.id)
+    if not file_info.get("file_path") or not os.path.isfile(file_info["file_path"]):
+        raise HTTPException(status_code=404, detail="Stored file is no longer available")
     ws.increment_download_count(file_id)
-    return {
-        "file_path": file_info["file_path"],
-        "original_name": file_info["original_name"],
-        "message": "File info retrieved"
-    }
+    return FileResponse(
+        path=file_info["file_path"],
+        filename=file_info["original_name"],
+        media_type="application/octet-stream",
+    )
 
 
 @router.delete("/files/{file_id}", status_code=204)

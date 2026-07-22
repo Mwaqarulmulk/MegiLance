@@ -26,8 +26,17 @@ from app.services.proposals_service import (
     shortlist_proposal,
     create_counter_offer,
 )
+from app.services.notifications_service import send_notification
 
 router = APIRouter()
+
+
+def _notify_safely(user_id: int, notification_type: str, title: str, content: str,
+                   action_url: str, data: dict) -> None:
+    try:
+        send_notification(user_id, notification_type, title, content, data=data, action_url=action_url)
+    except Exception as exc:
+        logger.warning("Could not create %s notification for user %s: %s", notification_type, user_id, exc)
 
 
 class ProposalCreate(BaseModel):
@@ -120,6 +129,16 @@ def create_proposal_endpoint(request: ProposalCreate, current_user=Depends(get_c
 
     if not proposal:
         raise HTTPException(status_code=500, detail="Failed to create proposal")
+
+    if not request.is_draft:
+        client_id = get_project_client_id(request.project_id)
+        if client_id:
+            _notify_safely(
+                client_id, "proposal_received", "New proposal received",
+                "A freelancer submitted a proposal for your project.",
+                f"/client/projects/{request.project_id}",
+                {"project_id": request.project_id, "proposal_id": proposal.get("id")},
+            )
 
     return {"message": "Proposal created successfully", "proposal": proposal}
 
@@ -234,11 +253,19 @@ def accept_proposal(proposal_id: int, current_user=Depends(get_current_user)):
     if not result:
         raise HTTPException(status_code=500, detail="Failed to accept proposal")
 
+    _notify_safely(
+        proposal["freelancer_id"], "proposal_accepted", "Your proposal was accepted",
+        f"Your proposal for {proposal.get('job_title') or 'the project'} was accepted.",
+        f"/freelancer/contracts/{result.get('contract_id')}",
+        {"project_id": proposal["project_id"], "proposal_id": proposal_id, "contract_id": result.get("contract_id")},
+    )
+
     return {
         "message": "Proposal accepted — contract and escrow created",
         "proposal_id": proposal_id,
         "project_id": proposal["project_id"],
         "freelancer_id": proposal["freelancer_id"],
+        "contract_id": result.get("contract_id"),
     }
 
 
@@ -257,6 +284,12 @@ def reject_proposal(proposal_id: int, current_user=Depends(get_current_user)):
         "UPDATE proposals SET status = 'rejected', updated_at = ? WHERE id = ?",
         [now, proposal_id],
     )
+    _notify_safely(
+        proposal["freelancer_id"], "proposal_rejected", "Proposal update",
+        f"Your proposal for {proposal.get('job_title') or 'the project'} was not selected.",
+        "/freelancer/proposals",
+        {"project_id": proposal["project_id"], "proposal_id": proposal_id},
+    )
     return {"message": "Proposal rejected successfully"}
 
 
@@ -273,6 +306,13 @@ def shortlist_proposal_endpoint(proposal_id: int, current_user=Depends(get_curre
     updated = shortlist_proposal(proposal_id)
     if not updated:
         raise HTTPException(status_code=500, detail="Failed to shortlist proposal")
+
+    _notify_safely(
+        proposal["freelancer_id"], "proposal_shortlisted", "Proposal shortlisted",
+        f"Your proposal for {proposal.get('job_title') or 'the project'} was shortlisted.",
+        "/freelancer/proposals",
+        {"project_id": proposal["project_id"], "proposal_id": proposal_id},
+    )
 
     return {"message": "Proposal shortlisted", "proposal": updated}
 
@@ -304,6 +344,13 @@ def create_counter_offer_endpoint(
     updated = create_counter_offer(proposal_id, counter_data)
     if not updated:
         raise HTTPException(status_code=500, detail="Failed to create counter-offer")
+
+    _notify_safely(
+        proposal["freelancer_id"], "counter_offer", "New counter-offer",
+        f"The client sent a counter-offer for {proposal.get('job_title') or 'the project'}.",
+        "/freelancer/proposals",
+        {"project_id": proposal["project_id"], "proposal_id": proposal_id},
+    )
 
     return {"message": "Counter-offer created", "proposal": updated}
 

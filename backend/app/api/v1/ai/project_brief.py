@@ -10,9 +10,20 @@ from app.schemas.project_brief import (
 )
 import json
 import logging
+from datetime import datetime, timedelta, timezone
+
+from app.db.turso_http import execute_query, parse_rows
+from app.services.notifications_service import send_notification
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+def _notify_safely(*args, **kwargs) -> None:
+    try:
+        send_notification(*args, **kwargs)
+    except Exception as exc:
+        logger.warning("Invitation notification could not be created: %s", exc)
 
 
 async def _call_llm(prompt: str, system_prompt: str = "") -> str:
@@ -122,30 +133,28 @@ async def smart_match_freelancers(
     AI matches the best 3-5 freelancers for a project based on skills,
     experience, ratings, availability, and fraud signals.
     """
-    from app.db.turso_http import execute_query
-
     # Fetch all active freelancers with their data
     freelancers_result = execute_query(
         """SELECT id, name, first_name, last_name, bio, skills, hourly_rate,
                   experience_level, profile_image_url, headline, seller_level,
                   profile_data
            FROM users
-           WHERE role = 'freelancer' AND is_active = 1
+           WHERE user_type = 'freelancer' AND is_active = 1
+             AND COALESCE(profile_visibility, 'public') = 'public'
            LIMIT 200"""
     )
 
     candidates = []
     if freelancers_result and freelancers_result.get("rows"):
-        for row in freelancers_result["rows"]:
+        for vals in parse_rows(freelancers_result):
             try:
-                vals = {col["value"]: row[i]["value"] for i, col in enumerate(freelancers_result.get("columns", []))}
                 # Parse skills
                 skills_raw = vals.get("skills", "[]")
                 if isinstance(skills_raw, str):
                     try:
                         skills = json.loads(skills_raw)
-                    except:
-                        skills = []
+                    except (json.JSONDecodeError, TypeError):
+                        skills = [skill.strip() for skill in skills_raw.split(",") if skill.strip()]
                 else:
                     skills = skills_raw if isinstance(skills_raw, list) else []
 
@@ -238,132 +247,57 @@ async def confirm_hire(
     request: HireConfirmRequest,
     current_user=Depends(get_current_user),
 ):
-    """
-    Client confirms hiring a freelancer. Creates project, contract,
-    and sends email notification to the freelancer.
-    """
-    from app.db.turso_http import execute_query
-    from datetime import datetime, timezone
-
-    now = datetime.now(timezone.utc).isoformat()
-    client_id = current_user.get("id") if isinstance(current_user, dict) else getattr(current_user, "id", None)
-
+    """Create an open project and invite the selected freelancer to review it."""
+    client_id = getattr(current_user, "id", None)
     if not client_id:
         raise HTTPException(status_code=401, detail="Authentication required")
+    if getattr(current_user, "user_type", None) != "client":
+        raise HTTPException(status_code=403, detail="Only clients can invite freelancers")
 
+    freelancer_rows = parse_rows(execute_query(
+        "SELECT id FROM users WHERE id = ? AND user_type = 'freelancer' AND is_active = 1",
+        [request.freelancer_id],
+    ))
+    if not freelancer_rows:
+        raise HTTPException(status_code=404, detail="Freelancer not found")
+
+    now = datetime.now(timezone.utc).isoformat()
     brief = request.project_brief
-
-    # Create project
     project_result = execute_query(
         """INSERT INTO projects (title, description, category, budget_type, budget_min, budget_max,
                   experience_level, estimated_duration, skills, client_id, status, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'in_progress', ?, ?)""",
-        [
-            brief.get("title", "AI-Matched Project"),
-            brief.get("description", ""),
-            brief.get("category", "Other"),
-            "fixed",
-            request.agreed_amount,
-            request.agreed_amount,
-            brief.get("experience_level", "intermediate"),
-            brief.get("timeline", "1 month"),
-            json.dumps(brief.get("skills", [])),
-            client_id,
-            now,
-            now,
-        ],
+           VALUES (?, ?, ?, 'fixed', ?, ?, ?, ?, ?, ?, 'open', ?, ?)""",
+        [brief.get("title", "AI-Matched Project"), brief.get("description", ""),
+         brief.get("category", "Other"), request.agreed_amount, request.agreed_amount,
+         brief.get("experience_level", "intermediate"), brief.get("timeline", "1 month"),
+         json.dumps(brief.get("skills", [])), client_id, now, now],
     )
-
-    project_id = None
-    if project_result and project_result.get("rows"):
-        project_id = project_result["rows"][0][0].get("value") if isinstance(project_result["rows"][0][0], dict) else project_result["rows"][0][0]
-    if not project_id:
-        id_result = execute_query(
-            "SELECT id FROM projects WHERE client_id = ? AND title = ? ORDER BY id DESC LIMIT 1",
-            [client_id, brief.get("title", "AI-Matched Project")],
-        )
-        if id_result and id_result.get("rows"):
-            raw = id_result["rows"][0][0]
-            if isinstance(raw, dict):
-                raw = raw.get("value")
-            project_id = int(raw) if raw else None
-
+    project_id = int(project_result.get("last_insert_rowid") or 0) if project_result else 0
     if not project_id:
         raise HTTPException(status_code=500, detail="Failed to create project")
 
-    # Create contract
-    contract_result = execute_query(
-        """INSERT INTO contracts (project_id, freelancer_id, client_id, amount, currency, status,
-                  contract_type, platform_fee, created_at, updated_at)
-           VALUES (?, ?, ?, ?, 'USD', 'pending', 'fixed', 0, ?, ?)""",
-        [
-            project_id,
-            request.freelancer_id,
-            client_id,
-            request.agreed_amount,
-            now,
-            now,
-        ],
+    expires_at = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+    invitation_result = execute_query(
+        """INSERT INTO invitations
+           (project_id, freelancer_id, client_id, fit_score, status, client_message,
+            proposed_rate, expires_at, created_at)
+           VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?)""",
+        [project_id, request.freelancer_id, client_id, 100,
+         request.message_to_freelancer or "", request.agreed_amount, expires_at, now],
     )
+    if not invitation_result:
+        execute_query("DELETE FROM projects WHERE id = ? AND client_id = ?", [project_id, client_id])
+        raise HTTPException(status_code=500, detail="Failed to create invitation")
 
-    contract_id = None
-    if contract_result and contract_result.get("rows"):
-        contract_id = contract_result["rows"][0][0].get("value") if isinstance(contract_result["rows"][0][0], dict) else contract_result["rows"][0][0]
-    if not contract_id:
-        id_result = execute_query(
-            "SELECT id FROM contracts WHERE project_id = ? AND client_id = ? ORDER BY id DESC LIMIT 1",
-            [project_id, client_id],
-        )
-        if id_result and id_result.get("rows"):
-            raw = id_result["rows"][0][0]
-            if isinstance(raw, dict):
-                raw = raw.get("value")
-            contract_id = int(raw) if raw else None
-
-    # Create milestones if provided
-    if request.milestone_plan and contract_id:
-        for i, milestone in enumerate(request.milestone_plan):
-            execute_query(
-                """INSERT INTO milestones (contract_id, title, description, amount, due_date, status, order_index, created_at, updated_at)
-                   VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, ?)""",
-                [
-                    contract_id,
-                    milestone.get("title", f"Milestone {i+1}"),
-                    milestone.get("description", ""),
-                    milestone.get("amount", request.agreed_amount / max(len(request.milestone_plan), 1)),
-                    milestone.get("due_date", now),
-                    i,
-                    now,
-                    now,
-                ],
-            )
-
-    # Send email notification to freelancer (best effort)
-    try:
-        from app.services.email_service import send_email
-        freelancer_result = execute_query(
-            "SELECT email, name, first_name FROM users WHERE id = ?",
-            [request.freelancer_id],
-        )
-        if freelancer_result and freelancer_result.get("rows"):
-            fvals = {col["value"]: freelancer_result["rows"][0][i]["value"]
-                     for i, col in enumerate(freelancer_result.get("columns", []))}
-            freelancer_email = fvals.get("email")
-            freelancer_name = fvals.get("name") or fvals.get("first_name", "Freelancer")
-            if freelancer_email:
-                await send_email(
-                    to=freelancer_email,
-                    subject="You've been matched with a project on MegiLance!",
-                    body=f"Hi {freelancer_name},\n\nGreat news! A client has selected you for a project.\n\nProject: {brief.get('title', 'AI-Matched Project')}\nBudget: ${request.agreed_amount}\n\nPlease log in to review the contract and accept or decline.\n\nBest,\nThe MegiLance Team",
-                )
-    except Exception as e:
-        logger.warning(f"Failed to send hire notification email: {e}")
-
+    _notify_safely(
+        request.freelancer_id, "project_invitation", "New project invitation",
+        f"A client invited you to review {brief.get('title', 'a project')}.",
+        data={"project_id": project_id, "invitation_id": invitation_result.get("last_insert_rowid")},
+        action_url="/freelancer/invitations",
+    )
     return HireConfirmResponse(
-        contract_id=contract_id or 0,
-        project_id=project_id,
-        status="pending",
-        message="Contract created and freelancer notified. Awaiting freelancer acceptance.",
+        contract_id=None, project_id=project_id, status="invited",
+        message="Project created and invitation sent. No contract is created until acceptance.",
         freelancer_notified=True,
     )
 
@@ -373,42 +307,33 @@ async def list_invitations(current_user=Depends(get_current_user)):
     """
     List pending AI-matched project invitations for the current freelancer.
     """
-    from app.db.turso_http import execute_query
-
-    user_id = current_user.get("id") if isinstance(current_user, dict) else getattr(current_user, "id", None)
+    user_id = getattr(current_user, "id", None)
     if not user_id:
         raise HTTPException(status_code=401, detail="Authentication required")
 
     result = execute_query(
-        """SELECT p.id as project_id, p.title, p.description, p.category, p.budget_min, p.budget_max,
-                  p.skills, p.created_at, u.name as client_name, u.profile_image_url as client_avatar
-           FROM projects p
-           JOIN users u ON p.client_id = u.id
-           WHERE p.status = 'open'
-           ORDER BY p.created_at DESC
+        """SELECT i.id, i.project_id, p.title, p.description, p.category,
+                  p.budget_min, p.budget_max, p.skills, i.created_at,
+                  u.name as client_name, u.profile_image_url as client_avatar,
+                  i.fit_score, i.client_message, i.proposed_rate, i.expires_at
+           FROM invitations i
+           JOIN projects p ON p.id = i.project_id
+           JOIN users u ON u.id = i.client_id
+           WHERE i.freelancer_id = ? AND i.status = 'pending'
+             AND (i.expires_at IS NULL OR i.expires_at > ?)
+           ORDER BY i.created_at DESC
            LIMIT 20"""
+        , [user_id, datetime.now(timezone.utc).isoformat()]
     )
 
     invitations = []
-    if result and result.get("rows"):
-        for row in result["rows"]:
-            try:
-                vals = {col["value"]: row[i]["value"] for i, col in enumerate(result.get("columns", []))}
-                invitations.append({
-                    "project_id": vals.get("project_id"),
-                    "title": vals.get("title"),
-                    "description": vals.get("description", "")[:200],
-                    "category": vals.get("category"),
-                    "budget_min": vals.get("budget_min"),
-                    "budget_max": vals.get("budget_max"),
-                    "skills": json.loads(vals.get("skills", "[]")) if isinstance(vals.get("skills"), str) else [],
-                    "client_name": vals.get("client_name"),
-                    "client_avatar": vals.get("client_avatar"),
-                    "created_at": vals.get("created_at"),
-                    "fit_score": 85.0,  # Placeholder - would be AI-computed
-                })
-            except Exception:
-                continue
+    for vals in parse_rows(result):
+        raw_skills = vals.get("skills") or ""
+        try:
+            skills = json.loads(raw_skills) if isinstance(raw_skills, str) else raw_skills
+        except (json.JSONDecodeError, TypeError):
+            skills = [skill.strip() for skill in str(raw_skills).split(",") if skill.strip()]
+        invitations.append({**vals, "description": (vals.get("description") or "")[:200], "skills": skills or []})
 
     return InvitationListResponse(
         invitations=invitations,
@@ -427,33 +352,37 @@ async def respond_to_invitation(
     Freelancer accepts or rejects an AI-matched invitation.
     Accepting creates a contract and notifies the client.
     """
-    from app.db.turso_http import execute_query
-    from datetime import datetime, timezone
-
-    user_id = current_user.get("id") if isinstance(current_user, dict) else getattr(current_user, "id", None)
+    user_id = getattr(current_user, "id", None)
     if not user_id:
         raise HTTPException(status_code=401, detail="Authentication required")
 
     now = datetime.now(timezone.utc).isoformat()
 
-    if request.accept:
-        # Get project details
-        project_result = execute_query(
-            "SELECT client_id, budget_min, budget_max, title FROM projects WHERE id = ?",
-            [invitation_id],
-        )
-        if not project_result or not project_result.get("rows"):
-            raise HTTPException(status_code=404, detail="Project not found")
+    invitation_rows = parse_rows(execute_query(
+        """SELECT i.id, i.project_id, i.client_id, i.proposed_rate, i.expires_at,
+                  p.budget_min, p.budget_max, p.title, p.status AS project_status
+           FROM invitations i JOIN projects p ON p.id = i.project_id
+           WHERE i.id = ? AND i.freelancer_id = ? AND i.status = 'pending'""",
+        [invitation_id, user_id],
+    ))
+    if not invitation_rows:
+        raise HTTPException(status_code=404, detail="Pending invitation not found")
+    invitation = invitation_rows[0]
+    if invitation.get("expires_at") and invitation["expires_at"] <= now:
+        execute_query("UPDATE invitations SET status = 'expired' WHERE id = ?", [invitation_id])
+        raise HTTPException(status_code=410, detail="Invitation has expired")
 
-        pvals = {col["value"]: project_result["rows"][0][i]["value"]
-                 for i, col in enumerate(project_result.get("columns", []))}
-        client_id = pvals.get("client_id")
-        agreed_amount = request.proposed_rate or pvals.get("budget_max") or pvals.get("budget_min") or 1000
+    if request.accept:
+        if invitation.get("project_status") != "open":
+            raise HTTPException(status_code=409, detail="Project is no longer accepting this invitation")
+        client_id = int(invitation["client_id"])
+        project_id = int(invitation["project_id"])
+        agreed_amount = request.proposed_rate or invitation.get("proposed_rate") or invitation.get("budget_max") or invitation.get("budget_min") or 1000
 
         # Create project with freelancer assigned
         execute_query(
             "UPDATE projects SET status = 'in_progress', updated_at = ? WHERE id = ?",
-            [now, invitation_id],
+            [now, project_id],
         )
 
         # Create contract
@@ -462,28 +391,26 @@ async def respond_to_invitation(
                       contract_type, platform_fee, created_at, updated_at)
                VALUES (?, ?, ?, ?, 'USD', 'pending', 'fixed', 0, ?, ?)
                RETURNING id""",
-            [invitation_id, user_id, client_id, agreed_amount, now, now],
+            [project_id, user_id, client_id, agreed_amount, now, now],
         )
 
         contract_id = None
         if contract_result and contract_result.get("rows"):
             contract_id = contract_result["rows"][0][0].get("value") if isinstance(contract_result["rows"][0][0], dict) else contract_result["rows"][0][0]
 
-        # Notify client
-        try:
-            from app.services.email_service import send_email
-            client_result = execute_query("SELECT email, name FROM users WHERE id = ?", [client_id])
-            if client_result and client_result.get("rows"):
-                cvals = {col["value"]: client_result["rows"][0][i]["value"]
-                         for i, col in enumerate(client_result.get("columns", []))}
-                if cvals.get("email"):
-                    await send_email(
-                        to=cvals["email"],
-                        subject=f"Freelancer accepted your project: {pvals.get('title', 'Project')}",
-                        body=f"Great news! A freelancer has accepted your project.\n\nProject: {pvals.get('title')}\nAgreed Amount: ${agreed_amount}\n\nA contract has been created. You can now communicate and start working.\n\nBest,\nThe MegiLance Team",
-                    )
-        except Exception as e:
-            logger.warning(f"Failed to send acceptance notification: {e}")
+        if not contract_id:
+            execute_query("UPDATE projects SET status = 'open', updated_at = ? WHERE id = ?", [now, project_id])
+            raise HTTPException(status_code=500, detail="Failed to create contract")
+        execute_query(
+            "UPDATE invitations SET status = 'accepted', freelancer_message = ?, proposed_rate = ?, responded_at = ? WHERE id = ?",
+            [request.message or "", agreed_amount, now, invitation_id],
+        )
+        _notify_safely(
+            client_id, "invitation_accepted", "Project invitation accepted",
+            f"A freelancer accepted your invitation for {invitation.get('title', 'your project')}.",
+            data={"project_id": project_id, "contract_id": contract_id},
+            action_url=f"/client/contracts/{contract_id}",
+        )
 
         return InvitationResponse(
             invitation_id=invitation_id,
@@ -492,6 +419,16 @@ async def respond_to_invitation(
             message="Invitation accepted. Contract created successfully.",
         )
     else:
+        execute_query(
+            "UPDATE invitations SET status = 'declined', freelancer_message = ?, responded_at = ? WHERE id = ?",
+            [request.message or "", now, invitation_id],
+        )
+        _notify_safely(
+            int(invitation["client_id"]), "invitation_declined", "Project invitation declined",
+            f"A freelancer declined your invitation for {invitation.get('title', 'your project')}.",
+            data={"project_id": invitation["project_id"], "invitation_id": invitation_id},
+            action_url=f"/client/projects/{invitation['project_id']}",
+        )
         return InvitationResponse(
             invitation_id=invitation_id,
             status="rejected",

@@ -91,7 +91,7 @@ class HireConfirmRequest(BaseModel):
 
 class HireConfirmResponse(BaseModel):
     """Hire confirmation result."""
-    contract_id: int
+    contract_id: Optional[int] = None
     project_id: int
     status: str
     message: str

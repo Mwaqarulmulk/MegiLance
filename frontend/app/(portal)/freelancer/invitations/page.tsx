@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api/core";
 
 interface Invitation {
+  id: number;
   project_id: number;
   title: string;
   description: string;
@@ -28,8 +30,6 @@ interface SuggestedProject {
   match_score?: number;
 }
 
-const BASE_URL = "/api/v1";
-
 export default function InvitationsPage() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [suggestedProjects, setSuggestedProjects] = useState<
@@ -38,40 +38,16 @@ export default function InvitationsPage() {
   const [loading, setLoading] = useState(true);
   const [suggestionsLoading, setSuggestionsLoading] = useState(true);
   const [responding, setResponding] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchInvitations = useCallback(async () => {
-    const token = localStorage.getItem("auth_token");
-
-    // Primary: AI invitations endpoint
     try {
-      const res = await fetch(`${BASE_URL}/ai/invitations`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const items: Invitation[] =
-          data.invitations ?? data.items ?? (Array.isArray(data) ? data : []);
-        setInvitations(items);
-        setLoading(false);
-        return;
-      }
-    } catch {
-      /* fall through */
-    }
-
-    // Fallback: REST invitations endpoint (if it exists in future)
-    try {
-      const res = await fetch(`${BASE_URL}/invitations?status=pending`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const items: Invitation[] =
-          data.invitations ?? data.items ?? (Array.isArray(data) ? data : []);
-        setInvitations(items);
-      }
+      const data = await apiFetch("/ai/invitations") as { invitations?: Invitation[]; items?: Invitation[] };
+      setInvitations(data.invitations ?? data.items ?? []);
+      setError(null);
     } catch (e) {
       console.error("Failed to fetch invitations:", e);
+      setError("Could not load invitations. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -79,17 +55,10 @@ export default function InvitationsPage() {
 
   const fetchSuggestedProjects = useCallback(async () => {
     setSuggestionsLoading(true);
-    const token = localStorage.getItem("auth_token");
     try {
-      const res = await fetch(`${BASE_URL}/matching/recommendations?limit=5`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const items: SuggestedProject[] =
-          data.jobs ?? data.projects ?? (Array.isArray(data) ? data : []);
-        setSuggestedProjects(items);
-      }
+      const data = await apiFetch("/matching/recommendations?limit=5") as { jobs?: SuggestedProject[]; projects?: SuggestedProject[] } | SuggestedProject[];
+      const items = Array.isArray(data) ? data : data.jobs ?? data.projects ?? [];
+      setSuggestedProjects(items);
     } catch (e) {
       console.error("Failed to fetch AI suggestions:", e);
     } finally {
@@ -102,23 +71,19 @@ export default function InvitationsPage() {
     fetchSuggestedProjects();
   }, [fetchInvitations, fetchSuggestedProjects]);
 
-  const handleRespond = async (projectId: number, accept: boolean) => {
-    setResponding(projectId);
+  const handleRespond = async (invitationId: number, accept: boolean) => {
+    setResponding(invitationId);
     try {
-      const token = localStorage.getItem("auth_token");
-      await fetch(`${BASE_URL}/ai/invitations/${projectId}/respond`, {
+      await apiFetch(`/ai/invitations/${invitationId}/respond`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ accept, message: null }),
       });
+      setInvitations((prev) => prev.filter((invitation) => invitation.id !== invitationId));
+      setError(null);
     } catch (e) {
       console.error("Response failed:", e);
+      setError("Your response was not saved. Please try again.");
     } finally {
-      // Optimistic update: remove regardless of API result
-      setInvitations((prev) => prev.filter((i) => i.project_id !== projectId));
       setResponding(null);
     }
   };
@@ -140,8 +105,9 @@ export default function InvitationsPage() {
         Project Invitations
       </h1>
       <p style={{ color: "#6b7280", marginBottom: 32 }}>
-        AI has matched these projects with your skills. Accept to start working.
+        Review invitations sent by clients. Accepting creates a pending contract for both parties to review.
       </p>
+      {error && <p role="alert" style={{ color: "#b91c1c", marginBottom: 16 }}>{error}</p>}
 
       {/* ── Invitations list or empty state ── */}
       {invitations.length === 0 ? (
@@ -228,7 +194,7 @@ export default function InvitationsPage() {
         >
           {invitations.map((inv) => (
             <div
-              key={inv.project_id}
+              key={inv.id}
               style={{
                 padding: 24,
                 borderRadius: 12,
@@ -327,26 +293,26 @@ export default function InvitationsPage() {
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <button
-                    onClick={() => handleRespond(inv.project_id, false)}
-                    disabled={responding === inv.project_id}
+                    onClick={() => handleRespond(inv.id, false)}
+                    disabled={responding === inv.id}
                     style={{
                       padding: "8px 20px",
                       borderRadius: 8,
                       border: "1px solid #e5e7eb",
                       background: "white",
                       cursor:
-                        responding === inv.project_id
+                        responding === inv.id
                           ? "not-allowed"
                           : "pointer",
                       fontSize: 14,
-                      opacity: responding === inv.project_id ? 0.6 : 1,
+                      opacity: responding === inv.id ? 0.6 : 1,
                     }}
                   >
                     Decline
                   </button>
                   <button
-                    onClick={() => handleRespond(inv.project_id, true)}
-                    disabled={responding === inv.project_id}
+                    onClick={() => handleRespond(inv.id, true)}
+                    disabled={responding === inv.id}
                     style={{
                       padding: "8px 20px",
                       borderRadius: 8,
@@ -354,15 +320,15 @@ export default function InvitationsPage() {
                       color: "white",
                       border: "none",
                       cursor:
-                        responding === inv.project_id
+                        responding === inv.id
                           ? "not-allowed"
                           : "pointer",
                       fontWeight: 600,
                       fontSize: 14,
-                      opacity: responding === inv.project_id ? 0.6 : 1,
+                      opacity: responding === inv.id ? 0.6 : 1,
                     }}
                   >
-                    {responding === inv.project_id ? "Processing..." : "Accept"}
+                    {responding === inv.id ? "Processing..." : "Accept"}
                   </button>
                 </div>
               </div>

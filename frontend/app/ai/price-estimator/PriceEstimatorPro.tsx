@@ -1369,7 +1369,7 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
     }
 
     // Determine default skills based on service type
-    let skills: string[] = [];
+    let skills: string[];
     if (checkStr.includes('web_application') || checkStr.includes('website') || checkStr.includes('web-app') || checkStr.includes('web development')) {
       skills = ['React', 'TypeScript', 'Node.js', 'Next.js'];
     } else if (checkStr.includes('mobile_app') || checkStr.includes('mobile app') || checkStr.includes('mobile development')) {

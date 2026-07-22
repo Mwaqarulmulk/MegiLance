@@ -37,9 +37,8 @@ class TestMFAEndpoints:
             json={"method": "sms", "phone_number": "+1234567890"},
             headers=auth_headers
         )
-        assert response.status_code == 200
-        data = response.json()
-        assert data["message"] == "Verification code sent"
+        assert response.status_code == 501
+        assert "authenticator app" in response.json()["detail"]
     
     async def test_setup_email_mfa(self, client: AsyncClient, auth_headers: dict):
         """Test Email MFA setup"""
@@ -48,9 +47,8 @@ class TestMFAEndpoints:
             json={"method": "email", "email": "user@example.com"},
             headers=auth_headers
         )
-        assert response.status_code == 200
-        data = response.json()
-        assert data["message"] == "Verification code sent"
+        assert response.status_code == 501
+        assert "authenticator app" in response.json()["detail"]
     
     async def test_verify_mfa(self, client: AsyncClient, auth_headers: dict):
         """Test MFA code verification"""
@@ -248,7 +246,7 @@ class TestAuthenticationFlow:
         register_response = await client.post(
             "/api/auth/register",
             json={
-                "email": "mfa_user@example.com",
+                "email": f"mfa_user_{datetime.now().timestamp()}@example.com",
                 "password": "TestPassword123!",
                 "full_name": "MFA Test User",
                 "user_type": "freelancer"
@@ -260,7 +258,7 @@ class TestAuthenticationFlow:
         login_response = await client.post(
             "/api/auth/login",
             json={
-                "email": "mfa_user@example.com",
+                "email": register_response.json()["user"]["email"],
                 "password": "TestPassword123!"
             }
         )

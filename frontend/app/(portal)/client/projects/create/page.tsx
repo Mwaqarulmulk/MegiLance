@@ -48,6 +48,7 @@ export default function CreateProjectPage() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isEstimating, setIsEstimating] = useState(false);
   const [estimate, setEstimate] = useState<any>(null);
 
@@ -90,73 +91,19 @@ export default function CreateProjectPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
-      const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-      const isGuest = userStr && (userStr.includes('client1@example.com') || userStr.includes('freelancer1@example.com'));
-      
       const skillsString = formData.skills.split(',').map(s => s.trim()).filter(Boolean).join(',');
-      let projectId: string | number = '';
-
-      if (isGuest) {
-        // Guest mode simulation
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        projectId = 'mock-proj-' + Date.now();
-        const mockProjects = JSON.parse(localStorage.getItem('mock_projects') || '[]');
-        mockProjects.push({
-          id: projectId,
-          title: formData.title,
-          description: formData.description,
-          category: formData.category,
-          skills: skillsString.split(','),
-          budget_min: Number(formData.budget_min),
-          budget_max: Number(formData.budget_max),
-          budget_type: 'fixed',
-          experience_level: formData.experience_level,
-          estimated_duration: '1-3-months',
-          status: 'open',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          proposals_count: 0,
-        });
-        localStorage.setItem('mock_projects', JSON.stringify(mockProjects));
-      } else {
-        const project: any = await api.projects.create({
-          ...formData,
-          budget_min: Number(formData.budget_min),
-          budget_max: Number(formData.budget_max),
-          skills: skillsString,
-        } as any);
-        projectId = project?.id || ('mock-proj-' + Date.now());
-      }
+      await api.projects.create({
+        ...formData,
+        budget_min: Number(formData.budget_min),
+        budget_max: Number(formData.budget_max),
+        skills: skillsString,
+      } as any);
       
       router.push('/client/projects');
     } catch (error) {
-      // Fallback offline simulation
-      try {
-        const projectId = 'mock-proj-' + Date.now();
-        const mockProjects = JSON.parse(localStorage.getItem('mock_projects') || '[]');
-        const skillsString = formData.skills.split(',').map(s => s.trim()).filter(Boolean).join(',');
-        mockProjects.push({
-          id: projectId,
-          title: formData.title,
-          description: formData.description,
-          category: formData.category,
-          skills: skillsString.split(','),
-          budget_min: Number(formData.budget_min),
-          budget_max: Number(formData.budget_max),
-          budget_type: 'fixed',
-          experience_level: formData.experience_level,
-          estimated_duration: '1-3-months',
-          status: 'open',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          proposals_count: 0,
-        });
-        localStorage.setItem('mock_projects', JSON.stringify(mockProjects));
-        router.push('/client/projects');
-        return;
-      } catch {}
-
+      setSubmitError(error instanceof Error ? error.message : 'Failed to create project. Please try again.');
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to create project:', error);
       }
@@ -285,6 +232,12 @@ export default function CreateProjectPage() {
               </div>
             </div>
           </div>
+
+          {submitError && (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {submitError}
+            </p>
+          )}
 
           <div className={common.actions}>
             <Button type="button" variant="ghost" onClick={() => router.back()}>

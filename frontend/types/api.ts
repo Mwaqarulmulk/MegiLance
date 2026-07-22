@@ -555,10 +555,11 @@ export interface NotificationPreferencesData {
 
 export interface PortfolioItemCreateData {
   title: string;
-  description: string;
-  url?: string;
+  description?: string;
+  project_url?: string;
   image_url?: string;
-  tags?: string[];
+  category?: string;
+  skills?: string;
 }
 
 export interface PayoutMethodCreateData {

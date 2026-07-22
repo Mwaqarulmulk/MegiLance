@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import api, { proposalsApi, contractsApi, fraudDetectionApi } from '@/lib/api';
+import api, { proposalsApi, fraudDetectionApi } from '@/lib/api';
 import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
 import Button from '@/app/components/atoms/Button/Button';
@@ -126,28 +126,11 @@ const ProjectDetail: React.FC = () => {
     try {
       await proposalsApi.accept(proposalId);
       
-      // Optionally create a contract automatically
-      const acceptedProposal = proposals.find(p => p.id === proposalId);
-      if (acceptedProposal && projectId) {
-        try {
-          await contractsApi.create({
-            project_id: projectId,
-            freelancer_id: acceptedProposal.freelancer_id,
-            amount: acceptedProposal.bid_amount,
-            terms: `Contract for project. Estimated ${acceptedProposal.estimated_hours} hours at $${acceptedProposal.hourly_rate}/hr.`,
-          });
-        } catch (contractErr) {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('Contract creation failed, but proposal was accepted:', contractErr);
-          }
-        }
-      }
-      
       // Refresh data
       await loadProject();
       await loadProposals();
       
-      showToast('Proposal accepted! A contract has been created.');
+      showToast('Proposal accepted. The contract and escrow are ready.');
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to accept proposal:', err);

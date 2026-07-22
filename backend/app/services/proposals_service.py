@@ -382,29 +382,12 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
     project_title = proposal.get("_project_title", "Untitled Project")
     project_description = proposal.get("_project_description", "")
 
-    # Accept proposal
-    execute_query(
-        "UPDATE proposals SET status = ?, updated_at = ? WHERE id = ?",
-        ["accepted", now, proposal_id]
-    )
-
-    # Update project status
-    execute_query(
-        "UPDATE projects SET status = ?, updated_at = ? WHERE id = ?",
-        ["in_progress", now, project_id]
-    )
-
-    # Reject other proposals
-    execute_query(
-        "UPDATE proposals SET status = ?, updated_at = ? WHERE project_id = ? AND id != ? AND status = ?",
-        ["rejected", now, project_id, proposal_id, "submitted"]
-    )
-
     # Create contract with tiered fee
     contract_amount = bid_amount if bid_amount > 0 else hourly_rate
 
     # Calculate tiered fee based on lifetime billing between client and freelancer
     lifetime_billing = 0
+    contract_id = None
     try:
         lb_result = execute_query(
             """SELECT COALESCE(SUM(amount), 0) FROM payments
@@ -455,8 +438,26 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
 
     except Exception as e:
         logger.error(f"Contract/Escrow creation error on proposal {proposal_id}: {str(e)}")
-        # Re-raise to prevent proposal from staying "accepted" without a contract
+        if contract_id:
+            try:
+                execute_query("DELETE FROM contracts WHERE id = ?", [contract_id])
+            except Exception as cleanup_error:
+                logger.error(f"Failed to clean up contract {contract_id}: {cleanup_error}")
         raise RuntimeError(f"Failed to create contract/escrow for proposal {proposal_id}: {str(e)}")
+
+    # Only publish the accepted state once the contract and escrow both exist.
+    execute_query(
+        "UPDATE proposals SET status = ?, updated_at = ? WHERE id = ?",
+        ["accepted", now, proposal_id]
+    )
+    execute_query(
+        "UPDATE projects SET status = ?, updated_at = ? WHERE id = ?",
+        ["in_progress", now, project_id]
+    )
+    execute_query(
+        "UPDATE proposals SET status = ?, updated_at = ? WHERE project_id = ? AND id != ? AND status IN ('submitted', 'shortlisted')",
+        ["rejected", now, project_id, proposal_id]
+    )
 
     # Best-effort: auto-fund the escrow from the client's wallet so the contract
     # is actually funded the moment the freelancer is hired. If the client's
@@ -472,7 +473,10 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
     except Exception as e:
         logger.warning(f"Escrow auto-fund skipped for contract {contract_id}: {e}")
 
-    return get_proposal_raw(proposal_id)
+    accepted = get_proposal_raw(proposal_id)
+    if accepted is not None:
+        accepted["contract_id"] = contract_id
+    return accepted
 
 
 def reject_proposal(proposal_id: int, reason: str = None) -> Optional[dict]:

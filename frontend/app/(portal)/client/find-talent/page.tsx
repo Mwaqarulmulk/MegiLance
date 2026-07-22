@@ -79,95 +79,6 @@ const COMPLEXITY_OPTIONS = [
   },
 ];
 
-interface FallbackFreelancer {
-  id: string;
-  name: string;
-  title: string;
-  rating: number;
-  hourlyRate: string;
-  skills: string[];
-  completedProjects: number;
-  matchScore: number;
-}
-
-const FALLBACK_FREELANCERS: FallbackFreelancer[] = [
-  {
-    id: "1",
-    name: "Ali Hassan",
-    title: "Full Stack Developer",
-    rating: 4.8,
-    hourlyRate: "$45/hr",
-    skills: ["React", "Node.js", "TypeScript"],
-    completedProjects: 47,
-    matchScore: 95,
-  },
-  {
-    id: "2",
-    name: "Maria Garcia",
-    title: "UI/UX Designer",
-    rating: 4.9,
-    hourlyRate: "$55/hr",
-    skills: ["Figma", "UI Design", "Prototyping"],
-    completedProjects: 62,
-    matchScore: 88,
-  },
-  {
-    id: "3",
-    name: "Chen Wei",
-    title: "Mobile Developer",
-    rating: 4.7,
-    hourlyRate: "$50/hr",
-    skills: ["React Native", "Flutter", "iOS"],
-    completedProjects: 35,
-    matchScore: 82,
-  },
-  {
-    id: "4",
-    name: "Aisha Patel",
-    title: "Data Scientist",
-    rating: 4.6,
-    hourlyRate: "$60/hr",
-    skills: ["Python", "Machine Learning", "TensorFlow"],
-    completedProjects: 28,
-    matchScore: 78,
-  },
-  {
-    id: "5",
-    name: "Lucas Müller",
-    title: "Backend Engineer",
-    rating: 4.8,
-    hourlyRate: "$48/hr",
-    skills: ["Python", "Django", "PostgreSQL"],
-    completedProjects: 53,
-    matchScore: 91,
-  },
-  {
-    id: "6",
-    name: "Sofia Rossi",
-    title: "DevOps Engineer",
-    rating: 4.7,
-    hourlyRate: "$52/hr",
-    skills: ["Docker", "Kubernetes", "AWS"],
-    completedProjects: 41,
-    matchScore: 85,
-  },
-];
-
-function normalizeFallbackFreelancer(
-  f: FallbackFreelancer,
-): Record<string, unknown> {
-  const rateNum = parseFloat(f.hourlyRate.replace(/[^0-9.]/g, ""));
-  return {
-    freelancer_id: Number(f.id),
-    display_name: f.name,
-    headline: f.title,
-    fit_score: f.matchScore,
-    skill_match: f.matchScore / 100,
-    hourly_rate: isNaN(rateNum) ? undefined : rateNum,
-    rating: f.rating,
-  };
-}
-
 export default function FindTalentPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -184,6 +95,7 @@ export default function FindTalentPage() {
   const [loading, setLoading] = useState(false);
   const [selectedFreelancer, setSelectedFreelancer] = useState<any>(null);
   const [hireSuccess, setHireSuccess] = useState(false);
+  const [matchError, setMatchError] = useState<string | null>(null);
   const [budgetSuggesting, setBudgetSuggesting] = useState(false);
   const [budgetSuggestion, setBudgetSuggestion] = useState<{
     min: number;
@@ -263,6 +175,7 @@ export default function FindTalentPage() {
 
   const getMatches = useCallback(async () => {
     setLoading(true);
+    setMatchError(null);
 
     try {
       // Level 1: POST /ai/smart-match (AI-powered matching)
@@ -317,9 +230,8 @@ export default function FindTalentPage() {
         console.warn("[FindTalent] Level 2 failed:", e);
       }
 
-      // Level 3: Hardcoded fallback (always shows results)
-      console.log("[FindTalent] Using Level 3 fallback: mock data");
-      setMatches(FALLBACK_FREELANCERS.map(normalizeFallbackFreelancer));
+      setMatches([]);
+      setMatchError("No verified freelancers matched these requirements. Adjust the skills or budget and try again.");
     } finally {
       setLoading(false);
     }
@@ -355,6 +267,7 @@ export default function FindTalentPage() {
       }, 2000);
     } catch (e) {
       console.error("Hire failed:", e);
+      setMatchError("The invitation could not be sent. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -694,10 +607,10 @@ export default function FindTalentPage() {
               <div className="text-center py-10 bg-green-50 dark:bg-green-900/20 rounded-xl">
                 <div className="text-[48px] mb-3">✅</div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                  Successfully Hired!
+                  Invitation Sent
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400">
-                  {selectedFreelancer?.display_name} has been notified. Redirecting to your projects...
+                  {selectedFreelancer?.display_name} can review the project. No contract starts until they accept.
                 </p>
               </div>
             ) : loading ? (
@@ -741,14 +654,14 @@ export default function FindTalentPage() {
                       onClick={() => handleHire(m.freelancer_id)}
                       className="px-6 py-2.5 rounded-lg bg-indigo-500 text-white border-none cursor-pointer font-semibold text-sm hover:bg-indigo-600"
                     >
-                      Hire
+                      Invite
                     </button>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-10">
-                No matches found. Try adjusting your requirements.
+              <p role="alert" className="text-gray-500 dark:text-gray-400 text-center py-10">
+                {matchError || "No matches found. Try adjusting your requirements."}
               </p>
             )}
           </div>

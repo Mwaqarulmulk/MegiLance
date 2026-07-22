@@ -1,5 +1,5 @@
 // @AI-HINT: Workroom API — Kanban board tasks, file sharing, discussions for contract collaboration
-import { apiFetch } from './core';
+import { apiFetch, getAuthToken } from './core';
 import type { ResourceId } from './core';
 
 export const workroomApi = {
@@ -60,8 +60,24 @@ export const workroomApi = {
     });
   },
 
-  downloadFile: (fileId: ResourceId) =>
-    apiFetch(`/workroom/files/${fileId}/download`),
+  downloadFile: async (fileId: ResourceId) => {
+    const token = getAuthToken();
+    const response = await fetch(`/api/v1/workroom/files/${fileId}/download`, {
+      credentials: 'include',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
+    if (!response.ok) {
+      let message = 'Failed to download file';
+      try {
+        const error = await response.json();
+        message = error.detail || error.message || message;
+      } catch {
+        // Keep the safe generic message for non-JSON failures.
+      }
+      throw new Error(message);
+    }
+    return response.blob();
+  },
 
   deleteFile: (fileId: ResourceId) =>
     apiFetch(`/workroom/files/${fileId}`, { method: 'DELETE' }),

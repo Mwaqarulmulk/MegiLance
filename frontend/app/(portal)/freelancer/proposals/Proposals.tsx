@@ -122,45 +122,6 @@ const Proposals: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    // 1. Fetch mock projects list from localStorage (to resolve project titles)
-    let mockProjectsList: any[] = [];
-    if (typeof window !== "undefined") {
-      try {
-        const mockProjStr = localStorage.getItem("mock_projects");
-        if (mockProjStr) {
-          mockProjectsList = JSON.parse(mockProjStr) || [];
-        }
-      } catch {}
-    }
-
-    // 2. Fetch mock proposals list from localStorage
-    let localMocks: any[] = [];
-    if (typeof window !== "undefined") {
-      try {
-        const mocksStr = localStorage.getItem("mock_proposals");
-        if (mocksStr) {
-          localMocks = JSON.parse(mocksStr) || [];
-        }
-      } catch (e) {
-        console.error("Failed to load local mock proposals:", e);
-      }
-    }
-
-    const mockTransformed: Proposal[] = localMocks.map((mock: any, idx: number) => {
-      const matchingProject = mockProjectsList.find((p: any) => String(p.id) === String(mock.project_id));
-      return {
-        id: `mock-prop-${idx}-${Date.now()}`,
-        projectId: String(mock.project_id),
-        jobTitle: matchingProject?.title || `AI-Matched Web Project`,
-        clientName: matchingProject?.client_name || "Guest Client",
-        status: "Submitted",
-        dateSubmitted: mock.submittedAt?.split("T")[0] || new Date().toISOString().split("T")[0],
-        bidAmount: mock.bid_amount,
-        matchScore: 90,
-        isClientVerified: true,
-      };
-    });
-
     try {
       // Try to fetch proposals with included project data
       let apiProposals: APIProposal[];
@@ -242,21 +203,18 @@ const Proposals: React.FC = () => {
         });
       }
       
-      setProposals([...mockTransformed, ...transformedProposals]);
+      setProposals(transformedProposals);
     } catch (err) {
       if (process.env.NODE_ENV === "development") {
         console.error("Failed to fetch proposals:", err);
       }
       
-      // If we have local mocks, do not display a scary error block since the UI is populated successfully
-      if (mockTransformed.length === 0) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Unable to load your proposals. Please check your connection and try again.",
-        );
-      }
-      setProposals(mockTransformed);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to load your proposals. Please check your connection and try again.",
+      );
+      setProposals([]);
     } finally {
       setLoading(false);
     }

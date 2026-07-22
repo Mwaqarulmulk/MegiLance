@@ -10,7 +10,7 @@ import Input from '@/app/components/atoms/Input/Input';
 import Select from '@/app/components/molecules/Select/Select';
 import Textarea from '@/app/components/atoms/Textarea/Textarea';
 import {
-  Plus, Settings, Trash2, Edit3, Star, Eye, Heart, X, Search,
+  Plus, Settings, Trash2, Edit3, Star, Eye, X, Search,
   Briefcase, ExternalLink, Link2, Grid3x3, LayoutList, LayoutGrid,
   Image, CheckCircle, AlertTriangle, FolderOpen, Tag, User, Calendar
 } from 'lucide-react';
@@ -120,7 +120,11 @@ export default function PortfolioShowcasePage() {
         title: item.title || 'Untitled project',
         description: item.description || '',
         category: item.category || 'other',
-        tags: Array.isArray(item.tags) ? item.tags : [],
+        tags: Array.isArray(item.skills)
+          ? item.skills
+          : typeof item.skills === 'string'
+            ? item.skills.split(',').map((tag: string) => tag.trim()).filter(Boolean)
+            : [],
         images: item.image_url ? [item.image_url] : [],
         thumbnail: item.image_url || '/placeholder.jpg',
         link: item.project_url || item.url || '',
@@ -160,7 +164,8 @@ export default function PortfolioShowcasePage() {
         description: newItem.description,
         image_url: newItem.images[0] || '',
         project_url: newItem.link,
-        tags: newItem.tags,
+        category: newItem.category,
+        skills: newItem.tags.join(', '),
       };
       if (editingItem) {
         await portfolioApi.update(editingItem.id, payload);
@@ -189,23 +194,6 @@ export default function PortfolioShowcasePage() {
     } catch (error) {
       showToast('Failed to delete project', 'error');
     }
-  };
-
-  const toggleFeatured = async (item: PortfolioItem) => {
-    setItems(prev =>
-      prev.map(i => (i.id === item.id ? { ...i, featured: !i.featured } : i))
-    );
-    showToast(item.featured ? 'Removed from featured' : 'Added to featured');
-  };
-
-  const handleLike = async (item: PortfolioItem) => {
-    setItems(prev =>
-      prev.map(i =>
-        i.id === item.id
-          ? { ...i, likes: item.user_liked ? Math.max(0, i.likes - 1) : i.likes + 1, user_liked: !i.user_liked }
-          : i
-      )
-    );
   };
 
   const saveSettings = async () => {
@@ -263,7 +251,6 @@ export default function PortfolioShowcasePage() {
 
   const featuredItems = items.filter(i => i.featured);
   const totalViews = items.reduce((sum, i) => sum + i.views, 0);
-  const totalLikes = items.reduce((sum, i) => sum + i.likes, 0);
 
   return (
     <PageTransition>
@@ -299,13 +286,7 @@ export default function PortfolioShowcasePage() {
                 <FolderOpen size={14} /> {items.length} Projects
               </div>
               <div className={cn(commonStyles.statChip, themeStyles.statChip)}>
-                <Star size={14} /> {featuredItems.length} Featured
-              </div>
-              <div className={cn(commonStyles.statChip, themeStyles.statChip)}>
                 <Eye size={14} /> {totalViews} Views
-              </div>
-              <div className={cn(commonStyles.statChip, themeStyles.statChip)}>
-                <Heart size={14} /> {totalLikes} Likes
               </div>
             </div>
 
@@ -435,18 +416,6 @@ export default function PortfolioShowcasePage() {
                           <span className={cn(commonStyles.stat, themeStyles.stat)}>
                             <Eye size={13} /> {item.views}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => handleLike(item)}
-                            className={cn(
-                              commonStyles.likeBtn,
-                              themeStyles.likeBtn,
-                              item.user_liked && commonStyles.liked,
-                              item.user_liked && themeStyles.liked
-                            )}
-                          >
-                            <Heart size={13} fill={item.user_liked ? 'currentColor' : 'none'} /> {item.likes}
-                          </button>
                         </div>
                       </div>
                     </StaggerItem>
@@ -476,15 +445,7 @@ export default function PortfolioShowcasePage() {
                   >
                     <div className={commonStyles.cardImage}>
                       <img src={item.thumbnail || '/placeholder.jpg'} alt={item.title} />
-                      {item.featured && (
-                        <span className={cn(commonStyles.featuredBadge, themeStyles.featuredBadge)}>
-                          <Star size={11} /> Featured
-                        </span>
-                      )}
                       <div className={commonStyles.cardOverlay}>
-                        <button type="button" onClick={() => toggleFeatured(item)} className={commonStyles.overlayBtn} aria-label={item.featured ? `Unfeature ${item.title}` : `Feature ${item.title}`}>
-                          <Star size={16} fill={item.featured ? 'currentColor' : 'none'} />
-                        </button>
                         <button type="button" onClick={() => editItem(item)} className={commonStyles.overlayBtn} aria-label={`Edit ${item.title}`}>
                           <Edit3 size={16} />
                         </button>
@@ -509,17 +470,6 @@ export default function PortfolioShowcasePage() {
                         <span className={cn(commonStyles.stat, themeStyles.stat)}>
                           <Eye size={13} /> {item.views}
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => handleLike(item)}
-                          className={cn(
-                            commonStyles.likeBtn,
-                            themeStyles.likeBtn,
-                            item.user_liked && commonStyles.liked
-                          )}
-                        >
-                          <Heart size={13} fill={item.user_liked ? 'currentColor' : 'none'} /> {item.likes}
-                        </button>
                       </div>
                     </div>
                   </StaggerItem>
@@ -630,16 +580,6 @@ export default function PortfolioShowcasePage() {
                   )}
                 </div>
 
-                <label className={commonStyles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={newItem.featured}
-                    onChange={(e) => setNewItem(prev => ({ ...prev, featured: e.target.checked }))}
-                  />
-                  <span className={cn(commonStyles.checkboxText, themeStyles.checkboxText)}>
-                    <Star size={13} /> Feature this project
-                  </span>
-                </label>
               </div>
 
               <div className={cn(commonStyles.modalFooter, themeStyles.modalFooter)}>

@@ -359,20 +359,15 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
 
   const handleDownloadFile = async (fileId: number, filename: string) => {
     try {
-      const result = await workroomApi.downloadFile(fileId) as any;
-      if (result?.download_url) {
-        window.open(result.download_url, "_blank");
-      } else {
-        const blob = new Blob([result]);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      const blob = await workroomApi.downloadFile(fileId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (err: any) {
       setUploadError(err?.message || "Failed to download file");
     }
