@@ -88,8 +88,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Content & community
     { path: '/blog', changeFrequency: 'daily', priority: 0.85 },
-    { path: '/blog/search', changeFrequency: 'daily', priority: 0.60 },
-    { path: '/blog/feed.xml', changeFrequency: 'daily', priority: 0.30 },
     { path: '/community', changeFrequency: 'weekly', priority: 0.72 },
     { path: '/careers', changeFrequency: 'monthly', priority: 0.62 },
     { path: '/press', changeFrequency: 'monthly', priority: 0.60 },

@@ -216,10 +216,6 @@ export function buildMeta(input: MetaInput): Metadata {
     ...(input.keywords ? { keywords: input.keywords } : {}),
     alternates: {
       canonical: url,
-      languages: { 
-        'en-US': url,
-        'x-default': url 
-      },
     },
     openGraph: {
       title,

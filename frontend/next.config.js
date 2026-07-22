@@ -56,46 +56,31 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
-  // Ensure NEXT_PUBLIC env vars are available at build time (fallback for deployments
-  // that don't read .env.production, e.g. Vercel dashboard overrides or DigitalOcean Docker)
   env: {
     NEXT_PUBLIC_SHOW_DEMO_LOGIN: process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN ?? 'true',
   },
 
-  // Security: Remove X-Powered-By header
   poweredByHeader: false,
-  
-  // Enable gzip compression
   compress: true,
-  
-  // React Strict Mode: catches bugs early (Vercel best practice)
   reactStrictMode: true,
-  
-  // Standalone output for Docker/DO deployment
   output: 'standalone',
-  
-  // Strip console.log and console.debug from production builds (security + performance)
-  // console.warn and console.error are preserved for monitoring
+
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production'
       ? { exclude: ['warn', 'error'] }
       : false,
   },
-  
-  // TypeScript: enforce type safety in builds
+
   typescript: {
     ignoreBuildErrors: false,
   },
-  
-  // Dev logging: show fetch requests in terminal (Vercel best practice)
+
   logging: {
     fetches: {
       fullUrl: true,
     },
   },
-  
-  // Performance: Tree-shake & optimize heavy package imports
+
   experimental: {
     optimizePackageImports: [
       'lucide-react',
@@ -119,35 +104,28 @@ const nextConfig = {
       'tailwind-merge',
       'three',
     ],
-    // Enable server actions body size limit (security)
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // Faster scroll restoration
     scrollRestoration: true,
-    // Optimize server-side React rendering
     optimizeServerReact: true,
   },
-  
+
   turbopack: {
-    // Explicitly set root to silence multiple lockfiles warning
     root: process.env.TURBOPACK_ROOT || __dirname,
     resolveAlias: {
       '@': '.',
-      // Shim Timer class for three-render-objects compatibility with newer three.js
       'three/src/misc/Timer.js': require('path').resolve(__dirname, './lib/three-timer-shim.ts'),
     },
   },
-  
+
   webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': require('path').resolve(__dirname, '.'),
-      // Shim Timer class for three-render-objects compatibility with newer three.js
       'three/src/misc/Timer.js': require('path').resolve(__dirname, './lib/three-timer-shim.ts'),
     };
-    
-    // Bundle analyzer in analyze mode
+
     if (process.env.ANALYZE === 'true') {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
       config.plugins.push(
@@ -157,15 +135,15 @@ const nextConfig = {
         })
       );
     }
-    
+
     return config;
   },
-  
+
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60, // Cache optimized images for at least 60 seconds
+    minimumCacheTTL: 60,
     remotePatterns: [
       { protocol: 'https', hostname: 'i.pravatar.cc' },
       { protocol: 'https', hostname: 'unpkg.com' },
@@ -180,13 +158,9 @@ const nextConfig = {
       { protocol: 'https', hostname: 'ui-avatars.com' },
     ],
   },
-  
-  // Consistent trailing slashes for SEO (avoids duplicate URL issues)
+
   trailingSlash: false,
-  
-  // SEO + Performance headers
-  // NOTE: Core security headers (X-Frame-Options, X-Content-Type-Options, HSTS, etc.)
-  // are set in middleware.ts to avoid duplication.
+
   async headers() {
     return [
       {
@@ -218,7 +192,6 @@ const nextConfig = {
         ],
       },
       {
-        // Long cache for static images (Core Web Vitals improvement)
         source: '/icons/:path*',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
@@ -231,7 +204,6 @@ const nextConfig = {
         ],
       },
       {
-        // Sitemap and robots should be fresh but cacheable
         source: '/sitemap.xml',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=43200' },
@@ -244,7 +216,6 @@ const nextConfig = {
         ],
       },
       {
-        // RSS feed should be fresh but cacheable
         source: '/blog/feed.xml',
         headers: [
           { key: 'Content-Type', value: 'application/rss+xml; charset=utf-8' },
@@ -252,7 +223,6 @@ const nextConfig = {
         ],
       },
       {
-        // Preconnect to external resources for faster loading
         source: '/:path*',
         headers: [
           { key: 'Link', value: '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin' },
@@ -261,20 +231,18 @@ const nextConfig = {
       },
     ];
   },
-  
-  // Rewrites — none needed; API proxy is handled by app/api/[...catchall]/route.ts
+
   async rewrites() {
     return [];
   },
-  
+
   async redirects() {
     return [
       {
         source: '/api/auth/callback/:provider',
         destination: '/callback',
-        permanent: false,
+        permanent: true,
       },
-      // Singular alias → canonical referrals dashboard
       {
         source: '/referral',
         destination: '/referrals',
@@ -300,7 +268,6 @@ const nextConfig = {
         destination: '/terms',
         permanent: true,
       },
-      // Redirect www to non-www
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.megilance.site' }],
@@ -312,4 +279,3 @@ const nextConfig = {
 };
 
 module.exports = withPWA(nextConfig);
-

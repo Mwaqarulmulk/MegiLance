@@ -1,6 +1,5 @@
 // @AI-HINT: Robots.txt configuration for SEO and crawler control.
-// Optimized for Google, Bing, and all major search engine bots with
-// granular per-bot rules for maximum indexing coverage.
+// Optimized for Google, Bing, AI Search Bots (OAI-SearchBot, Perplexity-User, Claude-User, etc.)
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -21,7 +20,6 @@ export default function robots(): MetadataRoute.Robots {
           '/freelancer/',
           '/settings/',
           '/messages/',
-          '/_next/',
           '/private/',
           '/onboarding/',
           '/test/',
@@ -36,7 +34,6 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/contracts/',
           '/workroom/',
-          '/projects/',
           '/*.json$',
         ],
       },
@@ -50,7 +47,6 @@ export default function robots(): MetadataRoute.Robots {
           '/portal/',
           '/client/',
           '/freelancer/',
-          '/_next/',
           '/settings/',
           '/messages/',
           '/wallet/',
@@ -58,7 +54,6 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/contracts/',
           '/workroom/',
-          '/projects/',
         ],
       },
       // ── Google Images - allow all public images ──
@@ -73,23 +68,67 @@ export default function robots(): MetadataRoute.Robots {
           '/uploads/avatars/',
         ],
       },
+      // ── OpenAI Search Bot ──
+      {
+        userAgent: 'OAI-SearchBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/settings/', '/messages/'],
+      },
+      // ── ChatGPT Search ──
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/', '/settings/', '/messages/'],
+      },
+      {
+        userAgent: 'ChatGPT-User',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // ── Perplexity AI Search ──
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      {
+        userAgent: 'Perplexity-User',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // ── Claude / Anthropic Search ──
+      {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      {
+        userAgent: 'Claude-User',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      {
+        userAgent: 'anthropic-ai',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
       // ── Bing ──
       {
         userAgent: 'Bingbot',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/', '/settings/', '/messages/'],
+        disallow: ['/api/', '/admin/', '/portal/', '/settings/', '/messages/'],
       },
       // ── DuckDuckBot ──
       {
         userAgent: 'DuckDuckBot',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+        disallow: ['/api/', '/admin/', '/portal/'],
       },
       // ── Yandex ──
       {
         userAgent: 'YandexBot',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+        disallow: ['/api/', '/admin/', '/portal/'],
       },
       // ── Social media bots for rich previews ──
       {
@@ -104,56 +143,19 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'LinkedInBot',
         allow: '/',
       },
-      // ── AI assistants that drive referral traffic — ALLOW ──
-      // ChatGPT browsing (via Bing) cites and links to sites — allow for discoverability
-      {
-        userAgent: 'GPTBot',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/', '/settings/', '/messages/'],
-      },
-      // ChatGPT real-time browsing — drives direct citation traffic
-      {
-        userAgent: 'ChatGPT-User',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/'],
-      },
-      // Perplexity — top AI search engine, significant referral source
-      {
-        userAgent: 'PerplexityBot',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
-      },
-      // Apple — Spotlight, Siri, Safari Reader
+      // ── Apple bot ──
       {
         userAgent: 'Applebot',
         allow: '/',
         disallow: ['/api/', '/admin/', '/portal/'],
       },
-      // Claude (Anthropic) — web browsing for AI responses
-      {
-        userAgent: 'anthropic-ai',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
-      },
-      // ClaudeBot — Anthropic web crawler
-      {
-        userAgent: 'ClaudeBot',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
-      },
-      // Google Gemini / Bard crawler
+      // ── Google Extended ──
       {
         userAgent: 'Google-Extended',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
+        disallow: ['/api/', '/admin/', '/portal/'],
       },
-      // Cohere — AI training crawler
-      {
-        userAgent: 'cohere-ai',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/portal/', '/_next/'],
-      },
-      // ── Block bulk scrapers used ONLY for raw training data (no search/referral value) ──
+      // ── Block bulk non-search scrapers ──
       {
         userAgent: 'CCBot',
         disallow: '/',
@@ -175,3 +177,4 @@ export default function robots(): MetadataRoute.Robots {
     host: baseUrl,
   };
 }
+

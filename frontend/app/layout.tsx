@@ -46,8 +46,8 @@ const rootKeywords = [
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: `${SITE_NAME} - Best Freelancer Website | Hire Freelance Developers, Designers & Experts Online`,
-    template: `%s | ${SITE_NAME} - ${SITE_TAGLINE}`,
+    default: `${SITE_NAME} — AI Freelance Marketplace & Freelancer Platform`,
+    template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   keywords: rootKeywords,
