@@ -232,11 +232,11 @@ const HowItWorksPage: React.FC = () => {
           </section>
         </section>
 
-        {/* Security & Trust */}
-        <section className={commonStyles.section} aria-labelledby="security-trust">
+        {/* Security & Protection Features */}
+        <section id="escrow" className={commonStyles.section} aria-labelledby="security-features">
           <ScrollReveal>
-            <h2 id="security-trust" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
-              Trust & Security Built-In
+            <h2 id="security-features" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
+              Escrow Protection & Security
             </h2>
               <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
                 Built-in protections for both clients and freelancers at every step of the process.
