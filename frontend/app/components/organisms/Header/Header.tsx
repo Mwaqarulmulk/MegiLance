@@ -29,7 +29,6 @@ const megaMenuData = {
         items: [
           { name: 'How It Works', href: '/how-it-works', icon: Rocket, description: '4-step process', status: 'complete' as FeatureStatus },
           { name: 'Marketplace', href: '/#features', icon: Zap, description: 'Find projects & talent', status: 'complete' as FeatureStatus },
-          { name: 'Pricing', href: '/pricing', icon: CreditCard, description: 'Transparent fees', status: 'complete' as FeatureStatus },
           { name: 'Talent Directory', href: '/talent', icon: Star, description: 'Browse top freelancers', status: 'complete' as FeatureStatus },
         ]
       },
@@ -57,7 +56,7 @@ const megaMenuData = {
         items: [
           { name: 'For Clients', href: '/clients', icon: Briefcase, description: 'Hire top talent', status: 'complete' as FeatureStatus },
           { name: 'For Freelancers', href: '/freelancers', icon: Users, description: 'Find great work', status: 'complete' as FeatureStatus },
-          { name: 'Teams', href: '/teams', icon: Building2, description: 'Collaborate & scale', status: 'development' as FeatureStatus },
+          { name: 'Teams', href: '/teams', icon: Building2, description: 'Collaborate & scale', status: 'complete' as FeatureStatus },
         ]
       },
       {
@@ -76,7 +75,7 @@ const megaMenuData = {
         title: 'Help & Knowledge',
         items: [
           { name: 'FAQ', href: '/faq', icon: HelpCircle, description: 'Common questions', status: 'complete' as FeatureStatus },
-          { name: 'Support', href: '/support', icon: Mail, description: 'Get help 24/7', status: 'development' as FeatureStatus },
+          { name: 'Support', href: '/support', icon: Mail, description: 'Get help 24/7', status: 'complete' as FeatureStatus },
         ]
       },
       {

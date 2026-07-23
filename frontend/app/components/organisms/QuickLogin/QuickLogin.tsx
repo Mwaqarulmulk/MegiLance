@@ -13,7 +13,7 @@ import commonStyles from './QuickLogin.common.module.css';
 import lightStyles from './QuickLogin.light.module.css';
 import darkStyles from './QuickLogin.dark.module.css';
 
-const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true' || process.env.NODE_ENV === 'development';
+const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true';
 
 // Demo credentials available when NEXT_PUBLIC_SHOW_DEMO_LOGIN=true or in dev mode
 const DEV_ACCOUNTS: Record<string, { email: string; password: string }> = SHOW_DEMO_LOGIN
