@@ -115,9 +115,10 @@ const PublicFooter = () => {
               <form className={commonStyles.newsletterForm} onSubmit={(e) => e.preventDefault()}>
                 <input
                   type="email"
+                  name="email"
                   placeholder="Your email"
                   className={cn(commonStyles.newsletterInput, styles.newsletterInput)}
-                  aria-label="Email for newsletter"
+                  aria-label="Email address for newsletter subscription"
                 />
                 <button type="submit" className={cn(commonStyles.newsletterButton, styles.newsletterButton)}>
                   Subscribe

@@ -1,5 +1,6 @@
 /* @AI-HINT: Light theme semantic color variables */
-:root {
+:root,
+html.light {
   /* Brand & Accent Colors */
   --primary: var(--ml-blue);
   --accent: var(--ml-orange);

@@ -1,4 +1,5 @@
 /* @AI-HINT: Dark theme semantic color variables */
+html.dark,
 .dark {
   /* Brand & Accent Colors */
   --primary: var(--ml-blue-light);
