@@ -475,19 +475,14 @@ const Login: React.FC = () => {
               <span className={styles.dividerText}>OR</span>
             </StaggerItem>
 
-            <StaggerItem>
-              {process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === "true" ? (
+            {process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === "true" && (
+              <StaggerItem>
                 <DevQuickLogin
                   onCredentialSelect={handleDevQuickLogin}
                   onAutoLogin={handleDevAutoLogin}
                 />
-              ) : (
-                <GuestQuickLogin
-                  onAutoLogin={handleDevAutoLogin}
-                  isLoading={loading}
-                />
-              )}
-            </StaggerItem>
+              </StaggerItem>
+            )}
 
             <StaggerItem>
               <form
