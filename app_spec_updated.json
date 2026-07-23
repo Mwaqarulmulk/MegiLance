@@ -1,0 +1,390 @@
+{
+  "name": "megilance",
+  "services": [
+    {
+      "name": "backend",
+      "github": {
+        "repo": "umair-fa22/MegiLance",
+        "branch": "main",
+        "deploy_on_push": true
+      },
+      "dockerfile_path": "backend/Dockerfile",
+      "envs": [
+        {
+          "key": "APP_NAME",
+          "value": "MegiLance API",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "ENVIRONMENT",
+          "value": "production",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "DEBUG",
+          "value": "false",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "LOG_LEVEL",
+          "value": "INFO",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "HOST",
+          "value": "0.0.0.0",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "PORT",
+          "value": "8000",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "WORKERS",
+          "value": "1",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "MONGODB_URI",
+          "value": "mongodb+srv://megilanceofficial_db_user:NqCAJ3WKyCqS0uZn@cluster0.8is4jam.mongodb.net/?appName=Cluster0",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "R2_ACCOUNT_ID",
+          "value": "3f295cd4f9644c8899d8d020de37d802",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "R2_ACCESS_KEY_ID",
+          "value": "41146f52c4d672bc3fd1cc2ec75dd393",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "R2_SECRET_ACCESS_KEY",
+          "value": "5137b877d608b04e6620bc0b900bd5a227404bb03114d051de6a3b959c2beb1f",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "R2_BUCKET",
+          "value": "megilance-media",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "R2_PUBLIC_URL",
+          "value": "https://pub-5723b5e89c4042049d37c030cc388ac4.r2.dev",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "TURSO_DATABASE_URL",
+          "value": "libsql://megilance-db-megilance.aws-ap-south-1.turso.io",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "TURSO_AUTH_TOKEN",
+          "value": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjUyMjY1NTksImlkIjoiZGVmMGE2NzYtMGZiNC00MDAzLTkyNmItMDhlYzA4NjY4MWFkIiwicmlkIjoiYTliOGUwMzctZGQwNi00NTRiLTlmYzgtNGFmMzcxYTg0ODdiIn0.qt4d8AZ587-_i6QWt8f2oUCXuN2w4w0m6YvveN_BSVRFJVH1GM9DL8TuxQfzptpt7HiGBlvGsnbq7zwRrYCyDA",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "SECRET_KEY",
+          "value": "megilance-prod-secret-key-2026-super-secure-minimum-256bits-long-key-value-here-12345",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "JWT_SECRET_KEY",
+          "value": "megilance-prod-secret-key-2026-super-secure-minimum-256bits-long-key-value-here-12345",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "JWT_ALGORITHM",
+          "value": "HS256",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "ACCESS_TOKEN_EXPIRE_MINUTES",
+          "value": "30",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "REFRESH_TOKEN_EXPIRE_DAYS",
+          "value": "7",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "REFRESH_TOKEN_EXPIRE_MINUTES",
+          "value": "10080",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "BACKEND_CORS_ORIGINS",
+          "value": "[\"https://megilance.site\",\"https://www.megilance.site\",\"https://api.megilance.site\"]",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "ALLOWED_ORIGINS",
+          "value": "https://megilance.site,https://www.megilance.site",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "FRONTEND_URL",
+          "value": "https://megilance.site",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "UPLOAD_DIR",
+          "value": "./uploads",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "MAX_UPLOAD_SIZE",
+          "value": "10485760",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "GOOGLE_CLIENT_ID",
+          "value": "334576604932-n9g48l5qrtcblunb1jkin7161bdokmpg.apps.googleusercontent.com",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "GOOGLE_CLIENT_SECRET",
+          "value": "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",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "GITHUB_CLIENT_ID",
+          "value": "Ov23ctGBUJFmDM3FHRCO",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "GITHUB_CLIENT_SECRET",
+          "value": "f952f535dbda3c20d99d5cbf2f1167c9aad7cdd6",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "RESEND_API_KEY",
+          "value": "re_92qAZqKU_Fq8eENUhpJbmYHX3Z3RcU9iR",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "FROM_EMAIL",
+          "value": "onboarding@resend.dev",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "FROM_NAME",
+          "value": "MegiLance",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "SMTP_HOST",
+          "value": "smtp.gmail.com",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "SMTP_PORT",
+          "value": "587",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "STRIPE_PLATFORM_FEE_PERCENT",
+          "value": "10.0",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "MOCK_PAYMENTS_ENABLED",
+          "value": "true",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "CRYPTO_USE_TESTNET",
+          "value": "true",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "USDC_RECEIVING_ADDRESS_POLYGON",
+          "value": "0x228d599d4c7e89194b94e9d65b1b4114870a4c34",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "DO_AI_API_KEY",
+          "value": "${DO_AI_API_KEY}",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "DO_AI_API_BASE",
+          "value": "https://inference.do-ai.run/v1",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "DO_AI_MODEL",
+          "value": "llama3.3-70b-instruct",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "ANTHROPIC_API_KEY",
+          "value": "${ANTHROPIC_API_KEY}",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "GOOGLE_SITE_VERIFICATION",
+          "value": "AiJ_ApfC0MGXqy36O_JGpOol_z0i0b8X0J3x3YuyhKs",
+          "scope": "RUN_AND_BUILD_TIME"
+        }
+      ],
+      "instance_size_slug": "apps-s-1vcpu-0.5gb",
+      "instance_count": 1,
+      "http_port": 8000
+    },
+    {
+      "name": "frontend",
+      "github": {
+        "repo": "umair-fa22/MegiLance",
+        "branch": "main",
+        "deploy_on_push": true
+      },
+      "dockerfile_path": "frontend/Dockerfile",
+      "source_dir": "frontend",
+      "envs": [
+        {
+          "key": "NODE_ENV",
+          "value": "production",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NPM_CONFIG_PRODUCTION",
+          "value": "false",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_API_URL",
+          "value": "https://api.megilance.site/api/v1",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_BACKEND_URL",
+          "value": "https://api.megilance.site",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_WS_URL",
+          "value": "wss://api.megilance.site",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXTAUTH_URL",
+          "value": "https://www.megilance.site",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_PREVIEW_MODE",
+          "value": "false",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_MOCK_PAYMENTS",
+          "value": "false",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION",
+          "value": "AiJ_ApfC0MGXqy36O_JGpOol_z0i0b8X0J3x3YuyhKs",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_DEV_ADMIN_EMAIL",
+          "value": "admin@megilance.com",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_DEV_ADMIN_PASSWORD",
+          "value": "Admin@123",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_DEV_CLIENT_EMAIL",
+          "value": "client1@example.com",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_DEV_CLIENT_PASSWORD",
+          "value": "Client@123",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_DEV_FREELANCER_EMAIL",
+          "value": "freelancer1@example.com",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_DEV_FREELANCER_PASSWORD",
+          "value": "Freelancer@123",
+          "scope": "RUN_AND_BUILD_TIME"
+        },
+        {
+          "key": "NEXT_PUBLIC_SHOW_DEMO_LOGIN",
+          "value": "false",
+          "scope": "RUN_AND_BUILD_TIME"
+        }
+      ],
+      "instance_size_slug": "apps-s-1vcpu-0.5gb",
+      "instance_count": 1,
+      "http_port": 3000
+    }
+  ],
+  "domains": [
+    {
+      "domain": "megilance.site",
+      "type": "PRIMARY",
+      "zone": "megilance.site"
+    },
+    {
+      "domain": "www.megilance.site",
+      "type": "ALIAS",
+      "zone": "megilance.site"
+    },
+    {
+      "domain": "api.megilance.site",
+      "type": "ALIAS",
+      "zone": "megilance.site"
+    }
+  ],
+  "region": "blr",
+  "ingress": {
+    "rules": [
+      {
+        "match": {
+          "path": {
+            "prefix": "/api/v1"
+          }
+        },
+        "component": {
+          "name": "backend",
+          "preserve_path_prefix": true
+        }
+      },
+      {
+        "match": {
+          "path": {
+            "prefix": "/health"
+          }
+        },
+        "component": {
+          "name": "backend"
+        }
+      },
+      {
+        "match": {
+          "path": {
+            "prefix": "/"
+          }
+        },
+        "component": {
+          "name": "frontend"
+        }
+      }
+    ]
+  },
+  "features": [
+    "buildpack-stack=ubuntu-22"
+  ]
+}
