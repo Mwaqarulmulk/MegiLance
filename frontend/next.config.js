@@ -269,6 +269,26 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/ai-freelancer-matching-platform',
+        destination: '/explore',
+        permanent: true,
+      },
+      {
+        source: '/ai-talent-matching',
+        destination: '/explore',
+        permanent: true,
+      },
+      {
+        source: '/blockchain-escrow-for-freelancers',
+        destination: '/how-it-works#escrow',
+        permanent: true,
+      },
+      {
+        source: '/smart-contract-escrow-for-freelancers',
+        destination: '/how-it-works#escrow',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.megilance.site' }],
         destination: 'https://megilance.site/:path*',
