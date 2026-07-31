@@ -1,1 +1,31 @@
-.contact { background: var(--bg-primary-light); color: var(--text-primary-light); }
+/* Contact.light.module.css */
+
+.page {
+  color: #0f172a;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.infoPanel, .formPanel {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.infoItem {
+  color: #1e293b;
+}
+
+.infoItem:hover {
+  color: #4573df;
+}
+
+.infoText {
+  color: #334155;
+}

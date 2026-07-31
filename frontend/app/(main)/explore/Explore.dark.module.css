@@ -1,1 +1,145 @@
-.explore { background: transparent; color: var(--text-primary-dark); }
+/* Explore.dark.module.css */
+
+.header {
+  color: #f8fafc;
+}
+
+.title {
+  color: #f8fafc;
+}
+
+.subtitle {
+  color: #94a3b8;
+}
+
+.searchBar {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.searchInput {
+  color: #f8fafc;
+}
+
+.mobileFilterBtn {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.categoryPill {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.categoryPill:hover {
+  background: rgba(30, 41, 59, 0.8);
+  color: #f8fafc;
+}
+
+.sidebarCard {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sidebarTitle {
+  color: #f8fafc;
+}
+
+.filterLabel {
+  color: #94a3b8;
+}
+
+.filterOption {
+  color: #cbd5e1;
+}
+
+.filterRadioCustom {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.quickLink {
+  color: #cbd5e1;
+}
+
+.quickLink:hover {
+  color: #4573df;
+}
+
+.toolbar {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.resultCount {
+  color: #94a3b8;
+}
+
+.sortSelect {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+}
+
+.viewToggle {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.viewBtn {
+  color: #94a3b8;
+}
+
+.sectionTitle {
+  color: #f8fafc;
+}
+
+.freelancerCard {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.name {
+  color: #f8fafc;
+}
+
+.role {
+  color: #94a3b8;
+}
+
+.skill {
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+}
+
+.projectCard {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.projectTitle {
+  color: #f8fafc;
+}
+
+.projectDescription {
+  color: #94a3b8;
+}
+
+.pageBtn {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.skeletonCard {
+  background: rgba(15, 23, 42, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.skeletonAvatar, .skeletonLine {
+  background: rgba(255, 255, 255, 0.08);
+}

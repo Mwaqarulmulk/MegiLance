@@ -1,1 +1,33 @@
-.compare { background: transparent; color: var(--text-primary-dark); }
+/* Compare.dark.module.css */
+
+.title {
+  color: #f8fafc;
+}
+
+.subtitle {
+  color: #94a3b8;
+}
+
+.chip {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
+.chip:hover {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.tableWrap {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.table th {
+  background: rgba(30, 41, 59, 0.8);
+  color: #f8fafc;
+}
+
+.table td {
+  color: #cbd5e1;
+}

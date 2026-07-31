@@ -54,17 +54,19 @@ export default function PainSolutions() {
   const mode = useThemeMode();
   const isDark = mode === 'dark';
 
-  const cardBg = isDark ? 'bg-white/[0.04] border-white/10' : 'bg-white border-gray-200/80';
-  const heading = isDark ? 'text-white' : 'text-gray-900';
-  const muted = isDark ? 'text-gray-300/85' : 'text-gray-600';
-  const painText = isDark ? 'text-gray-200' : 'text-gray-800';
+  const cardBg = isDark
+    ? 'bg-slate-900/60 border-slate-800/80 shadow-sm'
+    : 'bg-white border-slate-200/80 shadow-sm';
+  const heading = isDark ? 'text-slate-50' : 'text-slate-900';
+  const muted = isDark ? 'text-slate-400' : 'text-slate-600';
+  const painText = isDark ? 'text-slate-200' : 'text-slate-800';
 
   return (
     <div className="max-w-6xl mx-auto px-4">
       <div className="text-center max-w-3xl mx-auto mb-10">
         <span
           className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4"
-          style={{ background: 'rgba(69,115,223,0.12)', color: '#4573df' }}
+          style={{ background: 'rgba(69,115,223,0.1)', color: '#4573df' }}
         >
           Why MegiLance
         </span>
@@ -81,16 +83,15 @@ export default function PainSolutions() {
         {ITEMS.map(({ icon: Icon, pain, solution }) => (
           <div
             key={pain}
-            className={cn('rounded-2xl border p-6 transition-transform duration-200 hover:-translate-y-1', cardBg)}
-            style={{ boxShadow: isDark ? 'none' : '0 8px 24px -16px rgba(0,0,0,0.25)' }}
+            className={cn('rounded-xl border p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md', cardBg)}
           >
             <div
-              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-              style={{ background: 'rgba(69,115,223,0.12)', color: '#4573df' }}
+              className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+              style={{ background: 'rgba(69,115,223,0.1)', color: '#4573df' }}
             >
-              <Icon size={22} />
+              <Icon size={20} />
             </div>
-            <div className={cn('flex items-start gap-2 mb-3 text-sm font-semibold', painText)}>
+            <div className={cn('flex items-start gap-2 mb-2.5 text-sm font-semibold', painText)}>
               <X size={16} className="mt-0.5 flex-shrink-0" style={{ color: '#ef4444' }} />
               <span>{pain}</span>
             </div>

@@ -1,1 +1,99 @@
-.enterprise { background: transparent; color: var(--text-primary-dark); }
+/* Enterprise.dark.module.css */
+
+.themeWrapper {
+  color: #f8fafc;
+}
+
+.heroTitle {
+  color: #f8fafc;
+}
+
+.heroSubtitle {
+  color: #94a3b8;
+}
+
+.secondaryBtn {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.secondaryBtn:hover {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.trustBadge {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trustBadgeDesc {
+  color: #94a3b8;
+}
+
+.statCard {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.statValue {
+  color: #f8fafc;
+}
+
+.statDesc {
+  color: #94a3b8;
+}
+
+.sectionSubtitle {
+  color: #94a3b8;
+}
+
+.featureCard {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.featureDescription {
+  color: #94a3b8;
+}
+
+.planCard {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.planHighlighted {
+  border: 2px solid #4573df;
+  box-shadow: 0 8px 35px rgba(69, 115, 223, 0.25);
+}
+
+.planDescription {
+  color: #94a3b8;
+}
+
+.planFeatureItem {
+  color: #cbd5e1;
+}
+
+.planCta {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.planCta:hover {
+  background: rgba(51, 65, 85, 0.8);
+}
+
+.ctaBox {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 27, 75, 0.9) 100%);
+  border: 1px solid rgba(69, 115, 223, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.ctaDescription {
+  color: #94a3b8;
+}

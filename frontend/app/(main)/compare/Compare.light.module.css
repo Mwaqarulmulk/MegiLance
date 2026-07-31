@@ -1,1 +1,33 @@
-.compare { background: var(--bg-primary-light); color: var(--text-primary-light); }
+/* Compare.light.module.css */
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.chip:hover {
+  background: #f8fafc;
+}
+
+.tableWrap {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+}
+
+.table th {
+  background: rgba(248, 250, 252, 0.9);
+  color: #0f172a;
+}
+
+.table td {
+  color: #334155;
+}

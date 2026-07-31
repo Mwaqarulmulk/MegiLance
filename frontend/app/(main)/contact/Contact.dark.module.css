@@ -1,1 +1,31 @@
-.contact { background: transparent; color: var(--text-primary-dark); }
+/* Contact.dark.module.css */
+
+.page {
+  color: #f8fafc;
+}
+
+.title {
+  color: #f8fafc;
+}
+
+.subtitle {
+  color: #94a3b8;
+}
+
+.infoPanel, .formPanel {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.infoItem {
+  color: #f8fafc;
+}
+
+.infoItem:hover {
+  color: #4573df;
+}
+
+.infoText {
+  color: #cbd5e1;
+}

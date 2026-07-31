@@ -1,1 +1,275 @@
-.costcalculator { display: flex; flex-direction: column; padding: 4rem 2rem; min-height: 80vh; max-width: 1200px; margin: 0 auto; gap: 2rem; }
+/* CostCalculator.common.module.css */
+
+.container, .page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.header, .hero {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.heroIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.2), rgba(147, 51, 234, 0.2));
+  color: #4573df;
+}
+
+.title, .heroTitle {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.gradient {
+  background: linear-gradient(135deg, #4573df 0%, #9333ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle, .heroDesc {
+  font-size: 1.1rem;
+  line-height: 1.65;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* Calculator Card */
+.calculator {
+  max-width: 650px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 2.5rem;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  backdrop-filter: blur(12px);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label, .label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.field select, .select {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.slider {
+  width: 100%;
+  accent-color: #4573df;
+  cursor: pointer;
+}
+
+.result {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+  text-align: center;
+}
+
+.resultItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.resultLabel {
+  font-size: 0.825rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+.resultValue {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.resultValuePrimary {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #4573df;
+}
+
+.disclaimer {
+  font-size: 0.825rem;
+  text-align: center;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* Grid & Panels */
+.section {
+  width: 100%;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.calcGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.inputPanel, .resultsPanel {
+  padding: 2.25rem;
+  border-radius: 24px;
+  border: 1px solid;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panelTitle {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rateInfo {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+  font-size: 0.875rem;
+}
+
+.resultCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+}
+
+.resultCard {
+  padding: 1.25rem 1rem;
+  border-radius: 16px;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+}
+
+.savingsBox {
+  padding: 1.75rem;
+  border-radius: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, rgba(69, 115, 223, 0.12) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.savingsTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #10b981;
+}
+
+.savingsAmount {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #10b981;
+  line-height: 1.1;
+}
+
+.savingsPercent {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.upworkSaving {
+  font-size: 0.825rem;
+  opacity: 0.85;
+}
+
+/* FAQ */
+.sectionTitle {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 2rem;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.faqItem {
+  border-radius: 16px;
+  border: 1px solid;
+  overflow: hidden;
+}
+
+.faqQ {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  gap: 1rem;
+}
+
+.faqA {
+  padding: 0 1.5rem 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  opacity: 0.85;
+}

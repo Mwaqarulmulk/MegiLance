@@ -1,1 +1,59 @@
-.pricing { background: var(--bg-primary-light); color: var(--text-primary-light); }
+/* Pricing.light.module.css */
+
+.title {
+  color: #0f172a;
+}
+
+.howCard {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.howTitle {
+  color: #0f172a;
+}
+
+.howDesc {
+  color: #475569;
+}
+
+.tableWrapper {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.comparisonTable {
+  color: #1e293b;
+}
+
+.tableHead {
+  background: rgba(248, 250, 252, 0.9);
+  color: #0f172a;
+  border-bottom-color: #e2e8f0;
+}
+
+.tableRow {
+  border-bottom-color: #f1f5f9;
+}
+
+.tableRow:hover {
+  background: rgba(241, 245, 249, 0.6);
+}
+
+.tableCell {
+  color: #334155;
+}
+
+.faqItem {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+}
+
+.faqQuestion {
+  color: #0f172a;
+}
+
+.faqAnswer {
+  color: #475569;
+}

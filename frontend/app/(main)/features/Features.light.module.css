@@ -1,1 +1,73 @@
-.features { background: var(--bg-primary-light); color: var(--text-primary-light); }
+/* Features.light.module.css */
+
+.page {
+  color: #0f172a;
+}
+
+.heroTitle {
+  color: #0f172a;
+}
+
+.heroSubtitle {
+  color: #475569;
+}
+
+.heroStatLabel {
+  color: #64748b;
+}
+
+.tab {
+  color: #475569;
+}
+
+.tab:hover {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.tabCount {
+  background: rgba(0, 0, 0, 0.06);
+  color: #475569;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.cardTitle {
+  color: #0f172a;
+}
+
+.cardDesc {
+  color: #475569;
+}
+
+.highlight {
+  color: #334155;
+}
+
+.ctaCard {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.9) 0%, rgba(245, 243, 255, 0.9) 100%);
+  border: 1px solid rgba(69, 115, 223, 0.2);
+  box-shadow: 0 10px 40px rgba(69, 115, 223, 0.08);
+}
+
+.ctaTitle {
+  color: #0f172a;
+}
+
+.ctaDesc {
+  color: #475569;
+}
+
+.ctaBtnSecondary {
+  border-color: #cbd5e1;
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.ctaBtnSecondary:hover {
+  background: #f8fafc;
+}

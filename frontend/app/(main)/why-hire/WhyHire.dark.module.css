@@ -1,1 +1,60 @@
-.whyhire { background: transparent; color: var(--text-primary-dark); }
+/* WhyHire.dark.module.css */
+
+.page {
+  color: #f8fafc;
+}
+
+.heroTitle, .sectionTitle, .ctaTitle {
+  color: #f8fafc;
+}
+
+.heroDesc, .sectionSub, .ctaDesc {
+  color: #94a3b8;
+}
+
+.reasonCard {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.reasonTitle {
+  color: #f8fafc;
+}
+
+.reasonDesc {
+  color: #94a3b8;
+}
+
+.savingsTable {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.savingsHeader {
+  background: rgba(30, 41, 59, 0.8);
+  color: #f8fafc;
+}
+
+.savingsRow {
+  color: #cbd5e1;
+}
+
+.faqItem {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.faqQ {
+  color: #f8fafc;
+}
+
+.faqA {
+  color: #94a3b8;
+}
+
+.finalCta {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 27, 75, 0.9) 100%);
+  border-color: rgba(69, 115, 223, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}

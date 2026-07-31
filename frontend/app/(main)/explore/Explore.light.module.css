@@ -1,1 +1,145 @@
-.explore { background: var(--bg-primary-light); color: var(--text-primary-light); }
+/* Explore.light.module.css */
+
+.header {
+  color: #0f172a;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.searchBar {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.searchInput {
+  color: #0f172a;
+}
+
+.mobileFilterBtn {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.categoryPill {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(226, 232, 240, 0.8);
+  color: #475569;
+}
+
+.categoryPill:hover {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.sidebarCard {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.sidebarTitle {
+  color: #0f172a;
+}
+
+.filterLabel {
+  color: #64748b;
+}
+
+.filterOption {
+  color: #334155;
+}
+
+.filterRadioCustom {
+  border-color: #cbd5e1;
+}
+
+.quickLink {
+  color: #334155;
+}
+
+.quickLink:hover {
+  color: #4573df;
+}
+
+.toolbar {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+}
+
+.resultCount {
+  color: #475569;
+}
+
+.sortSelect {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.viewToggle {
+  border-color: #e2e8f0;
+}
+
+.viewBtn {
+  color: #64748b;
+}
+
+.sectionTitle {
+  color: #0f172a;
+}
+
+.freelancerCard {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.name {
+  color: #0f172a;
+}
+
+.role {
+  color: #64748b;
+}
+
+.skill {
+  background: rgba(241, 245, 249, 0.8);
+  color: #334155;
+}
+
+.projectCard {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.projectTitle {
+  color: #0f172a;
+}
+
+.projectDescription {
+  color: #475569;
+}
+
+.pageBtn {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.skeletonCard {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(226, 232, 240, 0.6);
+}
+
+.skeletonAvatar, .skeletonLine {
+  background: rgba(226, 232, 240, 0.8);
+}
