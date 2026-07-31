@@ -74,11 +74,11 @@ export default function Hero({ stats = defaultStats }) {
             </>
           ) : (
             <>
-              <Link href="/explore" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
-                Explore Platform
+              <Link href="/talent" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
+                Hire Top Talent
               </Link>
-              <Link href="/ai/price-estimator" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
-                Try Price Estimator
+              <Link href="/explore" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
+                Find Freelance Work
               </Link>
             </>
           )}

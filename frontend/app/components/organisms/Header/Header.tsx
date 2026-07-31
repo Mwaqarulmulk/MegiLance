@@ -21,68 +21,56 @@ import lightStyles from './Header.light.module.css';
 import darkStyles from './Header.dark.module.css';
 
 const megaMenuData = {
-  platform: {
-    title: 'Platform',
+  hireTalent: {
+    title: 'Hire Talent',
     sections: [
       {
-        title: 'Core Features',
+        title: 'For Clients',
         items: [
-          { name: 'How It Works', href: '/how-it-works', icon: Rocket, description: '4-step process', status: 'complete' as FeatureStatus },
-          { name: 'Marketplace', href: '/#features', icon: Zap, description: 'Find projects & talent', status: 'complete' as FeatureStatus },
-          { name: 'Talent Directory', href: '/talent', icon: Star, description: 'Browse top freelancers', status: 'complete' as FeatureStatus },
+          { name: 'Browse Freelancers', href: '/talent', icon: Star, description: 'Find top AI-vetted web developers, designers & writers' },
+          { name: 'Post a Project', href: '/client/dashboard', icon: Briefcase, description: 'Post work and receive proposals with zero commission' },
+          { name: 'Client Benefits', href: '/clients', icon: Shield, description: 'Milestone escrow protection & zero buyer service fee' },
         ]
       },
       {
-        title: 'AI-Powered',
+        title: 'Solutions & Portal',
         items: [
-          { name: 'AI Chatbot', href: '/ai/chatbot', icon: MessageSquare, description: 'Intelligent assistant', status: 'advanced' as FeatureStatus },
-          { name: 'AI Tools Hub', href: '/ai', icon: Zap, description: 'All AI tools in one place', status: 'advanced' as FeatureStatus },
-          { name: 'Price Estimator', href: '/ai/price-estimator', icon: BarChart3, description: 'ML-powered pricing', status: 'advanced' as FeatureStatus },
-        ]
-      },
-      {
-        title: 'Security',
-        items: [
-          { name: 'Secure Escrow', href: '/how-it-works#escrow', icon: Shield, description: 'Protected milestones', status: 'complete' as FeatureStatus },
+          { name: 'Client Dashboard', href: '/client/dashboard', icon: Briefcase, description: 'Manage active contracts, milestones & payments' },
+          { name: 'Enterprise Teams', href: '/teams', icon: Building2, description: 'Scalable talent solutions for enterprise teams' },
         ]
       }
     ]
   },
-  solutions: {
-    title: 'Solutions',
+  findWork: {
+    title: 'Find Work',
     sections: [
       {
-        title: 'Get Started',
+        title: 'For Freelancers',
         items: [
-          { name: 'For Clients', href: '/clients', icon: Briefcase, description: 'Hire top talent', status: 'complete' as FeatureStatus },
-          { name: 'For Freelancers', href: '/freelancers', icon: Users, description: 'Find great work', status: 'complete' as FeatureStatus },
-          { name: 'Teams', href: '/teams', icon: Building2, description: 'Collaborate & scale', status: 'complete' as FeatureStatus },
+          { name: 'Browse Jobs', href: '/explore', icon: Rocket, description: 'Explore available freelance jobs with 0% platform fee' },
+          { name: 'AI Proposal Writer', href: '/ai/proposal-writer', icon: MessageSquare, description: 'Generate winning proposals instantly' },
+          { name: 'Freelancer Benefits', href: '/freelancers', icon: Users, description: 'Keep 100% of your earnings with instant payouts' },
         ]
       },
       {
-        title: 'Dashboards',
+        title: 'Tools & Portal',
         items: [
-          { name: 'Client Portal', href: '/client/dashboard', icon: Briefcase, description: 'Manage projects', auth: true, status: 'complete' as FeatureStatus },
-          { name: 'Freelancer Portal', href: '/freelancer/dashboard', icon: Users, description: 'Track earnings', auth: true, status: 'complete' as FeatureStatus },
+          { name: 'Freelancer Dashboard', href: '/freelancer/dashboard', icon: Users, description: 'Track earnings, active proposals & client orders' },
+          { name: 'Rate Calculator', href: '/ai/rate-advisor', icon: BarChart3, description: 'Calculate competitive hourly & project rates' },
         ]
       }
     ]
   },
-  resources: {
-    title: 'Resources',
+  aiSuite: {
+    title: 'AI Tools',
     sections: [
       {
-        title: 'Help & Knowledge',
+        title: 'Smart AI Features',
         items: [
-          { name: 'FAQ', href: '/faq', icon: HelpCircle, description: 'Common questions', status: 'complete' as FeatureStatus },
-          { name: 'Support', href: '/support', icon: Mail, description: 'Get help 24/7', status: 'complete' as FeatureStatus },
-        ]
-      },
-      {
-        title: 'Company',
-        items: [
-          { name: 'About Us', href: '/about', icon: Globe, description: 'Our mission', status: 'complete' as FeatureStatus },
-          { name: 'System Status', href: '/system-status', icon: Activity, description: 'Platform health', status: 'complete' as FeatureStatus },
+          { name: 'AI Price Estimator', href: '/ai/price-estimator', icon: BarChart3, description: 'Get data-driven project budgets & timelines' },
+          { name: 'AI Smart Matching', href: '/ai/skill-analyzer', icon: Zap, description: 'Algorithmic 7-factor talent-to-job matching' },
+          { name: 'AI Assistant Chatbot', href: '/ai/chatbot', icon: MessageSquare, description: '24/7 intelligent platform assistance' },
+          { name: 'Fraud Risk Guard', href: '/ai/fraud-check', icon: Shield, description: 'Real-time client & proposal risk detection' },
         ]
       }
     ]
@@ -97,7 +85,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<MenuKey>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeMobileSection, setActiveMobileSection] = useState<MenuKey>('platform');
+  const [activeMobileSection, setActiveMobileSection] = useState<MenuKey>('hireTalent');
   const pathname = usePathname();
 
   // Use dark theme during hydration to prevent white background flash in dark mode
@@ -175,14 +163,6 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className={commonStyles.desktopNav} ref={navRef}>
-            <Link href="/explore" className={cn(commonStyles.navBtn, commonStyles.featuredBtn, themeStyles.featuredBtn)}>
-              <Sparkles size={16} /> Explore
-            </Link>
-
-            <Link href="/pricing" className={cn(commonStyles.navBtn, themeStyles.navBtn)}>
-              Pricing
-            </Link>
-
             {(Object.keys(megaMenuData) as Array<keyof typeof megaMenuData>).map((key) => (
               <div 
                 key={key} 
@@ -219,7 +199,7 @@ export default function Header() {
                   className={cn(
                     commonStyles.megaMenu, 
                     activeMenu === key && commonStyles.megaMenuActive,
-                    key === 'resources' && commonStyles.megaMenuAlignRight // Right align last items
+                    key === 'aiSuite' && commonStyles.megaMenuAlignRight
                   )}
                   role="region"
                   aria-label={`${megaMenuData[key].title} Submenu`}
@@ -236,13 +216,7 @@ export default function Header() {
                               </div>
                               <div className={commonStyles.itemTextContent}>
                                 <div className={commonStyles.itemHeader}>
-                                  <span className={commonStyles.itemName}>
-                                    {item.name}
-                                    {('auth' in item && (item as any).auth) && <Lock size={12} className={commonStyles.lockIcon} />}
-                                  </span>
-                                  {('status' in item && (item as any).status) && (
-                                    <FeatureStatusPill status={(item as any).status} size="xs" compact />
-                                  )}
+                                  <span className={commonStyles.itemName}>{item.name}</span>
                                 </div>
                                 <span className={cn(commonStyles.itemDesc, themeStyles.itemDesc)}>{item.description}</span>
                               </div>
@@ -255,6 +229,14 @@ export default function Header() {
                 </div>
               </div>
             ))}
+
+            <Link href="/how-it-works" className={cn(commonStyles.navBtn, themeStyles.navBtn)}>
+              How It Works
+            </Link>
+
+            <Link href="/pricing" className={cn(commonStyles.navBtn, themeStyles.navBtn)}>
+              Pricing
+            </Link>
           </nav>
 
           {/* Right Action Bar */}
@@ -327,16 +309,23 @@ export default function Header() {
                       <div className={commonStyles.itemTextContent}>
                         <div className={commonStyles.itemHeader}>
                           <span className={commonStyles.itemName}>{item.name}</span>
-                          {('status' in item && (item as any).status) && (
-                            <FeatureStatusPill status={(item as any).status} size="xs" compact />
-                          )}
                         </div>
+                        <span className={cn(commonStyles.itemDesc, themeStyles.itemDesc)}>{item.description}</span>
                       </div>
                     </Link>
                   ))}
                 </div>
               </div>
             ))}
+            
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
+              <Link href="/how-it-works" className={cn(commonStyles.navBtn, themeStyles.navBtn)} onClick={() => setMobileMenuOpen(false)}>
+                How It Works
+              </Link>
+              <Link href="/pricing" className={cn(commonStyles.navBtn, themeStyles.navBtn)} onClick={() => setMobileMenuOpen(false)}>
+                Pricing
+              </Link>
+            </div>
           </div>
         </div>
 

@@ -58,7 +58,6 @@ describe('Home Page Component', () => {
     
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
     expect(screen.getByTestId('trust-indicators')).toBeInTheDocument();
-    expect(screen.getByTestId('features-section')).toBeInTheDocument();
     expect(screen.getByTestId('how-it-works')).toBeInTheDocument();
     expect(screen.getByTestId('testimonials')).toBeInTheDocument();
   });

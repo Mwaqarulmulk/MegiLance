@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero/Hero';
@@ -9,10 +8,7 @@ import PainSolutions from './components/PainSolutions/PainSolutions';
 import TrustIndicators from './components/TrustIndicators';
 import DashboardShowcase from './components/DashboardShowcase/DashboardShowcase';
 import AIToolsHub from './components/AIToolsHub';
-import Features from './components/Features';
-import AIShowcase from './components/AIShowcase';
 import HowItWorks from './components/HowItWorks';
-import ProjectDemo from './components/ProjectDemo';
 import Testimonials from './components/Testimonials';
 import { ScrollReveal } from '../components/Animations/ScrollReveal';
 
@@ -35,21 +31,11 @@ const Home: React.FC = () => {
             </ScrollReveal>
           </section>
 
-          {/* Platform Visual Showcase — AI Deal Engine */}
-          <section className={commonStyles.homeSection} aria-label="Platform AI deal engine visualization">
+          {/* Interactive Interface Showcase */}
+          <section className={commonStyles.homeSection} aria-label="Interactive dashboard showcase">
             <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up" delay={0.2}>
-                <div style={{ textAlign: 'center', padding: '0 1rem 1rem' }}>
-                  <Image
-                    src="/images/hero/homepage-hero.png"
-                    alt="MegiLance AI Deal Engine — AI-powered matching connects projects with top freelancers through smart contract escrow"
-                    width={1100}
-                    height={580}
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1100px"
-                    style={{ width: '100%', height: 'auto', maxWidth: '1100px', borderRadius: '24px', boxShadow: '0 25px 60px -12px rgba(0,0,0,0.15)', display: 'inline-block' }}
-                  />
-                </div>
+              <ScrollReveal width="100%" direction="up" delay={0.1}>
+                <DashboardShowcase />
               </ScrollReveal>
             </div>
           </section>
@@ -59,15 +45,6 @@ const Home: React.FC = () => {
             <div className={commonStyles.sectionContainer}>
               <ScrollReveal width="100%" direction="up" delay={0.1}>
                 <PainSolutions />
-              </ScrollReveal>
-            </div>
-          </section>
-
-          {/* Interactive Interface Showcase */}
-          <section className={commonStyles.homeSection} aria-label="Interactive dashboard showcase">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up" delay={0.1}>
-                <DashboardShowcase />
               </ScrollReveal>
             </div>
           </section>
@@ -90,38 +67,11 @@ const Home: React.FC = () => {
             </div>
           </section>
 
-          {/* Features */}
-          <section id="features" className={commonStyles.homeSection} aria-label="Platform features">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="right">
-                <Features />
-              </ScrollReveal>
-            </div>
-          </section>
-
-          {/* AI Showcase — AI services detail */}
-          <section id="ai-services" className={commonStyles.homeSection} aria-label="AI services">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="left" delay={0.1}>
-                <AIShowcase />
-              </ScrollReveal>
-            </div>
-          </section>
-
           {/* How It Works */}
           <section id="how-it-works" className={commonStyles.homeSection} aria-label="How it works">
             <div className={commonStyles.sectionContainer}>
               <ScrollReveal width="100%" direction="left">
                 <HowItWorks />
-              </ScrollReveal>
-            </div>
-          </section>
-
-          {/* Project Demo codebase section */}
-          <section id="project-demo" className={commonStyles.homeSection} aria-label="Project demo and codebase">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up" delay={0.1}>
-                <ProjectDemo />
               </ScrollReveal>
             </div>
           </section>
