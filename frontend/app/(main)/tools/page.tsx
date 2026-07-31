@@ -30,7 +30,7 @@ const aiTools = [
     icon: DollarSign,
     tag: "Popular",
     tagColor: "#22c55e",
-    tagBg: "#f0fdf4",
+    tagBg: "rgba(34, 197, 94, 0.15)",
   },
   {
     title: "AI Proposal Writer",
@@ -38,8 +38,8 @@ const aiTools = [
     href: "/ai/proposal-writer",
     icon: FileText,
     tag: "AI-Powered",
-    tagColor: "#8b5cf6",
-    tagBg: "#f5f3ff",
+    tagColor: "#a855f7",
+    tagBg: "rgba(168, 85, 247, 0.15)",
   },
   {
     title: "AI Rate Advisor",
@@ -48,7 +48,7 @@ const aiTools = [
     icon: TrendingUp,
     tag: "AI-Powered",
     tagColor: "#3b82f6",
-    tagBg: "#eff6ff",
+    tagBg: "rgba(59, 130, 246, 0.15)",
   },
   {
     title: "AI Skill Analyzer",
@@ -57,233 +57,149 @@ const aiTools = [
     icon: Brain,
     tag: "New",
     tagColor: "#f97316",
-    tagBg: "#fff7ed",
+    tagBg: "rgba(249, 115, 22, 0.15)",
   },
   {
-    title: "AI Scope Planner",
-    description: "Plan project scope, milestones, timeline, and budget with AI-powered breakdown and risk assessment.",
-    href: "/ai/scope-planner",
+    title: "AI Project Scope Planner",
+    description: "Generate comprehensive project scope documents, milestones, deliverables, and timelines in seconds.",
+    href: "/tools/project-scope-generator",
     icon: Layers,
-    tag: null,
-    tagColor: "",
-    tagBg: "",
+    tag: "AI-Powered",
+    tagColor: "#a855f7",
+    tagBg: "rgba(168, 85, 247, 0.15)",
   },
   {
-    title: "Income Calculator",
-    description: "Project your freelance income, taxes, savings, and financial health with country-specific calculations.",
-    href: "/ai/income-calculator",
-    icon: BarChart3,
-    tag: null,
-    tagColor: "",
-    tagBg: "",
+    title: "AI Freelance Risk Checker",
+    description: "Analyze project descriptions for red flags, unrealistic budgets, Scope Creep risk, and client reputation scores.",
+    href: "/tools/freelance-risk-checker",
+    icon: Shield,
+    tag: "Free",
+    tagColor: "#22c55e",
+    tagBg: "rgba(34, 197, 94, 0.15)",
   },
   {
-    title: "Expense & Tax Calculator",
-    description: "Plan self-employment taxes, quarterly estimates, and business deductions with country-specific rules.",
-    href: "/ai/expense-calculator",
-    icon: Calculator,
-    tag: null,
-    tagColor: "",
-    tagBg: "",
+    title: "AI Milestone Generator",
+    description: "Break down complex projects into structured, paid milestone schedules with suggested payment terms.",
+    href: "/tools/milestone-generator",
+    icon: Zap,
+    tag: "Popular",
+    tagColor: "#22c55e",
+    tagBg: "rgba(34, 197, 94, 0.15)",
   },
   {
-    title: "Invoice Generator",
-    description: "Create professional invoices with line items, tax calculations, and multiple currency support.",
-    href: "/ai/invoice-generator",
+    title: "AI Proposal Reviewer",
+    description: "Paste your draft proposal and get an instant AI review with actionable tips to increase client response rates.",
+    href: "/tools/proposal-reviewer",
+    icon: Search,
+    tag: "Free",
+    tagColor: "#22c55e",
+    tagBg: "rgba(34, 197, 94, 0.15)",
+  },
+  {
+    title: "Freelance Invoice Generator",
+    description: "Create professional PDF invoices with multi-currency support, payment links, and instant download. No account required.",
+    href: "/tools/freelance-invoice-template",
     icon: FileText,
-    tag: null,
-    tagColor: "",
-    tagBg: "",
+    tag: "Free",
+    tagColor: "#22c55e",
+    tagBg: "rgba(34, 197, 94, 0.15)",
   },
   {
-    title: "Contract Builder",
-    description: "Generate legally-sound freelance contracts with customizable clauses, IP terms, and jurisdiction support.",
+    title: "Contract Template Builder",
+    description: "Generate legally sound freelance contract templates with IP assignment, NDA clauses, and milestone terms.",
     href: "/tools/contract-builder",
     icon: Shield,
-    tag: null,
-    tagColor: "",
-    tagBg: "",
+    tag: "Popular",
+    tagColor: "#22c55e",
+    tagBg: "rgba(34, 197, 94, 0.15)",
   },
   {
-    title: "Fraud Check",
-    description: "Analyze project descriptions and messages for scam patterns, suspicious payment terms, and red flags.",
-    href: "/ai/fraud-check",
-    icon: Search,
-    tag: "Security",
-    tagColor: "#ef4444",
-    tagBg: "#fef2f2",
-  },
-  {
-    title: "AI Chatbot",
-    description: "Get instant answers about freelancing, pricing, and finding talent. 24/7 intelligent support powered by AI.",
+    title: "AI Chatbot Assistant",
+    description: "24/7 AI-powered assistance for freelancing advice, pricing strategy, client communication tips, and platform help.",
     href: "/ai/chatbot",
     icon: MessageSquare,
     tag: "Free",
     tagColor: "#22c55e",
-    tagBg: "#f0fdf4",
-  },
-];
-
-const platformTools = [
-  {
-    title: "Cost Calculator",
-    description: "Estimate project costs based on skill, complexity, and duration with real market rate data.",
-    href: "/cost-calculator",
-    icon: Calculator,
-  },
-  {
-    title: "Find Talent",
-    description: "Get AI-matched with the best freelancers in minutes.",
-    href: "/client/find-talent",
-    icon: FileText,
-  },
-  {
-    title: "Browse Projects",
-    description: "Browse available projects matching your skills.",
-    href: "/freelancer/projects",
-    icon: Users,
+    tagBg: "rgba(34, 197, 94, 0.15)",
   },
 ];
 
 export default function ToolsPage() {
   return (
-    <main style={{ minHeight: '100vh' }}>
+    <main className={commonStyles.main}>
       {/* Hero Header */}
-      <header style={{ textAlign: 'center', padding: '4rem 2rem 3rem', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: 'white' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '999px', background: 'rgba(168,85,247,0.2)', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem', color: '#c4b5fd' }}>
+      <header className={commonStyles.hero}>
+        <div className={commonStyles.heroBadge}>
           <Sparkles size={14} />
           <span>11 Free AI Tools</span>
         </div>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: '0 0 0.75rem', letterSpacing: '-0.02em' }}>Freelancer Tools</h1>
-        <p style={{ fontSize: '1.25rem', color: '#94a3b8', margin: 0, maxWidth: '600px', marginInline: 'auto' }}>
+        <h1 className={commonStyles.title}>Freelancer Tools</h1>
+        <p className={commonStyles.subtitle}>
           Invoice generators, proposal templates, rate estimators, and more — all powered by AI. 100% free.
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-          <Link href="/ai" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', background: '#4573df', color: 'white', textDecoration: 'none', fontWeight: 600 }}>
+        <div className={commonStyles.heroCtas}>
+          <Link href="/ai" className={commonStyles.btnPrimary}>
             Explore All AI Tools <ArrowRight size={16} />
           </Link>
-          <Link href="/cost-calculator" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.2)', color: 'white', textDecoration: 'none', fontWeight: 600 }}>
+          <Link href="/cost-calculator" className={commonStyles.btnSecondary}>
             Cost Calculator
           </Link>
         </div>
       </header>
 
       {/* Stats Banner */}
-      <section style={{ padding: '1.5rem 2rem', background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#64748b' }}>
+      <section className={commonStyles.statsBanner}>
+        <div className={commonStyles.statsRow}>
+          <div className={commonStyles.statItem}>
             <Zap size={16} style={{ color: '#4573df' }} />
-            <span><strong style={{ color: '#0f172a' }}>11</strong> Free AI Tools</span>
+            <span><strong>11</strong> Free AI Tools</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#64748b' }}>
+          <div className={commonStyles.statItem}>
             <CheckCircle2 size={16} style={{ color: '#22c55e' }} />
-            <span><strong style={{ color: '#0f172a' }}>No</strong> Sign-up Required</span>
+            <span><strong>No</strong> Sign-up Required</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#64748b' }}>
+          <div className={commonStyles.statItem}>
             <Globe size={16} style={{ color: '#8b5cf6' }} />
-            <span><strong style={{ color: '#0f172a' }}>70+</strong> Countries</span>
+            <span><strong>70+</strong> Countries</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#64748b' }}>
+          <div className={commonStyles.statItem}>
             <Clock size={16} style={{ color: '#f97316' }} />
-            <span><strong style={{ color: '#0f172a' }}>Instant</strong> Results</span>
+            <span><strong>Instant</strong> Results</span>
           </div>
         </div>
       </section>
 
       {/* AI Tools Grid */}
-      <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>AI-Powered Tools</h2>
-          <p style={{ fontSize: '1rem', color: '#64748b', margin: 0 }}>100% free, instant results, no account needed.</p>
+      <section className={commonStyles.gridSection}>
+        <div className={commonStyles.sectionHeader}>
+          <h2 className={commonStyles.sectionTitle}>AI-Powered Tools</h2>
+          <p className={commonStyles.sectionDesc}>100% free, instant results, no account needed.</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+        <div className={commonStyles.grid}>
           {aiTools.map((tool) => {
             const Icon = tool.icon;
             return (
               <Link
                 key={tool.title}
                 href={tool.href}
-                style={{
-                  display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.5rem',
-                  borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit',
-                  transition: 'all 0.25s ease', background: 'white',
-                }}
+                className={commonStyles.card}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon size={22} style={{ color: '#4573df' }} />
+                <div className={commonStyles.cardHeader}>
+                  <div className={commonStyles.iconBox}>
+                    <Icon size={22} />
                   </div>
                   {tool.tag && (
-                    <span style={{ padding: '0.2rem 0.7rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700, background: tool.tagBg, color: tool.tagColor }}>
+                    <span className={commonStyles.tagPill} style={{ background: tool.tagBg, color: tool.tagColor }}>
                       {tool.tag}
                     </span>
                   )}
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.4rem', color: '#0f172a' }}>{tool.title}</h3>
-                  <p style={{ fontSize: '0.88rem', color: '#64748b', margin: 0, lineHeight: 1.5 }}>{tool.description}</p>
-                </div>
-                <div style={{ marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
-                  <span style={{ color: '#4573df', fontWeight: 600, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-                    Try Now <ArrowRight size={14} />
-                  </span>
-                </div>
+                <h3 className={commonStyles.cardTitle}>{tool.title}</h3>
+                <p className={commonStyles.cardDesc}>{tool.description}</p>
               </Link>
             );
           })}
-        </div>
-      </section>
-
-      {/* Platform Tools */}
-      <section style={{ padding: '3rem 2rem', background: '#f8fafc', borderTop: '1px solid #f1f5f9' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>Platform Tools</h2>
-            <p style={{ fontSize: '1rem', color: '#64748b', margin: 0 }}>Essential freelancing tools built into MegiLance.</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-            {platformTools.map((tool) => {
-              const Icon = tool.icon;
-              return (
-                <Link
-                  key={tool.title}
-                  href={tool.href}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem',
-                    borderRadius: '14px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit',
-                    transition: 'all 0.2s', background: 'white',
-                  }}
-                >
-                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Icon size={20} style={{ color: '#3b82f6' }} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 650, margin: '0 0 0.2rem', color: '#0f172a' }}>{tool.title}</h3>
-                    <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>{tool.description}</p>
-                  </div>
-                  <ArrowRight size={16} style={{ color: '#94a3b8', flexShrink: 0 }} />
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section style={{ padding: '3rem 2rem', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.8rem', fontWeight: 700, margin: '0 0 0.75rem', color: '#0f172a' }}>Ready to start freelancing?</h2>
-        <p style={{ fontSize: '1.05rem', color: '#64748b', margin: '0 0 1.5rem', maxWidth: '500px', marginInline: 'auto' }}>
-          Join thousands of freelancers using MegiLance to find work, manage projects, and get paid.
-        </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <Link href="/signup" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', background: '#4573df', color: 'white', textDecoration: 'none', fontWeight: 600 }}>
-            Get Started Free <ArrowRight size={16} />
-          </Link>
-          <Link href="/explore" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', color: '#475569', textDecoration: 'none', fontWeight: 600 }}>
-            Explore Platform
-          </Link>
         </div>
       </section>
     </main>

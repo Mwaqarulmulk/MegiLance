@@ -1,1 +1,54 @@
-.container { background-color: var(--theme-bg, var(--bg-primary-light)); color: var(--theme-text, var(--text-primary-light)); }
+/* Categories.light.module.css */
+
+.main {
+  color: #0f172a;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.cardTitle {
+  color: #0f172a;
+}
+
+.cardDesc {
+  color: #64748b;
+}
+
+.statsSection {
+  background: rgba(248, 250, 252, 0.8);
+  border-color: rgba(226, 232, 240, 0.8);
+}
+
+.statLabel {
+  color: #64748b;
+}
+
+.ctaTitle {
+  color: #0f172a;
+}
+
+.ctaDesc {
+  color: #475569;
+}
+
+.btnSecondary {
+  border-color: #cbd5e1;
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.btnSecondary:hover {
+  background: #f8fafc;
+}

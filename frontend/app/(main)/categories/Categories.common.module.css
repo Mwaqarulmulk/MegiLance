@@ -1,3 +1,209 @@
-.container { min-height: 100vh; }
-.header { padding: 4rem 1rem; }
-.title { font-weight: 700; }
+/* Categories.common.module.css */
+
+.main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  text-align: center;
+  padding: 4.5rem 1.5rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(69, 115, 223, 0.15);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4573df;
+  border: 1px solid rgba(69, 115, 223, 0.3);
+}
+
+.title {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 650px;
+  opacity: 0.85;
+}
+
+.gridSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  backdrop-filter: blur(12px);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.iconBox {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardTitle {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem 0;
+}
+
+.cardDesc {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.arrowIcon {
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.card:hover .arrowIcon {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+/* Stats Section */
+.statsSection {
+  padding: 3.5rem 1.5rem;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.statsGrid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.statValue {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #4573df;
+}
+
+.statLabel {
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+  opacity: 0.8;
+}
+
+/* CTA Section */
+.ctaSection {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.ctaTitle {
+  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.ctaDesc {
+  font-size: 1.05rem;
+  margin: 0;
+  max-width: 550px;
+  opacity: 0.85;
+}
+
+.ctaActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4573df 0%, #3b82f6 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(69, 115, 223, 0.35);
+  transition: transform 0.25s ease;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  border: 1px solid;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.25s ease;
+}
+
+.btnSecondary:hover {
+  transform: translateY(-2px);
+}
