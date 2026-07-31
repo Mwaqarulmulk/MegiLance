@@ -20,7 +20,7 @@ import {
   CheckCircle2, LogIn, Star,
   Lightbulb, Wallet, Award, BarChart3,
   Globe, Smartphone, Database, Shield, Bot,
-  Plus, Maximize2,
+  Plus, Maximize2, RotateCcw,
 } from 'lucide-react';
 
 const RobotModel = dynamic(() => import('./RobotModel'), { ssr: false, loading: () => null });
@@ -792,10 +792,25 @@ export default function ChatbotAgent() {
       setShowProactiveChip(true);
       setTimeout(() => setShowProactiveChip(false), 8000);
     }, 10000);
-    return () => {
-      if (proactiveTimerRef.current) clearTimeout(proactiveTimerRef.current);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
     };
-  }, [pathname, isOpen, mounted]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  const handleResetChat = useCallback(() => {
+    setMessages([]);
+    setConversationId(null);
+    setActiveFlow(null);
+    setFlowStepIndex(0);
+    setFlowData({});
+    setSelectedSkills([]);
+    playSound('send');
+  }, [playSound]);
 
   // ── Helpers ────────────────────────────────────────────────────────────
 
@@ -2067,19 +2082,28 @@ export default function ChatbotAgent() {
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.375rem', alignItems: 'center' }}>
+                <button
+                  onClick={handleResetChat}
+                  className={cn(commonStyles.expandBtn, themeStyles.closeButton)}
+                  aria-label="Reset conversation"
+                  title="Clear conversation"
+                >
+                  <RotateCcw size={16} />
+                </button>
                 <button
                   onClick={() => { setIsOpen(false); router.push('/ai/chatbot'); }}
                   className={cn(commonStyles.expandBtn, themeStyles.closeButton)}
                   aria-label="Open full page chatbot"
                   title="Open full chatbot page"
                 >
-                  <Maximize2 size={18} />
+                  <Maximize2 size={16} />
                 </button>
                 <button
                   onClick={toggleChatbot}
                   className={cn(commonStyles.closeButton, themeStyles.closeButton)}
                   aria-label="Close chat"
+                  title="Close chat"
                 >
                   <X size={18} />
                 </button>
@@ -2194,7 +2218,13 @@ export default function ChatbotAgent() {
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={activeFlow ? 'Type your answer\u2026' : 'Ask me anything\u2026'}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(e);
+                    }
+                  }}
+                  placeholder={activeFlow ? 'Type your answer\u2026' : 'Ask me anything\u2026 (Enter to send)'}
                   className={cn(commonStyles.chatbotAgentInput, themeStyles.chatbotAgentInput)}
                   disabled={isLoading || !conversationId}
                 />
@@ -2277,7 +2307,7 @@ export default function ChatbotAgent() {
               transition={{ duration: 0.3, type: 'spring' }}
               className={commonStyles.flexCenter}
             >
-              <RobotModel size={150} />
+              <RobotModel size={80} />
             </motion.div>
           )}
         </AnimatePresence>

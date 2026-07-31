@@ -96,10 +96,23 @@
 
 @media (min-width: 1200px) {
   .homeSection {
-    padding: 1.5rem 0;
+    padding: 2rem 0;
   }
 
   .sectionContainer {
+    max-width: 1280px;
     padding: 0 2.5rem;
   }
 }
+
+@media (min-width: 1440px) {
+  .homeSection {
+    padding: 2.5rem 0;
+  }
+
+  .sectionContainer {
+    max-width: 1440px;
+    padding: 0 3rem;
+  }
+}
+
