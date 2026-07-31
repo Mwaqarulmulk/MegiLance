@@ -358,8 +358,8 @@ export default function ProfileCompletion() {
     } catch (e) {
       // Ignore storage errors
     }
-    const role = localStorage.getItem("portal_area") || "freelancer";
-    router.push(role === "client" ? "/client/dashboard" : "/freelancer/dashboard");
+    const savedRole = (typeof window !== "undefined" && (localStorage.getItem("portal_area") || localStorage.getItem("ml_user_role"))) || "freelancer";
+    router.push(savedRole.includes("client") ? "/client/dashboard" : "/freelancer/dashboard");
   };
 
   if (loading) {

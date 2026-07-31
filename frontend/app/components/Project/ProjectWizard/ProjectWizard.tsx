@@ -363,7 +363,12 @@ export default function ProjectWizard() {
         status: 'open',
       });
 
-      router.push(`/client/projects/${project.id}?new=true`);
+      const projectId = project?.id || project?.data?.id || project?.project_id || project?.project?.id;
+      if (projectId) {
+        router.push(`/client/projects/${projectId}?new=true`);
+      } else {
+        router.push('/client/projects');
+      }
     } catch (error: any) {
       const message = error?.message || 'Failed to create project';
       if (message.includes('profile')) {

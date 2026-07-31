@@ -641,10 +641,12 @@ export default function InvoiceWizard({
 
       localStorage.removeItem('invoice_draft');
       
+      const invoiceId = result?.id || result?.data?.id || result?.invoice_id || result?.data?.invoice_id;
+      
       if (onComplete) {
-        onComplete(result.id);
+        onComplete(invoiceId || '');
       } else {
-        router.push(`/invoices/${result.id}`);
+        router.push(invoiceId ? `/invoices/${invoiceId}` : '/invoices');
       }
     } catch (error) {
       console.error('Error creating invoice:', error);

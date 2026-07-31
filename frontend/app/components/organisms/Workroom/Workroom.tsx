@@ -23,9 +23,9 @@ export default function Workroom({ contractId }: WorkroomProps) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const area = localStorage.getItem('portal_area');
+      const area = localStorage.getItem('portal_area') || localStorage.getItem('ml_user_role');
       if (area) {
-        setDashboardUrl(`/${area}/dashboard`);
+        setDashboardUrl(area.includes('client') ? '/client/dashboard' : '/freelancer/dashboard');
       }
     }
   }, []);
