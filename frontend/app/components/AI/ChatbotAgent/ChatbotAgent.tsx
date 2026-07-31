@@ -792,6 +792,11 @@ export default function ChatbotAgent() {
       setShowProactiveChip(true);
       setTimeout(() => setShowProactiveChip(false), 8000);
     }, 10000);
+    return () => {
+      if (proactiveTimerRef.current) clearTimeout(proactiveTimerRef.current);
+    };
+  }, [pathname, isOpen, mounted]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {

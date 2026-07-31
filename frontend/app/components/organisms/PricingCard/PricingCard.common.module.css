@@ -1,9 +1,9 @@
 /* AI-HINT: Common styles for the PricingCard component. Defines the layout, structure, typography, and spacing for individual pricing tiers. */
 
 .card {
-  border-radius: 24px;
-  padding: 36px 32px;
-  padding-top: 44px;
+  border-radius: 26px;
+  padding: 40px 34px;
+  padding-top: 48px;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -18,8 +18,9 @@
 }
 
 .popular {
-  padding-top: 52px;
-  margin-top: 12px;
+  padding-top: 56px;
+  margin-top: 10px;
+  box-shadow: 0 16px 40px rgba(69, 115, 223, 0.2);
 }
 
 .popularBadge {
@@ -27,43 +28,43 @@
   top: 0;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 8px 24px;
+  padding: 9px 26px;
   border-radius: 9999px;
   font-family: var(--font-family-body, inherit);
-  font-size: 0.8rem;
-  font-weight: 800;
+  font-size: 0.825rem;
+  font-weight: 850;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   white-space: nowrap;
-  background: linear-gradient(135deg, var(--color-primary, var(--ml-blue)) 0%, #667eea 100%);
+  background: linear-gradient(135deg, var(--color-primary, var(--ml-blue)) 0%, #6366f1 100%);
   color: #ffffff;
   border: none;
-  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.45);
+  box-shadow: 0 8px 24px rgba(69, 115, 223, 0.45);
   z-index: 10;
 }
 
 .cardHeader {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .cardTier {
   font-family: var(--font-family-heading, inherit);
-  font-size: 1.75rem;
-  font-weight: 800;
+  font-size: 1.85rem;
+  font-weight: 850;
   letter-spacing: -0.025em;
 }
 
 .cardDescription {
   font-family: var(--font-family-body, inherit);
-  font-size: 0.95rem;
+  font-size: 0.975rem;
   line-height: 1.65;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
   min-height: 3.2em; /* approx 2 lines */
-  opacity: 0.85;
+  opacity: 0.88;
 }
 
 .priceSection {
-  margin-bottom: 24px;
+  margin-bottom: 26px;
 }
 
 .price {
@@ -74,23 +75,23 @@
 
 .priceAmount {
   font-family: var(--font-family-heading, inherit);
-  font-size: 3.75rem;
-  font-weight: 850;
+  font-size: 3.85rem;
+  font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1;
 }
 
 .pricePeriod {
   font-family: var(--font-family-body, inherit);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.975rem;
+  font-weight: 650;
   padding-left: 4px;
   opacity: 0.8;
 }
 
 .features {
   list-style: none;
-  padding: 24px 0;
+  padding: 26px 0;
   margin: 0;
   flex-grow: 1;
   display: flex;
@@ -102,15 +103,15 @@
 .featureItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   font-family: var(--font-family-body, inherit);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.975rem;
+  font-weight: 550;
 }
 
 .featureIcon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
@@ -125,19 +126,24 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-weight: 750;
+  font-size: 1rem;
+  padding: 14px 24px;
+  border-radius: 14px;
 }
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
   .card {
-    padding: 24px;
-    padding-top: 32px;
+    padding: 28px 24px;
+    padding-top: 36px;
   }
 }
 
 @media (max-width: 374px) {
   .card {
-    padding: 20px;
-    padding-top: 28px;
+    padding: 22px 18px;
+    padding-top: 32px;
   }
 }
+

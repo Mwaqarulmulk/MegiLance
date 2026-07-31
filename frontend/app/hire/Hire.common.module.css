@@ -6,55 +6,61 @@
 
 /* Hero Section */
 .hero {
-  padding: 4rem 1rem;
+  padding: 4.5rem 1.5rem 3rem;
   text-align: center;
 }
 
 .heroTitle {
-  font-size: 2.25rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 768px) {
-  .heroTitle {
-    font-size: 3rem;
-  }
+  font-family: var(--font-family-heading, inherit);
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
 }
 
 .heroSubtitle {
-  font-size: 1.25rem;
-  max-width: 42rem;
+  font-size: clamp(1.1rem, 1.8vw, 1.25rem);
+  line-height: 1.65;
+  max-width: 44rem;
   margin: 0 auto;
+  opacity: 0.88;
+  font-weight: 450;
 }
 
 /* Skills Section */
 .skillsSection {
-  padding: 3rem 1rem;
-  max-width: 72rem;
+  padding: 3rem 1.5rem;
+  max-width: 76rem;
   margin: 0 auto;
 }
 
 .skillsSectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-}
-
-.categoryGroup {
+  font-family: var(--font-family-heading, inherit);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
   margin-bottom: 2.5rem;
 }
 
+.categoryGroup {
+  margin-bottom: 3rem;
+}
+
 .categoryTitle {
-  font-size: 1.125rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .skillsGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 @media (min-width: 640px) {
@@ -70,45 +76,54 @@
 }
 
 .skillCard {
-  padding: 1.25rem;
-  border-radius: 0.75rem;
+  padding: 1.35rem;
+  border-radius: 1rem;
   border: 1px solid var(--border-primary, var(--border-light));
   text-decoration: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .skillCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.1);
 }
 
 .skillName {
-  font-weight: 500;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
 }
 
 .skillRate {
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 650;
+  margin-top: 0.5rem;
+  opacity: 0.85;
 }
 
 /* Industries Section */
 .industriesSection {
-  padding: 3rem 1rem;
-  max-width: 72rem;
+  padding: 3rem 1.5rem;
+  max-width: 76rem;
   margin: 0 auto;
 }
 
 .industriesSectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
+  font-family: var(--font-family-heading, inherit);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  margin-bottom: 2.5rem;
   text-align: center;
 }
 
 .industriesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 @media (min-width: 768px) {
@@ -127,48 +142,59 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.25rem;
-  border-radius: 0.75rem;
+  padding: 1.5rem 1rem;
+  border-radius: 1rem;
   text-decoration: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .industryCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.1);
 }
 
 .industryEmoji {
-  font-size: 1.875rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
 }
 
 .industryName {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.925rem;
+  font-weight: 700;
 }
 
 /* CTA Section */
 .ctaSection {
-  padding: 4rem 1rem;
+  padding: 4.5rem 1.5rem;
   text-align: center;
 }
 
 .ctaTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-family: var(--font-family-heading, inherit);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
 }
 
 .ctaText {
-  margin-bottom: 1.5rem;
+  font-size: 1.075rem;
+  margin-bottom: 2rem;
+  opacity: 0.88;
 }
 
 .ctaButton {
   display: inline-block;
-  padding: 0.75rem 2rem;
-  font-weight: 500;
-  border-radius: 0.5rem;
+  padding: 0.875rem 2.25rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 0.75rem;
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+}
+
