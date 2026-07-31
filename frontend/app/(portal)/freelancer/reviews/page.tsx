@@ -88,13 +88,10 @@ const ReviewsPage: React.FC = () => {
       const userData: any = await api.auth.me();
       const userId = userData.id;
       try {
-        const reviewsData = await (api.reviews as any).list?.({ user_id: userId });
-        setReviews(Array.isArray(reviewsData) ? reviewsData : []);
+        const reviewsData: any = await api.reviews.list({ reviewed_user_id: userId });
+        const items = Array.isArray(reviewsData) ? reviewsData : (reviewsData?.data?.items ?? reviewsData?.items ?? []);
+        setReviews(items);
       } catch { setReviews([]); }
-      try {
-        const statsData = await (api.reviews as any).getStats?.(userId);
-        setStats(statsData as ReviewStats);
-      } catch { /* calculate manually */ }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load reviews');
     } finally { setLoading(false); }
@@ -172,16 +169,7 @@ const ReviewsPage: React.FC = () => {
   const handleSubmitResponse = async (reviewId: number) => {
     if (!responseText.trim()) return;
     try {
-      const respondFunc = (api.reviews as any).respond;
-      if (respondFunc) {
-        await respondFunc(reviewId, responseText);
-      } else {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api'}/reviews/${reviewId}/respond`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ response: responseText }),
-        });
-      }
+      await api.reviewResponses.createResponse(reviewId, responseText);
       setReviews(prev => prev.map(r => r.id === reviewId ? { ...r, response_text: responseText } : r));
     } catch (err) {
       console.error('Failed to submit response:', err);
@@ -356,7 +344,8 @@ const ReviewsPage: React.FC = () => {
                                   type="button"
                                   onClick={() => handleDeleteReview(review.id)}
                                   disabled={deletingReviewId === review.id}
-                                  style={{ marginLeft: '0.5rem', padding: '0.25rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', opacity: deletingReviewId === review.id ? 0.5 : 1 }}
+                                  className={cn(commonStyles.deleteReviewBtn, themed.deleteReviewBtn)}
+                                  style={{ opacity: deletingReviewId === review.id ? 0.5 : 1 }}
                                   title="Delete review"
                                   aria-label="Delete this review"
                                 >

@@ -20,6 +20,10 @@
   border: 1px solid transparent;
 }
 
+.backWrapper {
+  margin-bottom: 1.25rem;
+}
+
 /* ── Warning banner ────────────────────────────────────────── */
 .warningBanner {
   display: flex;

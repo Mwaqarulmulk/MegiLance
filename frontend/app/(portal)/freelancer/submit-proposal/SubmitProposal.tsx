@@ -296,11 +296,11 @@ const SubmitProposal: React.FC = () => {
           estimated_hours: data.estimatedHours || 0,
         });
       } else {
-        await api.portal.freelancer.submitProposal({
+        await proposalsApi.create({
           project_id: parseInt(data.jobId),
           cover_letter: data.coverLetter.trim(),
           bid_amount: bidAmount,
-          delivery_time: data.estimatedHours || 0,
+          estimated_hours: data.estimatedHours || undefined,
         });
       }
 

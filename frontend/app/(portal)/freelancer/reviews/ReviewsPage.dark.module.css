@@ -1,4 +1,4 @@
-﻿/* @AI-HINT: Dark theme for enhanced Reviews page */
+/* @AI-HINT: Dark theme for enhanced Reviews page */
 .pageWrapper { background: var(--bg-primary-dark); }
 .header { border-bottom-color: var(--border-dark); }
 .headerTitle { color: var(--text-primary-dark); }
@@ -33,6 +33,8 @@
 .clientName { color: var(--text-primary-dark); }
 .projectName { color: var(--text-tertiary-dark); }
 .date { color: #64748b; }
+.deleteReviewBtn { color: var(--ml-red-light); }
+.deleteReviewBtn:hover { background-color: rgba(255, 71, 87, 0.15); }
 .reviewItemComment { color: var(--text-tertiary-dark); }
 
 .star { color: var(--ml-yellow); }

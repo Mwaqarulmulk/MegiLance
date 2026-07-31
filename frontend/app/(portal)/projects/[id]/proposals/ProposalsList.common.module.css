@@ -199,6 +199,16 @@
   font-size: 0.8125rem;
 }
 
+.starRating {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.star {
+  transition: color 0.15s ease;
+}
+
 /* ── Card actions ────────────────────────────────────────────── */
 .cardActions {
   display: flex;

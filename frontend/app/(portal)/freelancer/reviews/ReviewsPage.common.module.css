@@ -228,6 +228,18 @@
 .projectName { font-size: 13px; display: block; }
 
 .reviewItemRating { text-align: right; }
+.deleteReviewBtn {
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, background-color 0.2s;
+}
 .date { font-size: 12px; display: block; margin-top: 2px; }
 
 .reviewItemComment {

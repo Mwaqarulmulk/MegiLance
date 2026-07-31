@@ -22,14 +22,16 @@
 .readMoreBtn { color: #6b8de6; }
 
 .starsRow { color: #94a3b8; }
+.starFilled { fill: #f59e0b; color: #f59e0b; }
+.starEmpty { fill: none; color: #475569; }
 
 .cardActions { border-top-color: #2a2d3e; }
 
-.statusBadge.pending { background: rgba(251,191,36,0.12); color: #fcd34d; }
-.statusBadge.submitted { background: rgba(107,141,230,0.12); color: #6b8de6; }
-.statusBadge.accepted { background: rgba(52,211,153,0.12); color: #34d399; }
-.statusBadge.rejected { background: rgba(248,113,113,0.12); color: #f87171; }
-.statusBadge.withdrawn { background: rgba(255,255,255,0.06); color: #94a3b8; }
+.statusPending { background: rgba(251,191,36,0.12); color: #fcd34d; }
+.statusSubmitted { background: rgba(107,141,230,0.12); color: #6b8de6; }
+.statusAccepted { background: rgba(52,211,153,0.12); color: #34d399; }
+.statusRejected { background: rgba(248,113,113,0.12); color: #f87171; }
+.statusWithdrawn { background: rgba(255,255,255,0.06); color: #94a3b8; }
 
 .emptyState { color: #475569; }
 .errorState { color: #f87171; }

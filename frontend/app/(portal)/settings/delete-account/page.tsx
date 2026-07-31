@@ -73,7 +73,7 @@ export default function DeleteAccountPage() {
     <div className={cn(commonStyles.page, themeStyles.page)}>
       <div className={cn(commonStyles.card, themeStyles.card)}>
         {/* Back link */}
-        <div style={{ marginBottom: "1.25rem" }}>
+        <div className={commonStyles.backWrapper}>
           <Button
             variant="ghost"
             size="sm"

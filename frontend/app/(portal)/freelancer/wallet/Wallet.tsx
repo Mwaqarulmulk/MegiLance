@@ -252,7 +252,11 @@ const Wallet: React.FC = () => {
     setWithdrawError('');
     setUiLoading(true);
     try {
-      await api.portal.freelancer.withdraw(amt);
+      await api.wallet.withdraw({
+        amount: amt,
+        method: 'bank_transfer',
+        destination: 'default_payout_account',
+      });
 
       toaster.notify({
         title: 'Withdrawal requested',

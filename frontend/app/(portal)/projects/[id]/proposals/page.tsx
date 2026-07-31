@@ -1,5 +1,7 @@
 // @AI-HINT: Client view of proposals for a specific project — shows all bids, accept/reject actions, freelancer profile links
 "use client";
+// @AI-HINT: Client view of proposals for a specific project — shows all bids, accept/reject actions, freelancer profile links
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -41,30 +43,29 @@ type SortKey = "date_desc" | "date_asc" | "bid_asc" | "bid_desc" | "rating_desc"
 
 function StarRating({ value, size = 14 }: { value: number; size?: number }) {
   return (
-    <span style={{ display: "inline-flex", gap: 2, color: "#f59e0b" }}>
+    <span className={commonStyles.starRating}>
       {[1, 2, 3, 4, 5].map((n) => (
         <Star
           key={n}
           size={size}
-          fill={n <= Math.round(value) ? "#f59e0b" : "none"}
-          color={n <= Math.round(value) ? "#f59e0b" : "#d1d5db"}
+          className={cn(commonStyles.star, n <= Math.round(value) ? commonStyles.starFilled : commonStyles.starEmpty)}
         />
       ))}
     </span>
   );
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: "pending",
-  submitted: "submitted",
-  accepted: "accepted",
-  rejected: "rejected",
-  withdrawn: "withdrawn",
+const STATUS_CLASS_MAP: Record<string, string> = {
+  pending: "statusPending",
+  submitted: "statusSubmitted",
+  accepted: "statusAccepted",
+  rejected: "statusRejected",
+  withdrawn: "statusWithdrawn",
 };
 
 function getStatusClass(status: string, themeStyles: Record<string, string>) {
-  const key = STATUS_COLORS[status] || "submitted";
-  return cn(commonStyles.statusBadge, (themeStyles as any)[`statusBadge.${key}`]);
+  const cls = STATUS_CLASS_MAP[status] || "statusSubmitted";
+  return cn(commonStyles.statusBadge, (themeStyles as any)[cls]);
 }
 
 export default function ProjectProposalsPage() {
@@ -303,7 +304,6 @@ export default function ProjectProposalsPage() {
                 ? `$${proposal.hourly_rate}/hr`
                 : "—";
               const isExpanded = expandedCards.has(proposal.id);
-              const statusKey = STATUS_COLORS[proposal.status] || "submitted";
 
               return (
                 <div
@@ -437,56 +437,7 @@ export default function ProjectProposalsPage() {
                     )}
                   >
                     {/* Status badge */}
-                    <span
-                      className={`${commonStyles.statusBadge} ${
-                        (themeStyles as any)[`statusBadge.${statusKey}`] || ""
-                      }`}
-                      style={
-                        statusKey === "accepted"
-                          ? {
-                              background:
-                                resolvedTheme === "dark"
-                                  ? "rgba(52,211,153,0.12)"
-                                  : "#d1fae5",
-                              color:
-                                resolvedTheme === "dark"
-                                  ? "#34d399"
-                                  : "#065f46",
-                            }
-                          : statusKey === "rejected"
-                          ? {
-                              background:
-                                resolvedTheme === "dark"
-                                  ? "rgba(248,113,113,0.12)"
-                                  : "#fee2e2",
-                              color:
-                                resolvedTheme === "dark"
-                                  ? "#f87171"
-                                  : "#991b1b",
-                            }
-                          : statusKey === "submitted"
-                          ? {
-                              background:
-                                resolvedTheme === "dark"
-                                  ? "rgba(107,141,230,0.12)"
-                                  : "#dbeafe",
-                              color:
-                                resolvedTheme === "dark"
-                                  ? "#6b8de6"
-                                  : "#1e40af",
-                            }
-                          : {
-                              background:
-                                resolvedTheme === "dark"
-                                  ? "rgba(251,191,36,0.12)"
-                                  : "#fef3c7",
-                              color:
-                                resolvedTheme === "dark"
-                                  ? "#fcd34d"
-                                  : "#92400e",
-                            }
-                      }
-                    >
+                    <span className={getStatusClass(proposal.status, themeStyles)}>
                       {proposal.status}
                     </span>
 

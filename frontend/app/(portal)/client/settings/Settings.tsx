@@ -297,7 +297,7 @@ const Settings: React.FC = () => {
             <SettingsSection
               title="Change Password"
               description="Update your account password. You'll need your current password to confirm."
-              footerContent={<Button onClick={() => {}} disabled={savingPassword} type="submit" form="change-password-form">{savingPassword ? 'Changing...' : 'Change Password'}</Button>}
+              footerContent={<Button disabled={savingPassword} type="submit" form="change-password-form">{savingPassword ? 'Changing...' : 'Change Password'}</Button>}
             >
               <form id="change-password-form" onSubmit={handleChangePassword}>
                 <div className={styles.formGrid}>
@@ -311,7 +311,7 @@ const Settings: React.FC = () => {
             <SettingsSection
               title="Change Email"
               description="Update your account email. A verification link will be sent to the new address."
-              footerContent={<Button onClick={() => {}} disabled={savingEmail} type="submit" form="change-email-form">{savingEmail ? 'Sending...' : 'Send Verification'}</Button>}
+              footerContent={<Button disabled={savingEmail} type="submit" form="change-email-form">{savingEmail ? 'Sending...' : 'Send Verification'}</Button>}
             >
               <form id="change-email-form" onSubmit={handleChangeEmail}>
                 <div className={styles.formGrid}>
