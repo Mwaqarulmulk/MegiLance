@@ -206,8 +206,26 @@ export default function SidebarNav({
     className
   );
 
+  const currentRole = userType || (
+    pathname?.startsWith('/admin') ? 'admin' :
+    pathname?.startsWith('/freelancer') ? 'freelancer' : 'client'
+  );
+
+  const roleBadgeConfig = {
+    client: { label: 'Client Workspace', style: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' },
+    freelancer: { label: 'Freelancer Workspace', style: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
+    admin: { label: 'Admin Console', style: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20' },
+  }[currentRole];
+
   return (
     <div className={sidebarClasses} role={isCollapsed ? 'tooltip' : undefined}>
+      {!isCollapsed && roleBadgeConfig && (
+        <div className="px-3 py-2 mb-2">
+          <div className={cn('text-xs font-semibold px-2.5 py-1 rounded-full border text-center uppercase tracking-wider', roleBadgeConfig.style)}>
+            {roleBadgeConfig.label}
+          </div>
+        </div>
+      )}
       <ul className={styles.sidebarNavList}>
           {navItemsWithBadges.map((item) => {
             const isDirectActive = pathname === item.href || pathname.startsWith(item.href + '/');

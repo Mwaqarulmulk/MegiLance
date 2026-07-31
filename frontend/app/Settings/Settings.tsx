@@ -109,18 +109,18 @@ const Settings: React.FC = () => {
         ],
       },
       {
-        label: "Billing & Payments",
+        label: portalArea === "freelancer" ? "Payout & Earnings" : "Billing & Payments",
         items: [
           {
             icon: <CreditCard size={20} />,
-            title: "Wallet & Payments",
-            desc: "Payment methods and transaction history",
+            title: portalArea === "freelancer" ? "Payout Options (EasyPaisa / JazzCash / Bank)" : "Payment Methods & Wallet",
+            desc: portalArea === "freelancer" ? "Manage withdrawal methods and local bank accounts" : "Credit cards, bank accounts, and wallet balance",
             path: `${basePath}/wallet`,
           },
           {
             icon: <FileText size={20} />,
-            title: "Invoices",
-            desc: "View and download invoices",
+            title: "Invoices & Receipts",
+            desc: "View and download billing statements and invoices",
             path: `${basePath}/invoices`,
           },
         ],
@@ -128,19 +128,19 @@ const Settings: React.FC = () => {
       ...(portalArea === "admin"
         ? [
             {
-              label: "Administration",
+              label: "Platform Administration",
               items: [
                 {
                   icon: <Key size={20} />,
-                  title: "API Keys",
-                  desc: "Manage API keys and access tokens",
+                  title: "API Keys & Webhooks",
+                  desc: "Manage API keys, access tokens, and webhooks",
                   path: "/admin/api-keys",
                 },
                 {
                   icon: <Database size={20} />,
-                  title: "Data & Export",
-                  desc: "Export data and manage backups",
-                  path: "/admin/export",
+                  title: "System Audit & Logs",
+                  desc: "View administrative security logs and system metrics",
+                  path: "/admin/audit",
                 },
               ],
             },

@@ -185,13 +185,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 try {
                   var key = 'megilance-theme';
                   var stored = localStorage.getItem(key);
-                  var theme;
-                  if (stored && stored !== 'system') {
-                    theme = stored;
-                  } else {
-                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    try { localStorage.setItem(key, theme); } catch (_) {}
-                  }
+                  var theme = (stored === 'dark' || stored === 'light') ? stored : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                  try { localStorage.setItem(key, theme); } catch (_) {}
                   document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(theme);
                   document.documentElement.style.colorScheme = theme;

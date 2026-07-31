@@ -149,6 +149,18 @@ export default function DisputesPage() {
         </div>
       </header>
 
+      {(user?.user_type === 'admin' || user?.role === 'admin') && (
+        <div className="flex items-center justify-between rounded-xl border border-purple-500/30 bg-purple-500/10 p-4 text-purple-700 dark:text-purple-300">
+          <div>
+            <h3 className="font-semibold">Administrator Access</h3>
+            <p className="text-xs">You have admin privileges. Access full arbitration, escrow splits, and dispute management console.</p>
+          </div>
+          <Button variant="primary" size="sm" onClick={() => router.push('/admin/disputes')}>
+            Open Admin Disputes Console
+          </Button>
+        </div>
+      )}
+
       {/* Create Dispute Modal */}
       {showCreateForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

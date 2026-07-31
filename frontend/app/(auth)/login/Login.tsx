@@ -268,7 +268,8 @@ const Login: React.FC = () => {
       } catch {
         /* localStorage unavailable in private browsing */
       }
-      router.push(getRedirect(role));
+      const targetUrl = getRedirect(role);
+      window.location.href = targetUrl;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error
@@ -284,7 +285,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     if (isPreviewMode()) {
       // Preview mode: bypass validation and go straight to the role destination
-      router.push("/freelancer/dashboard");
+      window.location.href = "/freelancer/dashboard";
       return;
     }
     if (!validate()) return;
@@ -330,7 +331,8 @@ const Login: React.FC = () => {
       } catch {
         /* localStorage unavailable in private browsing */
       }
-      router.push(getRedirect(resolvedRole));
+      const destination = getRedirect(resolvedRole);
+      window.location.href = destination;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error

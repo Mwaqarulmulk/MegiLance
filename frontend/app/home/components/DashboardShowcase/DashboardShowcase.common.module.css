@@ -135,31 +135,31 @@
 }
 
 /* Light / Dark Themes */
-.light {
+:global(html.light) .section {
   background: var(--bg-primary-light);
 }
-.light .title { color: #0f172a; }
-.light .subtitle { color: #64748b; }
-.light .ctrlBtn:hover { background: #f8fafc; }
-.light .ctrlBtnActive { background: #f1f5f9; border-color: #cbd5e1; }
-.light .ctrlTitle { color: #0f172a; }
-.light .ctrlDesc { color: #475569; }
-.light .browserFrame { background: white; border-color: #e2e8f0; }
-.light .browserHeader { background: #f8fafc; border-color: #e2e8f0; }
-.light .browserUrl { bg-color: #f1f5f9; color: #64748b; background: #f1f5f9; }
+:global(html.light) .title { color: #0f172a; }
+:global(html.light) .subtitle { color: #64748b; }
+:global(html.light) .ctrlBtn:hover { background: #f8fafc; }
+:global(html.light) .ctrlBtnActive { background: #f1f5f9; border-color: #cbd5e1; }
+:global(html.light) .ctrlTitle { color: #0f172a; }
+:global(html.light) .ctrlDesc { color: #475569; }
+:global(html.light) .browserFrame { background: white; border-color: #e2e8f0; }
+:global(html.light) .browserHeader { background: #f8fafc; border-color: #e2e8f0; }
+:global(html.light) .browserUrl { color: #64748b; background: #f1f5f9; }
 
-.dark {
+:global(html.dark) .section {
   background: var(--bg-primary-dark);
 }
-.dark .title { color: white; }
-.dark .subtitle { color: #94a3b8; }
-.dark .ctrlBtn:hover { background: rgba(255,255,255,0.02); }
-.dark .ctrlBtnActive { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
-.dark .ctrlTitle { color: white; }
-.dark .ctrlDesc { color: #94a3b8; }
-.dark .browserFrame { background: #0c121e; border-color: rgba(255,255,255,0.08); }
-.dark .browserHeader { background: #0f172a; border-color: rgba(255,255,255,0.08); }
-.dark .browserUrl { color: #64748b; background: rgba(0,0,0,0.25); }
+:global(html.dark) .title { color: white; }
+:global(html.dark) .subtitle { color: #94a3b8; }
+:global(html.dark) .ctrlBtn:hover { background: rgba(255,255,255,0.02); }
+:global(html.dark) .ctrlBtnActive { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+:global(html.dark) .ctrlTitle { color: white; }
+:global(html.dark) .ctrlDesc { color: #94a3b8; }
+:global(html.dark) .browserFrame { background: #0c121e; border-color: rgba(255,255,255,0.08); }
+:global(html.dark) .browserHeader { background: #0f172a; border-color: rgba(255,255,255,0.08); }
+:global(html.dark) .browserUrl { color: #64748b; background: rgba(0,0,0,0.25); }
 
 @media (max-width: 900px) {
   .grid {

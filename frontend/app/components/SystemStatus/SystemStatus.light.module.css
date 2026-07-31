@@ -1,0 +1,4 @@
+/* Light theme for SystemStatus */
+.container {
+  background: var(--bg-primary-light);
+}

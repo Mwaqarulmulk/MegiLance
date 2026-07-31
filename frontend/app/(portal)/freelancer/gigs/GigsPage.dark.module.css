@@ -1,0 +1,4 @@
+/* Dark theme for GigsPage */
+.container {
+  background: var(--bg-primary-dark);
+}

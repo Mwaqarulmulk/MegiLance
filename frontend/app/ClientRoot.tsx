@@ -20,8 +20,9 @@ const ClientRoot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem={true}
+      defaultTheme="light"
+      enableSystem={false}
+      themes={['light', 'dark']}
       disableTransitionOnChange={true}
       enableColorScheme={true}
       storageKey="megilance-theme"

@@ -1,0 +1,40 @@
+/* Dark theme for DashboardShowcase */
+.section {
+  background: var(--bg-primary-dark);
+}
+
+.title {
+  color: white;
+}
+
+.subtitle {
+  color: #94a3b8;
+}
+
+.ctrlBtnActive {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.ctrlTitle {
+  color: white;
+}
+
+.ctrlDesc {
+  color: #94a3b8;
+}
+
+.browserFrame {
+  background: #0c121e;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.browserHeader {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.browserUrl {
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.25);
+}

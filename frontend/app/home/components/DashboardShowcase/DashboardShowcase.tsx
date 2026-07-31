@@ -17,12 +17,14 @@ import {
   DollarSign
 } from 'lucide-react';
 import commonStyles from './DashboardShowcase.common.module.css';
+import lightStyles from './DashboardShowcase.light.module.css';
+import darkStyles from './DashboardShowcase.dark.module.css';
 
 type ScreenKey = 'client' | 'estimator' | 'proposals' | 'escrow';
 
 export default function DashboardShowcase() {
   const mode = useThemeMode();
-  const isDark = mode === 'dark';
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const [activeScreen, setActiveScreen] = useState<ScreenKey>('client');
 
   const screens = {
@@ -154,7 +156,7 @@ export default function DashboardShowcase() {
   };
 
   return (
-    <section className={cn(commonStyles.section, isDark ? commonStyles.dark : commonStyles.light)}>
+    <section className={cn(commonStyles.section, themeStyles.section)}>
       <div className={commonStyles.container}>
         
         {/* Section Header */}

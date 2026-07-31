@@ -1,0 +1,5 @@
+/* Dark theme for ProjectDemoPage */
+.container {
+  background: var(--bg-primary-dark);
+  color: white;
+}

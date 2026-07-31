@@ -1,0 +1,4 @@
+/* Dark theme for SystemStatus */
+.container {
+  background: var(--bg-primary-dark);
+}

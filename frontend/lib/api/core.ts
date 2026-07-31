@@ -11,9 +11,32 @@ let authToken: string | null = null;
 
 export function setAuthToken(token: string | null) {
   authToken = token;
+  if (typeof window !== "undefined") {
+    try {
+      if (token) {
+        localStorage.setItem("auth_token", token);
+        const isSecure = window.location.protocol === "https:";
+        const secureFlag = isSecure ? "; Secure" : "";
+        document.cookie = `auth_token=${encodeURIComponent(token)}; path=/; max-age=604800; SameSite=Lax${secureFlag}`;
+      } else {
+        localStorage.removeItem("auth_token");
+        document.cookie = "auth_token=; path=/; max-age=0; SameSite=Lax";
+        document.cookie = "auth_token=; path=/api/v1; max-age=0; SameSite=Lax";
+      }
+    } catch {
+      /* storage or cookie set fallback */
+    }
+  }
 }
 
 export function getAuthToken(): string | null {
+  if (!authToken && typeof window !== "undefined") {
+    try {
+      authToken = localStorage.getItem("auth_token");
+    } catch {
+      authToken = null;
+    }
+  }
   return authToken;
 }
 

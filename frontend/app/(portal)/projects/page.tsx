@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { projectsApi } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import { PageTransition, ScrollReveal } from '@/app/components/Animations';
 import { StaggerContainer, StaggerItem } from '@/app/components/Animations/StaggerContainer';
 import Button from '@/app/components/atoms/Button/Button';
@@ -16,7 +17,7 @@ import {
   Briefcase, Search, ChevronRight, Calendar, DollarSign, Users, ArrowUpDown,
   ChevronLeft, Filter, X, RefreshCw, SlidersHorizontal,
   Code, Palette, PenTool, Megaphone, BarChart3, Cpu, Globe, Zap,
-  Shield, BookOpen, Clock, Layers, Tag,
+  Shield, BookOpen, Clock, Layers, Tag, Plus,
 } from 'lucide-react';
 import commonStyles from './Projects.common.module.css';
 import lightStyles from './Projects.light.module.css';
@@ -290,18 +291,29 @@ export default function PortalProjectsPage() {
     </div>
   );
 
+  const { user } = useAuth();
+  const userRole = (user?.user_type || user?.role || (typeof window !== 'undefined' ? localStorage.getItem('portal_area') : 'client') || 'client').toLowerCase();
+
+  const roleTitle = userRole === 'client' ? 'My Posted Projects & Hiring' : userRole === 'admin' ? 'Platform Projects & Moderation' : 'Explore & Apply to Projects';
+  const roleSubtitle = userRole === 'client' ? 'Manage your job listings, review incoming proposals, and track active hires.' : userRole === 'admin' ? 'Monitor all active and archived marketplace projects across the platform.' : 'Browse high-quality client projects matching your skill set and submit competitive proposals.';
+
   return (
     <PageTransition>
       <div className={cn(commonStyles.page, themed.page)}>
         <ScrollReveal>
           <header className={commonStyles.pageHeader}>
             <div>
-              <h1 className={commonStyles.pageTitle}>Browse Projects</h1>
+              <h1 className={commonStyles.pageTitle}>{roleTitle}</h1>
               <p className={cn(commonStyles.pageSubtitle, themed.pageSubtitle)}>
-                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} available
+                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} available • {roleSubtitle}
               </p>
             </div>
             <div className={commonStyles.headerActions}>
+              {userRole === 'client' && (
+                <Button variant="primary" size="md" onClick={() => router.push('/create-project')}>
+                  <Plus size={16} /> Post New Project
+                </Button>
+              )}
               <div className={cn(commonStyles.sortWrapper, themed.sortWrapper)}>
                 <ArrowUpDown size={13} />
                 <select value={sortBy} onChange={e => { setSortBy(e.target.value); setCurrentPage(1); }} className={cn(commonStyles.sortSelect, themed.sortSelect)} aria-label="Sort projects">

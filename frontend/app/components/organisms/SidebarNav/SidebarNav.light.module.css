@@ -6,62 +6,63 @@
 }
 
 .navLinkInactive:hover {
-  background-color: #f3f5f8;
-  color: #1f2937;
+  background-color: #f1f5f9;
+  color: #0f172a;
 }
 
 .navLinkActive {
-  background-color: #eef3ff;
-  color: #2d5bd0;
-  box-shadow: none;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  color: #2563eb;
+  font-weight: 600;
+  box-shadow: 0 2px 8px -2px rgba(37, 99, 235, 0.15);
 }
 
 .navLinkActive:hover {
-  background-color: #e3ecff;
-  color: #2451c4;
+  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+  color: #1d4ed8;
 }
 
 .badge {
-  background-color: var(--border-light);
-  color: #374151;
+  background-color: #e2e8f0;
+  color: #334155;
 }
 
 .navLinkActive .badge {
-  background-color: rgba(69, 115, 223, 0.15);
-  color: #2d5bd0;
+  background-color: #2563eb;
+  color: #ffffff;
 }
 
 .sidebarNavSubLink {
   background-color: transparent;
-  border-left-color: #dde3ed;
-  color: #4b5563;
+  border-left-color: #cbd5e1;
+  color: #64748b;
 }
 
 .sidebarNavSubLink:hover {
-  background-color: #f3f5f8;
-  color: #111827;
+  background-color: #f1f5f9;
+  color: #0f172a;
 }
 
 .sidebarNavSubLink.navLinkActive {
-  background-color: #eef3ff;
-  border-left-color: var(--ml-blue);
-  color: #2d5bd0;
+  background-color: #eef2ff;
+  border-left-color: #2563eb;
+  color: #2563eb;
 }
 
 .sectionLabel {
-  color: var(--text-tertiary-light);
+  color: #94a3b8;
 }
 
 .sidebarNavSectionDivider {
-  background-color: #e8eaed;
+  background-color: #e2e8f0;
 }
 
 /* Tooltip for collapsed state */
 .tooltip {
-  background-color: #1f2937;
-  color: var(--bg-primary-light);
+  background-color: #0f172a;
+  color: #ffffff;
 }
 
 .tooltip::before {
-  border-right-color: #1f2937;
-}
+  border-right-color: #0f172a;
+}

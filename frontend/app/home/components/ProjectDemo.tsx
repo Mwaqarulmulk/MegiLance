@@ -15,10 +15,12 @@ import {
   Globe 
 } from 'lucide-react';
 import commonStyles from './ProjectDemo.common.module.css';
+import lightStyles from './ProjectDemo.light.module.css';
+import darkStyles from './ProjectDemo.dark.module.css';
 
 export default function ProjectDemo() {
   const mode = useThemeMode();
-  const isDark = mode === 'dark';
+  const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   const techCards = [
     {
@@ -60,7 +62,7 @@ export default function ProjectDemo() {
   ];
 
   return (
-    <section className={cn(commonStyles.section, isDark ? commonStyles.dark : commonStyles.light)}>
+    <section className={cn(commonStyles.section, themeStyles.section)}>
       <div className={commonStyles.container}>
         
         {/* Section Header */}
@@ -82,10 +84,10 @@ export default function ProjectDemo() {
               key={idx} 
               className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col hover:-translate-y-1 transition-transform"
             >
-              <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 flex items-center justify-center border border-slate-100 dark:border-slate-850 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 flex items-center justify-center border border-slate-100 dark:border-slate-800 mb-4">
                 {card.icon}
               </div>
-              <h3 className="font-bold text-sm text-slate-850 dark:text-slate-250 mb-1">{card.layer}</h3>
+              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200 mb-1">{card.layer}</h3>
               <p className="text-[11px] font-mono text-slate-500 mb-2">{card.tools}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
                 {card.desc}
@@ -95,10 +97,10 @@ export default function ProjectDemo() {
         </div>
 
         {/* Code Repository CTA */}
-        <div className="bg-slate-50 dark:bg-slate-900/40 border rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left space-y-1">
             <h4 className="font-bold text-slate-900 dark:text-white text-base">Explore the Complete Codebase</h4>
-            <p className="text-xs text-slate-650 dark:text-slate-400 max-w-xl">
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xl">
               Inspect database schemas, REST endpoints, testing coverages, and frontend components in the public repository.
             </p>
           </div>
@@ -114,7 +116,7 @@ export default function ProjectDemo() {
             </a>
             <Link 
               href="/project-demo" 
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-905 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Architecture & Stack Details
             </Link>

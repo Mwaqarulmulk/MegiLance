@@ -1,0 +1,40 @@
+/* Light theme for DashboardShowcase */
+.section {
+  background: var(--bg-primary-light);
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #64748b;
+}
+
+.ctrlBtnActive {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.ctrlTitle {
+  color: #0f172a;
+}
+
+.ctrlDesc {
+  color: #475569;
+}
+
+.browserFrame {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.browserHeader {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.browserUrl {
+  color: #64748b;
+  background: #f1f5f9;
+}

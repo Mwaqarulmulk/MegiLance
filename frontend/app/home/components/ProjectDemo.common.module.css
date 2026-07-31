@@ -169,37 +169,37 @@
 }
 
 /* Light / Dark Themes */
-.light {
+:global(html.light) .section {
   background: var(--bg-secondary-light);
 }
-.light .title { color: #0f172a; }
-.light .subtitle { color: #64748b; }
-.light .card { background: white; border-color: #e2e8f0; box-shadow: 0 4px 20px -8px rgba(0,0,0,0.08); }
-.light .cardTitle { color: #0f172a; }
-.light .icon { color: #4573df; }
-.light .cardDesc { color: #475569; }
-.light .btnSecondary { border-color: #cbd5e1; color: #334155; }
-.light .btnSecondary:hover { background: #f1f5f9; }
-.light .techList { border-color: #f1f5f9; }
-.light .techListTitle { color: #94a3b8; }
-.light .techBadge { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
-.light .featureList li { color: #475569; }
+:global(html.light) .title { color: #0f172a; }
+:global(html.light) .subtitle { color: #64748b; }
+:global(html.light) .card { background: white; border-color: #e2e8f0; box-shadow: 0 4px 20px -8px rgba(0,0,0,0.08); }
+:global(html.light) .cardTitle { color: #0f172a; }
+:global(html.light) .icon { color: #4573df; }
+:global(html.light) .cardDesc { color: #475569; }
+:global(html.light) .btnSecondary { border-color: #cbd5e1; color: #334155; }
+:global(html.light) .btnSecondary:hover { background: #f1f5f9; }
+:global(html.light) .techList { border-color: #f1f5f9; }
+:global(html.light) .techListTitle { color: #94a3b8; }
+:global(html.light) .techBadge { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+:global(html.light) .featureList li { color: #475569; }
 
-.dark {
+:global(html.dark) .section {
   background: var(--bg-secondary-dark);
 }
-.dark .title { color: white; }
-.dark .subtitle { color: #94a3b8; }
-.dark .card { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
-.dark .cardTitle { color: white; }
-.dark .icon { color: #6390f0; }
-.dark .cardDesc { color: #94a3b8; }
-.dark .btnSecondary { border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
-.dark .btnSecondary:hover { background: rgba(255,255,255,0.04); }
-.dark .techList { border-color: rgba(255,255,255,0.05); }
-.dark .techListTitle { color: #64748b; }
-.dark .techBadge { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); color: #cbd5e1; }
-.dark .featureList li { color: #cbd5e1; }
+:global(html.dark) .title { color: white; }
+:global(html.dark) .subtitle { color: #94a3b8; }
+:global(html.dark) .card { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+:global(html.dark) .cardTitle { color: white; }
+:global(html.dark) .icon { color: #6390f0; }
+:global(html.dark) .cardDesc { color: #94a3b8; }
+:global(html.dark) .btnSecondary { border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
+:global(html.dark) .btnSecondary:hover { background: rgba(255,255,255,0.04); }
+:global(html.dark) .techList { border-color: rgba(255,255,255,0.05); }
+:global(html.dark) .techListTitle { color: #64748b; }
+:global(html.dark) .techBadge { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); color: #cbd5e1; }
+:global(html.dark) .featureList li { color: #cbd5e1; }
 
 @media (max-width: 768px) {
   .mainGrid {

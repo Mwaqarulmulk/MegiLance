@@ -1,0 +1,26 @@
+/* Light theme for ProjectDemo */
+.section {
+  background: var(--bg-secondary-light);
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #64748b;
+}
+
+.card {
+  background: white;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 20px -8px rgba(0, 0, 0, 0.08);
+}
+
+.cardTitle {
+  color: #0f172a;
+}
+
+.cardDesc {
+  color: #475569;
+}
