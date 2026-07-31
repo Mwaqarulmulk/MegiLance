@@ -943,6 +943,38 @@ export function buildPageFactsJsonLd(facts: Array<{ property: string; value: str
   };
 }
 
+/**
+ * WebApplication — structured schema for interactive online calculators and tools.
+ * Helps Google rich results show interactive web tools in search SERP.
+ */
+export function buildWebApplicationJsonLd(opts: {
+  name: string;
+  description: string;
+  path: string;
+  category?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: opts.name,
+    description: opts.description,
+    url: toAbsoluteUrl(opts.path),
+    applicationCategory: opts.category || 'BusinessApplication',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript. Requires HTML5.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    author: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: BASE_URL,
+    },
+  };
+}
+
 /** Render one or more JSON-LD schemas as a combined script string */
 export function jsonLdScriptProps(...schemas: Record<string, unknown>[]) {
   if (schemas.length === 1) {
@@ -956,3 +988,4 @@ export function jsonLdScriptProps(...schemas: Record<string, unknown>[]) {
     dangerouslySetInnerHTML: { __html: JSON.stringify(schemas) },
   };
 }
+

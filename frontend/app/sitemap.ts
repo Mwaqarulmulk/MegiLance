@@ -93,7 +93,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/press', changeFrequency: 'monthly', priority: 0.60 },
 
     { path: '/why-hire', changeFrequency: 'monthly', priority: 0.88 },
-    { path: '/cost-calculator', changeFrequency: 'monthly', priority: 0.82 },
+    { path: '/cost-calculator', changeFrequency: 'weekly', priority: 0.90 },
+    { path: '/freelancer-rate-calculator', changeFrequency: 'weekly', priority: 0.90 },
     { path: '/compare', changeFrequency: 'monthly', priority: 0.85 },
     { path: '/compare/upwork', changeFrequency: 'monthly', priority: 0.82 },
     { path: '/compare/fiverr', changeFrequency: 'monthly', priority: 0.82 },

@@ -143,9 +143,32 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'LinkedInBot',
         allow: '/',
       },
-      // ── Apple bot ──
+      // ── Apple bot & extended ──
       {
         userAgent: 'Applebot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      {
+        userAgent: 'Applebot-Extended',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // ── DeepSeek Bot ──
+      {
+        userAgent: 'DeepSeekBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // ── SearchGPT Bot ──
+      {
+        userAgent: 'SearchGPT-Bot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      // ── Meta External Agent ──
+      {
+        userAgent: 'Meta-ExternalAgent',
         allow: '/',
         disallow: ['/api/', '/admin/', '/portal/'],
       },

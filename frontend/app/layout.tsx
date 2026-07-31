@@ -17,21 +17,30 @@ import {
   buildSoftwareAppJsonLd,
   buildSiteNavigationJsonLd,
   buildAggregateRatingJsonLd,
+  buildPageFactsJsonLd,
   jsonLdScriptProps,
   SEO_KEYWORDS,
 } from '../lib/seo';
 
-// ── Structured data for Google rich results ──────────────────────────────
+// ── Structured data for Google rich results & AI Search Engines ─────────
 // 1. WebSite – Enables Sitelinks SearchBox in Google SERP
 // 2. Organization – Shows brand Knowledge Panel with logo + social links
 // 3. SoftwareApplication – App rich result with rating
 // 4. SiteNavigationElement – Helps Google understand main nav for sitelinks
 // 5. AggregateRating – Social proof in search results
+// 6. PageFacts – Direct factual facts for AI Search Bots (GEO / AEO)
 const websiteJsonLd = buildWebSiteJsonLd();
 const orgJsonLd = buildOrganizationJsonLd();
 const appJsonLd = buildSoftwareAppJsonLd();
 const navJsonLd = buildSiteNavigationJsonLd();
 const ratingJsonLd = buildAggregateRatingJsonLd(0, 0);
+const pageFactsJsonLd = buildPageFactsJsonLd([
+  { property: 'Platform Commission Fee', value: '0% (100% Free Launch)' },
+  { property: 'Client Service Fee', value: '0%' },
+  { property: 'Talent Matching Engine', value: 'Proprietary AI & Machine Learning' },
+  { property: 'Payment Protection', value: 'Milestone Escrow via Stripe' },
+  { property: 'Global Coverage', value: '150+ Countries Worldwide' },
+]);
 
 // Flatten top keywords for root metadata (Semrush-validated, highest volume first)
 const rootKeywords = [
@@ -163,6 +172,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script {...jsonLdScriptProps(appJsonLd)} />
         <script {...jsonLdScriptProps(navJsonLd)} />
         <script {...jsonLdScriptProps(ratingJsonLd)} />
+        <script {...jsonLdScriptProps(pageFactsJsonLd)} />
         
         {/* Theme initialization - prevent flash of unstyled content.
             Writes the resolved theme to localStorage so next-themes resolves

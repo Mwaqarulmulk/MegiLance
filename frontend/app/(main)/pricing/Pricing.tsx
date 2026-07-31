@@ -13,6 +13,7 @@ import {
   Check, Shield, Users, Zap, FileText, HeadphonesIcon,
   Building2, Lock, UserCheck, BarChart3, MessageSquare, Globe
 } from 'lucide-react';
+import FeeSavingsCalculator from '@/app/components/widgets/FeeSavingsCalculator';
 import commonStyles from './Pricing.common.module.css';
 import lightStyles from './Pricing.light.module.css';
 import darkStyles from './Pricing.dark.module.css';
@@ -200,6 +201,15 @@ const Pricing: React.FC = () => {
               </table>
             </div>
           </section>
+        </ScrollReveal>
+
+        {/* Live Fee Savings Calculator Widget */}
+        <ScrollReveal delay={0.35}>
+          <FeeSavingsCalculator
+            title="Interactive Fee Savings Visualizer"
+            subtitle="Test different project budgets to see how much money you save on MegiLance vs Upwork and Fiverr."
+            showCTA={true}
+          />
         </ScrollReveal>
 
         {/* FAQ */}
