@@ -9,6 +9,7 @@
   color: var(--gray-400);
   text-decoration: none;
   font-size: var(--text-sm);
+  transition: color 0.2s ease;
 }
 
 .backButton:hover {
@@ -16,35 +17,43 @@
 }
 
 .contractBadge {
-  background-color: var(--gray-800);
-  color: var(--gray-300);
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
   padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .tabs {
   display: flex;
   gap: var(--spacing-2);
-  background-color: var(--gray-800);
-  padding: 4px;
-  border-radius: var(--radius-lg);
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  padding: 6px;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   width: fit-content;
 }
 
 .tabBtn {
   color: var(--gray-400);
+  border-radius: var(--radius-lg);
+  padding: 8px 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .tabBtn:hover {
   color: var(--white);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .activeTab {
-  background-color: var(--gray-700);
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   color: var(--white);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
 }
 
 .participantList {
@@ -61,8 +70,8 @@
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-3);
-  background-color: var(--gray-900);
-  border: 1px solid var(--gray-800);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
   color: var(--white);
   font-weight: 500;

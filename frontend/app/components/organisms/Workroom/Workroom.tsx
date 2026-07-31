@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils';
 import LiveEditor from './LiveEditor';
 import Whiteboard from './Whiteboard';
 import VideoChat from './VideoChat';
-import { Code, PenTool, Video as VideoIcon, ArrowLeft, Loader2 } from 'lucide-react';
+import MilestoneEscrowManager from './MilestoneEscrowManager';
+import { Code, PenTool, Video as VideoIcon, ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import Loading from '@/app/components/atoms/Loading/Loading';
 
@@ -17,15 +18,17 @@ interface WorkroomProps {
 
 export default function Workroom({ contractId }: WorkroomProps) {
   const { resolvedTheme, theme } = useTheme();
-  const [activeTab, setActiveTab] = useState<'editor' | 'whiteboard'>('editor');
+  const [activeTab, setActiveTab] = useState<'escrow' | 'editor' | 'whiteboard'>('escrow');
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardUrl, setDashboardUrl] = useState('/dashboard');
+  const [userRole, setUserRole] = useState<'client' | 'freelancer'>('client');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const area = localStorage.getItem('portal_area') || localStorage.getItem('ml_user_role');
       if (area) {
         setDashboardUrl(area.includes('client') ? '/client/dashboard' : '/freelancer/dashboard');
+        setUserRole(area.includes('client') ? 'client' : 'freelancer');
       }
     }
   }, []);
@@ -69,6 +72,12 @@ export default function Workroom({ contractId }: WorkroomProps) {
         <div className={commonStyles.mainArea}>
           <div className={themeStyles.tabs}>
             <button 
+              className={cn(commonStyles.tabBtn, themeStyles.tabBtn, activeTab === 'escrow' && themeStyles.activeTab)}
+              onClick={() => setActiveTab('escrow')}
+            >
+              <ShieldCheck size={16} /> Milestones & Escrow Manager
+            </button>
+            <button 
               className={cn(commonStyles.tabBtn, themeStyles.tabBtn, activeTab === 'editor' && themeStyles.activeTab)}
               onClick={() => setActiveTab('editor')}
             >
@@ -83,7 +92,9 @@ export default function Workroom({ contractId }: WorkroomProps) {
           </div>
           
           <div className={commonStyles.tabContent}>
-            {activeTab === 'editor' ? (
+            {activeTab === 'escrow' ? (
+              <MilestoneEscrowManager contractId={contractId} userRole={userRole} />
+            ) : activeTab === 'editor' ? (
               <LiveEditor contractId={contractId} />
             ) : (
               <Whiteboard contractId={contractId} />

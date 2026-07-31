@@ -79,8 +79,12 @@ const COMPLEXITY_OPTIONS = [
   },
 ];
 
+import Micro1TalentHub from "@/app/components/organisms/Micro1TalentHub/Micro1TalentHub";
+import { Sparkles, FileText } from "lucide-react";
+
 export default function FindTalentPage() {
   const router = useRouter();
+  const [viewMode, setViewMode] = useState<"vetted" | "wizard">("vetted");
   const [step, setStep] = useState(0);
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -301,24 +305,55 @@ export default function FindTalentPage() {
   };
 
   return (
-    <div className="max-w-[900px] mx-auto px-4 py-6">
-      <h1 className="text-[28px] font-bold mb-2 text-gray-900 dark:text-white">
-        Find the Perfect Talent
-      </h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-8">
-        Describe your project and our AI will match you with the best
-        freelancers.
-      </p>
+    <div className="max-w-[1100px] mx-auto px-4 py-6 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-800 pb-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+            Talent Sourcing & AI Matching Hub
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Discover pre-vetted Micro1 autonomous engineers or post an AI-assisted project brief.
+          </p>
+        </div>
 
-      {/* Progress Bar */}
-      <div className="flex gap-1 mb-8">
-        {STEPS.map((s, i) => (
-          <div
-            key={s.id}
-            className={`flex-1 h-1 rounded-sm ${i <= step ? "bg-indigo-500" : "bg-gray-200 dark:bg-gray-700"}`}
-          />
-        ))}
+        {/* View Mode Switcher */}
+        <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-xl self-start md:self-auto border border-gray-200 dark:border-gray-700">
+          <button
+            onClick={() => setViewMode("vetted")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              viewMode === "vetted"
+                ? "bg-indigo-600 text-white shadow-md"
+                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            }`}
+          >
+            <Sparkles size={14} className={viewMode === "vetted" ? "text-amber-300" : ""} /> Micro1 Vetted Talent Market
+          </button>
+          <button
+            onClick={() => setViewMode("wizard")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              viewMode === "wizard"
+                ? "bg-indigo-600 text-white shadow-md"
+                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            }`}
+          >
+            <FileText size={14} /> Guided Project Brief Wizard
+          </button>
+        </div>
       </div>
+
+      {viewMode === "vetted" ? (
+        <Micro1TalentHub />
+      ) : (
+        <div>
+          {/* Progress Bar */}
+          <div className="flex gap-1 mb-8">
+            {STEPS.map((s, i) => (
+              <div
+                key={s.id}
+                className={`flex-1 h-1 rounded-sm ${i <= step ? "bg-indigo-500" : "bg-gray-200 dark:bg-gray-700"}`}
+              />
+            ))}
+          </div>
 
       <div className="mb-4 text-gray-500 dark:text-gray-400 text-sm">
         Step {step + 1} of {STEPS.length}: {STEPS[step].title}
@@ -687,6 +722,8 @@ export default function FindTalentPage() {
           </button>
         )}
       </div>
+        </div>
+      )}
     </div>
   );
 }
