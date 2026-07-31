@@ -336,10 +336,10 @@ export default function Features() {
               Join thousands of freelancers and clients already using MegiLance.
             </p>
             <div className={commonStyles.ctaActions}>
-              <Link href="/signup/freelancer" className={cn(commonStyles.ctaBtn, commonStyles.ctaBtnPrimary)}>
+              <Link href="/signup?role=freelancer" className={cn(commonStyles.ctaBtn, commonStyles.ctaBtnPrimary)}>
                 Start Freelancing <ArrowRight size={16} />
               </Link>
-              <Link href="/signup/client" className={cn(commonStyles.ctaBtn, commonStyles.ctaBtnSecondary, t.ctaBtnSecondary)}>
+              <Link href="/signup?role=client" className={cn(commonStyles.ctaBtn, commonStyles.ctaBtnSecondary, t.ctaBtnSecondary)}>
                 Hire Talent <ArrowRight size={16} />
               </Link>
             </div>

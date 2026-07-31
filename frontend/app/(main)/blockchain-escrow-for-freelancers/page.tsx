@@ -64,7 +64,7 @@ export default function Page() {
             Go to Security &amp; Escrow <ArrowRight size={18} />
           </Link>
           <Link 
-            href="/signup" 
+            href="/signup?role=freelancer" 
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold border border-white/40 text-white hover:bg-white/10 transition-colors"
           >
             Create Free Account

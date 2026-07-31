@@ -58,7 +58,7 @@ export default function Page() {
         </p>
         <div className="flex justify-center gap-4 flex-wrap">
           <Link 
-            href="/signup" 
+            href="/signup?role=freelancer" 
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-white text-emerald-650 hover:scale-[1.02] transition-transform"
           >
             Create Account <ArrowRight size={18} />

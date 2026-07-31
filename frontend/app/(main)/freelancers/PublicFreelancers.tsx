@@ -577,7 +577,7 @@ const PublicFreelancers: React.FC = () => {
             Join our community, get matched with projects, and grow your career.
           </p>
           <div className={common.bottomCtaButtons}>
-            <Link href="/signup" className={cn(common.ctaBtn, themed.ctaBtn)}>Create Free Profile</Link>
+            <Link href="/signup?role=freelancer" className={cn(common.ctaBtn, themed.ctaBtn)}>Create Free Profile</Link>
             <Link href="/how-it-works" className={cn(common.ctaBtnOutline, themed.ctaBtnOutline)}>Learn More</Link>
           </div>
         </section>

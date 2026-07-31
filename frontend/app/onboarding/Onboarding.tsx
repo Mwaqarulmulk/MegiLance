@@ -262,7 +262,9 @@ const Onboarding: React.FC = () => {
     localStorage.setItem("onboarding_complete", "true");
     localStorage.removeItem("freelancer_onboarding_step");
     localStorage.removeItem("freelancer_onboarding_data");
-    router.push("/freelancer/dashboard");
+
+    const role = safeLocalStorage.getItem("portal_area") || safeLocalStorage.getItem("ml_user_role") || "freelancer";
+    router.push(role === "client" ? "/client/dashboard" : "/freelancer/dashboard");
   };
 
   const progress = (step / TOTAL_STEPS) * 100;

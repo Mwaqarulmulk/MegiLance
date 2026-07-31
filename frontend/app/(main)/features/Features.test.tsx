@@ -70,7 +70,7 @@ describe('Features Component', () => {
     render(<Features />);
     expect(screen.getByText(/Ready to get started/i)).toBeInTheDocument();
     const links = screen.getAllByRole('link');
-    const freelancerLink = links.find(l => l.getAttribute('href') === '/signup/freelancer');
+    const freelancerLink = links.find(l => l.getAttribute('href') === '/signup?role=freelancer');
     expect(freelancerLink).toBeDefined();
   });
 

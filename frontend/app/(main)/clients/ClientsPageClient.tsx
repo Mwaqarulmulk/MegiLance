@@ -123,7 +123,7 @@ export default function ClientsPageClient() {
         </h2>
         <button
           className={cn(commonStyles.btnPrimary, t.btnPrimary)}
-          onClick={() => router.push("/auth/signup")}
+          onClick={() => router.push("/signup?role=client")}
           aria-label="Sign up as a client"
         >
           Sign up as a Client

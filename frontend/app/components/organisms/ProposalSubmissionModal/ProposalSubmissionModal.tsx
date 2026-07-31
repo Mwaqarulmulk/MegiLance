@@ -130,6 +130,22 @@ export default function ProposalSubmissionModal({
     }
   };
 
+  const milestoneTotal = milestones.reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+  const milestoneMismatch = milestones.length > 0 && Math.abs(milestoneTotal - bidNum) > 0.01;
+
+  const handleAutoBalanceMilestones = () => {
+    if (milestones.length === 0 || bidNum <= 0) return;
+    const perMilestone = Math.floor((bidNum / milestones.length) * 100) / 100;
+    const remainder = Math.round((bidNum - perMilestone * milestones.length) * 100) / 100;
+
+    setMilestones((prev) =>
+      prev.map((m, idx) => ({
+        ...m,
+        amount: idx === prev.length - 1 ? perMilestone + remainder : perMilestone,
+      }))
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
       <motion.div
@@ -206,14 +222,33 @@ export default function ProposalSubmissionModal({
                 <label className="font-bold text-slate-900 dark:text-white">
                   Milestone Schedule
                 </label>
-                <button
-                  type="button"
-                  onClick={handleAddMilestone}
-                  className="text-indigo-600 dark:text-indigo-400 font-semibold text-[11px] flex items-center gap-1 hover:underline"
-                >
-                  <Plus size={12} /> Add Milestone
-                </button>
+                <div className="flex items-center gap-3">
+                  {milestoneMismatch && (
+                    <button
+                      type="button"
+                      onClick={handleAutoBalanceMilestones}
+                      className="text-amber-600 dark:text-amber-400 font-semibold text-[11px] hover:underline"
+                    >
+                      ⚡ Auto-Balance
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleAddMilestone}
+                    className="text-indigo-600 dark:text-indigo-400 font-semibold text-[11px] flex items-center gap-1 hover:underline"
+                  >
+                    <Plus size={12} /> Add Milestone
+                  </button>
+                </div>
               </div>
+
+              {milestoneMismatch && (
+                <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/50 text-[11px] text-amber-700 dark:text-amber-300 flex items-center justify-between">
+                  <span>
+                    Milestone total (${milestoneTotal.toLocaleString()}) does not match total bid (${bidNum.toLocaleString()}).
+                  </span>
+                </div>
+              )}
 
               <div className="space-y-2">
                 {milestones.map((m, idx) => (

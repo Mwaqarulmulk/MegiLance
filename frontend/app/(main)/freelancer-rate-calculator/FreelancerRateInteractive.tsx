@@ -195,7 +195,7 @@ export default function FreelancerRateInteractive() {
                 <strong style={{ color: '#34d399' }}>${traditionalPlatformFeeLost.toLocaleString()}</strong> every year!
               </p>
               <Link
-                href="/(auth)/signup"
+                href="/signup?role=freelancer"
                 style={{
                   display: 'inline-block',
                   padding: '0.6rem 1.25rem',

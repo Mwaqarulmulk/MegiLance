@@ -144,7 +144,7 @@ export default function MatchScoreSimulatorClient() {
                 />
                 <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-850 text-center">
                   <Link 
-                    href="/signup" 
+                    href="/signup?role=freelancer" 
                     className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                   >
                     Invite to Project on MegiLance →
