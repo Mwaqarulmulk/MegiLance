@@ -1,17 +1,17 @@
-/* @AI-HINT: Common styles for the create-project wrapper page. */
+/* CreateProject.common.module.css */
+
 .wrapper {
-  min-height: 100vh;
-  padding: var(--space-8) 0;
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 80vh;
 }
 
-@media (max-width: 380px) {
+@media (max-width: 768px) {
   .wrapper {
-    padding: var(--space-4) 0;
-  }
-}
-
-@media (max-width: 320px) {
-  .wrapper {
-    padding: var(--space-2) 0;
+    padding: 1.5rem 1rem 3rem;
   }
 }

@@ -1,1 +1,5 @@
-/* @AI-HINT: Create Invoice page - dark theme */
+/* CreateInvoice.dark.module.css */
+
+.pageContainer {
+  color: #f8fafc;
+}

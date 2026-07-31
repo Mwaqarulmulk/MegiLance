@@ -1,4 +1,5 @@
-/* @AI-HINT: Light theme colors for create-project wrapper */
+/* CreateProject.light.module.css */
+
 .wrapper {
-  background: var(--color-bg-primary, #f8f9fa);
+  color: #0f172a;
 }

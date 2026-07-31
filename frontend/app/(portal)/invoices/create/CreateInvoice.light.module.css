@@ -1,1 +1,5 @@
-/* @AI-HINT: Create Invoice page - light theme */
+/* CreateInvoice.light.module.css */
+
+.pageContainer {
+  color: #0f172a;
+}
