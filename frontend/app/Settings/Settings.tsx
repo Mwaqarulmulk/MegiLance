@@ -39,7 +39,6 @@ interface SettingsCategory {
 }
 
 const Settings: React.FC = () => {
-  const { resolvedTheme } = useTheme();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

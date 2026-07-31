@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
@@ -12,8 +12,7 @@ import light from './Security.light.module.css';
 import dark from './Security.dark.module.css';
 
 const Security: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const themed = useThemeStyles(light, dark);
   const [showPolicy, setShowPolicy] = useState(false);
 
   return (

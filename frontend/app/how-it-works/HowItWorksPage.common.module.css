@@ -14,19 +14,21 @@
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  font-family: var(--font-family-heading);
-  line-height: 1.2;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 850;
+  margin-bottom: 1.25rem;
+  font-family: var(--font-family-heading, inherit);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
 }
 
 .subtitle {
-  font-size: 1.25rem;
-  opacity: 0.8;
-  max-width: 700px;
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+  opacity: 0.85;
+  max-width: 720px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.65;
+  font-weight: 450;
 }
 
 .main {
@@ -37,17 +39,18 @@
 
 .section {
   animation: fadeInUp 0.8s ease-out;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
 }
 
 .sectionTitle {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 800;
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-family: var(--font-family-heading);
+  margin-bottom: 1.25rem;
+  font-family: var(--font-family-heading, inherit);
   position: relative;
   padding-bottom: 1rem;
+  letter-spacing: -0.03em;
 }
 
 .sectionTitle::after {
@@ -64,12 +67,13 @@
 
 .sectionSubtitle {
   text-align: center;
-  margin-bottom: 2.5rem;
-  font-size: 1.1rem;
-  opacity: 0.8;
-  max-width: 600px;
+  margin-bottom: 2.75rem;
+  font-size: 1.125rem;
+  opacity: 0.85;
+  max-width: 640px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.6;
 }
 
 .grid {
@@ -84,15 +88,15 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 0 auto 2rem;
+  gap: 1.75rem;
+  max-width: 1050px;
+  margin: 0 auto 2.5rem;
 }
 
 .statCard {
   text-align: center;
-  padding: 2rem 1.5rem;
-  border-radius: 16px;
+  padding: 2.25rem 1.75rem;
+  border-radius: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -103,41 +107,45 @@
 .statIcon {
   display: flex;
   justify-content: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
   color: var(--color-primary, var(--ml-blue));
 }
 
 .statValue {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  font-weight: 850;
   color: var(--color-primary, var(--ml-blue));
-  margin-bottom: 0.25rem;
-  font-family: var(--font-family-heading);
+  margin-bottom: 0.35rem;
+  font-family: var(--font-family-heading, inherit);
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
 
 .statTitle {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .statDesc {
   font-size: 0.875rem;
-  opacity: 0.7;
+  opacity: 0.75;
+  line-height: 1.5;
 }
 
 /* Features Grid for Security section */
 .featuresGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
+  gap: 1.75rem;
   max-width: 1100px;
   margin: 0 auto;
 }
 
 .featureCard {
-  padding: 2rem;
-  border-radius: 16px;
+  padding: 2.25rem;
+  border-radius: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -146,45 +154,47 @@
 }
 
 .featureIcon {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: var(--color-primary, var(--ml-blue));
 }
 
 .featureTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 700;
   margin-bottom: 0.75rem;
-  font-family: var(--font-family-heading);
+  font-family: var(--font-family-heading, inherit);
+  letter-spacing: -0.015em;
 }
 
 .featureDesc {
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.65;
   opacity: 0.85;
 }
 
 /* Architecture Diagram */
 .architectureCard {
-  max-width: 800px;
+  max-width: 840px;
   margin: 0 auto;
-  padding: 2.5rem;
-  border-radius: 20px;
+  padding: 2.75rem;
+  border-radius: 24px;
   text-align: center;
 }
 
 .archLayer {
-  padding: 1.5rem;
-  border-radius: 12px;
+  padding: 1.75rem;
+  border-radius: 16px;
   margin-bottom: 0.5rem;
 }
 
 .archLayer h3 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
 .archLayer p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   margin: 0.25rem 0;
   opacity: 0.9;
 }
@@ -204,27 +214,28 @@
 /* CTA Section */
 .ctaSection {
   text-align: center;
-  padding: 4rem 2rem;
-  border-radius: 24px;
+  padding: 4.5rem 2.5rem;
+  border-radius: 28px;
   margin-top: 2rem;
 }
 
 .ctaTitle {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 850;
   margin-bottom: 1rem;
-  font-family: var(--font-family-heading);
+  font-family: var(--font-family-heading, inherit);
+  letter-spacing: -0.025em;
 }
 
 .ctaSubtitle {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   opacity: 0.85;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
 }
 
 .ctaButtons {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -232,11 +243,11 @@
 .ctaButton {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
+  gap: 0.6rem;
+  padding: 1.1rem 2.25rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.05rem;
   text-decoration: none;
   transition: transform 0.3s ease,
     box-shadow 0.3s ease,

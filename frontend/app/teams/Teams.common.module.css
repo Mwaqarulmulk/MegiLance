@@ -1,76 +1,80 @@
 /* @AI-HINT: Common styles for Teams page — hiring models, process steps, capabilities, CTA. */
 
-.page { padding: 80px 0; }
-.container { max-width: 1150px; margin: 0 auto; padding: 0 24px; }
+.page { padding: 90px 0; }
+.container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 
 /* Hero */
-.header { text-align: center; margin-bottom: 56px; }
+.header { text-align: center; margin-bottom: 64px; }
 .badge {
-  display: inline-block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em;
-  text-transform: uppercase; padding: 6px 16px; border-radius: 999px; margin-bottom: 16px;
+  display: inline-block; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 7px 18px; border-radius: 9999px; margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 .title {
-  font-family: var(--font-family-heading); font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700; letter-spacing: -0.03em; line-height: 1.15;
+  font-family: var(--font-family-heading, inherit); font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+  font-weight: 850; letter-spacing: -0.035em; line-height: 1.12;
 }
-.subtitle { font-size: 1.125rem; margin-top: 12px; line-height: 1.7; opacity: 0.85; max-width: 620px; margin-left: auto; margin-right: auto; }
+.subtitle { font-size: clamp(1.1rem, 1.8vw, 1.3rem); margin-top: 16px; line-height: 1.65; opacity: 0.88; max-width: 650px; margin-left: auto; margin-right: auto; font-weight: 450; }
 
 /* Stats bar */
 .statsBar {
-  display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
-  margin-bottom: 64px; padding: 24px 0;
+  display: flex; justify-content: center; gap: 56px; flex-wrap: wrap;
+  margin-bottom: 72px; padding: 32px 24px; border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
 }
 .statItem { text-align: center; }
-.statValue { display: block; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
-.statLabel { font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
+.statValue { display: block; font-size: clamp(2rem, 3.2vw, 2.75rem); font-weight: 850; letter-spacing: -0.035em; line-height: 1; }
+.statLabel { font-size: 0.8rem; opacity: 0.75; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
 
 /* Section */
-.section { margin-top: 72px; }
+.section { margin-top: 80px; }
 .sectionTitle {
-  font-family: var(--font-family-heading); font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-weight: 700; text-align: center; margin-bottom: 12px; letter-spacing: -0.02em;
+  font-family: var(--font-family-heading, inherit); font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 800; text-align: center; margin-bottom: 14px; letter-spacing: -0.03em; line-height: 1.2;
 }
-.sectionDesc { text-align: center; font-size: 1rem; opacity: 0.8; margin-bottom: 40px; max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.65; }
+.sectionDesc { text-align: center; font-size: 1.05rem; opacity: 0.85; margin-bottom: 48px; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.65; font-weight: 450; }
 
 /* Hiring models grid */
-.modelsGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.modelsGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
 @media (max-width: 768px) { .modelsGrid { grid-template-columns: 1fr; } }
 
 .modelCard {
-  border-radius: 16px; padding: 28px; border: 1px solid;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 20px; padding: 32px; border: 1px solid;
+  transition: transform 0.25 ease, box-shadow 0.25s ease;
 }
-.modelCard:hover { transform: translateY(-4px); }
-.modelIcon { font-size: 2rem; margin-bottom: 12px; display: block; }
-.modelTitle { font-weight: 600; font-size: 1.1rem; margin-bottom: 8px; }
-.modelDesc { font-size: 0.9rem; line-height: 1.65; opacity: 0.85; }
+.modelCard:hover { transform: translateY(-5px); }
+.modelIcon { font-size: 2.25rem; margin-bottom: 16px; display: block; }
+.modelTitle { font-weight: 700; font-size: 1.25rem; margin-bottom: 10px; letter-spacing: -0.015em; }
+.modelDesc { font-size: 0.95rem; line-height: 1.65; opacity: 0.85; }
 
 /* Steps */
 .stepsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 @media (max-width: 900px) { .stepsGrid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 540px) { .stepsGrid { grid-template-columns: 1fr; } }
 
-.stepCard { border-radius: 16px; padding: 28px; border: 1px solid; text-align: center; }
-.stepNum { font-size: 2rem; font-weight: 800; display: block; margin-bottom: 12px; letter-spacing: -0.03em; }
-.stepTitle { font-weight: 600; font-size: 1rem; margin-bottom: 8px; }
-.stepDesc { font-size: 0.85rem; line-height: 1.65; opacity: 0.8; }
+.stepCard { border-radius: 20px; padding: 32px 24px; border: 1px solid; text-align: center; transition: transform 0.2s ease; }
+.stepCard:hover { transform: translateY(-3px); }
+.stepNum { font-size: 2.5rem; font-weight: 900; display: block; margin-bottom: 12px; letter-spacing: -0.04em; line-height: 1; }
+.stepTitle { font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+.stepDesc { font-size: 0.875rem; line-height: 1.65; opacity: 0.85; }
 
 /* Capabilities */
-.capsGrid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; }
+.capsGrid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 28px; }
 .capChip {
-  padding: 8px 20px; border-radius: 999px; font-size: 0.85rem; font-weight: 500;
-  border: 1px solid; transition: transform 0.15s ease;
+  padding: 10px 24px; border-radius: 9999px; font-size: 0.875rem; font-weight: 600;
+  border: 1px solid; transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .capChip:hover { transform: scale(1.05); }
 
 /* CTA */
-.ctaBox { border-radius: 20px; padding: 48px 32px; text-align: center; border: 1px solid; }
-.ctaTitle { font-family: var(--font-family-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
-.ctaDesc { font-size: 1rem; opacity: 0.8; line-height: 1.65; max-width: 480px; margin: 0 auto 24px; }
-.ctaButtons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.ctaBox { border-radius: 28px; padding: 56px 40px; text-align: center; border: 1px solid; }
+.ctaTitle { font-family: var(--font-family-heading, inherit); font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 850; margin-bottom: 14px; letter-spacing: -0.025em; }
+.ctaDesc { font-size: 1.05rem; opacity: 0.85; line-height: 1.65; max-width: 520px; margin: 0 auto 32px; font-weight: 450; }
+.ctaButtons { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
 .button {
-  padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
-  cursor: pointer; border: none; text-decoration: none; display: inline-block;
+  padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+  cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .button:hover { transform: translateY(-2px); }

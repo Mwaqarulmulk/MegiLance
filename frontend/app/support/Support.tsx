@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { PageTransition, ScrollReveal, StaggerContainer } from '@/app/components/Animations';
@@ -12,8 +12,7 @@ import light from './Support.light.module.css';
 import dark from './Support.dark.module.css';
 
 const Support: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const themed = useThemeStyles(light, dark);
 
   return (
     <PageTransition>

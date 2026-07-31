@@ -4,7 +4,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { Quote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -29,8 +29,7 @@ interface ReviewData {
 }
 
 const Testimonials: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themed = resolvedTheme === 'dark' ? dark : light;
+  const themed = useThemeStyles(light, dark);
 
   const [selected, setSelected] = useState<string>(ALL);
   const [testimonials, setTestimonials] = useState<ReviewData[]>([]);

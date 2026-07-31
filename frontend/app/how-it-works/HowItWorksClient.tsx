@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { 
   FileText, 
   Handshake, 
@@ -142,8 +142,7 @@ const whyDifferent = [
 ];
 
 const HowItWorksPage: React.FC = () => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <PageTransition>

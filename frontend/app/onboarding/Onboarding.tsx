@@ -161,7 +161,8 @@ const Onboarding: React.FC = () => {
     safeLocalStorage.setItem("freelancer_onboarding_step", String(step));
     safeLocalStorage.setItem(
       "freelancer_onboarding_data",
-      JSON.stringify(data),
+      JSON.stringify(data)
+    );
   }, [step, data]);
 
   const clearFieldError = (field: string) => {

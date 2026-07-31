@@ -50,8 +50,10 @@ export function ReferralsClient() {
         const me = await meRes.json();
         setStats({
           total_referrals: me?.stats?.total_referrals ?? 0,
-          total_earnings: Number(me?.total_earned ?? 0),
-          pending_earnings: 0,
+          active_referrals: me?.stats?.active_referrals ?? 0,
+          pending_rewards: 0,
+          total_earned: Number(me?.total_earned ?? 0),
+          referral_code: me?.code ?? '',
           referral_link: me?.referral_url ?? '',
         });
       }
@@ -137,11 +139,11 @@ export function ReferralsClient() {
         </div>
         <div className={cn(commonStyles.statCard, themeStyles.statCard)}>
           <span className={commonStyles.statLabel}>Total Earnings</span>
-          <span className={commonStyles.statValue}>${stats?.total_earnings || 0}</span>
+          <span className={commonStyles.statValue}>${stats?.total_earned || 0}</span>
         </div>
         <div className={cn(commonStyles.statCard, themeStyles.statCard)}>
           <span className={commonStyles.statLabel}>Pending</span>
-          <span className={commonStyles.statValue}>${stats?.pending_earnings || 0}</span>
+          <span className={commonStyles.statValue}>${stats?.pending_rewards || 0}</span>
         </div>
       </div>
 

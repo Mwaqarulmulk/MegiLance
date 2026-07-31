@@ -64,42 +64,44 @@ export default function PainSolutions() {
   const painText = isDark ? 'text-slate-200' : 'text-slate-800';
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      <div className="text-center max-w-3xl mx-auto mb-10">
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="text-center max-w-3xl mx-auto mb-12">
         <span
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4"
-          style={{ background: 'rgba(69,115,223,0.1)', color: '#4573df' }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border"
+          style={{ background: 'rgba(69,115,223,0.12)', color: '#3b66d1', borderColor: 'rgba(69,115,223,0.25)' }}
         >
           Why MegiLance
         </span>
-        <h2 className={cn('text-3xl md:text-4xl font-bold tracking-tight', heading)}>
+        <h2 className={cn('text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight', heading)}>
           Aligning market forces, <span style={{ color: '#4573df' }}>engineered for trust</span>
         </h2>
-        <p className={cn('mt-3 text-base md:text-lg', muted)}>
+        <p className={cn('mt-4 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto', muted)}>
           Traditional marketplaces thrive on friction, high fees, and information asymmetry. MegiLance
           rebuilds the freelancer-client relationship around transparency, psychological safety, and direct economic value.
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {ITEMS.map(({ icon: Icon, pain, solution }) => (
           <div
             key={pain}
-            className={cn('rounded-xl border p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md', cardBg)}
+            className={cn('rounded-2xl border p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between', cardBg)}
           >
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-              style={{ background: 'rgba(69,115,223,0.1)', color: '#4573df' }}
-            >
-              <Icon size={20} />
-            </div>
-            <div className={cn('flex items-start gap-2 mb-2.5 text-sm font-semibold', painText)}>
-              <X size={16} className="mt-0.5 flex-shrink-0" style={{ color: '#ef4444' }} />
-              <span>{pain}</span>
-            </div>
-            <div className={cn('flex items-start gap-2 text-sm leading-relaxed', muted)}>
-              <Check size={16} className="mt-0.5 flex-shrink-0" style={{ color: '#27AE60' }} />
-              <span>{solution}</span>
+            <div>
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 shadow-sm"
+                style={{ background: 'rgba(69,115,223,0.12)', color: '#4573df' }}
+              >
+                <Icon size={24} />
+              </div>
+              <div className="p-3 rounded-xl bg-red-500/10 dark:bg-red-950/30 border border-red-500/20 mb-3 flex items-start gap-2.5">
+                <X size={18} className="mt-0.5 flex-shrink-0 text-red-500 font-bold" />
+                <span className="text-xs sm:text-sm font-bold text-red-700 dark:text-red-300 leading-snug">{pain}</span>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/20 flex items-start gap-2.5">
+                <Check size={18} className="mt-0.5 flex-shrink-0 text-emerald-500 font-bold" />
+                <span className={cn('text-xs sm:text-sm font-medium leading-relaxed', muted)}>{solution}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -107,37 +109,37 @@ export default function PainSolutions() {
 
       {/* Conversion CTA with Lottie Rocket */}
       <div
-        className="mt-10 rounded-2xl p-8 md:p-10 text-center relative overflow-hidden"
+        className="mt-12 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #4573df 0%, #6b93e8 100%)',
-          boxShadow: '0 20px 50px -20px rgba(69,115,223,0.6)',
+          background: 'linear-gradient(135deg, #3b66d1 0%, #4573df 50%, #6b93e8 100%)',
+          boxShadow: '0 24px 60px -15px rgba(69,115,223,0.5)',
         }}
       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 text-left">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10 text-left">
           <div className="max-w-xl">
-            <h3 className="text-2xl md:text-3xl font-bold text-white">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight">
               Post your project free — pay only when you&apos;re happy
             </h3>
-            <p className="mt-2 text-white/85">
+            <p className="mt-3 text-base text-white/90 font-medium leading-relaxed">
               No upfront cost, no risk. Get matched with vetted talent in minutes and keep your money in
               escrow until milestones are approved.
             </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-white text-[#2a4fb0] hover:scale-[1.03] transition-transform"
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-bold bg-white text-[#2a4fb0] hover:bg-slate-50 hover:scale-[1.03] active:scale-[0.98] transition-all shadow-lg text-sm sm:text-base"
               >
-                Post a Project <ArrowRight size={18} />
+                Post a Project <ArrowRight size={20} />
               </Link>
               <Link
                 href="/ai/price-estimator"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold border border-white/40 text-white hover:bg-white/10 transition-colors"
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-bold border border-white/50 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all text-sm sm:text-base"
               >
-                <Calculator size={18} /> Estimate my budget
+                <Calculator size={20} /> Estimate my budget
               </Link>
             </div>
           </div>
-          <div className="flex-shrink-0 w-full md:w-64 h-48 md:h-56">
+          <div className="flex-shrink-0 w-full md:w-72 h-52 md:h-64">
             <BrandLottiePlayer
               src="/lottie/10_product_launch_rocket.json"
               ariaLabel="Rocket Launch Animation"

@@ -165,9 +165,6 @@ const Profile: React.FC = () => {
     fetchUserProfile();
   }, [fetchUserProfile]);
 
-  if (!resolvedTheme) {
-    return null; // Prevent hydration mismatch
-  }
 
   if (loading) {
     return (

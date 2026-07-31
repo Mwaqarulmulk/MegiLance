@@ -27,51 +27,59 @@
 }
 
 .badge {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .title {
-  font-size: clamp(3rem, 5vw + 1rem, 5rem);
-  font-weight: 800;
+  font-family: var(--font-family-heading, inherit);
+  font-size: clamp(2.75rem, 5.2vw + 0.5rem, 5rem);
+  font-weight: 850;
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
   margin: 0;
 }
 
 .highlight {
   display: inline-block;
   position: relative;
+  background: linear-gradient(135deg, #4573df 0%, #3b66d1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-  font-size: clamp(1.125rem, 2vw + 1rem, 1.5rem);
-  line-height: 1.6;
-  max-width: 700px;
+  font-size: clamp(1.125rem, 1.8vw, 1.35rem);
+  line-height: 1.65;
+  max-width: 720px;
   margin: 0 auto;
+  font-weight: 450;
 }
 
 .actions {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   justify-content: center;
   margin-top: 1rem;
   flex-wrap: wrap;
 }
 
 .ctaButton {
-  min-height: 48px;
-  padding: 0.875rem 1.4rem;
-  border-radius: var(--radius-full);
+  min-height: 50px;
+  padding: 0.9rem 1.8rem;
+  border-radius: 9999px;
   border: 1px solid transparent;
   text-decoration: none;
   font-weight: 700;
-  font-size: clamp(0.95rem, 1vw, 1rem);
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -80,7 +88,7 @@
 }
 
 .ctaButton:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .ctaButton:focus-visible {
@@ -95,7 +103,7 @@
 
 .stats {
   display: flex;
-  gap: 3rem;
+  gap: 3.5rem;
   justify-content: center;
   margin-top: 3rem;
   padding-top: 3rem;
@@ -109,15 +117,17 @@
 }
 
 .statValue {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .statLabel {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {

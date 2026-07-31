@@ -2,7 +2,7 @@
 // Production-ready: No mock data, connects to /api/freelancers
 'use client';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -109,7 +109,7 @@ function availColor(status: string): string {
 }
 
 const TalentDirectoryPage = () => {
-  const { resolvedTheme } = useTheme();
+  const themed = useThemeStyles(light, dark);
   const [mounted, setMounted] = useState(false);
   const [q, setQ] = useState('');
   const [category, setCategory] = useState('all');
@@ -152,8 +152,6 @@ const TalentDirectoryPage = () => {
       return true;
     });
   }, [profiles, q, category, catKeywords]);
-
-  const themed = (mounted && resolvedTheme === 'light') ? light : dark;
 
   return (
     <PageTransition>
