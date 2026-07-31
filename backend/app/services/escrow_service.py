@@ -244,25 +244,38 @@ def get_freelancer_id_for_contract(contract_id: int) -> Optional[int]:
 
 def release_escrow_funds(escrow_id: int, release_amount: float,
                          freelancer_id: int, current_released: float, total_amount: float):
-    """Transfer funds from escrow to freelancer atomically."""
+    """Transfer funds from escrow to freelancer atomically after deducting platform fee."""
+    from app.core.config import get_settings
+    settings = get_settings()
+    fee_percent = float(getattr(settings, "STRIPE_PLATFORM_FEE_PERCENT", 8.0)) / 100.0
+    platform_fee = round(release_amount * fee_percent, 2)
+    net_freelancer_amount = round(release_amount - platform_fee, 2)
+
     freelancer_balance = get_user_balance(freelancer_id)
-    new_freelancer_balance = freelancer_balance + release_amount
+    new_freelancer_balance = freelancer_balance + net_freelancer_amount
     new_released = current_released + release_amount
     new_status = "released" if new_released >= total_amount else "active"
     now = datetime.now(timezone.utc).isoformat()
 
-    # Atomic batch: credit freelancer + update escrow
+    # Atomic batch: credit freelancer net amount + update escrow
     from app.db.turso_http import get_turso_http
     client = get_turso_http()
     statements = [
         {"q": "UPDATE users SET account_balance = ? WHERE id = ?", "params": [new_freelancer_balance, freelancer_id]},
         {"q": "UPDATE escrow SET released_amount = ?, status = ?, updated_at = ? WHERE id = ?", "params": [new_released, new_status, now, escrow_id]},
     ]
+    if platform_fee > 0:
+        # Credit platform fee to admin user balance if available
+        statements.append({
+            "q": "UPDATE users SET account_balance = account_balance + ? WHERE role = 'admin' OR user_type = 'admin' ORDER BY id ASC LIMIT 1",
+            "params": [platform_fee],
+        })
     try:
         client.execute_many(statements)
     except Exception as e:
         logger.error(f"Atomic escrow release failed: {e}")
         raise ValueError("Failed to release escrow funds — transaction rolled back")
+
 
 
 def refund_escrow_funds(escrow_id: int, refund_amount: float,

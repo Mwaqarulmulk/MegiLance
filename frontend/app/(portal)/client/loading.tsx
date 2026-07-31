@@ -1,27 +1,30 @@
-// @AI-HINT: Loading UI for client portal routes
-// Uses Next.js loading.js convention - wrapped in Suspense automatically
+// @AI-HINT: Tailored loading skeleton for Client portal dashboard & routes
 'use client';
 
-import { LottieAnimation, loadingDotsAnimation } from '@/app/components/Animations/LottieAnimation';
+import React from 'react';
+import { StatGridSkeleton, TableRowsSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
 export default function ClientLoading() {
   return (
     <div
-      className="flex items-center justify-center min-h-[60vh]"
+      className="p-6 md:p-8 space-y-8 animate-pulse max-w-7xl mx-auto"
       role="status"
-      aria-label="Loading client portal content"
+      aria-label="Loading client portal"
     >
-      <div className="flex flex-col items-center gap-4">
-        <LottieAnimation
-          animationData={loadingDotsAnimation}
-          width={80}
-          height={80}
-          ariaLabel="Loading content"
-        />
-        <div className="space-y-2 w-48">
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4 mx-auto" />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-2">
+          <Skeleton width={240} height={28} radius={8} />
+          <Skeleton width={340} height={14} radius={6} />
         </div>
+        <Skeleton width={140} height={44} radius={12} />
+      </div>
+
+      <StatGridSkeleton count={4} />
+
+      <div className="space-y-4">
+        <Skeleton width={180} height={22} radius={6} />
+        <TableRowsSkeleton count={4} cols={5} />
       </div>
     </div>
   );

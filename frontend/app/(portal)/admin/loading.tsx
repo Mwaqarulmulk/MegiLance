@@ -1,30 +1,36 @@
-// @AI-HINT: Loading UI for admin portal routes
-// Uses Next.js loading.js convention - wrapped in Suspense automatically
+// @AI-HINT: Tailored loading skeleton for Admin management portal
 'use client';
 
-import { LottieAnimation, loadingDotsAnimation } from '@/app/components/Animations/LottieAnimation';
+import React from 'react';
+import { StatGridSkeleton, TableRowsSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
 export default function AdminLoading() {
   return (
     <div
-      className="flex items-center justify-center min-h-[60vh]"
+      className="p-6 md:p-8 space-y-8 animate-pulse max-w-7xl mx-auto"
       role="status"
-      aria-label="Loading admin content"
+      aria-label="Loading admin management portal"
     >
-      <div className="flex flex-col items-center gap-4">
-        <LottieAnimation
-          animationData={loadingDotsAnimation}
-          width={80}
-          height={80}
-          ariaLabel="Loading admin content"
-        />
-        <div className="space-y-2 w-56">
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4 mx-auto" />
-          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-            Loading admin panel...
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton width={220} height={28} radius={8} />
+          <Skeleton width={300} height={14} radius={6} />
         </div>
+        <div className="flex gap-2">
+          <Skeleton width={90} height={36} radius={8} />
+          <Skeleton width={110} height={36} radius={8} />
+        </div>
+      </div>
+
+      <StatGridSkeleton count={4} />
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <Skeleton width={160} height={20} radius={6} />
+          <Skeleton width={200} height={36} radius={8} />
+        </div>
+        <TableRowsSkeleton count={6} cols={6} />
       </div>
     </div>
   );

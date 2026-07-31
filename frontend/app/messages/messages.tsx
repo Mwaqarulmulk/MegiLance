@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,11 +15,10 @@ import lightStyles from './messages.light.module.css';
 import darkStyles from './messages.dark.module.css';
 
 const Messages: React.FC = () => {
-  const { resolvedTheme } = useTheme();
   const { user } = useAuth();
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
 
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   if (!user) return null;
 

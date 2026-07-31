@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import commonStyles from './DataTable.common.module.css';
@@ -38,8 +38,7 @@ function useIsMobile(breakpoint = 768) {
 }
 
 export function DataTable<T>({ columns, data, keyExtractor, onRowClick }: DataTableProps<T>) {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const isMobile = useIsMobile();
 
   const [sortKey, setSortKey] = useState<string | null>(null);

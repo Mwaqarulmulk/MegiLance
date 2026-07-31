@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeMode, useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import SidebarNav from '@/app/components/organisms/SidebarNav/SidebarNav';
 import commonStyles from './DashboardLayout.common.module.css';
@@ -15,12 +15,12 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, userType }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const mode = useThemeMode();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <div className={cn(commonStyles.layout, themeStyles.layout)}>
-      <SidebarNav theme={resolvedTheme} userType={userType} />
+      <SidebarNav theme={mode} userType={userType} />
       <main className={commonStyles.main}>
         {children}
       </main>

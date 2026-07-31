@@ -8,8 +8,20 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def _generate_secret_key() -> str:
-    """Generate a cryptographically secure random secret key for development."""
-    return secrets.token_hex(32)
+    """Generate or retrieve a persistent cryptographically secure secret key for development."""
+    key_file = os.path.join(os.path.dirname(__file__), "..", "..", ".dev_secret_key")
+    try:
+        if os.path.exists(key_file):
+            with open(key_file, "r", encoding="utf-8") as f:
+                saved = f.read().strip()
+                if saved and len(saved) >= 32:
+                    return saved
+        new_key = secrets.token_hex(32)
+        with open(key_file, "w", encoding="utf-8") as f:
+            f.write(new_key)
+        return new_key
+    except Exception:
+        return secrets.token_hex(32)
 
 
 class Settings(BaseSettings):

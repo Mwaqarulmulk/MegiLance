@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useThemeStyles } from "@/app/hooks/useThemeMode";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
@@ -124,7 +124,7 @@ const TOTAL_STEPS = 4;
 
 const Onboarding: React.FC = () => {
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -162,10 +162,7 @@ const Onboarding: React.FC = () => {
     safeLocalStorage.setItem(
       "freelancer_onboarding_data",
       JSON.stringify(data),
-    );
   }, [step, data]);
-
-  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   const clearFieldError = (field: string) => {
     setErrors((prev) => {

@@ -21,6 +21,7 @@ import { useMounted } from '@/app/hooks/useMounted';
 import common from './About.common.module.css';
 import light from './About.light.module.css';
 import dark from './About.dark.module.css';
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 const About: React.FC = () => {
   const { resolvedTheme } = useTheme();
@@ -230,13 +231,12 @@ const About: React.FC = () => {
               <span aria-hidden="true" className={styles.sectionNote}>The engineering and research team powering MegiLance</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
-              <Image
-                src="/images/sections/team.png"
-                alt="MegiLance team — Project Manager, Frontend Developer, UX/UI Designer, Backend Developer, and QA/Operations working on the platform"
-                width={680}
-                height={520}
-                sizes="(max-width: 768px) 100vw, 680px"
-                style={{ width: '100%', maxWidth: '680px', height: 'auto', objectFit: 'contain' }}
+              <BrandLottiePlayer
+                src="/lottie/16_team_collaboration.json"
+                ariaLabel="MegiLance Team Collaboration Animation"
+                className="w-full max-w-lg h-64 md:h-80"
+                framed={true}
+                glow={true}
               />
             </div>
           </ScrollReveal>

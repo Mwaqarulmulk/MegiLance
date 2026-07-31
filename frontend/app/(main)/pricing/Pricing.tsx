@@ -17,6 +17,7 @@ import FeeSavingsCalculator from '@/app/components/widgets/FeeSavingsCalculator'
 import commonStyles from './Pricing.common.module.css';
 import lightStyles from './Pricing.light.module.css';
 import darkStyles from './Pricing.dark.module.css';
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 const plans = [
   {
@@ -131,6 +132,16 @@ const Pricing: React.FC = () => {
               As a newly launched startup platform, MegiLance is completely FREE for everyone throughout 2026.
               Enjoy $0 subscription fees, 0% client fees, and 0% freelancer commission fees on all completed contracts!
             </p>
+
+            <div className="mt-8 flex justify-center">
+              <BrandLottiePlayer
+                src="/lottie/07_data_analytics_growth.json"
+                ariaLabel="Data Analytics & Fee Savings Growth Lottie Animation"
+                className="w-full max-w-md h-56 md:h-72"
+                framed={true}
+                glow={true}
+              />
+            </div>
           </div>
         </ScrollReveal>
 

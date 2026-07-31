@@ -3,7 +3,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import commonStyles from './FaqItem.common.module.css';
@@ -17,10 +17,7 @@ interface FaqItemProps {
 
 export const FaqItem: React.FC<FaqItemProps> = ({ question, children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { resolvedTheme } = useTheme();
-
-  if (!resolvedTheme) return null;
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   const itemClasses = cn(commonStyles.item, themeStyles.item);
 

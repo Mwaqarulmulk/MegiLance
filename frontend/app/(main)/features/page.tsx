@@ -15,6 +15,7 @@ export const metadata: Metadata = buildMeta({
 import React from 'react';
 import Image from 'next/image';
 import commonStyles from './Features.common.module.css';
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 const features = [
   {
@@ -98,25 +99,23 @@ export default function FeaturesPage() {
 
       {/* Security + Smart Escrow visuals */}
       <section style={{ padding: '3rem 2rem', display: 'flex', gap: '3rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ textAlign: 'center' }}>
-          <Image
-            src="/images/sections/security.png"
-            alt="MegiLance security — end-to-end encryption, verified profiles, secure payments, and blockchain trust"
-            width={480}
-            height={400}
-            sizes="(max-width: 640px) 100vw, 480px"
-            style={{ width: '100%', maxWidth: '480px', height: 'auto' }}
+        <div style={{ textAlign: 'center', width: '100%', maxWidth: '440px' }}>
+          <BrandLottiePlayer
+            src="/lottie/06_cybersecurity_trust.json"
+            ariaLabel="Cybersecurity & Trust Lottie Animation"
+            className="w-full h-64 md:h-72"
+            framed={true}
+            glow={true}
           />
           <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Enterprise-Grade Security</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <Image
-            src="/images/hero/smart-escrow-hero.png"
-            alt="Smart Contract Escrow — funds locked securely until milestones approved, then released to freelancer"
-            width={440}
-            height={400}
-            sizes="(max-width: 640px) 100vw, 440px"
-            style={{ width: '100%', maxWidth: '440px', height: 'auto' }}
+        <div style={{ textAlign: 'center', width: '100%', maxWidth: '440px' }}>
+          <BrandLottiePlayer
+            src="/lottie/15_payment_security.json"
+            ariaLabel="Payment Security & Escrow Lottie Animation"
+            className="w-full h-64 md:h-72"
+            framed={true}
+            glow={true}
           />
           <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Smart Contract Escrow</p>
         </div>

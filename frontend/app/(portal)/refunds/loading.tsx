@@ -1,27 +1,24 @@
-// @AI-HINT: Loading UI for refunds routes
+// @AI-HINT: High-fidelity refunds route loading skeleton
 'use client';
 
-import { LottieAnimation, loadingDotsAnimation } from '@/app/components/Animations/LottieAnimation';
+import React from 'react';
+import { TableRowsSkeleton, StatGridSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
 export default function RefundsLoading() {
   return (
     <div
-      className="flex items-center justify-center min-h-[60vh]"
+      className="p-6 md:p-8 space-y-6 animate-pulse max-w-7xl mx-auto"
       role="status"
-      aria-label="Loading refunds"
+      aria-label="Loading refunds page"
     >
-      <div className="flex flex-col items-center gap-4">
-        <LottieAnimation
-          animationData={loadingDotsAnimation}
-          width={80}
-          height={80}
-          ariaLabel="Loading refund information"
-        />
-        <div className="space-y-2 w-48">
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4 mx-auto" />
-        </div>
+      <div className="space-y-2">
+        <Skeleton width={180} height={28} radius={8} />
+        <Skeleton width={260} height={14} radius={6} />
       </div>
+
+      <StatGridSkeleton count={3} />
+      <TableRowsSkeleton count={5} cols={5} />
     </div>
   );
 }

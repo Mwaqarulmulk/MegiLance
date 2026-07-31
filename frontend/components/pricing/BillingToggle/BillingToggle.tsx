@@ -3,7 +3,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import commonStyles from './BillingToggle.common.module.css';
 import lightStyles from './BillingToggle.light.module.css';
@@ -15,11 +15,8 @@ interface BillingToggleProps {
 }
 
 export const BillingToggle: React.FC<BillingToggleProps> = ({ billingCycle, setBillingCycle }) => {
-  const { resolvedTheme } = useTheme();
-  if (!resolvedTheme) return null;
-
   const isYearly = billingCycle === 'yearly';
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   const handleToggle = () => {
     setBillingCycle(isYearly ? 'monthly' : 'yearly');

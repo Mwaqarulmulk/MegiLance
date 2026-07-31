@@ -1,30 +1,24 @@
-// @AI-HINT: Loading skeleton for disputes route
+// @AI-HINT: High-fidelity disputes route loading skeleton
 'use client';
+
+import React from 'react';
+import { TableRowsSkeleton, StatGridSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
 export default function DisputesLoading() {
   return (
     <div
-      className="p-6 space-y-6 animate-pulse"
+      className="p-6 md:p-8 space-y-6 animate-pulse max-w-7xl mx-auto"
       role="status"
-      aria-label="Loading disputes"
+      aria-label="Loading disputes center"
     >
-      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32" />
-
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="p-5 bg-gray-200 dark:bg-gray-700 rounded-xl space-y-3">
-            <div className="flex justify-between">
-              <div className="h-5 bg-gray-300 dark:bg-gray-600 rounded w-48" />
-              <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded-full w-24" />
-            </div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4" />
-            <div className="flex gap-4">
-              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28" />
-              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-20" />
-            </div>
-          </div>
-        ))}
+      <div className="space-y-2">
+        <Skeleton width={200} height={28} radius={8} />
+        <Skeleton width={300} height={14} radius={6} />
       </div>
+
+      <StatGridSkeleton count={3} />
+      <TableRowsSkeleton count={5} cols={5} />
     </div>
   );
 }

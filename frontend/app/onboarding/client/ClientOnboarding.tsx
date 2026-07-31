@@ -7,7 +7,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useThemeStyles } from "@/app/hooks/useThemeMode";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -132,7 +132,7 @@ interface ClientOnboardingData {
 // ─────────────────────────────────────────────
 
 const ClientOnboarding: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const router = useRouter();
 
   // ── State ──────────────────────────────────
@@ -167,11 +167,6 @@ const ClientOnboarding: React.FC = () => {
       // localStorage unavailable or parse error — continue with empty name
     }
   }, []);
-
-  // ── Theme ──────────────────────────────────
-  // Default to light on SSR; resolves to correct theme after hydration.
-  // No early return to avoid hook ordering violations.
-  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   // ── Helpers ────────────────────────────────
 

@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import commonStyles from './LoadingSpinner.common.module.css';
@@ -26,8 +26,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   ariaLabel,
   className,
 }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
 
   const sizeMap = { sm: 20, md: 32, lg: 48 };

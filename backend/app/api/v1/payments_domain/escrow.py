@@ -172,15 +172,26 @@ def release_escrow(escrow_id: int, request: EscrowRelease, current_user=Depends(
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    # Log wallet transaction
+    # Log wallet transactions (freelancer payout & platform fee)
     now = datetime.now(timezone.utc).isoformat()
+    from app.core.config import get_settings
+    fee_pct = float(getattr(get_settings(), "STRIPE_PLATFORM_FEE_PERCENT", 8.0)) / 100.0
+    platform_fee = round(release_amount * fee_pct, 2)
+    net_payout = round(release_amount - platform_fee, 2)
+
     execute_query(
         """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
            VALUES (?, 'escrow_release', ?, 'USD', ?, 'completed', ?, ?)""",
-        [freelancer_id, release_amount, f"Escrow #{escrow_id} released", escrow_id, now],
+        [freelancer_id, net_payout, f"Escrow #{escrow_id} released (Net of {fee_pct*100:.1f}% fee)", escrow_id, now],
     )
+    if platform_fee > 0:
+        execute_query(
+            """INSERT INTO wallet_transactions (user_id, type, amount, currency, description, status, reference_id, created_at)
+               VALUES (?, 'platform_fee', ?, 'USD', ?, 'completed', ?, ?)""",
+            [current_user.id, platform_fee, f"Platform fee from Escrow #{escrow_id}", escrow_id, now],
+        )
 
-    return {"message": "Escrow released successfully", "amount": release_amount}
+    return {"message": "Escrow released successfully", "gross_amount": release_amount, "net_amount": net_payout, "platform_fee": platform_fee}
 
 
 @router.post("/{escrow_id}/refund")

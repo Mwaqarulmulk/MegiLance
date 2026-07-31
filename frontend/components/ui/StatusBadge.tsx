@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import commonStyles from './StatusBadge.common.module.css';
 import lightStyles from './StatusBadge.light.module.css';
@@ -18,8 +18,7 @@ interface StatusBadgeProps {
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ variant, children, icon }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <motion.span whileHover={{ scale: 1.05 }} transition={{ type: "spring" as const }}

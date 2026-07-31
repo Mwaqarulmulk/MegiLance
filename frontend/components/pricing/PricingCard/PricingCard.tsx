@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Check, ArrowRight } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import Button from '@/app/components/atoms/Button/Button';
 import styles from './PricingCard.common.module.css';
@@ -32,8 +32,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
   ctaText, 
   ctaLink 
 }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <div className={cn(styles.card, themeStyles.card, isPopular && styles.popular, isPopular && themeStyles.popular)}>

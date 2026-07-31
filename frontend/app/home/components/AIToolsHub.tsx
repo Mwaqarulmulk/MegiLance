@@ -10,6 +10,8 @@ import commonStyles from './AIToolsHub.common.module.css';
 import lightStyles from './AIToolsHub.light.module.css';
 import darkStyles from './AIToolsHub.dark.module.css';
 
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
+
 const tools = [
   { icon: MessageSquare, label: 'AI Chatbot', desc: 'Instant 24/7 support', href: '/ai/chatbot', color: '#4573df' },
   { icon: DollarSign, label: 'Price Estimator', desc: 'Data-driven pricing', href: '/ai/price-estimator', color: '#27AE60' },
@@ -35,6 +37,16 @@ const AIToolsHub: React.FC = () => {
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
             Supercharge your workflow with intelligent tools built for modern freelancing.
           </p>
+        </div>
+
+        {/* AI Brain Lottie Banner */}
+        <div className="mb-8 flex justify-center">
+          <BrandLottiePlayer
+            src="/lottie/ai-brain.json"
+            ariaLabel="AI Neural Matching Animation"
+            className="w-full max-w-sm h-48 md:h-56"
+            glow={true}
+          />
         </div>
 
         <div className={commonStyles.grid}>

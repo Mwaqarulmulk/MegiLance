@@ -9,6 +9,8 @@ import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
 
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
+
 const defaultStats = [
   { label: 'Escrow Volume Protected', value: '$2.4M+' },
   { label: 'Vetted Engineering & Design Talent', value: '25,000+' },
@@ -82,6 +84,17 @@ export default function Hero({ stats = defaultStats }) {
               </Link>
             </>
           )}
+        </div>
+
+        {/* Hero Lottie Feature Animation Showcase */}
+        <div className="mt-8 mb-4 w-full flex justify-center">
+          <BrandLottiePlayer
+            src="/lottie/01_ai_saas_dashboard.json"
+            ariaLabel="MegiLance AI SaaS Dashboard Animation"
+            className="w-full max-w-xl h-64 md:h-80"
+            framed={true}
+            glow={true}
+          />
         </div>
 
         <div className={cn(commonStyles.stats, themeStyles.stats)} aria-label="Platform statistics">

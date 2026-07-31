@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Sparkles, ArrowRight, BrainCircuit, ShieldAlert, Star, Users } from 'lucide-react';
 import { buildMeta, getKeywordsForPage } from '@/lib/seo';
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 export const metadata: Metadata = buildMeta({
   title: 'AI Talent Matching Engine | Instant Vetted Recommendations',
@@ -17,6 +18,7 @@ export const metadata: Metadata = buildMeta({
 export default function AiTalentMatchingPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-16">
+
       <header className="mb-12 text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 mb-4 dark:bg-indigo-950 dark:text-indigo-300">
           <Sparkles size={13} />
@@ -28,6 +30,17 @@ export default function AiTalentMatchingPage() {
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
           Skip the endless scrolling. Our AI analyzes profiles, reviews, and past performance to recommend the perfect candidates for your projects.
         </p>
+
+        {/* Lottie AI Automation Agent Showcase */}
+        <div className="mt-8 flex justify-center">
+          <BrandLottiePlayer
+            src="/lottie/02_ai_automation_agent.json"
+            ariaLabel="AI Automation Agent Matching Animation"
+            className="w-full max-w-md h-56 md:h-72"
+            framed={true}
+            glow={true}
+          />
+        </div>
       </header>
 
       {/* Benefits Card */}

@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useTheme } from "next-themes";
+import { useThemeStyles } from "@/app/hooks/useThemeMode";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import UserAvatar from "../components/atoms/UserAvatar/UserAvatar";
@@ -18,6 +18,7 @@ import {
   StaggerItem,
 } from "@/app/components/Animations/StaggerContainer";
 import { Share2, Link2, Copy, Check, X } from "lucide-react";
+import { ProfileHeaderSkeleton, FormSkeleton } from "@/app/components/Animations/Skeleton/SkeletonPresets";
 import commonStyles from "./Profile.common.module.css";
 import lightStyles from "./Profile.light.module.css";
 import darkStyles from "./Profile.dark.module.css";
@@ -51,7 +52,7 @@ interface ApiProject {
 }
 
 const Profile: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<ApiUser | null>(null);
@@ -60,8 +61,6 @@ const Profile: React.FC = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareTab, setShareTab] = useState<"links" | "embed">("links");
   const [linkCopied, setLinkCopied] = useState(false);
-
-  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   const styles = useMemo(() => {
     const merged: Record<string, string> = {};
@@ -173,15 +172,9 @@ const Profile: React.FC = () => {
   if (loading) {
     return (
       <div className={cn(commonStyles.page, themeStyles.page)}>
-        <div
-          className={cn(
-            commonStyles.container,
-            commonStyles.loadingContainer,
-            themeStyles.loadingContainer,
-          )}
-        >
-          <div className={commonStyles.spinner}></div>
-          <p>Loading your profile...</p>
+        <div className={cn(commonStyles.container, "space-y-6 max-w-4xl mx-auto py-8 animate-pulse")}>
+          <ProfileHeaderSkeleton />
+          <FormSkeleton fields={3} />
         </div>
       </div>
     );

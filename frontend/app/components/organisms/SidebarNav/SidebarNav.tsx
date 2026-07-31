@@ -5,7 +5,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
+import { useThemeMode, useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import styles from './SidebarNav.common.module.css';
 import lightStyles from './SidebarNav.light.module.css';
@@ -127,7 +127,8 @@ export default function SidebarNav({
   className = '',
 }: SidebarNavProps) {
   const pathname = usePathname();
-  const { resolvedTheme } = useTheme(); // Use hook for theme
+  const mode = useThemeMode();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const [openSubmenus, setOpenSubmenus] = React.useState<Record<string, boolean>>({});
 
   // Get real-time unread counts for badge display
@@ -190,8 +191,6 @@ export default function SidebarNav({
     return item;
   });
 
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
-
   const toggleSubmenu = (href: string) => {
     setOpenSubmenus(prev => ({
       ...prev,
@@ -201,7 +200,7 @@ export default function SidebarNav({
 
   const sidebarClasses = cn(
     styles.sidebarNav,
-    `theme-${resolvedTheme}`, // Apply global theme class for CSS variables
+    `theme-${mode}`, // Apply global theme class for CSS variables
     isCollapsed && styles.sidebarNavCollapsed,
     className
   );

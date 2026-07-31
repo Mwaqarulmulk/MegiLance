@@ -9,6 +9,7 @@ import Input from "@/app/components/atoms/Input/Input";
 import Textarea from "@/app/components/atoms/Textarea/Textarea";
 import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
 import { PageTransition } from "@/app/components/Animations/PageTransition";
+import { ProfileHeaderSkeleton, FormSkeleton } from "@/app/components/Animations/Skeleton/SkeletonPresets";
 import { apiFetch } from "@/lib/api/core";
 import {
   Building2,
@@ -244,8 +245,9 @@ export default function ClientProfilePage() {
 
   if (loading) {
     return (
-      <div className={cn(commonStyles.container, themeStyles.container)}>
-        Loading...
+      <div className={cn(commonStyles.container, themeStyles.container, "space-y-6 max-w-4xl mx-auto py-6 animate-pulse")}>
+        <ProfileHeaderSkeleton />
+        <FormSkeleton fields={4} />
       </div>
     );
   }

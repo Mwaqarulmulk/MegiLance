@@ -23,6 +23,7 @@ import illustrationStyles from '@/app/components/Illustrations/Illustrations.com
 import common from './Contact.common.module.css';
 import light from './Contact.light.module.css';
 import dark from './Contact.dark.module.css';
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 const contactSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -113,6 +114,7 @@ const Contact: React.FC = () => {
 
       <div className={styles.page}>
         <div className={styles.container}>
+
           <ScrollReveal>
             <header className={styles.header}>
               <div className={common.heroRow}>
@@ -122,7 +124,14 @@ const Contact: React.FC = () => {
                     Have a question or a project in mind? We&apos;d love to hear from you.
                   </p>
                 </div>
-                <ContactIllustration className={illustrationStyles.heroIllustrationSmall} />
+                <div className="w-full max-w-xs h-48 md:h-64 flex-shrink-0">
+                  <BrandLottiePlayer
+                    src="/lottie/12_customer_support_agent.json"
+                    ariaLabel="Customer Support Agent Lottie Animation"
+                    className="w-full h-full"
+                    glow={true}
+                  />
+                </div>
               </div>
             </header>
           </ScrollReveal>

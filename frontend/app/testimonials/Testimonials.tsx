@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import Button from '@/app/components/atoms/Button/Button';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
+import { ProjectGridSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
 import common from './Testimonials.common.module.css';
 import light from './Testimonials.light.module.css';
@@ -119,11 +120,7 @@ const Testimonials: React.FC = () => {
 
           <section aria-label="Testimonials">
             {loading ? (
-              <div className={common.grid}>
-                {[1, 2, 3].map((i) => (
-                  <div key={i} style={{ height: 200, borderRadius: 12, opacity: 0.08, background: 'currentColor' }} />
-                ))}
-              </div>
+              <ProjectGridSkeleton count={3} />
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>
                 <p>No reviews yet{selected !== ALL ? ` in ${selected}` : ''}. Be the first to share your experience!</p>

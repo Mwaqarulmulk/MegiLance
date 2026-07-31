@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import commonStyles from './AuthLayout.common.module.css';
 import lightStyles from './AuthLayout.light.module.css';
@@ -13,8 +13,7 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <div className={cn(commonStyles.layout, themeStyles.layout)}>

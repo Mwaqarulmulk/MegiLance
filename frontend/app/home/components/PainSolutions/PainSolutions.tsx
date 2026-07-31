@@ -50,6 +50,8 @@ const ITEMS = [
   },
 ];
 
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
+
 export default function PainSolutions() {
   const mode = useThemeMode();
   const isDark = mode === 'dark';
@@ -103,34 +105,46 @@ export default function PainSolutions() {
         ))}
       </div>
 
-      {/* Conversion CTA */}
+      {/* Conversion CTA with Lottie Rocket */}
       <div
-        className="mt-10 rounded-2xl p-8 md:p-10 text-center"
+        className="mt-10 rounded-2xl p-8 md:p-10 text-center relative overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, #4573df 0%, #6b93e8 100%)',
           boxShadow: '0 20px 50px -20px rgba(69,115,223,0.6)',
         }}
       >
-        <h3 className="text-2xl md:text-3xl font-bold text-white">
-          Post your project free — pay only when you&apos;re happy
-        </h3>
-        <p className="mt-2 text-white/85 max-w-2xl mx-auto">
-          No upfront cost, no risk. Get matched with vetted talent in minutes and keep your money in
-          escrow until milestones are approved.
-        </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-white text-[#2a4fb0] hover:scale-[1.03] transition-transform"
-          >
-            Post a Project <ArrowRight size={18} />
-          </Link>
-          <Link
-            href="/ai/price-estimator"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold border border-white/40 text-white hover:bg-white/10 transition-colors"
-          >
-            <Calculator size={18} /> Estimate my budget
-          </Link>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 text-left">
+          <div className="max-w-xl">
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              Post your project free — pay only when you&apos;re happy
+            </h3>
+            <p className="mt-2 text-white/85">
+              No upfront cost, no risk. Get matched with vetted talent in minutes and keep your money in
+              escrow until milestones are approved.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-white text-[#2a4fb0] hover:scale-[1.03] transition-transform"
+              >
+                Post a Project <ArrowRight size={18} />
+              </Link>
+              <Link
+                href="/ai/price-estimator"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold border border-white/40 text-white hover:bg-white/10 transition-colors"
+              >
+                <Calculator size={18} /> Estimate my budget
+              </Link>
+            </div>
+          </div>
+          <div className="flex-shrink-0 w-full md:w-64 h-48 md:h-56">
+            <BrandLottiePlayer
+              src="/lottie/10_product_launch_rocket.json"
+              ariaLabel="Rocket Launch Animation"
+              className="w-full h-full"
+              glow={false}
+            />
+          </div>
         </div>
       </div>
     </div>

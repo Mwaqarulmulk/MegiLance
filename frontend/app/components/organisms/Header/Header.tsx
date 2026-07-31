@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
+import { useThemeMode, useThemeStyles } from '@/app/hooks/useThemeMode';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Menu, X, Sparkles, ChevronDown, Briefcase, Users, Shield, 
@@ -80,7 +80,7 @@ const megaMenuData = {
 type MenuKey = keyof typeof megaMenuData | null;
 
 export default function Header() {
-  const { resolvedTheme } = useTheme();
+  const mode = useThemeMode();
   const [isMounted, setIsMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<MenuKey>(null);
@@ -88,9 +88,8 @@ export default function Header() {
   const [activeMobileSection, setActiveMobileSection] = useState<MenuKey>('hireTalent');
   const pathname = usePathname();
 
-  // Use dark theme during hydration to prevent white background flash in dark mode
-  const isDarkMode = resolvedTheme === 'dark';
-  const themeStyles = isDarkMode ? darkStyles : lightStyles;
+  const isDarkMode = mode === 'dark';
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
 

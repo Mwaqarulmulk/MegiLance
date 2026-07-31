@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import commonStyles from './EmptyState.common.module.css';
 import lightStyles from './EmptyState.light.module.css';
@@ -16,8 +16,7 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ icon, title, description, action }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <div className={cn(commonStyles.container, themeStyles.container)}>

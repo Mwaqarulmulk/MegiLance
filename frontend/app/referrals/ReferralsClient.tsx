@@ -2,23 +2,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import Button from '@/app/components/atoms/Button/Button';
 import Input from '@/app/components/atoms/Input/Input';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
+import { StatGridSkeleton, FormSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
 import commonStyles from './Referrals.common.module.css';
 import lightStyles from './Referrals.light.module.css';
 import darkStyles from './Referrals.dark.module.css';
 
 interface ReferralStats {
   total_referrals: number;
-  total_earnings: number;
-  pending_earnings: number;
+  active_referrals: number;
+  pending_rewards: number;
+  total_earned: number;
+  referral_code: string;
   referral_link: string;
 }
 
 interface Referral {
-  id: number;
+  id: string;
   referred_email: string;
   status: string;
   reward_amount: number;
@@ -26,15 +30,13 @@ interface Referral {
 }
 
 export function ReferralsClient() {
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [inviteEmail, setInviteEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [inviting, setInviting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
 
   useEffect(() => {
     fetchData();
@@ -108,7 +110,16 @@ export function ReferralsClient() {
   };
 
   if (loading) {
-    return <div className={commonStyles.loading}>Loading...</div>;
+    return (
+      <div className={cn(commonStyles.container, themeStyles.container, 'space-y-8 animate-pulse')}>
+        <div className="space-y-2">
+          <Skeleton width={220} height={28} radius={8} />
+          <Skeleton width={320} height={14} radius={6} />
+        </div>
+        <StatGridSkeleton count={3} />
+        <FormSkeleton fields={2} />
+      </div>
+    );
   }
 
   return (

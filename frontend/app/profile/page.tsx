@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { getAuthToken } from '@/lib/api';
 import Profile from './Profile';
@@ -14,7 +14,7 @@ import darkStyles from './ProfileRedirect.dark.module.css';
 // @AI-HINT: Public /profile redirects to portal-scoped profile if a portal area is known
 export default function ProfilePage() {
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -54,7 +54,6 @@ export default function ProfilePage() {
 
   // Show loading while checking authentication
   if (checking) {
-    const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
     return (
       <div className={cn(commonStyles.loadingWrapper, themeStyles.loadingWrapper)}>
         <p>Redirecting to your profile...</p>

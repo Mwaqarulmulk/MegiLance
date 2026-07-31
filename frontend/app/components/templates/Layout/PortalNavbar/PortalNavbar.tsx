@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { 
   Bell, Search, HelpCircle, Sun, Moon, LogOut, User, Settings,
@@ -55,7 +56,7 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
   
   const [user, setUser] = useState<{ name: string; email?: string; avatar?: string } | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);

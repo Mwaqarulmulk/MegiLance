@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import EmptyState from '@/app/components/molecules/EmptyState/EmptyState';
 import { welcomeWaveAnimation } from '@/app/components/Animations/LottieAnimation';
@@ -20,7 +20,7 @@ import lightStyles from './UserManagement.light.module.css';
 import darkStyles from './UserManagement.dark.module.css';
 
 const UserManagementPage: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const { notify } = useToaster();
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -41,8 +41,6 @@ const UserManagementPage: React.FC = () => {
     };
     loadUsers();
   }, []);
-
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
   const handleInvite = async () => {
     if (!inviteEmail || !inviteEmail.includes('@')) {

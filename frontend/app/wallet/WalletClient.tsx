@@ -3,7 +3,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
@@ -69,7 +69,7 @@ async function walletApi<T>(endpoint: string, options?: RequestInit): Promise<T>
 }
 
 export default function WalletClient() {
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const { notify } = useToaster();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -169,8 +169,6 @@ export default function WalletClient() {
   }, [fetchWalletData]);
 
   if (!mounted) return null;
-
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

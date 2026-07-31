@@ -1,32 +1,27 @@
-// @AI-HINT: Loading skeleton for invoices route - shows invoice list
+// @AI-HINT: High-fidelity invoices loading skeleton
 'use client';
+
+import React from 'react';
+import { TableRowsSkeleton, StatGridSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
 export default function InvoicesLoading() {
   return (
     <div
-      className="p-6 space-y-6 animate-pulse"
+      className="p-6 md:p-8 space-y-6 animate-pulse max-w-7xl mx-auto"
       role="status"
       aria-label="Loading invoices"
     >
-      <div className="flex items-center justify-between">
-        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32" />
-        <div className="h-10 w-36 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+      <div className="flex justify-between items-center">
+        <div className="space-y-2">
+          <Skeleton width={180} height={28} radius={8} />
+          <Skeleton width={240} height={14} radius={6} />
+        </div>
+        <Skeleton width={120} height={40} radius={10} />
       </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-        ))}
-      </div>
-
-      {/* Invoice table */}
-      <div className="space-y-3">
-        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-        ))}
-      </div>
+      <StatGridSkeleton count={3} />
+      <TableRowsSkeleton count={5} cols={6} />
     </div>
   );
 }

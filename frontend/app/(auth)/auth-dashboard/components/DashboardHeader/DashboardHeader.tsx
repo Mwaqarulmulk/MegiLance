@@ -16,6 +16,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 import { User } from '../../types';
 
 import commonStyles from './DashboardHeader.common.module.css';
@@ -86,10 +87,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userRole, user }) => 
 
   if (!mounted) {
     return (
-      <div className={cn(commonStyles.header, lightStyles.header)}>
+      <div className={cn(commonStyles.header, lightStyles.header, 'animate-pulse')}>
         <div className={commonStyles.headerTitle}>
           <h1>Welcome back!</h1>
-          <p>Loading...</p>
+          <Skeleton width={180} height={16} radius={6} className="mt-1" />
         </div>
       </div>
     );

@@ -22,3 +22,5 @@ export {
   mailSentAnimation,
   onboardingAnimation,
 } from './LottieAnimation';
+export { default as Skeleton } from './Skeleton';
+export * from './Skeleton/SkeletonPresets';

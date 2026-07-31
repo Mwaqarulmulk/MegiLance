@@ -15,26 +15,44 @@ export type SkeletonProps = {
   inline?: boolean;
   theme?: 'light' | 'dark';
   className?: string;
+  style?: React.CSSProperties;
 };
 
-export default function Skeleton({ width, height = 14, radius = 8, lines = 1, inline = false, theme: themeProp, className }: SkeletonProps) {
+export default function Skeleton({
+  width,
+  height = 14,
+  radius = 8,
+  lines = 1,
+  inline = false,
+  theme: themeProp,
+  className,
+  style,
+}: SkeletonProps) {
   const { resolvedTheme } = useTheme();
   const currentTheme = themeProp || resolvedTheme;
   const themeClass = currentTheme === 'dark' ? dark.theme : light.theme;
 
-  const items = Array.from({ length: Math.max(1, lines) });
+  const count = Math.max(1, lines);
+  const items = Array.from({ length: count });
 
   return (
-    <div className={cn(styles.container, themeClass, inline && styles.inline, className)} aria-hidden>
-      {items.map((_, i) => (
-        <div 
-          key={i} 
-          className={styles.block} 
-          data-width={typeof width === 'number' ? `${width}px` : width}
-          data-height={typeof height === 'number' ? `${height}px` : height}
-          data-radius={typeof radius === 'number' ? `${radius}px` : radius}
-        />
-      ))}
+    <div className={cn(styles.container, themeClass, inline && styles.inline, className)} style={style} aria-hidden>
+      {items.map((_, i) => {
+        const isLast = i === count - 1 && count > 1;
+        const itemWidth = isLast && !width ? '75%' : width;
+        return (
+          <div
+            key={i}
+            className={styles.block}
+            style={{
+              width: typeof itemWidth === 'number' ? `${itemWidth}px` : itemWidth,
+              height: typeof height === 'number' ? `${height}px` : height,
+              borderRadius: typeof radius === 'number' ? `${radius}px` : radius,
+            }}
+          />
+        );
+      })}
     </div>
   );
 }
+

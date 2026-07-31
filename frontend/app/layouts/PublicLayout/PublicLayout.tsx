@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import commonStyles from './PublicLayout.common.module.css';
 import lightStyles from './PublicLayout.light.module.css';
@@ -12,11 +12,7 @@ import SmartBanner from '@/app/components/molecules/SmartBanner/SmartBanner';
 type Props = { children: React.ReactNode };
 
 const PublicLayout: React.FC<Props> = ({ children }) => {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-
-  const themeStyles = (mounted && resolvedTheme === 'dark') ? darkStyles : lightStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const styles = React.useMemo(() => ({
     root: cn(commonStyles.root, themeStyles.root),
     skipLink: cn(commonStyles.skipLink, themeStyles.skipLink),

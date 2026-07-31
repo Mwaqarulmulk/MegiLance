@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useTheme } from "next-themes";
+import { useThemeStyles } from "@/app/hooks/useThemeMode";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -165,9 +165,8 @@ const Settings: React.FC = () => {
       .filter((cat) => cat.items.length > 0);
   }, [categories, searchQuery]);
 
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   if (!mounted) return null;
-
-  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   return (
     <div className={cn(commonStyles.page, themeStyles.page)}>

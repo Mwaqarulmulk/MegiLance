@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import Header from '@/app/components/organisms/Header/Header';
 import Footer from '@/app/components/organisms/Footer/Footer';
@@ -15,8 +15,7 @@ interface DefaultLayoutProps {
 }
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
-  const { resolvedTheme } = useTheme();
-  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <div className={cn(commonStyles.layout, themeStyles.layout)}>

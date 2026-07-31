@@ -4,17 +4,15 @@
 
 import { forwardRef } from 'react';
 import type { HTMLAttributes, ThHTMLAttributes, TdHTMLAttributes } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
-// The CSS module imports are now relative to the new file location.
 import commonStyles from './Table.common.module.css';
 import lightStyles from './Table.light.module.css';
 import darkStyles from './Table.dark.module.css';
 
 const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <div className={cn(commonStyles.tableWrapper, styles.tableWrapper)}>
@@ -30,8 +28,7 @@ Table.displayName = 'Table';
 
 const TableHeader = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <thead
@@ -55,8 +52,7 @@ TableBody.displayName = 'TableBody';
 
 const TableFooter = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <tfoot
@@ -70,8 +66,7 @@ TableFooter.displayName = 'TableFooter';
 
 const TableRow = forwardRef<HTMLTableRowElement, HTMLAttributes<HTMLTableRowElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <tr
@@ -85,8 +80,7 @@ TableRow.displayName = 'TableRow';
 
 const TableHead = forwardRef<HTMLTableCellElement, ThHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <th
@@ -100,8 +94,7 @@ TableHead.displayName = 'TableHead';
 
 const TableCell = forwardRef<HTMLTableCellElement, TdHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <td
@@ -115,8 +108,7 @@ TableCell.displayName = 'TableCell';
 
 const TableCaption = forwardRef<HTMLTableCaptionElement, HTMLAttributes<HTMLTableCaptionElement>>(
   ({ className, ...props }, ref) => {
-  const { resolvedTheme } = useTheme();
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <caption

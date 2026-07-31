@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { Github, Twitter, Linkedin, Mail, ShieldCheck, Percent, BadgeCheck, Headphones } from 'lucide-react';
 
@@ -58,19 +58,7 @@ const socialLinks = [
 ];
 
 const PublicFooter = () => {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Don't render themed content until mounted to avoid hydration mismatch
-  if (!mounted) {
-    return <motion.footer initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} className={commonStyles.footer} />;
-  }
-
-  const styles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
+  const styles = useThemeStyles(lightStyles, darkStyles);
 
   return (
     <motion.footer initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} className={cn(commonStyles.footer, styles.footer)}>

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Loader2, Search, X, MapPin, Star, CheckCircle, Clock } from 'lucide-react';
-import { PageTransition, ScrollReveal, StaggerContainer, StaggerItem } from '@/app/components/Animations';
+import { PageTransition, ScrollReveal, StaggerContainer, StaggerItem, ProjectGridSkeleton } from '@/app/components/Animations';
 import { AnimatedOrb, ParticlesSystem, FloatingCube, FloatingSphere } from '@/app/components/3D';
 
 import { getAuthToken } from '@/lib/api';
@@ -218,9 +218,7 @@ const TalentDirectoryPage = () => {
 
         {/* Grid */}
         {loading ? (
-          <div className={common.loadingCenter}>
-            <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-          </div>
+          <ProjectGridSkeleton count={6} className="py-4" />
         ) : (
           <StaggerContainer className={common.grid} delay={0.06}>
             {filtered.map(p => (

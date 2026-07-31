@@ -3,10 +3,10 @@
 'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeStyles } from '@/app/hooks/useThemeMode';
 import { cn } from '@/lib/utils';
 import { Wallet, History, ArrowUpRight, ArrowDownRight, Loader2, Plus, Download, ShieldCheck, CreditCard, Banknote } from 'lucide-react';
-import { PageTransition, ScrollReveal } from '@/app/components/Animations';
+import { PageTransition, ScrollReveal, TableRowsSkeleton } from '@/app/components/Animations';
 import { getAuthToken } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import common from './payments.common.module.css';
@@ -42,10 +42,9 @@ async function fetchApi<T>(endpoint: string): Promise<T | null> {
 }
 
 const Payments: React.FC = () => {
-  const { resolvedTheme } = useTheme();
   const { user } = useAuth();
   const role = (user?.user_type || user?.role || 'client').toLowerCase();
-  const themed = useMemo(() => resolvedTheme === 'dark' ? dark : light, [resolvedTheme]);
+  const themed = useThemeStyles(light, dark);
   const [mounted, setMounted] = React.useState(false);
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState<WalletBalance>({ available: 0, pending: 0, total: 0 });
@@ -213,9 +212,7 @@ const Payments: React.FC = () => {
                 </h2>
               </div>
               {loading ? (
-                <div className={common.loadingContainer}>
-                  <Loader2 className={common.spinner} />
-                </div>
+                <TableRowsSkeleton count={4} cols={4} className="my-4" />
               ) : transactions.length === 0 ? (
                 <div className={cn(common.emptyState, themed.emptyState)}>
                   <p>No financial transactions found</p>

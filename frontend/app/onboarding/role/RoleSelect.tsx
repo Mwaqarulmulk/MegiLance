@@ -5,7 +5,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useThemeStyles } from "@/app/hooks/useThemeMode";
 import { cn } from "@/lib/utils";
 import { Briefcase, User, Check } from "lucide-react";
 import api, { setAuthToken, setRefreshToken } from "@/lib/api";
@@ -51,13 +51,11 @@ const roles: {
 ];
 
 const RoleSelect: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const router = useRouter();
   const [selected, setSelected] = useState<Role | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
 
   const handleContinue = async () => {
     if (!selected) return;

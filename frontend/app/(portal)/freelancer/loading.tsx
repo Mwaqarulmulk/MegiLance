@@ -1,27 +1,33 @@
-// @AI-HINT: Loading UI for freelancer portal routes
-// Uses Next.js loading.js convention - wrapped in Suspense automatically
+// @AI-HINT: Tailored loading skeleton for Freelancer portal dashboard & routes
 'use client';
 
-import { LottieAnimation, loadingDotsAnimation } from '@/app/components/Animations/LottieAnimation';
+import React from 'react';
+import { StatGridSkeleton, ProjectGridSkeleton } from '@/app/components/Animations/Skeleton/SkeletonPresets';
+import Skeleton from '@/app/components/Animations/Skeleton/Skeleton';
 
 export default function FreelancerLoading() {
   return (
     <div
-      className="flex items-center justify-center min-h-[60vh]"
+      className="p-6 md:p-8 space-y-8 animate-pulse max-w-7xl mx-auto"
       role="status"
-      aria-label="Loading freelancer portal content"
+      aria-label="Loading freelancer portal"
     >
-      <div className="flex flex-col items-center gap-4">
-        <LottieAnimation
-          animationData={loadingDotsAnimation}
-          width={80}
-          height={80}
-          ariaLabel="Loading content"
-        />
-        <div className="space-y-2 w-48">
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4 mx-auto" />
+      {/* Welcome banner skeleton */}
+      <div className="p-6 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent space-y-3">
+        <Skeleton width={260} height={28} radius={8} />
+        <Skeleton width={380} height={14} radius={6} />
+      </div>
+
+      {/* Earnings & Proposal Stats */}
+      <StatGridSkeleton count={4} />
+
+      {/* Recommended Jobs Grid Skeleton */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton width={200} height={22} radius={6} />
+          <Skeleton width={100} height={16} radius={4} />
         </div>
+        <ProjectGridSkeleton count={3} />
       </div>
     </div>
   );
