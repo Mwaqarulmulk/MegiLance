@@ -278,6 +278,22 @@ const Enterprise: React.FC = () => {
           </div>
         </section>
 
+        {/* Interactive Enterprise ROI & Cost Savings Calculator */}
+        <section className={common.section}>
+          <div className={common.container}>
+            <ScrollReveal>
+              <div className={common.sectionHeader}>
+                <h2 className={common.sectionTitle}>Calculate Your Enterprise Savings</h2>
+                <p className={cn(common.sectionSubtitle, themed.sectionSubtitle)}>
+                  See how much your organization saves by switching from traditional 20% commission platforms to MegiLance zero-friction escrow.
+                </p>
+              </div>
+            </ScrollReveal>
+            
+            <InteractiveEnterpriseCalculator themed={themed} />
+          </div>
+        </section>
+
         {/* Pricing Plans */}
         <section className={cn(common.section, common.plansSection)}>
           <div className={common.container}>
@@ -362,6 +378,66 @@ const Enterprise: React.FC = () => {
         </section>
       </main>
     </PageTransition>
+  );
+};
+
+const InteractiveEnterpriseCalculator: React.FC<{ themed: Record<string, string> }> = ({ themed }) => {
+  const [monthlySpend, setMonthlySpend] = React.useState<number>(25000);
+  const [teamSize, setTeamSize] = React.useState<number>(10);
+
+  const traditionalFee = monthlySpend * 0.20;
+  const megiLanceFee = monthlySpend * 0.03;
+  const monthlySavings = traditionalFee - megiLanceFee;
+  const annualSavings = monthlySavings * 12;
+
+  return (
+    <div className={cn(common.statCard, themed.statCard)} style={{ padding: '2.5rem', borderRadius: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2.5rem', alignItems: 'center' }}>
+        <div>
+          <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+            Monthly Freelance &amp; Contractor Spend: <span style={{ color: 'var(--color-primary, #4573df)', fontWeight: 800 }}>${monthlySpend.toLocaleString()}</span>
+          </label>
+          <input
+            type="range"
+            min={5000}
+            max={150000}
+            step={5000}
+            value={monthlySpend}
+            onChange={(e) => setMonthlySpend(Number(e.target.value))}
+            style={{ width: '100%', accentColor: 'var(--color-primary, #4573df)', cursor: 'pointer', height: '6px' }}
+            aria-label="Monthly spend slider"
+          />
+
+          <div style={{ marginTop: '1.5rem' }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+              Active Contractors Vetted: <span style={{ color: '#27ae60', fontWeight: 800 }}>{teamSize} Contractors</span>
+            </label>
+            <input
+              type="range"
+              min={1}
+              max={100}
+              step={1}
+              value={teamSize}
+              onChange={(e) => setTeamSize(Number(e.target.value))}
+              style={{ width: '100%', accentColor: '#27ae60', cursor: 'pointer', height: '6px' }}
+              aria-label="Team size slider"
+            />
+          </div>
+        </div>
+
+        <div style={{ background: 'rgba(69, 115, 223, 0.05)', padding: '1.75rem', borderRadius: '16px', border: '1px solid rgba(69, 115, 223, 0.15)' }}>
+          <div style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary, #4573df)', fontWeight: 700 }}>
+            Estimated Enterprise Savings
+          </div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#27ae60', margin: '0.5rem 0' }}>
+            ${annualSavings.toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 500 }}>/ year</span>
+          </div>
+          <p style={{ fontSize: '0.875rem', opacity: 0.85, margin: 0, lineHeight: 1.5 }}>
+            By saving <strong style={{ color: '#27ae60' }}>${monthlySavings.toLocaleString()}/mo</strong> in platform fees, your budget stretches to cover <strong style={{ color: 'var(--color-primary, #4573df)' }}>+{Math.round(monthlySavings / 2500)} additional deliverables</strong> every month.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

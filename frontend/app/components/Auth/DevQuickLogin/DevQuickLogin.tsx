@@ -101,9 +101,9 @@ const DevQuickLogin: React.FC<DevQuickLoginProps> = ({ onCredentialSelect, onAut
     <div className={styles.container}>
       <div className={styles.header}>
         <Rocket className={styles.title} size={18} />
-        <h3 className={styles.title}>Explore in Demo Mode</h3>
+        <h3 className={styles.title}>Quick Sandbox Role Access</h3>
         <p className={styles.subtitle}>
-          Click a role below to log in instantly and browse the live dashboards.
+          Select a role below for instant workspace access and role-based feature testing.
         </p>
       </div>
       <div className={styles.buttonGrid}>

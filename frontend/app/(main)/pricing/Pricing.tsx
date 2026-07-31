@@ -19,30 +19,30 @@ import darkStyles from './Pricing.dark.module.css';
 
 const plans = [
   {
-    tier: 'Free',
+    tier: 'Free Starter',
     description: 'All essential tools to collaborate directly. Empowered by live AI pricing and secure smart contract escrow.',
-    price: '0',
-    pricePeriod: '/mo',
+    price: '$0',
+    pricePeriod: '/mo (Free for 2026)',
     features: [
+      '0% Client fee & 0% Freelancer commission',
       'Unlimited applications & client connections',
       'Full AI suite (Price estimator, proposal editor)',
       'Semantic AI talent matching',
       'Real-time collaborative workspaces',
       'Smart contract milestone escrow',
       'Community support & advice',
-      'Just 10% freelancer fee — clients pay 0%',
     ],
     ctaText: 'Get Started Free',
     ctaLink: '/signup?plan=free',
   },
   {
     tier: 'Pro Freelancer',
-    description: 'For established professionals seeking optimized profit margins and priority platform exposure.',
-    price: '$19',
-    pricePeriod: '/mo',
+    description: 'For established professionals seeking priority platform exposure and advanced workspace analytics.',
+    price: '$0',
+    pricePeriod: '/mo (Waived for Launch)',
     features: [
       'Everything in Free (incl. all AI tools)',
-      'Lower 5% platform fee (keep 95% of rates)',
+      '0% Platform fee (Keep 100% of your earnings)',
       'Priority matching & search placement',
       'Verified Profile Badge',
       'Advanced market analytics & trends',
@@ -50,14 +50,14 @@ const plans = [
       'Priority human support',
     ],
     isPopular: true,
-    ctaText: 'Upgrade to Pro',
+    ctaText: 'Claim Free Pro Access',
     ctaLink: '/signup?plan=pro',
   },
   {
     tier: 'Enterprise',
     description: 'For scaling organizations requiring compliance support, dedicated sourcing, and flexible talent integration.',
-    price: 'Custom',
-    pricePeriod: '',
+    price: '$0',
+    pricePeriod: '/mo (Free Launch Access)',
     features: [
       'Everything in Pro Freelancer',
       'Dedicated Sourcing Partner',
@@ -66,7 +66,7 @@ const plans = [
       'Custom developer/designer vetting',
       '24/7 account management & SLA',
       'Custom integration APIs',
-      'Negotiable platform fee (as low as 2%)',
+      '0% platform commission during launch',
     ],
     ctaText: 'Contact Sales',
     ctaLink: '/contact?plan=enterprise',
@@ -80,24 +80,24 @@ const comparisonFeatures = [
   { name: 'AI Talent Matching', free: 'Included', standard: 'Priority', enterprise: 'Custom' },
   { name: 'AI Proposal Writer & Tools', free: true, standard: true, enterprise: true },
   { name: 'AI Price Estimator', free: true, standard: true, enterprise: true },
-  { name: 'Verified Profile Badge', free: false, standard: true, enterprise: true },
-  { name: 'Advanced Analytics', free: false, standard: true, enterprise: true },
-  { name: 'Priority Support', free: false, standard: true, enterprise: true },
-  { name: 'Dedicated Account Manager', free: false, standard: false, enterprise: true },
-  { name: 'NDA & Legal Agreements', free: false, standard: false, enterprise: true },
-  { name: 'Staff Augmentation', free: false, standard: false, enterprise: true },
-  { name: 'Custom Talent Sourcing', free: false, standard: false, enterprise: true },
-  { name: 'Client Fee', free: '0%', standard: '0%', enterprise: '0%' },
-  { name: 'Freelancer Platform Fee', free: '10%', standard: '5%', enterprise: 'Negotiable' },
+  { name: 'Verified Profile Badge', free: true, standard: true, enterprise: true },
+  { name: 'Advanced Analytics', free: true, standard: true, enterprise: true },
+  { name: 'Priority Support', free: true, standard: true, enterprise: true },
+  { name: 'Dedicated Account Manager', free: false, standard: true, enterprise: true },
+  { name: 'NDA & Legal Agreements', free: true, standard: true, enterprise: true },
+  { name: 'Staff Augmentation', free: false, standard: true, enterprise: true },
+  { name: 'Custom Talent Sourcing', free: false, standard: true, enterprise: true },
+  { name: 'Client Fee', free: '0% (Launch Free)', standard: '0% (Launch Free)', enterprise: '0% (Launch Free)' },
+  { name: 'Freelancer Platform Fee', free: '0% (Launch Free)', standard: '0% (Launch Free)', enterprise: '0% (Launch Free)' },
 ];
 
 const faqs = [
-  { q: 'Are the AI features really free?', a: 'Yes. To align with modern market demands, our complete AI tooling—including price estimating, proposal writing, and fraud detection—is free for both sides to ensure fair transactions. No credit card, no usage fees.' },
-  { q: 'How does the fee model work?', a: 'Clients pay 0% commission. Posting contracts is entirely free. Freelancers pay a minimal 5% or 10% commission only upon successful milestone release, which is significantly lower than legacy platform margins (10-20%).' },
-  { q: 'What is Staff Augmentation?', a: 'With our Enterprise plan, we source and embed dedicated freelancers into your team on a contract basis. This includes NDA agreements, managed onboarding, and ongoing support — like having an extended team without the overhead.' },
-  { q: 'Can I switch plans anytime?', a: 'Yes, you can upgrade or downgrade at any time. When upgrading, you get immediate access to the new features. When downgrading, your current plan stays active until the end of the billing period.' },
-  { q: 'Is there a contract for the Enterprise plan?', a: 'Enterprise plans are based on custom agreements tailored to your needs. We work with you to define scope, SLAs, and pricing. Typical contracts are month-to-month or annual depending on your preference.' },
-  { q: 'Are there any hidden fees?', a: 'No hidden fees. The commission is the only platform fee. Payment processing fees (Stripe) are standard. Enterprise clients may have custom billing arrangements.' },
+  { q: 'Is MegiLance really 100% free right now?', a: 'Yes! As a launching startup, MegiLance is offering 100% free platform access throughout at least 2026. There are zero subscription charges, zero client fees, and zero freelancer commissions.' },
+  { q: 'Are there any commission or platform fees during launch?', a: 'No. Freelancers keep 100% of their earnings and clients pay 0% service fees during our 2026 startup launch promotion.' },
+  { q: 'Are all AI features included for free?', a: 'Yes. Our complete AI tooling—including price estimating, proposal writing, and talent matching—is completely free for all users with no usage limits or hidden costs.' },
+  { q: 'What happens after the launch promotion period?', a: 'Any future fee structure changes will be communicated well in advance. For all of 2026, all features and transactions remain 100% commission-free and subscription-free.' },
+  { q: 'What is Staff Augmentation?', a: 'With our Enterprise tier, we help source and embed dedicated freelancers into your team on a contract basis, complete with NDA templates and dedicated account support.' },
+  { q: 'Are there any hidden payment charges?', a: 'There are no hidden platform fees. Standard payment gateway processing fees (such as Stripe or crypto gas fees) apply directly from payment providers, but MegiLance charges 0% commission.' },
 ];
 
 const Pricing: React.FC = () => {
@@ -124,12 +124,11 @@ const Pricing: React.FC = () => {
         {/* Hero */}
         <ScrollReveal>
           <div className={styles.header}>
-            <span className={commonStyles.heroBadge}>All AI features free · Clients pay 0%</span>
-            <h1 className={styles.title}>Simple pricing. Free AI for everyone.</h1>
+            <span className={commonStyles.heroBadge}>🚀 Startup Launch Offer · 100% Free for 2026</span>
+            <h1 className={styles.title}>100% Free Platform & Zero Commission</h1>
             <p className={styles.subtitle}>
-              Clients post and hire for free. Freelancers keep more — just a 10% fee on completed
-              work (5% on Pro Freelancer), well below the 20% you&apos;d pay elsewhere. Our full AI toolkit
-              is included free while we grow.
+              As a newly launched startup platform, MegiLance is completely FREE for everyone throughout 2026.
+              Enjoy $0 subscription fees, 0% client fees, and 0% freelancer commission fees on all completed contracts!
             </p>
           </div>
         </ScrollReveal>

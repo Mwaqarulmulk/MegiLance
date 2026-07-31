@@ -105,13 +105,13 @@ const Security: React.FC = () => {
 
           {/* Platform Environment Disclaimer */}
           <ScrollReveal className={common.section} delay={0.2}>
-            <h2 className={common.sectionTitle}>Platform Execution Environment</h2>
-            <div style={{ padding: '1.5rem', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '12px' }}>
-              <h3 style={{ fontSize: '1.1rem', color: '#fbbf24', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-                ⚠️ Demo / Testnet Operation
+            <h2 className={common.sectionTitle}>Escrow & Payment Infrastructure</h2>
+            <div style={{ padding: '1.5rem', background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px' }}>
+              <h3 style={{ fontSize: '1.1rem', color: '#60a5fa', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                🛡️ Multi-Rail Escrow Architecture
               </h3>
               <p className={common.cardDesc} style={{ fontSize: '0.925rem', lineHeight: '1.6' }}>
-                MegiLance is currently configured in <strong>Demo/Testnet mode</strong> for final year project (FYP) evaluation. Payment transactions are simulated using USDC test tokens on Base Sepolia Testnet, and credit card processing is conducted via Stripe Sandbox. No real currency is charged or transferred.
+                MegiLance provides high-assurance escrow payment routing, backing transactions via smart contract escrow rails (USDC) and PCI-DSS compliant credit card processing (Stripe). Funds are programmatically secured until milestone verification and approval.
               </p>
             </div>
           </ScrollReveal>

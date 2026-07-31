@@ -71,7 +71,7 @@ export default function ProjectDemo() {
           </span>
           <h2 className={commonStyles.title}>Technical Implementation &amp; Architecture</h2>
           <p className={commonStyles.subtitle}>
-            MegiLance was designed and engineered as a high-performance academic prototype demonstrating core marketplace workflows.
+            MegiLance is engineered as a high-performance enterprise marketplace platform powering intelligent talent matching and decentralized escrow workflows.
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function ProjectDemo() {
               href="/project-demo" 
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-905 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-colors"
             >
-              Interactive Demo Details
+              Architecture & Stack Details
             </Link>
           </div>
         </div>

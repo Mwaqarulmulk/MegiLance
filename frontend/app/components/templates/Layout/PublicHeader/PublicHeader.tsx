@@ -1,4 +1,3 @@
-// @AI-HINT: This is the dedicated header for the public-facing marketing website with dropdown menus. It includes navigation, branding, and primary calls-to-action like 'Sign In' and 'Sign Up'.
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -33,7 +32,7 @@ interface ServiceDropdownItem {
 const navLinks: NavLinkItem[] = [
   { name: 'AI Tools', href: '/ai' },
   { name: 'How It Works', href: '/how-it-works' },
-  { name: 'Project Demo', href: '/project-demo' },
+  { name: 'Architecture', href: '/project-demo' },
   { name: 'Features', href: '/#features' },
   { name: 'Pricing', href: '/pricing' },
   { name: 'Blog', href: '/blog' },

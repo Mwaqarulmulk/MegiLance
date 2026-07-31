@@ -20,7 +20,7 @@ export default function Page() {
           Freelancing Platform for Pakistani Freelancers
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Unlock the global economy. Overcome Stripe/PayPal barriers, secure stable payouts, and pay fair 5-10% commissions.
+          Unlock the global economy. Overcome Stripe/PayPal barriers, secure stable payouts, and pay 0% launch commissions for 2026.
         </p>
       </header>
 
@@ -43,8 +43,8 @@ export default function Page() {
           <div className="flex gap-3">
             <ShieldCheck className="text-pink-500 flex-shrink-0" size={20} />
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Fair Commission Model</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Keep 90-95% of your earnings. Standard platforms charge up to 20% commission on starters.</p>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Zero Commission Launch Offer</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Keep 100% of your hard-earned income with 0% platform commission during our 2026 launch offer.</p>
             </div>
           </div>
         </div>

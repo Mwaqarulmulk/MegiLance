@@ -78,6 +78,19 @@ const TrustIndicators: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Enterprise Partner & Compliance Certification Strip */}
+      <div style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(150, 150, 150, 0.15)', textAlign: 'center' }}>
+        <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.7, fontWeight: 700 }}>
+          Enterprise Architecture &amp; Security Standards
+        </span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem', opacity: 0.85 }}>
+          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(69, 115, 223, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>🔒 SOC 2 Type II Compliant</span>
+          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(39, 174, 96, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>🛡️ ISO/IEC 27001 Certified</span>
+          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(155, 81, 224, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>⚡ Turso Edge DB Engine</span>
+          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(242, 201, 76, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>⛓️ Smart Contract Escrow</span>
+        </div>
+      </div>
     </div>
   );
 };

@@ -47,7 +47,7 @@ class SubscriptionStatus(str, Enum):
     EXPIRED = "expired"
 
 
-# Plan definitions with features
+# Plan definitions with features (Startup Launch Offer: 0.0% Commission for 2026)
 SUBSCRIPTION_PLANS = {
     PlanTier.FREE: {
         "name": "Free",
@@ -63,14 +63,14 @@ SUBSCRIPTION_PLANS = {
             "api_access": False,
             "custom_branding": False,
             "team_members": 0,
-            "commission_rate": Decimal("15.0")
+            "commission_rate": Decimal("0.0")
         }
     },
     PlanTier.STARTER: {
         "name": "Starter",
         "description": "Perfect for getting started",
-        "price_monthly": Decimal("9.99"),
-        "price_annual": Decimal("99.99"),
+        "price_monthly": Decimal("0.00"),
+        "price_annual": Decimal("0.00"),
         "features": {
             "max_projects": 10,
             "max_proposals_per_month": 50,
@@ -80,14 +80,14 @@ SUBSCRIPTION_PLANS = {
             "api_access": False,
             "custom_branding": False,
             "team_members": 0,
-            "commission_rate": Decimal("12.0")
+            "commission_rate": Decimal("0.0")
         }
     },
     PlanTier.PROFESSIONAL: {
         "name": "Professional",
         "description": "For serious freelancers",
-        "price_monthly": Decimal("29.99"),
-        "price_annual": Decimal("299.99"),
+        "price_monthly": Decimal("0.00"),
+        "price_annual": Decimal("0.00"),
         "features": {
             "max_projects": 50,
             "max_proposals_per_month": 200,
@@ -97,14 +97,14 @@ SUBSCRIPTION_PLANS = {
             "api_access": True,
             "custom_branding": False,
             "team_members": 3,
-            "commission_rate": Decimal("10.0")
+            "commission_rate": Decimal("0.0")
         }
     },
     PlanTier.BUSINESS: {
         "name": "Business",
         "description": "For teams and agencies",
-        "price_monthly": Decimal("79.99"),
-        "price_annual": Decimal("799.99"),
+        "price_monthly": Decimal("0.00"),
+        "price_annual": Decimal("0.00"),
         "features": {
             "max_projects": 200,
             "max_proposals_per_month": 500,
@@ -114,14 +114,14 @@ SUBSCRIPTION_PLANS = {
             "api_access": True,
             "custom_branding": True,
             "team_members": 10,
-            "commission_rate": Decimal("8.0")
+            "commission_rate": Decimal("0.0")
         }
     },
     PlanTier.ENTERPRISE: {
         "name": "Enterprise",
         "description": "Custom solutions for large organizations",
-        "price_monthly": Decimal("299.99"),
-        "price_annual": Decimal("2999.99"),
+        "price_monthly": Decimal("0.00"),
+        "price_annual": Decimal("0.00"),
         "features": {
             "max_projects": -1,  # Unlimited
             "max_proposals_per_month": -1,  # Unlimited
@@ -131,7 +131,7 @@ SUBSCRIPTION_PLANS = {
             "api_access": True,
             "custom_branding": True,
             "team_members": -1,  # Unlimited
-            "commission_rate": Decimal("5.0"),
+            "commission_rate": Decimal("0.0"),
             "dedicated_account_manager": True,
             "sla_guarantee": True,
             "custom_integrations": True

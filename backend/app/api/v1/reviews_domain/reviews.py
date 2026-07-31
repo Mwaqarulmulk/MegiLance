@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_current_user_optional
 from app.db.turso_http import execute_query, parse_rows, parse_date
 from app.services.db_utils import get_val as _get_val, safe_str as _safe_str
 
@@ -41,9 +41,11 @@ class ReviewResponse(BaseModel):
 def list_reviews(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    limit: Optional[int] = Query(None, ge=1, le=100),
     user_id: Optional[int] = None,
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_optional),
 ):
+    effective_page_size = limit if limit is not None else page_size
     where = "WHERE 1=1"
     params: list = []
 
@@ -51,8 +53,8 @@ def list_reviews(
         where += " AND (r.reviewer_id = ? OR r.reviewee_id = ?)"
         params.extend([user_id, user_id])
 
-    offset = (page - 1) * page_size
-    params.extend([page_size, offset])
+    offset = (page - 1) * effective_page_size
+    params.extend([effective_page_size, offset])
 
     result = execute_query(
         f"""SELECT r.id, r.contract_id, r.reviewer_id, r.reviewee_id, r.rating,

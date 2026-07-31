@@ -189,14 +189,46 @@ const About: React.FC = () => {
           </StaggerContainer>
         </section>
 
+        {/* Platform Milestone Roadmap */}
+        <section aria-labelledby="milestones-title" style={{ margin: '4rem 0' }}>
+          <ScrollReveal>
+            <div className={styles.sectionHeader}>
+              <h2 id="milestones-title" className={styles.sectionTitle}>Platform Evolution &amp; Roadmap</h2>
+              <span aria-hidden="true" className={styles.sectionNote}>From vision to next-generation AI freelance marketplace</span>
+            </div>
+          </ScrollReveal>
+          <StaggerContainer className={styles.valuesGrid}>
+            <StaggerItem className={styles.valueItem} style={{ borderLeft: '4px solid var(--color-primary, #4573df)', paddingLeft: '1.25rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary, #4573df)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase 1 — 2024</span>
+              <h3 className={styles.valueTitle}>Architecture &amp; Core Engine</h3>
+              <p className={styles.valueDesc}>
+                Launched FastAPI async microservices, hybrid Web2/Web3 escrow foundation, and Turso edge database infrastructure.
+              </p>
+            </StaggerItem>
+            <StaggerItem className={styles.valueItem} style={{ borderLeft: '4px solid #27ae60', paddingLeft: '1.25rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#27ae60', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase 2 — 2025</span>
+              <h3 className={styles.valueTitle}>7-Factor AI Vetting</h3>
+              <p className={styles.valueDesc}>
+                Integrated proprietary ML scoring models, sentiment analysis reviews, price forecasting, and automated milestone verification.
+              </p>
+            </StaggerItem>
+            <StaggerItem className={styles.valueItem} style={{ borderLeft: '4px solid #9b51e0', paddingLeft: '1.25rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#9b51e0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase 3 — 2026+</span>
+              <h3 className={styles.valueTitle}>Enterprise &amp; Global Scale</h3>
+              <p className={styles.valueDesc}>
+                Expanding automated tax compliance, USDC zero-fee settlement, SOC2 security governance, and enterprise team portals.
+              </p>
+            </StaggerItem>
+          </StaggerContainer>
+        </section>
+
         {/* Team Section */}
         <section aria-labelledby="team-title">
           <ScrollReveal>
             <div className={styles.sectionHeader}>
-              <h2 id="team-title" className={styles.sectionTitle}>Our Team</h2>
-              <span aria-hidden="true" className={styles.sectionNote}>The people building the future of freelancing</span>
+              <h2 id="team-title" className={styles.sectionTitle}>Leadership &amp; Core Engineering</h2>
+              <span aria-hidden="true" className={styles.sectionNote}>The engineering and research team powering MegiLance</span>
             </div>
-            {/* Team collaboration visual — Project Manager, Frontend Dev, Backend Dev, UX/UI Designer, QA/Operations */}
             <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
               <Image
                 src="/images/sections/team.png"
@@ -209,22 +241,31 @@ const About: React.FC = () => {
             </div>
           </ScrollReveal>
           <StaggerContainer className={styles.valuesGrid}>
-            <StaggerItem className={styles.valueItem}>
+            <StaggerItem className={styles.valueItem} tabIndex={0}>
+              <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(69, 115, 223, 0.1)', color: 'var(--color-primary, #4573df)', marginBottom: '0.75rem' }}>
+                Founder &amp; Lead Engineer
+              </div>
               <h3 className={styles.valueTitle}>Ghulam Mujtaba</h3>
               <p className={styles.valueDesc}>
-                Founder &amp; Lead Engineer. System architecture, AI matching integration, and full-stack development.
+                Lead Architect. Responsible for Next.js 16 frontend, FastAPI microservices, AI match engine integration, and end-to-end user experience.
               </p>
             </StaggerItem>
-            <StaggerItem className={styles.valueItem}>
+            <StaggerItem className={styles.valueItem} tabIndex={0}>
+              <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(39, 174, 96, 0.1)', color: '#27ae60', marginBottom: '0.75rem' }}>
+                Co-Founder &amp; Backend Lead
+              </div>
               <h3 className={styles.valueTitle}>Muhammad Waqar Ul Mulk</h3>
               <p className={styles.valueDesc}>
-                Co-Founder &amp; Backend Lead. Database schemas, remote API routes, security audits, and deployment.
+                Database &amp; Security Lead. Oversees Turso async query pipelines, security audits, authentication layers, and deployment.
               </p>
             </StaggerItem>
-            <StaggerItem className={styles.valueItem}>
+            <StaggerItem className={styles.valueItem} tabIndex={0}>
+              <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(155, 81, 224, 0.1)', color: '#9b51e0', marginBottom: '0.75rem' }}>
+                Academic Advisory Board
+              </div>
               <h3 className={styles.valueTitle}>Supervisors</h3>
               <p className={styles.valueDesc}>
-                <strong>Dr. Junaid Akram</strong> (Supervisor) &amp; <strong>Khula Qadeer</strong> (Co-Supervisor) — Academic Advising and Evaluation Guidance.
+                <strong>Dr. Junaid Akram</strong> (Supervisor) &amp; <strong>Khula Qadeer</strong> (Co-Supervisor) — System Evaluation, AI Vetting Methodology, and Academic Guidance.
               </p>
             </StaggerItem>
           </StaggerContainer>
@@ -232,14 +273,24 @@ const About: React.FC = () => {
 
         <section aria-labelledby="cta-title">
           <ScrollReveal>
-            <h2 id="cta-title" className={styles.sectionTitle}>Join the Revolution</h2>
             <div className={styles.cta}>
-              <Link href="/signup">
-                <button className={styles.ctaBtn} aria-label="Get started with MegiLance">
-                  Start Freelancing Today
-                </button>
-              </Link>
-              <span className={styles.sectionNote}>Low platform fees. Blockchain-secured payments.</span>
+              <h2 id="cta-title" className={styles.sectionTitle} style={{ margin: 0 }}>Experience Next-Gen Freelancing</h2>
+              <p style={{ maxWidth: '500px', margin: '0 auto', fontSize: '1rem', opacity: 0.85 }}>
+                Join thousands of businesses and verified freelancers benefiting from transparent escrow and zero-commission contracts.
+              </p>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '0.5rem' }}>
+                <Link href="/signup">
+                  <button className={styles.ctaBtn} aria-label="Get started with MegiLance">
+                    Start Freelancing Today
+                  </button>
+                </Link>
+                <Link href="/enterprise">
+                  <button className={styles.ctaBtn} style={{ background: 'transparent', border: '1px solid currentColor', color: 'inherit' }} aria-label="Explore Enterprise Solutions">
+                    Explore Enterprise
+                  </button>
+                </Link>
+              </div>
+              <span className={styles.sectionNote}>Low 2-5% fee structure • Smart Contract Protected • Instant Withdrawals</span>
             </div>
           </ScrollReveal>
         </section>

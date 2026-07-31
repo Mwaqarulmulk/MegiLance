@@ -62,7 +62,7 @@ const LEVEL_DESCRIPTIONS: Record<string, string> = {
   platinum: "Elite seller — among the very best on the platform.",
 };
 
-const BASE_COMMISSION = 20;
+const BASE_COMMISSION = 0; // 0% Launch Offer for 2026
 
 /** Map flat backend /seller-stats/me response → SellerStatsData expected by <SellerStats>. */
 function transformSellerStats(raw: Record<string, unknown>): SellerStatsData {
@@ -77,7 +77,7 @@ function transformSellerStats(raw: Record<string, unknown>): SellerStatsData {
       jssScore: (raw.jss_score as number) ?? 0,
       benefits: {
         commissionRate:
-          BASE_COMMISSION - ((benefits.reduced_fees as number) ?? 0),
+          (benefits.commission_rate as number) ?? (benefits.commissionRate as number) ?? BASE_COMMISSION,
         featuredGigs: (benefits.featured_gigs as number) ?? 0,
         prioritySupport: (benefits.priority_support as boolean) ?? false,
         badges: (raw.badges as string[]) ?? (benefits.badges as string[]) ?? [],

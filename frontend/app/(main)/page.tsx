@@ -1,4 +1,3 @@
-// @AI-HINT: This is the Next.js home route. It delegates to the Home component, which uses per-component theming and styles only.
 import Home from '@/app/home/Home';
 import type { Metadata } from 'next';
 import { buildWebSiteJsonLd, buildOrganizationJsonLd, buildFAQJsonLd } from '@/lib/seo';

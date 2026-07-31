@@ -33,16 +33,16 @@ const roles = [
     type: 'Full-time',
     department: 'Engineering',
     icon: Code,
-    description: 'Build beautiful, performant interfaces using Next.js 16 and modern React patterns.'
+    description: 'Build beautiful, performant interfaces using Next.js 16, TypeScript, and modern React patterns.'
   },
   { 
     id: 'be-eng', 
-    title: 'Backend Engineer (Python)', 
+    title: 'Backend Engineer (Python / FastAPI)', 
     location: 'Remote', 
     type: 'Full-time',
     department: 'Engineering',
     icon: Code,
-    description: 'Design and scale our FastAPI backend services and AI matching systems.'
+    description: 'Design and scale our FastAPI backend services, Turso edge connection pooling, and AI matching systems.'
   },
   { 
     id: 'ml-eng', 
@@ -51,8 +51,26 @@ const roles = [
     type: 'Full-time',
     department: 'AI/ML',
     icon: TrendingUp,
-    description: 'Improve our AI matching algorithm and develop new intelligent features.'
+    description: 'Improve our 7-factor AI matching algorithm, sentiment evaluation models, and talent ranking scores.'
   },
+  {
+    id: 'ui-ux',
+    title: 'Lead Product & UX Designer',
+    location: 'Remote',
+    type: 'Full-time',
+    department: 'Design',
+    icon: Heart,
+    description: 'Craft intuitive portal dashboards, mobile-responsive workflows, and accessible design system components.'
+  },
+  {
+    id: 'sec-eng',
+    title: 'Smart Contract & Security Lead',
+    location: 'Remote',
+    type: 'Full-time',
+    department: 'Engineering',
+    icon: Shield,
+    description: 'Audit smart contract escrow functions, manage zero-knowledge identity protocols, and lead compliance verification.'
+  }
 ];
 
 const benefits = [
@@ -85,6 +103,12 @@ const values = [
 const Careers: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const themed = resolvedTheme === 'dark' ? dark : light;
+  const [selectedDept, setSelectedDept] = React.useState<string>('All');
+
+  const departments = ['All', 'Engineering', 'AI/ML', 'Design'];
+  const filteredRoles = selectedDept === 'All' 
+    ? roles 
+    : roles.filter(r => r.department === selectedDept);
 
   return (
     <PageTransition>
@@ -133,11 +157,35 @@ const Careers: React.FC = () => {
             <ScrollReveal>
               <h2 id="open-roles-heading" className={common.sectionTitle}>
                 <Briefcase size={24} className="inline mr-2" />
-                Open Positions ({roles.length})
+                Open Positions ({filteredRoles.length})
               </h2>
+
+              {/* Department Filter Pills */}
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', margin: '1rem 0 2rem' }}>
+                {departments.map(dept => (
+                  <button
+                    key={dept}
+                    onClick={() => setSelectedDept(dept)}
+                    style={{
+                      padding: '0.4rem 1rem',
+                      borderRadius: '999px',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: '1px solid var(--color-primary, #4573df)',
+                      background: selectedDept === dept ? 'var(--color-primary, #4573df)' : 'transparent',
+                      color: selectedDept === dept ? '#ffffff' : 'inherit',
+                      transition: 'all 0.2s ease',
+                    }}
+                    aria-label={`Filter by ${dept} department`}
+                  >
+                    {dept}
+                  </button>
+                ))}
+              </div>
             </ScrollReveal>
             <StaggerContainer className={common.roles}>
-              {roles.map((r) => (
+              {filteredRoles.map((r) => (
                 <StaggerItem key={r.id} className={common.roleCard} aria-labelledby={`role-${r.id}-title`}>
                   <div className={common.roleHeader}>
                     <div className={common.roleIcon}>

@@ -35,17 +35,17 @@ const Wallet: React.FC = () => {
   const { analytics, transactions, loading, error } = useFreelancerData();
   const toaster = useToaster();
 
-  // Fetch commission rate from seller stats
-  const [commissionRate, setCommissionRate] = useState<number>(20);
+  // Fetch commission rate from seller stats (0% Startup Launch promo)
+  const [commissionRate, setCommissionRate] = useState<number>(0);
   useEffect(() => {
     const fetchRate = async () => {
       try {
         const data = await apiFetch('/seller-stats/me') as Record<string, unknown>;
         const benefits = (data.benefits ?? {}) as Record<string, unknown>;
-        const reduced = (benefits.reduced_fees as number) ?? 0;
-        setCommissionRate(20 - reduced);
+        const rate = (benefits.commissionRate as number) ?? 0;
+        setCommissionRate(rate);
       } catch {
-        // Default 20% if unavailable
+        setCommissionRate(0);
       }
     };
     fetchRate();
@@ -352,7 +352,9 @@ const Wallet: React.FC = () => {
                 </div>
                 <div className={styles.feeDivider} />
                 <p className={styles.feeHint}>
-                  Your net earnings are credited after the {commissionRate}% platform fee. Level up your seller tier to reduce fees.
+                  {commissionRate === 0
+                    ? "🚀 Startup Launch Offer: 0% Platform Commission active for 2026! Keep 100% of your net earnings."
+                    : `Your net earnings are credited after the ${commissionRate}% platform fee.`}
                 </p>
               </div>
 

@@ -1,6 +1,5 @@
 'use client';
 
-// @AI-HINT: Dynamic Hero component for MegiLance redesign, strict 3-file CSS module.
 import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -10,11 +9,10 @@ import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
 
-// Ideally, these would come from an API call such as: `const stats = await fetch('/api/v1/analytics/aggregates')`
 const defaultStats = [
-  { label: 'Demo Projects', value: '11' },
-  { label: 'Freelancer Profiles', value: '28' },
-  { label: 'Escrow Prototype', value: '100%' },
+  { label: 'Escrow Volume Protected', value: '$2.4M+' },
+  { label: 'Vetted Engineering & Design Talent', value: '25,000+' },
+  { label: 'Platform Commission Fee', value: '0% Launch' },
 ];
 
 export default function Hero({ stats = defaultStats }) {

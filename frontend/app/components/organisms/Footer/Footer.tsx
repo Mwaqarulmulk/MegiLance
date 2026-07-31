@@ -25,16 +25,16 @@ const footerSections = {
   'For You': [
     { name: 'For Clients', href: '/clients' },
     { name: 'For Freelancers', href: '/freelancers' },
+    { name: 'Enterprise', href: '/enterprise' },
     { name: 'Teams', href: '/teams' },
-    { name: 'FAQ', href: '/faq' },
     { name: 'Careers', href: '/careers' },
   ],
   'Resources': [
     { name: 'Help Center', href: '/support' },
-    { name: 'Contact Us', href: '/contact' },
     { name: 'About Us', href: '/about' },
+    { name: 'Press Room', href: '/press' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Community', href: '/community' },
+    { name: 'Contact Us', href: '/contact' },
   ],
   'AI Tools': [
     { name: 'All AI Tools', href: '/ai' },

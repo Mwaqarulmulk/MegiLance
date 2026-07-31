@@ -1,5 +1,3 @@
-// @AI-HINT: Clean, focused Home page for MegiLance AI-powered freelancing platform.
-
 'use client';
 
 import React from 'react';

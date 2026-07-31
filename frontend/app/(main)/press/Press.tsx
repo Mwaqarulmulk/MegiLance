@@ -34,10 +34,10 @@ const pressReleases = [
 ];
 
 const companyStats = [
-  { label: 'Founded', value: '2024' },
-  { label: 'Headquarters', value: 'Remote-First' },
-  { label: 'Core Team', value: '3 Founders' },
-  { label: 'Platform', value: 'AI + Blockchain' },
+  { label: 'Platform Engine', value: '7-Factor AI Vetting' },
+  { label: 'Escrow Guarantee', value: 'USDC + Smart Contracts' },
+  { label: 'Platform Fee', value: '0% (Launch Free Offer)' },
+  { label: 'Uptime SLA', value: '99.9% Edge Availability' },
 ];
 
 const Press: React.FC = () => {

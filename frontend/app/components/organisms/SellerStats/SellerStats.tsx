@@ -1,4 +1,3 @@
-// @AI-HINT: SellerStats dashboard component - displays seller level, JSS score, stats, and progress to next level
 'use client';
 
 import React from 'react';
@@ -107,7 +106,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ stats, className }) => {
   // Defensive: ensure level is always a full SellerLevel object
   const rawLevel = stats.level;
   const defaultBenefits = {
-    commissionRate: 20,
+    commissionRate: 0,
     featuredGigs: 0,
     prioritySupport: false,
     badges: [] as string[],
@@ -334,7 +333,9 @@ const SellerStats: React.FC<SellerStatsProps> = ({ stats, className }) => {
                 Commission Rate
               </span>
               <span className={cn(common.benefitValue, themed.benefitValue)}>
-                {level.benefits?.commissionRate ?? 20}% platform fee
+                {level.benefits?.commissionRate === 0
+                  ? '0% (Launch Free Offer)'
+                  : `${level.benefits?.commissionRate ?? 0}% platform fee`}
               </span>
             </div>
           </div>

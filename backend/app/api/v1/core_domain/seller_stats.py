@@ -11,7 +11,7 @@ from app.db.turso_http import execute_query, parse_rows
 router = APIRouter()
 
 LEVEL_ORDER = ["new_seller", "bronze", "silver", "gold", "platinum"]
-LEVEL_COMMISSIONS = {"new_seller": 20, "bronze": 20, "silver": 18, "gold": 15, "platinum": 12}
+LEVEL_COMMISSIONS = {"new_seller": 0, "bronze": 0, "silver": 0, "gold": 0, "platinum": 0} # 0% Launch Offer for 2026
 LEVEL_REQUIREMENTS = {
     "bronze":   {"orders": 5,   "earnings": 100,   "rating": 4.0, "months": 1},
     "silver":   {"orders": 20,  "earnings": 500,   "rating": 4.3, "months": 3},
