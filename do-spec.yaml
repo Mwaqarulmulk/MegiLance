@@ -195,7 +195,7 @@ services:
     value: wss://api.megilance.site
   - key: NEXT_PUBLIC_SHOW_DEMO_LOGIN
     scope: RUN_AND_BUILD_TIME
-    value: "true"
+    value: "false"
   - key: NEXTAUTH_URL
     scope: RUN_AND_BUILD_TIME
     value: https://www.megilance.site

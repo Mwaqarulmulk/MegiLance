@@ -177,7 +177,7 @@ services:
     scope: RUN_AND_BUILD_TIME
     value: wss://api.megilance.site
   - key: NEXT_PUBLIC_SHOW_DEMO_LOGIN
-    scope: RUN_TIME
+    scope: RUN_AND_BUILD_TIME
     value: "false"
   - key: NEXTAUTH_URL
     scope: RUN_AND_BUILD_TIME
