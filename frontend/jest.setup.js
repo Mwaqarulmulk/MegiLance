@@ -31,7 +31,8 @@ jest.mock('next/router', () => ({
 
 // Mock Next.js image component
 jest.mock('next/image', () => {
-  const MockImage = ({ src, alt, ...props }) => {
+  const React = require('react');
+  const MockImage = ({ src, alt, priority, fill, placeholder, blurDataURL, sizes, quality, ...props }) => {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} {...props} />;
   };
@@ -124,7 +125,7 @@ jest.mock('framer-motion', () => {
 // Mock lottie-react to prevent HTMLCanvasElement.prototype.getContext errors in jsdom
 jest.mock('lottie-react', () => {
   const React = require('react');
-  const LottieMock = React.forwardRef((props, ref) => {
+  const LottieMock = React.forwardRef(({ animationData, autoplay, rendererSettings, loop, ...props }, ref) => {
     return React.createElement('div', { ref, 'data-testid': 'lottie-mock', ...props });
   });
   LottieMock.displayName = 'LottieMock';
