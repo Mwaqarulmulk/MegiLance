@@ -1,9 +1,45 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy, Component, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 const Lottie = lazy(() => import('lottie-react'));
+
+// Safe error boundary to catch any lottie rendering errors locally
+class BrandLottieErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.warn('BrandLottiePlayer caught rendering error:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        this.props.fallback || (
+          <div className="flex h-full w-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
+            <span>Animation preview unavailable</span>
+          </div>
+        )
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function isValidLottie(data: unknown): Record<string, unknown> | null {
+  if (!data || typeof data !== 'object') return null;
+  const obj = data as Record<string, unknown>;
+  const target = (obj.default && typeof obj.default === 'object' ? obj.default : obj) as Record<string, unknown>;
+  if (Array.isArray(target.layers) || (typeof target.v === 'string' && target.v.length > 0)) {
+    return target;
+  }
+  return null;
+}
 
 export interface BrandLottiePlayerProps {
   /** Relative URL path to JSON in public folder e.g. '/lottie/01_ai_saas_dashboard.json' or pre-imported animationData object */
@@ -42,13 +78,14 @@ export function BrandLottiePlayer({
   glow = true,
   framed = false,
 }: BrandLottiePlayerProps) {
-  const [data, setData] = useState<Record<string, unknown> | null>(directData || null);
+  const [data, setData] = useState<Record<string, unknown> | null>(() => isValidLottie(directData));
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(!directData && !!src);
 
   useEffect(() => {
-    if (directData) {
-      setData(directData);
+    const validDirect = isValidLottie(directData);
+    if (validDirect) {
+      setData(validDirect);
       setLoading(false);
       return;
     }
@@ -65,7 +102,13 @@ export function BrandLottiePlayer({
       })
       .then((json) => {
         if (isMounted) {
-          setData(json);
+          const validated = isValidLottie(json);
+          if (validated) {
+            setData(validated);
+          } else {
+            console.warn(`Invalid Lottie structure fetched from ${src}`);
+            setError(true);
+          }
           setLoading(false);
         }
       })
@@ -123,20 +166,23 @@ export function BrandLottiePlayer({
       )}
 
       {data && !loading && (
-        <Suspense fallback={<div className="h-full w-full animate-pulse bg-muted/20 rounded-xl" />}>
-          <Lottie
-            animationData={data}
-            loop={loop}
-            autoplay={autoplay}
-            className={cn('relative z-10 h-full w-full object-contain', lottieClassName)}
-            rendererSettings={{
-              preserveAspectRatio: 'xMidYMid meet',
-            }}
-          />
-        </Suspense>
+        <BrandLottieErrorBoundary>
+          <Suspense fallback={<div className="h-full w-full animate-pulse bg-muted/20 rounded-xl" />}>
+            <Lottie
+              animationData={data}
+              loop={loop}
+              autoplay={autoplay}
+              className={cn('relative z-10 h-full w-full object-contain', lottieClassName)}
+              rendererSettings={{
+                preserveAspectRatio: 'xMidYMid meet',
+              }}
+            />
+          </Suspense>
+        </BrandLottieErrorBoundary>
       )}
     </div>
   );
 }
 
 export default BrandLottiePlayer;
+
