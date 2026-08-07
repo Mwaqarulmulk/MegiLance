@@ -34,7 +34,7 @@ export function isValidLottieData(data: unknown): Record<string, unknown> | null
   const obj = data as Record<string, unknown>;
   // Unwrap default export if wrapped
   const target = (obj.default && typeof obj.default === 'object' ? obj.default : obj) as Record<string, unknown>;
-  if (Array.isArray(target.layers) || (typeof target.v === 'string' && target.v.length > 0)) {
+  if (Array.isArray(target.layers)) {
     return target;
   }
   return null;

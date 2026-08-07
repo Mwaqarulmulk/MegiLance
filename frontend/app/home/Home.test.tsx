@@ -12,7 +12,7 @@ jest.mock('next-themes', () => ({
 
 // Mock sub-components with relative paths matching Home.tsx imports
 jest.mock('./components/Hero/Hero', () => {
-  return () => <div>Hero Section</div>;
+  return () => <div data-testid="hero-section">Hero Section</div>;
 });
 jest.mock('./components/TrustIndicators', () => {
   return () => <div data-testid="trust-indicators">Trust Indicators</div>;
