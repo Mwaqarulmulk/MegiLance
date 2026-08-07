@@ -39,39 +39,45 @@ const AIToolsHub: React.FC = () => {
           </p>
         </div>
 
-        {/* AI Brain Lottie Banner */}
-        <div className="mb-8 flex justify-center">
-          <BrandLottiePlayer
-            src="/lottie/ai-brain.json"
-            ariaLabel="AI Neural Matching Animation"
-            className="w-full max-w-sm h-48 md:h-56"
-            glow={true}
-          />
-        </div>
+        {/* Orbital Hub Layout: Central Lottie with surrounding cards */}
+        <div className={commonStyles.hubWrapper}>
+          {/* Central Lottie Core */}
+          <div className={commonStyles.centerCore}>
+            <BrandLottiePlayer
+              src="/lottie/ai-brain.json"
+              ariaLabel="AI Neural Matching Animation"
+              className="w-full max-w-xs md:max-w-md h-52 md:h-64"
+              glow={true}
+            />
+            <div className={commonStyles.corePulseRing} />
+          </div>
 
-        <div className={commonStyles.grid}>
-          {tools.map((tool) => {
-            const Icon = tool.icon;
-            return (
-              <Link
-                key={tool.label}
-                href={tool.href}
-                className={cn(commonStyles.card, themeStyles.card)}
-              >
-                <div
-                  className={commonStyles.iconWrap}
+          {/* Surrounding Cards Grid */}
+          <div className={commonStyles.orbitalGrid}>
+            {tools.map((tool, idx) => {
+              const Icon = tool.icon;
+              return (
+                <Link
+                  key={tool.label}
+                  href={tool.href}
+                  className={cn(commonStyles.card, themeStyles.card, commonStyles[`cardPos${idx}`])}
                   style={{ '--tool-color': tool.color } as React.CSSProperties}
                 >
-                  <Icon size={20} />
-                </div>
-                <div className={commonStyles.cardBody}>
-                  <span className={cn(commonStyles.cardLabel, themeStyles.cardLabel)}>{tool.label}</span>
-                  <span className={cn(commonStyles.cardDesc, themeStyles.cardDesc)}>{tool.desc}</span>
-                </div>
-                <ArrowRight size={14} className={commonStyles.arrow} />
-              </Link>
-            );
-          })}
+                  <div
+                    className={commonStyles.iconWrap}
+                    style={{ '--tool-color': tool.color } as React.CSSProperties}
+                  >
+                    <Icon size={20} />
+                  </div>
+                  <div className={commonStyles.cardBody}>
+                    <span className={cn(commonStyles.cardLabel, themeStyles.cardLabel)}>{tool.label}</span>
+                    <span className={cn(commonStyles.cardDesc, themeStyles.cardDesc)}>{tool.desc}</span>
+                  </div>
+                  <ArrowRight size={14} className={commonStyles.arrow} />
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         <div className={commonStyles.cta}>

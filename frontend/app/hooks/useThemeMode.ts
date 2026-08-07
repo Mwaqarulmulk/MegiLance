@@ -21,9 +21,11 @@ function getThemeFromDOM(): ThemeMode {
  */
 export function useThemeMode(): ThemeMode {
   const { resolvedTheme } = useTheme();
-  const [mode, setMode] = useState<ThemeMode>(getThemeFromDOM);
+  const [mounted, setMounted] = useState(false);
+  const [mode, setMode] = useState<ThemeMode>('light');
 
   useEffect(() => {
+    setMounted(true);
     setMode(getThemeFromDOM());
     const observer = new MutationObserver(() => {
       setMode(getThemeFromDOM());
@@ -35,7 +37,7 @@ export function useThemeMode(): ThemeMode {
     return () => observer.disconnect();
   }, [resolvedTheme]);
 
-  return mode;
+  return mounted ? mode : 'light';
 }
 
 /**

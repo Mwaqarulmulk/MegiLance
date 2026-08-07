@@ -44,73 +44,160 @@
   line-height: 1.6;
 }
 
-.grid {
+.hubWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  min-height: 420px;
+}
+
+.centerCore {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.centerCore:hover {
+  transform: scale(1.04);
+}
+
+.corePulseRing {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(69, 115, 223, 0.25);
+  animation: spinRing 25s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.orbitalGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1.75rem;
+  gap: 1rem;
+  width: 100%;
+  position: relative;
+  z-index: 3;
 }
 
-@media (min-width: 640px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
-}
+@media (min-width: 768px) {
+  .hubWrapper {
+    min-height: 460px;
+  }
 
-@media (min-width: 1024px) {
-  .grid { grid-template-columns: repeat(6, 1fr); }
+  .centerCore {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .centerCore:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  .orbitalGrid {
+    grid-template-columns: repeat(2, minmax(240px, 280px));
+    justify-content: space-between;
+    align-content: space-between;
+    gap: 1.5rem 0;
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  /* Left column cards (0, 1, 2) */
+  .cardPos0, .cardPos1, .cardPos2 {
+    grid-column: 1;
+  }
+
+  /* Right column cards (3, 4, 5) */
+  .cardPos3, .cardPos4, .cardPos5 {
+    grid-column: 2;
+  }
 }
 
 .card {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding: 1.1rem 1rem;
-  border-radius: 1rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: 1.1rem;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
   position: relative;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
 }
 
-.card:hover { transform: translateY(-3px); }
-.card:hover .arrow { opacity: 1; transform: translateX(3px); }
+.card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: color-mix(in srgb, var(--tool-color) 40%, transparent);
+  box-shadow: 0 12px 30px -4px color-mix(in srgb, var(--tool-color) 25%, transparent);
+}
+
+.card:hover .arrow {
+  opacity: 1;
+  transform: translateX(4px);
+  color: var(--tool-color);
+}
 
 .iconWrap {
-  width: 42px;
-  height: 42px;
-  border-radius: 0.75rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--tool-color) 14%, transparent);
+  background: color-mix(in srgb, var(--tool-color) 15%, transparent);
   color: var(--tool-color);
+  transition: transform 0.25s ease;
+}
+
+.card:hover .iconWrap {
+  transform: scale(1.1);
+  background: var(--tool-color);
+  color: #ffffff;
 }
 
 .cardBody {
   display: flex;
   flex-direction: column;
-  gap: 0.12rem;
+  gap: 0.2rem;
   flex: 1;
-  width: 100%;
 }
 
 .cardLabel {
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
 .cardDesc {
-  font-size: 0.72rem;
-  line-height: 1.4;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  opacity: 0.85;
 }
 
 .arrow {
   flex-shrink: 0;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
   opacity: 0.35;
-  align-self: flex-end;
 }
 
 .cta {
@@ -121,7 +208,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.7rem 1.75rem;
+  padding: 0.75rem 1.85rem;
   border-radius: 9999px;
   font-size: 0.9rem;
   font-weight: 600;

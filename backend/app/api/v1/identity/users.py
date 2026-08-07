@@ -194,8 +194,31 @@ def get_current_user_profile(
             except (json.JSONDecodeError, TypeError):
                 user[field] = [] if field != "contact_preferences" else {}
 
-    user["profile_completed"] = bool(user.get("onboarding_completed", 0))
-    return user
+@router.get("/me/profile-completeness")
+def get_profile_completeness(current_user=Depends(get_current_user)):
+    """Calculate profile completeness percentage for the current user."""
+    user_id = current_user.get("user_id") or current_user.get("id")
+    result = execute_query(
+        """SELECT name, bio, skills, hourly_rate, profile_image_url, headline, location, onboarding_completed 
+           FROM users WHERE id = ?""",
+        [user_id]
+    )
+    rows = parse_rows(result)
+    if not rows:
+        return {"percentage": 0, "completed_fields": [], "missing_fields": ["name", "bio", "skills"], "onboarding_completed": False}
+
+    user = rows[0]
+    total_fields = ["name", "bio", "skills", "hourly_rate", "profile_image_url", "headline", "location"]
+    completed = [f for f in total_fields if user.get(f)]
+    missing = [f for f in total_fields if not user.get(f)]
+    percentage = int((len(completed) / len(total_fields)) * 100)
+
+    return {
+        "percentage": percentage,
+        "completed_fields": completed,
+        "missing_fields": missing,
+        "onboarding_completed": bool(user.get("onboarding_completed", 0)),
+    }
 
 
 # Columns a user is allowed to edit on their OWN profile. Sensitive columns
