@@ -50,8 +50,8 @@ const termsSections = [
     items: [
       { text: 'Payments are processed through our secure escrow system', icon: Lock },
       { text: 'Funds are released upon milestone completion and client approval', icon: CheckCircle },
-      { text: 'Platform fee of 10% is deducted from each payment', icon: DollarSign },
-      { text: 'Payments are processed within 3-5 business days', icon: AlertCircle },
+      { text: '0% Platform Fee during promotional launch — you retain 100% of your earnings', icon: DollarSign },
+      { text: 'Standard payment processor fees may apply upon withdrawal', icon: AlertCircle },
     ],
   },
   {

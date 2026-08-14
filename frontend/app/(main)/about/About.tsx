@@ -1,4 +1,4 @@
-// @AI-HINT: Clean About page with mission, problem/solution, team details.
+// @AI-HINT: Factual About page explaining platform purpose, origin, core pillars, architecture, and team.
 'use client';
 import React from 'react';
 import Image from 'next/image';
@@ -16,12 +16,15 @@ import {
   Brain, 
   DollarSign,
   Lock,
+  Layers,
+  FileCheck,
 } from 'lucide-react';
 import { useMounted } from '@/app/hooks/useMounted';
 import common from './About.common.module.css';
 import light from './About.light.module.css';
 import dark from './About.dark.module.css';
 import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
+import { PRICING_CONFIG, PLATFORM_STATUS } from '@/lib/platform-config';
 
 const About: React.FC = () => {
   const { resolvedTheme } = useTheme();
@@ -49,7 +52,7 @@ const About: React.FC = () => {
 
   return (
     <PageTransition>
-      {/* Premium 3D Background */}
+      {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <AnimatedOrb variant="purple" size={500} blur={90} opacity={0.1} className="absolute top-[-10%] right-[-10%]" />
         <AnimatedOrb variant="blue" size={400} blur={70} opacity={0.08} className="absolute bottom-[-10%] left-[-10%]" />
@@ -63,21 +66,22 @@ const About: React.FC = () => {
       </div>
 
       <main id="main-content" role="main" aria-labelledby="about-title" className={styles.root}>
+        {/* Hero Section */}
         <header className={styles.hero}>
           <ScrollReveal direction="down">
             <div className={common.heroRow}>
               <div className={common.heroContent}>
+                <span className="inline-block px-3 py-1 mb-4 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
+                  {PLATFORM_STATUS.STAGE}
+                </span>
                 <h1 id="about-title" className={styles.title}>About MegiLance</h1>
                 <p className={styles.subtitle}>
-                  MegiLance is a hybrid decentralized freelancing ecosystem designed to align the economics of remote work
-                  with the psychology of trust. By integrating AI for objective competency matching and blockchain smart contracts
-                  for secure escrow, we eliminate traditional market friction and empower global professionals to collaborate with absolute peace of mind.
+                  MegiLance is an AI-assisted freelance platform for clients and independent professionals. Its free tools help users estimate project costs, calculate freelance rates, write proposals, plan project scopes and evaluate potential risks. The marketplace connects those workflows with freelancer discovery, job opportunities, project collaboration and milestone-based payments.
                 </p>
               </div>
-              {/* Brand illustration — Our Story, Mission, Vision, AI+Blockchain, Secure Trust, Fair Pay, Global Freelancing */}
               <Image
                 src="/images/hero/about-hero.png"
-                alt="MegiLance platform values — Our Story, Our Mission, Our Vision, AI and Blockchain, Secure Trust, Fair Pay, Global Freelancing"
+                alt="MegiLance platform overview — AI tools, Milestone Escrow, and Freelance Marketplace"
                 width={520}
                 height={400}
                 priority
@@ -88,147 +92,45 @@ const About: React.FC = () => {
           </ScrollReveal>
         </header>
 
-        {/* The Problem We Solve */}
-        <section aria-labelledby="problem-title">
+        {/* Core Pillars */}
+        <section aria-labelledby="pillars-title" style={{ margin: '2rem 0 4rem' }}>
           <ScrollReveal>
             <div className={styles.sectionHeader}>
-              <h2 id="problem-title" className={styles.sectionTitle}>The Problem We Solve</h2>
-              <span aria-hidden="true" className={styles.sectionNote}>Why the freelance industry needs disruption</span>
+              <h2 id="pillars-title" className={styles.sectionTitle}>What MegiLance Solves</h2>
+              <span aria-hidden="true" className={styles.sectionNote}>Built for clients and independent professionals</span>
             </div>
           </ScrollReveal>
           <StaggerContainer className={styles.grid}>
-            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="problem-fees-title">
-              <DollarSign size={32} className={common.iconError} />
-              <h3 id="problem-fees-title" className={styles.cardTitle}>Economic Extortion</h3>
-              <p className={styles.cardBody}>
-                Traditional platforms take 10-20% of a freelancer's hard-earned income. This heavy tax
-                disproportionately penalizes talented professionals, driving up client costs and squeezing freelancer margins.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="problem-payments-title">
-              <Globe size={32} className={common.iconWarning} />
-              <h3 id="problem-payments-title" className={styles.cardTitle}>Financial Exclusion</h3>
-              <p className={styles.cardBody}>
-                Freelancers in the Global South face severe payment barriers, often blocked from main gateways.
-                They suffer through high transfer fees, delayed wire clearings, and extreme exchange rate inflation.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="problem-trust-title">
-              <Shield size={32} className={common.iconAccent} />
-              <h3 id="problem-trust-title" className={styles.cardTitle}>Payment & Work Anxiety</h3>
-              <p className={styles.cardBody}>
-                Both clients and freelancers carry significant transaction anxiety. Clients fear unfinished milestones;
-                freelancers fear unpaid invoices. Opaque platform bidding wars and arbitrary dispute reviews worsen this trust deficit.
-              </p>
-            </StaggerItem>
-          </StaggerContainer>
-        </section>
-
-        {/* Our Solution */}
-        <section aria-labelledby="solution-title">
-          <ScrollReveal>
-            <div className={styles.sectionHeader}>
-              <h2 id="solution-title" className={styles.sectionTitle}>Our Solution</h2>
-              <span aria-hidden="true" className={styles.sectionNote}>Hybrid Web2 + Web3 Architecture</span>
-            </div>
-          </ScrollReveal>
-          <StaggerContainer className={styles.grid}>
-            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="solution-ai-title">
+            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="pillar-tools-title">
               <Brain size={32} className={common.iconPrimary} />
-              <h3 id="solution-ai-title" className={styles.cardTitle}>Objectivity & Market Intelligence</h3>
+              <h3 id="pillar-tools-title" className={styles.cardTitle}>Free AI Productivity Tools</h3>
               <p className={styles.cardBody}>
-                We use machine learning to rank talent based on actual, verified performance rather than ad spend.
-                Our AI Price Estimator uses live global indices to align budget expectations fairly for both sides.
+                11 interactive tools that help users estimate realistic project budgets, calculate sustainable freelance rates, craft structured proposals, and inspect briefs for risk patterns before any contracts begin.
               </p>
             </StaggerItem>
-            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="solution-blockchain-title">
-              <Lock size={32} className={common.iconSuccess} />
-              <h3 id="solution-blockchain-title" className={styles.cardTitle}>Smart Contract Escrow</h3>
-              <p className={styles.cardBody}>
-                MetaMask web3 wallets and smart contracts guarantee secure escrow. Payments are locked at milestone start
-                and release immediately upon deliverable approval—creating a risk-free, transparent agreement.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="solution-speed-title">
+            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="pillar-matching-title">
               <Zap size={32} className={common.iconWarning} />
-              <h3 id="solution-speed-title" className={styles.cardTitle}>Global High-Speed Edge</h3>
+              <h3 id="pillar-matching-title" className={styles.cardTitle}>Objective Skill Matching</h3>
               <p className={styles.cardBody}>
-                Built on Next.js 16, async FastAPI, and Turso Edge SQL databases to deliver a sub-second response time
-                for users worldwide, facilitating fluid collaboration.
+                Algorithmic multi-factor evaluation connecting clients with relevant talent based on verified competencies, project requirements, budget compatibility, and availability.
+              </p>
+            </StaggerItem>
+            <StaggerItem className={styles.card} tabIndex={0} aria-labelledby="pillar-escrow-title">
+              <Lock size={32} className={common.iconSuccess} />
+              <h3 id="pillar-escrow-title" className={styles.cardTitle}>Milestone Escrow Protection</h3>
+              <p className={styles.cardBody}>
+                Structured milestone funding ensures clients only release funds upon deliverable approval, while freelancers work with confidence knowing milestone payments are pre-funded in escrow.
               </p>
             </StaggerItem>
           </StaggerContainer>
         </section>
 
-        {/* Mission & Values */}
-        <section aria-labelledby="mission-title">
-          <ScrollReveal>
-            <div className={styles.sectionHeader}>
-              <h2 id="mission-title" className={styles.sectionTitle}>Our Mission</h2>
-              <span aria-hidden="true" className={styles.sectionNote}>Empowering the global freelance workforce</span>
-            </div>
-          </ScrollReveal>
-          <StaggerContainer className={styles.valuesGrid}>
-            <StaggerItem className={styles.valueItem} aria-labelledby="value-equity-title">
-              <h3 id="value-equity-title" className={styles.valueTitle}>Financial Autonomy</h3>
-              <p className={styles.valueDesc}>
-                We drive transaction overhead close to zero by utilizing blockchain, ensuring that professionals keep the true value of their labor.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.valueItem} aria-labelledby="value-merit-title">
-              <h3 id="value-merit-title" className={styles.valueTitle}>Eliminating Bias</h3>
-              <p className={styles.valueDesc}>
-                Our AI matching promotes freelancers solely based on skill, responsiveness, and work history, bypassing favoritism.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.valueItem} aria-labelledby="value-transparency-title">
-              <h3 id="value-transparency-title" className={styles.valueTitle}>Mutual Safety</h3>
-              <p className={styles.valueDesc}>
-                We replace transaction anxiety with structural certainty. Secure escrow and milestone-based approvals mean peace of mind at every step.
-              </p>
-            </StaggerItem>
-          </StaggerContainer>
-        </section>
-
-        {/* Platform Milestone Roadmap */}
-        <section aria-labelledby="milestones-title" style={{ margin: '4rem 0' }}>
-          <ScrollReveal>
-            <div className={styles.sectionHeader}>
-              <h2 id="milestones-title" className={styles.sectionTitle}>Platform Evolution &amp; Roadmap</h2>
-              <span aria-hidden="true" className={styles.sectionNote}>From vision to next-generation AI freelance marketplace</span>
-            </div>
-          </ScrollReveal>
-          <StaggerContainer className={styles.valuesGrid}>
-            <StaggerItem className={styles.valueItem} style={{ borderLeft: '4px solid var(--color-primary, #4573df)', paddingLeft: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary, #4573df)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase 1 — 2024</span>
-              <h3 className={styles.valueTitle}>Architecture &amp; Core Engine</h3>
-              <p className={styles.valueDesc}>
-                Launched FastAPI async microservices, hybrid Web2/Web3 escrow foundation, and Turso edge database infrastructure.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.valueItem} style={{ borderLeft: '4px solid #27ae60', paddingLeft: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#27ae60', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase 2 — 2025</span>
-              <h3 className={styles.valueTitle}>7-Factor AI Vetting</h3>
-              <p className={styles.valueDesc}>
-                Integrated proprietary ML scoring models, sentiment analysis reviews, price forecasting, and automated milestone verification.
-              </p>
-            </StaggerItem>
-            <StaggerItem className={styles.valueItem} style={{ borderLeft: '4px solid #9b51e0', paddingLeft: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#9b51e0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase 3 — 2026+</span>
-              <h3 className={styles.valueTitle}>Enterprise &amp; Global Scale</h3>
-              <p className={styles.valueDesc}>
-                Expanding automated tax compliance, USDC zero-fee settlement, SOC2 security governance, and enterprise team portals.
-              </p>
-            </StaggerItem>
-          </StaggerContainer>
-        </section>
-
-        {/* Team Section */}
-        <section aria-labelledby="team-title">
+        {/* Leadership & Core Team */}
+        <section aria-labelledby="team-title" style={{ margin: '4rem 0' }}>
           <ScrollReveal>
             <div className={styles.sectionHeader}>
               <h2 id="team-title" className={styles.sectionTitle}>Leadership &amp; Core Engineering</h2>
-              <span aria-hidden="true" className={styles.sectionNote}>The engineering and research team powering MegiLance</span>
+              <span aria-hidden="true" className={styles.sectionNote}>The team behind MegiLance</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
               <BrandLottiePlayer
@@ -247,7 +149,7 @@ const About: React.FC = () => {
               </div>
               <h3 className={styles.valueTitle}>Ghulam Mujtaba</h3>
               <p className={styles.valueDesc}>
-                Lead Architect. Responsible for Next.js 16 frontend, FastAPI microservices, AI match engine integration, and end-to-end user experience.
+                Lead Architect. Responsible for Next.js 16 frontend, FastAPI microservices, AI engine integrations, and platform design.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.valueItem} tabIndex={0}>
@@ -256,41 +158,59 @@ const About: React.FC = () => {
               </div>
               <h3 className={styles.valueTitle}>Muhammad Waqar Ul Mulk</h3>
               <p className={styles.valueDesc}>
-                Database &amp; Security Lead. Oversees Turso async query pipelines, security audits, authentication layers, and deployment.
+                Database &amp; Security Lead. Oversees Turso async query pipelines, authentication layers, and infrastructure deployment.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.valueItem} tabIndex={0}>
               <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(155, 81, 224, 0.1)', color: '#9b51e0', marginBottom: '0.75rem' }}>
                 Academic Advisory Board
               </div>
-              <h3 className={styles.valueTitle}>Supervisors</h3>
+              <h3 className={styles.valueTitle}>Advisory &amp; Evaluation</h3>
               <p className={styles.valueDesc}>
-                <strong>Dr. Junaid Akram</strong> (Supervisor) &amp; <strong>Khula Qadeer</strong> (Co-Supervisor) — System Evaluation, AI Vetting Methodology, and Academic Guidance.
+                <strong>Dr. Junaid Akram</strong> &amp; <strong>Khula Qadeer</strong> — System Evaluation, AI Vetting Methodology, and Advisory Guidance.
               </p>
             </StaggerItem>
           </StaggerContainer>
         </section>
 
+        {/* Origin & Development */}
+        <section aria-labelledby="origin-title" style={{ margin: '4rem 0' }}>
+          <ScrollReveal>
+            <div className={styles.sectionHeader}>
+              <h2 id="origin-title" className={styles.sectionTitle}>Platform Origin &amp; Status</h2>
+              <span aria-hidden="true" className={styles.sectionNote}>Built from research into a scalable product</span>
+            </div>
+            <div className={styles.card} style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
+              <p className={styles.cardBody} style={{ fontSize: '1.05rem', lineHeight: 1.75 }}>
+                MegiLance began as an advanced software engineering project exploring how AI-assisted scope planning and transparent milestone payments could resolve common friction in online freelancing. Today, MegiLance operates in early access / public beta, continuously expanding its free tool suite and verified global talent network.
+              </p>
+            </div>
+          </ScrollReveal>
+        </section>
+
+        {/* CTA */}
         <section aria-labelledby="cta-title">
           <ScrollReveal>
             <div className={styles.cta}>
-              <h2 id="cta-title" className={styles.sectionTitle} style={{ margin: 0 }}>Experience Next-Gen Freelancing</h2>
-              <p style={{ maxWidth: '500px', margin: '0 auto', fontSize: '1rem', opacity: 0.85 }}>
-                Join thousands of businesses and verified freelancers benefiting from transparent escrow and zero-commission contracts.
+              <h2 id="cta-title" className={styles.sectionTitle} style={{ margin: 0 }}>Explore MegiLance Today</h2>
+              <p style={{ maxWidth: '560px', margin: '0 auto', fontSize: '1rem', opacity: 0.85 }}>
+                Start with free AI tools to estimate project costs or plan work, then connect with freelancers and clients on the marketplace.
               </p>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '0.5rem' }}>
-                <Link href="/signup">
-                  <button className={styles.ctaBtn} aria-label="Get started with MegiLance">
-                    Start Freelancing Today
+                <Link href="/ai">
+                  <button className={styles.ctaBtn} aria-label="Explore Free AI Tools">
+                    Use Free AI Tools
                   </button>
                 </Link>
-                <Link href="/enterprise">
-                  <button className={styles.ctaBtn} style={{ background: 'transparent', border: '1px solid currentColor', color: 'inherit' }} aria-label="Explore Enterprise Solutions">
-                    Explore Enterprise
+                <Link href="/signup">
+                  <button className={styles.ctaBtn} style={{ background: 'transparent', border: '1px solid currentColor', color: 'inherit' }} aria-label="Create Free Account">
+                    Join MegiLance
                   </button>
                 </Link>
               </div>
-              <span className={styles.sectionNote}>Low 2-5% fee structure • Smart Contract Protected • Instant Withdrawals</span>
+              <span className={styles.sectionNote}>
+                {PRICING_CONFIG.LAUNCH_POLICY_NOTICE}
+              </span>
             </div>
           </ScrollReveal>
         </section>

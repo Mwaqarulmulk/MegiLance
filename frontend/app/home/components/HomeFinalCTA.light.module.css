@@ -1,0 +1,46 @@
+.card {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.badge {
+  background-color: #ffffff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.primaryBtn {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.primaryBtn:hover {
+  background-color: #1d4ed8;
+}
+
+.secondaryBtn {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.secondaryBtn:hover {
+  background-color: #f1f5f9;
+}
+
+.trustRow {
+  border-top-color: #e2e8f0;
+}
+
+.trustItem {
+  color: #475569;
+}

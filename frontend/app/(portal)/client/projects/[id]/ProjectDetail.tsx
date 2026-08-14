@@ -361,7 +361,7 @@ const ProjectDetail: React.FC = () => {
                 onAwardProject={(prop) => handleAcceptProposal(Number(prop.id))}
                 onMessageFreelancer={(prop) =>
                   router.push(
-                    `/portal/client/messages?freelancer=${prop.freelancer_id}`
+                    `/client/messages?freelancer=${prop.freelancer_id}`
                   )
                 }
               />

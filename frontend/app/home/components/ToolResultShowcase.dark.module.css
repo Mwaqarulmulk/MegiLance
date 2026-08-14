@@ -1,0 +1,81 @@
+.wrapper {
+  color: #f1f5f9;
+}
+
+.badge {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.title {
+  color: #f8fafc;
+}
+
+.subtitle {
+  color: #94a3b8;
+}
+
+.tabBtn {
+  background-color: #0f172a;
+  color: #94a3b8;
+  border-color: #1e293b;
+}
+
+.tabBtn:hover {
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.tabBtnActive {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.showcaseCard {
+  background-color: #0f172a;
+  border-color: #1e293b;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.inputBar {
+  background-color: #1e293b;
+  border-bottom-color: #334155;
+}
+
+.inputText {
+  color: #f8fafc;
+}
+
+.resultBadge {
+  background-color: #1e293b;
+  color: #94a3b8;
+}
+
+.resultTitle {
+  color: #f8fafc;
+}
+
+.milestoneItem {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.proposalBox {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.cardFooter {
+  border-top-color: #1e293b;
+}
+
+.conversionBtn {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.conversionBtn:hover {
+  background-color: #2563eb;
+}

@@ -5,7 +5,7 @@ import commonStyles from './Compare.common.module.css';
 const platforms = [
   {
     name: "MegiLance",
-    fees: "5% service fee",
+    fees: "0% Launch Commission",
     escrow: "Yes — built-in",
     aiMatching: "Yes — ML-powered",
     milestones: "Zero-friction",

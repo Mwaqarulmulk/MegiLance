@@ -4,7 +4,7 @@ import CompareIndexClient from './CompareIndexClient';
 
 export const metadata: Metadata = buildMeta({
   title: 'MegiLance vs Upwork vs Fiverr | Best Freelance Platform Comparison 2026',
-  description: 'Compare MegiLance vs Upwork vs Fiverr vs Freelancer.com. Lower 5% fee, superior AI matching, faster hiring, and built-in milestone escrow. See why MegiLance wins every category.',
+  description: 'Compare MegiLance vs Upwork vs Fiverr vs Freelancer.com. 0% promotional platform commission during launch, free AI productivity tools, and built-in milestone escrow protection.',
   path: '/compare',
   keywords: getKeywordsForPage(['informational', 'transactional'], [
     'upwork vs fiverr vs megilance', 'best freelance platform 2026',

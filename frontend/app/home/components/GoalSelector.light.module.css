@@ -1,0 +1,60 @@
+.container {
+  color: #1e293b;
+}
+
+.badge {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.card {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.iconWrap {
+  background-color: #f1f5f9;
+  color: #2563eb;
+}
+
+.pill {
+  background-color: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.cardTitle {
+  color: #0f172a;
+}
+
+.cardDesc {
+  color: #64748b;
+}
+
+.bulletItem {
+  color: #334155;
+}
+
+.ctaButton {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.ctaButton:hover {
+  background-color: #1e293b;
+}

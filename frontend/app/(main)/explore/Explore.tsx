@@ -183,7 +183,11 @@ const Explore: React.FC = () => {
               profileSlug: f.profile_slug || f.id,
             };
           });
-          setFreelancers(mapped);
+          const filteredFreelancers = mapped.filter(f => {
+            const name = (f.name || '').toLowerCase();
+            return !name.includes('test') && !name.includes('e2e') && !name.includes('dummy');
+          });
+          setFreelancers(filteredFreelancers);
         } catch (err) {
           if (process.env.NODE_ENV === 'development') console.error('Freelancer search error:', err);
           setFreelancers([]);
@@ -224,7 +228,11 @@ const Explore: React.FC = () => {
               proposalCount: p.proposal_count || 0,
             };
           });
-          setProjects(mapped);
+          const filteredProjects = mapped.filter(p => {
+            const title = (p.title || '').toLowerCase();
+            return !title.includes('test') && !title.includes('e2e') && !title.includes('demo');
+          });
+          setProjects(filteredProjects);
         } catch (err) {
           if (process.env.NODE_ENV === 'development') console.error('Project search error:', err);
           setProjects([]);

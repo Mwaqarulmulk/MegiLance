@@ -159,18 +159,61 @@ export function trackComparisonCTA(competitor: string, action: string) {
   trackConversion('comparison_cta', { competitor, action });
 }
 
-// ── Cost Calculator / Tools ─────────────────────────────────────────────────
+// ── AI Tools & Marketplace Acquisition Funnel Tracking ────────────────────────
 
-export function trackCalculatorUse(toolName: string, result?: EventParams) {
-  trackConversion('calculator_use', { tool: toolName, ...result });
+export function trackToolView(toolName: string) {
+  trackConversion('tool_view', { tool: toolName });
 }
 
-// ── Referral Program ────────────────────────────────────────────────────────
-
-export function trackReferralShare(method: string) {
-  trackConversion('referral_share', { method });
+export function trackToolStart(toolName: string, category?: string) {
+  trackConversion('tool_start', { tool: toolName, category });
 }
 
-export function trackReferralSignup(referrerId: string) {
-  trackConversion('referral_signup', { referrer_id: referrerId });
+export function trackToolComplete(toolName: string, metadata?: EventParams) {
+  trackConversion('tool_complete', { tool: toolName, ...metadata });
+}
+
+export function trackToolError(toolName: string, errorMessage: string) {
+  trackConversion('tool_error', { tool: toolName, error: errorMessage });
+}
+
+export function trackToolResultCTAClick(toolName: string, ctaType: string, destination: string) {
+  trackConversion('tool_result_cta_click', {
+    tool: toolName,
+    cta_type: ctaType,
+    destination,
+  });
+}
+
+export function trackSignupFromTool(toolName: string, role: 'client' | 'freelancer', step: 'started' | 'completed') {
+  const event = step === 'started' ? 'signup_started_from_tool' : 'signup_completed_from_tool';
+  trackConversion(event, { tool: toolName, role });
+}
+
+export function trackProjectCreatedFromTool(toolName: string, category?: string) {
+  trackConversion('project_created_from_tool', { tool: toolName, category });
+}
+
+export function trackProfileCreatedFromTool(toolName: string, role?: string) {
+  trackConversion('profile_created_from_tool', { tool: toolName, role });
+}
+
+export function trackMatchingStarted(query?: string, category?: string) {
+  trackConversion('matching_started', { query, category });
+}
+
+export function trackMatchingResultViewed(matchCount: number, topScore?: number) {
+  trackConversion('matching_result_viewed', { match_count: matchCount, top_score: topScore });
+}
+
+export function trackProposalSent(projectId: string, amount?: number) {
+  trackConversion('proposal_sent', { project_id: projectId, value: amount, currency: 'USD' });
+}
+
+export function trackContractStarted(contractId: string, value?: number) {
+  trackConversion('contract_started', { contract_id: contractId, value, currency: 'USD' });
+}
+
+export function trackPaymentOrMilestoneStarted(milestoneId: string, amount: number) {
+  trackConversion('payment_or_milestone_started', { milestone_id: milestoneId, value: amount, currency: 'USD' });
 }

@@ -15,7 +15,7 @@ const SignupFallback = () => (
     <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Create Your MegiLance Account</h1>
     <p className="text-slate-600 dark:text-slate-400 mb-6">
       Join MegiLance to find vetted global talent or discover high-paying remote development projects. 
-      Includes smart-contract milestone escrow, low fees, and AI-powered competency matching.
+      Includes smart-contract milestone escrow, 0% launch platform commission, and AI-powered competency matching.
     </p>
     <div className="animate-pulse space-y-4">
       <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded"></div>

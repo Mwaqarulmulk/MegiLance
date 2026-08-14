@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     q: "What are the fees?",
-    a: "MegiLance charges a flat 5% service fee, significantly lower than competitors who charge 10-20%. There are no hidden costs.",
+    a: "MegiLance is offering 0% platform commission during our 2026 promotional launch. Standard third-party payment processing fees (e.g. Stripe card processing or blockchain network gas fees) apply directly from the payment providers.",
   },
   {
     q: "How does escrow work?",
@@ -75,11 +75,19 @@ export default function FaqClient() {
             <button
               className={commonStyles.question}
               onClick={() => setOpen(open === i ? null : i)}
+              aria-expanded={open === i}
+              aria-controls={`faq-answer-${i}`}
             >
               {faq.q}
               <span className={`${commonStyles.icon} ${open === i ? commonStyles.iconOpen : ""}`}>+</span>
             </button>
-            {open === i && <p className={commonStyles.answer}>{faq.a}</p>}
+            <p 
+              id={`faq-answer-${i}`}
+              className={commonStyles.answer}
+              style={{ display: open === i ? 'block' : 'none' }}
+            >
+              {faq.a}
+            </p>
           </div>
         ))}
       </section>

@@ -1,0 +1,38 @@
+.container {
+  color: #1e293b;
+}
+
+.badge {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.faqItem {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.faqItem:hover {
+  border-color: #cbd5e1;
+}
+
+.questionBtn {
+  color: #0f172a;
+}
+
+.answerText {
+  color: #475569;
+}
+
+.moreLink {
+  color: #2563eb;
+}

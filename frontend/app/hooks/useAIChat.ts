@@ -98,7 +98,7 @@ const generateOfflineResponse = (message: string): { content: string; suggestion
   // Greeting patterns
   if (/^(hi|hello|hey|good\s*(morning|afternoon|evening))/.test(msg)) {
     return {
-      content: "Hello! 👋 I'm MegiBot, your AI assistant. I'm currently in offline mode with limited features, but I can still help with basic questions about MegiLance. How can I assist you?",
+      content: "Hello! 👋 I'm MegiBot, your MegiLance guide. I can help answer questions about our free AI tools, milestone escrow payments, posting projects, and hiring freelancers. How can I assist you today?",
       suggestions: ['How do I get started?', 'Find freelancers', 'Post a project', 'Payment info']
     };
   }
@@ -188,10 +188,10 @@ Our **AI Matching** system analyzes:
 • Bank Transfer
 • USDC (crypto)
 
-**Fees:**
-• Freelancers: 5-10% service fee
-• Clients: No additional fees
-• Withdrawals: Free over $100`,
+**Fees (Launch Promotion):**
+• Freelancers: 0% platform commission during 2026 launch
+• Clients: 0% platform service fee
+• Free AI Tools: All 11 tools are 100% free to use`,
       suggestions: ['Withdrawal times', 'Dispute resolution', 'Refund policy']
     };
   }

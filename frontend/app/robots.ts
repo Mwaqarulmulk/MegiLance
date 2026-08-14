@@ -34,6 +34,8 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/contracts/',
           '/workroom/',
+          '/project-demo/',
+          '/demo/',
           '/*.json$',
         ],
       },
@@ -54,6 +56,8 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/contracts/',
           '/workroom/',
+          '/project-demo/',
+          '/testimonials/',
         ],
       },
       // ── Google Images - allow all public images ──

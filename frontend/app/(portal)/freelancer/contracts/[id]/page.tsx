@@ -231,7 +231,7 @@ const ContractDetailsPage: React.FC = () => {
         <p>{error || "Contract not found"}</p>
         <Button
           variant="primary"
-          onClick={() => router.push("/portal/freelancer/contracts")}
+          onClick={() => router.push("/freelancer/contracts")}
         >
           Back to Contracts
         </Button>

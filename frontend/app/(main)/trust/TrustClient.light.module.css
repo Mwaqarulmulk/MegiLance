@@ -1,0 +1,46 @@
+.container {
+  color: #1e293b;
+}
+
+.badge {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.sectionCard {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+.iconWrap {
+  background-color: #f1f5f9;
+  color: #2563eb;
+}
+
+.sectionTitle {
+  color: #0f172a;
+}
+
+.cardBody {
+  color: #475569;
+}
+
+.navBtn {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.navBtn:hover {
+  background-color: #f8fafc;
+}

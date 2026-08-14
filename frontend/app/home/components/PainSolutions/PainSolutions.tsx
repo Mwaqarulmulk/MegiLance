@@ -26,21 +26,21 @@ const ITEMS = [
   },
   {
     icon: ShieldCheck,
-    pain: 'Reputation risk & credential inflation',
+    pain: 'Reputation risk & credential uncertainty',
     solution:
-      'Every freelancer is vetted through smart reputation tracking and fraud detection. Zero fake reviews or inflated portfolios—only verifiable skills.',
+      'Evaluate talent through multi-factor competency assessments and verified milestone delivery history, ensuring reliable skills on every job.',
   },
   {
     icon: CalendarClock,
     pain: 'Milestone anxiety & scope misalignment',
     solution:
-      'Break projects into clear deliverables. Funds lock in escrow for each phase, aligning client and freelancer incentives and protecting work quality.',
+      'Break projects into clear deliverables. Funds lock in escrow for each phase, aligning client and freelancer expectations and protecting work quality.',
   },
   {
     icon: Receipt,
     pain: 'High platform commission taxing your budget',
     solution:
-      'We cut out excessive marketplace fees with transparent 5–10% platform rates. More of your capital directly incentivizes the expert doing the work.',
+      'Take advantage of 0% promotional platform commission during our launch. More of your project capital directly rewards the specialist doing the work.',
   },
   {
     icon: BadgeCheck,
@@ -73,11 +73,10 @@ export default function PainSolutions() {
           Why MegiLance
         </span>
         <h2 className={cn('text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight', heading)}>
-          Aligning market forces, <span style={{ color: '#4573df' }}>engineered for trust</span>
+          Aligning collaboration, <span style={{ color: '#4573df' }}>engineered for trust</span>
         </h2>
         <p className={cn('mt-4 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto', muted)}>
-          Traditional marketplaces thrive on friction, high fees, and information asymmetry. MegiLance
-          rebuilds the freelancer-client relationship around transparency, psychological safety, and direct economic value.
+          MegiLance eliminates marketplace friction with free planning tools, transparent milestone escrow, and verified skill matching.
         </p>
       </div>
 

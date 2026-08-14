@@ -43,11 +43,9 @@ const Security: React.FC = () => {
               <div className={cn(common.cardIcon, themed.cardIcon)}>
                 <Shield size={24} />
               </div>
-              <h3 id="sec-1" className={common.cardTitle}>Smart Contract Security</h3>
+              <h3 id="sec-1" className={common.cardTitle}>Smart Contract Escrow Architecture</h3>
               <p className={common.cardDesc}>
-                Our payment and escrow systems are built on audited smart contracts. All contracts undergo rigorous
-                internal testing and multiple external audits from leading security firms before deployment. Audit reports
-                are available upon request.
+                Our milestone payment and escrow mechanisms are built with rigorously tested smart contract architecture. All contracts undergo automated test suites, formal verification analysis, and internal security reviews.
               </p>
             </article>
 
@@ -191,25 +189,25 @@ const Security: React.FC = () => {
                 <h3>3. Payment Security</h3>
                 <ul>
                   <li>PCI DSS compliant payment processing via Stripe</li>
-                  <li>Escrow funds held in segregated accounts</li>
-                  <li>Smart contract audits by third-party firms</li>
-                  <li>Fraud detection using AI/ML algorithms</li>
+                  <li>Escrow funds held in dedicated programmatic escrow vaults</li>
+                  <li>Smart contract verification via automated & internal test suites</li>
+                  <li>Heuristic and AI-assisted fraud detection patterns</li>
                 </ul>
               </section>
               <section>
                 <h3>4. Infrastructure Security</h3>
                 <ul>
-                  <li>Hosted on enterprise-grade cloud infrastructure</li>
-                  <li>DDoS protection and WAF enabled</li>
-                  <li>Regular penetration testing</li>
-                  <li>24/7 monitoring and incident response</li>
+                  <li>Hosted on modern cloud infrastructure with TLS 1.3 encryption</li>
+                  <li>DDoS mitigation and automated rate limiting enabled</li>
+                  <li>Role-based access controls and encrypted session management</li>
+                  <li>Automated service health monitoring and incident response</li>
                 </ul>
               </section>
               <section>
                 <h3>5. Vulnerability Reporting</h3>
                 <p>
                   Report security vulnerabilities to <a href="mailto:security@megilance.com">security@megilance.com</a>. 
-                  Responsible disclosure is eligible for bug bounty rewards up to $10,000.
+                  Responsible disclosure is reviewed promptly by our engineering and security team.
                 </p>
               </section>
             </div>

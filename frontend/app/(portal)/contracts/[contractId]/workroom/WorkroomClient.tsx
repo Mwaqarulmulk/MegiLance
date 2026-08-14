@@ -6,11 +6,12 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { workroomApi, disputesApi, milestonesApi } from "@/lib/api";
 import Button from "@/app/components/atoms/Button/Button";
+import MilestoneEscrowManager from "@/app/components/organisms/Workroom/MilestoneEscrowManager";
 import commonStyles from "./Workroom.common.module.css";
 import lightStyles from "./Workroom.light.module.css";
 import darkStyles from "./Workroom.dark.module.css";
 
-type TabType = "kanban" | "files" | "discussions";
+type TabType = "milestones" | "kanban" | "files" | "discussions";
 type TaskStatus = "todo" | "in_progress" | "review" | "done";
 
 interface Activity {
@@ -576,6 +577,17 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
             className={cn(
               commonStyles.tab,
               themeStyles.tab,
+              activeTab === "milestones" && commonStyles.activeTab,
+              activeTab === "milestones" && themeStyles.activeTab,
+            )}
+            onClick={() => setActiveTab("milestones")}
+          >
+            🛡️ Milestones &amp; Escrow
+          </button>
+          <button
+            className={cn(
+              commonStyles.tab,
+              themeStyles.tab,
               activeTab === "kanban" && commonStyles.activeTab,
               activeTab === "kanban" && themeStyles.activeTab,
             )}
@@ -617,6 +629,13 @@ export default function WorkroomClient({ contractId }: WorkroomClientProps) {
             </div>
           ) : (
             <>
+              {/* Milestones & Escrow Manager */}
+              {activeTab === "milestones" && (
+                <div className="py-2">
+                  <MilestoneEscrowManager contractId={contractId} />
+                </div>
+              )}
+
               {/* Kanban Board */}
               {activeTab === "kanban" && (
                 <div className={commonStyles.kanbanContainer}>

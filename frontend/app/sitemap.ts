@@ -61,6 +61,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Key landing pages
     { path: '/how-it-works', changeFrequency: 'monthly', priority: 0.85 },
     { path: '/about', changeFrequency: 'monthly', priority: 0.82 },
+    { path: '/trust', changeFrequency: 'monthly', priority: 0.85 },
+    { path: '/methodology', changeFrequency: 'monthly', priority: 0.85 },
     { path: '/pricing', changeFrequency: 'weekly', priority: 0.85 },
     { path: '/faq', changeFrequency: 'weekly', priority: 0.82 },
     { path: '/contact', changeFrequency: 'monthly', priority: 0.75 },
@@ -81,7 +83,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/teams', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/enterprise', changeFrequency: 'monthly', priority: 0.78 },
     { path: '/security', changeFrequency: 'monthly', priority: 0.72 },
-    { path: '/testimonials', changeFrequency: 'weekly', priority: 0.75 },
     { path: '/support', changeFrequency: 'monthly', priority: 0.70 },
     { path: '/ai', changeFrequency: 'monthly', priority: 0.72 },
     { path: '/ai-talent-matching', changeFrequency: 'monthly', priority: 0.80 },

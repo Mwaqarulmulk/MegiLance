@@ -509,11 +509,7 @@ const ChatbotEnhanced: React.FC = () => {
                   ref={inputRef}
                   type="text"
                   className={cn(commonStyles.input, themeStyles.input)}
-                  placeholder={
-                    status.mode === 'offline'
-                      ? 'Offline mode - basic responses available...'
-                      : 'Ask me anything about MegiLance...'
-                  }
+                  placeholder="Ask me anything about MegiLance, free AI tools, or escrow..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   disabled={isTyping}
@@ -537,11 +533,7 @@ const ChatbotEnhanced: React.FC = () => {
               {status.mode !== 'online' && (
                 <div className={cn(commonStyles.modeIndicator, themeStyles.modeIndicator)}>
                   <Info size={12} />
-                  <span>
-                    {status.mode === 'offline'
-                      ? 'Offline mode: Using local responses'
-                      : 'Limited connectivity: Some features may be unavailable'}
-                  </span>
+                  <span>MegiLance Assistant Active</span>
                 </div>
               )}
             </form>

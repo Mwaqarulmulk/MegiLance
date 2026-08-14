@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -438,19 +439,26 @@ function ResultsDashboard({
           </div>
         </div>
 
-        {/* Tips */}
-        <div className={cn(cs.resultCard, ts.resultCard, cs.resultCardFullWidth)}>
-          <div className={cs.resultCardHeader}>
-            <div className={cn(cs.resultCardIcon, ts.resultCardIcon)}><Star size={18} /></div>
-            <h4 className={cn(cs.resultCardTitle, ts.resultCardTitle)}>Improvement Tips</h4>
+        {/* Post-Result Marketplace Conversion CTA */}
+        <div className="my-6 p-6 rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/70 to-indigo-50/70 dark:from-blue-950/30 dark:to-indigo-950/30 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Your proposal is ready.</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-350">Save it to your MegiLance profile and discover projects matching your skills.</p>
           </div>
-          <div className={cs.recsGrid}>
-            {result.tips.map((tip, i) => (
-              <div key={i} className={cn(cs.recItem, ts.recItem)}>
-                <div className={cn(cs.recTitle, ts.recTitle)}>{tip.tip}</div>
-                <div className={cn(cs.recMsg, ts.recMsg)}>{tip.detail}</div>
-              </div>
-            ))}
+          <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
+            <Link
+              href="/explore"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-sm"
+            >
+              <Sparkles size={16} />
+              <span>Find Matching Projects</span>
+            </Link>
+            <Link
+              href="/signup?role=freelancer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all"
+            >
+              <span>Create Freelancer Profile</span>
+            </Link>
           </div>
         </div>
       </div>

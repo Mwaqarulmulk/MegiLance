@@ -4,12 +4,17 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 import Hero from './components/Hero/Hero';
+import GoalSelector from './components/GoalSelector';
+import AIToolsHub from './components/AIToolsHub';
+import ToolResultShowcase from './components/ToolResultShowcase';
+import AIResultToWork from './components/AIResultToWork';
 import PainSolutions from './components/PainSolutions/PainSolutions';
 import TrustIndicators from './components/TrustIndicators';
 import DashboardShowcase from './components/DashboardShowcase/DashboardShowcase';
-import AIToolsHub from './components/AIToolsHub';
 import HowItWorks from './components/HowItWorks';
 import Testimonials from './components/Testimonials';
+import HomeFAQ from './components/HomeFAQ';
+import HomeFinalCTA from './components/HomeFinalCTA';
 import { ScrollReveal } from '../components/Animations/ScrollReveal';
 
 import { useThemeMode } from '@/app/hooks/useThemeMode';
@@ -23,68 +28,104 @@ const Home: React.FC = () => {
 
   return (
     <div className={cn(commonStyles.homePage, themeStyles.homePage)}>
-        <main id="main-content" className={commonStyles.pageContent}>
-          {/* Hero Section */}
-          <section data-testid="hero-section" aria-labelledby="hero-title">
-            <ScrollReveal width="100%" direction="none" duration={0.8}>
-              <Hero />
+      <main id="main-content" className={commonStyles.pageContent}>
+        {/* 1. Hero Section */}
+        <section data-testid="hero-section" aria-labelledby="hero-title">
+          <ScrollReveal width="100%" direction="none" duration={0.8}>
+            <Hero />
+          </ScrollReveal>
+        </section>
+
+        {/* 2. Choose Your Goal */}
+        <section className={commonStyles.homeSection} aria-label="Choose your goal">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up" delay={0.1}>
+              <GoalSelector />
             </ScrollReveal>
-          </section>
+          </div>
+        </section>
 
-          {/* Interactive Interface Showcase */}
-          <section className={commonStyles.homeSection} aria-label="Interactive dashboard showcase">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up" delay={0.1}>
-                <DashboardShowcase />
-              </ScrollReveal>
-            </div>
-          </section>
+        {/* 3. Popular Free AI Tools Hub */}
+        <section id="ai-tools" className={commonStyles.homeSection} aria-label="Popular free AI tools">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up" delay={0.1}>
+              <AIToolsHub />
+            </ScrollReveal>
+          </div>
+        </section>
 
-          {/* Pain points → solutions (high-conversion value section) */}
-          <section className={commonStyles.homeSection} aria-label="Why MegiLance — problems we solve">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up" delay={0.1}>
-                <PainSolutions />
-              </ScrollReveal>
-            </div>
-          </section>
+        {/* 4. Example AI Tool Result Showcase */}
+        <section className={commonStyles.homeSection} aria-label="Example AI tool result demonstration">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up" delay={0.1}>
+              <ToolResultShowcase />
+            </ScrollReveal>
+          </div>
+        </section>
 
-          {/* Trust Indicators */}
-          <section className={commonStyles.homeSection} aria-label="Trust indicators">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" delay={0.2}>
-                <TrustIndicators />
-              </ScrollReveal>
-            </div>
-          </section>
+        {/* 5. How an AI Result Becomes Real Work */}
+        <section className={commonStyles.homeSection} aria-label="How an AI result becomes real work">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up" delay={0.1}>
+              <AIResultToWork />
+            </ScrollReveal>
+          </div>
+        </section>
 
-          {/* AI Tools Hub */}
-          <section id="ai-tools" className={commonStyles.homeSection} aria-label="AI tools hub">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up" delay={0.1}>
-                <AIToolsHub />
-              </ScrollReveal>
-            </div>
-          </section>
+        {/* 6. For Clients & Freelancers — Solutions & Workrooms */}
+        <section className={commonStyles.homeSection} aria-label="Why MegiLance — solutions for clients and freelancers">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up" delay={0.1}>
+              <PainSolutions />
+            </ScrollReveal>
+          </div>
+        </section>
 
-          {/* How It Works */}
-          <section id="how-it-works" className={commonStyles.homeSection} aria-label="How it works">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="left">
-                <HowItWorks />
-              </ScrollReveal>
-            </div>
-          </section>
+        {/* 7. Interactive Interface Showcase */}
+        <section className={commonStyles.homeSection} aria-label="Interactive dashboard showcase">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up" delay={0.1}>
+              <DashboardShowcase />
+            </ScrollReveal>
+          </div>
+        </section>
 
-          {/* Testimonials */}
-          <section id="testimonials" className={commonStyles.homeSection} aria-label="User testimonials">
-            <div className={commonStyles.sectionContainer}>
-              <ScrollReveal width="100%" direction="up">
-                <Testimonials />
-              </ScrollReveal>
-            </div>
-          </section>
-        </main>
+        {/* 8. Trust & Escrow Protection */}
+        <section className={commonStyles.homeSection} aria-label="Platform trust, security and escrow">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" delay={0.2}>
+              <TrustIndicators />
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* 9. How It Works */}
+        <section id="how-it-works" className={commonStyles.homeSection} aria-label="How it works">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="left">
+              <HowItWorks />
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* 10. FAQ */}
+        <section id="faq" className={commonStyles.homeSection} aria-label="Frequently asked questions">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up">
+              <HomeFAQ />
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* 12. Final CTA */}
+        <section className={commonStyles.homeSection} aria-label="Get started CTA">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up">
+              <HomeFinalCTA />
+            </ScrollReveal>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

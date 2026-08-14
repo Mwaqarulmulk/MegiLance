@@ -11,17 +11,18 @@ export const metadata: Metadata = buildMeta({
 });
 
 const PriceEstimatorFallback = () => (
-  <div className="max-w-4xl mx-auto my-10 p-8 border rounded-2xl bg-white dark:bg-slate-950 shadow-sm text-center">
-    <h1 className="text-3xl font-bold mb-4 text-slate-900 dark:text-white">AI Price Estimator Pro</h1>
-    <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto leading-relaxed">
-      Estimate freelance project budgets using AI-powered pricing guidance based on category, complexity, 
-      timeline, and skill requirements. Aligns budget expectations using real market rates. 
-      Loading price estimation dashboard...
-    </p>
-    <div className="animate-pulse space-y-4 max-w-2xl mx-auto">
-      <div className="h-12 bg-slate-100 dark:bg-slate-850 rounded-xl"></div>
-      <div className="h-48 bg-slate-100 dark:bg-slate-850 rounded-2xl"></div>
+  <div className="max-w-5xl mx-auto my-8 p-6 md:p-10 border border-slate-200/80 dark:border-slate-800 rounded-3xl bg-white dark:bg-slate-900/60 shadow-sm animate-pulse space-y-6">
+    <div className="text-center space-y-3">
+      <div className="h-6 w-48 bg-blue-100 dark:bg-blue-950/60 rounded-full mx-auto" />
+      <div className="h-9 w-80 bg-slate-200 dark:bg-slate-800 rounded-xl mx-auto" />
+      <div className="h-4 max-w-lg bg-slate-100 dark:bg-slate-850 rounded mx-auto" />
     </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="h-14 bg-slate-100 dark:bg-slate-850 rounded-2xl" />
+      ))}
+    </div>
+    <div className="h-64 bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-100 dark:border-slate-850" />
   </div>
 );
 

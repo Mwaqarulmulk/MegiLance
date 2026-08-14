@@ -10,33 +10,47 @@ jest.mock('next-themes', () => ({
   useTheme: () => ({ resolvedTheme: 'light' }),
 }));
 
+// Mock useThemeMode
+jest.mock('@/app/hooks/useThemeMode', () => ({
+  useThemeMode: () => 'light',
+}));
+
 // Mock sub-components with relative paths matching Home.tsx imports
 jest.mock('./components/Hero/Hero', () => {
-  return () => <div data-testid="hero-section">Hero Section</div>;
+  return () => <div data-testid="hero-inner">Hero Section</div>;
+});
+jest.mock('./components/GoalSelector', () => {
+  return () => <div data-testid="goal-selector">Goal Selector</div>;
+});
+jest.mock('./components/AIToolsHub', () => {
+  return () => <div data-testid="ai-tools-hub">AI Tools Hub</div>;
+});
+jest.mock('./components/ToolResultShowcase', () => {
+  return () => <div data-testid="tool-result-showcase">Tool Result Showcase</div>;
+});
+jest.mock('./components/AIResultToWork', () => {
+  return () => <div data-testid="ai-result-to-work">AI Result To Work</div>;
+});
+jest.mock('./components/PainSolutions/PainSolutions', () => {
+  return () => <div data-testid="pain-solutions">Pain Solutions</div>;
 });
 jest.mock('./components/TrustIndicators', () => {
   return () => <div data-testid="trust-indicators">Trust Indicators</div>;
 });
-jest.mock('./components/ProjectStats', () => {
-  return () => <div data-testid="project-stats">Project Stats</div>;
-});
-jest.mock('./components/WhyMegiLance', () => {
-  return () => <div data-testid="why-megilance">Why MegiLance</div>;
-});
-jest.mock('./components/Features', () => {
-  return () => <div data-testid="features-section">Features Section</div>;
-});
-jest.mock('./components/FeaturesStatus', () => {
-  return () => <div data-testid="features-status">Features Status</div>;
+jest.mock('./components/DashboardShowcase/DashboardShowcase', () => {
+  return () => <div data-testid="dashboard-showcase">Dashboard Showcase</div>;
 });
 jest.mock('./components/HowItWorks', () => {
   return () => <div data-testid="how-it-works">How It Works Section</div>;
 });
-jest.mock('./components/PoweredByAI', () => {
-  return () => <div data-testid="powered-by-ai">Powered By AI</div>;
-});
 jest.mock('./components/Testimonials', () => {
   return () => <div data-testid="testimonials">Testimonials Section</div>;
+});
+jest.mock('./components/HomeFAQ', () => {
+  return () => <div data-testid="home-faq">Home FAQ</div>;
+});
+jest.mock('./components/HomeFinalCTA', () => {
+  return () => <div data-testid="home-final-cta">Home Final CTA</div>;
 });
 
 // Mock animation utilities from parent
@@ -59,7 +73,6 @@ describe('Home Page Component', () => {
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
     expect(screen.getByTestId('trust-indicators')).toBeInTheDocument();
     expect(screen.getByTestId('how-it-works')).toBeInTheDocument();
-    expect(screen.getByTestId('testimonials')).toBeInTheDocument();
   });
 
   test('renders page with theme-aware structure', () => {

@@ -31,20 +31,17 @@ interface ServiceDropdownItem {
 
 const navLinks: NavLinkItem[] = [
   { name: 'AI Tools', href: '/ai' },
+  { name: 'Hire Talent', href: '/talent' },
+  { name: 'Find Work', href: '/explore' },
   { name: 'How It Works', href: '/how-it-works' },
-  { name: 'Architecture', href: '/project-demo' },
-  { name: 'Features', href: '/#features' },
   { name: 'Pricing', href: '/pricing' },
-  { name: 'Blog', href: '/blog' },
 ];
 
 const servicesDropdown: ServiceDropdownItem[] = [
-  { name: 'For Freelancers', href: '/freelancers', icon: Users, description: 'Find work and build your career' },
-  { name: 'For Clients', href: '/clients', icon: Briefcase, description: 'Hire top talent for your projects' },
-  { name: 'Talent Directory', href: '/talent', icon: Sparkles, description: 'Browse our top rated talent' },
-  { name: 'Teams', href: '/teams', icon: Users, description: 'Build your dream team' },
-  { name: 'AI Tools', href: '/ai', icon: Zap, description: 'Powered by AI matching' },
-  { name: 'Enterprise', href: '/enterprise', icon: Shield, description: 'Scale your team globally' },
+  { name: 'Hire Top Talent', href: '/talent', icon: Users, description: 'Find & hire vetted freelancers' },
+  { name: 'Find Freelance Work', href: '/explore', icon: Briefcase, description: 'Browse open projects & opportunities' },
+  { name: '11 Free AI Tools', href: '/ai', icon: Zap, description: 'Price estimates, proposals, & rate tools' },
+  { name: 'Enterprise & Teams', href: '/enterprise', icon: Shield, description: 'Custom sourcing & team collaboration' },
 ];
 
 const PublicHeader = () => {
@@ -159,6 +156,18 @@ const PublicHeader = () => {
     setIsServicesOpen(false);
   };
 
+  // Close on escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        setIsServicesOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <>
       <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} className={cn(commonStyles.header, styles.header, isScrolled && commonStyles.scrolled, isScrolled && styles.scrolled)}>
@@ -262,12 +271,15 @@ const PublicHeader = () => {
       )}
 
       {/* Mobile Menu */}
-      <div className={cn(
-        commonStyles.mobileMenu,
-        styles.mobileMenu,
-        isMobileMenuOpen && commonStyles.mobileMenuOpen,
-        isMobileMenuOpen && styles.mobileMenuOpen
-      )}>
+      <div 
+        className={cn(
+          commonStyles.mobileMenu,
+          styles.mobileMenu,
+          isMobileMenuOpen && commonStyles.mobileMenuOpen,
+          isMobileMenuOpen && styles.mobileMenuOpen
+        )}
+        aria-hidden={!isMobileMenuOpen}
+      >
         <nav className={commonStyles.mobileNav}>
           <ul className={commonStyles.mobileNavList}>
             {/* Mobile Services Section */}

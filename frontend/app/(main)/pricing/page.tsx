@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
 
 export const metadata: Metadata = buildMeta({
-  title: 'MegiLance Pricing Plans | Transparent Plans — Free, Pro $19/mo & Enterprise',
-  description: 'View MegiLance pricing plans with zero hidden fees. Start for free or choose our Pro Freelancer plan. Simple and cost-effective Upwork alternative.',
+  title: 'Pricing & Platform Fees | MegiLance Promotional Launch Terms',
+  description: 'View MegiLance platform fees and promotional launch pricing. 0% platform fees during launch with milestone escrow protection.',
   path: '/pricing',
   keywords: getKeywordsForPage(['transactional', 'informational'], [
     'megilance pricing plans', 'megilance pricing', 'freelance platform pricing', 'freelance marketplace fees',

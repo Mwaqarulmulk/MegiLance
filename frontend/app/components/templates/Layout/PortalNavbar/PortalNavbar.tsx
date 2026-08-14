@@ -9,7 +9,8 @@ import {
   Bell, Search, HelpCircle, Sun, Moon, LogOut, User, Settings,
   X, Check, CheckCheck, MessageSquare, FileText,
   Briefcase, CreditCard, AlertCircle, Clock, ChevronRight,
-  Keyboard, BookOpen, Mail, Shield, Wallet, Menu, Home, Flag
+  Keyboard, BookOpen, Mail, Shield, Wallet, Menu, Home, Flag,
+  ArrowLeftRight
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -167,6 +168,19 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
       href: userType === 'general' ? '/profile' : `/${userType}/profile`, 
       icon: <User size={16} /> 
     },
+    ...(userType === 'client' ? [
+      {
+        label: 'Switch to Freelancer View',
+        href: '/freelancer/dashboard',
+        icon: <ArrowLeftRight size={16} />,
+      }
+    ] : userType === 'freelancer' ? [
+      {
+        label: 'Switch to Client View',
+        href: '/client/dashboard',
+        icon: <ArrowLeftRight size={16} />,
+      }
+    ] : []),
     { 
       label: 'Account Settings', 
       href: userType === 'general' ? '/settings' : `/${userType}/settings`, 

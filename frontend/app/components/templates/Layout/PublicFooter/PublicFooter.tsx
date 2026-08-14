@@ -17,33 +17,36 @@ import lightStyles from './PublicFooter.light.module.css';
 import darkStyles from './PublicFooter.dark.module.css';
 
 const footerSections = {
-  'Product': [
+  'AI Tools': [
+    { name: 'AI Tools Hub (All 11)', href: '/ai' },
+    { name: 'Price Estimator', href: '/ai/price-estimator' },
+    { name: 'Proposal Writer', href: '/ai/proposal-writer' },
+    { name: 'Rate Advisor', href: '/ai/rate-advisor' },
+    { name: 'Scope Planner', href: '/ai/scope-planner' },
+    { name: 'Risk & Scam Checker', href: '/ai/fraud-check' },
+    { name: 'Skill Analyzer', href: '/ai/skill-analyzer' },
+  ],
+  'Marketplace': [
+    { name: 'Browse Freelancers', href: '/talent' },
+    { name: 'Find Freelance Work', href: '/explore' },
     { name: 'How It Works', href: '/how-it-works' },
-    { name: 'Features', href: '/#features' },
-    { name: 'Pricing', href: '/pricing' },
+    { name: 'Pricing & Fees', href: '/pricing' },
     { name: 'For Clients', href: '/clients' },
     { name: 'For Freelancers', href: '/freelancers' },
-    { name: 'Talent Directory', href: '/talent' },
-    { name: 'Teams', href: '/teams' },
-    { name: 'Success Stories', href: '/testimonials' },
-    { name: 'Download App', href: '/install' },
+    { name: 'Teams & Enterprise', href: '/teams' },
   ],
-  'Company': [
-    { name: 'About Us', href: '/about' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Press', href: '/press' },
-    { name: 'Security', href: '/security' },
-  ],
-  'Resources': [
-    { name: 'Help Center', href: '/help' },
-    { name: 'Support', href: '/support' },
+  'Trust & Safety': [
+    { name: 'Trust Overview', href: '/trust' },
+    { name: 'AI Methodology', href: '/methodology' },
+    { name: 'Security & Escrow', href: '/security' },
+    { name: 'Support & Help', href: '/support' },
     { name: 'Contact Us', href: '/contact' },
-    { name: 'Community', href: '/community' },
-    { name: 'Status', href: '/system-status' },
-    { name: 'Referral Program', href: '/referrals' },
+    { name: 'System Status', href: '/system-status' },
   ],
-  'Legal': [
+  'Company & Legal': [
+    { name: 'About MegiLance', href: '/about' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Community', href: '/community' },
     { name: 'Terms of Service', href: '/terms' },
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Cookie Policy', href: '/cookies' },
@@ -52,9 +55,9 @@ const footerSections = {
 
 const socialLinks = [
   { name: 'Twitter', href: '#', icon: Twitter },
-  { name: 'GitHub', href: '#', icon: Github },
+  { name: 'GitHub', href: 'https://github.com/ghulam-mujtaba5/MegiLance', icon: Github },
   { name: 'LinkedIn', href: '#', icon: Linkedin },
-  { name: 'Email', href: 'mailto:hello@megilance.com', icon: Mail },
+  { name: 'Email', href: 'mailto:support@megilance.site', icon: Mail },
 ];
 
 const PublicFooter = () => {
@@ -71,7 +74,7 @@ const PublicFooter = () => {
               <MegiLanceLogo />
             </Link>
             <p className={cn(commonStyles.tagline, styles.tagline)}>
-              The Future of Freelance, Today.
+              Free AI Freelance Tools &amp; Smart Marketplace
             </p>
             {/* Trust signals — reinforce safety & value */}
             <ul
@@ -82,10 +85,10 @@ const PublicFooter = () => {
               }}
             >
               {[
-                { icon: ShieldCheck, label: 'Secure escrow' },
-                { icon: Percent, label: '0% Commission' },
-                { icon: BadgeCheck, label: 'Verified talent' },
-                { icon: Headphones, label: 'Help Center' },
+                { icon: ShieldCheck, label: 'Milestone escrow' },
+                { icon: Percent, label: 'Promotional pricing' },
+                { icon: BadgeCheck, label: '11 Free AI Tools' },
+                { icon: Headphones, label: 'Support & Help' },
               ].map(({ icon: Icon, label }) => (
                 <li
                   key={label}

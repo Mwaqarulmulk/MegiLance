@@ -8,13 +8,14 @@ import { useAuth } from '@/hooks/useAuth';
 import commonStyles from './Hero.common.module.css';
 import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
-
+import { Sparkles, Shield, ArrowRight, Bot } from 'lucide-react';
+import { PLATFORM_FACTS, PRICING_CONFIG, PLATFORM_STATUS } from '@/lib/platform-config';
 import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 const defaultStats = [
-  { label: 'Escrow Volume Protected', value: '$2.4M+' },
-  { label: 'Vetted Engineering & Design Talent', value: '25,000+' },
-  { label: 'Platform Commission Fee', value: '0% Launch' },
+  { label: 'Free AI Freelance Tools', value: `${PLATFORM_FACTS.AI_TOOLS_COUNT} Tools` },
+  { label: 'Supported Global Markets', value: PLATFORM_FACTS.COUNTRIES_SUPPORTED },
+  { label: 'Promotional Launch Fee', value: '0% Platform' },
 ];
 
 export default function Hero({ stats = defaultStats }) {
@@ -42,25 +43,28 @@ export default function Hero({ stats = defaultStats }) {
           ) : (
             <>
               <span className={cn(commonStyles.badge, themeStyles.badge)}>
-                ✨ AI-Powered Matching
+                <Bot size={14} className="inline mr-1" /> {PLATFORM_STATUS.BADGE}
               </span>
               <span className={cn(commonStyles.badge, themeStyles.badge)}>
-                🛡️ Escrow Protection
+                <Sparkles size={14} className="inline mr-1 text-amber-500" /> Free AI Tools Suite
+              </span>
+              <span className={cn(commonStyles.badge, themeStyles.badge)}>
+                <Shield size={14} className="inline mr-1 text-emerald-500" /> Milestone Escrow
               </span>
             </>
           )}
         </div>
 
         <h1 id="hero-title" className={cn(commonStyles.title, themeStyles.title)}>
-          AI-Powered Freelancing with <br />
-          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>Smarter Matching & Milestone Escrow</span>
+          Free AI Tools for Freelancers &amp; Clients —{' '}
+          <span className={cn(commonStyles.highlight, themeStyles.highlight)}>Plus a Smarter Freelance Marketplace</span>
         </h1>
         
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
           {isAuthenticated ? (
             `You are logged in as a ${user?.user_type}. Access your collaboration workrooms, manage active escrow payments, or check your proposal status from your dashboard.`
           ) : (
-            "MegiLance helps clients scope, price, match, and manage freelance projects with AI-powered tools and milestone escrow."
+            "Price projects, write stronger proposals, plan scopes, calculate rates and evaluate freelance opportunities with free AI tools. When you're ready to hire or find work, continue directly on MegiLance."
           )}
         </p>
 
@@ -76,15 +80,24 @@ export default function Hero({ stats = defaultStats }) {
             </>
           ) : (
             <>
-              <Link href="/talent" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
-                Hire Top Talent
+              <Link href="#ai-tools" className={cn(commonStyles.ctaButton, commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
+                Use Free AI Tools
               </Link>
-              <Link href="/explore" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
-                Find Freelance Work
+              <Link href="/talent" className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
+                Hire Freelancers
               </Link>
             </>
           )}
         </div>
+
+        {!isAuthenticated && (
+          <div className="mt-3 text-center">
+            <Link href="/explore" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
+              <span>Find Freelance Work</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        )}
 
         {/* Hero Lottie Feature Animation Showcase */}
         <div className="mt-8 mb-4 w-full flex justify-center">

@@ -32,8 +32,8 @@ export type FAQItem = {
 
 export const SITE_NAME = 'MegiLance';
 export const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://megilance.site';
-export const SITE_DESCRIPTION = 'MegiLance is the #1 AI-powered freelance marketplace and best Upwork & Fiverr alternative. Hire top freelance web developers, designers, writers & experts online. Secure escrow payments, smart AI matching, zero commission for freelancers. Find freelance jobs and work online.';
-export const SITE_TAGLINE = 'The Future of Freelancing';
+export const SITE_DESCRIPTION = 'Free AI tools for freelancers & clients — price projects, write proposals, calculate rates and plan work. Plus a smart freelance marketplace with milestone escrow.';
+export const SITE_TAGLINE = 'Free AI Freelance Tools & Freelance Marketplace';
 export const SITE_LOGO = `${BASE_URL}/icon-512.png`;
 export const SOCIAL_LINKS = [
   'https://www.linkedin.com/company/megilance/',
@@ -718,13 +718,13 @@ export function buildOfferCatalogJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
     name: `${SITE_NAME} Pricing Plans`,
-    description: 'Transparent freelance marketplace pricing — Free plan, Pro Freelancer $19/mo, Enterprise custom pricing.',
+    description: 'Transparent freelance marketplace pricing — 0% promotional platform commission during 2026 launch and free AI freelance tools.',
     url: toAbsoluteUrl('/pricing'),
     itemListElement: [
       {
         '@type': 'Offer',
-        name: 'Free Plan',
-        description: 'Create a free profile, apply to 10 projects/month, standard AI matching, 15% platform fee on earnings.',
+        name: 'Free Launch Plan',
+        description: 'Full access to all 11 AI tools, 0% platform commission during launch promotion, milestone-based escrow protection.',
         price: '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
@@ -732,22 +732,21 @@ export function buildOfferCatalogJsonLd() {
       },
       {
         '@type': 'Offer',
-        name: 'Pro Freelancer',
-        description: 'Unlimited applications, priority AI matching, premium profile placement, reduced 8% fee, analytics.',
-        price: '19',
+        name: 'Pro Beta Access',
+        description: 'Saved AI calculation history, verified skill badges, regional rate analytics, and 0% platform commission during launch promotion.',
+        price: '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
-        billingIncrement: 'P1M',
         url: toAbsoluteUrl('/pricing'),
       },
       {
         '@type': 'Offer',
-        name: 'Enterprise',
-        description: 'Custom workflows, dedicated account manager, bulk hiring, white-label options, premium SLA.',
+        name: 'Enterprise & Teams',
+        description: 'Custom talent sourcing assistance, standardized NDA/IP templates, dedicated onboarding support, and team collaboration.',
         price: '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
-        url: toAbsoluteUrl('/enterprise'),
+        url: toAbsoluteUrl('/contact?plan=enterprise'),
       },
     ],
   };

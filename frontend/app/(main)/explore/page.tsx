@@ -20,19 +20,31 @@ const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 async function fetchFreelancers() {
   try {
-    const res = await fetch(`${API_URL}/api/v1/users/freelancers?page=1&page_size=6`, { next: { revalidate: 120 } });
+    const res = await fetch(`${API_URL}/api/v1/users/freelancers?page=1&page_size=12`, { next: { revalidate: 120 } });
     if (!res.ok) return [];
     const data = await res.json();
-    return (data.items || data || []).slice(0, 6);
+    const items = data.items || data || [];
+    return items
+      .filter((f: any) => {
+        const name = (f.name || '').toLowerCase();
+        return !name.includes('test') && !name.includes('e2e') && !name.includes('dummy');
+      })
+      .slice(0, 6);
   } catch { return []; }
 }
 
 async function fetchProjects() {
   try {
-    const res = await fetch(`${API_URL}/api/v1/projects?status=open&page=1&page_size=6`, { next: { revalidate: 120 } });
+    const res = await fetch(`${API_URL}/api/v1/projects?status=open&page=1&page_size=12`, { next: { revalidate: 120 } });
     if (!res.ok) return [];
     const data = await res.json();
-    return (data.items || data.projects || data || []).slice(0, 6);
+    const items = data.items || data.projects || data || [];
+    return items
+      .filter((p: any) => {
+        const title = (p.title || '').toLowerCase();
+        return !title.includes('test') && !title.includes('e2e') && !title.includes('demo');
+      })
+      .slice(0, 6);
   } catch { return []; }
 }
 
@@ -208,20 +220,20 @@ async function LiveDataSections() {
       <section style={{ padding: '3rem 2rem', textAlign: 'center' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2rem' }}>
           <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>10K+</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Freelancers</div>
-          </div>
-          <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>5K+</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Projects Completed</div>
-          </div>
-          <div>
             <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>11</div>
             <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Free AI Tools</div>
           </div>
           <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>24/7</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Support</div>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>70+</div>
+            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Countries Supported</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>0%</div>
+            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Launch Platform Fee</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>100%</div>
+            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Milestone Escrow</div>
           </div>
         </div>
       </section>

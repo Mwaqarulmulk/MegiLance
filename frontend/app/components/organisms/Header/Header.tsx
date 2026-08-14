@@ -21,22 +21,56 @@ import lightStyles from './Header.light.module.css';
 import darkStyles from './Header.dark.module.css';
 
 const megaMenuData = {
+  aiSuite: {
+    title: 'AI Tools',
+    sections: [
+      {
+        title: 'Price & Rates',
+        items: [
+          { name: 'AI Price Estimator', href: '/ai/price-estimator', icon: BarChart3, description: 'Estimate project budgets and delivery timelines' },
+          { name: 'Freelance Rate Advisor', href: '/ai/rate-advisor', icon: Zap, description: 'Calculate competitive hourly & fixed project rates' },
+        ]
+      },
+      {
+        title: 'Proposals & Planning',
+        items: [
+          { name: 'AI Proposal Writer', href: '/ai/proposal-writer', icon: MessageSquare, description: 'Draft tailored proposals with deliverable milestones' },
+          { name: 'Project Scope Planner', href: '/ai/scope-planner', icon: Briefcase, description: 'Structure milestones, WBS scopes, and timelines' },
+        ]
+      },
+      {
+        title: 'Contracts & Invoices',
+        items: [
+          { name: 'Contract Builder', href: '/tools/contract-builder', icon: Lock, description: 'Create standard freelance agreement templates' },
+          { name: 'Invoice Generator', href: '/ai/invoice-generator', icon: CreditCard, description: 'Create professional multi-currency invoices' },
+        ]
+      },
+      {
+        title: 'Safety & Growth',
+        items: [
+          { name: 'Risk & Scam Checker', href: '/ai/fraud-check', icon: Shield, description: 'Scan job briefs and messages for fraud red flags' },
+          { name: 'Skill Analyzer', href: '/ai/skill-analyzer', icon: Star, description: 'Evaluate your skillset against real market demand' },
+          { name: 'All 11 AI Tools Hub', href: '/ai', icon: Sparkles, description: 'Browse the full free AI productivity tool suite' },
+        ]
+      }
+    ]
+  },
   hireTalent: {
     title: 'Hire Talent',
     sections: [
       {
-        title: 'For Clients',
+        title: 'Find & Hire',
         items: [
-          { name: 'Browse Freelancers', href: '/talent', icon: Star, description: 'Find top AI-vetted web developers, designers & writers' },
-          { name: 'Post a Project', href: '/client/dashboard', icon: Briefcase, description: 'Post work and receive proposals with zero commission' },
-          { name: 'Client Benefits', href: '/clients', icon: Shield, description: 'Milestone escrow protection & zero buyer service fee' },
+          { name: 'Browse Freelancers', href: '/talent', icon: Star, description: 'Find verified developers, designers & writers' },
+          { name: 'Post a Project', href: '/create-project', icon: Briefcase, description: 'Post work with milestone escrow protection' },
+          { name: 'Client Overview', href: '/clients', icon: Shield, description: 'Learn how milestone escrow protects your budget' },
         ]
       },
       {
-        title: 'Solutions & Portal',
+        title: 'Teams & Enterprise',
         items: [
-          { name: 'Client Dashboard', href: '/client/dashboard', icon: Briefcase, description: 'Manage active contracts, milestones & payments' },
-          { name: 'Enterprise Teams', href: '/teams', icon: Building2, description: 'Scalable talent solutions for enterprise teams' },
+          { name: 'Enterprise Sourcing', href: '/teams', icon: Building2, description: 'Dedicated talent matching and team workflows' },
+          { name: 'Methodology', href: '/methodology', icon: Activity, description: 'How our multi-factor matching algorithms work' },
         ]
       }
     ]
@@ -45,32 +79,37 @@ const megaMenuData = {
     title: 'Find Work',
     sections: [
       {
-        title: 'For Freelancers',
+        title: 'Opportunities',
         items: [
-          { name: 'Browse Jobs', href: '/explore', icon: Rocket, description: 'Explore available freelance jobs with 0% platform fee' },
-          { name: 'AI Proposal Writer', href: '/ai/proposal-writer', icon: MessageSquare, description: 'Generate winning proposals instantly' },
-          { name: 'Freelancer Benefits', href: '/freelancers', icon: Users, description: 'Keep 100% of your earnings with instant payouts' },
+          { name: 'Browse Projects', href: '/explore', icon: Rocket, description: 'Explore active freelance opportunities worldwide' },
+          { name: 'Freelancer Overview', href: '/freelancers', icon: Users, description: 'Platform benefits, milestone security, and tools' },
         ]
       },
       {
-        title: 'Tools & Portal',
+        title: 'Freelancer Tools',
         items: [
-          { name: 'Freelancer Dashboard', href: '/freelancer/dashboard', icon: Users, description: 'Track earnings, active proposals & client orders' },
-          { name: 'Rate Calculator', href: '/ai/rate-advisor', icon: BarChart3, description: 'Calculate competitive hourly & project rates' },
+          { name: 'AI Proposal Writer', href: '/ai/proposal-writer', icon: MessageSquare, description: 'Write compelling proposals for open projects' },
+          { name: 'Rate Advisor', href: '/ai/rate-advisor', icon: BarChart3, description: 'Check regional market rates for your specialty' },
         ]
       }
     ]
   },
-  aiSuite: {
-    title: 'AI Tools',
+  resources: {
+    title: 'Resources',
     sections: [
       {
-        title: 'Smart AI Features',
+        title: 'Learn & Explore',
         items: [
-          { name: 'AI Price Estimator', href: '/ai/price-estimator', icon: BarChart3, description: 'Get data-driven project budgets & timelines' },
-          { name: 'AI Smart Matching', href: '/ai/skill-analyzer', icon: Zap, description: 'Algorithmic 7-factor talent-to-job matching' },
-          { name: 'AI Assistant Chatbot', href: '/ai/chatbot', icon: MessageSquare, description: '24/7 intelligent platform assistance' },
-          { name: 'Fraud Risk Guard', href: '/ai/fraud-check', icon: Shield, description: 'Real-time client & proposal risk detection' },
+          { name: 'How It Works', href: '/how-it-works', icon: Rocket, description: 'Step-by-step guide from AI scoping to payment' },
+          { name: 'AI Methodology', href: '/methodology', icon: Activity, description: 'Transparent documentation of our AI algorithms' },
+          { name: 'Trust & Safety', href: '/trust', icon: Shield, description: 'Escrow workflows, dispute handling & privacy' },
+        ]
+      },
+      {
+        title: 'Company & Help',
+        items: [
+          { name: 'About MegiLance', href: '/about', icon: Users, description: 'Platform origin, mission, architecture & team' },
+          { name: 'Help & Support', href: '/support', icon: HelpCircle, description: 'FAQs, contact channels, and community guides' },
         ]
       }
     ]

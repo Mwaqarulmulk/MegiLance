@@ -1,0 +1,65 @@
+.container {
+  color: #1e293b;
+}
+
+.badge {
+  background-color: #fdf4ff;
+  color: #a21caf;
+  border: 1px solid #f5d0fe;
+}
+
+.title {
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+}
+
+.stepCard {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.stepCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.stepNum {
+  color: #2563eb;
+}
+
+.iconWrap {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.stepTitle {
+  color: #0f172a;
+}
+
+.stepDesc {
+  color: #64748b;
+}
+
+.primaryBtn {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.primaryBtn:hover {
+  background-color: #1d4ed8;
+}
+
+.secondaryBtn {
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.secondaryBtn:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
