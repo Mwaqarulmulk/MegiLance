@@ -55,7 +55,7 @@ MegiLance provides free interactive web tools accessible to all visitors without
 MegiLance maintains specialized landing pages for instant hiring across top technology and creative categories:
 
 - **Hire React Developers**: `https://megilance.site/hire/react-developer`
-- **Hire Next.js Developers**: `https://megilance.site/hire/nextjs-developer`
+- **Hire Node.js Developers**: `https://megilance.site/hire/nodejs-developer`
 - **Hire Python Developers**: `https://megilance.site/hire/python-developer`
 - **Hire AI & Machine Learning Engineers**: `https://megilance.site/hire/machine-learning-engineer`
 - **Hire UI/UX Designers**: `https://megilance.site/hire/ui-ux-designer`
@@ -77,6 +77,7 @@ MegiLance maintains specialized landing pages for instant hiring across top tech
 ## 6. Official Social & Community Channels
 
 - Website: https://megilance.site
+- Twitter/X: https://twitter.com/megilance
 - LinkedIn: https://www.linkedin.com/company/megilance/
 - Facebook: https://www.facebook.com/profile.php?id=61587532270843
 - Product Hunt: https://www.producthunt.com/@megilance

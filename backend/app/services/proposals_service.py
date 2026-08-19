@@ -357,11 +357,6 @@ def get_proposal_with_project_details(proposal_id: int) -> Optional[dict]:
     )
     if proj_result and proj_result.get("rows"):
         proj_row = proj_result["rows"][0]
-        proposal["_project_client_id"] = int(_get_val(proj_row, 0) or 0)
-        proposal["_project_title"] = _safe_str(_get_val(proj_row, 1)) or "Untitled Project"
-        proposal["_project_description"] = _safe_str(_get_val(proj_row, 2)) or ""
-        proposal["_project_budget_type"] = _safe_str(_get_val(proj_row, 3)) or "fixed"
-        proposal["_project_status"] = _safe_str(_get_val(proj_row, 4)) or "open"
     else:
         proposal["_project_client_id"] = None
 
@@ -432,7 +427,36 @@ def accept_proposal(proposal_id: int, proposal: dict, client_id: int) -> Optiona
                    VALUES (?, ?, ?, 'pending', ?, ?, ?)""",
                 [contract_id, client_id, contract_amount, 0, now, now]
             )
-            logger.info(f"Contract {contract_id} and escrow created for project {project_id} on proposal {proposal_id} acceptance")
+            # Create standard 2-part milestones (Advance + Final Delivery)
+            part1_amount = round(contract_amount * 0.5, 2)
+            part2_amount = round(contract_amount - part1_amount, 2)
+            execute_query(
+                """INSERT INTO milestones (contract_id, title, description, amount, status, order_index, due_date, created_at, updated_at)
+                   VALUES (?, ?, ?, ?, 'pending', 1, ?, ?, ?)""",
+                [
+                    contract_id,
+                    "Part 1: Upfront Advance & Project Kickoff",
+                    "Initial deposit (50%) to secure freelancer allocation and initiate project work.",
+                    part1_amount,
+                    start_date,
+                    now,
+                    now,
+                ],
+            )
+            execute_query(
+                """INSERT INTO milestones (contract_id, title, description, amount, status, order_index, due_date, created_at, updated_at)
+                   VALUES (?, ?, ?, ?, 'pending', 2, ?, ?, ?)""",
+                [
+                    contract_id,
+                    "Part 2: Final Delivery & Project Sign-off",
+                    "Final milestone payment (50%) released upon project completion and deliverable approval.",
+                    part2_amount,
+                    end_date,
+                    now,
+                    now,
+                ],
+            )
+            logger.info(f"Contract {contract_id}, escrow, and 2-part milestones created for project {project_id} on proposal {proposal_id} acceptance")
         else:
             raise RuntimeError(f"Contract INSERT succeeded but contract not found for project {project_id}, freelancer {freelancer_id}")
 

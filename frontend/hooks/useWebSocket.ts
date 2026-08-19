@@ -59,8 +59,13 @@ export interface WsReadReceipt {
 }
 
 export const useWebSocket = (options: UseWebSocketOptions = {}) => {
+  const defaultWsUrl = process.env.NEXT_PUBLIC_WS_URL || 
+    (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? `${window.location.protocol === 'https:' ? 'https:' : 'http:'}//${window.location.host}`
+      : 'http://localhost:8000');
+
   const { 
-    url = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8000', 
+    url = defaultWsUrl, 
     autoConnect = true,
     maxReconnectAttempts = 15,
     enableHeartbeat = true,

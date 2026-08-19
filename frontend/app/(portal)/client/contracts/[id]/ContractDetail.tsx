@@ -30,7 +30,7 @@ interface Milestone {
   id: number;
   description: string;
   amount: number;
-  status: 'pending' | 'active' | 'submitted' | 'approved' | 'paid' | 'rejected';
+  status: 'pending' | 'active' | 'submitted' | 'approved' | 'paid' | 'rejected' | 'in_progress';
   due_date?: string;
 }
 
@@ -400,7 +400,7 @@ export default function ContractDetail({ contractId }: ContractDetailProps) {
                                   isLoading={actionLoading === milestone.id}
                                   onClick={() => handleMilestoneAction(milestone.id, 'approve')}
                                 >
-                                  Approve & Pay
+                                  Approve & Release
                                 </Button>
                                 <Button 
                                   variant="danger" 
@@ -409,6 +409,19 @@ export default function ContractDetail({ contractId }: ContractDetailProps) {
                                   onClick={() => handleMilestoneAction(milestone.id, 'reject')}
                                 >
                                   Reject
+                                </Button>
+                              </div>
+                            )}
+
+                            {(milestone.status === 'pending' || milestone.status === 'in_progress') && (
+                              <div className={commonStyles.actionButtons}>
+                                <Button 
+                                  variant="primary" 
+                                  size="sm" 
+                                  isLoading={actionLoading === milestone.id}
+                                  onClick={() => handleMilestoneAction(milestone.id, 'approve')}
+                                >
+                                  {idx === 0 ? 'Release Advance' : 'Release Payment'}
                                 </Button>
                               </div>
                             )}

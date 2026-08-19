@@ -34,10 +34,11 @@ export const SITE_NAME = 'MegiLance';
 export const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://megilance.site';
 export const SITE_DESCRIPTION = 'Free AI tools for freelancers & clients — price projects, write proposals, calculate rates and plan work. Plus a smart freelance marketplace with milestone escrow.';
 export const SITE_TAGLINE = 'Free AI Freelance Tools & Freelance Marketplace';
-export const SITE_LOGO = `${BASE_URL}/icon-512.png`;
+export const SITE_LOGO = `${BASE_URL}/icons/icon-512x512.svg`;
 export const SOCIAL_LINKS = [
   'https://www.linkedin.com/company/megilance/',
   'https://www.facebook.com/profile.php?id=61587532270843',
+  'https://twitter.com/megilance',
   'https://medium.com/@megilanceofficial',
   'https://www.producthunt.com/@megilance',
 ];
@@ -350,7 +351,7 @@ export function buildOrganizationJsonLd() {
     },
     image: SITE_LOGO,
     description: SITE_DESCRIPTION,
-    foundingDate: '2024',
+    foundingDate: '2025',
     slogan: SITE_TAGLINE,
     sameAs: SOCIAL_LINKS,
     contactPoint: [

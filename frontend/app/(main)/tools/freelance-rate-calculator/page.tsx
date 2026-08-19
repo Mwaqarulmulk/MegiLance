@@ -6,6 +6,7 @@ import {
   buildMeta, 
   buildFAQJsonLd, 
   buildAIToolJsonLd, 
+  buildBreadcrumbJsonLd,
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -46,6 +47,10 @@ export default function FreelanceRateCalculatorPage() {
       "145"
     ),
     buildFAQJsonLd(faqs),
+    buildBreadcrumbJsonLd([
+      { name: 'AI Tools', path: '/tools' },
+      { name: 'Freelance Rate Calculator', path: '/tools/freelance-rate-calculator' },
+    ]),
   ];
 
   return (

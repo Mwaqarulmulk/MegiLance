@@ -372,7 +372,10 @@ interface WebSocketProviderProps {
 
 export function WebSocketProvider({
   children,
-  url = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000',
+  url = process.env.NEXT_PUBLIC_WS_URL || 
+    (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`
+      : 'ws://localhost:8000'),
   autoConnect = false,
 }: WebSocketProviderProps) {
   const [state, setState] = useState<ConnectionState>('disconnected');

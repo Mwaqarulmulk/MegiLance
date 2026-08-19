@@ -132,9 +132,9 @@ class Settings(BaseSettings):
     SMTP_PORT: int = 587
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
-    FROM_EMAIL: str = "noreply@megilance.com"
+    FROM_EMAIL: str = "noreply@megilance.site"
     FROM_NAME: str = "MegiLance"
-    FRONTEND_URL: str = "http://localhost:3000"
+    FRONTEND_URL: str = os.environ.get("FRONTEND_URL", "https://megilance.site")
 
     # Blockchain & Payments
     circle_api_key: Optional[str] = None

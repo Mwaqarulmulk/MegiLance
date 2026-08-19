@@ -57,7 +57,6 @@ export default function robots(): MetadataRoute.Robots {
           '/contracts/',
           '/workroom/',
           '/project-demo/',
-          '/testimonials/',
         ],
       },
       // ── Google Images - allow all public images ──
@@ -198,6 +197,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Bytespider',
         disallow: '/',
+      },
+      // ── Semrush Bot – allow for SEO monitoring ──
+      {
+        userAgent: 'SemrushBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
+      },
+      {
+        userAgent: 'SemrushBot-SA',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/portal/'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

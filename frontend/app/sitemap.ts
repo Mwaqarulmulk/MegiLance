@@ -115,6 +115,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/tools/proposal-creator', changeFrequency: 'weekly', priority: 0.88 },
     { path: '/tools/business-contract-template', changeFrequency: 'weekly', priority: 0.88 },
     { path: '/tools/freelance-invoice-template', changeFrequency: 'weekly', priority: 0.90 },
+    { path: '/tools/contract-builder', changeFrequency: 'weekly', priority: 0.85 },
+    { path: '/tools', changeFrequency: 'weekly', priority: 0.90 },
 
     // Legal pages
     { path: '/privacy', changeFrequency: 'monthly', priority: 0.35 },
@@ -124,8 +126,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Status page (redirect corrected)
     { path: '/system-status', changeFrequency: 'weekly', priority: 0.50 },
 
-    // AI/LLM discoverability
-    { path: '/llms.txt', changeFrequency: 'monthly', priority: 0.30 },
+    // AI/LLM discoverability — llms.txt is a text file, NOT a page; exclude from sitemap
+    // { path: '/llms.txt', changeFrequency: 'monthly', priority: 0.30 },
   ];
 
   const staticPages: MetadataRoute.Sitemap = topLevelPaths.map(({ path, changeFrequency, priority }) => ({

@@ -162,7 +162,7 @@ async function LiveDataSections() {
                 <Link key={f.id} href={`/freelancers/${f.id}`} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.25rem', borderRadius: '14px', border: '1.5px solid #e2e8f0', background: 'white', textDecoration: 'none', color: 'inherit', transition: 'all 0.2s' }}>
                   <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                     <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1rem', color: '#475569', flexShrink: 0 }}>
-                      {f.profile_image_url ? <img src={f.profile_image_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }} /> : (f.name?.charAt(0) || 'F')}
+                      {f.profile_image_url ? <img src={f.profile_image_url} alt={f.name ? `${f.name} profile photo` : 'Freelancer profile photo'} style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }} /> : (f.name?.charAt(0) || 'F')}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <h3 style={{ fontSize: '1rem', fontWeight: 650, margin: '0 0 0.15rem', color: '#0f172a' }}>{f.name || 'Freelancer'}</h3>

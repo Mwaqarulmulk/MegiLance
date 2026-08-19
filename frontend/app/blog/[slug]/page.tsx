@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import BlogPostClient from './BlogPostClient';
-import { buildArticleMeta, BASE_URL } from '@/lib/seo';
+import { buildArticleMeta, buildBreadcrumbJsonLd, BASE_URL } from '@/lib/seo';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -10,7 +10,7 @@ type Props = {
 async function getPost(slug: string) {
   const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
   try {
-    const res = await fetch(`${API_URL}/api/v1/blog/${slug}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/v1/blog/${slug}`, { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     return res.json();
   } catch (error) {
@@ -53,6 +53,7 @@ export default async function Page({ params }: Props) {
     description: post.excerpt || post.meta_description,
     image: (post.featured_image_url || post.image_url) ? `${BASE_URL}${post.featured_image_url || post.image_url}` : undefined,
     datePublished: post.published_date || post.created_at,
+    dateModified: post.updated_at || post.published_date || post.created_at,
     author: {
       '@type': 'Person',
       name: post.author || 'MegiLance',
@@ -62,7 +63,7 @@ export default async function Page({ params }: Props) {
       name: 'MegiLance',
       logo: {
         '@type': 'ImageObject',
-        url: `${BASE_URL}/icon-512.png`,
+        url: `${BASE_URL}/icons/icon-512x512.svg`,
       },
     },
     mainEntityOfPage: {
@@ -71,11 +72,20 @@ export default async function Page({ params }: Props) {
     },
   };
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Blog', path: '/blog' },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <BlogPostClient />
     </>

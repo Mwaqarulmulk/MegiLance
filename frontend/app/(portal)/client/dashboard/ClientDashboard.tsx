@@ -321,7 +321,7 @@ const ClientDashboard: React.FC = () => {
         icon: TrendingUp,
         title: "No active projects",
         desc: "Post your first project to start hiring",
-        href: "/client/find-talent",
+        href: "/create-project",
       });
     }
     return issues.slice(0, 3);
@@ -437,13 +437,13 @@ const ClientDashboard: React.FC = () => {
                   Browse Talent
                 </Button>
               </Link>
-              <Link href="/client/find-talent">
+              <Link href="/create-project">
                 <Button
                   variant="primary"
                   size="lg"
                   iconBefore={<Plus size={20} />}
                 >
-                  Find Talent
+                  Post a Project
                 </Button>
               </Link>
             </div>
@@ -479,7 +479,7 @@ const ClientDashboard: React.FC = () => {
             </div>
             <div className={commonStyles.welcomeBannerActions}>
               <Link
-                href="/client/find-talent"
+                href="/create-project"
                 className={cn(
                   commonStyles.welcomeBannerPrimaryAction,
                   themeStyles.welcomeBannerPrimaryAction,

@@ -27,13 +27,11 @@ import {
 // 2. Organization – Shows brand Knowledge Panel with logo + social links
 // 3. SoftwareApplication – App rich result with rating
 // 4. SiteNavigationElement – Helps Google understand main nav for sitelinks
-// 5. AggregateRating – Social proof in search results
-// 6. PageFacts – Direct factual facts for AI Search Bots (GEO / AEO)
+// 5. PageFacts – Direct factual facts for AI Search Bots (GEO / AEO)
 const websiteJsonLd = buildWebSiteJsonLd();
 const orgJsonLd = buildOrganizationJsonLd();
 const appJsonLd = buildSoftwareAppJsonLd();
 const navJsonLd = buildSiteNavigationJsonLd();
-const ratingJsonLd = buildAggregateRatingJsonLd(0, 0);
 const pageFactsJsonLd = buildPageFactsJsonLd([
   { property: 'Platform Commission Fee', value: '0% (100% Free Launch)' },
   { property: 'Client Service Fee', value: '0%' },
@@ -160,6 +158,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
+        {/* hreflang - single language site, set x-default */}
+        <link rel="alternate" hrefLang="en" href="https://megilance.site" />
+        <link rel="alternate" hrefLang="x-default" href="https://megilance.site" />
+        
         {/* DNS prefetch for API */}
         <link rel="dns-prefetch" href="//api.stripe.com" />
         
@@ -171,7 +173,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script {...jsonLdScriptProps(orgJsonLd)} />
         <script {...jsonLdScriptProps(appJsonLd)} />
         <script {...jsonLdScriptProps(navJsonLd)} />
-        <script {...jsonLdScriptProps(ratingJsonLd)} />
         <script {...jsonLdScriptProps(pageFactsJsonLd)} />
         
         {/* Theme initialization - prevent flash of unstyled content.

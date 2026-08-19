@@ -5,7 +5,7 @@
 # Core Framework
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
-uvloop==0.21.0
+uvloop==0.21.0; sys_platform != 'win32'
 python-dotenv==1.0.1
 pydantic==2.10.6
 pydantic-settings==2.7.1
@@ -15,7 +15,7 @@ jinja2==3.1.4
 # Database
 sqlalchemy==2.0.36
 alembic==1.17.1
-sqlalchemy-libsql==0.2.0  # Turso/libSQL support
+sqlalchemy-libsql==0.2.0; sys_platform != 'win32'  # Turso/libSQL support (HTTP client used on Windows)
 
 # Authentication & Security
 passlib==1.7.4
@@ -38,7 +38,8 @@ stripe==11.5.0
 python-socketio==5.14.3
 
 # File handling
-python-magic==0.4.27
+python-magic==0.4.27; sys_platform != 'win32'
+python-magic-bin==0.4.14; sys_platform == 'win32'
 
 # Cloud Storage (S3/Spaces/R2)
 boto3==1.42.4

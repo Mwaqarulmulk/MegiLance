@@ -210,48 +210,73 @@ export default function ClientDeliverablesPage() {
         </p>
       </div>
 
-      <div className="space-y-4">
-        {deliverables.map((deliverable) => {
-          const config = statusConfig[deliverable.status];
-          return (
-            <div
-              key={deliverable.id}
-              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => setSelectedDeliverable(deliverable)}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className={`px-2 py-0.5 text-xs font-medium rounded-full ${config.color}`}
-                    >
-                      {config.label}
-                    </span>
+      {loadingDeliverables ? (
+        <div className="py-16 text-center text-gray-500">
+          <Clock className="w-8 h-8 mx-auto animate-spin mb-3 text-blue-500" />
+          <p className="text-sm">Loading deliverables...</p>
+        </div>
+      ) : deliverables.length === 0 ? (
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+          <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Upload className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No Deliverables Yet
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
+            When freelancers submit work for your active contract milestones, their deliverables, files, and notes will appear here for your review and approval.
+          </p>
+          <a
+            href="/client/contracts"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            View Active Contracts
+          </a>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {deliverables.map((deliverable) => {
+            const config = statusConfig[deliverable.status] || { label: deliverable.status, color: "bg-gray-100 text-gray-700" };
+            return (
+              <div
+                key={deliverable.id}
+                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => setSelectedDeliverable(deliverable)}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={`px-2 py-0.5 text-xs font-medium rounded-full ${config.color}`}
+                      >
+                        {config.label}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {deliverable.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {deliverable.freelancerName} • {deliverable.contractTitle} →{" "}
+                      {deliverable.milestoneTitle}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+                      {deliverable.description}
+                    </p>
                   </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {deliverable.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {deliverable.freelancerName} • {deliverable.contractTitle} →{" "}
-                    {deliverable.milestoneTitle}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-                    {deliverable.description}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {deliverable.files?.length || 0} files
-                  </div>
-                  <div className="text-xs text-gray-400 mt-1">
-                    {new Date(deliverable.submittedAt).toLocaleDateString()}
+                  <div className="text-right">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {deliverable.files?.length || 0} files
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {deliverable.submittedAt ? new Date(deliverable.submittedAt).toLocaleDateString() : ""}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Review Modal */}
       {selectedDeliverable && (

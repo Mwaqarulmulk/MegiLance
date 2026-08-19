@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { buildMeta } from '../../../lib/seo';
+import { buildMeta, buildContactPageJsonLd, buildBreadcrumbJsonLd, jsonLdScriptProps } from '../../../lib/seo';
 
 export const metadata: Metadata = buildMeta({
   title: 'Contact MegiLance | Support, Sales & Partnership Inquiries',
@@ -16,5 +16,13 @@ export const metadata: Metadata = buildMeta({
 import Contact from "./Contact";
 
 export default function ContactPage() {
-  return <Contact />;
+  return (
+    <>
+      <script {...jsonLdScriptProps(buildContactPageJsonLd())} />
+      <script {...jsonLdScriptProps(
+        buildBreadcrumbJsonLd([{ name: 'Contact', path: '/contact' }])
+      )} />
+      <Contact />
+    </>
+  );
 }

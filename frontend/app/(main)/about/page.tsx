@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+import { buildMeta, getKeywordsForPage, buildAboutPageJsonLd, buildBreadcrumbJsonLd, jsonLdScriptProps } from '../../../lib/seo';
+import About from './About';
 
 export const metadata: Metadata = buildMeta({
   title: 'About MegiLance | Our Mission, Team & Story Behind the AI Freelance Platform',
@@ -11,8 +12,15 @@ export const metadata: Metadata = buildMeta({
 });
 
 // @AI-HINT: About page route — delegates to the premium About component with full theme support, animations, and accessibility
-import About from "./About";
 
 export default function AboutPage() {
-  return <About />;
+  return (
+    <>
+      <script {...jsonLdScriptProps(buildAboutPageJsonLd())} />
+      <script {...jsonLdScriptProps(
+        buildBreadcrumbJsonLd([{ name: 'About', path: '/about' }])
+      )} />
+      <About />
+    </>
+  );
 }

@@ -2,7 +2,7 @@
 // Parent page for /hire/[skill]/[industry] programmatic SEO pages
 
 import type { Metadata } from 'next';
-import { buildMeta, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, buildItemListJsonLd, jsonLdScriptProps, BASE_URL, getKeywordsForPage } from '@/lib/seo';
+import { buildMeta, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, buildItemListJsonLd, buildHowToJsonLd, buildFAQJsonLd, jsonLdScriptProps, BASE_URL, getKeywordsForPage } from '@/lib/seo';
 import HireClient from './HireClient';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,6 +31,25 @@ const skillCategories = [
 ];
 
 export default function HireDirectoryPage() {
+  const howToJsonLd = buildHowToJsonLd(
+    'How to Hire a Freelancer Online',
+    'A step-by-step guide for businesses to hire qualified freelancers on MegiLance with 0% platform fees and AI-powered matching.',
+    [
+      { name: 'Browse Skill Categories', text: 'Choose from 40+ skill categories including web development, design, AI/ML, writing, and marketing. Each category has vetted freelancer profiles ready to hire.' },
+      { name: 'Post Your Project for Free', text: 'Describe your project requirements, set your budget range, and upload any reference materials. Posting is 100% free with no listing fees.' },
+      { name: 'Review AI-Matched Proposals', text: 'Receive proposals from qualified freelancers matched by our AI engine. Review portfolios, ratings, and hourly rates to find the best fit.' },
+      { name: 'Set Milestones & Fund Escrow', text: 'Agree on project milestones with your chosen freelancer. Fund the escrow securely — your payment is held until each milestone is completed and approved.' },
+      { name: 'Approve Work & Release Payment', text: 'Review deliverables for each milestone. Approve to release payment automatically from escrow to the freelancer.' },
+    ]
+  );
+
+  const hireFAQs = [
+    { question: 'How do I hire a freelancer online?', answer: 'Post your project for free on MegiLance, receive proposals from AI-matched freelancers, review their profiles and portfolios, then hire the best fit using milestone-based escrow payments.' },
+    { question: 'What is the best website to hire freelancers?', answer: 'MegiLance is among the best freelancer websites offering 0% platform commission (vs Upwork 10-20%), AI-powered matching, milestone escrow, and 40+ skill categories. It is 100% free to post projects.' },
+    { question: 'How much does it cost to hire a freelancer?', answer: 'On MegiLance, posting projects is free and we charge 0% platform commission. You only pay the agreed project rate plus standard payment processing fees. Freelancer hourly rates range from $15/hr to $150+/hr depending on skill and experience.' },
+    { question: 'How do I hire a web developer?', answer: 'Browse MegiLance\'s web developer directory at /hire/react-developer or /hire/nodejs-developer. Post your project, review proposals with portfolio links, and hire via milestone escrow. Average web developer rate is $50-90/hr.' },
+  ];
+
   return (
     <>
       <script {...jsonLdScriptProps(
@@ -40,6 +59,8 @@ export default function HireDirectoryPage() {
         buildBreadcrumbJsonLd([{ name: 'Hire Freelancers', path: '/hire' }])
       )} />
       <script {...jsonLdScriptProps(buildItemListJsonLd(skillCategories))} />
+      <script {...jsonLdScriptProps(howToJsonLd)} />
+      <script {...jsonLdScriptProps(buildFAQJsonLd(hireFAQs))} />
       <HireClient />
     </>
   );

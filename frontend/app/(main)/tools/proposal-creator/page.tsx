@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PenTool, ArrowRight, Sparkles, CheckCircle2, MessageSquare, ShieldAlert } from 'lucide-react';
-import { buildMeta, getKeywordsForPage } from '@/lib/seo';
+import { buildMeta, getKeywordsForPage, buildAIToolJsonLd, buildFAQJsonLd, buildBreadcrumbJsonLd, jsonLdScriptProps } from '@/lib/seo';
 
 export const metadata: Metadata = buildMeta({
   title: 'Free AI Proposal Creator | Write Winning Freelance Bids',
@@ -15,8 +15,24 @@ export const metadata: Metadata = buildMeta({
 });
 
 export default function ProposalCreatorPage() {
+  const aiToolJsonLd = buildAIToolJsonLd(
+    'Free AI Proposal Creator',
+    'Write winning freelance proposals and bids in seconds using advanced generative AI. Tailored to each project, compatible with Upwork, Fiverr, and MegiLance.',
+    '/tools/proposal-creator',
+    '4.9',
+    '198'
+  );
+
+  const faqJsonLd = buildFAQJsonLd([
+    { question: 'Is the proposal creator free to use?', answer: 'Yes, the AI proposal creator is completely free. Guests get up to 5 proposals per day, while verified MegiLance freelancers get unlimited access.' },
+    { question: 'Which platforms support the generated proposals?', answer: 'You can copy and use the AI-generated proposals on any platform including Upwork, Freelancer.com, Toptal, and MegiLance.' },
+    { question: 'What makes a good freelance proposal?', answer: 'A winning proposal directly addresses the client\'s specific requirements, showcases relevant experience, proposes a clear timeline and milestones, and maintains a professional but personable tone. Our AI tailors every proposal to the specific job posting.' },
+  ]);
+
   return (
-    <main className="max-w-4xl mx-auto px-6 py-16">
+    <>
+      <script {...jsonLdScriptProps(aiToolJsonLd, faqJsonLd, buildBreadcrumbJsonLd([{ name: 'AI Tools', path: '/tools' }, { name: 'Proposal Creator', path: '/tools/proposal-creator' }]))} />
+      <main className="max-w-4xl mx-auto px-6 py-16">
       <header className="mb-12 text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 mb-4 dark:bg-blue-950 dark:text-blue-300">
           <PenTool size={13} />
@@ -100,6 +116,7 @@ export default function ProposalCreatorPage() {
           </div>
         </div>
       </section>
-    </main>
+      </main>
+    </>
   );
 }

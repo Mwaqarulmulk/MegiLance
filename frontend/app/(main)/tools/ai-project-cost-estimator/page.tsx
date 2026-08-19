@@ -6,6 +6,7 @@ import {
   buildMeta, 
   buildFAQJsonLd, 
   buildAIToolJsonLd, 
+  buildBreadcrumbJsonLd,
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -46,6 +47,10 @@ export default function AiProjectCostEstimatorPage() {
       "180"
     ),
     buildFAQJsonLd(faqs),
+    buildBreadcrumbJsonLd([
+      { name: 'AI Tools', path: '/tools' },
+      { name: 'AI Project Cost Estimator', path: '/tools/ai-project-cost-estimator' },
+    ]),
   ];
 
   return (

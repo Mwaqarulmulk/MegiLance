@@ -6,6 +6,7 @@ import {
   buildMeta, 
   buildFAQJsonLd, 
   buildAIToolJsonLd, 
+  buildBreadcrumbJsonLd,
   jsonLdScriptProps, 
   getKeywordsForPage 
 } from '@/lib/seo';
@@ -46,6 +47,10 @@ export default function MilestoneGeneratorPage() {
       "85"
     ),
     buildFAQJsonLd(faqs),
+    buildBreadcrumbJsonLd([
+      { name: 'AI Tools', path: '/tools' },
+      { name: 'Milestone Generator', path: '/tools/milestone-generator' },
+    ]),
   ];
 
   return (

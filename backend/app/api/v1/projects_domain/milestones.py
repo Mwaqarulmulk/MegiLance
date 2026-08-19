@@ -236,26 +236,39 @@ def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user
     # Only client can approve
     if contract["client_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only the client can approve milestones")
-
-    if rows[0]["status"] != "submitted":
+    # Client can approve submitted milestones or release pending upfront advance milestones
+    if rows[0]["status"] not in ("submitted", "pending", "in_progress"):
         raise HTTPException(status_code=400, detail=f"Cannot approve milestone in '{rows[0]['status']}' status")
 
     milestone_amount = float(rows[0]["amount"] or 0)
+    contract_id = int(rows[0]["contract_id"])
     escrow_rows = parse_rows(execute_query(
-        "SELECT id, amount, released_amount FROM escrow WHERE contract_id = ? AND status IN ('funded', 'active') ORDER BY id DESC LIMIT 1",
-        [rows[0]["contract_id"]],
+        "SELECT id, amount, released_amount, status FROM escrow WHERE contract_id = ? ORDER BY id DESC LIMIT 1",
+        [contract_id],
     ))
-    if not escrow_rows:
+    
+    # Auto-fund if pending and client has balance
+    if escrow_rows and escrow_rows[0].get("status") == "pending":
+        from app.services.escrow_service import get_user_balance, fund_pending_escrow
+        escrow_amt = float(escrow_rows[0]["amount"] or 0)
+        if get_user_balance(current_user.id) >= escrow_amt:
+            fund_pending_escrow(contract_id, current_user.id, escrow_amt, "Auto-funded on milestone release")
+            escrow_rows = parse_rows(execute_query(
+                "SELECT id, amount, released_amount, status FROM escrow WHERE contract_id = ? ORDER BY id DESC LIMIT 1",
+                [contract_id],
+            ))
+
+    if not escrow_rows or escrow_rows[0].get("status") not in ('funded', 'active'):
         raise HTTPException(status_code=400, detail="Fund the contract escrow before approving this milestone")
 
     escrow = escrow_rows[0]
     remaining = float(escrow["amount"] or 0) - float(escrow["released_amount"] or 0)
-    if milestone_amount <= 0 or milestone_amount > remaining:
+    if milestone_amount <= 0 or milestone_amount > (remaining + 0.01):
         raise HTTPException(status_code=400, detail="Milestone amount exceeds the available escrow balance")
 
     now = datetime.now(timezone.utc).isoformat()
     execute_query(
-        "UPDATE milestones SET status = 'approving', updated_at = ? WHERE id = ? AND status = 'submitted'",
+        "UPDATE milestones SET status = 'approving', updated_at = ? WHERE id = ?",
         [now, milestone_id],
     )
     try:
@@ -268,8 +281,8 @@ def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user
         )
     except ValueError as exc:
         execute_query(
-            "UPDATE milestones SET status = 'submitted', updated_at = ? WHERE id = ? AND status = 'approving'",
-            [datetime.now(timezone.utc).isoformat(), milestone_id],
+            "UPDATE milestones SET status = ?, updated_at = ? WHERE id = ?",
+            [rows[0]["status"], datetime.now(timezone.utc).isoformat(), milestone_id],
         )
         raise HTTPException(status_code=400, detail=str(exc))
 
@@ -286,11 +299,28 @@ def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user
         )
     except Exception as exc:
         logger.warning("Milestone %s paid but wallet history logging failed: %s", milestone_id, exc)
+
+    # Check if all milestones for the contract are now approved/completed
+    all_ms = parse_rows(execute_query(
+        "SELECT id, status FROM milestones WHERE contract_id = ?",
+        [contract_id],
+    ))
+    if all_ms and all(m.get("status") in ("approved", "paid") for m in all_ms):
+        execute_query(
+            "UPDATE contracts SET status = 'completed', updated_at = ? WHERE id = ?",
+            [now, contract_id],
+        )
+        execute_query(
+            "UPDATE projects SET status = 'completed', updated_at = ? WHERE id = (SELECT project_id FROM contracts WHERE id = ?)",
+            [now, contract_id],
+        )
+        logger.info(f"Contract {contract_id} marked as completed after all milestones approved")
+
     _notify_safely(
         contract["freelancer_id"], "milestone_approved", "Milestone approved and paid",
         f"Your milestone was approved and ${milestone_amount:.2f} was released.",
-        f"/freelancer/contracts/{rows[0]['contract_id']}",
-        {"contract_id": rows[0]["contract_id"], "milestone_id": milestone_id, "amount": milestone_amount},
+        f"/freelancer/contracts/{contract_id}",
+        {"contract_id": contract_id, "milestone_id": milestone_id, "amount": milestone_amount},
     )
     return {"message": "Milestone approved and payment released", "released_amount": milestone_amount}
 

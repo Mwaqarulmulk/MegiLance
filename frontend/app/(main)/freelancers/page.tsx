@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { buildMeta, getKeywordsForPage } from '../../../lib/seo';
+import { buildMeta, getKeywordsForPage, buildEmployerAggregateRatingJsonLd, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, jsonLdScriptProps } from '../../../lib/seo';
 
 export const metadata: Metadata = buildMeta({
   title: 'Hire Top Freelancers Online | Vetted Web Developers & Designers for Hire',
@@ -54,9 +54,22 @@ const FreelancersDirectoryFallback = () => (
 
 export default async function FreelancersPage() {
   return (
-    <Suspense fallback={<FreelancersDirectoryFallback />}>
-      <PublicFreelancers />
-    </Suspense>
+    <>
+      <script {...jsonLdScriptProps(buildEmployerAggregateRatingJsonLd())} />
+      <script {...jsonLdScriptProps(
+        buildCollectionPageJsonLd(
+          'Top Freelancers for Hire',
+          'Browse and hire the best freelancers in web development, design, AI, and more. Verified profiles, escrow payments, and AI-powered matching.',
+          '/freelancers'
+        )
+      )} />
+      <script {...jsonLdScriptProps(
+        buildBreadcrumbJsonLd([{ name: 'Freelancers', path: '/freelancers' }])
+      )} />
+      <Suspense fallback={<FreelancersDirectoryFallback />}>
+        <PublicFreelancers />
+      </Suspense>
+    </>
   );
 }
 
