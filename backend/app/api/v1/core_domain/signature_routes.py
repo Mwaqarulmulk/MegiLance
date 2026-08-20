@@ -11,7 +11,7 @@ import hashlib
 def compute_signature_hash(data: str) -> str:
     return hashlib.sha256(data.encode()).hexdigest()
 
-router = APIRouter(prefix="/signatures", tags=["E-Signatures"])
+router = APIRouter(tags=["E-Signatures"])
 
 from app.core.security import get_current_user
 from app.db.turso_http import execute_query, parse_rows

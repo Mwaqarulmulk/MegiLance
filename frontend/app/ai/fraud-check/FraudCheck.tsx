@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Shield, AlertTriangle, CheckCircle, XCircle, RefreshCw, FileText, Zap } from 'lucide-react';
 import Button from '@/app/components/atoms/Button/Button';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { PageTransition } from '@/app/components/Animations/PageTransition';
 import { ScrollReveal } from '@/app/components/Animations/ScrollReveal';
 
@@ -36,6 +37,7 @@ const SAMPLE_TEXTS = {
 };
 
 const FraudCheck: React.FC = () => {
+  const toaster = useToaster();
   const { resolvedTheme } = useTheme();
   const [text, setText] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -341,7 +343,11 @@ const FraudCheck: React.FC = () => {
                     className="px-4 py-2 border rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-sm font-semibold transition flex items-center gap-1.5"
                     onClick={() => {
                       navigator.clipboard.writeText(getFraudSummaryText(analysisResult));
-                      alert("Summary copied to clipboard!");
+                      toaster.notify({
+                        title: "Copied",
+                        description: "Summary copied to clipboard!",
+                        variant: "success",
+                      });
                     }}
                   >
                     Copy Summary

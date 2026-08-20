@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { PageTransition, ScrollReveal, StaggerContainer, StaggerItem } from '@/app/components/Animations';
 import commonStyles from './Workflows.common.module.css';
 import lightStyles from './Workflows.light.module.css';
@@ -37,6 +38,7 @@ interface WorkflowTemplate {
 }
 
 export default function WorkflowsPage() {
+  const toaster = useToaster();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'my-workflows' | 'templates' | 'logs'>('my-workflows');
@@ -115,11 +117,20 @@ export default function WorkflowsPage() {
       setWorkflows(prev => prev.map(wf => 
         wf.id === workflowId ? { ...wf, isActive: !wf.isActive } : wf
       ));
+      toaster.notify({
+        title: 'Workflow Updated',
+        description: `Workflow ${workflow.isActive ? 'disabled' : 'enabled'} successfully.`,
+        variant: 'success',
+      });
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to toggle workflow:', error);
       }
-      alert('Failed to update workflow status. Please try again.');
+      toaster.notify({
+        title: 'Update Failed',
+        description: 'Failed to update workflow status. Please try again.',
+        variant: 'danger',
+      });
     }
   };
 
@@ -128,11 +139,20 @@ export default function WorkflowsPage() {
       const { workflowApi } = await import('@/lib/api') as any;
       await workflowApi.delete(workflowId);
       setWorkflows(prev => prev.filter(wf => wf.id !== workflowId));
+      toaster.notify({
+        title: 'Workflow Deleted',
+        description: 'Workflow deleted successfully.',
+        variant: 'success',
+      });
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to delete workflow:', error);
       }
-      alert('Failed to delete workflow. Please try again.');
+      toaster.notify({
+        title: 'Delete Failed',
+        description: 'Failed to delete workflow. Please try again.',
+        variant: 'danger',
+      });
     }
   };
 
@@ -153,6 +173,11 @@ export default function WorkflowsPage() {
     setWorkflows(prev => [workflow, ...prev]);
     setNewWorkflow({ name: '', trigger: '', description: '' });
     setShowCreateModal(false);
+    toaster.notify({
+      title: 'Workflow Created',
+      description: `Workflow "${workflow.name}" created successfully.`,
+      variant: 'success',
+    });
   };
 
   const applyTemplate = (template: WorkflowTemplate) => {

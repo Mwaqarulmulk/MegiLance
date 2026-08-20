@@ -220,7 +220,7 @@ async def register(request: Request, body: RegisterRequest, response: Response):
             "user_id": user["id"],
             "role": user.get("role", user_type),
             "user_type": user_type,
-            "name": body.name,
+            "name": name,
         },
     )
     refresh_token = create_refresh_token(
@@ -257,7 +257,7 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         })
         email_service.send_verification_email(
             to_email=body.email,
-            user_name=body.name,
+            user_name=name,
             verification_token=verification_token,
         )
     except Exception as e:

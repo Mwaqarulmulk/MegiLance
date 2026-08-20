@@ -95,7 +95,7 @@ def _enrich(rows: list[dict]) -> list[dict]:
 
 @router.get("")
 def list_favorites(
-    target_type: Optional[str] = Query(None, regex="^(project|freelancer|client)$"),
+    target_type: Optional[str] = Query(None, pattern="^(project|freelancer|client)$"),
     current_user=Depends(get_current_user),
 ):
     where = "WHERE user_id = ?"

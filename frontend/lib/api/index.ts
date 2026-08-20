@@ -85,7 +85,9 @@ export {
   disputesApi,
   reviewsApi,
   reviewResponsesApi,
+  talentInvitationsApi,
 } from "./marketplace";
+export type { ReviewItem, ReviewStats } from "./marketplace";
 
 // Gigs
 export { gigsApi } from "./gigs";

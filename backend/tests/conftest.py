@@ -54,6 +54,19 @@ def db() -> Generator[Session, None, None]:
         Base.metadata.drop_all(bind=engine)
 
 
+@pytest.fixture(autouse=True)
+def _clean_test_state():
+    """Ensure clean dependency overrides and security cache across all tests."""
+    from app.core.security import _user_cache, _user_cache_lock
+    app.dependency_overrides.clear()
+    with _user_cache_lock:
+        _user_cache.clear()
+    yield
+    app.dependency_overrides.clear()
+    with _user_cache_lock:
+        _user_cache.clear()
+
+
 @pytest.fixture(scope="function")
 def client(db: Session) -> Generator[TestClient, None, None]:
     """Create test client with database override"""

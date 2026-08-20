@@ -178,6 +178,7 @@ def _fake_execute_query(sql: str, params=None):
 def _mock_turso(monkeypatch):
     """Patch execute_query at every import site used in the auth flow."""
     _reset_db()
+    client.cookies.clear()
     targets = [
         "app.db.turso_http.execute_query",
         "app.api.v1.identity.auth.execute_query",
@@ -191,6 +192,7 @@ def _mock_turso(monkeypatch):
         except AttributeError:
             pass  # module may not have imported it yet
     yield
+    client.cookies.clear()
 
 
 # ---------------------------------------------------------------------------
@@ -278,5 +280,6 @@ def test_register_weak_password():
 
 def test_protected_endpoint_no_token():
     """Accessing /me without auth returns 401 or 403."""
+    client.cookies.clear()
     resp = client.get("/api/auth/me")
     assert resp.status_code in (401, 403)

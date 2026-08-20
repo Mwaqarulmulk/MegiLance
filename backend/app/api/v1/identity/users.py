@@ -44,6 +44,9 @@ def list_freelancers(
     # directory only shows real, presentable freelancers. (See seed_marketplace.py for demo data.)
     conditions.append("u.email NOT LIKE '%@example.com'")
     conditions.append("u.email NOT LIKE 'test_%'")
+    conditions.append("u.email NOT LIKE '%.test'")
+    conditions.append("u.name NOT LIKE 'ai_test_%'")
+    conditions.append("u.name IS NOT NULL AND TRIM(u.name) != ''")
     conditions.append("(u.profile_visibility IS NULL OR u.profile_visibility = 'public')")
     conditions.append(
         "(u.hourly_rate > 0 "

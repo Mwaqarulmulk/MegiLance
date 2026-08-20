@@ -14,7 +14,7 @@ from app.services.pdf_generator import (
     generate_receipt_pdf,
 )
 
-router = APIRouter(prefix="/pdf", tags=["PDF Generation"])
+router = APIRouter(tags=["PDF Generation"])
 
 
 class InvoicePDFRequest(BaseModel):

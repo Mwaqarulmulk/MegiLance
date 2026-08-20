@@ -112,13 +112,17 @@ def create_review(request: ReviewCreate, current_user=Depends(get_current_user))
         raise HTTPException(status_code=404, detail="Contract not found")
 
     contract = contract_rows[0]
-    if contract["client_id"] != current_user.id and contract["freelancer_id"] != current_user.id:
+    contract_client_id = str(contract.get("client_id", ""))
+    contract_freelancer_id = str(contract.get("freelancer_id", ""))
+    user_id_str = str(getattr(current_user, "id", ""))
+
+    if user_id_str != contract_client_id and user_id_str != contract_freelancer_id:
         raise HTTPException(status_code=403, detail="Only contract parties can review")
 
-    if contract["client_id"] == current_user.id:
-        reviewee_id = contract["freelancer_id"]
+    if user_id_str == contract_client_id:
+        reviewee_id = int(contract["freelancer_id"]) if str(contract.get("freelancer_id", "")).isdigit() else contract.get("freelancer_id")
     else:
-        reviewee_id = contract["client_id"]
+        reviewee_id = int(contract["client_id"]) if str(contract.get("client_id", "")).isdigit() else contract.get("client_id")
 
     existing = execute_query(
         "SELECT id FROM reviews WHERE contract_id = ? AND reviewer_id = ?",
@@ -155,7 +159,7 @@ def update_review(review_id: int, request: ReviewUpdate, current_user=Depends(ge
     rows = parse_rows(execute_query("SELECT id, reviewer_id FROM reviews WHERE id = ?", [review_id]))
     if not rows:
         raise HTTPException(status_code=404, detail="Review not found")
-    if rows[0]["reviewer_id"] != current_user.id:
+    if str(rows[0].get("reviewer_id", "")) != str(getattr(current_user, "id", "")):
         raise HTTPException(status_code=403, detail="Only the reviewer can edit this review")
 
     updates = {k: v for k, v in request.model_dump().items() if v is not None}
@@ -180,7 +184,7 @@ def delete_review(review_id: int, current_user=Depends(get_current_user)):
     rows = parse_rows(execute_query("SELECT id, reviewer_id FROM reviews WHERE id = ?", [review_id]))
     if not rows:
         raise HTTPException(status_code=404, detail="Review not found")
-    if rows[0]["reviewer_id"] != current_user.id:
+    if str(rows[0].get("reviewer_id", "")) != str(getattr(current_user, "id", "")):
         raise HTTPException(status_code=403, detail="Only the reviewer can delete this review")
     execute_query("DELETE FROM reviews WHERE id = ?", [review_id])
     return {"message": "Review deleted"}
@@ -196,7 +200,7 @@ def respond_to_review(review_id: int, request: ReviewResponse, current_user=Depe
     if not rows:
         raise HTTPException(status_code=404, detail="Review not found")
 
-    if rows[0]["reviewee_id"] != current_user.id:
+    if str(rows[0].get("reviewee_id", "")) != str(getattr(current_user, "id", "")):
         raise HTTPException(status_code=403, detail="Only the reviewed user can respond")
 
     now = datetime.now(timezone.utc).isoformat()

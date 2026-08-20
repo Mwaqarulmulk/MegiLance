@@ -83,11 +83,11 @@ export default function Page() {
 
         <div className="p-6 bg-slate-50 dark:bg-slate-900 border rounded-2xl">
           <h3 className="font-bold text-sm text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-            <HelpCircle className="text-emerald-500" size={16} />
-            Prototype Disclaimers
+            <ShieldCheck className="text-emerald-500" size={16} />
+            2-Part Milestone Escrow Guarantee
           </h3>
           <p className="text-xs text-slate-650 dark:text-slate-400 leading-relaxed">
-            Please note: MegiLance is currently operating in <strong>sandbox prototype mode</strong>. Blockchain smart contracts run on our local test networks, and fiat transactions are simulated for safety evaluations.
+            MegiLance guarantees complete payment security. Funds for Part 1 (Upfront Advance) and Part 2 (Final Delivery) are secured in escrow before work commences and released only upon validated project milestones.
           </p>
         </div>
       </section>

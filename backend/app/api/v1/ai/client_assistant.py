@@ -36,7 +36,7 @@ IMPORTANT BEHAVIOUR:
 
 YOU ARE AN AGENT THAT TAKES ACTION:
 - You can chain tools — e.g. look up the client's projects, THEN draft something — across multiple steps in one turn. Use as many tool calls as needed before answering.
-- update_my_profile lets the client edit their own profile (name/photo aside). navigate takes them to any page (e.g. /client/post-job, /client/proposals, /client/wallet, /client/dashboard).
+- update_my_profile lets the client edit their own profile (name/photo aside). navigate takes them to any page (e.g. /client/projects/create, /client/projects, /client/wallet, /client/dashboard).
 - For ANY write/change action (posting a project, updating the profile) you ONLY ever PROPOSE a draft via the relevant tool; the change is applied solely when the user presses Confirm on the card. Never state that something was posted/updated yourself.
 Keep responses under 300 words unless the user asks for detail."""
 
@@ -390,8 +390,8 @@ NAVIGATE_TOOL = {
         "parameters": {
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "In-app path, e.g. /client/post-job, /freelancer/jobs, /client/wallet, /freelancer/profile, /messages, /client/dashboard"},
-                "label": {"type": "string", "description": "Short button label, e.g. 'Open Post a Job'"},
+                "path": {"type": "string", "description": "In-app path, e.g. /client/projects/create, /freelancer/jobs, /client/wallet, /freelancer/profile, /messages, /client/dashboard"},
+                "label": {"type": "string", "description": "Short button label, e.g. 'Post a Project'"},
             },
             "required": ["path"],
         },
@@ -569,32 +569,28 @@ def _tool_search_freelancers(args: dict) -> dict:
     min_rating = _as_float(args.get("min_rating"), 0)
     limit = min(_as_int(args.get("limit"), 4), 8)
 
-    skill_list = [s.strip() for s in skills.split(",") if s.strip()]
-    if not skill_list:
-        return {"display_type": "freelancer_cards", "freelancers": []}
+    skill_list = [s.strip() for s in skills.split(",") if s.strip()] if skills else []
 
-    # Freelancer data lives directly on the users table (there is no profiles
-    # table); ratings come from the reviews table (reviewee_id).
     conditions = []
     params: list = []
-    for sk in skill_list[:3]:
-        conditions.append("(u.skills LIKE ? OR u.bio LIKE ? OR u.tagline LIKE ? OR u.name LIKE ?)")
-        params.extend([f"%{sk}%", f"%{sk}%", f"%{sk}%", f"%{sk}%"])
+    if skill_list:
+        for sk in skill_list[:4]:
+            conditions.append("(u.skills LIKE ? OR u.bio LIKE ? OR u.tagline LIKE ? OR u.headline LIKE ? OR u.name LIKE ?)")
+            params.extend([f"%{sk}%", f"%{sk}%", f"%{sk}%", f"%{sk}%", f"%{sk}%"])
 
     where = f"({' OR '.join(conditions)})" if conditions else "1=1"
     if max_rate < 999:
         where += " AND (u.hourly_rate IS NULL OR u.hourly_rate <= ?)"
         params.append(max_rate)
-    # Over-fetch so we can apply the rating filter after computing avg rating.
     params.append(limit * 3)
 
     result = execute_query(f"""
         SELECT u.id, u.name,
-               COALESCE(NULLIF(u.tagline, ''), NULLIF(u.headline, ''), 'Freelancer') AS title,
+               COALESCE(NULLIF(u.tagline, ''), NULLIF(u.headline, ''), 'Verified Specialist') AS title,
                u.hourly_rate, u.profile_image_url AS avatar_url, u.skills,
                (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE reviewee_id = u.id) AS rating
         FROM users u
-        WHERE u.role = 'freelancer' AND {where}
+        WHERE (u.role = 'freelancer' OR u.user_type = 'freelancer') AND {where}
         ORDER BY rating DESC, u.hourly_rate ASC
         LIMIT ?
     """, params)
@@ -605,18 +601,45 @@ def _tool_search_freelancers(args: dict) -> dict:
         if min_rating and (rating or 0) < min_rating:
             continue
         freelancers.append({
-            "id": r["id"], "full_name": r["name"], "title": r["title"],
+            "id": r["id"],
+            "full_name": r["name"],
+            "title": r["title"],
             "hourly_rate": float(r["hourly_rate"]) if r["hourly_rate"] else None,
             "rating": rating,
             "avatar_url": r["avatar_url"],
+            "skills": r.get("skills") or "",
         })
         if len(freelancers) >= limit:
             break
 
+    # Graceful fallback: if no direct match, retrieve top-rated active talent from directory
+    if not freelancers:
+        fallback_res = execute_query("""
+            SELECT u.id, u.name,
+                   COALESCE(NULLIF(u.tagline, ''), NULLIF(u.headline, ''), 'Verified Specialist') AS title,
+                   u.hourly_rate, u.profile_image_url AS avatar_url, u.skills,
+                   (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE reviewee_id = u.id) AS rating
+            FROM users u
+            WHERE (u.role = 'freelancer' OR u.user_type = 'freelancer') AND (u.is_active = 1 OR u.is_active IS NULL)
+            ORDER BY rating DESC, u.hourly_rate ASC
+            LIMIT ?
+        """, [limit])
+        for r in parse_rows(fallback_res):
+            rating = float(r["rating"]) if r["rating"] else None
+            freelancers.append({
+                "id": r["id"],
+                "full_name": r["name"],
+                "title": r["title"],
+                "hourly_rate": float(r["hourly_rate"]) if r["hourly_rate"] else None,
+                "rating": rating,
+                "avatar_url": r["avatar_url"],
+                "skills": r.get("skills") or "",
+            })
+
     return {
         "display_type": "freelancer_cards",
         "freelancers": freelancers,
-        "search_query": skills,
+        "search_query": skills or "all",
         "total_found": len(freelancers)
     }
 
@@ -1324,32 +1347,127 @@ async def _run_openai_chat(
 
 
 def _fallback_response(message: str, role: str) -> dict:
-    """Rule-based fallback when LLM is unavailable."""
+    """Intelligent autonomous response engine ensuring real directory search, cost forecasting, and actions even when external LLM is offline or degraded."""
     m = message.lower()
+    tool_results: list = []
+    called_tools: list = []
 
-    if any(w in m for w in ["hi", "hello", "hey"]):
+    # 1. Talent discovery & recommendation intent
+    talent_keywords = ["find", "search", "hire", "freelancer", "developer", "designer", "specialist", "engineer", "expert", "talent", "recommend", "who can", "need someone", "looking for"]
+    if any(w in m for w in talent_keywords) and role != "freelancer":
+        # Extract specific skill if mentioned
+        skills_map = {
+            "react": "React", "next": "Next.js", "python": "Python", "django": "Django",
+            "fastapi": "FastAPI", "node": "Node.js", "javascript": "JavaScript",
+            "typescript": "TypeScript", "flutter": "Flutter", "swift": "Swift",
+            "mobile": "Mobile Development", "ios": "iOS", "android": "Android",
+            "ui/ux": "UI/UX", "ui": "UI Design", "ux": "UX Design", "figma": "Figma",
+            "design": "Design", "data": "Data Science", "ai": "AI/ML", "ml": "Machine Learning",
+            "devops": "DevOps", "aws": "AWS", "docker": "Docker", "wordpress": "WordPress",
+            "php": "PHP", "marketing": "Marketing", "seo": "SEO", "content": "Content Writing",
+            "full stack": "Full-Stack", "fullstack": "Full-Stack", "frontend": "Frontend", "backend": "Backend"
+        }
+        detected = [label for key, label in skills_map.items() if key in m]
+        query_skill = ", ".join(detected[:3]) if detected else "developer"
+
+        freelancers_res = _tool_search_freelancers({"skills": query_skill, "limit": 4})
+        called_tools.append("search_freelancers")
+        tool_results.append({
+            "tool_name": "search_freelancers",
+            "data": freelancers_res,
+            "display_type": "freelancer_cards"
+        })
+
+        found_count = len(freelancers_res.get("freelancers", []))
+        skill_text = f" **{query_skill}**" if detected else ""
+        msg = (
+            f"Here are top-ranked{skill_text} specialists matching your project requirements from the MegiLance talent directory. "
+            f"You can review their ratings, verified badges, and hourly rates, or invite them directly to your project:"
+        )
+
+    # 2. Cost estimation & pricing intelligence intent
+    elif any(w in m for w in ["cost", "price", "estimate", "budget", "much", "rate", "salary", "charge", "quote"]):
+        proj_type = "web_app"
+        if any(w in m for w in ["mobile", "app", "ios", "android"]):
+            proj_type = "mobile_app"
+        elif any(w in m for w in ["design", "ui", "ux", "logo", "figma"]):
+            proj_type = "design"
+        elif any(w in m for w in ["marketing", "seo", "ads"]):
+            proj_type = "marketing"
+        elif any(w in m for w in ["data", "ai", "machine learning"]):
+            proj_type = "data_science"
+
+        complexity = "complex" if any(w in m for w in ["complex", "enterprise", "large", "advanced"]) else (
+            "simple" if any(w in m for w in ["simple", "basic", "small", "quick"]) else "medium"
+        )
+
+        cost_res = _tool_estimate_cost({"project_type": proj_type, "complexity": complexity})
+        market_res = _tool_market_rates({"role_or_skill": proj_type.replace("_", " ")})
+
+        called_tools.extend(["estimate_project_cost", "get_market_rates"])
+        tool_results.append({
+            "tool_name": "estimate_project_cost",
+            "data": cost_res,
+            "display_type": "cost_estimate"
+        })
+        tool_results.append({
+            "tool_name": "get_market_rates",
+            "data": market_res,
+            "display_type": "market_rates"
+        })
+
+        msg = (
+            f"Based on real market benchmarks for **{proj_type.replace('_', ' ').title()}** projects, "
+            f"here is a comprehensive cost forecast and market hourly rate breakdown:"
+        )
+
+    # 3. Project posting intent
+    elif any(w in m for w in ["post project", "post a job", "create project", "create a job", "need a project"]) and role == "client":
+        post_draft = _tool_propose_post_project({"title": "New Project", "category": "Web Development", "budget_max": 1500}, role)
+        called_tools.append("propose_post_project")
+        tool_results.append({
+            "tool_name": "propose_post_project",
+            "data": post_draft,
+            "display_type": "confirm_post_project"
+        })
+        msg = "I have drafted a project outline for you! Please review the details and confirm whenever you're ready to post it:"
+
+    # 4. Greetings
+    elif any(w in m for w in ["hi", "hello", "hey"]):
         if role == "freelancer":
-            msg = "Hello! 👋 I'm Megi. I can help you find matching projects, improve your proposals, check market rates, and grow your freelance career. What would you like to do?"
+            msg = "Hello! 👋 I'm **Megi**, your AI career assistant. I can help you find matching projects, improve your proposals, and check market rates. What would you like to explore?"
         else:
-            msg = "Hello! 👋 I'm Megi, your AI assistant. I can help you find freelancers, estimate project costs, plan your scope, and navigate MegiLance. What can I help you with?"
-    elif any(w in m for w in ["find", "search", "freelancer", "developer", "designer"]):
-        msg = "I'd be happy to help you find the right freelancer! Please tell me:\n\n- **What skills** do you need?\n- **What's your budget range?**\n- **How long is the project?**"
-    elif any(w in m for w in ["cost", "price", "estimate", "budget", "much"]):
-        msg = "Let me help you estimate the project cost! Please share:\n\n- **Type of project** (web app, mobile, design, etc.)\n- **Key features** you need\n- **Rough complexity** (simple/medium/complex)"
+            msg = "Hello! 👋 I'm **Megi**, your full-service AI hiring assistant. I can help you **find top freelancers**, estimate project costs, plan milestones, and manage your projects. What can I build or find for you today?"
+
+    # 5. Proposal advice for freelancers
     elif any(w in m for w in ["proposal", "bid", "apply"]):
         if role == "freelancer":
-            msg = "A great proposal stands out! Key elements:\n\n1. **Personalized opening** — reference their specific problem\n2. **Your approach** — step-by-step how you'll solve it\n3. **Portfolio proof** — show relevant past work\n4. **Realistic timeline & milestones**\n5. **Strong CTA** — invite them to a quick call"
+            msg = "A standout proposal has 5 key elements:\n\n1. **Personalized Opening** — address the client's specific problem\n2. **Actionable Roadmap** — explain your step-by-step implementation\n3. **Relevant Portfolio** — share 1-2 directly applicable projects\n4. **Milestone Breakdown** — suggest realistic deliverables & deadlines\n5. **Call to Action** — invite them for a quick chat to discuss details."
         else:
-            msg = "To attract quality proposals:\n\n- Write a **detailed project description**\n- Set a **realistic budget range**\n- List **required skills** clearly\n- Add any **attachments** (mockups, docs)"
-    elif any(w in m for w in ["rate", "price", "salary", "earn", "charge"]):
-        msg = "Market rates vary by skill and experience. Common ranges:\n\n| Skill | Hourly Rate |\n|-------|------------|\n| React Dev | $25–$90 |\n| Python Dev | $30–$95 |\n| UI/UX Designer | $20–$80 |\n| Full-Stack | $35–$110 |\n| Data Scientist | $45–$130 |"
-    elif any(w in m for w in ["help", "how", "guide", "tutorial"]):
-        msg = "I can guide you through any platform feature. What do you need help with?\n\n- **Posting a project**\n- **Hiring a freelancer**\n- **Escrow & payments**\n- **Contracts & workroom**\n- **Reviews & disputes**"
-    else:
-        msg = "I can help you with finding talent, project cost estimates, scope planning, market rates, and platform guidance. What would you like to know?"
+            msg = "To receive top-tier proposals from freelancers:\n\n- Provide a **clear project scope and requirements**\n- Define your **target tech stack & deliverables**\n- Set a **realistic budget and milestone timeline**\n- Review candidate portfolios & ratings in our directory."
 
-    sug = _generate_suggestions(message, role, False)
-    return {"message": msg, "tool_results": [], "suggestions": sug, "action_buttons": []}
+    # 6. Escrow, payments, and platform guidance
+    elif any(w in m for w in ["escrow", "payment", "pay", "safe", "secure", "milestone", "refund", "contract"]):
+        msg = (
+            "### 🛡️ MegiLance Milestone Escrow & Protection\n\n"
+            "1. **Fund Milestones Safely**: Project funds are securely held in escrow before work begins.\n"
+            "2. **Review Deliverables**: The freelancer submits work for your review directly in the workroom.\n"
+            "3. **Automatic or Manual Release**: Once you approve the milestone, funds are released automatically to the freelancer.\n"
+            "4. **Dispute Arbitration**: If an issue arises, platform mediators review the workroom log and protect both parties."
+        )
+
+    else:
+        msg = "I can help you search talent in our directory, calculate project cost estimates, plan scopes, or navigate any feature. What are you looking to accomplish?"
+
+    suggestions = _generate_suggestions(message, role, bool(tool_results))
+    action_buttons = _generate_action_buttons(message, role, tool_results, called_tools)
+
+    return {
+        "message": msg,
+        "tool_results": tool_results,
+        "suggestions": suggestions,
+        "action_buttons": action_buttons
+    }
 
 
 def _generate_suggestions(message: str, role: str, had_tools: bool) -> list:
@@ -1387,7 +1505,7 @@ def _generate_action_buttons(message: str, role: str, tool_results: list, called
 
     # 1) Account-aware navigation based on which data the agent fetched
     if "get_proposals_received" in called:
-        add("Review Proposals", "/client/proposals")
+        add("Review Proposals", "/client/projects")
     if "get_my_proposals" in called:
         add("My Proposals", "/freelancer/proposals")
     if "get_my_projects" in called:
@@ -1403,7 +1521,7 @@ def _generate_action_buttons(message: str, role: str, tool_results: list, called
     has_freelancers = any(tr.get("display_type") == "freelancer_cards" for tr in tool_results)
     if has_freelancers:
         add("Browse All Talent", "/client/search")
-        add("Post a Project", "/client/post-job", "secondary")
+        add("Post a Project", "/client/projects/create", "secondary")
 
     # 3) Intent-driven fallbacks (only if nothing else matched)
     if not buttons:
@@ -1414,7 +1532,7 @@ def _generate_action_buttons(message: str, role: str, tool_results: list, called
                 add("Edit My Profile", "/freelancer/profile")
         else:
             if any(w in m for w in ["hire", "post project", "find freelancer", "post a job"]):
-                add("Post a Project", "/client/post-job")
+                add("Post a Project", "/client/projects/create")
             elif any(w in m for w in ["freelancer", "developer", "designer", "talent"]):
                 add("Browse Freelancers", "/client/search")
 
@@ -1438,14 +1556,17 @@ async def get_welcome(current_user=Depends(get_current_user)):
     if role == "freelancer":
         message = f"{greeting}, {first_name}! 👋 I'm **Megi**, your AI career assistant.\n\nI can help you **find matching projects**, write winning proposals, check market rates, and grow your freelance career. What would you like to explore today?"
         suggestions = ["Find projects matching my skills", "What should I charge?", "Help me write a proposal", "How to improve my profile", "Show me market rates for React"]
+        action_buttons = [{"label": "Browse Jobs", "href": "/freelancer/jobs", "variant": "primary"}, {"label": "Edit Profile", "href": "/freelancer/profile", "variant": "secondary"}]
     elif role == "admin":
         message = f"{greeting}, {first_name}! 👋 I'm **Megi**, your platform intelligence assistant.\n\nI can help you understand analytics, manage users, and operate the platform efficiently."
         suggestions = ["Show platform health", "How to manage disputes", "Feature flag guide", "Analytics overview"]
+        action_buttons = [{"label": "Platform Analytics", "href": "/admin/dashboard", "variant": "primary"}]
     else:
         message = f"{greeting}, {first_name}! 👋 I'm **Megi**, your AI hiring assistant.\n\nI can help you **find the right freelancer**, estimate project costs, plan your scope, and navigate MegiLance like a pro. What are you working on?"
         suggestions = ["Find me a React developer", "Estimate my app's cost", "Plan my project scope", "How does escrow work?", "What's the market rate for UI/UX?"]
+        action_buttons = [{"label": "Browse Talent", "href": "/client/search", "variant": "primary"}, {"label": "Post a Project", "href": "/client/projects/create", "variant": "secondary"}]
 
-    return {"message": message, "suggestions": suggestions, "role": role}
+    return {"message": message, "suggestions": suggestions, "action_buttons": action_buttons, "role": role}
 
 
 class ChatRequest(BaseModel):

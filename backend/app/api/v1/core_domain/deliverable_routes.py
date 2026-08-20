@@ -6,7 +6,7 @@ from typing import Optional
 from datetime import datetime, timezone
 import uuid
 
-router = APIRouter(prefix="/deliverables", tags=["Deliverables"])
+router = APIRouter(tags=["Deliverables"])
 
 
 class SubmitDeliverable(BaseModel):

@@ -1,0 +1,170 @@
+.container {
+  color: #f9fafb;
+}
+
+.title {
+  color: #f9fafb;
+}
+
+.subtitle {
+  color: #9ca3af;
+}
+
+.errorBanner {
+  background-color: rgba(185, 28, 28, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.emptyState {
+  background-color: rgba(31, 41, 55, 0.5);
+  border-color: #374151;
+}
+
+.emptyTitle {
+  color: #f9fafb;
+}
+
+.emptyDescription {
+  color: #9ca3af;
+}
+
+.primaryButton {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.primaryButton:hover {
+  background-color: #4f46e5;
+}
+
+.secondaryButton {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+.secondaryButton:hover {
+  background-color: #374151;
+}
+
+.invitationCard {
+  background-color: #1f2937;
+  border-color: #374151;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.projectTitle {
+  color: #f9fafb;
+}
+
+.clientMeta {
+  color: #9ca3af;
+}
+
+.description {
+  color: #d1d5db;
+}
+
+.skillPill {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+.cardFooter {
+  border-color: #374151;
+}
+
+.budgetInfo {
+  color: #9ca3af;
+}
+
+.budgetInfo strong {
+  color: #f9fafb;
+}
+
+.declineBtn {
+  background-color: #374151;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+}
+
+.declineBtn:hover:not(:disabled) {
+  background-color: #4b5563;
+}
+
+.acceptBtn {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.acceptBtn:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.sectionTitle {
+  color: #f9fafb;
+}
+
+.sectionLink {
+  color: #818cf8;
+}
+
+.sectionLink:hover {
+  color: #a5b4fc;
+}
+
+.suggestedCard {
+  background-color: #1f2937;
+  border-color: #374151;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.suggestedTitle {
+  color: #f9fafb;
+}
+
+.suggestedDescription {
+  color: #9ca3af;
+}
+
+.suggestedSkillPill {
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.suggestedMatchScore {
+  color: #818cf8;
+}
+
+.suggestedBudget {
+  color: #9ca3af;
+}
+
+.viewButton {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.viewButton:hover {
+  background-color: #4f46e5;
+}
+
+.loadingContainer {
+  color: #9ca3af;
+}
+
+.badgeHigh {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.badgeMedium {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+.badgeLow {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}

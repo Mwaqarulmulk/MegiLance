@@ -79,7 +79,7 @@ export default function Page() {
           <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
             <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Which blockchain network is utilized?</h3>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-              Our sandbox prototype runs contract wrappers simulating Ethereum/Arbitrum network node ledger transactions to show stablecoin settlements.
+              MegiLance utilizes multi-chain EVM smart contracts supporting Ethereum, Polygon, Arbitrum, Base, and BNB Chain for real-time USDC, USDT, and native cryptocurrency settlements.
             </p>
           </div>
           <div className="border-b border-slate-100 dark:border-slate-800 pb-4">

@@ -52,7 +52,7 @@ def get_featured_freelancers(
     experience_level: Optional[str] = None,
     availability: Optional[str] = None,
 ):
-    where = "WHERE u.user_type = 'freelancer' AND u.is_active = 1"
+    where = "WHERE u.user_type = 'freelancer' AND u.is_active = 1 AND u.name IS NOT NULL AND TRIM(u.name) != '' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%.test' AND u.name NOT LIKE 'ai_test_%'"
     params: list = []
 
     if skills:

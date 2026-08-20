@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api/core";
 import { downloadInvoicePdf } from "@/lib/api/pdf";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
 import {
   FileText,
   Download,
@@ -152,6 +153,7 @@ const statusConfig = {
 };
 
 export default function InvoicesPage() {
+  const toaster = useToaster();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -223,12 +225,22 @@ export default function InvoicesPage() {
             : i,
         ),
       );
+      toaster.notify({
+        title: "Invoice Sent",
+        description: "Invoice sent to client successfully.",
+        variant: "success",
+      });
     } catch (err) {
       console.error("Send invoice failed:", err);
+      toaster.notify({
+        title: "Send Failed",
+        description: err instanceof Error ? err.message : "Failed to send invoice.",
+        variant: "danger",
+      });
     }
   };
 
-  // ── Print invoice ────────────────────────────────────────────────────────────
+  // ── Print invoice ────────────────────────────────────────────────────
   const handlePrint = () => {
     window.print();
   };
@@ -237,7 +249,11 @@ export default function InvoicesPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const handleDeleteInvoice = async (invoiceId: string, invoiceStatus: string) => {
     if (!["draft", "cancelled"].includes(invoiceStatus)) {
-      alert("Only draft or cancelled invoices can be deleted.");
+      toaster.notify({
+        title: "Cannot Delete",
+        description: "Only draft or cancelled invoices can be deleted.",
+        variant: "warning",
+      });
       return;
     }
     if (!confirm("Delete this invoice permanently?")) return;
@@ -246,8 +262,17 @@ export default function InvoicesPage() {
       await apiFetch(`/invoices/${invoiceId}`, { method: "DELETE" });
       setInvoices((prev) => prev.filter((i) => i.id !== invoiceId));
       if (selectedInvoice?.id === invoiceId) setSelectedInvoice(null);
+      toaster.notify({
+        title: "Invoice Deleted",
+        description: "Invoice has been permanently deleted.",
+        variant: "success",
+      });
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete invoice.");
+      toaster.notify({
+        title: "Delete Failed",
+        description: err instanceof Error ? err.message : "Failed to delete invoice.",
+        variant: "danger",
+      });
     } finally {
       setDeletingId(null);
     }

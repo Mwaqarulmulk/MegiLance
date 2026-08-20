@@ -353,3 +353,110 @@ def itemize_invoice(request: InvoiceItemizeRequest, current_user=Depends(get_cur
             else "Standard project phase breakdown — adjust line items as needed"
         ),
     }
+
+
+class ProjectPriceEstimateRequest(BaseModel):
+    category: Optional[str] = None
+    skills_required: Optional[List[str]] = []
+    description: Optional[str] = None
+    estimated_hours: Optional[int] = None
+    complexity: Optional[str] = "medium"
+
+
+@router.post("/estimate-price")
+def estimate_project_price(
+    request: ProjectPriceEstimateRequest,
+    current_user=Depends(get_current_user_optional),
+):
+    """Estimate project price and hourly rates based on skills, category, and complexity."""
+    skills = [s.strip().lower() for s in (request.skills_required or []) if s.strip()]
+    category = request.category or "General"
+    complexity = (request.complexity or "medium").lower()
+
+    # Complexity multipliers
+    complexity_mult = {
+        "entry": 0.7,
+        "simple": 0.7,
+        "low": 0.7,
+        "medium": 1.0,
+        "intermediate": 1.0,
+        "moderate": 1.0,
+        "expert": 1.45,
+        "complex": 1.45,
+        "high": 1.45,
+        "senior": 1.45,
+        "enterprise": 1.8,
+    }.get(complexity, 1.0)
+
+    # Calculate hourly rate from matching freelancers in DB if any
+    base_rate = 35.0
+    if skills:
+        conditions = " OR ".join(["LOWER(u.skills) LIKE ?" for _ in skills])
+        params = [f"%{s}%" for s in skills]
+        res = execute_query(
+            f"""SELECT AVG(u.hourly_rate) as avg_rate, MIN(u.hourly_rate) as min_rate, MAX(u.hourly_rate) as max_rate
+                FROM users u
+                WHERE (u.user_type = 'freelancer' OR u.role = 'freelancer') AND u.is_active = 1
+                AND u.hourly_rate IS NOT NULL AND u.hourly_rate > 0
+                AND ({conditions})""",
+            params,
+        )
+        rows = parse_rows(res)
+        if rows and rows[0].get("avg_rate"):
+            base_rate = float(rows[0]["avg_rate"])
+    elif category:
+        res = execute_query(
+            """SELECT AVG(u.hourly_rate) as avg_rate
+               FROM users u
+               WHERE (u.user_type = 'freelancer' OR u.role = 'freelancer') AND u.is_active = 1
+               AND u.hourly_rate IS NOT NULL AND u.hourly_rate > 0
+               AND (LOWER(u.tagline) LIKE ? OR LOWER(u.headline) LIKE ? OR LOWER(u.skills) LIKE ?)""",
+            [f"%{category.lower()}%", f"%{category.lower()}%", f"%{category.lower()}%"],
+        )
+        rows = parse_rows(res)
+        if rows and rows[0].get("avg_rate"):
+            base_rate = float(rows[0]["avg_rate"])
+
+    estimated_hourly_rate = round(base_rate * complexity_mult, 2)
+
+    # Estimate hours
+    if request.estimated_hours and request.estimated_hours > 0:
+        estimated_hours = int(request.estimated_hours)
+    else:
+        # Default hours based on complexity
+        hours_map = {
+            "simple": 30, "entry": 30, "low": 30,
+            "medium": 60, "intermediate": 60, "moderate": 60,
+            "complex": 120, "expert": 120, "high": 120,
+            "enterprise": 200,
+        }
+        desc_words = len((request.description or "").split())
+        estimated_hours = hours_map.get(complexity, 60)
+        if desc_words > 50:
+            estimated_hours = max(estimated_hours, min(250, desc_words * 2))
+
+    estimated_total = round(estimated_hourly_rate * estimated_hours, 2)
+    low_estimate = round(estimated_total * 0.8, 2)
+    high_estimate = round(estimated_total * 1.25, 2)
+
+    factors = [
+        f"Category: {category}",
+        f"Complexity multiplier: {complexity_mult}x ({complexity})",
+        f"Market hourly rate: ${estimated_hourly_rate}/hr",
+        f"Estimated effort: {estimated_hours} hours",
+    ]
+    if skills:
+        factors.append(f"Skills considered: {', '.join(skills[:5])}")
+
+    return {
+        "estimated_hourly_rate": estimated_hourly_rate,
+        "estimated_total": estimated_total,
+        "estimated_hours": estimated_hours,
+        "low_estimate": low_estimate,
+        "high_estimate": high_estimate,
+        "complexity": complexity,
+        "category": category,
+        "confidence": 0.85 if skills else 0.7,
+        "factors": factors,
+    }
+

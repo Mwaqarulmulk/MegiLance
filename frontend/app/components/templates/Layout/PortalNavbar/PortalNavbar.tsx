@@ -9,8 +9,7 @@ import {
   Bell, Search, HelpCircle, Sun, Moon, LogOut, User, Settings,
   X, Check, CheckCheck, MessageSquare, FileText,
   Briefcase, CreditCard, AlertCircle, Clock, ChevronRight,
-  Keyboard, BookOpen, Mail, Shield, Wallet, Menu, Home, Flag,
-  ArrowLeftRight
+  Keyboard, BookOpen, Mail, Shield, Wallet, Menu, Home, Flag
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -144,6 +143,23 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
     logout();
   }, [logout]);
 
+  const handleSwitchRole = useCallback((targetRole: 'client' | 'freelancer' | 'admin') => {
+    try {
+      localStorage.setItem('ml_user_role', targetRole);
+      localStorage.setItem('portal_area', targetRole);
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        u.user_type = targetRole;
+        u.role = targetRole;
+        localStorage.setItem('user', JSON.stringify(u));
+      }
+    } catch (e) {
+      console.error('Role switch failed:', e);
+    }
+    router.push(`/${targetRole}/dashboard`);
+  }, [router]);
+
   const markAsRead = (id: string) => {
     hookMarkAsRead(Number(id));
   };
@@ -162,46 +178,60 @@ export default function PortalNavbar({ userType = 'client', onMenuToggle, isSide
     }
   };
 
-  const menuItems: ProfileMenuItem[] = [
-    { 
-      label: 'View Profile', 
-      href: userType === 'general' ? '/profile' : `/${userType}/profile`, 
-      icon: <User size={16} /> 
-    },
-    ...(userType === 'client' ? [
-      {
-        label: 'Switch to Freelancer View',
-        href: '/freelancer/dashboard',
-        icon: <ArrowLeftRight size={16} />,
-      }
-    ] : userType === 'freelancer' ? [
-      {
+  const menuItems: ProfileMenuItem[] = useMemo(() => {
+    const baseItems: ProfileMenuItem[] = [
+      { 
+        label: 'View Profile', 
+        href: userType === 'general' ? '/profile' : `/${userType}/profile`, 
+        icon: <User size={16} /> 
+      },
+      { 
+        label: 'Account Settings', 
+        href: userType === 'general' ? '/settings' : `/${userType}/settings`, 
+        icon: <Settings size={16} /> 
+      },
+      { 
+        label: 'Wallet & Payments', 
+        href: userType === 'general' ? '/wallet' : `/${userType}/wallet`, 
+        icon: <Wallet size={16} /> 
+      },
+      { 
+        label: 'Security', 
+        href: userType === 'general' ? '/settings' : `/${userType}/settings?tab=security`, 
+        icon: <Shield size={16} /> 
+      },
+    ];
+
+    if (userType !== 'client') {
+      baseItems.push({
         label: 'Switch to Client View',
-        href: '/client/dashboard',
-        icon: <ArrowLeftRight size={16} />,
-      }
-    ] : []),
-    { 
-      label: 'Account Settings', 
-      href: userType === 'general' ? '/settings' : `/${userType}/settings`, 
-      icon: <Settings size={16} /> 
-    },
-    { 
-      label: 'Wallet & Payments', 
-      href: userType === 'general' ? '/wallet' : `/${userType}/wallet`, 
-      icon: <Wallet size={16} /> 
-    },
-    { 
-      label: 'Security', 
-      href: userType === 'general' ? '/settings' : `/${userType}/settings?tab=security`, 
-      icon: <Shield size={16} /> 
-    },
-    { 
+        onClick: () => handleSwitchRole('client'),
+        icon: <User size={16} />,
+      });
+    }
+    if (userType !== 'freelancer') {
+      baseItems.push({
+        label: 'Switch to Freelancer View',
+        onClick: () => handleSwitchRole('freelancer'),
+        icon: <Briefcase size={16} />,
+      });
+    }
+    if (userType !== 'admin') {
+      baseItems.push({
+        label: 'Switch to Admin View',
+        onClick: () => handleSwitchRole('admin'),
+        icon: <Shield size={16} />,
+      });
+    }
+
+    baseItems.push({ 
       label: 'Sign Out', 
       onClick: handleLogout, 
       icon: <LogOut size={16} /> 
-    },
-  ];
+    });
+
+    return baseItems;
+  }, [userType, handleLogout, handleSwitchRole]);
 
   const helpMenuItems = [
     { label: 'Help Center', href: '/help', icon: <BookOpen size={16} />, description: 'Browse help articles' },

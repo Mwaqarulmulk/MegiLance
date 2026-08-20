@@ -30,12 +30,19 @@ def list_tickets(
     status_filter: Optional[str] = None,
     current_user=Depends(get_current_user),
 ):
-    where = "WHERE user_id = ?"
-    params = [current_user.id]
+    is_admin = getattr(current_user, "role", "") == "admin" or getattr(current_user, "user_type", "") == "admin"
+    where_clauses = []
+    params = []
+
+    if not is_admin:
+        where_clauses.append("user_id = ?")
+        params.append(current_user.id)
 
     if status_filter:
-        where += " AND status = ?"
+        where_clauses.append("status = ?")
         params.append(status_filter)
+
+    where = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
     offset = (page - 1) * page_size
     params.extend([page_size, offset])
@@ -55,10 +62,17 @@ def list_tickets(
 
 @router.get("/{ticket_id}")
 def get_ticket(ticket_id: int, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id, user_id, subject, description, category, priority, status, created_at, updated_at FROM support_tickets WHERE id = ? AND user_id = ?",
-        [ticket_id, current_user.id],
-    )
+    is_admin = getattr(current_user, "role", "") == "admin" or getattr(current_user, "user_type", "") == "admin"
+    if is_admin:
+        result = execute_query(
+            "SELECT id, user_id, subject, description, category, priority, status, created_at, updated_at FROM support_tickets WHERE id = ?",
+            [ticket_id],
+        )
+    else:
+        result = execute_query(
+            "SELECT id, user_id, subject, description, category, priority, status, created_at, updated_at FROM support_tickets WHERE id = ? AND user_id = ?",
+            [ticket_id, current_user.id],
+        )
     rows = parse_rows(result)
     if not rows:
         raise HTTPException(status_code=404, detail="Ticket not found")
@@ -87,10 +101,17 @@ def create_ticket(request: TicketCreate, current_user=Depends(get_current_user))
 
 @router.post("/{ticket_id}/reply")
 def reply_ticket(ticket_id: int, request: TicketReply, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id FROM support_tickets WHERE id = ? AND user_id = ?",
-        [ticket_id, current_user.id],
-    )
+    is_admin = getattr(current_user, "role", "") == "admin" or getattr(current_user, "user_type", "") == "admin"
+    if is_admin:
+        result = execute_query(
+            "SELECT id FROM support_tickets WHERE id = ?",
+            [ticket_id],
+        )
+    else:
+        result = execute_query(
+            "SELECT id FROM support_tickets WHERE id = ? AND user_id = ?",
+            [ticket_id, current_user.id],
+        )
     if not parse_rows(result):
         raise HTTPException(status_code=404, detail="Ticket not found")
 
@@ -105,10 +126,17 @@ def reply_ticket(ticket_id: int, request: TicketReply, current_user=Depends(get_
 
 @router.post("/{ticket_id}/close")
 def close_ticket(ticket_id: int, current_user=Depends(get_current_user)):
-    result = execute_query(
-        "SELECT id FROM support_tickets WHERE id = ? AND user_id = ?",
-        [ticket_id, current_user.id],
-    )
+    is_admin = getattr(current_user, "role", "") == "admin" or getattr(current_user, "user_type", "") == "admin"
+    if is_admin:
+        result = execute_query(
+            "SELECT id FROM support_tickets WHERE id = ?",
+            [ticket_id],
+        )
+    else:
+        result = execute_query(
+            "SELECT id FROM support_tickets WHERE id = ? AND user_id = ?",
+            [ticket_id, current_user.id],
+        )
     if not parse_rows(result):
         raise HTTPException(status_code=404, detail="Ticket not found")
 

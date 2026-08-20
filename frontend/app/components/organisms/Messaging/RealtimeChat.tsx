@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import api from '@/lib/api';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -114,6 +115,7 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
   otherUserAvatar,
   isDemo,
 }) => {
+  const toaster = useToaster();
   const { resolvedTheme } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -254,7 +256,14 @@ const RealtimeChat: React.FC<RealtimeChatProps> = ({
         metadata: { attachment_url: url, attachment_name: file.name },
       };
       setMessages(prev => [...prev, opt]);
-    } catch { /* ignore */ } finally {
+    } catch (err) {
+      console.error('File upload failed:', err);
+      toaster.notify({
+        title: 'Upload Failed',
+        description: err instanceof Error ? err.message : 'Failed to upload attachment. Please try again.',
+        variant: 'danger',
+      });
+    } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }

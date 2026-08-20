@@ -138,7 +138,7 @@ def get_platform_health(current_user=Depends(require_admin)):
 
 @router.get("/analytics/user-distribution")
 def get_user_distribution(
-    group_by: str = Query("country", regex="^(country|user_type|role|seller_level|experience_level)$"),
+    group_by: str = Query("country", pattern="^(country|user_type|role|seller_level|experience_level)$"),
     current_user=Depends(require_admin),
 ):
     valid_columns = {"country", "user_type", "role", "seller_level", "experience_level"}
@@ -170,7 +170,7 @@ def get_user_distribution(
 def get_revenue_trends(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    interval: str = Query("day", regex="^(day|week|month)$"),
+    interval: str = Query("day", pattern="^(day|week|month)$"),
     current_user=Depends(require_admin),
 ):
     since = start_date or (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
@@ -216,7 +216,7 @@ def get_revenue_trends(
 @router.get("/analytics/users/registration-trends")
 def get_registration_trends(
     start_date: Optional[str] = None,
-    interval: str = Query("day", regex="^(day|week|month)$"),
+    interval: str = Query("day", pattern="^(day|week|month)$"),
     current_user=Depends(require_admin),
 ):
     since = start_date or (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()

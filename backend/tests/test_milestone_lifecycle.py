@@ -42,7 +42,7 @@ def lifecycle_db(monkeypatch):
         if "COALESCE(SUM(AMOUNT)" in normalized:
             return _result(["allocated"], [300])
         if "FROM ESCROW" in normalized:
-            return _result(["id", "amount", "released_amount"], [20, 1000, 200])
+            return _result(["id", "amount", "released_amount", "status"], [20, 1000, 200, "funded"])
         writes.append((sql, params))
         return {"columns": [], "rows": [], "rows_affected": 1, "last_insert_rowid": 30}
 

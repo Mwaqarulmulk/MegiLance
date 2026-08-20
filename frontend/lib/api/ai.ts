@@ -48,7 +48,7 @@ export const clientAssistantApi = {
     suggestions: string[];
     action_buttons: Array<{ label: string; href: string; variant: string }>;
   }> =>
-    apiFetch("/ai/client-assistant/welcome", { method: "POST" }) as Promise<{
+    apiFetch("/ai/client-assistant/welcome", { method: "GET" }) as Promise<{
       greeting: string;
       message: string;
       suggestions: string[];

@@ -1,9 +1,11 @@
 // @AI-HINT: Enhanced Reviews page with sub-ratings, distribution histogram, filtering, sort, and response capability.
 'use client';
 
-import api from '@/lib/api';
+import api, { ReviewItem as Review, ReviewStats } from '@/lib/api';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
+
 
 import UserAvatar from '@/app/components/atoms/UserAvatar/UserAvatar';
 import Button from '@/app/components/atoms/Button/Button';
@@ -19,31 +21,6 @@ import {
 import commonStyles from './ReviewsPage.common.module.css';
 import lightStyles from './ReviewsPage.light.module.css';
 import darkStyles from './ReviewsPage.dark.module.css';
-
-interface Review {
-  id: number;
-  contract_id: number;
-  reviewer_id: number;
-  reviewed_user_id: number;
-  rating: number;
-  communication_rating?: number;
-  quality_rating?: number;
-  professionalism_rating?: number;
-  deadline_rating?: number;
-  review_text: string;
-  is_public: boolean;
-  created_at: string;
-  updated_at: string;
-  reviewer_name?: string;
-  project_name?: string;
-  response_text?: string;
-}
-
-interface ReviewStats {
-  average_rating: number;
-  total_reviews: number;
-  rating_breakdown: Record<string, number>;
-}
 
 type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest';
 type FilterRating = 0 | 1 | 2 | 3 | 4 | 5;
@@ -67,6 +44,7 @@ const SubRatingBar: React.FC<{ label: string; value: number; themed: Record<stri
 );
 
 const ReviewsPage: React.FC = () => {
+  const toaster = useToaster();
   const { resolvedTheme } = useTheme();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<ReviewStats | null>(null);
@@ -82,48 +60,72 @@ const ReviewsPage: React.FC = () => {
   const themed = resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
   const fetchReviews = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const userData: any = await api.auth.me();
-      const userId = userData.id;
-      try {
-        const reviewsData: any = await api.reviews.list({ reviewed_user_id: userId });
-        const items = Array.isArray(reviewsData) ? reviewsData : (reviewsData?.data?.items ?? reviewsData?.items ?? []);
-        setReviews(items);
-      } catch { setReviews([]); }
+      setLoading(true);
+      const [reviewsData, statsData] = await Promise.all([
+        api.reviews.getMyReviews(),
+        api.reviews.getReviewStats().catch(() => null),
+      ]);
+      setReviews(Array.isArray(reviewsData) ? reviewsData : []);
+      if (statsData) setStats(statsData);
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load reviews');
-    } finally { setLoading(false); }
+      console.error('Failed to load reviews:', err);
+      setError('Could not load reviews. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => { fetchReviews(); }, [fetchReviews]);
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
-  // Derived stats
-  const calculatedStats = useMemo(() => {
+  // Client-side computed stats if API didn't provide them
+  const calculatedStats: ReviewStats = useMemo(() => {
     if (stats) return stats;
-    if (reviews.length === 0) return { average_rating: 0, total_reviews: 0, rating_breakdown: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 } };
-    const totalRating = reviews.reduce((acc, r) => acc + r.rating, 0);
-    const breakdown: Record<string, number> = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
-    reviews.forEach(r => { const k = String(Math.min(5, Math.max(1, Math.round(r.rating)))); breakdown[k] = (breakdown[k] || 0) + 1; });
-    return { average_rating: totalRating / reviews.length, total_reviews: reviews.length, rating_breakdown: breakdown };
-  }, [stats, reviews]);
-
-  // Sub-rating averages
-  const subRatings = useMemo(() => {
-    const rated = reviews.filter(r => r.communication_rating || r.quality_rating);
-    if (rated.length === 0) return null;
-    const avg = (field: keyof Review) => {
-      const vals = rated.map(r => (r[field] as number) || 0).filter(v => v > 0);
-      return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-    };
+    const total = reviews.length;
+    if (total === 0) {
+      return {
+        average_rating: 0,
+        total_reviews: 0,
+        rating_breakdown: { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 },
+        recommend_percentage: 0,
+        avg_communication: 0,
+        avg_quality: 0,
+        avg_professionalism: 0,
+        avg_deadline: 0,
+      };
+    }
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    const breakdown: Record<string, number> = { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 };
+    let recommendCount = 0;
+    for (const r of reviews) {
+      const rounded = Math.min(5, Math.max(1, Math.round(r.rating)));
+      breakdown[String(rounded)] = (breakdown[String(rounded)] || 0) + 1;
+      if (r.rating >= 4) recommendCount++;
+    }
     return {
-      communication: avg('communication_rating'),
-      quality: avg('quality_rating'),
-      professionalism: avg('professionalism_rating'),
-      deadline: avg('deadline_rating'),
+      average_rating: sum / total,
+      total_reviews: total,
+      rating_breakdown: breakdown,
+      recommend_percentage: Math.round((recommendCount / total) * 100),
+      avg_communication: reviews.reduce((a, r) => a + (r.communication_rating || r.rating), 0) / total,
+      avg_quality: reviews.reduce((a, r) => a + (r.quality_rating || r.rating), 0) / total,
+      avg_professionalism: reviews.reduce((a, r) => a + (r.professionalism_rating || r.rating), 0) / total,
+      avg_deadline: reviews.reduce((a, r) => a + (r.deadline_rating || r.rating), 0) / total,
     };
-  }, [reviews]);
+  }, [reviews, stats]);
+
+  const subRatings = useMemo(() => {
+    if (reviews.length === 0) return null;
+    return {
+      communication: calculatedStats.avg_communication ?? 0,
+      quality: calculatedStats.avg_quality ?? 0,
+      professionalism: calculatedStats.avg_professionalism ?? 0,
+      deadline: calculatedStats.avg_deadline ?? 0,
+    };
+  }, [reviews.length, calculatedStats]);
 
   // Filter & sort
   const filteredReviews = useMemo(() => {
@@ -159,8 +161,17 @@ const ReviewsPage: React.FC = () => {
     try {
       await api.reviews.delete(reviewId);
       setReviews(prev => prev.filter(r => r.id !== reviewId));
+      toaster.notify({
+        title: 'Review Deleted',
+        description: 'The review was deleted successfully.',
+        variant: 'success',
+      });
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete review');
+      toaster.notify({
+        title: 'Delete Failed',
+        description: err instanceof Error ? err.message : 'Failed to delete review',
+        variant: 'danger',
+      });
     } finally {
       setDeletingReviewId(null);
     }
@@ -171,8 +182,18 @@ const ReviewsPage: React.FC = () => {
     try {
       await api.reviewResponses.createResponse(reviewId, responseText);
       setReviews(prev => prev.map(r => r.id === reviewId ? { ...r, response_text: responseText } : r));
+      toaster.notify({
+        title: 'Response Submitted',
+        description: 'Your response has been posted.',
+        variant: 'success',
+      });
     } catch (err) {
       console.error('Failed to submit response:', err);
+      toaster.notify({
+        title: 'Response Failed',
+        description: err instanceof Error ? err.message : 'Failed to submit response.',
+        variant: 'danger',
+      });
     }
     setRespondingTo(null);
     setResponseText('');

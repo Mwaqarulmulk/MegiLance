@@ -149,7 +149,7 @@ def get_overview(current_user=Depends(require_admin)):
 def get_revenue_analytics(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    interval: str = Query("day", regex="^(day|week|month)$"),
+    interval: str = Query("day", pattern="^(day|week|month)$"),
     current_user=Depends(require_admin),
 ):
     now = _now_utc()
@@ -241,7 +241,7 @@ def get_revenue_analytics(
 def get_user_growth(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    interval: str = Query("day", regex="^(day|week|month)$"),
+    interval: str = Query("day", pattern="^(day|week|month)$"),
     current_user=Depends(require_admin),
 ):
     now = _now_utc()
@@ -673,7 +673,7 @@ def get_forecast(
 
 @router.get("/analytics-pro/cohort")
 def get_cohort_analysis(
-    cohort_type: str = Query("monthly", regex="^(weekly|monthly)$"),
+    cohort_type: str = Query("monthly", pattern="^(weekly|monthly)$"),
     months_back: int = Query(12, ge=1, le=24),
     current_user=Depends(require_admin),
 ):

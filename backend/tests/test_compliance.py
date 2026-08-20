@@ -36,6 +36,9 @@ def _fake_execute_query(sql: str, params=None):
     if "REVOKED_TOKENS" in sql_upper:
         return {"cols": [], "rows": []}
 
+    if "COUNT(*) AS CNT FROM USERS" in sql_upper:
+        return {"cols": [{"name": "cnt"}], "rows": [[{"type": "integer", "value": str(len(_fake_db.get("users", [])) or 1)}]]}
+
     if sql_upper.startswith("SELECT") and "USERS" in sql_upper:
         if "WHERE EMAIL = ?" in sql_upper:
             email = str(params[0]).lower().strip() if params else ""
@@ -56,7 +59,7 @@ def _fake_execute_query(sql: str, params=None):
             row = [_col_val(v) for v in u.values()]
             return {"cols": cols, "rows": [row]}
 
-    return {"cols": [], "rows": []}
+    return {"cols": [], "rows": [], "last_insert_rowid": 1, "rows_affected": 1}
 
 
 def _seed_user():
@@ -71,7 +74,7 @@ def _seed_user():
         "is_verified": True,
         "email_verified": True,
         "name": "GDPR Test User",
-        "user_type": "client",
+        "user_type": "admin",
         "role": "admin",
         "bio": "",
         "skills": "",
@@ -90,7 +93,7 @@ def _seed_user():
     _fake_db["users"].append(user)
     token = create_access_token(
         subject=user["email"],
-        custom_claims={"user_id": uid, "role": "admin"}
+        custom_claims={"user_id": uid, "role": "admin", "user_type": "admin"}
     )
     return uid, token
 
@@ -98,12 +101,15 @@ def _seed_user():
 @pytest.fixture(autouse=True)
 def _mock_turso(monkeypatch):
     _reset_db()
+    client.cookies.clear()
+    app.dependency_overrides.clear()
     targets = [
         "app.db.turso_http.execute_query",
         "app.api.v1.identity.auth.execute_query",
         "app.services.auth_service.execute_query",
         "app.core.security.execute_query",
         "app.services.token_blacklist_service.execute_query",
+        "app.api.v1.core_domain.compliance.execute_query",
     ]
     for target in targets:
         try:
@@ -111,10 +117,13 @@ def _mock_turso(monkeypatch):
         except AttributeError:
             pass
     yield
+    client.cookies.clear()
+    app.dependency_overrides.clear()
 
 
 def test_compliance_status_requires_auth():
     """Compliance status endpoint requires auth."""
+    client.cookies.clear()
     resp = client.get("/api/compliance/status")
     assert resp.status_code in (401, 403)
 

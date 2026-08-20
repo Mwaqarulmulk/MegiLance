@@ -4,6 +4,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { FileDown, FileText, FileType2, Loader2, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToaster } from '@/app/components/molecules/Toast/ToasterProvider';
 import { AIReport } from './reportTypes';
 import { exportReportPDF } from './pdf';
 import { exportReportDOCX } from './docx';
@@ -20,6 +21,7 @@ interface ExportMenuProps {
 type Busy = null | 'pdf' | 'docx';
 
 export default function ExportMenu({ report, className, size = 'md', label = 'Export Report' }: ExportMenuProps) {
+  const toaster = useToaster();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<Busy>(null);
   const [done, setDone] = useState<Busy>(null);
@@ -47,14 +49,17 @@ export default function ExportMenu({ report, className, size = 'md', label = 'Ex
         setTimeout(() => setDone(null), 2000);
       } catch (err) {
         console.error('Report export failed:', err);
-        // eslint-disable-next-line no-alert
-        alert('Sorry — the report could not be generated. Please try again.');
+        toaster.notify({
+          title: 'Export Failed',
+          description: 'Sorry — the report could not be generated. Please try again.',
+          variant: 'danger',
+        });
       } finally {
         setBusy(null);
         setOpen(false);
       }
     },
-    [busy, resolve],
+    [busy, resolve, toaster],
   );
 
   return (

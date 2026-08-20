@@ -14,7 +14,7 @@ import { StaggerContainer, StaggerItem } from '@/app/components/Animations/Stagg
 import { searchApi } from '@/lib/api';
 import {
   Search, Filter, Star, MapPin, DollarSign, Briefcase, MessageSquare, Heart,
-  SlidersHorizontal, ChevronLeft, ChevronRight, X, CheckCircle, Users,
+  SlidersHorizontal, ChevronLeft, ChevronRight, X, CheckCircle, Users, UserPlus,
   Code, Palette, PenTool, Megaphone, BarChart3, Cpu, Globe, Zap,
   RefreshCw, Award, Clock, TrendingUp,
 } from 'lucide-react';
@@ -512,11 +512,16 @@ export default function ClientSearchPage() {
 
                     <div className={commonStyles.cardActions}>
                       <Link href={`/freelancers/${f.id}`} className={commonStyles.profileLink}>
-                        <Button variant="outline" size="sm" fullWidth>View Profile</Button>
+                        <Button variant="outline" size="sm" fullWidth>Profile</Button>
+                      </Link>
+                      <Link href={`/client/projects/create?invite=${f.id}`}>
+                        <Button variant="primary" size="sm" iconBefore={<UserPlus size={13} />}>
+                          Invite
+                        </Button>
                       </Link>
                       <Link href={`/client/messages?to=${f.id}`}>
-                        <Button variant="primary" size="sm" iconBefore={<MessageSquare size={13} />}>
-                          Contact
+                        <Button variant="ghost" size="sm" iconBefore={<MessageSquare size={13} />}>
+                          Chat
                         </Button>
                       </Link>
                     </div>

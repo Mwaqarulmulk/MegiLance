@@ -34,8 +34,20 @@ class BrandLottieErrorBoundary extends Component<{ children: ReactNode; fallback
 function isValidLottie(data: unknown): Record<string, unknown> | null {
   if (!data || typeof data !== 'object') return null;
   const obj = data as Record<string, unknown>;
-  const target = (obj.default && typeof obj.default === 'object' ? obj.default : obj) as Record<string, unknown>;
-  if (Array.isArray(target.layers)) {
+  const rawTarget = (obj.default && typeof obj.default === 'object' ? obj.default : obj) as Record<string, unknown>;
+  if (Array.isArray(rawTarget.layers)) {
+    const target = { ...rawTarget };
+    if (!target.fonts || typeof target.fonts !== 'object') {
+      target.fonts = { list: [] };
+    } else if (!Array.isArray((target.fonts as Record<string, unknown>).list)) {
+      target.fonts = { ...(target.fonts as Record<string, unknown>), list: [] };
+    }
+    if (!Array.isArray(target.chars)) {
+      target.chars = [];
+    }
+    if (!Array.isArray(target.assets)) {
+      target.assets = [];
+    }
     return target;
   }
   return null;

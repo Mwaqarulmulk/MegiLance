@@ -187,7 +187,7 @@ async def get_external_project(project_id: int, current_user=Depends(get_current
 
 @router.post("/scrape")
 async def trigger_scrape(
-    source: Optional[str] = Query(None, regex="^(remoteok|jobicy|arbeitnow|all)$"),
+    source: Optional[str] = Query(None, pattern="^(remoteok|jobicy|arbeitnow|all)$"),
     current_user=Depends(require_admin),
 ):
     now = datetime.now(timezone.utc).isoformat()

@@ -298,7 +298,7 @@ def get_referral_stats(current_user=Depends(get_current_user)):
 
 @router.get("/leaderboard")
 def get_referral_leaderboard(
-    period: str = Query("monthly", regex="^(monthly|all_time)$"),
+    period: str = Query("monthly", pattern="^(monthly|all_time)$"),
     limit: int = Query(10, ge=1, le=50),
 ):
     try:

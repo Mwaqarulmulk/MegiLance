@@ -174,7 +174,7 @@ async def get_my_rank(current_user=Depends(get_current_user)):
 
 @router.get("/gamification/leaderboard")
 async def get_leaderboard(
-    period: str = Query("all_time", regex="^(all_time|monthly|weekly)$"),
+    period: str = Query("all_time", pattern="^(all_time|monthly|weekly)$"),
     limit: int = Query(20, ge=1, le=100),
 ):
     try:

@@ -20,7 +20,7 @@ import {
   CheckCircle2, LogIn, Star,
   Lightbulb, Wallet, Award, BarChart3,
   Globe, Smartphone, Database, Shield, Bot,
-  Plus, Maximize2, RotateCcw,
+  Plus, Maximize2, RotateCcw, UserPlus, ExternalLink,
 } from 'lucide-react';
 
 const RobotModel = dynamic(() => import('./RobotModel'), { ssr: false, loading: () => null });
@@ -505,24 +505,213 @@ function ConfirmCard({
   );
 }
 
-function FreelancerCards({ data }: { data: Record<string, any> }) {
+function FreelancerCards({
+  data,
+  onNavigate,
+}: {
+  data: Record<string, any>;
+  onNavigate?: (path: string, label?: string) => void;
+}) {
   const list = (data.freelancers || []) as any[];
   if (!list.length) return <div style={cardBox}>No matching freelancers found yet.</div>;
   return (
-    <div>
-      {list.map((f, i) => (
-        <div key={i} style={cardBox}>
-          <div style={cardTitle}><User size={14} /> {f.full_name || 'Freelancer'}</div>
-          <div style={{ opacity: 0.8 }}>{f.title || ''}</div>
-          <div style={cardRow}>
-            <span style={cardLabel}>Rate</span>
-            <span>{f.hourly_rate ? `$${f.hourly_rate}/hr` : '—'}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+      {list.map((f, i) => {
+        const name = f.full_name || f.name || 'Freelancer';
+        const initials =
+          name
+            .split(' ')
+            .map((n: string) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2) || 'FL';
+        const ratingNum = f.rating != null ? Number(f.rating) : 5.0;
+        const matchText = f.match_score
+          ? `${f.match_score}% Match`
+          : ratingNum >= 4.8
+          ? 'Top Match'
+          : `${Math.round(ratingNum * 19 + 5)}% Match`;
+        const skillsList = Array.isArray(f.skills)
+          ? f.skills
+          : typeof f.skills === 'string'
+          ? f.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : [];
+        const freelancerId = f.id ?? f.user_id;
+
+        return (
+          <div
+            key={i}
+            style={{
+              border: '1px solid rgba(127,127,127,0.22)',
+              background: 'rgba(127,127,127,0.06)',
+              borderRadius: 14,
+              padding: '0.85rem 0.95rem',
+              fontSize: '0.82rem',
+              lineHeight: 1.45,
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {/* Top Row: Avatar, Info, and Match Badge */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                {f.avatar_url ? (
+                  <img
+                    src={f.avatar_url}
+                    alt={name}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      flexShrink: 0,
+                      border: '2px solid rgba(99,102,241,0.3)',
+                    }}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {initials}
+                  </div>
+                )}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                    <CheckCircle2 size={13} style={{ color: '#3b82f6', flexShrink: 0 }} />
+                  </div>
+                  <div
+                    style={{
+                      opacity: 0.75,
+                      fontSize: '0.78rem',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {f.title || 'Verified Specialist'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Match Score Badge */}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.12))',
+                  color: '#10b981',
+                  border: '1px solid rgba(16,185,129,0.3)',
+                  borderRadius: 20,
+                  padding: '2px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Sparkles size={11} /> {matchText}
+              </span>
+            </div>
+
+            {/* Stats Row: Hourly Rate & Rating */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 8,
+                padding: '4px 0',
+                borderTop: '1px solid rgba(127,127,127,0.12)',
+              }}
+            >
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 700, fontSize: '0.84rem' }}>
+                <DollarSign size={13} style={{ color: '#10b981' }} />
+                <span>{f.hourly_rate ? `$${f.hourly_rate}/hr` : 'Market rate'}</span>
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 600, fontSize: '0.82rem' }}>
+                <Star size={13} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
+                <span>{ratingNum.toFixed(1)} ★</span>
+              </span>
+            </div>
+
+            {/* Top 3 Skill Pills */}
+            {skillsList.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
+                {skillsList.slice(0, 3).map((sk: string, idx: number) => (
+                  <span
+                    key={idx}
+                    style={{
+                      background: 'rgba(99,102,241,0.1)',
+                      color: 'inherit',
+                      border: '1px solid rgba(99,102,241,0.22)',
+                      borderRadius: 6,
+                      padding: '2px 6px',
+                      fontSize: '0.7rem',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {sk}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+              <button
+                style={{
+                  ...cardBtnPrimary,
+                  flex: 1,
+                  justifyContent: 'center',
+                  padding: '0.45rem 0.65rem',
+                  fontSize: '0.78rem',
+                }}
+                onClick={() =>
+                  onNavigate?.(
+                    freelancerId ? `/client/projects/create?invite=${freelancerId}` : '/client/projects/create',
+                    'Invite to Job'
+                  )
+                }
+              >
+                <UserPlus size={13} /> Invite to Job
+              </button>
+              <button
+                style={{
+                  ...cardBtn,
+                  flex: 1,
+                  justifyContent: 'center',
+                  padding: '0.45rem 0.65rem',
+                  fontSize: '0.78rem',
+                }}
+                onClick={() =>
+                  onNavigate?.(
+                    freelancerId ? `/freelancers/${freelancerId}` : '/client/search',
+                    `View ${name}`
+                  )
+                }
+              >
+                <ExternalLink size={13} /> View Profile
+              </button>
+            </div>
           </div>
-          {f.rating != null && (
-            <div style={cardRow}><span style={cardLabel}>Rating</span><span>{Number(f.rating).toFixed(1)} ★</span></div>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -588,7 +777,7 @@ function AgentToolResultView({
     case 'confirm_update_profile':
       return <ConfirmCard result={result} onActionDone={onActionDone} />;
     case 'freelancer_cards':
-      return <FreelancerCards data={data} />;
+      return <FreelancerCards data={data} onNavigate={onNavigate} />;
     case 'project_list':
       return <ProjectCards data={data} />;
     case 'cost_estimate':

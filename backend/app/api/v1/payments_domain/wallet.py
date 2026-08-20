@@ -160,7 +160,7 @@ def withdraw(request: WithdrawRequest, current_user=Depends(get_current_user)):
 
 @router.get("/analytics")
 def wallet_analytics(
-    period: str = Query("30d", regex="^(7d|30d|90d|1y|all)$"),
+    period: str = Query("30d", pattern="^(7d|30d|90d|1y|all)$"),
     current_user=Depends(get_current_user),
 ):
     """Get wallet analytics (income, expenses, transaction count) for a given period."""

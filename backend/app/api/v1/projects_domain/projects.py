@@ -89,7 +89,7 @@ def list_projects(
     search: Optional[str] = None,
 ):
     offset = (page - 1) * page_size
-    where = "WHERE 1=1"
+    where = "WHERE 1=1 AND p.title NOT LIKE '%test%' AND p.title NOT LIKE '%dummy%' AND p.title NOT LIKE 'ai_test_%'"
     params: list = []
 
     if status:

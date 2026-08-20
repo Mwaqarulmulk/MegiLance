@@ -14,52 +14,63 @@ export const metadata: Metadata = buildMeta({
 
 import React from 'react';
 import Image from 'next/image';
+import {
+  BrainCircuit,
+  ShieldCheck,
+  Zap,
+  MessageSquare,
+  BarChart3,
+  CreditCard,
+  ShieldAlert,
+  Smartphone,
+  Globe
+} from 'lucide-react';
 import commonStyles from './Features.common.module.css';
 import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 const features = [
   {
-    icon: "🤖",
+    icon: <BrainCircuit size={28} className="text-blue-500" />,
     title: "AI-Powered Matching",
     description: "Our ML engine analyzes skills, budget, and compatibility to match you with the perfect freelancer — not just keywords, but real fit.",
   },
   {
-    icon: "🔒",
+    icon: <ShieldCheck size={28} className="text-emerald-500" />,
     title: "Secure Escrow",
     description: "Funds are held safely in escrow and released milestone-by-milestone. Both clients and freelancers are protected.",
   },
   {
-    icon: "⚡",
+    icon: <Zap size={28} className="text-amber-500" />,
     title: "Zero-Friction Milestones",
     description: "Break projects into milestones, track progress, and approve deliverables — all in one streamlined workflow.",
   },
   {
-    icon: "💬",
+    icon: <MessageSquare size={28} className="text-indigo-500" />,
     title: "Real-time Chat",
     description: "Communicate instantly with typing indicators, file sharing, and read receipts powered by Socket.IO.",
   },
   {
-    icon: "📊",
+    icon: <BarChart3 size={28} className="text-purple-500" />,
     title: "Smart Analytics",
     description: "Track project progress, spending, freelancer performance, and market trends with AI-generated insights.",
   },
   {
-    icon: "💳",
+    icon: <CreditCard size={28} className="text-cyan-500" />,
     title: "Multi-Currency Payments",
     description: "Accept payments in USD, EUR, GBP, PKR, and more. Live exchange rates with Stripe and crypto support.",
   },
   {
-    icon: "🛡️",
+    icon: <ShieldAlert size={28} className="text-rose-500" />,
     title: "Fraud Detection",
     description: "Behavioral analysis and ML models detect suspicious accounts, payment fraud, and malicious activity in real time.",
   },
   {
-    icon: "📱",
+    icon: <Smartphone size={28} className="text-teal-500" />,
     title: "Mobile Optimized",
     description: "Fully responsive PWA that works beautifully on any device — manage projects, chat, and track milestones on the go.",
   },
   {
-    icon: "🌐",
+    icon: <Globe size={28} className="text-blue-600" />,
     title: "Global Talent Pool",
     description: "Access freelancers from 150+ countries. AI-powered ranking surfaces the best talent for your specific needs.",
   },
@@ -90,7 +101,9 @@ export default function FeaturesPage() {
       <section className={commonStyles.grid}>
         {features.map((f) => (
           <article key={f.title} className={commonStyles.card}>
-            <span className={commonStyles.icon}>{f.icon}</span>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-blue-50/80 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 mb-4 shadow-sm">
+              {f.icon}
+            </div>
             <h3 className={commonStyles.cardTitle}>{f.title}</h3>
             <p className={commonStyles.cardDesc}>{f.description}</p>
           </article>

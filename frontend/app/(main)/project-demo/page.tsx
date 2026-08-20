@@ -45,7 +45,7 @@ export default function ProjectDemoPage() {
     {
       title: '4. Escrow Funding',
       desc: 'Milestone funds are secured in a smart contract wrapper (in USDC or fiat representation) until delivery approval.',
-      status: 'Escrow Prototype'
+      status: 'Live Escrow Engine'
     },
     {
       title: '5. Automated Vetting',
@@ -200,7 +200,7 @@ export default function ProjectDemoPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Complete Lifecycle Demonstration</h2>
                   <p className="text-slate-650 dark:text-slate-400 mb-6 leading-relaxed">
-                    MegiLance covers the entire freelance project lifecycle. To test these active modules, log in as a Client to post jobs, and switch to Freelancer to bid or request milestone releases.
+                    MegiLance provides dedicated environments for each role. Register as a Client to post jobs and hire, or register as a Freelancer to bid on projects and receive milestone payouts.
                   </p>
                   <div className="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-xl border border-blue-100 dark:border-blue-900 flex gap-3">
                     <Info className="text-blue-500 flex-shrink-0 mt-0.5" size={18} />

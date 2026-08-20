@@ -2,7 +2,13 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 import { apiFetch } from "@/lib/api/core";
+import { useToaster } from "@/app/components/molecules/Toast/ToasterProvider";
+import commonStyles from "./Invitations.common.module.css";
+import lightStyles from "./Invitations.light.module.css";
+import darkStyles from "./Invitations.dark.module.css";
 
 interface Invitation {
   id: number;
@@ -31,18 +37,28 @@ interface SuggestedProject {
 }
 
 export default function InvitationsPage() {
+  const toaster = useToaster();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [suggestedProjects, setSuggestedProjects] = useState<
-    SuggestedProject[]
-  >([]);
+  const [suggestedProjects, setSuggestedProjects] = useState<SuggestedProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [suggestionsLoading, setSuggestionsLoading] = useState(true);
   const [responding, setResponding] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const fetchInvitations = useCallback(async () => {
     try {
-      const data = await apiFetch("/ai/invitations") as { invitations?: Invitation[]; items?: Invitation[] };
+      const data = (await apiFetch("/ai/invitations")) as {
+        invitations?: Invitation[];
+        items?: Invitation[];
+      };
       setInvitations(data.invitations ?? data.items ?? []);
       setError(null);
     } catch (e) {
@@ -56,8 +72,14 @@ export default function InvitationsPage() {
   const fetchSuggestedProjects = useCallback(async () => {
     setSuggestionsLoading(true);
     try {
-      const data = await apiFetch("/matching/recommendations?limit=5") as { jobs?: SuggestedProject[]; projects?: SuggestedProject[] } | SuggestedProject[];
-      const items = Array.isArray(data) ? data : data.jobs ?? data.projects ?? [];
+      const data = (await apiFetch(
+        "/matching/recommendations?limit=5",
+      )) as
+        | { jobs?: SuggestedProject[]; projects?: SuggestedProject[] }
+        | SuggestedProject[];
+      const items = Array.isArray(data)
+        ? data
+        : (data.jobs ?? data.projects ?? []);
       setSuggestedProjects(items);
     } catch (e) {
       console.error("Failed to fetch AI suggestions:", e);
@@ -78,21 +100,36 @@ export default function InvitationsPage() {
         method: "POST",
         body: JSON.stringify({ accept, message: null }),
       });
-      setInvitations((prev) => prev.filter((invitation) => invitation.id !== invitationId));
+      setInvitations((prev) =>
+        prev.filter((invitation) => invitation.id !== invitationId),
+      );
       setError(null);
+      toaster.notify({
+        title: accept ? "Invitation Accepted" : "Invitation Declined",
+        description: accept
+          ? "You accepted the project invitation. A pending contract has been created."
+          : "You declined the project invitation.",
+        variant: accept ? "success" : "info",
+      });
     } catch (e) {
       console.error("Response failed:", e);
-      setError("Your response was not saved. Please try again.");
+      const msg = "Your response was not saved. Please try again.";
+      setError(msg);
+      toaster.notify({
+        title: "Action Failed",
+        description: msg,
+        variant: "danger",
+      });
     } finally {
       setResponding(null);
     }
   };
 
-  if (loading) {
+  if (!mounted || loading) {
     return (
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>
-        <div style={{ textAlign: "center", padding: 60, color: "#6b7280" }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
+      <div className={cn(commonStyles.container, themeStyles.container)}>
+        <div className={cn(commonStyles.loadingContainer, themeStyles.loadingContainer)}>
+          <div className={commonStyles.emptyIcon}>📬</div>
           <p>Loading your invitations...</p>
         </div>
       </div>
@@ -100,359 +137,186 @@ export default function InvitationsPage() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>
-        Project Invitations
-      </h1>
-      <p style={{ color: "#6b7280", marginBottom: 32 }}>
-        Review invitations sent by clients. Accepting creates a pending contract for both parties to review.
-      </p>
-      {error && <p role="alert" style={{ color: "#b91c1c", marginBottom: 16 }}>{error}</p>}
+    <div className={cn(commonStyles.container, themeStyles.container)}>
+      <header className={commonStyles.header}>
+        <h1 className={cn(commonStyles.title, themeStyles.title)}>
+          Project Invitations
+        </h1>
+        <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
+          Review invitations sent by clients. Accepting creates a pending contract for both parties to review.
+        </p>
+      </header>
+
+      {error && (
+        <div role="alert" className={cn(commonStyles.errorBanner, themeStyles.errorBanner)}>
+          {error}
+        </div>
+      )}
 
       {/* ── Invitations list or empty state ── */}
       {invitations.length === 0 ? (
-        <div
-          style={{
-            background: "#f9fafb",
-            borderRadius: 16,
-            padding: "40px 32px",
-            textAlign: "center",
-            marginBottom: 40,
-            border: "1px dashed #d1d5db",
-          }}
-        >
-          <div style={{ fontSize: 52, marginBottom: 16 }}>📭</div>
-          <h3 style={{ fontSize: 20, fontWeight: 600, marginBottom: 12 }}>
+        <div className={cn(commonStyles.emptyState, themeStyles.emptyState)}>
+          <div className={commonStyles.emptyIcon}>📭</div>
+          <h3 className={cn(commonStyles.emptyTitle, themeStyles.emptyTitle)}>
             No pending invitations yet
           </h3>
-          <p
-            style={{
-              color: "#6b7280",
-              marginBottom: 28,
-              maxWidth: 420,
-              margin: "0 auto 28px",
-              lineHeight: 1.6,
-            }}
-          >
+          <p className={cn(commonStyles.emptyDescription, themeStyles.emptyDescription)}>
             Complete your profile and add your skills so our AI can match you
             with relevant projects. Clients posting projects that fit your
             expertise will appear here automatically.
           </p>
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
+          <div className={commonStyles.emptyActions}>
             <Link
               href="/freelancer/projects"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "10px 24px",
-                borderRadius: 8,
-                background: "#6366f1",
-                color: "white",
-                textDecoration: "none",
-                fontWeight: 600,
-                fontSize: 15,
-              }}
+              className={cn(commonStyles.primaryButton, themeStyles.primaryButton)}
             >
               🔍 Find Projects
             </Link>
             <Link
               href="/freelancer/profile"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "10px 24px",
-                borderRadius: 8,
-                border: "1px solid #e5e7eb",
-                background: "white",
-                color: "#374151",
-                textDecoration: "none",
-                fontWeight: 500,
-                fontSize: 15,
-              }}
+              className={cn(commonStyles.secondaryButton, themeStyles.secondaryButton)}
             >
               ✏️ Complete Profile
             </Link>
           </div>
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-            marginBottom: 40,
-          }}
-        >
-          {invitations.map((inv) => (
-            <div
-              key={inv.id}
-              style={{
-                padding: 24,
-                borderRadius: 12,
-                border: "1px solid #e5e7eb",
-                background: "white",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  marginBottom: 12,
-                }}
-              >
-                <div>
-                  <h3
-                    style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}
-                  >
-                    {inv.title}
-                  </h3>
-                  <p style={{ color: "#6b7280", fontSize: 14 }}>
-                    by {inv.client_name} · {inv.category}
-                  </p>
-                </div>
-                <span
-                  style={{
-                    padding: "4px 12px",
-                    borderRadius: 20,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    flexShrink: 0,
-                    background:
-                      inv.fit_score >= 80
-                        ? "#dcfce7"
-                        : inv.fit_score >= 60
-                          ? "#fef3c7"
-                          : "#fee2e2",
-                    color:
-                      inv.fit_score >= 80
-                        ? "#166534"
-                        : inv.fit_score >= 60
-                          ? "#92400e"
-                          : "#991b1b",
-                  }}
-                >
-                  {Math.round(inv.fit_score)}% Match
-                </span>
-              </div>
+        <div className={commonStyles.invitationsList}>
+          {invitations.map((inv) => {
+            const badgeClass =
+              inv.fit_score >= 80
+                ? themeStyles.badgeHigh
+                : inv.fit_score >= 60
+                  ? themeStyles.badgeMedium
+                  : themeStyles.badgeLow;
 
-              <p
-                style={{ color: "#374151", lineHeight: 1.6, marginBottom: 16 }}
-              >
-                {inv.description}
-              </p>
-
+            return (
               <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 6,
-                  marginBottom: 16,
-                }}
+                key={inv.id}
+                className={cn(commonStyles.invitationCard, themeStyles.invitationCard)}
               >
-                {inv.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    style={{
-                      padding: "4px 10px",
-                      borderRadius: 12,
-                      background: "#f3f4f6",
-                      color: "#374151",
-                      fontSize: 13,
-                    }}
-                  >
-                    {skill}
+                <div className={commonStyles.cardHeader}>
+                  <div>
+                    <h3 className={cn(commonStyles.projectTitle, themeStyles.projectTitle)}>
+                      {inv.title}
+                    </h3>
+                    <p className={cn(commonStyles.clientMeta, themeStyles.clientMeta)}>
+                      by {inv.client_name} · {inv.category}
+                    </p>
+                  </div>
+                  <span className={cn(commonStyles.matchBadge, badgeClass)}>
+                    {Math.round(inv.fit_score)}% Match
                   </span>
-                ))}
-              </div>
+                </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingTop: 16,
-                  borderTop: "1px solid #f3f4f6",
-                }}
-              >
-                <div style={{ fontSize: 14, color: "#6b7280" }}>
-                  Budget:{" "}
-                  <strong>
-                    ${inv.budget_min?.toLocaleString() || "0"} – $
-                    {inv.budget_max?.toLocaleString() || "0"}
-                  </strong>
+                <p className={cn(commonStyles.description, themeStyles.description)}>
+                  {inv.description}
+                </p>
+
+                <div className={commonStyles.skillsRow}>
+                  {inv.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className={cn(commonStyles.skillPill, themeStyles.skillPill)}
+                    >
+                      {skill}
+                    </span>
+                  ))}
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button
-                    onClick={() => handleRespond(inv.id, false)}
-                    disabled={responding === inv.id}
-                    style={{
-                      padding: "8px 20px",
-                      borderRadius: 8,
-                      border: "1px solid #e5e7eb",
-                      background: "white",
-                      cursor:
-                        responding === inv.id
-                          ? "not-allowed"
-                          : "pointer",
-                      fontSize: 14,
-                      opacity: responding === inv.id ? 0.6 : 1,
-                    }}
-                  >
-                    Decline
-                  </button>
-                  <button
-                    onClick={() => handleRespond(inv.id, true)}
-                    disabled={responding === inv.id}
-                    style={{
-                      padding: "8px 20px",
-                      borderRadius: 8,
-                      background: "#6366f1",
-                      color: "white",
-                      border: "none",
-                      cursor:
-                        responding === inv.id
-                          ? "not-allowed"
-                          : "pointer",
-                      fontWeight: 600,
-                      fontSize: 14,
-                      opacity: responding === inv.id ? 0.6 : 1,
-                    }}
-                  >
-                    {responding === inv.id ? "Processing..." : "Accept"}
-                  </button>
+
+                <div className={cn(commonStyles.cardFooter, themeStyles.cardFooter)}>
+                  <div className={cn(commonStyles.budgetInfo, themeStyles.budgetInfo)}>
+                    Budget:{" "}
+                    <strong>
+                      ${inv.budget_min?.toLocaleString() || "0"} – $
+                      {inv.budget_max?.toLocaleString() || "0"}
+                    </strong>
+                  </div>
+                  <div className={commonStyles.actionButtonGroup}>
+                    <button
+                      onClick={() => handleRespond(inv.id, false)}
+                      disabled={responding === inv.id}
+                      className={cn(commonStyles.actionBtn, themeStyles.declineBtn)}
+                    >
+                      Decline
+                    </button>
+                    <button
+                      onClick={() => handleRespond(inv.id, true)}
+                      disabled={responding === inv.id}
+                      className={cn(commonStyles.actionBtn, themeStyles.acceptBtn)}
+                    >
+                      {responding === inv.id ? "Processing..." : "Accept"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* ── AI-Suggested Projects section ── */}
       <div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 8,
-          }}
-        >
-          <h2 style={{ fontSize: 20, fontWeight: 700 }}>
+        <div className={commonStyles.sectionHeader}>
+          <h2 className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
             🤖 AI-Suggested Projects
           </h2>
           <Link
             href="/freelancer/projects"
-            style={{
-              color: "#6366f1",
-              textDecoration: "none",
-              fontSize: 14,
-              fontWeight: 500,
-            }}
+            className={cn(commonStyles.sectionLink, themeStyles.sectionLink)}
           >
             View all →
           </Link>
         </div>
-        <p style={{ color: "#6b7280", marginBottom: 20, fontSize: 14 }}>
+        <p className={cn(commonStyles.subtitle, themeStyles.subtitle, "mb-5 text-sm")}>
           Based on your profile and skills, you may be a great fit for these
           projects.
         </p>
 
         {suggestionsLoading ? (
-          <div style={{ textAlign: "center", padding: 40, color: "#6b7280" }}>
-            <div style={{ fontSize: 22, marginBottom: 8 }}>🔍</div>
-            Finding best matches for you...
+          <div className={cn(commonStyles.loadingContainer, themeStyles.loadingContainer, "py-10")}>
+            <div className="text-2xl mb-2">🔍</div>
+            <p>Finding best matches for you...</p>
           </div>
         ) : suggestedProjects.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className={commonStyles.suggestedList}>
             {suggestedProjects.map((proj) => (
               <div
                 key={proj.id}
-                style={{
-                  padding: 20,
-                  borderRadius: 12,
-                  border: "1px solid #e5e7eb",
-                  background: "white",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  gap: 16,
-                }}
+                className={cn(commonStyles.suggestedCard, themeStyles.suggestedCard)}
               >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <h3
-                    style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}
-                  >
+                <div className={commonStyles.suggestedContent}>
+                  <h3 className={cn(commonStyles.suggestedTitle, themeStyles.suggestedTitle)}>
                     {proj.title}
                   </h3>
-                  <p
-                    style={{
-                      color: "#6b7280",
-                      fontSize: 13,
-                      marginBottom: 10,
-                      lineHeight: 1.5,
-                    }}
-                  >
+                  <p className={cn(commonStyles.suggestedDescription, themeStyles.suggestedDescription)}>
                     {proj.description?.slice(0, 120)}
                     {(proj.description?.length ?? 0) > 120 ? "..." : ""}
                   </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  <div className={commonStyles.suggestedSkills}>
                     {(proj.skills_required || []).slice(0, 4).map((skill) => (
                       <span
                         key={skill}
-                        style={{
-                          padding: "3px 8px",
-                          borderRadius: 10,
-                          background: "#eef2ff",
-                          color: "#4f46e5",
-                          fontSize: 12,
-                        }}
+                        className={cn(commonStyles.suggestedSkillPill, themeStyles.suggestedSkillPill)}
                       >
                         {skill}
                       </span>
                     ))}
                   </div>
                 </div>
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div className={commonStyles.suggestedMeta}>
                   {proj.match_score != null && (
-                    <div
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: "#6366f1",
-                        marginBottom: 6,
-                      }}
-                    >
+                    <div className={cn(commonStyles.suggestedMatchScore, themeStyles.suggestedMatchScore)}>
                       {Math.round(proj.match_score)}% match
                     </div>
                   )}
-                  <div
-                    style={{ fontSize: 13, color: "#6b7280", marginBottom: 12 }}
-                  >
+                  <div className={cn(commonStyles.suggestedBudget, themeStyles.suggestedBudget)}>
                     ${proj.budget_min?.toLocaleString() ?? "?"} – $
                     {proj.budget_max?.toLocaleString() ?? "?"}
                   </div>
                   <Link
                     href={`/freelancer/projects/${proj.id}`}
-                    style={{
-                      display: "inline-block",
-                      padding: "7px 16px",
-                      borderRadius: 8,
-                      background: "#6366f1",
-                      color: "white",
-                      textDecoration: "none",
-                      fontSize: 13,
-                      fontWeight: 600,
-                    }}
+                    className={cn(commonStyles.viewButton, themeStyles.viewButton)}
                   >
                     View
                   </Link>
@@ -461,24 +325,12 @@ export default function InvitationsPage() {
             ))}
           </div>
         ) : (
-          <div
-            style={{
-              textAlign: "center",
-              padding: 40,
-              background: "#f9fafb",
-              borderRadius: 12,
-              border: "1px dashed #d1d5db",
-            }}
-          >
-            <p style={{ color: "#6b7280", marginBottom: 16 }}>
+          <div className={cn(commonStyles.emptyState, themeStyles.emptyState, "p-8")}>
+            <p className={cn(commonStyles.emptyDescription, themeStyles.emptyDescription, "mb-4")}>
               No AI suggestions available yet.{" "}
               <Link
                 href="/freelancer/profile"
-                style={{
-                  color: "#6366f1",
-                  textDecoration: "none",
-                  fontWeight: 500,
-                }}
+                className={cn(commonStyles.sectionLink, themeStyles.sectionLink)}
               >
                 Complete your profile
               </Link>{" "}
@@ -486,16 +338,7 @@ export default function InvitationsPage() {
             </p>
             <Link
               href="/freelancer/projects"
-              style={{
-                display: "inline-block",
-                padding: "10px 24px",
-                borderRadius: 8,
-                background: "#6366f1",
-                color: "white",
-                textDecoration: "none",
-                fontWeight: 600,
-                fontSize: 15,
-              }}
+              className={cn(commonStyles.primaryButton, themeStyles.primaryButton)}
             >
               Browse All Projects
             </Link>

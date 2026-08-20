@@ -272,7 +272,11 @@ export default function DeliverablesPage() {
       return res;
     } catch (err) {
       console.error(err);
-      alert("Action failed. Please try again.");
+      toaster.notify({
+        title: "Action Failed",
+        description: "Action failed. Please try again.",
+        variant: "danger",
+      });
     } finally {
       setActionLoading(false);
     }
@@ -337,7 +341,11 @@ export default function DeliverablesPage() {
       setNewComment("");
     } catch (err) {
       console.error(err);
-      alert("Failed to add comment. Please try again.");
+      toaster.notify({
+        title: "Comment Failed",
+        description: "Failed to add comment. Please try again.",
+        variant: "danger",
+      });
     } finally {
       setActionLoading(false);
     }

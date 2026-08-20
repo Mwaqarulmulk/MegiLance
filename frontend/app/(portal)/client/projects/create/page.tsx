@@ -1,12 +1,12 @@
-// @AI-HINT: Create Project page with AI-powered Price Estimation
+// @AI-HINT: Create Project page with AI Price Estimation & Direct Talent Invitation flow
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Save } from 'lucide-react'
-import api, { aiApi } from '@/lib/api';
+import { ArrowLeft, Save, UserPlus } from 'lucide-react';
+import api, { aiApi, talentInvitationsApi } from '@/lib/api';
 import Input from '@/app/components/atoms/Input/Input';
 import Select from '@/app/components/molecules/Select/Select';
 import Button from '@/app/components/atoms/Button/Button';
@@ -32,25 +32,47 @@ const EXPERIENCE_LEVELS = [
   { value: 'expert', label: 'Expert' },
 ];
 
-export default function CreateProjectPage() {
+function CreateProjectContent() {
   const { resolvedTheme } = useTheme();
   const theme = resolvedTheme === 'light' ? light : dark;
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const inviteFreelancerId = searchParams.get('invite');
+  const paramTitle = searchParams.get('title');
+  const paramCategory = searchParams.get('category');
+  const paramSkills = searchParams.get('skills');
+  const paramBudgetMin = searchParams.get('budget_min');
+  const paramBudgetMax = searchParams.get('budget_max');
 
   const [formData, setFormData] = useState({
-    title: '',
+    title: paramTitle || '',
     description: '',
-    category: '',
-    budget_min: '',
-    budget_max: '',
+    category: paramCategory || '',
+    budget_min: paramBudgetMin || '',
+    budget_max: paramBudgetMax || '',
     experience_level: 'intermediate',
-    skills: '', // Comma separated
+    skills: paramSkills || '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isEstimating, setIsEstimating] = useState(false);
   const [estimate, setEstimate] = useState<any>(null);
+
+  // Sync params if they change dynamically
+  useEffect(() => {
+    if (paramTitle || paramCategory || paramSkills || paramBudgetMin || paramBudgetMax) {
+      setFormData(prev => ({
+        ...prev,
+        title: paramTitle || prev.title,
+        category: paramCategory || prev.category,
+        skills: paramSkills || prev.skills,
+        budget_min: paramBudgetMin || prev.budget_min,
+        budget_max: paramBudgetMax || prev.budget_max,
+      }));
+    }
+  }, [paramTitle, paramCategory, paramSkills, paramBudgetMin, paramBudgetMax]);
 
   // Debounce logic for AI estimation
   useEffect(() => {
@@ -71,7 +93,7 @@ export default function CreateProjectPage() {
         category: formData.category,
         skills_required: skillsList,
         description: formData.description,
-        complexity: formData.experience_level
+        complexity: formData.experience_level,
       });
       setEstimate(result);
     } catch (error) {
@@ -94,13 +116,27 @@ export default function CreateProjectPage() {
     setSubmitError(null);
     try {
       const skillsString = formData.skills.split(',').map(s => s.trim()).filter(Boolean).join(',');
-      await api.projects.create({
+      const createdProject: any = await api.projects.create({
         ...formData,
-        budget_min: Number(formData.budget_min),
-        budget_max: Number(formData.budget_max),
+        budget_min: Number(formData.budget_min) || 0,
+        budget_max: Number(formData.budget_max) || 0,
         skills: skillsString,
       } as any);
-      
+
+      // If this project was created from a talent invite link, dispatch the direct invitation
+      if (inviteFreelancerId && createdProject?.id) {
+        try {
+          await talentInvitationsApi.create({
+            project_id: Number(createdProject.id),
+            freelancer_id: Number(inviteFreelancerId),
+            message: 'Hello! I posted this project specifically to invite you based on your profile and skills.',
+            suggested_rate: Number(formData.budget_max) || undefined,
+          });
+        } catch (inviteErr) {
+          console.warn('Could not auto-dispatch invitation:', inviteErr);
+        }
+      }
+
       router.push('/client/projects');
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'Failed to create project. Please try again.');
@@ -117,7 +153,7 @@ export default function CreateProjectPage() {
       setFormData(prev => ({
         ...prev,
         budget_min: estimate.low_estimate.toString(),
-        budget_max: estimate.high_estimate.toString()
+        budget_max: estimate.high_estimate.toString(),
       }));
     }
   };
@@ -126,9 +162,9 @@ export default function CreateProjectPage() {
     <PageTransition>
       <div className={cn(common.container, theme.theme)}>
         <header className={common.header}>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => router.back()}
             iconBefore={<ArrowLeft size={16} />}
             className="mb-4"
@@ -139,10 +175,63 @@ export default function CreateProjectPage() {
           <p className={common.subtitle}>Describe your project and get matched with top talent.</p>
         </header>
 
+        {/* Direct Talent Invitation Banner */}
+        {inviteFreelancerId && (
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.1))',
+              border: '1px solid rgba(99,102,241,0.3)',
+              borderRadius: 12,
+              padding: '0.85rem 1.1rem',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                flexShrink: 0,
+              }}
+            >
+              <UserPlus size={18} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+                Direct Talent Invitation Active
+                <span
+                  style={{
+                    background: 'rgba(16,185,129,0.15)',
+                    color: '#10b981',
+                    border: '1px solid rgba(16,185,129,0.3)',
+                    borderRadius: 12,
+                    padding: '1px 7px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  Candidate #{inviteFreelancerId}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.82rem', opacity: 0.85, marginTop: 2 }}>
+                As soon as this project is published, a direct private invitation will automatically be delivered to this specialist.
+              </div>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className={common.form}>
           <div className={cn(common.section, theme.section)}>
             <h2 className={common.sectionTitle}>Project Details</h2>
-            
+
             <Input
               label="Project Title"
               name="title"
@@ -197,7 +286,7 @@ export default function CreateProjectPage() {
           </div>
 
           {/* AI Price Estimation */}
-          <AIPriceEstimator 
+          <AIPriceEstimator
             estimate={estimate}
             isLoading={isEstimating}
             onApply={applyEstimate}
@@ -243,8 +332,8 @@ export default function CreateProjectPage() {
             <Button type="button" variant="ghost" onClick={() => router.back()}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               isLoading={isSubmitting}
               iconBefore={<Save size={16} />}
             >
@@ -254,5 +343,13 @@ export default function CreateProjectPage() {
         </form>
       </div>
     </PageTransition>
+  );
+}
+
+export default function CreateProjectPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading project form...</div>}>
+      <CreateProjectContent />
+    </Suspense>
   );
 }
