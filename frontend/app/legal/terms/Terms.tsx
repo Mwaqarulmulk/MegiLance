@@ -48,7 +48,7 @@ const Terms: React.FC = () => {
             <header className={common.header}>
               <h1 className={common.title}>Terms of Service</h1>
               <p className={common.subtitle}>Please read these terms carefully before using MegiLance.</p>
-              <p className={common.meta} aria-label="Terms last updated">Last updated: Aug 8, 2025</p>
+              <p className={common.meta} aria-label="Terms last updated">Last updated: August 2026</p>
             </header>
           </ScrollReveal>
 

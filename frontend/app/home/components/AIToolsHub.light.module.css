@@ -3,9 +3,9 @@
 }
 
 .badge {
-  background: rgba(245, 158, 11, 0.1);
-  color: #b45309;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.2);
 }
 
 .title {
@@ -31,19 +31,45 @@
 
 .filterBtnActive {
   background: #ffffff;
-  color: #2563eb !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* Center Lottie Hub (Light) */
+.centerHub {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.9));
+  border-color: #cbd5e1;
+  box-shadow: 0 16px 36px -10px rgba(37, 99, 235, 0.12);
+}
+
+.centerHubTitle {
+  color: #0f172a;
+}
+
+.centerHubSubtitle {
+  color: #475569;
+}
+
+.centerHubCta {
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+}
+
+.centerHubCta:hover {
+  background: #1e293b;
+}
+
+/* Tool Cards (Light) */
 .toolCard {
-  background: rgba(255, 255, 255, 0.85);
+  background: #ffffff;
   border-color: #e2e8f0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .toolCard:hover {
-  border-color: var(--accent-color);
-  box-shadow: 0 16px 32px -8px color-mix(in srgb, var(--accent-color) 22%, transparent);
+  border-color: var(--accent-color, #3b82f6);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08);
 }
 
 .runsTag {
@@ -52,7 +78,7 @@
 
 .toolBadge {
   background: #f1f5f9;
-  color: #475569;
+  color: #334155;
   border: 1px solid #e2e8f0;
 }
 
@@ -65,21 +91,45 @@
 }
 
 .cardBottom {
-  border-top-color: #f1f5f9;
+  border-color: #f1f5f9;
 }
 
 .useToolLink {
-  color: var(--accent-color);
+  color: var(--accent-color, #2563eb);
 }
 
-.allToolsBtn {
+/* Secondary Cards (Light) */
+.secondaryCard {
   background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.secondaryCard:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.secondaryTitle {
   color: #0f172a;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.secondaryBadge {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.secondaryDesc {
+  color: #64748b;
+}
+
+/* Footer CTA (Light) */
+.allToolsBtn {
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
 }
 
 .allToolsBtn:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
+  background: #1e293b;
 }

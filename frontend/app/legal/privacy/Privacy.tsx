@@ -46,7 +46,7 @@ const Privacy: React.FC = () => {
             <header className={common.header}>
               <h1 className={common.title}>Privacy Policy</h1>
               <p className={common.subtitle}>We respect your privacy and are committed to protecting your data.</p>
-              <p className={common.meta} aria-label="Policy last updated">Last updated: Aug 8, 2025</p>
+              <p className={common.meta} aria-label="Policy last updated">Last updated: August 2026</p>
             </header>
           </ScrollReveal>
 

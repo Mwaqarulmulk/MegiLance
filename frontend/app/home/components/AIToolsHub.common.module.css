@@ -4,7 +4,7 @@
 }
 
 .container {
-  max-width: 1140px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
@@ -68,18 +68,103 @@
   transition: all 0.2s ease;
 }
 
-.toolsGrid {
+/* Orbiting Container Grid with Center Lottie */
+.orbitContainer {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 2.75rem;
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
+.wingColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Center Lottie Hub Card */
+.centerHub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.25rem 1.5rem;
+  border-radius: 28px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.2);
+}
+
+.centerGlowRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 70%);
+  pointer-events: none;
+  filter: blur(24px);
+}
+
+.lottieWrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.centerCardContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+}
+
+.centerHubTitle {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+
+.centerHubSubtitle {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.centerHubCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.centerHubCta:hover {
+  transform: translateY(-2px);
+}
+
+/* Tool Cards */
 .toolCard {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem 1.35rem;
+  padding: 1.25rem 1.2rem;
   border-radius: 18px;
   border: 1px solid;
   text-decoration: none;
@@ -98,13 +183,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.1rem;
+  margin-bottom: 0.85rem;
 }
 
 .iconWrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,42 +214,42 @@
 .toolBadge {
   font-size: 0.68rem;
   font-weight: 800;
-  padding: 0.2rem 0.55rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 9999px;
 }
 
 .toolTitle {
-  font-size: 1.1rem;
+  font-size: 0.98rem;
   font-weight: 800;
   line-height: 1.3;
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.35rem;
   letter-spacing: -0.015em;
 }
 
 .toolDesc {
-  font-size: 0.84rem;
-  line-height: 1.55;
-  margin: 0 0 1.25rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0 0 0.85rem;
   flex-grow: 1;
 }
 
 .cardBottom {
   margin-top: auto;
-  padding-top: 0.85rem;
+  padding-top: 0.65rem;
   border-top: 1px solid;
 }
 
 .useToolLink {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.82rem;
+  gap: 0.35rem;
+  font-size: 0.78rem;
   font-weight: 800;
   transition: gap 0.2s ease;
 }
 
 .toolCard:hover .useToolLink {
-  gap: 0.65rem;
+  gap: 0.55rem;
 }
 
 .arrowIcon {
@@ -175,6 +260,63 @@
   transform: translateX(3px);
 }
 
+/* Secondary Tools Row */
+.secondaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.secondaryCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.15rem;
+  border-radius: 16px;
+  border: 1px solid;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.secondaryCard:hover {
+  transform: translateY(-2px);
+}
+
+.secondaryIconWrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.secondaryTitle {
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.secondaryBadge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+}
+
+.secondaryDesc {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin: 0.2rem 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer CTA */
 .ctaWrapper {
   display: flex;
   justify-content: center;
@@ -196,14 +338,25 @@
   transform: translateY(-2px);
 }
 
-@media (max-width: 1080px) {
-  .toolsGrid {
+@media (max-width: 1024px) {
+  .orbitContainer {
+    grid-template-columns: 1fr;
+  }
+  .centerHub {
+    order: -1;
+    margin-bottom: 1rem;
+  }
+  .wingColumn {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
+  }
+  .secondaryGrid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .toolsGrid {
+  .wingColumn {
     grid-template-columns: 1fr;
   }
 }

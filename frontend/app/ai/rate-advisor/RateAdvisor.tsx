@@ -491,7 +491,7 @@ export default function RateAdvisor() {
           steps={RATE_GUIDE_STEPS}
           tips={RATE_GUIDE_TIPS}
           faqs={RATE_GUIDE_FAQS}
-          accuracyNote="Recommendations start from 2025 benchmark rates (Upwork, Fiverr, Toptal, Arc.dev) for your service and experience level, then adjust for your country and portfolio strength. Platform fees and billable-hour assumptions drive the income projections. Real earnings depend on your demand, reviews and negotiation."
+          accuracyNote="Recommendations start from 2026 benchmark rates (Upwork, Fiverr, Toptal, Arc.dev) for your service and experience level, then adjust for your country and portfolio strength. Platform fees and billable-hour assumptions drive the income projections. Real earnings depend on your demand, reviews and negotiation."
         />
       </div>
 
@@ -655,6 +655,6 @@ function buildRateReport(r: RateResult): AIReport {
       },
     ],
     disclaimer:
-      'Rates are based on 2025 market data from Upwork, Fiverr, Toptal and Arc.dev. Individual results vary with demand, reviews, niche and negotiation. Use as guidance, not a guarantee.',
+      'Rates are based on 2026 market data from Upwork, Fiverr, Toptal and Arc.dev. Individual results vary with demand, reviews, niche and negotiation. Use as guidance, not a guarantee.',
   };
 }

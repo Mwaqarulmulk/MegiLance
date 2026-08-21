@@ -105,6 +105,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/install', changeFrequency: 'yearly', priority: 0.50 },
 
     // Free AI Tools (High ROI traffic magnets)
+    { path: '/tools/website-cost-calculator', changeFrequency: 'weekly', priority: 0.95 },
+    { path: '/tools/ai-startup-advisor', changeFrequency: 'weekly', priority: 0.95 },
+    { path: '/tools/upwork-fee-calculator', changeFrequency: 'weekly', priority: 0.95 },
+    { path: '/tools/fiverr-fee-calculator', changeFrequency: 'weekly', priority: 0.95 },
     { path: '/tools/ai-project-cost-estimator', changeFrequency: 'weekly', priority: 0.95 },
     { path: '/tools/freelance-rate-calculator', changeFrequency: 'weekly', priority: 0.90 },
     { path: '/tools/project-scope-generator', changeFrequency: 'weekly', priority: 0.90 },
@@ -204,6 +208,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
+  // ── Programmatic SEO: /cost-to-hire/[skill] low-KD cost guides ────────
+  const costToHireSkills = ['react-developer', 'python-developer', 'fullstack-developer', 'ui-ux-designer', 'ai-developers', 'mobile-developer'];
+  const costToHirePages: MetadataRoute.Sitemap = costToHireSkills.map((skill) => ({
+    url: `${baseUrl}/cost-to-hire/${skill}`,
+    lastModified: currentDate,
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }));
+
   // ── Dynamic content pages ────────────────────────────────────────────
   const freelancerPages: MetadataRoute.Sitemap = freelancers.map((f) => ({
     url: `${baseUrl}/freelancers/${f.id}`,
@@ -219,5 +232,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...skillPages, ...hirePages, ...freelancerPages, ...blogPages];
+  return [...staticPages, ...skillPages, ...hirePages, ...costToHirePages, ...freelancerPages, ...blogPages];
 }

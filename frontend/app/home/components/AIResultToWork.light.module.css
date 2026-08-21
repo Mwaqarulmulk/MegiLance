@@ -3,9 +3,9 @@
 }
 
 .badge {
-  background: rgba(245, 158, 11, 0.1);
-  color: #b45309;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.2);
 }
 
 .title {
@@ -16,58 +16,121 @@
   color: #475569;
 }
 
-.stepCard {
-  background: rgba(255, 255, 255, 0.85);
+/* Stage Nav Tabs (Light) */
+.stageTabBtn {
+  background: #ffffff;
   border-color: #e2e8f0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  color: #334155;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.stepCard:hover {
+.stageTabBtn:hover {
   border-color: #cbd5e1;
-  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.08);
+  background: #f8fafc;
 }
 
-.stepNum {
+.stageTabBtnActive {
+  background: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 6px 20px -4px rgba(59, 130, 246, 0.25);
+}
+
+.stageTabNum {
   background: #f1f5f9;
   color: #2563eb;
   border-color: #e2e8f0;
 }
 
-.stepTag {
+.stageTabTag {
   color: #64748b;
 }
 
-.iconWrap {
-  background: #eff6ff;
-  color: #2563eb;
+/* Main Stage Card (Light) */
+.stageCard {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
 }
 
-.stepTitle {
+.stagePill {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.stageHeadline {
   color: #0f172a;
 }
 
-.stepDesc {
+.stageDesc {
   color: #475569;
 }
 
 .primaryBtn {
-  background: #4f46e5;
+  background: #2563eb;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
 .primaryBtn:hover {
-  background: #4338ca;
+  background: #1d4ed8;
 }
 
-.secondaryBtn {
+.nextStageBtn {
+  color: #334155;
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.nextStageBtn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* Simulator (Light) */
+.simulatorCard {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.simHeader {
+  border-color: #e2e8f0;
+}
+
+.simBadge {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.metricTile {
   background: #ffffff;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  border-color: #e2e8f0;
 }
 
-.secondaryBtn:hover {
+.metricVal {
+  color: #0f172a;
+}
+
+/* Global Footer (Light) */
+.globalPrimaryBtn {
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
+}
+
+.globalPrimaryBtn:hover {
+  background: #1e293b;
+}
+
+.globalSecondaryBtn {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.globalSecondaryBtn:hover {
   background: #f8fafc;
   border-color: #94a3b8;
 }

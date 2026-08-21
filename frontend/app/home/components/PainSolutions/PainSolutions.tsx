@@ -1,5 +1,5 @@
-// @AI-HINT: High-craft comparison and platform advantages section for the homepage.
 'use client';
+
 
 import React from 'react';
 import Link from 'next/link';

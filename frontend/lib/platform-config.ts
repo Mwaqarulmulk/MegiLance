@@ -96,7 +96,7 @@ export const PRICING_CONFIG = {
  * Never invent unverified customer numbers or mock escrow volumes.
  */
 export const PLATFORM_FACTS = {
-  AI_TOOLS_COUNT: 11,
+  AI_TOOLS_COUNT: 16,
   COUNTRIES_SUPPORTED: '70+',
   SERVICE_CATEGORIES_COUNT: 10,
   SERVICE_TYPES_COUNT: '100+',

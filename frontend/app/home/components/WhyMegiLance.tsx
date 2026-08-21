@@ -1,6 +1,5 @@
-// @AI-HINT: "Why MegiLance?" section component showcasing the core platform value propositions with visual hierarchy, interactive cards, and trust-building messaging. Uses glassmorphism effects and gradient accents per 2025 design trends.
-
 'use client';
+
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -19,7 +18,7 @@ import lightStyles from './WhyMegiLance.light.module.css';
 import darkStyles from './WhyMegiLance.dark.module.css';
 import SectionGlobe from '@/app/components/Animations/SectionGlobe/SectionGlobe';
 
-interface ValueProp {
+export interface ValueProp {
   id: string;
   icon: React.ReactNode;
   title: string;
@@ -34,59 +33,59 @@ const valuePropositions: ValueProp[] = [
     id: 'ai-precision',
     icon: <Zap className={commonStyles.icon} />,
     title: 'AI-Powered Precision',
-    subtitle: 'Intelligent Workflow Automation',
+    subtitle: 'Intelligent Scoping & Estimation',
     description:
-      'Leverage our suite of AI tools to estimate project costs, generate proposals, and automate your entire workflow with unparalleled accuracy.',
+      'Leverage our suite of free AI tools to estimate project costs, generate client proposals, and break briefs into actionable milestone scopes.',
     benefits: [
-      'Smart cost estimation using historical data',
-      'AI-generated professional proposals',
-      'Automated workflow optimization',
-      'Real-time market analytics',
+      'Calibrated cost estimation using market data',
+      'AI-structured milestone deliverables',
+      'Instant proposal generation with clear WBS',
+      'Real-time market rate benchmarking',
     ],
     variant: 'primary',
   },
   {
     id: 'bulletproof-security',
     icon: <Lock className={commonStyles.icon} />,
-    title: 'Bulletproof Security',
-    subtitle: 'Transparent On-Chain Payments',
+    title: 'Milestone Escrow Vault',
+    subtitle: '100% Pre-Funded Protection',
     description:
-      'Experience peace of mind with our secure USDC payment system, featuring transparent, low-fee transactions and on-chain verification.',
+      'Eliminate payment disputes and non-delivery risk. Funds are secured in a neutral escrow vault and released only upon client deliverable sign-off.',
     benefits: [
-      'Stable USDC stablecoin payments',
-      'On-chain transaction verification',
-      'Transparent fee structure (0.5-2%)',
-      'Instant settlement with no intermediaries',
+      '100% pre-funded milestone escrow',
+      'Code and deliverable verification before release',
+      'Automated dispute mediation safeguards',
+      'Instant payout release upon approval',
     ],
     variant: 'success',
   },
   {
     id: 'borderless-opportunities',
     icon: <Globe2 className={commonStyles.icon} />,
-    title: 'Borderless Opportunities',
-    subtitle: 'Global Network Access',
+    title: '7-Factor Merit Matching',
+    subtitle: 'Top 1% Specialist Network',
     description:
-      'Connect with a curated, global network of clients and discover high-value projects that perfectly match your skills and professional ambition.',
+      'Connect with verified technical specialists matched objectively on past delivery velocity, verified code commits, and skill depth.',
     benefits: [
-      'Access to global client marketplace',
-      'AI-powered project matching algorithm',
-      'Curated opportunity recommendations',
-      'Multi-currency and timezone support',
+      'Zero spam bids; meritocratic ranking',
+      '7-factor AI matching algorithm',
+      'Curated technical & design specialists',
+      'Multi-currency and global timezone coverage',
     ],
     variant: 'orange',
   },
   {
-    id: 'sovereign-wallet',
+    id: 'zero-commission',
     icon: <Wallet2 className={commonStyles.icon} />,
-    title: 'Sovereign Wallet',
-    subtitle: 'Self-Custodial Fund Management',
+    title: '0% Platform Commission',
+    subtitle: 'Keep 100% of Your Earnings',
     description:
-      'Manage your earnings with a built-in, non-custodial wallet that gives you absolute control and ownership over your funds.',
+      'Freelancers retain 100% of their contract value with zero hidden deductions, while clients enjoy transparent milestone pricing.',
     benefits: [
-      'Non-custodial wallet ownership',
-      'Direct control over private keys',
-      'Seamless withdrawal to external wallets',
-      'Built-in DeFi protocol integration',
+      '0% freelancer platform fee',
+      'Transparent milestone invoices',
+      'Multi-currency bank & card settlement',
+      'Direct payout to local bank accounts',
     ],
     variant: 'purple',
   },

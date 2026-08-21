@@ -393,8 +393,8 @@ export default function BrandingPage() {
                     The quick brown fox jumps over the lazy dog
                   </h3>
                   <p style={{ fontFamily: settings.font_family }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    MegiLance provides intelligent AI talent matching, automated milestone escrow,
+                    and zero platform commission fees for modern digital teams.
                   </p>
                 </div>
               </div>

@@ -16,37 +16,53 @@
   color: #94a3b8;
 }
 
-.stepCard {
-  background: rgba(15, 23, 42, 0.65);
+/* Stage Nav Tabs (Dark) */
+.stageTabBtn {
+  background: rgba(15, 23, 42, 0.5);
   border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-.stepCard:hover {
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6);
+.stageTabBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(30, 41, 59, 0.5);
 }
 
-.stepNum {
+.stageTabBtnActive {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: #6366f1;
+  box-shadow: 0 6px 24px -4px rgba(99, 102, 241, 0.35);
+}
+
+.stageTabNum {
   background: rgba(255, 255, 255, 0.06);
-  color: #60a5fa;
+  color: #818cf8;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-.stepTag {
+.stageTabTag {
   color: #94a3b8;
 }
 
-.iconWrap {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+/* Main Stage Card (Dark) */
+.stageCard {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
 }
 
-.stepTitle {
-  color: #f8fafc;
+.stagePill {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
-.stepDesc {
+.stageHeadline {
+  color: #ffffff;
+}
+
+.stageDesc {
   color: #94a3b8;
 }
 
@@ -60,13 +76,60 @@
   background: #4f46e5;
 }
 
-.secondaryBtn {
+.nextStageBtn {
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nextStageBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Simulator (Dark) */
+.simulatorCard {
+  background: rgba(11, 15, 25, 0.9);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.simHeader {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.simBadge {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.metricTile {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.metricVal {
+  color: #ffffff;
+}
+
+/* Global Footer (Dark) */
+.globalPrimaryBtn {
+  background: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
+
+.globalPrimaryBtn:hover {
+  background: #4f46e5;
+}
+
+.globalSecondaryBtn {
   background: rgba(255, 255, 255, 0.05);
   color: #f1f5f9;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.secondaryBtn:hover {
+.globalSecondaryBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.25);
 }

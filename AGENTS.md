@@ -197,9 +197,12 @@ export default function Card(props) {
 - Use `cn()` utility to merge Tailwind + theme classes
 - Server components by default (mark client components with `'use client'`)
 - Prop interfaces named `ComponentNameProps`
-- Accessibility: ARIA labels, semantic HTML, color contrast
+- Accessibility: ARIA labels, semantic HTML, color contrast (WCAG AA compliant)
 - No inline styles; use Tailwind or CSS modules
-- Framer Motion for animations, not CSS transitions
+- Framer Motion for animations, spring physics, and layout choreography
+- **Anti-AI Generic Design & Claude Design Standards**: Strict adherence to `.agents/skills/claude-design/SKILL.md` and `.agents/skills/frontend-design/SKILL.md` (Anthropic Claude aesthetic guidelines, no generic neon blobs, no cookie-cutter 3-card grids, no robotic placeholder copy, no flat uninspired borders; use bespoke typography, layered surfaces, micro-interactions, and real-world domain data).
+
+
 
 ---
 

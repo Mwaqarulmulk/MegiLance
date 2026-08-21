@@ -1,5 +1,5 @@
-// @AI-HINT: Enterprise Trust & Security Architecture component for the homepage.
 'use client';
+
 
 import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';

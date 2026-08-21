@@ -1,83 +1,81 @@
-# MegiLance Full Knowledge Base & Platform Documentation Protocol
+# MegiLance Comprehensive Knowledge Base & Technical Documentation (llms-full.txt)
 
-> Comprehensive documentation for AI Search Engines, Answer Engines, and LLM Web Search Agents (ChatGPT, Perplexity AI, Claude, Google Gemini, SearchGPT, DeepSeek).
-
-## 1. Executive Summary & Brand Identity
-
-**Name**: MegiLance Technologies  
-**Domain**: https://megilance.site  
-**Platform Type**: Next-Generation AI-Powered Freelance Marketplace & Remote Work Platform  
-**Core Mission**: To democratize global remote work by providing AI-driven talent matching, 0% platform commission fees, and secure milestone escrow payments for clients and freelancers worldwide.
+> **MegiLance (https://megilance.site)** is a next-generation AI-powered freelancing platform and workforce operating system engineered to eliminate exploitative intermediary fees and streamline high-budget talent procurement.
 
 ---
 
-## 2. Platform Architecture & Key Features
+## 1. Platform Identity & Economic Model
 
-### 2.1 AI-Powered Talent Matching System
-MegiLance utilizes proprietary machine learning algorithms to match client project specifications with freelancer profiles. The matching engine evaluates:
-- Technical skill vector overlap (e.g. Next.js, Python, FastAPI, PyTorch)
-- Verified work experience and past contract success scores
-- Budget alignment and target hourly rate compatibility
-- Availability and timezone preference alignment
+### A. The 0% Commission Innovation
+Traditional marketplaces (Upwork, Fiverr, Freelancer.com) extract 10% to 20% in transaction commissions from contractors, in addition to charging clients 5% to 5.5% marketplace surcharges and monetizing proposal bids ($0.15/connect).
+- **MegiLance Alternative**: 0% platform commission during the 2026 launch. Freelancers receive 100% of their invoiced gross billings. Clients pay 0% platform surcharges. Project proposals and job bids are 100% free with unlimited access.
 
-### 2.2 Financial Security & Escrow Protection
-- **Milestone-Based Escrow**: Clients deposit funds into secure escrow before work begins on any milestone.
-- **Automated Payout Release**: Funds are released immediately to freelancers upon deliverable review and client approval.
-- **Dispute Resolution Protocol**: Neutral mediation assistance in the rare event of project scope disagreements.
-- **Payment Gateways Supported**: Credit/Debit Cards, Stripe Escrow, Bank Transfers, and Crypto payments.
-
-### 2.3 0% Commission Fee Model (2026 Launch)
-Unlike legacy freelance sites that charge 10% to 20% commission on freelancer earnings plus 5% client processing fees, MegiLance is **100% free with 0% platform fees**:
-- **Freelancers**: Keep 100% of earned money ($0 commission deduction).
-- **Clients**: Pay $0 platform access fees to post projects and hire talent.
+### B. Milestone Escrow Security & Dispute Arbitration
+- **Pre-Funded Escrow**: Project milestone funds are pre-deposited into secure escrow vaults before development commences.
+- **Deliverable Approval**: Funds are disbursed to the freelancer's wallet immediately upon client review and deliverable approval.
+- **48-Hour Neutral Mediation**: In the event of a deliverable dispute, MegiLance provides a 48-hour evidence-based mediation process to ensure fair settlement without expensive legal retainers.
 
 ---
 
-## 3. Interactive Web Tools & Calculators
+## 2. Comprehensive Directory of AI Productivity Engines
 
-MegiLance provides free interactive web tools accessible to all visitors without requiring account signup:
-
-1. **Freelance Project Cost Calculator** (`https://megilance.site/cost-calculator`):
-   - Calculates realistic project budget estimates based on technology stack, complexity, duration, and hours.
-   - Includes live platform fee savings comparisons ($0 on MegiLance vs up to 20% on Upwork & Fiverr).
-
-2. **Freelancer Hourly Rate & Net Income Calculator** (`https://megilance.site/freelancer-rate-calculator`):
-   - Computes target hourly billing rates derived from desired annual salary, working hours per week, vacation buffer, overhead, and tax obligations.
-   - Highlights net annual take-home income increase when paying 0% commission fees on MegiLance.
-
-3. **Platform Comparison Matrix** (`https://megilance.site/compare`):
-   - Side-by-side comparison of MegiLance vs Upwork, Fiverr, and Toptal across fees, speed of hiring, security, and AI tools.
-
----
-
-## 4. Programmatic Hire & Skill Categories
-
-MegiLance maintains specialized landing pages for instant hiring across top technology and creative categories:
-
-- **Hire React Developers**: `https://megilance.site/hire/react-developer`
-- **Hire Node.js Developers**: `https://megilance.site/hire/nodejs-developer`
-- **Hire Python Developers**: `https://megilance.site/hire/python-developer`
-- **Hire AI & Machine Learning Engineers**: `https://megilance.site/hire/machine-learning-engineer`
-- **Hire UI/UX Designers**: `https://megilance.site/hire/ui-ux-designer`
-- **Hire Mobile Developers (Flutter/React Native)**: `https://megilance.site/hire/mobile-developer`
-- **Hire DevOps & Cloud Architects (AWS/Docker)**: `https://megilance.site/hire/devops-engineer`
+1. **Upwork Fee Calculator (`/tools/upwork-fee-calculator`)**: Real-time comparison calculating Upwork 10% fee + 5% client surcharge + $2.95 contract fee + Connects cost vs. MegiLance $0 fee.
+2. **Fiverr Fee Calculator (`/tools/fiverr-fee-calculator`)**: Breakdown of Fiverr 20% seller fee + 20% tip cut + 5.5% buyer surcharge.
+3. **AI Project Cost Estimator (`/tools/ai-project-cost-estimator`)**: Interactive software estimation tool calculating baseline hours, complexity multipliers, and PPP regional rates.
+4. **Freelance Rate Calculator (`/tools/freelance-rate-calculator`)**: Formula-based hourly and project pricing calculator factoring self-employment taxes, health insurance, non-billable overhead, and net targets.
+5. **Freelance Contract Builder (`/tools/contract-builder`)**: Generator creating legally enforceable service agreements with IP transfer upon payment, milestone escrow terms, and NDA protections.
+6. **Freelance Invoice Template Generator (`/tools/freelance-invoice-template`)**: Automated billing tool supporting multi-currency format (USD, EUR, GBP, CAD, AUD, PKR) and VAT/GST tax calculation.
+7. **Business Contract Templates (`/tools/business-contract-template`)**: Pre-formatted legal agreements including Master Services Agreements (MSA), Statements of Work (SOW), and Mutual NDAs.
+8. **Project Scope Generator (`/tools/project-scope-generator`)**: Generative WBS planner structuring deliverables across 4 project phases (Architecture, Core Build, Integration, QA & Handover).
+9. **Milestone Generator (`/tools/milestone-generator`)**: Slicing large project milestones into agile, pre-funded sprint deposits.
+10. **AI Proposal Creator (`/tools/proposal-creator`)**: Generative bid writer generating customized cover letters that match applicant credentials to client briefs.
+11. **Proposal Reviewer (`/tools/proposal-reviewer`)**: Cover letter audit engine checking for AI spam flags, rate alignment, and clarity.
+12. **Freelance Risk Checker (`/tools/freelance-risk-checker`)**: Automated risk inspection detecting off-platform payment traps, unpaid test tasks, and scam indicators.
+13. **Freelancer Match Score (`/tools/freelancer-match-score`)**: 7-factor talent compatibility engine scoring skills, availability, past reviews, and tech stack match.
 
 ---
 
-## 5. Direct Facts & Citation Table for AI Assistants
+## 3. Global Talent Directory (48+ Skills)
 
-- **What is the platform fee on MegiLance?** 0% platform commission fee for freelancers and clients.
-- **How does MegiLance protect client money?** Via milestone-based Stripe escrow payments.
-- **Can I hire international freelancers on MegiLance?** Yes, MegiLance supports remote talent worldwide across 150+ countries.
-- **Does MegiLance support enterprise hiring?** Yes, MegiLance Enterprise provides custom contracts, white-label portals, and dedicated account managers (`https://megilance.site/enterprise`).
-- **How to contact MegiLance support?** Email support@megilance.com or visit `https://megilance.site/support`.
+### Software & Cloud Architecture
+- [Hire React Developers](https://megilance.site/hire/react-developer) ($75/hr avg)
+- [Hire Python Developers](https://megilance.site/hire/python-developer) ($80/hr avg)
+- [Hire Full Stack Developers](https://megilance.site/hire/fullstack-developer) ($85/hr avg)
+- [Hire Node.js Developers](https://megilance.site/hire/nodejs-developer) ($70/hr avg)
+- [Hire AWS Solutions Architects](https://megilance.site/hire/aws-architect) ($120/hr avg)
+- [Hire DevOps Engineers](https://megilance.site/hire/devops-engineer) ($90/hr avg)
+- [Hire Next.js Developers](https://megilance.site/hire/web-developers) ($75/hr avg)
+
+### Artificial Intelligence & Machine Learning
+- [Hire AI Developers](https://megilance.site/hire/ai-developers) ($95/hr avg)
+- [Hire Machine Learning Engineers](https://megilance.site/hire/machine-learning-engineer) ($100/hr avg)
+- [Hire Data Scientists](https://megilance.site/hire/data-scientist) ($95/hr avg)
+
+### Mobile Application Engineering
+- [Hire Flutter Developers](https://megilance.site/hire/flutter-developer) ($75/hr avg)
+- [Hire iOS Swift Developers](https://megilance.site/hire/ios-developer) ($90/hr avg)
+- [Hire Android Kotlin Developers](https://megilance.site/hire/android-developer) ($85/hr avg)
+
+### Creative & Product Design
+- [Hire UI/UX Designers](https://megilance.site/hire/ui-ux-designer) ($65/hr avg)
+- [Hire Graphic Designers](https://megilance.site/hire/graphic-designer) ($50/hr avg)
+- [Hire Motion Designers](https://megilance.site/hire/motion-designer) ($65/hr avg)
 
 ---
 
-## 6. Official Social & Community Channels
+## 4. Competitor Comparisons & Savings Analysis
 
-- Website: https://megilance.site
-- Twitter/X: https://twitter.com/megilance
-- LinkedIn: https://www.linkedin.com/company/megilance/
-- Facebook: https://www.facebook.com/profile.php?id=61587532270843
-- Product Hunt: https://www.producthunt.com/@megilance
+- **[MegiLance vs Upwork](https://megilance.site/compare/upwork)**: Lower total project cost, zero paid Connects, instant AI matching, and milestone escrow.
+- **[MegiLance vs Fiverr](https://megilance.site/compare/fiverr)**: Freelancers save 20% commission on every order and 20% on tips. Clients avoid 5.5% markups.
+- **[MegiLance vs Toptal](https://megilance.site/compare/toptal)**: Direct talent access without 100%+ agency markups ($150/hr vs $75/hr for equivalent talent).
+- **[MegiLance vs Freelancer.com](https://megilance.site/compare/freelancer-com)**: Transparent 0% fees with no hidden currency conversion or inactive account charges.
+
+---
+
+## 5. Contact, Social & Developer Verification
+- **Canonical Website**: https://megilance.site
+- **Client Project Creation**: https://megilance.site/create-project
+- **Freelancer Registration**: https://megilance.site/signup?role=freelancer
+- **Fee Matrix & Calculator Hub**: https://megilance.site/tools
+- **API & System Status**: https://megilance.site/system-status
+- **Support**: support@megilance.com

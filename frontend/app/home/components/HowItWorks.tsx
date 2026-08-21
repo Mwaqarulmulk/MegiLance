@@ -1,11 +1,11 @@
-// @AI-HINT: Modern 4-step process timeline for clients and freelancers.
 'use client';
+
 
 import React from 'react';
 import Link from 'next/link';
 import { Search, ClipboardList, Users, FileSignature, ArrowRight, ShieldCheck, Sparkles, CheckCircle2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 import { useThemeMode } from '@/app/hooks/useThemeMode';
 import commonStyles from './HowItWorks.common.module.css';
@@ -47,7 +47,7 @@ const steps = [
   },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -58,12 +58,12 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.5, ease: "easeOut" }
   },
 };
 

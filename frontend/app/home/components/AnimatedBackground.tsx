@@ -1,5 +1,5 @@
-// @AI-HINT: Animated background component with floating particles for enhanced visual appeal.
 'use client';
+
 
 import React, { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';

@@ -221,7 +221,7 @@ function ProcessingView({ cs, ts }: { cs: typeof commonStyles; ts: typeof lightS
         <div className={cn(cs.processingOrbInner, ts.processingOrbInner)}><Brain size={32} /></div>
       </div>
       <h3 className={cn(cs.formTitle, ts.formTitle)}>Analyzing Your Skills</h3>
-      <p className={cn(cs.processingSubtitle, ts.processingSubtitle)}>AI is mapping your skill profile against 2025–2026 market benchmarks</p>
+      <p className={cn(cs.processingSubtitle, ts.processingSubtitle)}>AI is mapping your skill profile against 2026 market benchmarks</p>
       <div className={cs.processingSteps}>
         {steps.map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0.3 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.5, duration: 0.4 }} className={cs.processingStep}>
@@ -624,7 +624,7 @@ export default function SkillAnalyzer() {
       )}
 
       <div className={cn(cs.disclaimer, ts.disclaimer)}>
-        Dataset: 2025–2026 Freelance Market Benchmark across global developer and creative platforms.
+        Dataset: 2026 Freelance Market Benchmark across global developer and creative platforms.
       </div>
     </div>
   );
