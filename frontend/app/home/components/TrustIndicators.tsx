@@ -70,10 +70,10 @@ const TrustIndicators: React.FC = () => {
       
       {/* Section Header */}
       <div className={cn(commonStyles.trustHeader, styles.trustHeader)}>
-        <span className={cn(commonStyles.headerBadge, styles.headerBadge)}>
+        <div className={cn(commonStyles.headerBadge, styles.headerBadge)}>
           <Shield size={13} className="text-emerald-500" />
-          Enterprise Trust &amp; Security
-        </span>
+          <span>Enterprise Trust &amp; Security</span>
+        </div>
         <h2 className={cn(commonStyles.trustTitle, styles.trustTitle)}>
           Built with Safety, Transparency &amp; Protection at Every Milestone
         </h2>

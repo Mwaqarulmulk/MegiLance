@@ -1,11 +1,11 @@
 .testimonials {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
 
 .badge {
-  background: rgba(241, 245, 249, 0.9);
-  color: #2563eb;
-  border: 1px solid #e2e8f0;
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .title {
@@ -17,9 +17,9 @@
 }
 
 .testimonialCard {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.85);
   border-color: #e2e8f0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .testimonialCard:hover {
@@ -29,7 +29,7 @@
 
 .escrowVerifiedBadge {
   background: #ecfdf5;
-  color: #065f46;
+  color: #047857;
   border-color: #a7f3d0;
 }
 
@@ -39,7 +39,11 @@
 
 .projectTag {
   background: #f1f5f9;
-  color: #64748b;
+  color: #475569;
+}
+
+.authorRow {
+  border-top-color: #e2e8f0;
 }
 
 .authorName {

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Search, ClipboardList, Users, FileSignature, ArrowRight, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Search, ClipboardList, Users, FileSignature, ArrowRight, ShieldCheck, Sparkles, CheckCircle2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
@@ -17,17 +17,17 @@ const steps = [
     stepNumber: '01',
     icon: ClipboardList,
     title: 'Scope or Post a Project',
-    description: 'Use our free AI tools to price your project and generate milestone scopes, or post your brief directly to the marketplace.',
+    description: 'Use free AI tools to price your project and generate milestone scopes, or post your brief directly to the marketplace.',
     badge: 'Step 1',
-    roleTag: 'Client & Freelancer',
+    roleTag: 'Client & Specialist',
   },
   {
     stepNumber: '02',
     icon: Search,
     title: '7-Factor Skill Matching',
-    description: 'Our objective algorithm ranks specialists based on verified skills, delivery velocity, ratings, and availability.',
+    description: 'Our objective matching algorithm ranks specialists based on verified skills, delivery velocity, ratings, and availability.',
     badge: 'Step 2',
-    roleTag: 'AI Matched',
+    roleTag: 'Meritocratic AI',
   },
   {
     stepNumber: '03',
@@ -35,15 +35,15 @@ const steps = [
     title: 'Collaborate in Live Workrooms',
     description: 'Milestone funds are pre-funded safely in escrow. Collaborate via direct chat, shared file attachments, and sprint checkpoints.',
     badge: 'Step 3',
-    roleTag: '100% Escrow',
+    roleTag: '100% Escrow Vault',
   },
   {
     stepNumber: '04',
     icon: FileSignature,
     title: 'Verify & Release Payment',
-    description: 'Review completed deliverables, request revisions if needed, and release milestone funds instantly upon satisfaction.',
+    description: 'Review completed deliverables, inspect source code or design files, and release milestone funds instantly upon satisfaction.',
     badge: 'Step 4',
-    roleTag: 'Instant Payout',
+    roleTag: 'Instant Multi-Currency',
   },
 ];
 
@@ -52,19 +52,18 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  hidden: { opacity: 0, y: 24 },
   visible: { 
     opacity: 1, 
     y: 0, 
-    scale: 1,
-    transition: { type: 'spring' as const, stiffness: 200, damping: 20 }
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
   },
 };
 
@@ -79,14 +78,14 @@ const HowItWorks: React.FC = () => {
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-80px' }}
+        viewport={{ once: true, margin: '-60px' }}
       >
         {/* Header */}
         <motion.div variants={itemVariants} className={commonStyles.header}>
-          <span className={cn(commonStyles.tagline, themeStyles.tagline)}>
-            <Sparkles size={14} className="text-amber-500" />
-            Simple 4-Step Process
-          </span>
+          <div className={cn(commonStyles.tagline, themeStyles.tagline)}>
+            <Sparkles size={13} className="text-amber-500" />
+            <span>Frictionless 4-Stage Operating Pipeline</span>
+          </div>
           <h2 className={cn(commonStyles.title, themeStyles.title)}>How MegiLance Works</h2>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
             From initial project scoping to milestone escrow approval — every step is engineered for trust, quality, and fair collaboration.
@@ -123,7 +122,7 @@ const HowItWorks: React.FC = () => {
         <motion.div variants={itemVariants} className={commonStyles.bottomCta}>
           <Link href="/create-project" className={cn(commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
             <span>Post a Project Free</span>
-            <ArrowRight size={16} />
+            <ArrowRight size={15} />
           </Link>
           <Link href="/how-it-works" className={cn(commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
             <span>Explore Complete Process Guide</span>

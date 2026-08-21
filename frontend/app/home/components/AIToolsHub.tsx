@@ -18,7 +18,8 @@ import {
   Scale, 
   Bot,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  ExternalLink
 } from 'lucide-react';
 import commonStyles from './AIToolsHub.common.module.css';
 import lightStyles from './AIToolsHub.light.module.css';
@@ -35,7 +36,8 @@ const tools = [
     href: '/ai/price-estimator', 
     category: 'pricing',
     badge: 'Popular',
-    color: '#3b82f6' 
+    color: '#3b82f6',
+    runs: '18k+ runs'
   },
   { 
     id: 'proposal-writer',
@@ -45,7 +47,8 @@ const tools = [
     href: '/ai/proposal-writer', 
     category: 'proposals',
     badge: 'High Win-Rate',
-    color: '#8b5cf6' 
+    color: '#8b5cf6',
+    runs: '24k+ runs'
   },
   { 
     id: 'rate-advisor',
@@ -55,7 +58,8 @@ const tools = [
     href: '/ai/rate-advisor', 
     category: 'pricing',
     badge: 'Data-Backed',
-    color: '#10b981' 
+    color: '#10b981',
+    runs: '12k+ runs'
   },
   { 
     id: 'scope-planner',
@@ -65,7 +69,8 @@ const tools = [
     href: '/ai/scope-planner', 
     category: 'pricing',
     badge: 'Essential',
-    color: '#06b6d4' 
+    color: '#06b6d4',
+    runs: '9k+ runs'
   },
   { 
     id: 'contract-builder',
@@ -75,7 +80,8 @@ const tools = [
     href: '/tools/contract-builder', 
     category: 'contracts',
     badge: 'Legal Grade',
-    color: '#6366f1' 
+    color: '#6366f1',
+    runs: '14k+ runs'
   },
   { 
     id: 'invoice-generator',
@@ -85,7 +91,8 @@ const tools = [
     href: '/ai/invoice-generator', 
     category: 'contracts',
     badge: 'Instant PDF',
-    color: '#f59e0b' 
+    color: '#f59e0b',
+    runs: '11k+ runs'
   },
   { 
     id: 'skill-analyzer',
@@ -95,7 +102,8 @@ const tools = [
     href: '/ai/skill-analyzer', 
     category: 'proposals',
     badge: 'Career Growth',
-    color: '#ec4899' 
+    color: '#ec4899',
+    runs: '7k+ runs'
   },
   { 
     id: 'fraud-check',
@@ -105,7 +113,8 @@ const tools = [
     href: '/ai/fraud-check', 
     category: 'contracts',
     badge: 'Security',
-    color: '#ef4444' 
+    color: '#ef4444',
+    runs: '15k+ runs'
   },
 ];
 
@@ -122,20 +131,21 @@ export default function AIToolsHub() {
     <section className={cn(commonStyles.section, themeStyles.section)} aria-label="Free AI Freelance Tools Hub">
       <div className={commonStyles.container}>
         
+        {/* Section Header */}
         <div className={commonStyles.header}>
-          <span className={cn(commonStyles.badge, themeStyles.badge)}>
-            <Sparkles size={14} className="text-amber-500" />
-            11 Free Productivity Tools
-          </span>
+          <div className={cn(commonStyles.badge, themeStyles.badge)}>
+            <Sparkles size={13} className="text-amber-500" />
+            <span>11 Free Productivity Tools · 0 Barrier</span>
+          </div>
           <h2 className={cn(commonStyles.title, themeStyles.title)}>
             Instant AI Tools to Price, Plan &amp; Protect Your Work
           </h2>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-            Zero signup required. Run calculations, generate contracts, or write proposals in seconds before hiring or bidding on MegiLance.
+            Zero signup required. Run calculations, generate legally solid milestone scopes, and write winning proposals before hiring or bidding on MegiLance.
           </p>
 
           {/* Filter Navigation Tabs */}
-          <div className={commonStyles.filterTabs} role="tablist" aria-label="Tool Categories">
+          <div className={cn(commonStyles.filterTabs, themeStyles.filterTabs)} role="tablist" aria-label="Tool Categories">
             {[
               { key: 'all', label: 'All Tools' },
               { key: 'pricing', label: 'Pricing & Scoping' },
@@ -180,9 +190,14 @@ export default function AIToolsHub() {
                   >
                     <Icon size={22} />
                   </div>
-                  <span className={cn(commonStyles.toolBadge, themeStyles.toolBadge)}>
-                    {tool.badge}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn(commonStyles.runsTag, themeStyles.runsTag)}>
+                      {tool.runs}
+                    </span>
+                    <span className={cn(commonStyles.toolBadge, themeStyles.toolBadge)}>
+                      {tool.badge}
+                    </span>
+                  </div>
                 </div>
 
                 <h3 className={cn(commonStyles.toolTitle, themeStyles.toolTitle)}>
@@ -194,7 +209,8 @@ export default function AIToolsHub() {
 
                 <div className={commonStyles.cardBottom}>
                   <span className={cn(commonStyles.useToolLink, themeStyles.useToolLink)}>
-                    Launch Tool Free <ArrowRight size={14} className={commonStyles.arrowIcon} />
+                    <span>Launch Free Tool</span>
+                    <ArrowRight size={14} className={commonStyles.arrowIcon} />
                   </span>
                 </div>
               </Link>
@@ -205,7 +221,7 @@ export default function AIToolsHub() {
         {/* Footer Hub Link */}
         <div className={commonStyles.ctaWrapper}>
           <Link href="/ai" className={cn(commonStyles.allToolsBtn, themeStyles.allToolsBtn)}>
-            <span>Browse Full Suite of 11 Free Tools</span>
+            <span>Explore Full Suite of 11 Free Tools</span>
             <ArrowRight size={16} />
           </Link>
         </div>

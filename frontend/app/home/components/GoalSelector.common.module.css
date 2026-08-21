@@ -1,223 +1,214 @@
-/* GoalSelector — common structural styles */
+/* GoalSelector — Common structural styles */
 
 .container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 1rem 0;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.4rem 1rem;
+  gap: 0.45rem;
+  padding: 0.35rem 0.95rem;
   border-radius: 9999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .title {
-  font-family: var(--font-family-heading, inherit);
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
   line-height: 1.15;
   margin: 0;
-  max-width: 600px;
+  max-width: 780px;
 }
 
 .subtitle {
-  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  font-size: clamp(0.98rem, 1.3vw, 1.12rem);
   line-height: 1.65;
-  max-width: 540px;
+  max-width: 680px;
   margin: 0;
+  font-weight: 450;
 }
 
-/* ── Card grid ── */
-.grid {
+/* Bento Grid */
+.bentoGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1.25fr 1fr;
+  grid-template-rows: auto auto;
   gap: 1.5rem;
 }
 
-/* ── Individual goal cards ── */
-.card {
+.tileHero {
+  grid-row: span 2;
+}
+
+.bentoTile {
   position: relative;
   border-radius: 20px;
-  padding: 2rem 1.75rem 1.75rem;
+  border: 1px solid;
+  padding: 2rem 1.85rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-              box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-  isolation: isolate;
-  /* Gradient border technique */
-  background-clip: padding-box;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-}
-
-/* Gradient border via pseudo-element */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 21px;
-  background: var(--gradient-border-subtle, linear-gradient(135deg, rgba(69,115,223,0.25), rgba(124,58,237,0.15)));
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.28s ease;
-}
-
-.card:hover::before {
-  opacity: 1;
-}
-
-/* Ambient hover glow */
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  box-shadow: var(--shadow-card-glow, 0 20px 60px rgba(69, 115, 223, 0.14));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.card:hover::after {
-  opacity: 1;
-}
-
-/* ── Card header: icon + badge row ── */
-.cardHeader {
-  display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.25rem;
+  gap: 1.5rem;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-/* Icon container — glowing circle */
-.iconWrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+.bentoTile:hover {
+  transform: translateY(-4px);
+}
+
+.tileGlow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tileContentTop {
+  position: relative;
+  z-index: 10;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: box-shadow 0.25s ease;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
-.card:hover .iconWrap {
-  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.25);
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.3rem 0.7rem;
+  gap: 0.4rem;
+  padding: 0.28rem 0.75rem;
   border-radius: 9999px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-align: right;
-  flex-shrink: 0;
-  max-width: 140px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
-.cardTitle {
-  font-family: var(--font-family-heading, inherit);
-  font-size: 1.25rem;
+.tileTitle {
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
   font-weight: 800;
   letter-spacing: -0.025em;
-  line-height: 1.2;
+  line-height: 1.25;
   margin: 0;
 }
 
-.cardDesc {
-  font-size: 0.9rem;
-  line-height: 1.65;
+.tileDesc {
+  font-size: 0.88rem;
+  line-height: 1.6;
   margin: 0;
 }
 
-/* ── Bullet list ── */
-.bulletList {
+/* Live Escrow Card inside Bento Hero */
+.liveEscrowCard {
+  border-radius: 14px;
+  padding: 1.15rem;
+  border: 1px solid;
+  margin-top: 0.5rem;
+}
+
+/* Mini Scope Widget */
+.miniScopeWidget {
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid;
+  margin-top: 0.25rem;
+}
+
+/* CheckList for Bento Tile 3 */
+.checkList {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0.25rem 0 0;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
 }
 
-.bulletItem {
+.checkItem {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
   line-height: 1.4;
 }
 
-/* ── Card footer / CTA ── */
-.cardFooter {
+.tileBottom {
+  position: relative;
+  z-index: 10;
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
 }
 
-.ctaButton {
+.tileBtnPrimary {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.65rem 1.25rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 700;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 800;
   text-decoration: none;
-  transition: gap 0.2s ease, transform 0.2s ease;
-  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.ctaButton:hover {
-  gap: 0.65rem;
-  transform: translateX(2px);
+.tileBtnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-/* ── Responsive ── */
+.tileBtnPrimary:hover,
+.tileBtnSecondary:hover {
+  gap: 0.75rem;
+}
+
+/* Responsive */
 @media (max-width: 900px) {
-  .grid {
+  .bentoGrid {
     grid-template-columns: 1fr;
-    max-width: 500px;
-    margin: 0 auto;
+  }
+  .tileHero {
+    grid-row: auto;
   }
 }
 
 @media (max-width: 640px) {
-  .card {
+  .bentoTile {
     padding: 1.5rem 1.25rem;
-  }
-
-  .header {
-    margin-bottom: 2rem;
   }
 }

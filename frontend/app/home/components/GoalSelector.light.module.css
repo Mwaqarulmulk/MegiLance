@@ -1,110 +1,98 @@
 /* GoalSelector — Light theme */
 
 .container {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
 
 .badge {
-  background: rgba(69, 115, 223, 0.08);
-  color: var(--ml-blue);
-  border: 1px solid rgba(69, 115, 223, 0.18);
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .title {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
 
 .subtitle {
-  color: var(--text-secondary-light);
+  color: #475569;
 }
 
-/* ── Cards — base ── */
-.card {
+.bentoTile {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.bentoTile:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.12);
+}
+
+.tileHero {
+  background: linear-gradient(175deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 246, 255, 0.85) 100%);
+  border-color: rgba(191, 219, 254, 0.9);
+}
+
+.tileTitle {
+  color: #0f172a;
+}
+
+.tileDesc {
+  color: #475569;
+}
+
+.pillEscrow {
+  background: rgba(236, 253, 245, 0.9);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.pillCommission {
+  background: rgba(239, 246, 255, 0.9);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.pillAi {
+  background: rgba(254, 243, 199, 0.8);
+  color: #92400e;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.pillSuccess {
+  background: rgba(236, 253, 245, 0.9);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.liveEscrowCard {
   background: #ffffff;
-  border: 1px solid rgba(220, 226, 240, 0.8);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03);
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-.card:hover {
-  box-shadow: 0 8px 40px rgba(69, 115, 223, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-color: rgba(69, 115, 223, 0.2);
+.miniScopeWidget {
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
-/* ── Per-card accent tints (each card has its own identity) ── */
-/* Card 1: AI Tools — Blue accent */
-.card:nth-child(1) .iconWrap {
-  background: linear-gradient(135deg, rgba(69, 115, 223, 0.12), rgba(99, 102, 241, 0.08));
-  color: #4573df;
-  border: 1px solid rgba(69, 115, 223, 0.2);
-}
-.card:nth-child(1) .pill {
-  background: rgba(69, 115, 223, 0.08);
-  color: #4573df;
-  border: 1px solid rgba(69, 115, 223, 0.15);
-}
-.card:nth-child(1):hover::before {
-  background: linear-gradient(135deg, rgba(69,115,223,0.3), rgba(99,102,241,0.15));
+.tileBtnPrimary {
+  background: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
 }
 
-/* Card 2: Hire Freelancers — Emerald accent */
-.card:nth-child(2) .iconWrap {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.08));
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-.card:nth-child(2) .pill {
-  background: rgba(16, 185, 129, 0.08);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.15);
-}
-.card:nth-child(2):hover {
-  box-shadow: 0 8px 40px rgba(16, 185, 129, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-color: rgba(16, 185, 129, 0.2);
-}
-.card:nth-child(2):hover::before {
-  background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(5,150,105,0.12));
+.tileBtnPrimary:hover {
+  background: #4338ca;
 }
 
-/* Card 3: Find Work — Violet accent */
-.card:nth-child(3) .iconWrap {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(109, 40, 217, 0.08));
-  color: #7c3aed;
-  border: 1px solid rgba(124, 58, 237, 0.2);
-}
-.card:nth-child(3) .pill {
-  background: rgba(124, 58, 237, 0.08);
-  color: #7c3aed;
-  border: 1px solid rgba(124, 58, 237, 0.15);
-}
-.card:nth-child(3):hover {
-  box-shadow: 0 8px 40px rgba(124, 58, 237, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-color: rgba(124, 58, 237, 0.2);
-}
-.card:nth-child(3):hover::before {
-  background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(99,102,241,0.12));
+.tileBtnSecondary {
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
 }
 
-/* ── Common text / element colors ── */
-.cardTitle {
-  color: var(--text-primary-light);
-}
-
-.cardDesc {
-  color: var(--text-secondary-light);
-}
-
-.bulletItem {
-  color: var(--text-secondary-light);
-}
-
-/* ── CTA button ── */
-.ctaButton {
-  background: rgba(69, 115, 223, 0.07);
-  color: var(--ml-blue);
-  border-color: rgba(69, 115, 223, 0.15);
-}
-
-.ctaButton:hover {
-  background: rgba(69, 115, 223, 0.12);
-  border-color: rgba(69, 115, 223, 0.3);
+.tileBtnSecondary:hover {
+  background: #e2e8f0;
 }

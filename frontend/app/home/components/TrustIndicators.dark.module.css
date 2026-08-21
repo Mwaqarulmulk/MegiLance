@@ -1,11 +1,11 @@
 .trustContainer {
-  color: var(--text-primary-dark);
+  color: #f8fafc;
 }
 
 .headerBadge {
-  background: rgba(16, 185, 129, 0.12);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(6, 78, 59, 0.4);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .trustTitle {
@@ -17,27 +17,27 @@
 }
 
 .indicatorItem {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(15, 23, 42, 0.65);
   border-color: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .indicatorItem:hover {
-  border-color: rgba(99, 102, 241, 0.35);
-  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6);
 }
 
 .indicatorIcon {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(255, 255, 255, 0.05);
   color: #60a5fa;
 }
 
 .indicatorValue {
-  color: #f8fafc;
+  color: #ffffff;
 }
 
 .indicatorLabel {
-  color: #cbd5e1;
+  color: #f8fafc;
 }
 
 .indicatorSubtext {
@@ -45,18 +45,19 @@
 }
 
 .badgeItem {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(15, 23, 42, 0.65);
   border-color: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .badgeItem:hover {
   border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6);
 }
 
 .badgeIcon {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
+  color: #60a5fa;
 }
 
 .badgeTag {
@@ -74,16 +75,16 @@
 }
 
 .guaranteeStrip {
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 23, 42, 0.6);
   border-color: rgba(255, 255, 255, 0.08);
 }
 
 .guaranteeLabel {
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
 .guaranteePill {
-  background: rgba(30, 41, 59, 0.7);
-  color: #e2e8f0;
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
 }

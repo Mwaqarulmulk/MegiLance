@@ -1,11 +1,11 @@
 .howItWorks {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
 
 .tagline {
-  background: rgba(241, 245, 249, 0.9);
-  color: #2563eb;
-  border: 1px solid #e2e8f0;
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .title {
@@ -17,7 +17,7 @@
 }
 
 .stepCard {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.85);
   border-color: #e2e8f0;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
@@ -32,9 +32,9 @@
 }
 
 .rolePill {
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
 .iconWrap {
@@ -51,13 +51,13 @@
 }
 
 .ctaPrimary {
-  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  background: #4f46e5;
   color: #ffffff;
-  box-shadow: 0 6px 16px -2px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
 }
 
 .ctaPrimary:hover {
-  box-shadow: 0 10px 22px -2px rgba(37, 99, 235, 0.45);
+  background: #4338ca;
 }
 
 .ctaSecondary {

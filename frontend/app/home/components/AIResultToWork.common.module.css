@@ -1,73 +1,66 @@
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding: 2.5rem 1rem;
+  padding: 2rem 1rem;
 }
 
 .header {
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 3.5rem;
+  max-width: 780px;
+  margin: 0 auto 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   padding: 0.35rem 0.95rem;
   border-radius: 9999px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
 }
 
 .title {
-  font-family: var(--font-heading, inherit);
-  font-size: clamp(2rem, 3.5vw, 2.75rem);
-  font-weight: 850;
-  line-height: 1.2;
-  letter-spacing: -0.03em;
-  margin-bottom: 1rem;
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.85rem;
 }
 
 .subtitle {
-  font-size: 1.05rem;
+  font-size: clamp(0.98rem, 1.3vw, 1.12rem);
   line-height: 1.65;
   margin: 0 auto;
+  font-weight: 450;
 }
 
 .stepsGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-bottom: 3.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 3rem;
   position: relative;
-}
-
-@media (min-width: 640px) {
-  .stepsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .stepsGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .stepCard {
-  padding: 2rem 1.75rem;
-  border-radius: 1.25rem;
-  border-width: 1px;
-  border-style: solid;
+  padding: 1.65rem 1.4rem;
+  border-radius: 18px;
+  border: 1px solid;
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .stepCard:hover {
@@ -76,44 +69,51 @@
 
 .stepTop {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
 }
 
 .stepNum {
-  font-size: 1.25rem;
-  font-weight: 850;
+  font-size: 1.1rem;
+  font-weight: 900;
   letter-spacing: -0.02em;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.stepTag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  opacity: 0.7;
 }
 
 .iconWrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 0.85rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   transition: transform 0.2s ease;
 }
 
 .stepCard:hover .iconWrap {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .stepTitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 800;
   line-height: 1.3;
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.01em;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.015em;
 }
 
 .stepDesc {
-  font-size: 0.8875rem;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  line-height: 1.55;
   flex-grow: 1;
 }
 
@@ -121,7 +121,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -129,12 +129,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.85rem 1.85rem;
-  border-radius: 9999px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  padding: 0.75rem 1.75rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 800;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .primaryBtn:hover {
@@ -145,14 +145,26 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.85rem 1.85rem;
-  border-radius: 9999px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 750;
   text-decoration: none;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .secondaryBtn:hover {
   transform: translateY(-2px);
+}
+
+@media (max-width: 960px) {
+  .stepsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stepsGrid {
+    grid-template-columns: 1fr;
+  }
 }

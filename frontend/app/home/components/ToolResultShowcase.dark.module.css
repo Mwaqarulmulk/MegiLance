@@ -1,11 +1,11 @@
 .wrapper {
-  color: var(--text-primary-dark);
+  color: #f8fafc;
 }
 
 .badge {
-  background: rgba(30, 41, 59, 0.7);
-  color: #60a5fa;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .title {
@@ -17,52 +17,52 @@
 }
 
 .tabBtn {
-  background: rgba(30, 41, 59, 0.5);
-  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.6);
+  color: #94a3b8;
   border-color: rgba(255, 255, 255, 0.08);
 }
 
 .tabBtn:hover {
-  background: rgba(51, 65, 85, 0.7);
+  background: rgba(255, 255, 255, 0.05);
   color: #ffffff;
 }
 
 .tabBtnActive {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%);
-  color: #60a5fa !important;
-  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.4);
 }
 
 .showcaseCard {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(15, 23, 42, 0.7);
   border-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
 }
 
 .inputBar {
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(11, 15, 25, 0.85);
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .inputText {
-  color: #e2e8f0;
+  color: #cbd5e1;
 }
 
 .copyBtn {
-  background: rgba(255, 255, 255, 0.06);
-  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
 }
 
 .copyBtn:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 .resultBadge {
-  background: rgba(245, 158, 11, 0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .resultTitle {
@@ -70,7 +70,7 @@
 }
 
 .estimateHighlight {
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(59, 130, 246, 0.12);
   border-color: rgba(59, 130, 246, 0.3);
 }
 
@@ -83,33 +83,52 @@
 }
 
 .proposalBox {
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(255, 255, 255, 0.02);
   border-color: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0;
+  color: #cbd5e1;
+}
+
+.deliverablesTitle {
+  color: #ffffff;
 }
 
 .milestoneItem {
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(255, 255, 255, 0.02);
   border-color: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
+}
+
+.msName {
+  color: #ffffff;
 }
 
 .msStatusPill {
-  background: rgba(16, 185, 129, 0.12);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(6, 78, 59, 0.4);
+  color: #6ee7b7;
+}
+
+.msMeta {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.msCost {
+  color: #ffffff;
 }
 
 .cardFooter {
   border-top-color: rgba(255, 255, 255, 0.08);
 }
 
+.actionPrompt {
+  color: #94a3b8;
+}
+
 .conversionBtn {
-  background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%);
+  background: #6366f1;
   color: #ffffff;
-  box-shadow: 0 6px 20px -3px rgba(59, 130, 246, 0.45);
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.35);
 }
 
 .conversionBtn:hover {
-  box-shadow: 0 10px 26px -3px rgba(59, 130, 246, 0.6);
+  background: #4f46e5;
 }

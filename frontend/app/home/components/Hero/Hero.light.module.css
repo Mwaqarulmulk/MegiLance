@@ -1,18 +1,20 @@
-/* Hero — Light theme */
+/* Hero — Light theme tokens & colors */
 
 .hero {
-  /* Atmospheric mesh: layered radial glow spots on a pale blue-white base */
   background:
-    radial-gradient(ellipse 80% 60% at 60% -10%, rgba(69, 115, 223, 0.16) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(99, 102, 241, 0.09) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at -10% 50%, rgba(6, 182, 212, 0.06) 0%, transparent 60%),
-    linear-gradient(180deg, #fafbff 0%, #f1f5ff 60%, #fafbff 100%);
-  color: var(--text-primary-light);
+    radial-gradient(ellipse 90% 70% at 50% -15%, rgba(79, 70, 229, 0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 60%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
+    linear-gradient(180deg, #f8faff 0%, #edf3ff 50%, #f8faff 100%);
+  color: #0f172a;
 }
 
-/* Dot grid in light theme */
 .hero::before {
-  color: rgba(69, 115, 223, 0.6);
+  color: rgba(79, 70, 229, 0.35);
+}
+
+.hero::after {
+  background: radial-gradient(ellipse at center, rgba(79, 70, 229, 0.15) 0%, transparent 70%);
 }
 
 .content {
@@ -20,84 +22,162 @@
 }
 
 .title {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
 
 .subtitle {
-  color: var(--text-secondary-light);
+  color: #475569;
 }
 
-/* Glass badges */
 .badge {
-  background: rgba(255, 255, 255, 0.75);
-  color: var(--ml-blue);
-  border: 1px solid rgba(69, 115, 223, 0.25);
-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  color: #4338ca;
+  border: 1px solid rgba(79, 70, 229, 0.22);
 }
 
-/* Trust strip */
-.avatar {
-  background: linear-gradient(135deg, var(--ml-blue), #7c3aed);
-  border-color: #ffffff;
+.welcomeBadge {
+  background: rgba(236, 253, 245, 0.9);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.ctaPrimary {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
   color: #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4), 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+
+.ctaPrimary:hover {
+  box-shadow: 0 14px 32px -5px rgba(79, 70, 229, 0.5), 0 6px 14px rgba(79, 70, 229, 0.25);
+}
+
+.ctaSecondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e293b;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.ctaSecondary:hover {
+  background: #ffffff;
+  border-color: #94a3b8;
 }
 
 .trustText {
-  color: var(--text-secondary-light);
+  color: #64748b;
 }
 
-/* Stats */
+/* Command HUD Light Styles */
+.commandHudWrapper {
+  box-shadow: 0 25px 60px -15px rgba(79, 70, 229, 0.15), 0 0 0 1px rgba(79, 70, 229, 0.08);
+}
+
+.hudCard {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(226, 232, 240, 0.9);
+}
+
+.hudHeader {
+  background: rgba(248, 250, 252, 0.7);
+  border-color: rgba(226, 232, 240, 0.8);
+}
+
+.hudTabBtn {
+  background: transparent;
+  color: #64748b;
+}
+
+.hudTabBtn:hover {
+  color: #0f172a;
+}
+
+.hudTabBtnActive {
+  background: #ffffff;
+  color: #4f46e5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.liveStatusPill {
+  background: rgba(236, 253, 245, 0.85);
+  color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.hudBody {
+  background: #ffffff;
+}
+
+.presetBtn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.presetBtn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.presetBtnActive {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.hudColRight {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.estimateBigPrice {
+  color: #1e3a8a;
+}
+
+.skillChip {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+.milestoneStrip {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.hudActionBtn {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.hudActionBtn:hover {
+  background: #4338ca;
+}
+
+.escrowStepCard {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.talentCard {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
 .stats {
-  border-top: 1px solid rgba(69, 115, 223, 0.12);
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .statValue {
-  color: var(--text-primary-light);
-  background: var(--gradient-brand, linear-gradient(135deg, #4573df, #7c3aed));
+  background: linear-gradient(135deg, #1e3a8a 0%, #4f46e5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .statLabel {
-  color: var(--text-secondary-light);
+  color: #334155;
 }
 
-/* Primary CTA — gradient with layered glow */
-.ctaPrimary {
-  background: linear-gradient(135deg, #4573df 0%, #5e82e8 100%);
-  color: #ffffff;
-  box-shadow:
-    0 6px 20px rgba(69, 115, 223, 0.30),
-    0 1px 3px rgba(69, 115, 223, 0.15);
-}
-
-.ctaPrimary:hover {
-  box-shadow:
-    0 12px 32px rgba(69, 115, 223, 0.40),
-    0 4px 12px rgba(69, 115, 223, 0.20);
-}
-
-/* Secondary CTA — glass treatment */
-.ctaSecondary {
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--text-primary-light);
-  border-color: rgba(69, 115, 223, 0.2);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.ctaSecondary:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(69, 115, 223, 0.4);
-  box-shadow: 0 4px 16px rgba(69, 115, 223, 0.10);
-}
-
-/* Visual panel glass frame */
-.visualFrame {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(69, 115, 223, 0.15);
-  box-shadow:
-    0 20px 60px rgba(69, 115, 223, 0.12),
-    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+.statSub {
+  color: #64748b;
 }

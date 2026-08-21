@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
-import { HelpCircle, ChevronDown, ArrowRight } from 'lucide-react';
+import { HelpCircle, ChevronDown, ArrowRight, Sparkles } from 'lucide-react';
 import { PLATFORM_FAQS } from '@/lib/platform-config';
 import commonStyles from './HomeFAQ.common.module.css';
 import lightStyles from './HomeFAQ.light.module.css';
@@ -21,11 +21,16 @@ export default function HomeFAQ() {
 
   return (
     <div className={cn(commonStyles.container, themeStyles.container)}>
+      
+      {/* Header */}
       <div className={commonStyles.header}>
-        <span className={cn(commonStyles.badge, themeStyles.badge)}>Frequently Asked Questions</span>
+        <div className={cn(commonStyles.badge, themeStyles.badge)}>
+          <HelpCircle size={13} className="text-blue-500" />
+          <span>Frequently Asked Questions</span>
+        </div>
         <h2 className={cn(commonStyles.title, themeStyles.title)}>Got Questions? We Have Answers</h2>
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-          Everything you need to know about our free AI tools, marketplace workflows, and milestone payment safety.
+          Everything you need to know about our free AI tools, marketplace workflows, and milestone escrow protection.
         </p>
       </div>
 
@@ -48,7 +53,7 @@ export default function HomeFAQ() {
                   className={cn(commonStyles.chevron, isOpen && commonStyles.chevronRotated)}
                 />
               </button>
-              {/* Server-rendered HTML answer for crawlability */}
+              {/* Answer */}
               <div
                 id={`faq-answer-${index}`}
                 role="region"
@@ -63,9 +68,9 @@ export default function HomeFAQ() {
       </div>
 
       <div className={commonStyles.footer}>
-        <span>Have more questions?</span>
+        <span>Have more questions about working on MegiLance?</span>
         <Link href="/faq" className={cn(commonStyles.moreLink, themeStyles.moreLink)}>
-          <span>View All Platform FAQs</span>
+          <span>View Complete FAQ Hub</span>
           <ArrowRight size={14} />
         </Link>
       </div>
