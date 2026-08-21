@@ -191,6 +191,17 @@ def release_escrow(escrow_id: int, request: EscrowRelease, current_user=Depends(
             [current_user.id, platform_fee, f"Platform fee from Escrow #{escrow_id}", escrow_id, now],
         )
 
+    # Growth Engine Hook: Qualify two-sided referral reward upon milestone escrow release ($50 to referrer)
+    try:
+        from app.services.referrals_service import qualify_referral_on_milestone
+        qualify_referral_on_milestone(
+            client_id=current_user.id,
+            contract_id=escrow_core.get("contract_id"),
+            milestone_id=escrow_id,
+        )
+    except Exception as e:
+        logger.warning(f"Referral milestone qualification hook failed (non-critical): {e}")
+
     return {"message": "Escrow released successfully", "gross_amount": release_amount, "net_amount": net_payout, "platform_fee": platform_fee}
 
 

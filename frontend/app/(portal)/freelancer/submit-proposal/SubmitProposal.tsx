@@ -23,6 +23,7 @@ import {
 import api, { APIError, apiFetch } from "@/lib/api";
 import { proposalsApi, projectsApi } from "@/lib/api/projects";
 import { authApi } from "@/lib/api";
+import { getPendingProposal, clearPendingProposal } from "@/app/lib/bridges/pendingProjectBridge";
 import { ProposalData, ProposalErrors } from "./SubmitProposal.types";
 
 import Button from "@/app/components/atoms/Button/Button";
@@ -126,10 +127,44 @@ const SubmitProposal: React.FC = () => {
                     : applied.hourly_rate || null,
                 availability: "immediate",
               }));
+            } else {
+              // Hydrate from pending proposal bridge (AI Proposal Writer lead magnet)
+              const pending = getPendingProposal();
+              if (pending && (!pending.jobId || String(pending.jobId) === String(jobIdParam))) {
+                setData((prev) => ({
+                  ...prev,
+                  coverLetter: pending.coverLetter || prev.coverLetter,
+                  hourlyRate: pending.hourlyRate || prev.hourlyRate,
+                  estimatedHours: pending.estimatedHours || prev.estimatedHours || 20,
+                  availability: (pending.availability as any) || prev.availability || "immediate",
+                }));
+              }
+            }
+          } else {
+            // Unauthenticated/guest fallback hydration
+            const pending = getPendingProposal();
+            if (pending && (!pending.jobId || String(pending.jobId) === String(jobIdParam))) {
+              setData((prev) => ({
+                ...prev,
+                coverLetter: pending.coverLetter || prev.coverLetter,
+                hourlyRate: pending.hourlyRate || prev.hourlyRate,
+                estimatedHours: pending.estimatedHours || prev.estimatedHours || 20,
+                availability: (pending.availability as any) || prev.availability || "immediate",
+              }));
             }
           }
         } catch (_) {
-          // ignore inner failures
+          // Fallback storage hydration on inner check error
+          const pending = getPendingProposal();
+          if (pending && (!pending.jobId || String(pending.jobId) === String(jobIdParam))) {
+            setData((prev) => ({
+              ...prev,
+              coverLetter: pending.coverLetter || prev.coverLetter,
+              hourlyRate: pending.hourlyRate || prev.hourlyRate,
+              estimatedHours: pending.estimatedHours || prev.estimatedHours || 20,
+              availability: (pending.availability as any) || prev.availability || "immediate",
+            }));
+          }
         }
       } catch (err: any) {
         const status = err?.status ?? 0;
@@ -304,6 +339,7 @@ const SubmitProposal: React.FC = () => {
         });
       }
 
+      clearPendingProposal();
       setSubmissionState("success");
     } catch (err) {
       if (process.env.NODE_ENV === "development") {

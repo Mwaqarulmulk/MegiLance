@@ -9,6 +9,7 @@ from .v1.ai import (
     chatbot,
     client_assistant,
     fraud_detection,
+    instant_match,
     project_brief,
     skill_analyzer,
 )
@@ -207,6 +208,7 @@ api_router.include_router(gamification.router, prefix="", tags=["gamification"])
 
 # AI Project Brief & Smart Match - Client-first hiring flow
 api_router.include_router(project_brief.router, prefix="/ai", tags=["ai-project-brief"])
+api_router.include_router(instant_match.router, prefix="/ai", tags=["instant-match"])
 
 # Analytics and reporting
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])

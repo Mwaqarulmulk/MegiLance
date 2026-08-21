@@ -80,11 +80,12 @@ const COMPLEXITY_OPTIONS = [
 ];
 
 import Micro1TalentHub from "@/app/components/organisms/Micro1TalentHub/Micro1TalentHub";
-import { Sparkles, FileText } from "lucide-react";
+import InstantMatchingWizard from "@/app/components/AI/InstantMatchingWizard";
+import { Sparkles, FileText, Zap } from "lucide-react";
 
 export default function FindTalentPage() {
   const router = useRouter();
-  const [viewMode, setViewMode] = useState<"vetted" | "wizard">("vetted");
+  const [viewMode, setViewMode] = useState<"instant" | "vetted" | "wizard">("instant");
   const [step, setStep] = useState(0);
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -317,10 +318,20 @@ export default function FindTalentPage() {
         </div>
 
         {/* View Mode Switcher */}
-        <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-xl self-start md:self-auto border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-xl self-start md:self-auto border border-gray-200 dark:border-gray-700 flex-wrap gap-1">
+          <button
+            onClick={() => setViewMode("instant")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              viewMode === "instant"
+                ? "bg-indigo-600 text-white shadow-md"
+                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            }`}
+          >
+            <Zap size={14} className={viewMode === "instant" ? "text-amber-300 fill-amber-300" : "text-amber-500"} /> ⚡ 60-Second Instant Match
+          </button>
           <button
             onClick={() => setViewMode("vetted")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === "vetted"
                 ? "bg-indigo-600 text-white shadow-md"
                 : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -330,7 +341,7 @@ export default function FindTalentPage() {
           </button>
           <button
             onClick={() => setViewMode("wizard")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === "wizard"
                 ? "bg-indigo-600 text-white shadow-md"
                 : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -341,7 +352,11 @@ export default function FindTalentPage() {
         </div>
       </div>
 
-      {viewMode === "vetted" ? (
+      {viewMode === "instant" ? (
+        <div className="py-2">
+          <InstantMatchingWizard />
+        </div>
+      ) : viewMode === "vetted" ? (
         <Micro1TalentHub />
       ) : (
         <div>

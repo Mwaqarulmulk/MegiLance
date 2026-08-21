@@ -3,6 +3,16 @@
   color: var(--text-primary-dark);
 }
 
+.sectionCanvas {
+  background: var(--bg-primary-dark);
+}
+
+.sectionAlt {
+  background: var(--bg-secondary-dark);
+  border-top: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+}
+
 .gradientOrb {
-  background: radial-gradient(circle, rgba(39, 174, 96, 0.15) 0%, rgba(2, 6, 23, 0) 70%);
+  background: radial-gradient(circle, rgba(69, 115, 223, 0.1) 0%, rgba(15, 23, 42, 0) 70%);
 }

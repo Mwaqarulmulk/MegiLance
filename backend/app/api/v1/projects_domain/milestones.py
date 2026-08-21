@@ -322,6 +322,18 @@ def approve_milestone(milestone_id: int, request: MilestoneApprove, current_user
         f"/freelancer/contracts/{contract_id}",
         {"contract_id": contract_id, "milestone_id": milestone_id, "amount": milestone_amount},
     )
+
+    # Growth Engine Hook: Qualify two-sided referral reward upon milestone release ($50 to referrer)
+    try:
+        from app.services.referrals_service import qualify_referral_on_milestone
+        qualify_referral_on_milestone(
+            client_id=current_user.id,
+            contract_id=contract_id,
+            milestone_id=milestone_id,
+        )
+    except Exception as exc:
+        logger.warning(f"Referral qualification hook on milestone #{milestone_id} failed (non-critical): {exc}")
+
     return {"message": "Milestone approved and payment released", "released_amount": milestone_amount}
 
 

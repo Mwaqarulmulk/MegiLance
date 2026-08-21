@@ -1,73 +1,73 @@
 /* Features.dark.module.css */
 
 .page {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .heroTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .heroSubtitle {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .heroStatLabel {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .tab {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .tab:hover {
-  color: #f8fafc;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary-dark);
+  background: var(--bg-secondary-dark);
 }
 
 .tabCount {
   background: rgba(255, 255, 255, 0.1);
-  color: #cbd5e1;
+  color: var(--text-secondary-dark);
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .cardTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .cardDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .highlight {
-  color: #cbd5e1;
+  color: var(--text-secondary-dark);
 }
 
 .ctaCard {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 27, 75, 0.9) 100%);
-  border: 1px solid rgba(69, 115, 223, 0.3);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(69, 115, 223, 0.12) 100%);
+  border: 1px solid var(--border-dark);
+  box-shadow: var(--shadow-xl);
 }
 
 .ctaTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .ctaDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .ctaBtnSecondary {
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #f8fafc;
-  background: rgba(30, 41, 59, 0.6);
+  border-color: var(--border-dark);
+  color: var(--text-primary-dark);
+  background: var(--bg-secondary-dark);
 }
 
 .ctaBtnSecondary:hover {
-  background: rgba(51, 65, 85, 0.8);
+  background: var(--bg-tertiary-dark);
 }

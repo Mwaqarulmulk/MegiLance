@@ -17,6 +17,7 @@ import darkStyles from './ExpenseTaxCalculator.dark.module.css';
 import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 import { ExportMenu, type AIReport } from '@/app/components/AI/report';
+import LeadMagnetHireBridge from '@/app/components/AI/LeadMagnetBridge/LeadMagnetHireBridge';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -300,6 +301,12 @@ function ResultsDashboard({
             ))}
           </div>
         </div>
+
+        {/* 1-Click Hiring Bridge & Instant Matching Lead Magnet */}
+        <LeadMagnetHireBridge
+          toolName="expense-calculator"
+          result={result}
+        />
       </div>
     </div>
   );

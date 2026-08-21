@@ -1,65 +1,67 @@
 .container {
-  color: #f1f5f9;
+  color: var(--text-primary-dark);
 }
 
 .badge {
-  background-color: rgba(168, 85, 247, 0.15);
-  color: #d8b4fe;
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  background-color: rgba(155, 89, 182, 0.15);
+  color: var(--ml-purple-light);
+  border: 1px solid rgba(155, 89, 182, 0.3);
 }
 
 .title {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .stepCard {
-  background-color: #0f172a;
-  border-color: #1e293b;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .stepCard:hover {
-  border-color: #334155;
-  box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.5);
+  border-color: var(--ml-blue-light);
+  box-shadow: var(--shadow-md);
 }
 
 .stepNum {
-  color: #60a5fa;
+  color: var(--ml-blue-light);
 }
 
 .iconWrap {
-  background-color: #1e293b;
-  color: #60a5fa;
+  background-color: var(--bg-tertiary-dark);
+  color: var(--ml-blue-light);
 }
 
 .stepTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .stepDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .primaryBtn {
-  background-color: #3b82f6;
+  background-color: var(--ml-blue);
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(69, 115, 223, 0.35);
 }
 
 .primaryBtn:hover {
-  background-color: #2563eb;
+  background-color: var(--ml-blue-dark);
+  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.45);
 }
 
 .secondaryBtn {
-  background-color: #1e293b;
-  color: #cbd5e1;
-  border: 1px solid #334155;
+  background-color: var(--bg-secondary-dark);
+  color: var(--text-primary-dark);
+  border: 1px solid var(--border-dark);
 }
 
 .secondaryBtn:hover {
-  background-color: #334155;
-  color: #ffffff;
+  background-color: var(--bg-tertiary-dark);
+  border-color: var(--ml-blue-light);
 }

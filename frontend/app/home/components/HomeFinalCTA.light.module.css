@@ -1,46 +1,49 @@
 .card {
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
-  border-color: #e2e8f0;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, var(--bg-secondary-light) 0%, rgba(69, 115, 223, 0.06) 100%);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-lg);
 }
 
 .badge {
-  background-color: #ffffff;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
+  background-color: var(--bg-primary-light);
+  color: var(--ml-blue);
+  border: 1px solid rgba(69, 115, 223, 0.2);
 }
 
 .title {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .subtitle {
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .primaryBtn {
-  background-color: #2563eb;
+  background-color: var(--ml-blue);
   color: #ffffff;
+  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.3);
 }
 
 .primaryBtn:hover {
-  background-color: #1d4ed8;
+  background-color: var(--ml-blue-dark);
+  box-shadow: 0 8px 24px rgba(69, 115, 223, 0.4);
 }
 
 .secondaryBtn {
-  background-color: #ffffff;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
+  background-color: var(--bg-primary-light);
+  color: var(--text-primary-light);
+  border: 1px solid var(--border-light);
 }
 
 .secondaryBtn:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-secondary-light);
+  border-color: var(--ml-blue);
 }
 
 .trustRow {
-  border-top-color: #e2e8f0;
+  border-top-color: var(--border-light);
 }
 
 .trustItem {
-  color: #475569;
+  color: var(--text-secondary-light);
 }

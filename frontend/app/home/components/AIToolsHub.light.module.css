@@ -1,10 +1,36 @@
 .section { background: transparent; }
-.badge { background: rgba(69, 115, 223, 0.1); color: #4573df; }
-.title { color: var(--text-primary-23272f, #23272f); }
-.subtitle { color: var(--text-secondary-333333, #5a6a7a); }
-.card { background: var(--bg-primary-light); border-color: var(--border-e0e0e0, #e8edf2); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05); }
-.card:hover { border-color: #4573df; box-shadow: 0 6px 20px rgba(69, 115, 223, 0.12); }
-.cardLabel { color: var(--text-primary-23272f, #23272f); }
-.cardDesc { color: var(--text-secondary-333333, #6b7280); }
-.ctaBtn { background: #4573df; color: #ffffff; }
-.ctaBtn:hover { background: #3562cc; }
+.badge {
+  background: rgba(69, 115, 223, 0.08);
+  color: var(--ml-blue);
+  border: 1px solid rgba(69, 115, 223, 0.2);
+}
+.title {
+  color: var(--text-primary-light);
+}
+.subtitle {
+  color: var(--text-secondary-light);
+}
+.card {
+  background: var(--bg-primary-light);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+.card:hover {
+  border-color: var(--ml-blue);
+  box-shadow: 0 12px 28px -6px rgba(69, 115, 223, 0.15);
+}
+.cardLabel {
+  color: var(--text-primary-light);
+}
+.cardDesc {
+  color: var(--text-secondary-light);
+}
+.ctaBtn {
+  background: var(--ml-blue);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(69, 115, 223, 0.25);
+}
+.ctaBtn:hover {
+  background: var(--ml-blue-dark);
+  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.35);
+}

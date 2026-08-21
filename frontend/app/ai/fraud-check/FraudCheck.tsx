@@ -16,6 +16,7 @@ import lightStyles from './FraudCheck.light.module.css';
 import darkStyles from './FraudCheck.dark.module.css';
 import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, celebrate } from '@/app/components/AI/kit';
 import { ExportMenu, type AIReport } from '@/app/components/AI/report';
+import LeadMagnetHireBridge from '@/app/components/AI/LeadMagnetBridge/LeadMagnetHireBridge';
 
 interface Warning {
   category: string;
@@ -329,6 +330,14 @@ const FraudCheck: React.FC = () => {
                     </ul>
                   </div>
                 )}
+
+                {/* 1-Click Hiring Bridge & Instant Matching Lead Magnet */}
+                <LeadMagnetHireBridge
+                  toolName="fraud-check"
+                  result={analysisResult}
+                  customDescription={text}
+                  buttonText="Post Verified Safe Scope with 100% Escrow Protection"
+                />
 
                 {/* Actions */}
                 <div className={cn(commonStyles.resultActions, themeStyles.resultActions, "flex flex-wrap gap-2 items-center")}>

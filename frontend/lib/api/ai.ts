@@ -245,6 +245,57 @@ export const aiMatchingApi = {
       method: "POST",
       body: JSON.stringify({ project_id: projectId }),
     }),
+
+  instantMatch: (data: {
+    prompt: string;
+    category?: string;
+    budget_hint?: number;
+    skills?: string[];
+    experience_level?: string;
+    duration?: string;
+  }) =>
+    apiFetch<{
+      extracted_brief: {
+        title: string;
+        description: string;
+        category: string;
+        skills: string[];
+        budget_min: number;
+        budget_max: number;
+        budget_type: string;
+        estimated_days: number;
+        experience_level: string;
+        duration: string;
+      };
+      matches: Array<{
+        freelancer_id: string | number;
+        name: string;
+        title?: string;
+        avatar_url?: string;
+        hourly_rate: number;
+        match_score: number;
+        match_quality: string;
+        why_good_fit: string;
+        top_skills: string[];
+        trust_signals: {
+          is_id_verified: boolean;
+          identity_verified: boolean;
+          payment_verified: boolean;
+          jss_score: number;
+          seller_level: string;
+          verified_badge: string;
+          verified_skill_badges: string[];
+          escrow_protected: boolean;
+          client_fee_rate: number;
+          review_count: number;
+          average_rating: number;
+        };
+      }>;
+      total_matched: number;
+    }>("/ai/instant-match", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
 
 export const fraudDetectionApi = {

@@ -42,9 +42,13 @@ import {
   Zap,
   Target,
   Star,
+  Send,
+  Loader2,
 } from "lucide-react";
 
 import ProfileCompleteness from "@/app/components/organisms/ProfileCompleteness/ProfileCompleteness";
+import InstantMatchingWizard from "@/app/components/AI/InstantMatchingWizard";
+import { useGuestStateBridge } from "@/app/lib/bridges/useGuestStateBridge";
 import StatCard from "./components/StatCard";
 import ProjectCard from "./components/ProjectCard";
 import TalentCard from "./components/TalentCard";
@@ -77,6 +81,16 @@ const ClientDashboard: React.FC = () => {
   const { counts } = useUnreadCounts();
   const [showWelcomeBanner, setShowWelcomeBanner] = useState(false);
   const [dismissedError, setDismissedError] = useState(false);
+
+  const {
+    draft: instantMatchDraft,
+    hasPendingDraft,
+    clearDraft: clearInstantMatchDraft,
+    executeProjectAndInvitation,
+    isExecuting: isExecutingInstantMatch,
+  } = useGuestStateBridge();
+  const [showInstantMatchWizard, setShowInstantMatchWizard] = useState(false);
+  const [instantMatchExecutionSuccess, setInstantMatchExecutionSuccess] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -449,6 +463,98 @@ const ClientDashboard: React.FC = () => {
             </div>
           </div>
         </ScrollReveal>
+
+        {/* Resume Instant Match Banner — shown when guest/client has a pending matching draft */}
+        {hasPendingDraft && instantMatchDraft && !instantMatchExecutionSuccess && (
+          <div
+            className="p-5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/20"
+            data-testid="resume-instant-match-banner"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-amber-300 font-bold shrink-0">
+                <Zap size={24} className="fill-amber-300" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[11px] font-extrabold bg-amber-400 text-gray-950 uppercase tracking-wider">
+                    ⚡ Instant Match Ready
+                  </span>
+                  <span className="text-xs text-blue-100 font-medium">100% Escrow Protected</span>
+                </div>
+                <h3 className="text-lg font-extrabold text-white mt-1">
+                  {instantMatchDraft.extractedBrief?.title || instantMatchDraft.prompt || 'Pending Instant Match Scope'}
+                </h3>
+                <p className="text-xs text-blue-100 mt-0.5">
+                  {instantMatchDraft.selectedCandidate
+                    ? `Selected Candidate: ${instantMatchDraft.selectedCandidate.name} (${instantMatchDraft.selectedCandidate.match_score}% Match • $${instantMatchDraft.selectedCandidate.hourly_rate}/hr)`
+                    : 'Your matched talent profile and project parameters are saved.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 flex-wrap">
+              <button
+                type="button"
+                disabled={isExecutingInstantMatch}
+                onClick={async () => {
+                  try {
+                    await executeProjectAndInvitation();
+                    setInstantMatchExecutionSuccess(true);
+                  } catch (e) {
+                    console.error('Instant match execution failed', e);
+                  }
+                }}
+                className="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                data-testid="resume-instant-match-invite-btn"
+              >
+                {isExecutingInstantMatch ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
+                1-Click Direct Invite
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowInstantMatchWizard(true)}
+                className="px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-medium text-xs backdrop-blur-sm transition-all cursor-pointer"
+              >
+                View / Edit Match
+              </button>
+              <button
+                type="button"
+                onClick={() => clearInstantMatchDraft()}
+                className="px-3 py-2.5 rounded-xl text-blue-200 hover:text-white font-medium text-xs transition-all cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Modal / Section for Instant Matching Wizard if toggled */}
+        {showInstantMatchWizard && (
+          <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-gray-800">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Zap size={20} className="text-amber-500 fill-amber-500" /> 60-Second Instant Matching Engine
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowInstantMatchWizard(false)}
+                className="text-xs font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-white px-2 py-1 cursor-pointer"
+              >
+                ✕ Close
+              </button>
+            </div>
+            <InstantMatchingWizard
+              onComplete={() => {
+                setShowInstantMatchWizard(false);
+                setInstantMatchExecutionSuccess(true);
+              }}
+            />
+          </div>
+        )}
 
         {/* Welcome Banner — shown only to new clients who haven't completed onboarding */}
         {showWelcomeBanner && (

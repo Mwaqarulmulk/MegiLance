@@ -8,6 +8,7 @@ import commonStyles from './ContractBuilder.common.module.css';
 import lightStyles from './ContractBuilder.light.module.css';
 import darkStyles from './ContractBuilder.dark.module.css';
 import { Loader2, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import LeadMagnetHireBridge from '@/app/components/AI/LeadMagnetBridge/LeadMagnetHireBridge';
 
 interface ContractOptions {
   contract_types: Record<string, string>;
@@ -302,6 +303,14 @@ export default function ContractBuilder() {
               <div className={cn(commonStyles.preview, themeStyles.preview)}>
                 {result.document}
               </div>
+
+              {/* 1-Click Hiring Bridge & Instant Matching Lead Magnet */}
+              <LeadMagnetHireBridge
+                toolName="contract-builder"
+                result={{ ...result, formData }}
+                customTitle={formData.scope_description ? `Contract: ${formData.scope_description.slice(0, 45)}...` : undefined}
+                customBudgetMax={formData.total_value || undefined}
+              />
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50 p-8 h-full min-h-[400px]">

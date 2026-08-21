@@ -16,7 +16,7 @@
 }
 
 .subtitle {
-  color: var(--color-text-secondary-light);
+  color: var(--text-secondary-light);
 }
 
 .badge {
@@ -34,7 +34,7 @@
 }
 
 .statLabel {
-  color: var(--color-text-secondary-light);
+  color: var(--text-secondary-light);
 }
 
 .ctaPrimary {
@@ -55,5 +55,5 @@
 
 .ctaSecondary:hover {
   background: var(--bg-tertiary-light);
-  border-color: #cfd9e7;
+  border-color: var(--border-light);
 }

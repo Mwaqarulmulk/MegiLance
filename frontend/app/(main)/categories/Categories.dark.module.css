@@ -1,54 +1,59 @@
 /* Categories.dark.module.css */
 
 .main {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .title {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.65);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+  border-color: var(--ml-blue-light);
+  box-shadow: var(--shadow-md);
 }
 
 .cardTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .cardDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .statsSection {
-  background: rgba(15, 23, 42, 0.5);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
 }
 
 .statLabel {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .ctaTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .ctaDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .btnSecondary {
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #f8fafc;
-  background: rgba(30, 41, 59, 0.6);
+  border-color: var(--border-dark);
+  color: var(--text-primary-dark);
+  background: var(--bg-secondary-dark);
 }
 
 .btnSecondary:hover {
-  background: rgba(51, 65, 85, 0.8);
+  background: var(--bg-tertiary-dark);
 }

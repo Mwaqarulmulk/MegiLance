@@ -1,73 +1,73 @@
 /* Features.light.module.css */
 
 .page {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .heroTitle {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .heroSubtitle {
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .heroStatLabel {
-  color: #64748b;
+  color: var(--text-secondary-light);
 }
 
 .tab {
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .tab:hover {
-  color: #0f172a;
-  background: rgba(255, 255, 255, 0.5);
+  color: var(--text-primary-light);
+  background: var(--bg-secondary-light);
 }
 
 .tabCount {
   background: rgba(0, 0, 0, 0.06);
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: var(--bg-primary-light);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .cardTitle {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .cardDesc {
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .highlight {
-  color: #334155;
+  color: var(--text-secondary-light);
 }
 
 .ctaCard {
-  background: linear-gradient(135deg, rgba(238, 242, 255, 0.9) 0%, rgba(245, 243, 255, 0.9) 100%);
-  border: 1px solid rgba(69, 115, 223, 0.2);
-  box-shadow: 0 10px 40px rgba(69, 115, 223, 0.08);
+  background: linear-gradient(135deg, var(--bg-secondary-light) 0%, rgba(69, 115, 223, 0.08) 100%);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
 }
 
 .ctaTitle {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .ctaDesc {
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .ctaBtnSecondary {
-  border-color: #cbd5e1;
-  color: #1e293b;
-  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--border-light);
+  color: var(--text-primary-light);
+  background: var(--bg-primary-light);
 }
 
 .ctaBtnSecondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary-light);
 }

@@ -1,0 +1,247 @@
+/* Dark Theme Glassmorphism & High-Contrast Accents */
+
+.wizardContainer {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.wizardHeader {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+}
+
+.stepPillInactive {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.stepPillActive {
+  background: linear-gradient(90deg, #60a5fa 0%, #818cf8 100%);
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.5);
+}
+
+.headerTitle {
+  color: #f8fafc;
+}
+
+.headerSubtitle {
+  color: #94a3b8;
+}
+
+.promptTextarea {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+}
+
+.promptTextarea:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+}
+
+.promptMetaRow {
+  color: #64748b;
+}
+
+.chipsLabel {
+  color: #94a3b8;
+}
+
+.chipButton {
+  background-color: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.chipButton:hover {
+  background-color: rgba(51, 65, 85, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.chipButtonActive {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-color: #60a5fa;
+  color: #93c5fd;
+}
+
+.expandableSection {
+  background-color: rgba(30, 41, 59, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.expandableHeader {
+  color: #cbd5e1;
+}
+
+.expandableContent {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.categoryOption {
+  background-color: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.categoryOption:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #f1f5f9;
+}
+
+.categoryOptionActive {
+  background-color: rgba(59, 130, 246, 0.25);
+  border-color: #60a5fa;
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.budgetInput {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+}
+
+.briefSummaryCard {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #f8fafc;
+}
+
+.skillPill {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.candidateCard {
+  background-color: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.candidateCard:hover {
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.candidateCardSelected {
+  border-color: #60a5fa;
+  background-color: rgba(30, 58, 138, 0.25);
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+}
+
+.avatarWrapper {
+  background-color: #312e81;
+  color: #a5b4fc;
+}
+
+.candidateName {
+  color: #f8fafc;
+}
+
+.candidateTitle {
+  color: #94a3b8;
+}
+
+.candidateRate {
+  color: #34d399;
+}
+
+.trustBadgeMini {
+  background-color: rgba(15, 23, 42, 0.7);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trustBadgeHighlight {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.fitExplanation {
+  background-color: rgba(15, 23, 42, 0.5);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.selectCandidateBtn {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+}
+
+.selectCandidateBtn:hover {
+  background-color: rgba(51, 65, 85, 0.8);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.selectCandidateBtnActive {
+  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.escrowSetupCard {
+  background-color: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.selectedCandidateSummary {
+  background-color: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.formLabel {
+  color: #e2e8f0;
+}
+
+.formInput,
+.formTextarea {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  border-color: #60a5fa;
+}
+
+.riskReversalCallout {
+  background-color: rgba(6, 78, 59, 0.3);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: #6ee7b7;
+}
+
+.wizardFooter {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(15, 23, 42, 0.8);
+}
+
+.trustFooter {
+  color: #94a3b8;
+}
+
+.primaryCta {
+  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.4);
+}
+
+.primaryCta:hover {
+  background: linear-gradient(90deg, #2563eb 0%, #4f46e5 100%);
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.55);
+}
+
+.secondaryBtn {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #94a3b8;
+}
+
+.secondaryBtn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+}

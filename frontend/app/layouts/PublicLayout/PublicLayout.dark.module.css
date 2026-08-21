@@ -1,15 +1,15 @@
 /* @AI-HINT: Dark theme styles for PublicLayout. */
 .root { background: var(--bg-primary-dark); color: var(--text-primary-dark); }
-.skipLink { background: #6b8de6; color: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+.skipLink { background: var(--ml-blue-light); color: #fff; box-shadow: var(--shadow-md); }
 .header { background: rgba(15, 23, 42, 0.85); border-bottom: 1px solid var(--border-dark); }
 .nav { color: var(--text-primary-dark); }
 .navBrand { color: var(--text-primary-dark); }
-.navLink { color: var(--text-tertiary-dark); }
-.navLink:hover { color: #6b8de6; }
-.navLinkActive { color: #6b8de6; }
-.mobileToggle { color: var(--text-tertiary-dark); }
+.navLink { color: var(--text-secondary-dark); }
+.navLink:hover { color: var(--ml-blue-light); }
+.navLinkActive { color: var(--ml-blue-light); }
+.mobileToggle { color: var(--text-secondary-dark); }
 .mobileNav { background: rgba(15, 23, 42, 0.92); border-bottom: 1px solid var(--border-dark); }
-.main { background: var(--bg-primary-dark); }
-.footer { background: var(--bg-primary-dark); color: var(--text-tertiary-dark); border-top-color: var(--border-dark); }
-.footerMeta .navLink { color: var(--text-tertiary-dark); }
-.footerMeta .navLink:hover { color: #6b8de6; }
+.main { background: var(--bg-primary-dark); color: var(--text-primary-dark); }
+.footer { background: var(--bg-primary-dark); color: var(--text-secondary-dark); border-top: 1px solid var(--border-dark); }
+.footerMeta .navLink { color: var(--text-secondary-dark); }
+.footerMeta .navLink:hover { color: var(--ml-blue-light); }

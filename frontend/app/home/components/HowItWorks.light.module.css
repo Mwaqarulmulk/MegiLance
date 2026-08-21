@@ -6,38 +6,33 @@
 
 .tagline {
   color: var(--ml-blue);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(69, 115, 223, 0.08);
   border: 1px solid rgba(69, 115, 223, 0.2);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .title {
-  color: #1a202c;
+  color: var(--text-primary-light);
 }
 
 .subtitle {
-  color: #4a5568;
+  color: var(--text-secondary-light);
 }
 
 .timeline::after {
-  background: linear-gradient(to bottom, var(--ml-blue), var(--ml-orange));
+  background: linear-gradient(to bottom, var(--ml-blue), var(--ml-blue-light));
 }
 
 .timelineContent {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.05),
-    0 4px 10px -2px rgba(0, 0, 0, 0.02),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  background: var(--bg-primary-light);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .timelineContent:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary-light);
   border-color: var(--ml-blue);
-  box-shadow: 
-    0 20px 40px -5px rgba(69, 115, 223, 0.15),
-    0 10px 20px -5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 16px 36px -6px rgba(69, 115, 223, 0.15);
 }
 
 .stepNumber {
@@ -45,9 +40,9 @@
 }
 
 .stepTitle {
-  color: #1a202c;
+  color: var(--text-primary-light);
 }
 
 .stepDescription {
-  color: #4a5568;
+  color: var(--text-secondary-light);
 }

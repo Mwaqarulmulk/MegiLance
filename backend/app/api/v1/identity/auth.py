@@ -60,6 +60,7 @@ class RegisterRequest(BaseModel):
     hourly_rate: float = 0
     profile_image_url: str = ""
     location: str = ""
+    referral_code: Optional[str] = None
 
 class PasswordResetRequest(BaseModel):
     email: str
@@ -262,6 +263,14 @@ async def register(request: Request, body: RegisterRequest, response: Response):
         )
     except Exception as e:
         logger.warning(f"Failed to send verification email during registration: {e}")
+
+    # Process referral reward ($20 welcome credit) if referral_code provided
+    if body.referral_code:
+        try:
+            from app.services.referrals_service import process_registration_referral
+            process_registration_referral(user["id"], body.email, body.referral_code)
+        except Exception as e:
+            logger.warning(f"Failed to process referral for new user {user['id']}: {e}")
 
     return {
         "access_token": access_token,

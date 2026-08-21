@@ -3,12 +3,12 @@
   background: var(--bg-primary-dark);
   color: var(--text-primary-dark);
   --surface: var(--bg-secondary-dark); 
-  --surface-2: var(--border-dark); 
-  --border: #475569; 
-  --text-muted: var(--text-tertiary-dark); 
+  --surface-2: var(--bg-tertiary-dark); 
+  --border: var(--border-dark); 
+  --text-muted: var(--text-secondary-dark); 
   --brand: var(--ml-blue); 
-  --elevation-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --elevation-md: 0 4px 12px rgba(0,0,0,0.4);
+  --elevation-sm: var(--shadow-sm);
+  --elevation-md: var(--shadow-md);
 }
 
 .roleCard:hover {

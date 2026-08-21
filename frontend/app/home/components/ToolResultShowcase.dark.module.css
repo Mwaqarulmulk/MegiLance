@@ -1,81 +1,84 @@
 .wrapper {
-  color: #f1f5f9;
+  color: var(--text-primary-dark);
 }
 
 .badge {
-  background-color: rgba(34, 197, 94, 0.15);
-  color: #86efac;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background-color: rgba(39, 174, 96, 0.15);
+  color: var(--ml-green-light);
+  border: 1px solid rgba(39, 174, 96, 0.3);
 }
 
 .title {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .tabBtn {
-  background-color: #0f172a;
-  color: #94a3b8;
-  border-color: #1e293b;
+  background-color: var(--bg-secondary-dark);
+  color: var(--text-secondary-dark);
+  border-color: var(--border-dark);
 }
 
 .tabBtn:hover {
-  border-color: #334155;
-  color: #f8fafc;
+  border-color: var(--ml-blue-light);
+  color: var(--text-primary-dark);
 }
 
 .tabBtnActive {
-  background-color: #3b82f6;
+  background-color: var(--ml-blue);
   color: #ffffff;
-  border-color: #3b82f6;
+  border-color: var(--ml-blue);
+  box-shadow: 0 4px 12px rgba(69, 115, 223, 0.35);
 }
 
 .showcaseCard {
-  background-color: #0f172a;
-  border-color: #1e293b;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  background-color: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-md);
 }
 
 .inputBar {
-  background-color: #1e293b;
-  border-bottom-color: #334155;
+  background-color: var(--bg-tertiary-dark);
+  border-bottom-color: var(--border-dark);
 }
 
 .inputText {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .resultBadge {
-  background-color: #1e293b;
-  color: #94a3b8;
+  background-color: var(--bg-tertiary-dark);
+  color: var(--text-secondary-dark);
 }
 
 .resultTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .milestoneItem {
-  background-color: #1e293b;
-  border-color: #334155;
+  background-color: var(--bg-tertiary-dark);
+  border-color: var(--border-dark);
 }
 
 .proposalBox {
-  background-color: #1e293b;
-  border-color: #334155;
+  background-color: var(--bg-tertiary-dark);
+  border-color: var(--border-dark);
 }
 
 .cardFooter {
-  border-top-color: #1e293b;
+  border-top-color: var(--border-dark);
 }
 
 .conversionBtn {
-  background-color: #3b82f6;
+  background-color: var(--ml-blue);
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(69, 115, 223, 0.35);
 }
 
 .conversionBtn:hover {
-  background-color: #2563eb;
+  background-color: var(--ml-blue-dark);
+  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.45);
 }

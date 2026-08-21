@@ -1,40 +1,42 @@
 /* Dark theme for DashboardShowcase */
 .section {
-  background: var(--bg-primary-dark);
+  background: transparent;
 }
 
 .title {
-  color: white;
+  color: var(--text-primary-dark);
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .ctrlBtnActive {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--bg-tertiary-dark);
+  border-color: var(--ml-blue-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .ctrlTitle {
-  color: white;
+  color: var(--text-primary-dark);
 }
 
 .ctrlDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .browserFrame {
-  background: #0c121e;
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-xl);
 }
 
 .browserHeader {
-  background: #0f172a;
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--bg-primary-dark);
+  border-color: var(--border-dark);
 }
 
 .browserUrl {
-  color: #64748b;
-  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-secondary-dark);
+  background: var(--bg-tertiary-dark);
 }

@@ -1,60 +1,60 @@
 .container {
-  color: #1e293b;
+  color: var(--text-primary-light);
 }
 
 .badge {
-  background-color: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
+  background-color: rgba(69, 115, 223, 0.1);
+  color: var(--ml-blue);
+  border: 1px solid rgba(69, 115, 223, 0.2);
 }
 
 .title {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .subtitle {
-  color: #475569;
+  color: var(--text-secondary-light);
 }
 
 .card {
-  background-color: #ffffff;
-  border-color: #e2e8f0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-primary-light);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
-  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+  border-color: var(--ml-blue);
 }
 
 .iconWrap {
-  background-color: #f1f5f9;
-  color: #2563eb;
+  background-color: var(--bg-secondary-light);
+  color: var(--ml-blue);
 }
 
 .pill {
-  background-color: #f8fafc;
-  color: #334155;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-secondary-light);
+  color: var(--text-secondary-light);
+  border: 1px solid var(--border-light);
 }
 
 .cardTitle {
-  color: #0f172a;
+  color: var(--text-primary-light);
 }
 
 .cardDesc {
-  color: #64748b;
+  color: var(--text-secondary-light);
 }
 
 .bulletItem {
-  color: #334155;
+  color: var(--text-secondary-light);
 }
 
 .ctaButton {
-  background-color: #0f172a;
-  color: #ffffff;
+  background-color: var(--text-primary-light);
+  color: var(--bg-primary-light);
 }
 
 .ctaButton:hover {
-  background-color: #1e293b;
+  background-color: var(--ml-blue);
 }

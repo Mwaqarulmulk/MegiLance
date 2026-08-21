@@ -75,15 +75,17 @@
 .mobileNavOpen { display: block; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .main {
-  padding: 2.5rem 1.5rem;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
   overflow: visible;
 }
 
 /* Max-width container for consistent rhythm */
 .container {
-  max-width: 1280px;
-  margin: 0 auto;
   width: 100%;
+  margin: 0 auto;
 }
 
 /* Section rhythm helpers */
@@ -98,11 +100,11 @@
 .divider {
   width: 100%;
   height: 1px;
-  background: var(--border, rgba(0,0,0,0.08));
+  background: var(--border-light);
 }
 .footer {
   padding: 2rem 1.5rem;
-  border-top: 1px solid var(--border-color, rgba(0,0,0,0.08));
+  border-top: 1px solid var(--border-light);
 }
 .footerMeta {
   display: flex;
@@ -111,17 +113,8 @@
 
 /* Responsive adjustments */
 @media (min-width: 768px) {
-  .main {
-    padding: 3rem 2rem;
-  }
   .nav {
     padding: 0.875rem 2rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .main {
-    padding: 3.5rem 2.5rem;
   }
 }
 
@@ -130,7 +123,4 @@
   .mobileToggle { display: inline-flex; align-items: center; justify-content: center; }
   .mobileNav { display: none; padding: 0.75rem 1.25rem; }
   .mobileNavOpen { display: grid; gap: 0.5rem; }
-  .main {
-    padding: 1.5rem 1rem;
-  }
 }

@@ -1,59 +1,61 @@
 /* Pricing.dark.module.css */
 
 .title {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .howCard {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .howTitle {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .howDesc {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }
 
 .tableWrapper {
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .comparisonTable {
-  color: #f1f5f9;
+  color: var(--text-primary-dark);
 }
 
 .tableHead {
-  background: rgba(30, 41, 59, 0.8);
-  color: #f8fafc;
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: var(--bg-tertiary-dark);
+  color: var(--text-primary-dark);
+  border-bottom-color: var(--border-dark);
 }
 
 .tableRow {
-  border-bottom-color: rgba(255, 255, 255, 0.05);
+  border-bottom-color: var(--border-dark);
 }
 
 .tableRow:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-tertiary-dark);
 }
 
 .tableCell {
-  color: #cbd5e1;
+  color: var(--text-secondary-dark);
 }
 
 .faqItem {
-  background: rgba(15, 23, 42, 0.65);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .faqQuestion {
-  color: #f8fafc;
+  color: var(--text-primary-dark);
 }
 
 .faqAnswer {
-  color: #94a3b8;
+  color: var(--text-secondary-dark);
 }

@@ -1,42 +1,54 @@
 /* @AI-HINT: Clients page dark theme — colors only */
 .container {
     background: var(--bg-primary-dark);
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .hero {
-    background: linear-gradient(135deg, #020617 0%, #1e1b4b 100%);
-    color: #f1f5f9;
+    background: linear-gradient(135deg, var(--bg-primary-dark) 0%, rgba(69, 115, 223, 0.12) 100%);
+    color: var(--text-primary-dark);
 }
 .heroSubtitle {
-    color: #94a3b8;
+    color: var(--text-secondary-dark);
 }
 .btnPrimary {
-    background: #4573df;
+    background: var(--ml-blue);
     color: #ffffff;
+    box-shadow: 0 4px 14px rgba(69, 115, 223, 0.35);
+}
+.btnPrimary:hover {
+    background: var(--ml-blue-dark);
+    box-shadow: 0 6px 20px rgba(69, 115, 223, 0.45);
 }
 .btnOutline {
-    color: #f1f5f9;
-    border: 2px solid #475569;
+    color: var(--text-primary-dark);
+    border: 1px solid var(--border-dark);
+    background: var(--bg-secondary-dark);
+}
+.btnOutline:hover {
+    background: var(--bg-tertiary-dark);
 }
 .featuresTitle {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .featureCard {
-    border: 1px solid #334155;
+    border: 1px solid var(--border-dark);
     background: var(--bg-secondary-dark);
+    box-shadow: var(--shadow-sm);
 }
 .featureCard:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    border-color: var(--ml-blue-light);
+    box-shadow: var(--shadow-md);
 }
 .featureCardTitle {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .featureCardText {
-    color: #94a3b8;
+    color: var(--text-secondary-dark);
 }
 .ctaSection {
-    background: var(--bg-secondary-dark);
+    background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(69, 115, 223, 0.12) 100%);
+    border-top: 1px solid var(--border-dark);
 }
 .ctaTitle {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }

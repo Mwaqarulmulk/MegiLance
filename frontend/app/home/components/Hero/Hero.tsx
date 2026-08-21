@@ -11,6 +11,7 @@ import darkStyles from './Hero.dark.module.css';
 import { Sparkles, Shield, ArrowRight, Bot } from 'lucide-react';
 import { PLATFORM_FACTS, PRICING_CONFIG, PLATFORM_STATUS } from '@/lib/platform-config';
 import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
+import InstantMatchingWizard from '@/app/components/AI/InstantMatchingWizard';
 
 const defaultStats = [
   { label: 'Free AI Freelance Tools', value: `${PLATFORM_FACTS.AI_TOOLS_COUNT} Tools` },
@@ -68,6 +69,11 @@ export default function Hero({ stats = defaultStats }) {
           )}
         </p>
 
+        {/* 60-Second Instant Matching Wizard Centerpiece */}
+        <div className="w-full my-4 text-left">
+          <InstantMatchingWizard className="shadow-2xl" />
+        </div>
+
         <div className={cn(commonStyles.actions, themeStyles.actions)}>
           {isAuthenticated ? (
             <>
@@ -91,7 +97,7 @@ export default function Hero({ stats = defaultStats }) {
         </div>
 
         {!isAuthenticated && (
-          <div className="mt-3 text-center">
+          <div className="mt-1 text-center">
             <Link href="/explore" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
               <span>Find Freelance Work</span>
               <ArrowRight size={14} />
@@ -100,7 +106,7 @@ export default function Hero({ stats = defaultStats }) {
         )}
 
         {/* Hero Lottie Feature Animation Showcase */}
-        <div className="mt-8 mb-4 w-full flex justify-center">
+        <div className="mt-4 mb-2 w-full flex justify-center">
           <BrandLottiePlayer
             src="/lottie/01_ai_saas_dashboard.json"
             ariaLabel="MegiLance AI SaaS Dashboard Animation"

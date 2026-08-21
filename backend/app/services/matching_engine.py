@@ -249,14 +249,22 @@ class MatchingEngine:
         Calculate how well freelancer's rate matches project budget
         Returns score from 0.0 to 1.0
         """
-        hourly_rate = freelancer.get("hourly_rate")
-        budget_max = project.get("budget_max")
-        if not hourly_rate or not budget_max:
+        raw_hourly = freelancer.get("hourly_rate")
+        raw_budget_max = project.get("budget_max")
+        raw_budget_min = project.get("budget_min")
+        
+        if raw_hourly is None or raw_budget_max is None:
             return 0.5  # Neutral if no data
         
-        hourly_rate = float(hourly_rate)
-        budget_max = float(budget_max)
-        budget_min = float(project.get("budget_min") or 0)
+        try:
+            hourly_rate = float(raw_hourly)
+            budget_max = float(raw_budget_max)
+            budget_min = float(raw_budget_min) if raw_budget_min is not None else 0.0
+        except (ValueError, TypeError):
+            return 0.5  # Neutral if non-numeric or malformed
+        
+        if hourly_rate <= 0 or budget_max <= 0:
+            return 0.5  # Neutral if non-positive to prevent ZeroDivisionError
         
         # For hourly projects
         if project.get("budget_type") == "hourly":

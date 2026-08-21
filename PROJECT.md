@@ -1,60 +1,161 @@
-# Project: MegiLance 2.0 Freelancing Platform (Phase 2)
+# Project: MegiLance High-Growth Marketplace & Growth Engine (Round 3)
 
 ## Architecture
-MegiLance is a modern full-stack freelancing and gig marketplace built with:
-- **Frontend**: Next.js 16 + React 19 + TypeScript + Tailwind CSS + Radix UI + CSS Modules (`frontend/`)
-- **Backend**: FastAPI + Python 3.11+ + SQLAlchemy 2.0 + Turso/LibSQL (`backend/`)
-- **AI Hiring Assistant & Intelligence**: Multi-model DO AI LLM gateway (`deepseek-v4-pro`, `llama3.3-70b`), 9-factor talent matching engine, multi-dataset price estimation engine, intent classifier, and propose-then-confirm action executor (`backend/app/services/ai/`, `backend/app/api/v1/ai/`)
-- **Real-Time Communication**: Socket.io ASGI server for presence, real-time messaging, typing, room channels (`backend/app/core/websocket.py`)
-- **Transactional Notifications**: Multi-channel notification pipeline (In-app alerts + SMTP / Resend email triggers)
-- **Database & Storage**: Turso cloud SQLite with double-checked locking singleton connection pool and LRU+TTL read query cache
+MegiLance is a full-stack AI-powered freelance marketplace combining a Next.js 16 + React 19 + TypeScript frontend with a FastAPI + Python 3.11+ backend backed by Turso/LibSQL database, SQLAlchemy 2.0 ORM, and Pydantic validation schemas.
+
+Round 3 introduces the High-Growth Engine spanning four interconnected pillars:
+1. **AI Lead Magnet Bridge**: Converts unauthenticated visitors of all 11 free AI productivity tools into paying clients and active proposals via `<HireSpecialistBridge />` and `<ProposalProjectBridge />`.
+2. **60-Second Instant Matching Onboarding Wizard**: Frictionless 3-step natural language matching on homepage and client dashboard with real-time candidate ranking and zero-data-loss guest registration persistence.
+3. **Trust Engine & Risk Reversal Badges**: Universal trust signals ("100% Milestone Escrow Protection", "0% Client Fees", "Identity Verified", "Skills Score", "Verified Reviews") embedded across profile pages, directory cards, match cards, and escrow checkout workrooms.
+4. **Viral Marketplace Referral & Growth Loops**: Two-sided referral economics ($20 welcome credit for referee, $50 milestone bonus for referrer), shareable referral links, milestone success celebration share modals, and embeddable freelancer portfolio badges.
+
+```
+                               ┌──────────────────────────────────────────────┐
+                               │             MegiLance Marketplace            │
+                               └──────────────────────┬───────────────────────┘
+                                                      │
+         ┌─────────────────────────┬──────────────────┴──────────────┬─────────────────────────┐
+         ▼                         ▼                                 ▼                         ▼
+┌───────────────────┐    ┌────────────────────┐            ┌───────────────────┐     ┌───────────────────┐
+│ Track 1: AI Lead  │    │ Track 2: 60-Second │            │ Track 3: Trust    │     │ Track 4: Viral    │
+│ Magnet Bridge     │    │ Instant Match      │            │ Engine Badges     │     │ Growth Loops      │
+├───────────────────┤    ├────────────────────┤            ├───────────────────┤     ├───────────────────┤
+│ • 11 AI Tools     │    │ • 1-Sentence Input │            │ • 100% Escrow     │     │ • ?ref= in Auth   │
+│ • HireSpecialist  │    │ • AI Extractor     │            │   Protection      │     │ • $20/$50 Credits │
+│ • ProposalMatch   │    │ • Top 3 Candidates │            │ • 0% Client Fees  │     │ • Milestone Share │
+│ • State Bridges   │    │ • Guest Zero Loss  │            │ • Verified Badges │     │ • Embed Badges    │
+└───────────────────┘    └────────────────────┘            └───────────────────┘     └───────────────────┘
+```
+
+---
 
 ## Feature Inventory
+
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | Auth & Onboarding | JWT login, registration, password hashing, role selection (Client/Freelancer/Admin) | M1, M3 | Survey |
-| 2 | Role Switching | Portal layout authorization, seamless persona toggle in profile navbar | M2, M3 | Survey |
-| 3 | Project & Job Posting | Multi-step job wizard, budget, skills, category, instant broadcast | M1, M2, M3 | Survey |
-| 4 | Job Search & Filtering | Category, budget type, experience level, query parameters | M1, M3 | Survey |
-| 5 | Proposal Submission | 3-step proposal wizard, milestone structuring, bid validation | M2, M3 | Survey |
-| 6 | Proposal Comparison & Bidding | Client proposal matrix, AI fraud check, counter-offers, shortlisting | M2, M3 | Survey |
-| 7 | Atomic Contract Inception | Accept proposal -> create contract, create pending escrow, auto-reject rivals | M1, M3 | Survey |
-| 8 | Escrow Custody & Funding | Wallet debit, escrow lock, support for Stripe/Crypto/Pakistan gateways | M1, M3 | Survey |
-| 9 | Milestone Lifecycle | Client creation, freelancer delivery submission, client review/approval | M1, M3 | Survey |
-| 10 | Escrow Fund Release | Atomic balance release, platform fee deduction, wallet credit | M1, M3 | Survey |
-| 11 | Deliverables & Signatures | Route prefix normalization, file attachment submission, e-signatures | M1, M2 | Survey |
-| 12 | Real-Time Chat & Rooms | Socket.io room joins, message delivery, typing indicator, live presence | M3 | Survey |
-| 13 | Notification Pipeline | In-app alerts and transactional email event triggers across key milestones | M3 | Survey |
-| 14 | Two-Way Reviews & Ratings | 5-star rating breakdown, comment sentiment, JSS re-calculation | M3 | Survey |
-| 15 | Dispute Resolution | Client/Freelancer dispute filing, evidence submission, admin arbitration | M1, M3 | Survey |
-| 16 | Admin User & Platform Oversight | User moderation, status toggling, support ticket visibility, platform metrics | M1, M3 | Survey |
-| 17 | Talent Invitations Router | Direct invitation endpoints for client inviting freelancers to jobs | M1 | Survey |
-| 18 | Toast & Feedback Polish | Migration of native alert dialogs to unified Toast system across 9 views | M2 | Survey |
-| 19 | AI Hiring Assistant Natural NLP | Conversational project requirement extraction, intent parsing, skill inference | M6 (Phase 2) | Survey Phase 2 |
-| 20 | AI Talent Directory Matching | 9-factor ranking engine, verified skill matching, rich talent cards with action buttons | M6 (Phase 2) | Survey Phase 2 |
-| 21 | AI Market-Rate Price Estimation | Multi-tier complexity pricing, historical DB aggregations, regional PPP adjustment | M6 (Phase 2) | Survey Phase 2 |
-| 22 | AI Agentic Actions & Workflows | Propose-then-confirm project drafting, talent invitations, account status checks | M6 (Phase 2) | Survey Phase 2 |
-| 23 | Multi-Tier E2E Test Suite | 195 backend pytest tests & 63 Jest frontend unit tests validating all flows | M7 (Phase 2) | Survey Phase 2 |
-| 24 | Forensic Victory Audit Certification | Static analysis, runtime tracing, and zero-compromise integrity verification | M8 (Phase 2) | Survey Phase 2 |
+| 1 | 11 AI Tools 1-Click Hiring Bridge | Unified `<HireSpecialistBridge />` on all 11 AI tool result views pre-populating project creation and matching | M1 | survey |
+| 2 | Live Proposal Project Matcher | Real-time query of open projects in AI Proposal Writer (`<ProposalProjectBridge />`) with 1-click pre-filled application | M1 | survey |
+| 3 | ProjectWizard & SubmitProposal State Persistence | Seamless reading of `megilance_pending_project` and `megilance_pending_proposal` from browser storage | M1 | survey |
+| 4 | Instant Match AI Backend (`POST /api/v1/ai/instant-match`) | Natural language requirement parsing, budget/timeline estimation, and top 3 candidate ranking via `MatchingEngine` | M2 | survey |
+| 5 | Instant Hire/Invite Backend (`POST /api/v1/ai/instant-hire-invite`) | Authenticated client endpoint creating project and dispatching talent invitations / milestone escrow | M2 | survey |
+| 6 | 60-Second Instant Match Frontend Wizard (`<InstantMatchWizard />`) | Interactive 3-step wizard with 5 sample chips, real-time match radar, and candidate selection | M2 | survey |
+| 7 | Multi-Surface Wizard Mounting & Guest Bridge | Hero homepage integration, client dashboard integration, and zero-data-loss registration persistence | M2 | survey |
+| 8 | Shared Trust Badge Components | Reusable `<TrustBadgeGroup />`, `<RiskReversalGuaranteeBox />`, `<VerifiedReviewBadge />` | M3 | survey |
+| 9 | Directory & Profile Trust Integration | Embedding trust signals across `UserProfile.tsx`, `TalentClient.tsx`, `AIMatchCard.tsx`, and `/freelancers/[id]` | M3 | survey |
+| 10 | Escrow & Checkout Risk Reversal Banners | "100% Milestone Escrow Protection" & "0% Client Fees" in `MilestoneEscrowManager.tsx` and payment flows | M3 | survey |
+| 11 | Two-Sided Referral Signup Hook | Capturing `?ref=` / `?referral_code=` in `auth.py` and `Signup.tsx`, linking users and awarding $20 welcome credit | M4 | survey |
+| 12 | Milestone Completion Referral Bonus | Awarding $50 referrer reward in `escrow.py` upon referee's first milestone completion | M4 | survey |
+| 13 | Milestone Success Share Celebration Modal | Interactive modal post-milestone release for 1-click sharing to LinkedIn/X/WhatsApp with embedded referral links | M4 | survey |
+| 14 | Embeddable Freelancer Credential Badges | `<ShareableCertificateModal />` and embeddable SVG/HTML badge widget for external freelancer portfolios | M4 | survey |
+| 15 | Full E2E Test Suite & Hardening | Complete backend Pytest coverage, Jest unit tests, and Next.js production build verification | M5 | survey |
 
-## Milestones (Phase 2)
+---
+
+## Milestones
+
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M6 | AI Chatbot Hiring Assistant Refinements & Integration | Fix action button URLs, fix welcome API method, add `/ai/estimate-price` compatibility, upgrade `FreelancerCards` to rich interactive cards with avatar/match score/actions, align `/ai/chatbot` | None | DONE |
-| M7 | Multi-Tier Test Suite & Adversarial Validation | Run full backend pytest suites (195 tests) including AI hiring assistant flows, frontend Jest tests (63 tests), and Next.js production build (`npm run build`) | M6 | DONE |
-| M8 | Forensic Victory Audit & Integrity Certification | Forensic auditor verification of all AI and marketplace implementations | M7 | DONE |
+| M1 | AI Tool Lead Magnet & 1-Click Hiring Bridge | 11 AI tool conversion bridges, `<HireSpecialistBridge />`, `<ProposalProjectBridge />`, `SubmitProposal` & `ProjectWizard` state bridges | none | IN_PROGRESS |
+| M2 | 60-Second Instant Matching Client Onboarding Wizard | Backend instant match & invite endpoints, `<InstantMatchWizard />`, homepage/dashboard mounting, guest persistence | none | PLANNED |
+| M3 | Trust Engine & High-Conversion Risk Reversal Badges | Shared trust badge components, profile/directory/match/escrow embeddings, risk reversal guarantees | none | PLANNED |
+| M4 | Viral Marketplace Referral & Growth Loops | Referral code capture in auth, $20/$50 reward triggers in escrow release, milestone share modal, embed badges | M3 | PLANNED |
+| M5 | Full System E2E Testing & Hardening | Backend pytest suites, Jest tests, production build verification, end-to-end flow validation | M1, M2, M3, M4 | PLANNED |
+
+---
 
 ## Interface Contracts
-### AI Hiring Assistant Endpoints
-- `POST /api/v1/ai/client-assistant/chat` -> `{ reply, suggestions, tool_results, action_buttons, conversation_id }`
-- `GET /api/v1/ai/client-assistant/welcome` -> `{ message, suggestions, quick_actions, role }`
-- `POST /api/v1/ai/client-assistant/actions/post-project` -> `{ success, project_id, message }`
-- `POST /api/v1/ai/smart-match` -> `{ matches: [{ freelancer_id, full_name, match_score, why_good_fit, skills, rating, hourly_rate }] }`
-- `POST /api/v1/price-estimator/estimate` -> `{ estimated_min_budget, estimated_max_budget, recommended_rate, duration_days, phase_breakdown }`
+
+### AI Tools ↔ Project Creation (`sessionStorage['megilance_pending_project']`)
+```typescript
+interface SpecialistScopeData {
+  title: string;
+  description?: string;
+  category: string;
+  skills: string[];
+  budgetMin: number;
+  budgetMax: number;
+  budgetType: 'fixed' | 'hourly';
+  duration: string;
+  experienceLevel: 'entry' | 'intermediate' | 'expert';
+  milestones?: Array<{ name: string; weeks: number; amount: number; description?: string }>;
+  deliverables?: string[];
+  sourceTool: string;
+}
+```
+
+### AI Proposal Writer ↔ Proposal Submission (`sessionStorage['megilance_pending_proposal']`)
+```typescript
+interface PendingProposalData {
+  jobId?: string | number;
+  coverLetter: string;
+  hourlyRate?: number;
+  estimatedHours?: number;
+  suggestedTimeline?: string;
+  sourceTool: 'proposal-writer';
+}
+```
+
+### Instant Match API (`POST /api/v1/ai/instant-match`)
+- **Request**: `{ prompt: string, category?: string, budget_override?: number }`
+- **Response**:
+```json
+{
+  "project_title": "Full-Stack Web App",
+  "project_description": "...",
+  "category": "Web Development",
+  "extracted_skills": ["Next.js", "FastAPI", "TypeScript"],
+  "estimated_budget_min": 1500.0,
+  "estimated_budget_max": 3500.0,
+  "estimated_timeline": "2-4 weeks",
+  "complexity": "intermediate",
+  "candidates": [
+    {
+      "freelancer_id": 14,
+      "display_name": "Alex Rivera",
+      "headline": "Senior Full-Stack Engineer",
+      "hourly_rate": 65.0,
+      "rating": 4.95,
+      "review_count": 42,
+      "completed_projects": 38,
+      "match_score": 96,
+      "match_quality": "excellent",
+      "why_good_fit": "Strong expertise in Next.js and FastAPI with 99% JSS",
+      "matched_skills": ["Next.js", "FastAPI", "TypeScript"],
+      "seller_level": "Top Rated Plus"
+    }
+  ],
+  "ai_confidence": 0.95
+}
+```
+
+### Referral Registration & Escrow Completion
+- **Registration**: `POST /api/v1/identity/register` accepts `referral_code: Optional[str]`. Links `referred_user_id` and awards $20 welcome project credit.
+- **Milestone Release**: `POST /api/v1/escrow/{id}/release` checks if client/freelancer is referee on first completed milestone >= $50 -> credits $50 to referrer and sets referral status to `'completed'`.
+
+---
 
 ## Code Layout
-- `backend/app/api/v1/ai/`: AI feature routers (`client_assistant.py`, `ai_matching.py`, `project_brief.py`, `ai_services.py`, `chatbot.py`)
-- `backend/app/services/ai/` & `services/`: AI business logic (`matching_engine.py`, `price_estimator_engine.py`, `ai_chatbot.py`, `llm_gateway.py`)
-- `frontend/app/components/AI/`: UI components (`ChatbotAgent/`, `AIMatchCard/`, `AIPriceEstimator/`, `AIRateEstimator/`, `AIProposalAssistant/`)
-- `frontend/app/ai/chatbot/`: Dedicated full-page AI assistant (`ChatbotEnhanced.tsx`)
-- `frontend/lib/api/ai.ts`: Typed API client for all AI assistant operations
+
+### Backend (`backend/app/`)
+- `api/v1/ai/instant_match.py`: New instant match & invite endpoints
+- `api/v1/identity/auth.py`: Registration schema and handler updated with `referral_code`
+- `api/v1/payments_domain/escrow.py`: Escrow release handler updated with milestone referral reward triggers
+- `api/routers.py`: Mounts `instant_match.py` router
+- `tests/test_ai_instant_match.py`: Test suite for instant match and talent invitations
+- `tests/test_referral_loops.py`: Test suite for two-sided referral rewards and escrow hooks
+
+### Frontend (`frontend/app/`)
+- `components/AI/HireSpecialistBridge/`: Reusable `<HireSpecialistBridge />` component
+- `components/AI/ProposalProjectBridge/`: Reusable `<ProposalProjectBridge />` component
+- `components/Onboarding/InstantMatchWizard/`: Reusable `<InstantMatchWizard />` component
+- `components/Trust/`: Reusable `<TrustBadgeGroup />`, `<RiskReversalGuaranteeBox />`, `<VerifiedReviewBadge />`, `<EscrowProtectionBanner />`
+- `components/Referrals/`: `<MilestoneSuccessShareModal />`, `<ShareableCertificateModal />`, `<EmbeddableBadgeWidget />`
+- `ai/price-estimator/PriceEstimatorPro.tsx`: Integrates `<HireSpecialistBridge />`
+- `ai/scope-planner/ScopePlanner.tsx`: Integrates `<HireSpecialistBridge />`
+- `ai/proposal-writer/ProposalWriter.tsx`: Integrates `<ProposalProjectBridge />`
+- `home/components/Hero/Hero.tsx` & `home/Home.tsx`: Mounts `<InstantMatchWizard />`
+- `(portal)/client/dashboard/ClientDashboard.tsx`: Mounts `<InstantMatchWizard compact />`
+- `components/Profile/UserProfile/UserProfile.tsx`: Mounts trust badges & guarantee box
+- `talent/TalentClient.tsx`: Embeds trust badge pills on talent cards
+- `components/organisms/Workroom/MilestoneEscrowManager.tsx`: Integrates escrow guarantee callouts and `<MilestoneSuccessShareModal />`
+- `(auth)/signup/Signup.tsx`: Captures `?ref=` query param and handles `megilance_instant_match_state`

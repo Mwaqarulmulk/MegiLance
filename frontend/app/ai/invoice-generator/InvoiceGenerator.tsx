@@ -19,6 +19,7 @@ import darkStyles from './InvoiceGenerator.dark.module.css';
 import { AuroraBackground, ShineBadge, AnimatedGradientText, NumberTicker, Meteors, BorderBeam, celebrate } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 import { ExportMenu, type AIReport } from '@/app/components/AI/report';
+import LeadMagnetHireBridge from '@/app/components/AI/LeadMagnetBridge/LeadMagnetHireBridge';
 
 /* ============================================================================
    Types
@@ -1022,6 +1023,12 @@ function ResultsDashboard({ result, onReset, onCopy, cs, ts }: ResultsDashboardP
           </div>
         </motion.div>
       </div>
+
+      {/* 1-Click Hiring Bridge & Instant Matching Lead Magnet */}
+      <LeadMagnetHireBridge
+        toolName="invoice-generator"
+        result={result}
+      />
 
       {/* Actions */}
       <div className={cn(cs.actionsBar, "flex flex-wrap gap-2 items-center")}>

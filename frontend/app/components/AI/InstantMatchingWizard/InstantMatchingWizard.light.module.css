@@ -1,0 +1,243 @@
+/* Light Theme Color Tokens & Gradients */
+
+.wizardContainer {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+.wizardHeader {
+  border-bottom-color: #f1f5f9;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.stepPillInactive {
+  background-color: #e2e8f0;
+}
+
+.stepPillActive {
+  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+}
+
+.headerTitle {
+  color: #0f172a;
+}
+
+.headerSubtitle {
+  color: #64748b;
+}
+
+.promptTextarea {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.promptTextarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.promptMetaRow {
+  color: #94a3b8;
+}
+
+.chipsLabel {
+  color: #475569;
+}
+
+.chipButton {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.chipButton:hover {
+  background-color: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.chipButtonActive {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+.expandableSection {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.expandableHeader {
+  color: #334155;
+}
+
+.expandableContent {
+  border-top-color: #e2e8f0;
+}
+
+.categoryOption {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.categoryOption:hover {
+  border-color: #94a3b8;
+}
+
+.categoryOptionActive {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.budgetInput {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.briefSummaryCard {
+  background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+  border-color: #bfdbfe;
+  color: #1e293b;
+}
+
+.skillPill {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.candidateCard {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.candidateCard:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.candidateCardSelected {
+  border-color: #3b82f6;
+  background-color: #f8faff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.avatarWrapper {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.candidateName {
+  color: #0f172a;
+}
+
+.candidateTitle {
+  color: #64748b;
+}
+
+.candidateRate {
+  color: #059669;
+}
+
+.trustBadgeMini {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.trustBadgeHighlight {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.fitExplanation {
+  background-color: #f8fafc;
+  color: #475569;
+  border: 1px solid #f1f5f9;
+}
+
+.selectCandidateBtn {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.selectCandidateBtn:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.selectCandidateBtnActive {
+  background: linear-gradient(90deg, #2563eb 0%, #4f46e5 100%);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.escrowSetupCard {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.selectedCandidateSummary {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.formLabel {
+  color: #1e293b;
+}
+
+.formInput,
+.formTextarea {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  border-color: #3b82f6;
+}
+
+.riskReversalCallout {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.wizardFooter {
+  border-top-color: #f1f5f9;
+  background-color: #f8fafc;
+}
+
+.trustFooter {
+  color: #64748b;
+}
+
+.primaryCta {
+  background: linear-gradient(90deg, #2563eb 0%, #4f46e5 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.primaryCta:hover {
+  background: linear-gradient(90deg, #1d4ed8 0%, #4338ca 100%);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+}
+
+.secondaryBtn {
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.secondaryBtn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}

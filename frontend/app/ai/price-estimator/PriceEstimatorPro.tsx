@@ -32,6 +32,7 @@ import {
   celebrate,
 } from '@/app/components/AI/kit';
 import { ExportMenu, UserGuide, type AIReport } from '@/app/components/AI/report';
+import LeadMagnetHireBridge from '@/app/components/AI/LeadMagnetBridge/LeadMagnetHireBridge';
 
 /* ============================================================================
    Types
@@ -1665,31 +1666,14 @@ ${result.hours_breakdown ? `• Core Development: ${result.hours_breakdown.core_
           <RegionalAnalysisCard analysis={regional_analysis} cs={cs} ts={ts} />
         )}
 
+        {/* 1-Click Hiring Bridge & Instant Matching Lead Magnet */}
+        <LeadMagnetHireBridge
+          toolName="price-estimator"
+          result={result}
+        />
+
         {/* Pricing Guide - full width */}
         <PricingGuideCard cs={cs} ts={ts} />
-      </div>
-
-      {/* Post-Result Marketplace Conversion CTA */}
-      <div className="my-6 p-6 rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/70 to-indigo-50/70 dark:from-blue-950/30 dark:to-indigo-950/30 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Want to hire within this budget?</h4>
-          <p className="text-sm text-slate-600 dark:text-slate-350">Find freelancers matching your scope and estimated budget.</p>
-        </div>
-        <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
-          <Link
-            href={`/talent?category=${encodeURIComponent(result.meta.category || '')}&budget=${result.estimate.total_estimate}`}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-sm"
-          >
-            <Sparkles size={16} />
-            <span>Find Matching Freelancers</span>
-          </Link>
-          <button
-            onClick={handlePostProject}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all"
-          >
-            <span>Save &amp; Create Project</span>
-          </button>
-        </div>
       </div>
 
       {/* Action Buttons */}

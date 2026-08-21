@@ -1,48 +1,61 @@
 /* @AI-HINT: About page light theme — colors only */
 .root {
     background: var(--bg-primary-light);
-    color: #0f172a;
+    color: var(--text-primary-light);
 }
 .title {
-    color: #0f172a;
+    color: var(--text-primary-light);
 }
 .subtitle {
-    color: #334155;
+    color: var(--text-secondary-light);
 }
 .sectionTitle {
-    color: #0f172a;
+    color: var(--text-primary-light);
 }
 .sectionNote {
-    color: #64748b;
+    color: var(--text-secondary-light);
 }
 .card {
-    background: var(--bg-secondary-light);
-    border: 1px solid #e2e8f0;
+    background: var(--bg-primary-light);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
 }
 .card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--ml-blue);
+    box-shadow: var(--shadow-md);
 }
 .cardTitle {
-    color: #0f172a;
+    color: var(--text-primary-light);
 }
 .cardBody {
-    color: #475569;
+    color: var(--text-secondary-light);
 }
 .valueItem {
     background: var(--bg-secondary-light);
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+.valueItem:hover {
+    border-color: var(--ml-blue);
+    box-shadow: var(--shadow-md);
 }
 .valueTitle {
-    color: #0f172a;
+    color: var(--text-primary-light);
 }
 .valueDesc {
-    color: #475569;
+    color: var(--text-secondary-light);
 }
 .cta {
-    background: var(--bg-secondary-light);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, var(--bg-secondary-light) 0%, rgba(69, 115, 223, 0.08) 100%);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-lg);
 }
 .ctaBtn {
-    background: #4573df;
+    background: var(--ml-blue);
     color: #ffffff;
+    box-shadow: 0 6px 20px rgba(69, 115, 223, 0.3);
+}
+.ctaBtn:hover {
+    background: var(--ml-blue-dark);
+    box-shadow: 0 8px 24px rgba(69, 115, 223, 0.4);
 }

@@ -26,6 +26,8 @@ import {
 } from '@/app/components/AI/kit';
 import GuestBanner from '@/app/components/AI/GuestBanner/GuestBanner';
 import { ExportMenu, type AIReport } from '@/app/components/AI/report';
+import LeadMagnetHireBridge from '@/app/components/AI/LeadMagnetBridge/LeadMagnetHireBridge';
+import LiveMatchingProjectsFeed from './LiveMatchingProjectsFeed';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -439,28 +441,21 @@ function ResultsDashboard({
           </div>
         </div>
 
-        {/* Post-Result Marketplace Conversion CTA */}
-        <div className="my-6 p-6 rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/70 to-indigo-50/70 dark:from-blue-950/30 dark:to-indigo-950/30 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Your proposal is ready.</h4>
-            <p className="text-sm text-slate-600 dark:text-slate-350">Save it to your MegiLance profile and discover projects matching your skills.</p>
-          </div>
-          <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
-            <Link
-              href="/explore"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-sm"
-            >
-              <Sparkles size={16} />
-              <span>Find Matching Projects</span>
-            </Link>
-            <Link
-              href="/signup?role=freelancer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all"
-            >
-              <span>Create Freelancer Profile</span>
-            </Link>
-          </div>
-        </div>
+        {/* Live Matching Projects Feed for Freelancers (Feature 9 & R1) */}
+        <LiveMatchingProjectsFeed
+          category={result.detected_project_type?.primary}
+          skills={result.skill_match?.matched_skills}
+          suggestedRate={result.suggested_rate?.recommended}
+          proposalText={result.proposal}
+          projectTitle={projectTitle}
+        />
+
+        {/* 1-Click Hiring Bridge for Client Project Scoping */}
+        <LeadMagnetHireBridge
+          toolName="proposal-writer"
+          result={result}
+          customTitle={projectTitle || 'Project Proposal Implementation'}
+        />
       </div>
     </div>
   );

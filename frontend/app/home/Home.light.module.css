@@ -1,8 +1,18 @@
 .homePage {
   background: var(--bg-primary-light);
-  color: #1a202c;
+  color: var(--text-primary-light);
+}
+
+.sectionCanvas {
+  background: var(--bg-primary-light);
+}
+
+.sectionAlt {
+  background: var(--bg-secondary-light);
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .gradientOrb {
-  background: radial-gradient(circle, rgba(39, 174, 96, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(circle, rgba(69, 115, 223, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
 }

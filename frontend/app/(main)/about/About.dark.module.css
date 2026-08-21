@@ -1,48 +1,61 @@
 /* @AI-HINT: About page dark theme — colors only */
 .root {
     background: var(--bg-primary-dark);
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .title {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .subtitle {
-    color: #cbd5e1;
+    color: var(--text-secondary-dark);
 }
 .sectionTitle {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .sectionNote {
-    color: #94a3b8;
+    color: var(--text-secondary-dark);
 }
 .card {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+    box-shadow: var(--shadow-sm);
 }
 .card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: var(--ml-blue-light);
+    box-shadow: var(--shadow-md);
 }
 .cardTitle {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .cardBody {
-    color: #94a3b8;
+    color: var(--text-secondary-dark);
 }
 .valueItem {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-dark);
+    box-shadow: var(--shadow-sm);
+}
+.valueItem:hover {
+    border-color: var(--ml-blue-light);
+    box-shadow: var(--shadow-md);
 }
 .valueTitle {
-    color: #f1f5f9;
+    color: var(--text-primary-dark);
 }
 .valueDesc {
-    color: #94a3b8;
+    color: var(--text-secondary-dark);
 }
 .cta {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(69, 115, 223, 0.12) 100%);
+    border: 1px solid var(--border-dark);
+    box-shadow: var(--shadow-xl);
 }
 .ctaBtn {
-    background: #4573df;
+    background: var(--ml-blue);
     color: #ffffff;
+    box-shadow: 0 6px 20px rgba(69, 115, 223, 0.4);
+}
+.ctaBtn:hover {
+    background: var(--ml-blue-dark);
+    box-shadow: 0 8px 24px rgba(69, 115, 223, 0.5);
 }
