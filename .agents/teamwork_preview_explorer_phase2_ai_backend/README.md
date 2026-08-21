@@ -1,0 +1,2 @@
+# Explorer Directory
+Agent: teamwork_preview_explorer_phase2_ai_backend
