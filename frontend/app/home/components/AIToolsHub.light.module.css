@@ -1,36 +1,82 @@
-.section { background: transparent; }
+.section {
+  color: var(--text-primary-light);
+}
+
 .badge {
-  background: rgba(69, 115, 223, 0.08);
-  color: var(--ml-blue);
-  border: 1px solid rgba(69, 115, 223, 0.2);
+  background: rgba(241, 245, 249, 0.9);
+  color: #2563eb;
+  border: 1px solid #e2e8f0;
 }
+
 .title {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
+
 .subtitle {
-  color: var(--text-secondary-light);
+  color: #475569;
 }
-.card {
-  background: var(--bg-primary-light);
-  border-color: var(--border-light);
-  box-shadow: var(--shadow-sm);
+
+.filterTabs {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
 }
-.card:hover {
-  border-color: var(--ml-blue);
-  box-shadow: 0 12px 28px -6px rgba(69, 115, 223, 0.15);
+
+.filterBtn {
+  color: #64748b;
 }
-.cardLabel {
-  color: var(--text-primary-light);
+
+.filterBtn:hover {
+  color: #0f172a;
 }
-.cardDesc {
-  color: var(--text-secondary-light);
+
+.filterBtnActive {
+  background: #ffffff;
+  color: #2563eb !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
-.ctaBtn {
-  background: var(--ml-blue);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(69, 115, 223, 0.25);
+
+.toolCard {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #e2e8f0;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
-.ctaBtn:hover {
-  background: var(--ml-blue-dark);
-  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.35);
+
+.toolCard:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 16px 32px -8px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+.toolBadge {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.toolTitle {
+  color: #0f172a;
+}
+
+.toolDesc {
+  color: #475569;
+}
+
+.cardBottom {
+  border-top-color: #f1f5f9;
+}
+
+.useToolLink {
+  color: var(--accent-color);
+}
+
+.allToolsBtn {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.allToolsBtn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
 }

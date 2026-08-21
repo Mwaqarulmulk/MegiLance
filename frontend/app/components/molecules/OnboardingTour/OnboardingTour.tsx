@@ -44,12 +44,12 @@ export default function OnboardingTour() {
 
   useEffect(() => {
     setMounted(true);
-    const hasSeenT = localStorage.getItem('megilance_onboarding_done');
-    if (!hasSeenT) {
-      // Slightly delay for effect
-      const timer = setTimeout(() => setIsOpen(true), 1500);
-      return () => clearTimeout(timer);
-    }
+    const handleOpenTour = () => {
+      setStep(0);
+      setIsOpen(true);
+    };
+    window.addEventListener('open-onboarding-tour', handleOpenTour);
+    return () => window.removeEventListener('open-onboarding-tour', handleOpenTour);
   }, []);
 
   if (!mounted) return null;

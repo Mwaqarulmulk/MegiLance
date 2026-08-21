@@ -221,13 +221,15 @@ const Passwordless: React.FC = () => {
             </StaggerItem>
 
             <StaggerItem>
-              <Tabs defaultIndex={Object.keys(roleConfig).indexOf(selectedRole)} onTabChange={(index) => setSelectedRole(Object.keys(roleConfig)[index] as UserRole)}>
+              <Tabs defaultIndex={['freelancer', 'client'].indexOf(selectedRole)} onTabChange={(index) => setSelectedRole(['freelancer', 'client'][index] as UserRole)}>
                 <Tabs.List className={styles.roleSelector}>
-                  {Object.entries(roleConfig).map(([role, { label, icon: Icon }]) => (
-                    <Tabs.Tab key={role} icon={<Icon />}>
-                      {label}
-                    </Tabs.Tab>
-                  ))}
+                  {Object.entries(roleConfig)
+                    .filter(([role]) => role !== 'admin')
+                    .map(([role, { label, icon: Icon }]) => (
+                      <Tabs.Tab key={role} icon={<Icon />}>
+                        {label}
+                      </Tabs.Tab>
+                    ))}
                 </Tabs.List>
               </Tabs>
             </StaggerItem>

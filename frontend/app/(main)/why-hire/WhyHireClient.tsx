@@ -36,7 +36,7 @@ export default function WhyHireClient({ faqs }: { faqs: FAQ[] }) {
     { icon: <Clock size={24} />, title: 'Instant Team Assembly', desc: 'Hire vetted talent within 24 hours. Receive context-aware proposals from professionals who are ready to hit the ground running.' },
     { icon: <Star size={24} />, title: 'Eliminating Credential Inflation', desc: "Every freelancer's track record, technical competency, and communication feedback are audited. No synthetic reviews." },
     { icon: <Globe size={24} />, title: 'Bypassing Geographic Constraints', desc: 'Tap into top-tier experts across the Global South. Overcome local talent deficits and connect with high-caliber professionals.' },
-    { icon: <Zap size={24} />, title: 'Frictionless 0% Client Fees', desc: 'We do not tax your hiring budget. Post projects and build teams with zero client-side fees, while freelancers keep up to 95% of their rates.' },
+    { icon: <Zap size={24} />, title: 'Frictionless 0% Platform Fees', desc: 'We do not tax your hiring budget. Post projects with 0% platform fees, while freelancers keep 100% of their earnings during our promotional launch.' },
     { icon: <TrendingUp size={24} />, title: 'Elastic Scale & Flexibility', desc: 'Scale up or down instantly. Manage project scope dynamically without the operational friction of traditional employment contracts.' },
   ];
 

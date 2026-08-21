@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
-import { Sparkles, ArrowRight, ShieldCheck, UserPlus } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, UserPlus, Briefcase, Zap, CheckCircle2 } from 'lucide-react';
 import { PRICING_CONFIG, PLATFORM_STATUS } from '@/lib/platform-config';
 import commonStyles from './HomeFinalCTA.common.module.css';
 import lightStyles from './HomeFinalCTA.light.module.css';
@@ -17,42 +17,52 @@ export default function HomeFinalCTA() {
   return (
     <div className={cn(commonStyles.wrapper, themeStyles.wrapper)}>
       <div className={cn(commonStyles.card, themeStyles.card)}>
-        <span className={cn(commonStyles.badge, themeStyles.badge)}>
-          <Sparkles size={14} className="inline mr-1 text-amber-500" />
-          {PLATFORM_STATUS.STAGE}
-        </span>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>
-          Start with a Useful AI Result. Continue with Real Freelance Work.
-        </h2>
-        <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-          Price your project, write your proposal, or plan your milestones with free AI tools. When you're ready to hire or find work, continue directly on MegiLance.
-        </p>
+        
+        {/* Radiant Aurora Glow */}
+        <div className={commonStyles.auroraGlow} aria-hidden="true" />
 
-        <div className={commonStyles.actions}>
-          <Link href="#ai-tools" className={cn(commonStyles.primaryBtn, themeStyles.primaryBtn)}>
-            <Sparkles size={18} />
-            <span>Use Free AI Tools</span>
-          </Link>
-          <Link href="/signup" className={cn(commonStyles.secondaryBtn, themeStyles.secondaryBtn)}>
-            <UserPlus size={18} />
-            <span>Create Free Account</span>
-          </Link>
+        <div className={commonStyles.content}>
+          <span className={cn(commonStyles.badge, themeStyles.badge)}>
+            <Zap size={14} className="text-amber-300" />
+            0% Platform Fee · Guaranteed Milestone Escrow
+          </span>
+
+          <h2 className={cn(commonStyles.title, themeStyles.title)}>
+            Ready to Build, Hire, or Freelance with Complete Protection?
+          </h2>
+
+          <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
+            Join thousands of clients and specialists using free AI planning tools, verified talent matching, and secure milestone escrow.
+          </p>
+
+          <div className={commonStyles.actions}>
+            <Link href="/create-project" className={cn(commonStyles.primaryBtn, themeStyles.primaryBtn)}>
+              <Briefcase size={18} />
+              <span>Post a Project Free</span>
+              <ArrowRight size={16} />
+            </Link>
+            <Link href="#ai-tools" className={cn(commonStyles.secondaryBtn, themeStyles.secondaryBtn)}>
+              <Sparkles size={18} className="text-amber-300" />
+              <span>Explore 11 Free AI Tools</span>
+            </Link>
+          </div>
+
+          <div className={commonStyles.trustRow}>
+            <div className={commonStyles.trustItem}>
+              <CheckCircle2 size={16} className="text-emerald-400" />
+              <span>100% Pre-Funded Milestone Escrow</span>
+            </div>
+            <div className={commonStyles.trustItem}>
+              <CheckCircle2 size={16} className="text-emerald-400" />
+              <span>0% Promotional Platform Cut</span>
+            </div>
+            <div className={commonStyles.trustItem}>
+              <CheckCircle2 size={16} className="text-emerald-400" />
+              <span>Instant Multi-Currency Payouts</span>
+            </div>
+          </div>
         </div>
 
-        <div className={commonStyles.trustRow}>
-          <div className={commonStyles.trustItem}>
-            <ShieldCheck size={16} className="text-emerald-500" />
-            <span>Milestone Escrow Protection</span>
-          </div>
-          <div className={commonStyles.trustItem}>
-            <ShieldCheck size={16} className="text-emerald-500" />
-            <span>0% Platform Fee During Launch</span>
-          </div>
-          <div className={commonStyles.trustItem}>
-            <ShieldCheck size={16} className="text-emerald-500" />
-            <span>No Credit Card Required for AI Tools</span>
-          </div>
-        </div>
       </div>
     </div>
   );

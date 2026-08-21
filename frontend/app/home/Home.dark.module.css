@@ -8,11 +8,12 @@
 }
 
 .sectionAlt {
-  background: var(--bg-secondary-dark);
-  border-top: 1px solid var(--border-dark);
-  border-bottom: 1px solid var(--border-dark);
+  background: rgba(15, 23, 42, 0.45);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
 }
 
 .gradientOrb {
-  background: radial-gradient(circle, rgba(69, 115, 223, 0.1) 0%, rgba(15, 23, 42, 0) 70%);
+  background: radial-gradient(circle, rgba(69, 115, 223, 0.12) 0%, rgba(15, 23, 42, 0) 70%);
 }

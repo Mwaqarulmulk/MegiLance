@@ -143,7 +143,7 @@ Start hiring or working fee-free at https://megilance.site`;
 
       {showCTA && (
         <div className={styles.actions}>
-          <Link href="/(auth)/signup" className={styles.btnPrimary}>
+          <Link href="/signup" className={styles.btnPrimary}>
             Start Free with 0% Fees
           </Link>
           <button onClick={handleCopySummary} className={styles.btnSecondary} type="button">

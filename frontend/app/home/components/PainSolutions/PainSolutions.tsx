@@ -1,144 +1,183 @@
-// @AI-HINT: High-conversion "pain point → solution" section for the homepage. Speaks
-// directly to client anxieties (cross-border pay, overpaying, risk/trust, late delivery)
-// and shows how MegiLance removes each one. Built to drive "Post a Project" sign-ups.
+// @AI-HINT: High-craft comparison and platform advantages section for the homepage.
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import {
   Globe2, Calculator, ShieldCheck, CalendarClock, Receipt, BadgeCheck, ArrowRight, X, Check,
+  Sparkles, Zap, Lock, DollarSign, Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
+import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
-const ITEMS = [
+const COMPARISON_ROWS = [
   {
-    icon: Globe2,
-    pain: 'Cross-border payment friction & banking barriers',
-    solution:
-      'On-chain escrow settles instantly. Bypass high wire fees, unstable local currencies, and banking restrictions. Funds release automatically upon verified milestone completion.',
-  },
-  {
-    icon: Calculator,
-    pain: 'Pricing asymmetry & budget guesswork',
-    solution:
-      'Our AI Price Estimator analyzes real-time market indices, location data, and skill complexity, giving you fair, location-adjusted pricing in seconds.',
-  },
-  {
-    icon: ShieldCheck,
-    pain: 'Reputation risk & credential uncertainty',
-    solution:
-      'Evaluate talent through multi-factor competency assessments and verified milestone delivery history, ensuring reliable skills on every job.',
-  },
-  {
-    icon: CalendarClock,
-    pain: 'Milestone anxiety & scope misalignment',
-    solution:
-      'Break projects into clear deliverables. Funds lock in escrow for each phase, aligning client and freelancer expectations and protecting work quality.',
-  },
-  {
+    topic: 'Platform Commission & Fees',
+    traditional: '10% to 20% commission deducted from every payment',
+    megilance: '0% promotional launch fee — keep 100% of earned project capital',
     icon: Receipt,
-    pain: 'High platform commission taxing your budget',
-    solution:
-      'Take advantage of 0% promotional platform commission during our launch. More of your project capital directly rewards the specialist doing the work.',
   },
   {
+    topic: 'Payment & Escrow Protection',
+    traditional: 'Slow manual payouts, wire fees, and dispute anxiety',
+    megilance: 'Code-enforced milestone escrow with instant multi-currency releases',
+    icon: Lock,
+  },
+  {
+    topic: 'Pricing & Budget Transparency',
+    traditional: 'Blind guesswork, price gouging, and endless bidding wars',
+    megilance: 'Data-grounded AI Price Estimator calibrated on 50k+ live projects',
+    icon: Calculator,
+  },
+  {
+    topic: 'Talent Screening & Matching',
+    traditional: 'Manual resume sorting through hundreds of spam bids',
+    megilance: 'Objective 7-factor AI compatibility scoring on skill & delivery record',
     icon: BadgeCheck,
-    pain: 'Screening fatigue & matching mismatch',
-    solution:
-      'Skip the endless resume sorting. Our semantic AI matching connects you with professionals based on objective capability, work style, and project requirements.',
+  },
+  {
+    topic: 'Project Scope Alignment',
+    traditional: 'Vague contracts causing scope creep and deliverable friction',
+    megilance: 'Structured Milestone Work Breakdown with transparent checkpoints',
+    icon: CalendarClock,
   },
 ];
-
-import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 
 export default function PainSolutions() {
   const mode = useThemeMode();
   const isDark = mode === 'dark';
 
-  const cardBg = isDark
-    ? 'bg-slate-900/60 border-slate-800/80 shadow-sm'
-    : 'bg-white border-slate-200/80 shadow-sm';
-  const heading = isDark ? 'text-slate-50' : 'text-slate-900';
-  const muted = isDark ? 'text-slate-400' : 'text-slate-600';
-  const painText = isDark ? 'text-slate-200' : 'text-slate-800';
-
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="text-center max-w-3xl mx-auto mb-12">
+    <div className="max-w-6xl mx-auto px-4 py-12">
+      
+      {/* Section Header */}
+      <div className="text-center max-w-3xl mx-auto mb-14">
         <span
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border"
-          style={{ background: 'rgba(69,115,223,0.12)', color: '#3b66d1', borderColor: 'rgba(69,115,223,0.25)' }}
+          style={{ 
+            background: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(37, 99, 235, 0.08)', 
+            color: isDark ? '#60a5fa' : '#2563eb', 
+            borderColor: isDark ? 'rgba(59, 130, 246, 0.25)' : 'rgba(37, 99, 235, 0.2)' 
+          }}
         >
-          Why MegiLance
+          <Sparkles size={14} className="text-amber-500" />
+          The MegiLance Advantage
         </span>
-        <h2 className={cn('text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight', heading)}>
-          Aligning collaboration, <span style={{ color: '#4573df' }}>engineered for trust</span>
+        <h2 className={cn(
+          'text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight', 
+          isDark ? 'text-white' : 'text-slate-900'
+        )}>
+          Engineered for Trust, <span className="text-blue-600 dark:text-blue-400">Zero Friction</span> &amp; Fair Work
         </h2>
-        <p className={cn('mt-4 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto', muted)}>
-          MegiLance eliminates marketplace friction with free planning tools, transparent milestone escrow, and verified skill matching.
+        <p className={cn(
+          'mt-4 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto', 
+          isDark ? 'text-slate-400' : 'text-slate-600'
+        )}>
+          See how MegiLance replaces outdated marketplace practices with modern milestone escrow, transparent pricing, and instant AI scoping.
         </p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {ITEMS.map(({ icon: Icon, pain, solution }) => (
-          <div
-            key={pain}
-            className={cn('rounded-2xl border p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between', cardBg)}
-          >
-            <div>
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 shadow-sm"
-                style={{ background: 'rgba(69,115,223,0.12)', color: '#4573df' }}
-              >
-                <Icon size={24} />
-              </div>
-              <div className="p-3 rounded-xl bg-red-500/10 dark:bg-red-950/30 border border-red-500/20 mb-3 flex items-start gap-2.5">
-                <X size={18} className="mt-0.5 flex-shrink-0 text-red-500 font-bold" />
-                <span className="text-xs sm:text-sm font-bold text-red-700 dark:text-red-300 leading-snug">{pain}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/20 flex items-start gap-2.5">
-                <Check size={18} className="mt-0.5 flex-shrink-0 text-emerald-500 font-bold" />
-                <span className={cn('text-xs sm:text-sm font-medium leading-relaxed', muted)}>{solution}</span>
+      {/* Comparison Matrix Table / Cards */}
+      <div className="space-y-4 mb-16">
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 font-extrabold text-xs uppercase tracking-wider text-slate-400">
+          <div className="col-span-4">Platform Dimension</div>
+          <div className="col-span-4 text-rose-500 dark:text-rose-400">❌ Traditional Marketplaces</div>
+          <div className="col-span-4 text-emerald-600 dark:text-emerald-400">✅ MegiLance Guarantee</div>
+        </div>
+
+        {COMPARISON_ROWS.map((row, idx) => {
+          const Icon = row.icon;
+          return (
+            <div
+              key={row.topic}
+              className={cn(
+                'rounded-2xl border p-5 md:p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg',
+                isDark 
+                  ? 'bg-slate-900/60 border-slate-800/80 backdrop-blur-xl' 
+                  : 'bg-white border-slate-200/90 shadow-sm'
+              )}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                
+                {/* Topic Column */}
+                <div className="md:col-span-4 flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ 
+                      background: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(37, 99, 235, 0.1)', 
+                      color: isDark ? '#60a5fa' : '#2563eb' 
+                    }}
+                  >
+                    <Icon size={20} />
+                  </div>
+                  <div>
+                    <h3 className={cn('font-bold text-sm md:text-base', isDark ? 'text-white' : 'text-slate-900')}>
+                      {row.topic}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Traditional Column */}
+                <div className="md:col-span-4 p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/25 border border-rose-200/60 dark:border-rose-900/40 flex items-start gap-2.5">
+                  <X size={16} className="text-rose-500 font-bold flex-shrink-0 mt-0.5" />
+                  <span className="text-xs font-semibold text-rose-800 dark:text-rose-300 leading-snug">
+                    {row.traditional}
+                  </span>
+                </div>
+
+                {/* MegiLance Column */}
+                <div className="md:col-span-4 p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/25 border border-emerald-200/60 dark:border-emerald-900/40 flex items-start gap-2.5">
+                  <Check size={16} className="text-emerald-500 font-bold flex-shrink-0 mt-0.5" />
+                  <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 leading-snug">
+                    {row.megilance}
+                  </span>
+                </div>
+
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Conversion CTA with Lottie Rocket */}
+      {/* Conversion Banner Card */}
       <div
-        className="mt-12 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
+        className="rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #3b66d1 0%, #4573df 50%, #6b93e8 100%)',
-          boxShadow: '0 24px 60px -15px rgba(69,115,223,0.5)',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4f46e5 100%)',
+          boxShadow: '0 24px 60px -15px rgba(37, 99, 235, 0.45)',
         }}
       >
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10 text-left">
           <div className="max-w-xl">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/15 text-white backdrop-blur-md mb-3 border border-white/20">
+              <Shield size={12} className="text-emerald-300" /> 100% Escrow Guarantee
+            </span>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight">
-              Post your project free — pay only when you&apos;re happy
+              Post Your Project Free — Release Funds Only on Milestone Approval
             </h3>
             <p className="mt-3 text-base text-white/90 font-medium leading-relaxed">
-              No upfront cost, no risk. Get matched with vetted talent in minutes and keep your money in
-              escrow until milestones are approved.
+              No upfront risk, zero platform cut during launch. Get matched with top specialists in minutes and hold your project budget in secure milestone escrow.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-bold bg-white text-[#2a4fb0] hover:bg-slate-50 hover:scale-[1.03] active:scale-[0.98] transition-all shadow-lg text-sm sm:text-base"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold bg-white text-blue-800 hover:bg-slate-50 hover:scale-[1.03] active:scale-[0.98] transition-all shadow-xl text-sm sm:text-base"
               >
-                Post a Project <ArrowRight size={20} />
+                <span>Post a Project Free</span>
+                <ArrowRight size={18} />
               </Link>
               <Link
                 href="/ai/price-estimator"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-bold border border-white/50 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all text-sm sm:text-base"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold border border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all text-sm sm:text-base"
               >
-                <Calculator size={20} /> Estimate my budget
+                <Calculator size={18} />
+                <span>Estimate Project Budget</span>
               </Link>
             </div>
           </div>
-          <div className="flex-shrink-0 w-full md:w-72 h-52 md:h-64">
+          
+          <div className="flex-shrink-0 w-full md:w-72 h-52 md:h-64 flex items-center justify-center">
             <BrandLottiePlayer
               src="/lottie/10_product_launch_rocket.json"
               ariaLabel="Rocket Launch Animation"
@@ -148,6 +187,7 @@ export default function PainSolutions() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

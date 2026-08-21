@@ -1,0 +1,250 @@
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  text-decoration: none;
+  margin-bottom: 2rem;
+  transition: transform 0.2s ease;
+}
+
+.backLink:hover {
+  transform: translateX(-3px);
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .layoutGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.mainCard {
+  border-radius: 1.5rem;
+  border-width: 1px;
+  border-style: solid;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.775rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.postedDate {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+}
+
+.title {
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-weight: 850;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+@media (max-width: 600px) {
+  .metaGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.metaIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metaLabel {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  display: block;
+}
+
+.metaValue {
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: block;
+}
+
+.sectionHeading {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.skillsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skillTag {
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.milestonesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.milestoneCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-radius: 0.85rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.msTitle {
+  font-size: 0.9rem;
+  font-weight: 750;
+  margin: 0;
+}
+
+.msDesc {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0.2rem 0 0;
+}
+
+.msAmount {
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+/* Sidebar */
+.sidebarCard {
+  border-radius: 1.5rem;
+  border-width: 1px;
+  border-style: solid;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 6rem;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  width: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ctaBtn:hover {
+  transform: translateY(-2px);
+}
+
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  width: 100%;
+}
+
+.clientMetaSection {
+  border-top-width: 1px;
+  border-top-style: solid;
+  padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.clientHeading {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.clientSignal {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  font-weight: 650;
+}

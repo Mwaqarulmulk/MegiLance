@@ -1,94 +1,139 @@
 .testimonials {
-  padding: 5rem 0;
+  padding: 4rem 0 4.5rem;
   position: relative;
-  overflow: hidden;
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
-  position: relative;
-  z-index: 2;
-}
-
-@media (min-width: 480px) {
-  .container {
-    padding: 0 1.5rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    padding: 0 2rem;
-  }
+  padding: 0 1.5rem;
 }
 
 .header {
   text-align: center;
   max-width: 800px;
-  margin: 0 auto 6rem;
+  margin: 0 auto 3.5rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
 }
 
 .title {
-  font-family: var(--font-heading);
-  font-size: 3.5rem;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
 }
 
 .subtitle {
-  font-family: var(--font-body);
-  font-size: 1.25rem;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin: 0 auto;
 }
 
 .testimonialsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
+  gap: 1.5rem;
+}
+
+.testimonialCard {
+  padding: 2.25rem 2rem;
+  border-radius: 1.5rem;
+  border-width: 1px;
+  border-style: solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cardTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.escrowVerifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.725rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.quoteText {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  margin: 0;
+  font-style: italic;
+  flex-grow: 1;
+}
+
+.projectTagRow {
+  margin-top: auto;
+}
+
+.projectTag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.5rem;
+}
+
+.authorRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-top: 1rem;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: rgba(148, 163, 184, 0.15);
+}
+
+.avatarWrap {
+  flex-shrink: 0;
+}
+
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.authorName {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.authorRole {
+  font-size: 0.78rem;
+  margin: 0;
+  opacity: 0.85;
 }
 
 @media (max-width: 1024px) {
   .testimonialsGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .title {
-    font-size: 2.5rem;
-  }
-  
-  .testimonialsGrid {
     grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .testimonials {
-    padding: 3rem 0;
-  }
-
-  .title {
-    font-size: 2rem;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-  }
-
-  .testimonialsGrid {
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 374px) {
-  .title {
-    font-size: 1.75rem;
+    max-width: 650px;
+    margin: 0 auto;
   }
 }

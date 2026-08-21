@@ -32,7 +32,7 @@ import dark from './Enterprise.dark.module.css';
 // Enterprise stats
 const stats = [
   { label: 'Workforce Efficiency', value: '+45%', icon: Building2, description: 'Increased output velocity' },
-  { label: 'Platform Commission', value: '2-5%', icon: Users, description: 'Low transactional friction' },
+  { label: 'Launch Commission', value: '0%', icon: Users, description: 'Zero commission during public launch' },
   { label: 'Compliance Overhead', value: 'Zero', icon: Globe, description: 'Automated NDAs & tax forms' },
   { label: 'Talent Match Time', value: '<24h', icon: TrendingUp, description: 'Rapid, precise sourcing' },
 ];

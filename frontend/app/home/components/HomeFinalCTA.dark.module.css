@@ -1,49 +1,10 @@
 .card {
-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(69, 115, 223, 0.12) 100%);
-  border-color: var(--border-dark);
-  box-shadow: var(--shadow-xl);
+  background: linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 40%, #312e81 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .badge {
-  background-color: var(--bg-tertiary-dark);
-  color: var(--ml-blue-light);
-  border: 1px solid rgba(69, 115, 223, 0.3);
-}
-
-.title {
-  color: var(--text-primary-dark);
-}
-
-.subtitle {
-  color: var(--text-secondary-dark);
-}
-
-.primaryBtn {
-  background-color: var(--ml-blue);
-  color: #ffffff;
-  box-shadow: 0 6px 20px rgba(69, 115, 223, 0.4);
-}
-
-.primaryBtn:hover {
-  background-color: var(--ml-blue-dark);
-  box-shadow: 0 8px 24px rgba(69, 115, 223, 0.5);
-}
-
-.secondaryBtn {
-  background-color: var(--bg-secondary-dark);
-  color: var(--text-primary-dark);
-  border: 1px solid var(--border-dark);
-}
-
-.secondaryBtn:hover {
-  background-color: var(--bg-tertiary-dark);
-  border-color: var(--ml-blue-light);
-}
-
-.trustRow {
-  border-top-color: var(--border-dark);
-}
-
-.trustItem {
-  color: var(--text-secondary-dark);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fde68a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }

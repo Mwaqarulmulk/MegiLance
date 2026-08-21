@@ -108,8 +108,17 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 10. FAQ (Alt Surface) */}
-        <section id="faq" className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Frequently asked questions">
+        {/* 10. Verified Testimonials & Social Proof (Alt Surface) */}
+        <section id="testimonials" className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Client and freelancer testimonials">
+          <div className={commonStyles.sectionContainer}>
+            <ScrollReveal width="100%" direction="up">
+              <Testimonials />
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* 11. FAQ (Canvas) */}
+        <section id="faq" className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="Frequently asked questions">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up">
               <HomeFAQ />
@@ -117,8 +126,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 11. Final CTA (Canvas / Highlight) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="Get started CTA">
+        {/* 12. Final CTA (Alt Surface / Highlight) */}
+        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Get started CTA">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up">
               <HomeFinalCTA />

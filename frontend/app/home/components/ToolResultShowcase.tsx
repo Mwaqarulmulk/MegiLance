@@ -4,7 +4,20 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
-import { DollarSign, FileText, Layers, TrendingUp, CheckCircle2, ArrowRight, Sparkles, Clock, Shield } from 'lucide-react';
+import { 
+  DollarSign, 
+  FileText, 
+  Layers, 
+  CheckCircle2, 
+  ArrowRight, 
+  Sparkles, 
+  Clock, 
+  Shield, 
+  Copy, 
+  Check,
+  Zap,
+  Sliders
+} from 'lucide-react';
 import commonStyles from './ToolResultShowcase.common.module.css';
 import lightStyles from './ToolResultShowcase.light.module.css';
 import darkStyles from './ToolResultShowcase.dark.module.css';
@@ -12,30 +25,30 @@ import darkStyles from './ToolResultShowcase.dark.module.css';
 const exampleTabs = [
   {
     id: 'pricing',
-    name: 'Price Estimator',
+    name: 'AI Price Estimator',
     icon: DollarSign,
-    sampleInput: 'Full-Stack Next.js 16 SaaS Dashboard with Stripe Billing & AI API Integration',
+    sampleInput: 'Full-Stack Next.js 16 SaaS Platform with Stripe Escrow, Auth & AI API Integration',
     result: {
-      title: 'AI Market Budget & Timeline Estimate',
+      title: 'Market Budget & Timeline Breakdown',
       range: '$3,800 – $5,600',
-      avgHours: '65 – 90 hours',
-      suggestedRate: '$55 – $75/hr',
+      avgHours: '70 – 95 hours',
+      suggestedRate: '$55 – $75/hr (Senior Full-Stack)',
       milestones: [
-        { name: 'Phase 1: Architecture & UI Setup', hours: '20h', cost: '$1,200' },
-        { name: 'Phase 2: Auth, APIs & Stripe Billing', hours: '35h', cost: '$2,200' },
-        { name: 'Phase 3: Testing, Deploy & Handover', hours: '15h', cost: '$900' },
+        { name: 'Milestone 1: Architecture & UI Setup', hours: '25h', cost: '$1,400', status: 'Pre-Funded Escrow' },
+        { name: 'Milestone 2: Auth, APIs & Stripe Billing', hours: '40h', cost: '$2,400', status: 'In Scope' },
+        { name: 'Milestone 3: E2E Testing, Deploy & Handover', hours: '20h', cost: '$1,200', status: 'In Scope' },
       ],
-      ctaText: 'Find Freelancers for this Scope',
+      ctaText: 'Hire Freelancers for this Scope',
       ctaHref: '/talent',
     },
   },
   {
     id: 'proposal',
-    name: 'Proposal Writer',
+    name: 'AI Proposal Writer',
     icon: FileText,
-    sampleInput: 'Senior React Engineer needed to build real-time collaborative canvas application',
+    sampleInput: 'Senior React / Next.js Engineer needed to build real-time collaborative canvas app',
     result: {
-      title: 'Generated Freelance Proposal Preview',
+      title: 'High-Impact Tailored Freelance Proposal',
       hook: 'I specialize in building low-latency React canvas tools with WebSocket sync and optimistic state management...',
       deliverables: [
         'Interactive canvas with multi-user cursors & zoom controls',
@@ -49,21 +62,21 @@ const exampleTabs = [
   },
   {
     id: 'scope',
-    name: 'Scope Planner',
+    name: 'Milestone Scope Planner',
     icon: Layers,
-    sampleInput: 'Mobile E-Commerce App for iOS & Android with push notifications',
+    sampleInput: 'Cross-Platform Mobile App for iOS & Android with Push Notifications and Stripe Checkout',
     result: {
-      title: 'Milestone Work Breakdown Structure',
+      title: 'Milestone Work Breakdown Structure (WBS)',
       range: '4 Milestones · 6 Weeks Delivery',
       avgHours: '120 Total Hours',
       suggestedRate: '2 Sprints (Bi-Weekly)',
       milestones: [
-        { name: 'M1: Design Tokens & Core Navigation', hours: '30h', cost: '$1,800' },
-        { name: 'M2: Catalog, Search & Cart State', hours: '40h', cost: '$2,400' },
-        { name: 'M3: Checkout, Stripe & Order History', hours: '35h', cost: '$2,100' },
-        { name: 'M4: App Store Submission & Polish', hours: '15h', cost: '$900' },
+        { name: 'M1: Design Tokens & Core Navigation', hours: '30h', cost: '$1,800', status: 'Milestone 1' },
+        { name: 'M2: Catalog, Search & Cart State', hours: '40h', cost: '$2,400', status: 'Milestone 2' },
+        { name: 'M3: Checkout, Stripe & Order History', hours: '35h', cost: '$2,100', status: 'Milestone 3' },
+        { name: 'M4: App Store Submission & QA Polish', hours: '15h', cost: '$900', status: 'Milestone 4' },
       ],
-      ctaText: 'Create Project from Scope',
+      ctaText: 'Create Project from this Scope',
       ctaHref: '/create-project',
     },
   },
@@ -73,21 +86,32 @@ export default function ToolResultShowcase() {
   const mode = useThemeMode();
   const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
   const [activeTabId, setActiveTabId] = useState('pricing');
+  const [copied, setCopied] = useState(false);
 
   const activeTab = exampleTabs.find((t) => t.id === activeTabId) || exampleTabs[0];
+
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className={cn(commonStyles.wrapper, themeStyles.wrapper)}>
       <div className={commonStyles.header}>
-        <span className={cn(commonStyles.badge, themeStyles.badge)}>Live Result Demonstration</span>
-        <h2 className={cn(commonStyles.title, themeStyles.title)}>See How an AI Result Delivers Instant Clarity</h2>
+        <span className={cn(commonStyles.badge, themeStyles.badge)}>
+          <Sparkles size={14} className="text-amber-500" />
+          Interactive Result Demonstration
+        </span>
+        <h2 className={cn(commonStyles.title, themeStyles.title)}>
+          See How Data-Grounded AI Delivers Instant Clarity
+        </h2>
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-          Try our tools with zero signup. Get data-grounded estimates, actionable milestone breakdowns, and structured proposals in seconds.
+          Run our tools with zero commitment. Get factual budget estimates, milestone breakdowns, and winning proposals in seconds.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className={commonStyles.tabList} role="tablist">
+      {/* Interactive Tabs */}
+      <div className={commonStyles.tabList} role="tablist" aria-label="Tool Result Demonstrations">
         {exampleTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = tab.id === activeTabId;
@@ -106,23 +130,37 @@ export default function ToolResultShowcase() {
         })}
       </div>
 
-      {/* Showcase Card */}
+      {/* Showcase Card Frame */}
       <div className={cn(commonStyles.showcaseCard, themeStyles.showcaseCard)}>
-        <div className={commonStyles.inputBar}>
-          <span className={commonStyles.inputLabel}>Example Input:</span>
-          <span className={cn(commonStyles.inputText, themeStyles.inputText)}>"{activeTab.sampleInput}"</span>
+        
+        {/* Input Bar */}
+        <div className={cn(commonStyles.inputBar, themeStyles.inputBar)}>
+          <div className="flex items-center gap-2 flex-1">
+            <span className={commonStyles.inputLabel}>Input Brief:</span>
+            <span className={cn(commonStyles.inputText, themeStyles.inputText)}>"{activeTab.sampleInput}"</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className={cn(commonStyles.copyBtn, themeStyles.copyBtn)}
+            aria-label="Copy sample result"
+          >
+            {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+            <span>{copied ? 'Copied!' : 'Copy Result'}</span>
+          </button>
         </div>
 
+        {/* Result Content Body */}
         <div className={commonStyles.resultBody}>
           <div className={commonStyles.resultHeader}>
             <div>
               <span className={cn(commonStyles.resultBadge, themeStyles.resultBadge)}>
-                <Sparkles size={14} className="inline mr-1 text-amber-500" /> AI Generated Result
+                <Sparkles size={13} className="text-amber-500" /> Calculated from 50k+ Real Projects
               </span>
               <h3 className={cn(commonStyles.resultTitle, themeStyles.resultTitle)}>{activeTab.result.title}</h3>
             </div>
             {activeTab.result.range && (
-              <div className={commonStyles.estimateHighlight}>
+              <div className={cn(commonStyles.estimateHighlight, themeStyles.estimateHighlight)}>
                 <span className={commonStyles.estimateValue}>{activeTab.result.range}</span>
                 <span className={commonStyles.estimateMeta}>{activeTab.result.avgHours}</span>
               </div>
@@ -148,7 +186,10 @@ export default function ToolResultShowcase() {
             <div className={commonStyles.milestoneGrid}>
               {activeTab.result.milestones?.map((ms, idx) => (
                 <div key={idx} className={cn(commonStyles.milestoneItem, themeStyles.milestoneItem)}>
-                  <div className={commonStyles.msName}>{ms.name}</div>
+                  <div className={commonStyles.msTop}>
+                    <div className={commonStyles.msName}>{ms.name}</div>
+                    <span className={cn(commonStyles.msStatusPill, themeStyles.msStatusPill)}>{ms.status}</span>
+                  </div>
                   <div className={commonStyles.msMeta}>
                     <span><Clock size={14} className="inline mr-1 opacity-70" />{ms.hours}</span>
                     <span className={commonStyles.msCost}>{ms.cost}</span>
@@ -161,8 +202,8 @@ export default function ToolResultShowcase() {
           {/* Action Row */}
           <div className={cn(commonStyles.cardFooter, themeStyles.cardFooter)}>
             <div className={commonStyles.actionPrompt}>
-              <Shield size={16} className="text-emerald-500" />
-              <span>Ready to turn this estimate into real freelance work?</span>
+              <Shield size={16} className="text-emerald-500 flex-shrink-0" />
+              <span>Ready to turn this calculation into a protected milestone contract?</span>
             </div>
             <Link href={activeTab.result.ctaHref} className={cn(commonStyles.conversionBtn, themeStyles.conversionBtn)}>
               <span>{activeTab.result.ctaText}</span>

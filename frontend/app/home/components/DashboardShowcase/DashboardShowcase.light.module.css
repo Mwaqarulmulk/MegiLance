@@ -1,42 +1,62 @@
-/* Light theme for DashboardShowcase */
 .section {
   background: transparent;
+  color: var(--text-primary-light);
+}
+
+.badge {
+  background: rgba(241, 245, 249, 0.9);
+  color: #2563eb;
+  border: 1px solid #e2e8f0;
 }
 
 .title {
-  color: var(--text-primary-light);
+  color: #0f172a;
 }
 
 .subtitle {
-  color: var(--text-secondary-light);
+  color: #475569;
+}
+
+.ctrlBtn {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: #e2e8f0;
+}
+
+.ctrlBtn:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
 }
 
 .ctrlBtnActive {
-  background: var(--bg-secondary-light);
-  border-color: var(--ml-blue);
-  box-shadow: var(--shadow-sm);
+  background: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.12);
 }
 
 .ctrlTitle {
-  color: var(--text-primary-light);
+  color: #0f172a;
+}
+
+.ctrlTag {
+  color: #64748b;
 }
 
 .ctrlDesc {
-  color: var(--text-secondary-light);
+  color: #334155;
 }
 
 .browserFrame {
-  background: var(--bg-primary-light);
-  border-color: var(--border-light);
-  box-shadow: var(--shadow-lg);
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.08);
 }
 
 .browserHeader {
-  background: var(--bg-secondary-light);
-  border-color: var(--border-light);
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
 .browserUrl {
-  color: var(--text-secondary-light);
-  background: var(--bg-tertiary-light);
+  color: #64748b;
+  background: #f1f5f9;
 }

@@ -67,9 +67,8 @@
   --line-height-loose: 1.8;
 
 /* ============================================= */
-/*   LAYOUT & SPACING - Use tokens.css          */
+/*   LAYOUT & SPACING                            */
 /* ============================================= */
-/* Spacing is defined in tokens.css. These are layout-specific tokens. */
 --size-sidebar-width: 280px;
 --size-sidebar-collapsed-width: 72px;
 --size-navbar-height: 64px;
@@ -94,9 +93,8 @@
 --spacing-24: var(--space-24);
 
 /* ============================================= */
-/*   BORDERS & RADIUS - Use tokens.css          */
+/*   BORDERS & RADIUS                            */
 /* ============================================= */
-/* Radius and spacing are defined in tokens.css. These are additional aliases. */
 --border-radius-xs: var(--radius-xs);
 --border-radius-sm: var(--radius-sm);
 --border-radius-md: var(--radius-md);
@@ -113,9 +111,8 @@
 --border-width-lg: 3px;
 
 /* ============================================= */
-/*   SHADOWS - Use tokens.css as source of truth */
+/*   SHADOWS                                     */
 /* ============================================= */
-/* Shadows are defined in tokens.css. These are additional theme-specific shadows. */
 --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
 --shadow-base: 
   0 1px 3px rgba(0, 0, 0, 0.04),
@@ -137,6 +134,16 @@
   0 32px 64px rgba(0, 0, 0, 0.32),
   0 0 0 1px rgba(255, 255, 255, 0.06);
 
+/* ── Premium Brand Shadows ── */
+/* Brand ambient glow — use on card hover */
+--shadow-card-glow: 0 20px 60px rgba(69, 115, 223, 0.14), 0 4px 16px rgba(0, 0, 0, 0.06);
+--shadow-card-glow-dark: 0 20px 60px rgba(69, 115, 223, 0.22), 0 4px 16px rgba(0, 0, 0, 0.3);
+/* CTA button ambient glow */
+--shadow-cta-glow: 0 0 40px rgba(69, 115, 223, 0.4), 0 8px 24px rgba(69, 115, 223, 0.3);
+/* Elevated card depth */
+--shadow-elevated: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06), 0 24px 48px rgba(0,0,0,0.04);
+--shadow-elevated-dark: 0 1px 4px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.3), 0 24px 48px rgba(0,0,0,0.2);
+
   /* ============================================= */
   /*   GLASS MORPHISM - Premium Glass Effects     */
   /* ============================================= */
@@ -150,16 +157,43 @@
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 
 /* ============================================= */
-/*   GRADIENTS - Use tokens.css as source       */
+/*   GRADIENTS                                   */
 /* ============================================= */
-/* Gradients are defined in tokens.css. These are additional theme-specific gradients. */
 --gradient-hero: linear-gradient(135deg, rgba(69, 115, 223, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
 --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
 
+/* ── Premium Brand Gradients ── */
+/* Tri-stop: blue → violet → cyan — the MegiLance brand signature */
+--gradient-brand: linear-gradient(135deg, #4573df 0%, #7c3aed 55%, #06b6d4 100%);
+/* Cool two-stop: blue → indigo */
+--gradient-brand-cool: linear-gradient(135deg, #4573df 0%, #6366f1 100%);
+/* Hero atmospheric mesh — layered radial glows + base gradient */
+--gradient-hero-mesh-light:
+  radial-gradient(ellipse 80% 60% at 60% -10%, rgba(69, 115, 223, 0.18) 0%, transparent 65%),
+  radial-gradient(ellipse 50% 40% at 90% 80%, rgba(99, 102, 241, 0.10) 0%, transparent 60%),
+  radial-gradient(ellipse 60% 50% at -10% 50%, rgba(6, 182, 212, 0.07) 0%, transparent 60%),
+  linear-gradient(180deg, #fafbff 0%, #f2f6ff 60%, #fafbff 100%);
+--gradient-hero-mesh-dark:
+  radial-gradient(ellipse 80% 60% at 60% -10%, rgba(69, 115, 223, 0.28) 0%, transparent 65%),
+  radial-gradient(ellipse 50% 40% at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 60%),
+  radial-gradient(ellipse 60% 50% at -10% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),
+  linear-gradient(180deg, #07091a 0%, #080c1e 60%, #07091a 100%);
+/* Editorial dark section — intentional dark on both themes */
+--gradient-cta-dark: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+/* Subtle accent tints for section backgrounds */
+--gradient-section-accent-light: linear-gradient(180deg, rgba(69, 115, 223, 0.04) 0%, transparent 100%);
+--gradient-section-accent-dark: linear-gradient(180deg, rgba(69, 115, 223, 0.08) 0%, transparent 100%);
+
+/* ── Grain Texture (inline SVG — zero network cost) ── */
+--grain-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+
+/* ── Gradient Border Tokens ── */
+--gradient-border-brand: linear-gradient(135deg, rgba(69,115,223,0.5), rgba(124,58,237,0.3), rgba(6,182,212,0.2));
+--gradient-border-subtle: linear-gradient(135deg, rgba(69,115,223,0.25), rgba(124,58,237,0.15));
+
 /* ============================================= */
-/*   TRANSITIONS & ANIMATIONS - Use tokens.css  */
+/*   TRANSITIONS & ANIMATIONS                    */
 /* ============================================= */
-/* Transitions are defined in tokens.css. These are additional aliases. */
 --transition-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 --transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
@@ -173,9 +207,8 @@
 --transition-shadow: box-shadow var(--duration-normal) var(--ease-smooth);
 
 /* ============================================= */
-/*   Z-INDEX SCALE - Use tokens.css             */
+/*   Z-INDEX SCALE                               */
 /* ============================================= */
-/* Z-index is defined in tokens.css. These are additional aliases. */
 --z-index-behind: -1;
 --z-index-base: 0;
 --z-index-dropdown: var(--z-dropdown);
@@ -193,7 +226,6 @@
   /* ============================================= */
   /*   SURFACE & BACKGROUND TOKENS                */
   /* ============================================= */
-  /* Semantic surface colors - use these instead of hardcoded hex */
   --surface-primary: var(--neutral-50);
   --surface-secondary: var(--neutral-100);
   --surface-tertiary: var(--neutral-200);
@@ -221,7 +253,6 @@
 /* ============================================= */
 /*   LEGACY VARIABLE ALIASES                    */
 /* ============================================= */
-/* These map old variable names to new semantic tokens for backward compatibility */
 --surface-f5f7fa: var(--surface);
 --surface-alt-f4f6f8: var(--surface-alt);
 --surface-272b32: var(--surface);
@@ -292,4 +323,3 @@ a:hover, a:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus-ring-primary);
 }
-

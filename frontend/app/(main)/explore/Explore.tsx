@@ -604,7 +604,7 @@ const Explore: React.FC = () => {
                       {projects.slice(0, 6).map(p => (
                         <StaggerItem key={p.id}>
                           <Link
-                            href={`/client/projects/${p.id}`}
+                            href={`/jobs/${p.id}`}
                             className={cn(common.projectCard, themed.projectCard)}
                           >
                             <div className={common.projectHeader}>

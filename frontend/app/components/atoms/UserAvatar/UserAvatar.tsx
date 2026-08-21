@@ -31,10 +31,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   const { resolvedTheme } = useTheme();
   const [imageError, setImageError] = useState(false);
 
-  if (!resolvedTheme) {
-    return null; // Avoid hydration mismatch
-  }
-  const themeStyles = resolvedTheme === 'light' ? lightStyles : darkStyles;
+  const themeStyles = resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
   let sizeClass = '';
   let imageSize: number;

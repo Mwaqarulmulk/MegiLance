@@ -54,10 +54,8 @@ const footerSections = {
 };
 
 const socialLinks = [
-  { name: 'Twitter', href: '#', icon: Twitter },
   { name: 'GitHub', href: 'https://github.com/ghulam-mujtaba5/MegiLance', icon: Github },
-  { name: 'LinkedIn', href: '#', icon: Linkedin },
-  { name: 'Email', href: 'mailto:support@megilance.site', icon: Mail },
+  { name: 'Email Support', href: 'mailto:support@megilance.site', icon: Mail },
 ];
 
 const PublicFooter = () => {

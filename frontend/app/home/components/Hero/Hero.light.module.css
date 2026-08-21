@@ -1,6 +1,18 @@
+/* Hero — Light theme */
+
 .hero {
-  background: var(--bg-primary-light);
+  /* Atmospheric mesh: layered radial glow spots on a pale blue-white base */
+  background:
+    radial-gradient(ellipse 80% 60% at 60% -10%, rgba(69, 115, 223, 0.16) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(99, 102, 241, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at -10% 50%, rgba(6, 182, 212, 0.06) 0%, transparent 60%),
+    linear-gradient(180deg, #fafbff 0%, #f1f5ff 60%, #fafbff 100%);
   color: var(--text-primary-light);
+}
+
+/* Dot grid in light theme */
+.hero::before {
+  color: rgba(69, 115, 223, 0.6);
 }
 
 .content {
@@ -11,49 +23,81 @@
   color: var(--text-primary-light);
 }
 
-.highlight {
-  color: var(--ml-blue);
-}
-
 .subtitle {
   color: var(--text-secondary-light);
 }
 
+/* Glass badges */
 .badge {
-  background: var(--bg-tertiary-light);
+  background: rgba(255, 255, 255, 0.75);
   color: var(--ml-blue);
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(69, 115, 223, 0.25);
+  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.08);
 }
 
+/* Trust strip */
+.avatar {
+  background: linear-gradient(135deg, var(--ml-blue), #7c3aed);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.trustText {
+  color: var(--text-secondary-light);
+}
+
+/* Stats */
 .stats {
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid rgba(69, 115, 223, 0.12);
 }
 
 .statValue {
   color: var(--text-primary-light);
+  background: var(--gradient-brand, linear-gradient(135deg, #4573df, #7c3aed));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .statLabel {
   color: var(--text-secondary-light);
 }
 
+/* Primary CTA — gradient with layered glow */
 .ctaPrimary {
-  background: linear-gradient(135deg, var(--ml-blue) 0%, #5b84e8 100%);
+  background: linear-gradient(135deg, #4573df 0%, #5e82e8 100%);
   color: #ffffff;
-  box-shadow: 0 10px 24px rgba(69, 115, 223, 0.25);
+  box-shadow:
+    0 6px 20px rgba(69, 115, 223, 0.30),
+    0 1px 3px rgba(69, 115, 223, 0.15);
 }
 
 .ctaPrimary:hover {
-  box-shadow: 0 14px 30px rgba(69, 115, 223, 0.32);
+  box-shadow:
+    0 12px 32px rgba(69, 115, 223, 0.40),
+    0 4px 12px rgba(69, 115, 223, 0.20);
 }
 
+/* Secondary CTA — glass treatment */
 .ctaSecondary {
-  background: var(--bg-primary-light);
+  background: rgba(255, 255, 255, 0.85);
   color: var(--text-primary-light);
-  border-color: var(--border-light);
+  border-color: rgba(69, 115, 223, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .ctaSecondary:hover {
-  background: var(--bg-tertiary-light);
-  border-color: var(--border-light);
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(69, 115, 223, 0.4);
+  box-shadow: 0 4px 16px rgba(69, 115, 223, 0.10);
+}
+
+/* Visual panel glass frame */
+.visualFrame {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(69, 115, 223, 0.15);
+  box-shadow:
+    0 20px 60px rgba(69, 115, 223, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }

@@ -117,27 +117,27 @@ const securityFeatures = [
 const whyDifferent = [
   {
     icon: <DollarSign size={28} />,
-    title: 'Transparent Fees',
-    stat: '5-10%',
-    description: 'vs 10-20% on traditional platforms',
+    title: 'Launch Platform Fee',
+    stat: '0%',
+    description: 'Keep 100% of earnings during promotional launch',
   },
   {
     icon: <Zap size={28} />,
-    title: 'AI-Powered Matching',
+    title: 'Objective Matching',
     stat: '7-Factor',
-    description: 'algorithm for perfect freelancer matches',
+    description: 'algorithm evaluating competency & availability',
   },
   {
     icon: <Globe size={28} />,
-    title: 'Global Payments',
-    stat: '150+',
-    description: 'currencies via Stripe, PayPal & Crypto',
+    title: 'Global Settlements',
+    stat: '70+',
+    description: 'supported countries with multi-currency payouts',
   },
   {
     icon: <Shield size={28} />,
     title: 'Milestone Escrow',
     stat: '100%',
-    description: 'secure milestone-based payments',
+    description: 'secure code-enforced milestone payments',
   },
 ];
 
@@ -163,8 +163,7 @@ const HowItWorksPage: React.FC = () => {
           <header className={commonStyles.header}>
             <h1 className={cn(commonStyles.title, themeStyles.title)}>How MegiLance Works</h1>
             <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-              A modern freelancing platform combining AI-powered matching, secure escrow payments, 
-              and transparent reputation. Built with Next.js, FastAPI, and Turso.
+              A modern freelance marketplace combining free AI project scoping, code-enforced milestone escrow payments, and verified skill matching.
             </p>
           </header>
         </ScrollReveal>

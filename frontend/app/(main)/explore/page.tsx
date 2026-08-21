@@ -199,7 +199,7 @@ async function LiveDataSections() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {projects.map((p: any) => (
-                <Link key={p.id} href={`/projects/${p.id}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'white', textDecoration: 'none', color: 'inherit', transition: 'all 0.2s' }}>
+                <Link key={p.id} href={`/jobs/${p.id}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'white', textDecoration: 'none', color: 'inherit', transition: 'all 0.2s' }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 style={{ fontSize: '1rem', fontWeight: 650, margin: '0 0 0.25rem', color: '#0f172a' }}>{p.title}</h3>
                     <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.8rem', color: '#64748b' }}>

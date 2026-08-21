@@ -415,7 +415,7 @@ const Login: React.FC = () => {
               role="radiogroup"
               aria-label="Select account type"
             >
-              {(["freelancer", "client", "admin"] as UserRole[]).map((role) => {
+              {(["freelancer", "client"] as UserRole[]).map((role) => {
                 const RoleIcon = roleConfig[role].icon;
                 return (
                   <button

@@ -1,10 +1,10 @@
-// @AI-HINT: Factual Trust Indicators component for Homepage. Features verified platform capabilities, security architecture, and escrow protection details.
+// @AI-HINT: Enterprise Trust & Security Architecture component for the homepage.
 'use client';
 
 import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
-import { Shield, Sparkles, Globe, Zap, Star, Lock, FileCheck } from 'lucide-react';
+import { Shield, Sparkles, Globe, Zap, Star, Lock, FileCheck, CheckCircle2, Award, BadgeCheck } from 'lucide-react';
 import useAnimatedCounter from '@/hooks/useAnimatedCounter';
 import { PLATFORM_FACTS, PRICING_CONFIG } from '@/lib/platform-config';
 
@@ -17,6 +17,7 @@ interface TrustIndicator {
   icon: React.ReactNode;
   value: number;
   label: string;
+  subtext: string;
   prefix?: string;
   suffix?: string;
 }
@@ -26,19 +27,38 @@ interface SecurityBadge {
   title: string;
   description: string;
   icon: React.ReactNode;
+  tag: string;
 }
 
 const trustIndicators: TrustIndicator[] = [
-  { id: 1, icon: <Sparkles size={24} />, value: PLATFORM_FACTS.AI_TOOLS_COUNT, label: "Free AI Tools Available", suffix: "" },
-  { id: 2, icon: <Globe size={24} />, value: 70, label: "Countries Supported", suffix: "+" },
-  { id: 3, icon: <FileCheck size={24} />, value: 10, label: "Service Categories", suffix: "" },
-  { id: 4, icon: <Shield size={24} />, value: 100, label: "Milestone Escrow Protection", suffix: "%" },
+  { id: 1, icon: <Shield size={24} />, value: 100, label: "Milestone Escrow", subtext: "Funds locked safely until deliverable approval", suffix: "%" },
+  { id: 2, icon: <Zap size={24} />, value: 0, label: "Platform Commission", subtext: "Keep 100% of your earnings during launch", suffix: "%" },
+  { id: 3, icon: <Globe size={24} />, value: 70, label: "Supported Markets", subtext: "Instant multi-currency global settlement", suffix: "+" },
+  { id: 4, icon: <Sparkles size={24} />, value: PLATFORM_FACTS.AI_TOOLS_COUNT, label: "Free Planning Tools", subtext: "Instant data-grounded calculations", suffix: " Tools" },
 ];
 
 const securityBadges: SecurityBadge[] = [
-  { id: 1, title: "Milestone Escrow", description: "Funds pre-funded and held safely until work is reviewed and approved", icon: <Lock size={20} /> },
-  { id: 2, title: "Multi-Factor AI Matching", description: "Objective 7-factor competency, rate, and availability scoring", icon: <Star size={20} /> },
-  { id: 3, title: "Encrypted Workrooms", description: "Secure end-to-end communication and file sharing for project collaboration", icon: <Shield size={20} /> },
+  { 
+    id: 1, 
+    title: "Zero-Risk Milestone Escrow", 
+    description: "Payments are pre-funded into neutral escrow. Specialists work with guaranteed payment, and clients release funds only after deliverable verification.", 
+    icon: <Lock size={22} className="text-emerald-500" />,
+    tag: "Financial Safety"
+  },
+  { 
+    id: 2, 
+    title: "Multi-Factor Skill Verification", 
+    description: "Candidates are evaluated across verified competency tests, delivery velocity, and client feedback to ensure top-tier execution.", 
+    icon: <BadgeCheck size={22} className="text-blue-500" />,
+    tag: "Vetted Specialists"
+  },
+  { 
+    id: 3, 
+    title: "Encrypted Workrooms & IP Protection", 
+    description: "Confidential collaboration rooms with automatic milestone contract generation, NDA compliance, and full intellectual property transfer.", 
+    icon: <Shield size={22} className="text-purple-500" />,
+    tag: "Legal & IP Guard"
+  },
 ];
 
 const TrustIndicators: React.FC = () => {
@@ -46,14 +66,23 @@ const TrustIndicators: React.FC = () => {
   const styles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <div className={cn(commonStyles.trustContainer, styles.trustContainer)}>
+    <div className={cn(commonStyles.trustContainer, styles.trustContainer)} aria-label="Platform Trust & Security">
+      
+      {/* Section Header */}
       <div className={cn(commonStyles.trustHeader, styles.trustHeader)}>
-        <h2 className={cn(commonStyles.trustTitle, styles.trustTitle)}>Built for Transparent &amp; Secure Collaboration</h2>
+        <span className={cn(commonStyles.headerBadge, styles.headerBadge)}>
+          <Shield size={13} className="text-emerald-500" />
+          Enterprise Trust &amp; Security
+        </span>
+        <h2 className={cn(commonStyles.trustTitle, styles.trustTitle)}>
+          Built with Safety, Transparency &amp; Protection at Every Milestone
+        </h2>
         <p className={cn(commonStyles.trustSubtitle, styles.trustSubtitle)}>
-          Empowering freelancers and clients with free planning tools, transparent milestone payments, and verified skill matching.
+          Empowering freelancers and clients with guaranteed milestone escrow, zero platform fees, and verified meritocratic matching.
         </p>
       </div>
 
+      {/* Key Metric Counters */}
       <div className={cn(commonStyles.trustIndicators, styles.trustIndicators)}>
         {trustIndicators.map((indicator) => (
           <TrustIndicatorItem 
@@ -64,11 +93,17 @@ const TrustIndicators: React.FC = () => {
         ))}
       </div>
 
+      {/* Security Architecture Cards */}
       <div className={cn(commonStyles.securityBadges, styles.securityBadges)}>
         {securityBadges.map((badge) => (
           <div key={badge.id} className={cn(commonStyles.badgeItem, styles.badgeItem)}>
-            <div className={cn(commonStyles.badgeIcon, styles.badgeIcon)}>
-              {badge.icon}
+            <div className={cn(commonStyles.badgeTopRow)}>
+              <div className={cn(commonStyles.badgeIcon, styles.badgeIcon)}>
+                {badge.icon}
+              </div>
+              <span className={cn(commonStyles.badgeTag, styles.badgeTag)}>
+                {badge.tag}
+              </span>
             </div>
             <div className={cn(commonStyles.badgeContent, styles.badgeContent)}>
               <h3 className={cn(commonStyles.badgeTitle, styles.badgeTitle)}>{badge.title}</h3>
@@ -80,16 +115,24 @@ const TrustIndicators: React.FC = () => {
         ))}
       </div>
 
-      {/* Verified Architecture & Security Standards Strip */}
-      <div style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(150, 150, 150, 0.15)', textAlign: 'center' }}>
-        <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.7, fontWeight: 700 }}>
-          Modern Full-Stack Architecture &amp; Security
+      {/* Verified Guarantees Strip */}
+      <div className={cn(commonStyles.guaranteeStrip, styles.guaranteeStrip)}>
+        <span className={commonStyles.guaranteeLabel}>
+          MegiLance Operational &amp; Financial Standards
         </span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem', opacity: 0.85 }}>
-          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(69, 115, 223, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>🔒 JWT &amp; Role-Based Access</span>
-          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(39, 174, 96, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>🛡️ Milestone Escrow Protection</span>
-          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(155, 81, 224, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>⚡ Turso Edge SQL Database</span>
-          <span style={{ padding: '0.35rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(242, 201, 76, 0.3)', fontSize: '0.8rem', fontWeight: 600 }}>🚀 Next.js 16 &amp; FastAPI Async Core</span>
+        <div className={commonStyles.guaranteePills}>
+          <span className={cn(commonStyles.guaranteePill, styles.guaranteePill)}>
+            <CheckCircle2 size={14} className="text-emerald-500" /> 100% Pre-Funded Milestone Escrow
+          </span>
+          <span className={cn(commonStyles.guaranteePill, styles.guaranteePill)}>
+            <CheckCircle2 size={14} className="text-emerald-500" /> Transparent Dispute Resolution Protocol
+          </span>
+          <span className={cn(commonStyles.guaranteePill, styles.guaranteePill)}>
+            <CheckCircle2 size={14} className="text-emerald-500" /> Instant Multi-Currency Payout Rails
+          </span>
+          <span className={cn(commonStyles.guaranteePill, styles.guaranteePill)}>
+            <CheckCircle2 size={14} className="text-emerald-500" /> Full IP Rights Transfer on Final Approval
+          </span>
         </div>
       </div>
     </div>
@@ -122,6 +165,11 @@ const TrustIndicatorItem: React.FC<TrustIndicatorItemProps> = ({ indicator, them
         <span className={cn(commonStyles.indicatorLabel, themeStyles.indicatorLabel)}>
           {indicator.label}
         </span>
+        {indicator.subtext && (
+          <span className={cn(commonStyles.indicatorSubtext, themeStyles.indicatorSubtext)}>
+            {indicator.subtext}
+          </span>
+        )}
       </div>
     </div>
   );

@@ -1,41 +1,49 @@
-// @AI-HINT: A section explaining the platform's process for both freelancers and clients, designed for clarity and visual appeal.
+// @AI-HINT: Modern 4-step process timeline for clients and freelancers.
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-import { Search, ClipboardList, Users, FileSignature } from 'lucide-react';
+import Link from 'next/link';
+import { Search, ClipboardList, Users, FileSignature, ArrowRight, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
-import StepCard from './StepCard';
-import type { StepCardProps } from './StepCard';
-import { LottieAnimation, workflowAnimation } from '@/app/components/Animations/LottieAnimation';
-import SectionGlobe from '@/app/components/Animations/SectionGlobe/SectionGlobe';
 import { useThemeMode } from '@/app/hooks/useThemeMode';
 import commonStyles from './HowItWorks.common.module.css';
 import lightStyles from './HowItWorks.light.module.css';
 import darkStyles from './HowItWorks.dark.module.css';
 
-const steps: Array<Omit<StepCardProps, 'stepNumber' | 'type'>> = [
+const steps = [
   {
-    icon: <ClipboardList />,
-    title: '1. Post a Project',
-    description: 'Describe your project, set your budget, and let our AI suggest the perfect scope and milestones. Get matched with vetted freelancers instantly.',
+    stepNumber: '01',
+    icon: ClipboardList,
+    title: 'Scope or Post a Project',
+    description: 'Use our free AI tools to price your project and generate milestone scopes, or post your brief directly to the marketplace.',
+    badge: 'Step 1',
+    roleTag: 'Client & Freelancer',
   },
   {
-    icon: <Search />,
-    title: '2. AI-Matched Talent',
-    description: 'Our 7-factor algorithm matches you with freelancers based on skills, experience, ratings, and communication. Review proposals with objective ranking scores.',
+    stepNumber: '02',
+    icon: Search,
+    title: '7-Factor Skill Matching',
+    description: 'Our objective algorithm ranks specialists based on verified skills, delivery velocity, ratings, and availability.',
+    badge: 'Step 2',
+    roleTag: 'AI Matched',
   },
   {
-    icon: <Users />,
-    title: '3. Hire & Collaborate',
-    description: 'Hire with confidence using milestone-based escrow. Collaborate in real-time workrooms with file sharing, messaging, and progress tracking.',
+    stepNumber: '03',
+    icon: Users,
+    title: 'Collaborate in Live Workrooms',
+    description: 'Milestone funds are pre-funded safely in escrow. Collaborate via direct chat, shared file attachments, and sprint checkpoints.',
+    badge: 'Step 3',
+    roleTag: '100% Escrow',
   },
   {
-    icon: <FileSignature />,
-    title: '4. Approve & Get Paid',
-    description: 'Review deliverables, request revisions if needed, and approve milestones. Payment is released instantly to the freelancer upon approval.',
+    stepNumber: '04',
+    icon: FileSignature,
+    title: 'Verify & Release Payment',
+    description: 'Review completed deliverables, request revisions if needed, and release milestone funds instantly upon satisfaction.',
+    badge: 'Step 4',
+    roleTag: 'Instant Payout',
   },
 ];
 
@@ -44,19 +52,19 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.15,
       delayChildren: 0.1,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
   visible: { 
     opacity: 1, 
     y: 0, 
     scale: 1,
-      transition: { type: 'spring' as const, stiffness: 200, damping: 20 }
+    transition: { type: 'spring' as const, stiffness: 200, damping: 20 }
   },
 };
 
@@ -65,66 +73,61 @@ const HowItWorks: React.FC = () => {
   const themeStyles = mode === 'dark' ? darkStyles : lightStyles;
 
   return (
-    <section className={cn(commonStyles.howItWorks, themeStyles.howItWorks)}>
-      <SectionGlobe variant="blue" size="lg" position="left" />
+    <section className={cn(commonStyles.howItWorks, themeStyles.howItWorks)} aria-label="How MegiLance Works">
       <motion.div 
-        className={cn(commonStyles.container)}
+        className={commonStyles.container}
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
+        viewport={{ once: true, margin: '-80px' }}
       >
-        <motion.div variants={itemVariants} className={cn(commonStyles.header)}>
-          <span className={cn(commonStyles.tagline, themeStyles.tagline)}>The Process</span>
-          <motion.div 
-            whileHover={{ scale: 1.1, rotate: 5 }} 
-            transition={{ type: "spring" as const, stiffness: 300, damping: 15 }}
-          >
-            <LottieAnimation
-              animationData={workflowAnimation}
-              width={120}
-              height={120}
-              ariaLabel="Workflow process illustration"
-              className="mx-auto mb-2"
-            />
-          </motion.div>
+        {/* Header */}
+        <motion.div variants={itemVariants} className={commonStyles.header}>
+          <span className={cn(commonStyles.tagline, themeStyles.tagline)}>
+            <Sparkles size={14} className="text-amber-500" />
+            Simple 4-Step Process
+          </span>
           <h2 className={cn(commonStyles.title, themeStyles.title)}>How MegiLance Works</h2>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-            A streamlined process powered by AI — from project posting to secure payment, every step is optimized for quality and trust.
+            From initial project scoping to milestone escrow approval — every step is engineered for trust, quality, and fair collaboration.
           </p>
         </motion.div>
         
-        {/* Process visual: vertical stack showing Project Brief → AI Match → Escrow → Payment */}
-        <motion.div variants={itemVariants} style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-          <div style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center' }}>
-            <Image
-              src="/images/sections/how-it-works-home.png"
-              alt="How MegiLance works: Project Brief → AI Matching → Smart Contract Escrow → Milestone Payment"
-              width={260}
-              height={520}
-              sizes="(max-width: 768px) 200px, 260px"
-              style={{ width: '100%', maxWidth: '260px', height: 'auto', objectFit: 'contain' }}
-            />
-          </div>
-          <div style={{ flex: '1 1 300px' }}>
-            <motion.div variants={itemVariants} className={cn(commonStyles.timeline)}>
-              {steps.map((step, index) => (
-                <motion.div
-                  key={step.title}
-                  whileHover={{ scale: 1.03, y: -5 }}
-                  transition={{ type: "spring" as const, stiffness: 400, damping: 15 }}
-                >
-                  <StepCard
-                    stepNumber={index + 1}
-                    icon={step.icon}
-                    title={step.title}
-                    description={step.description}
-                    type={index % 2 === 0 ? 'client' : 'freelancer'}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+        {/* Horizontal 4-Card Timeline Grid */}
+        <motion.div variants={containerVariants} className={commonStyles.timelineGrid}>
+          {steps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <motion.div
+                key={step.stepNumber}
+                variants={itemVariants}
+                className={cn(commonStyles.stepCard, themeStyles.stepCard)}
+              >
+                <div className={commonStyles.stepTop}>
+                  <span className={cn(commonStyles.stepNum, themeStyles.stepNum)}>{step.stepNumber}</span>
+                  <span className={cn(commonStyles.rolePill, themeStyles.rolePill)}>{step.roleTag}</span>
+                </div>
+
+                <div className={cn(commonStyles.iconWrap, themeStyles.iconWrap)}>
+                  <Icon size={22} />
+                </div>
+
+                <h3 className={cn(commonStyles.stepTitle, themeStyles.stepTitle)}>{step.title}</h3>
+                <p className={cn(commonStyles.stepDesc, themeStyles.stepDesc)}>{step.description}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* CTA Strip */}
+        <motion.div variants={itemVariants} className={commonStyles.bottomCta}>
+          <Link href="/create-project" className={cn(commonStyles.ctaPrimary, themeStyles.ctaPrimary)}>
+            <span>Post a Project Free</span>
+            <ArrowRight size={16} />
+          </Link>
+          <Link href="/how-it-works" className={cn(commonStyles.ctaSecondary, themeStyles.ctaSecondary)}>
+            <span>Explore Complete Process Guide</span>
+          </Link>
         </motion.div>
       </motion.div>
     </section>
@@ -132,4 +135,3 @@ const HowItWorks: React.FC = () => {
 };
 
 export default HowItWorks;
-

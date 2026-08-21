@@ -1,0 +1,80 @@
+.container {
+  color: var(--text-primary-dark);
+}
+
+.backLink {
+  color: #60a5fa;
+}
+
+.mainCard, .sidebarCard {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.statusPill {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.title {
+  color: #ffffff;
+}
+
+.metaGrid {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.metaIcon {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.metaValue {
+  color: #f8fafc;
+}
+
+.description {
+  color: #cbd5e1;
+}
+
+.skillTag {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.milestoneCard {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.msTitle {
+  color: #f8fafc;
+}
+
+.msAmount {
+  color: #34d399;
+}
+
+.ctaBtn {
+  background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px -3px rgba(59, 130, 246, 0.45);
+}
+
+.secondaryAction {
+  background: rgba(30, 41, 59, 0.6);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.clientMetaSection {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.clientSignal {
+  color: #94a3b8;
+}
