@@ -11,11 +11,11 @@ html.light {
   --warning: var(--ml-yellow);
 
   /* UI Surfaces & Backgrounds */
-  --background: #ffffff;
-  --surface: var(--neutral-50);
-  --surface-alt: var(--neutral-100);
-  --container-dark: var(--neutral-800);
-  --border: var(--neutral-200);
+  --background: var(--ml-paper);
+  --surface: #ffffff;
+  --surface-alt: #f4f2ed;
+  --container-dark: var(--ml-ink);
+  --border: var(--ml-line);
 
   /* Text Colors */
   --text-primary: var(--neutral-900);
@@ -25,8 +25,10 @@ html.light {
   --text-on-dark: #ffffff;
 
   /* Extended Brand Palette */
-  --brand-indigo: #3C3C88;
-  --brand-electric-blue: #2F80ED;
+  --brand-indigo: #3d3fa8;
+  --brand-electric-blue: #5b5ce2;
+  --surface-accent: var(--ml-mint-wash);
+  --surface-warm: #fff1e5;
 
   /* Legacy aliases for backward compatibility */
   --primary-4573df: var(--primary);

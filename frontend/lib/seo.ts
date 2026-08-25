@@ -281,6 +281,9 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
   };
 }
 
+/** Backward-compatible alias for pages using the earlier pluralized helper name. */
+export const buildBreadcrumbsJsonLd = buildBreadcrumbJsonLd;
+
 /** FAQPage – Shows expandable FAQ answers directly in Google SERP */
 export function buildFAQJsonLd(faqs: FAQItem[]) {
   return {

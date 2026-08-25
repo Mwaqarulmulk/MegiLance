@@ -1,0 +1,282 @@
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex d1330d6a..dda926d6 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -151,3 +151,7 @@[m [mshow.ps1[m
+ *.pdf[m
+ *.docx[m
+ *.svg[m
+[32m+[m
+[32m+[m[32m# Development secret artifacts[m
+[32m+[m[32m.dev_secret_key[m
+[32m+[m[32m**/.dev_secret_key[m
+[1mdiff --git a/backend/.dev_secret_key b/backend/.dev_secret_key[m
+[1mdeleted file mode 100644[m
+[1mindex b6fa9521..00000000[m
+[1m--- a/backend/.dev_secret_key[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-7329ab29d20942c4b9548b0c57da7c1dbcd8ee49060d1c954ba46ce849eb7c34[m
+\ No newline at end of file[m
+[1mdiff --git a/backend/app/core/storage.py b/backend/app/core/storage.py[m
+[1mindex 13fc00c7..078a3360 100644[m
+[1m--- a/backend/app/core/storage.py[m
+[1m+++ b/backend/app/core/storage.py[m
+[36m@@ -8,16 +8,37 @@[m [mimport logging[m
+ import os[m
+ from pathlib import Path[m
+ from typing import Optional[m
+[31m-from datetime import datetime[m
+[31m-import boto3[m
+[32m+[m[32mfrom datetime import datetime[m
+[32m+[m[32mfrom uuid import uuid4[m
+[32m+[m[32mimport boto3[m
+ from botocore.exceptions import ClientError[m
+ from app.core.config import get_settings[m
+ logger = logging.getLogger(__name__)[m
+ [m
+[31m-settings = get_settings()[m
+[31m-[m
+[31m-[m
+[31m-class StorageBackend:[m
+[32m+[m[32msettings = get_settings()[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef _safe_upload_parts(filename: str, subfolder: str = "") -> tuple[str, str, str]:[m
+[32m+[m[32m    """Return safe path components for untrusted upload metadata."""[m
+[32m+[m[32m    safe_name = Path(filename or "upload").name[m
+[32m+[m[32m    stem = Path(safe_name).stem or "upload"[m
+[32m+[m[32m    suffix = Path(safe_name).suffix.lower()[m
+[32m+[m[32m    safe_stem = "".join(ch for ch in stem if ch.isalnum() or ch in ("-", "_", "."))[:100] or "upload"[m
+[32m+[m[32m    safe_folder = "/".join(part for part in Path(subfolder or "").parts if part not in ("", ".", ".."))[m
+[32m+[m[32m    unique_filename = f"{safe_stem}_{uuid4().hex}{suffix}"[m
+[32m+[m[32m    return safe_folder, unique_filename, f"{safe_folder}/{unique_filename}" if safe_folder else unique_filename[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef _safe_local_path(upload_dir: Path, file_path: str) -> Path:[m
+[32m+[m[32m    """Resolve a stored path and reject traversal outside the upload directory."""[m
+[32m+[m[32m    root = upload_dir.resolve()[m
+[32m+[m[32m    candidate = (root / file_path).resolve()[m
+[32m+[m[32m    if candidate != root and root not in candidate.parents:[m
+[32m+[m[32m        raise ValueError("Invalid storage path")[m
+[32m+[m[32m    return candidate[m
+[32m+[m
+[32m+[m
+[32m+[m[32mclass StorageBackend:[m
+     """Abstract base class for storage backends"""[m
+     def save_file(self, file_data: bytes, filename: str, subfolder: str = "") -> str:[m
+         raise NotImplementedError[m
+[36m@@ -41,10 +62,7 @@[m [mclass S3Storage(StorageBackend):[m
+         )[m
+ [m
+     def save_file(self, file_data: bytes, filename: str, subfolder: str = "") -> str:[m
+[31m-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")[m
+[31m-        name, ext = os.path.splitext(filename)[m
+[31m-        unique_filename = f"{name}_{timestamp}{ext}"[m
+[31m-        key = f"{subfolder}/{unique_filename}" if subfolder else unique_filename[m
+[32m+[m[32m        _, _, key = _safe_upload_parts(filename, subfolder)[m
+         [m
+         try:[m
+             self.s3_client.put_object([m
+[36m@@ -90,25 +108,17 @@[m [mclass LocalStorage(StorageBackend):[m
+         Returns:[m
+             Relative path to the saved file[m
+         """[m
+[31m-        # Create subfolder if specified[m
+[31m-        target_dir = self.upload_dir / subfolder if subfolder else self.upload_dir[m
+[31m-        target_dir.mkdir(parents=True, exist_ok=True)[m
+[31m-        [m
+[31m-        # Generate unique filename with timestamp[m
+[31m-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")[m
+[31m-        name, ext = os.path.splitext(filename)[m
+[31m-        unique_filename = f"{name}_{timestamp}{ext}"[m
+[31m-        [m
+[31m-        file_path = target_dir / unique_filename[m
+[32m+[m[32m        safe_folder, unique_filename, relative_path = _safe_upload_parts(filename, subfolder)[m
+[32m+[m[32m        target_dir = _safe_local_path(self.upload_dir, safe_folder) if safe_folder else self.upload_dir[m
+[32m+[m[32m        target_dir.mkdir(parents=True, exist_ok=True)[m
+[32m+[m[32m        file_path = _safe_local_path(target_dir, unique_filename)[m
+         [m
+         # Write file[m
+         with open(file_path, "wb") as f:[m
+             f.write(file_data)[m
+         [m
+[31m-        # Return relative path for DB storage[m
+[31m-        if subfolder:[m
+[31m-            return f"{subfolder}/{unique_filename}"[m
+[31m-        return unique_filename[m
+[32m+[m[32m        # Return normalized relative path for DB storage[m
+[32m+[m[32m        return relative_path[m
+ [m
+ # Factory to get storage backend[m
+ def get_storage_backend() -> StorageBackend:[m
+[36m@@ -140,8 +150,11 @@[m [mdef get_storage() -> StorageBackend:[m
+ def get_file(file_path: str) -> Optional[bytes]:[m
+     """Get file content from local storage"""[m
+     if isinstance(storage, LocalStorage):[m
+[31m-        full_path = storage.upload_dir / file_path[m
+[31m-        if not full_path.exists():[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            full_path = _safe_local_path(storage.upload_dir, file_path)[m
+[32m+[m[32m        except ValueError:[m
+[32m+[m[32m            return None[m
+[32m+[m[32m        if not full_path.exists():[m
+             return None[m
+         with open(full_path, "rb") as f:[m
+             return f.read()[m
+[36m@@ -151,6 +164,9 @@[m [mdef get_file(file_path: str) -> Optional[bytes]:[m
+ def file_exists(file_path: str) -> bool:[m
+     """Check if file exists"""[m
+     if isinstance(storage, LocalStorage):[m
+[31m-        full_path = storage.upload_dir / file_path[m
+[31m-        return full_path.exists()[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            full_path = _safe_local_path(storage.upload_dir, file_path)[m
+[32m+[m[32m        except ValueError:[m
+[32m+[m[32m            return False[m
+[32m+[m[32m        return full_path.exists()[m
+     return False[m
+[1mdiff --git a/frontend/app/(main)/tools/page.tsx b/frontend/app/(main)/tools/page.tsx[m
+[1mindex 2ec5c230..4f654b04 100644[m
+[1m--- a/frontend/app/(main)/tools/page.tsx[m
+[1m+++ b/frontend/app/(main)/tools/page.tsx[m
+[36m@@ -4,7 +4,7 @@[m [mimport Link from 'next/link';[m
+ import { [m
+   Calculator, TrendingUp, FileText, BarChart3, Brain, Layers, [m
+   DollarSign, Shield, Search, MessageSquare, ArrowRight, Sparkles,[m
+[31m-  Zap, Clock, Users, Globe, CheckCircle2, Star, Percent, Scale[m
+[32m+[m[32m  Zap, Clock, Users, Globe, CheckCircle2, Star, Percent, Scale, Rocket[m
+ } from 'lucide-react';[m
+ import { [m
+   buildMeta, [m
+[1mdiff --git a/frontend/app/(portal)/client/deliverables/page.tsx b/frontend/app/(portal)/client/deliverables/page.tsx[m
+[1mindex cb14a96a..57d1ac08 100644[m
+[1m--- a/frontend/app/(portal)/client/deliverables/page.tsx[m
+[1m+++ b/frontend/app/(portal)/client/deliverables/page.tsx[m
+[36m@@ -15,6 +15,7 @@[m [mimport {[m
+   ThumbsUp,[m
+   ThumbsDown,[m
+ } from "lucide-react";[m
+[32m+[m[32mimport Link from "next/link";[m
+ import { apiFetch } from "@/lib/api/core";[m
+ [m
+ interface Deliverable {[m
+[36m@@ -226,12 +227,12 @@[m [mexport default function ClientDeliverablesPage() {[m
+           <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">[m
+             When freelancers submit work for your active contract milestones, their deliverables, files, and notes will appear here for your review and approval.[m
+           </p>[m
+[31m-          <a[m
+[32m+[m[32m          <Link[m
+             href="/client/contracts"[m
+             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"[m
+           >[m
+             View Active Contracts[m
+[31m-          </a>[m
+[32m+[m[32m          </Link>[m
+         </div>[m
+       ) : ([m
+         <div className="space-y-4">[m
+[1mdiff --git a/frontend/app/(portal)/projects/page.tsx b/frontend/app/(portal)/projects/page.tsx[m
+[1mindex 6a9fb801..999af464 100644[m
+[1m--- a/frontend/app/(portal)/projects/page.tsx[m
+[1m+++ b/frontend/app/(portal)/projects/page.tsx[m
+[36m@@ -102,6 +102,7 @@[m [mconst formatTimeAgo = (dateStr: string) => {[m
+ export default function PortalProjectsPage() {[m
+   const { resolvedTheme } = useTheme();[m
+   const router = useRouter();[m
+[32m+[m[32m  const { user } = useAuth();[m
+   const [mounted, setMounted] = useState(false);[m
+   const [projects, setProjects] = useState<any[]>([]);[m
+   const [loading, setLoading] = useState(true);[m
+[36m@@ -291,7 +292,6 @@[m [mexport default function PortalProjectsPage() {[m
+     </div>[m
+   );[m
+ [m
+[31m-  const { user } = useAuth();[m
+   const userRole = (user?.user_type || user?.role || (typeof window !== 'undefined' ? localStorage.getItem('portal_area') : 'client') || 'client').toLowerCase();[m
+ [m
+   const roleTitle = userRole === 'client' ? 'My Posted Projects & Hiring' : userRole === 'admin' ? 'Platform Projects & Moderation' : 'Explore & Apply to Projects';[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx[m
+[1mindex eba360cc..8a9b078e 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx[m
+[1m+++ b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx[m
+[36m@@ -98,8 +98,20 @@[m [mconst PublicHeader = () => {[m
+     };[m
+   }, []);[m
+ [m
+[31m-  // Compute styles - use common styles during SSR to prevent hydration mismatch[m
+[31m-  const styles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;[m
+[32m+[m[32m  // Close on escape key[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    const handleKeyDown = (e: KeyboardEvent) => {[m
+[32m+[m[32m      if (e.key === 'Escape') {[m
+[32m+[m[32m        setIsMobileMenuOpen(false);[m
+[32m+[m[32m        setIsServicesOpen(false);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    };[m
+[32m+[m[32m    window.addEventListener('keydown', handleKeyDown);[m
+[32m+[m[32m    return () => window.removeEventListener('keydown', handleKeyDown);[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+[32m+[m[32m  // Compute styles - use common styles during SSR to prevent hydration mismatch[m
+[32m+[m[32m  const styles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;[m
+ [m
+   // Prevent hydration mismatch by using a minimal skeleton on server[m
+   if (!mounted) {[m
+[36m@@ -156,19 +168,7 @@[m [mconst PublicHeader = () => {[m
+     setIsServicesOpen(false);[m
+   };[m
+ [m
+[31m-  // Close on escape key[m
+[31m-  useEffect(() => {[m
+[31m-    const handleKeyDown = (e: KeyboardEvent) => {[m
+[31m-      if (e.key === 'Escape') {[m
+[31m-        setIsMobileMenuOpen(false);[m
+[31m-        setIsServicesOpen(false);[m
+[31m-      }[m
+[31m-    };[m
+[31m-    window.addEventListener('keydown', handleKeyDown);[m
+[31m-    return () => window.removeEventListener('keydown', handleKeyDown);[m
+[31m-  }, []);[m
+[31m-[m
+[31m-  return ([m
+[32m+[m[32m  return ([m
+     <>[m
+       <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} className={cn(commonStyles.header, styles.header, isScrolled && commonStyles.scrolled, isScrolled && styles.scrolled)}>[m
+         <div className={cn(commonStyles.container, styles.container)}>[m
+[1mdiff --git a/frontend/app/cost-to-hire/[skill]/page.tsx b/frontend/app/cost-to-hire/[skill]/page.tsx[m
+[1mindex b482c781..88c50b7c 100644[m
+[1m--- a/frontend/app/cost-to-hire/[skill]/page.tsx[m
+[1m+++ b/frontend/app/cost-to-hire/[skill]/page.tsx[m
+[36m@@ -271,10 +271,7 @@[m [mexport default async function CostToHirePage({ params }: Props) {[m
+     buildServiceJsonLd([m
+       `How Much Does It Cost to Hire a ${data.name}?`,[m
+       `Comprehensive 2026 rate and salary guide for hiring ${data.name}s. Compare junior, mid-level, and senior hourly rates across US, UK, Canada, Australia, and Europe.`,[m
+[31m-      `/cost-to-hire/${data.slug}`,[m
+[31m-      'USD',[m
+[31m-      data.ratesBySeniority.junior.min.toString(),[m
+[31m-      data.ratesBySeniority.senior.max.toString()[m
+[32m+[m[32m      `/cost-to-hire/${data.slug}`[m
+     ),[m
+     buildFAQJsonLd(data.faqs),[m
+     buildBreadcrumbJsonLd([[m
+[1mdiff --git a/frontend/lib/seo.ts b/frontend/lib/seo.ts[m
+[1mindex cca8e90e..c6f36b51 100644[m
+[1m--- a/frontend/lib/seo.ts[m
+[1m+++ b/frontend/lib/seo.ts[m
+[36m@@ -279,9 +279,12 @@[m [mexport function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {[m
+       })),[m
+     ],[m
+   };[m
+[31m-}[m
+[31m-[m
+[31m-/** FAQPage – Shows expandable FAQ answers directly in Google SERP */[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m/** Backward-compatible alias for pages using the earlier pluralized helper name. */[m
+[32m+[m[32mexport const buildBreadcrumbsJsonLd = buildBreadcrumbJsonLd;[m
+[32m+[m
+[32m+[m[32m/** FAQPage – Shows expandable FAQ answers directly in Google SERP */[m
+ export function buildFAQJsonLd(faqs: FAQItem[]) {[m
+   return {[m
+     '@context': 'https://schema.org',[m

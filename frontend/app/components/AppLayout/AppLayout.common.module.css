@@ -15,21 +15,21 @@
   position: relative;
   width: 100%;
   min-width: 0;
-  padding-left: 272px;
-  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-left: var(--size-sidebar-width, 280px);
+  transition: padding-left 0.24s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .mainContentCollapsed {
-  padding-left: 72px;
+  padding-left: var(--size-sidebar-collapsed-width, 72px);
 }
 
 .pageContent {
   flex: 1;
   width: 100%;
-  padding: 1.5rem 2rem 3rem;
-  max-width: 1600px;
+  padding: clamp(1.25rem, 2.8vw, 2.75rem) clamp(1rem, 3vw, 3.25rem) 5rem;
+  max-width: 1680px;
   margin: 0 auto;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - var(--size-navbar-height, 68px));
 }
 
 /* Mobile overlay backdrop */
@@ -39,8 +39,8 @@
   z-index: var(--z-overlay, 900);
   opacity: 0;
   pointer-events: none;
-  backdrop-filter: blur(4px);
-  transition: opacity 0.25s ease-out;
+  backdrop-filter: blur(8px) saturate(120%);
+  transition: opacity 0.22s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .mobileOverlayVisible {
@@ -89,7 +89,7 @@
   }
 
   .pageContent {
-    padding: 1rem 1rem 2rem;
+    padding: 1rem 1rem 5rem;
   }
 }
 

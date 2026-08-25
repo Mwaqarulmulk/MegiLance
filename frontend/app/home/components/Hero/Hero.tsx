@@ -28,10 +28,10 @@ import lightStyles from './Hero.light.module.css';
 import darkStyles from './Hero.dark.module.css';
 
 const defaultStats = [
-  { label: 'Platform Fee', value: '0%', sub: 'Keep 100% Earnings' },
-  { label: 'Milestone Escrow', value: '100%', sub: 'Pre-Funded Safety' },
-  { label: 'Free AI Suite', value: `${PLATFORM_FACTS.AI_TOOLS_COUNT} Tools`, sub: 'Zero Signup Barrier' },
-  { label: 'Global Markets', value: `${PLATFORM_FACTS.COUNTRIES_SUPPORTED}+`, sub: 'Instant Payouts' },
+  { label: 'Project setup', value: 'Guided', sub: 'Start with a clearer brief' },
+  { label: 'Delivery model', value: 'Milestones', sub: 'Review progress step by step' },
+  { label: 'Free AI suite', value: `${PLATFORM_FACTS.AI_TOOLS_COUNT} tools`, sub: 'Explore before signup' },
+  { label: 'Work styles', value: 'Global', sub: 'Built for remote collaboration' },
 ];
 
 const TRUST_AVATARS = [
@@ -116,9 +116,9 @@ export default function Hero({ stats = defaultStats }) {
 
         {/* ── Main Headline ── */}
         <h1 id="hero-title" className={cn(commonStyles.title, themeStyles.title)}>
-          Hire Elite Specialists. Protect Every Dollar with{' '}
+          Start with clarity. Deliver with confidence{' '}
           <span className={cn(commonStyles.highlight, themeStyles.highlight)}>
-            Milestone Escrow.
+            milestone by milestone.
           </span>
         </h1>
 
@@ -126,7 +126,7 @@ export default function Hero({ stats = defaultStats }) {
         <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
           {isAuthenticated
             ? `Manage active workrooms, verify completed deliverables, or release protected escrow payments directly from your dashboard.`
-            : 'Eliminate delivery risk and blind bidding wars. Price projects with free AI tools, connect with top-tier specialists, and collaborate with 100% pre-funded milestone escrow.'}
+            : 'Clients can shape a focused brief and compare relevant talent. Freelancers can find clearer opportunities and present their work with context. Use the free tools first, then choose the workflow that fits.'}
         </p>
 
         {/* ── Primary Action Buttons ── */}
@@ -158,11 +158,11 @@ export default function Hero({ stats = defaultStats }) {
                 <ArrowRight size={16} aria-hidden="true" />
               </Link>
               <Link
-                href="#ai-tools"
+                href="/signup?role=freelancer&from=hero"
                 className={cn(commonStyles.ctaButton, commonStyles.ctaSecondary, themeStyles.ctaSecondary)}
               >
-                <Sparkles size={16} className="text-amber-500" aria-hidden="true" />
-                <span>Explore Free AI Suite</span>
+                <Users size={16} aria-hidden="true" />
+                <span>Find Work as a Freelancer</span>
               </Link>
             </>
           )}
@@ -189,10 +189,10 @@ export default function Hero({ stats = defaultStats }) {
                   <Star key={i} size={13} className="fill-amber-400" />
                 ))}
               </div>
-              <strong className="text-xs font-bold text-slate-900 dark:text-white">4.9/5 Rating</strong>
+              <strong className="text-xs font-bold text-slate-900 dark:text-white">Built for focused work</strong>
             </div>
             <span className={cn(commonStyles.trustText, themeStyles.trustText)}>
-              Trusted across {PLATFORM_FACTS.COUNTRIES_SUPPORTED}+ markets · 0% client platform fee
+              Clear briefs · relevant proposals · milestone-based collaboration
             </span>
           </div>
         </div>
@@ -239,13 +239,13 @@ export default function Hero({ stats = defaultStats }) {
                   className={cn(commonStyles.hudTabBtn, themeStyles.hudTabBtn, activeTab === 'talent' && themeStyles.hudTabBtnActive)}
                 >
                   <Users size={13} className="text-blue-500" />
-                  <span>Top 1% Talent</span>
+                  <span>Relevant Talent</span>
                 </button>
               </div>
 
               <div className={cn(commonStyles.liveStatusPill, themeStyles.liveStatusPill)}>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[11px] font-bold">100% Escrow Protected</span>
+                <span className="text-[11px] font-bold">Escrow terms explained</span>
               </div>
             </div>
 
@@ -296,7 +296,7 @@ export default function Hero({ stats = defaultStats }) {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className={commonStyles.badgeConfidence}>96% Confidence</span>
+                        <span className={commonStyles.badgeConfidence}>Illustrative range</span>
                         <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">
                           ~{currentPreset.hours} total
                         </span>
@@ -318,8 +318,8 @@ export default function Hero({ stats = defaultStats }) {
                         <span className="font-semibold text-slate-700 dark:text-slate-200">
                           Structured into {currentPreset.milestones} Milestone Deliverables
                         </span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                          Pre-Funded Escrow
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                          Review milestone terms
                         </span>
                       </div>
                       <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1.5">
@@ -330,7 +330,7 @@ export default function Hero({ stats = defaultStats }) {
                     {/* Action */}
                     <div className="mt-4 flex items-center justify-between gap-3">
                       <span className="text-xs text-slate-500 dark:text-slate-400">
-                        Lead Match: <strong className="text-slate-800 dark:text-slate-200">{currentPreset.lead}</strong>
+                          Example specialist: <strong className="text-slate-800 dark:text-slate-200">{currentPreset.lead.replace(/\s*\([^)]*\)/, '')}</strong>
                       </span>
                       <Link
                         href="/talent"
@@ -423,7 +423,7 @@ export default function Hero({ stats = defaultStats }) {
                             <div className="flex items-center gap-2">
                               <h4 className="font-bold text-sm text-slate-900 dark:text-white">{specialist.name}</h4>
                               <span className="text-[10px] font-bold px-1.5 py-0.2 bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 rounded">
-                                ⭐ Top Rated
+                                Example profile
                               </span>
                             </div>
                             <p className="text-xs text-slate-500 dark:text-slate-400">{specialist.role}</p>
@@ -431,7 +431,7 @@ export default function Hero({ stats = defaultStats }) {
                         </div>
                         <div className="text-right">
                           <span className="font-black text-sm text-slate-900 dark:text-white">{specialist.rate}</span>
-                          <span className="text-[10px] font-bold text-emerald-500 block">{specialist.match}</span>
+                              <span className="text-[10px] font-bold text-emerald-500 block">{specialist.match.replace(' AI Match', ' fit')}</span>
                         </div>
                       </div>
 

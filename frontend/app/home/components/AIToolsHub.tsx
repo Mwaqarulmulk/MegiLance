@@ -34,7 +34,7 @@ const leftTools = [
     id: 'price-estimator',
     icon: DollarSign, 
     label: 'AI Price Estimator', 
-    desc: 'Calculate market budgets, developer hours, and milestones based on live scope indices.', 
+    desc: 'Estimate a practical budget range, effort, and milestone shape from your project brief.', 
     href: '/ai/price-estimator', 
     category: 'pricing',
     badge: 'Popular',
@@ -45,10 +45,10 @@ const leftTools = [
     id: 'proposal-writer',
     icon: FileText, 
     label: 'AI Proposal Writer', 
-    desc: 'Generate high-converting freelance proposals with structured deliverables and milestones.', 
+    desc: 'Turn your experience and project understanding into a clear proposal with deliverables and milestones.', 
     href: '/ai/proposal-writer', 
     category: 'proposals',
-    badge: 'High Win-Rate',
+    badge: 'Proposal structure',
     color: '#8b5cf6',
     runs: '24k+ runs'
   },
@@ -81,10 +81,10 @@ const rightTools = [
     id: 'contract-builder',
     icon: Lock, 
     label: 'Milestone Contract Builder', 
-    desc: 'Generate legally solid freelance contracts with milestone escrow terms and IP clauses.', 
+    desc: 'Draft a contract starting point with milestone, payment, and IP terms to review before signing.', 
     href: '/tools/contract-builder', 
     category: 'contracts',
-    badge: 'Legal Grade',
+    badge: 'Contract basics',
     color: '#6366f1',
     runs: '14k+ runs'
   },
@@ -92,7 +92,7 @@ const rightTools = [
     id: 'fraud-check',
     icon: Shield, 
     label: 'Risk & Scam Checker', 
-    desc: 'Scan job posts and communications for scam indicators and payment risk red flags.', 
+    desc: 'Check a job post or message for common scam signals and payment-risk red flags.', 
     href: '/ai/fraud-check', 
     category: 'contracts',
     badge: 'Security',
@@ -149,13 +149,13 @@ export default function AIToolsHub() {
         <div className={commonStyles.header}>
           <div className={cn(commonStyles.badge, themeStyles.badge)}>
             <Sparkles size={13} className="text-amber-500" />
-            <span>11 Free Productivity Tools · 0 Signup Barrier</span>
+            <span>Free tools for clearer decisions · No signup to explore</span>
           </div>
           <h2 className={cn(commonStyles.title, themeStyles.title)}>
-            Instant AI Tools to Price, Plan &amp; Protect Your Work
+            Practical tools for pricing, planning, and safer work
           </h2>
           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>
-            Zero signup required. Run calculations, generate legally solid milestone scopes, and write winning proposals before hiring or bidding on MegiLance.
+            Explore the tools first, then decide when you are ready to create an account. Turn a rough brief into clearer scope, budget, milestones, and communication.
           </p>
 
           {/* Filter Navigation Tabs */}
@@ -243,16 +243,16 @@ export default function AIToolsHub() {
             <div className={cn(commonStyles.centerCardContent, themeStyles.centerCardContent)}>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 mb-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>11 AI Engines Live</span>
+                <span>Tools designed around real project decisions</span>
               </div>
               <h3 className={cn(commonStyles.centerHubTitle, themeStyles.centerHubTitle)}>
-                MegiLance Neural Core
+                MegiLance decision toolkit
               </h3>
               <p className={cn(commonStyles.centerHubSubtitle, themeStyles.centerHubSubtitle)}>
-                Grounded in 50,000+ real marketplace deliverables. No training on user data.
+                Built to help you reason through scope, rates, proposals, and delivery risks. Review every suggestion before you act.
               </p>
               <Link href="/ai" className={cn(commonStyles.centerHubCta, themeStyles.centerHubCta)}>
-                <span>Explore AI Command Hub</span>
+                <span>See all tools</span>
                 <ChevronRight size={14} />
               </Link>
             </div>
@@ -332,7 +332,7 @@ export default function AIToolsHub() {
         {/* Footer Hub Link */}
         <div className={commonStyles.ctaWrapper}>
           <Link href="/ai" className={cn(commonStyles.allToolsBtn, themeStyles.allToolsBtn)}>
-            <span>Explore All 11 Free AI Scoping &amp; Productivity Tools</span>
+            Explore the complete free toolkit
             <ArrowRight size={16} />
           </Link>
         </div>

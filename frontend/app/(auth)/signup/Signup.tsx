@@ -39,8 +39,8 @@ const roleConfig = {
     id: 'freelancer' as UserRole,
     label: 'Freelancer',
     brandIcon: Briefcase,
-    brandTitle: 'Build Your Freelance Career',
-    brandText: 'Showcase your skills, bid on exciting projects, and get paid securely for your expert work.',
+brandTitle: 'Start with a clearer next step',
+    brandText: 'Create a focused profile or project brief, then use MegiLance to move from first decision to meaningful work.',
   },
 };
 
@@ -284,7 +284,7 @@ const Signup: React.FC = () => {
         <StaggerContainer className={styles.formContainer}>
           <StaggerItem className={styles.formHeader}>
             <h1 className={styles.formTitle}>Create Your Account</h1>
-            <p className={styles.formSubtitle}>Join the top-tier network of talent and clients.</p>
+            <p className={styles.formSubtitle}>Choose your path and set up the basics. You can refine your profile or project details later.</p>
           </StaggerItem>
 
           <ClientOnly>

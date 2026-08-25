@@ -1,9 +1,9 @@
 /* @AI-HINT: MobileBottomNav light theme colors */
 
 .bottomNav {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 250, 251, 0.92) 100%);
-  border-top-color: var(--border-light);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(180deg, rgba(251, 250, 247, 0.92), rgba(244, 242, 237, 0.98));
+  border-top-color: var(--ml-line);
+  box-shadow: 0 -10px 28px rgba(16, 21, 43, 0.08);
 }
 
 .tabItem {
@@ -11,7 +11,7 @@
 }
 
 .tabItemActive {
-  color: var(--ml-blue);
+  color: var(--ml-blue-dark);
 }
 
 .tabLabel {
@@ -19,8 +19,8 @@
 }
 
 .tabLabelActive {
-  color: var(--ml-blue);
-  font-weight: 600;
+  color: var(--ml-blue-dark);
+  font-weight: 700;
 }
 
 .activeIndicator {

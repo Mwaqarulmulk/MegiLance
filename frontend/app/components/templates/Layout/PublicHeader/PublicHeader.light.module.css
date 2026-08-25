@@ -1,17 +1,17 @@
 ﻿/* @AI-HINT: Light theme styles for the PublicHeader. */
 
 .header {
-  background-color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid var(--border-light);
+  background-color: rgba(251, 250, 247, 0.84);
+  border-bottom: 1px solid var(--ml-line);
 }
 
 .header.scrolled {
-  background-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  background-color: rgba(251, 250, 247, 0.96);
+  box-shadow: 0 12px 28px rgba(16, 21, 43, 0.08);
 }
 
 .navLink {
-  color: var(--color-text-secondary-light);
+  color: #5e6375;
 }
 
 .navLink:hover {
@@ -19,7 +19,7 @@
 }
 
 .signInButton {
-  color: var(--color-text-secondary-light);
+  color: #5e6375;
 }
 
 .signInButton:hover {
@@ -32,7 +32,7 @@
 }
 
 .mobileMenuButton:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(91, 92, 226, 0.08);
 }
 
 .mobileMenu {
@@ -64,8 +64,8 @@
 }
 
 .dropdownItemIcon {
-  background-color: rgba(69, 115, 223, 0.1);
-  color: var(--ml-blue);
+  background-color: rgba(91, 92, 226, 0.11);
+  color: var(--ml-blue-dark);
 }
 
 .dropdownItemTitle {
@@ -73,32 +73,32 @@
 }
 
 .dropdownItemDesc {
-  color: var(--color-text-secondary-light);
+  color: #5e6375;
 }
 
 .mobileNavCategory {
-  color: var(--color-text-secondary-light);
+  color: #5e6375;
 }
 
 .mobileNavLinkDesc {
-  color: var(--color-text-secondary-light);
+  color: #5e6375;
 }
 
 .exploreLink {
-  background: linear-gradient(135deg, var(--ml-blue) 0%, #6b8ceb 100%);
+  background: linear-gradient(135deg, var(--ml-blue-dark) 0%, var(--ml-blue) 68%, var(--ml-teal) 140%);
   color: #fff;
 }
 
 .exploreLink:hover {
-  background: linear-gradient(135deg, #3a62c4 0%, var(--ml-blue) 100%);
-  box-shadow: 0 4px 20px rgba(69, 115, 223, 0.4);
+  background: linear-gradient(135deg, var(--ml-ink) 0%, var(--ml-blue-dark) 100%);
+  box-shadow: 0 8px 24px rgba(91, 92, 226, 0.28);
 }
 
 .mobileExploreLink {
-  background: linear-gradient(135deg, var(--ml-blue) 0%, #6b8ceb 100%);
+  background: linear-gradient(135deg, var(--ml-blue-dark) 0%, var(--ml-blue) 68%, var(--ml-teal) 140%);
   color: #fff;
 }
 
 .mobileExploreLink:hover {
-  background: linear-gradient(135deg, #3a62c4 0%, var(--ml-blue) 100%);
+  background: linear-gradient(135deg, var(--ml-ink) 0%, var(--ml-blue-dark) 100%);
 }

@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useThemeMode, useThemeStyles } from '@/app/hooks/useThemeMode';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Menu, X, Sparkles, ChevronDown, Briefcase, Users, Shield, 
+  Menu, X, Sparkles, ChevronDown, Briefcase, Users, Shield, PlayCircle, 
   Search, Zap, Globe, MessageSquare, CreditCard, 
   BarChart3, Star, Building2, Rocket, HelpCircle, Mail, Activity, Lock
 } from 'lucide-react';
@@ -22,7 +22,7 @@ import darkStyles from './Header.dark.module.css';
 
 const megaMenuData = {
   aiSuite: {
-    title: 'AI Tools',
+    title: 'Work Tools',
     sections: [
       {
         title: 'Price & Rates',
@@ -56,7 +56,7 @@ const megaMenuData = {
     ]
   },
   hireTalent: {
-    title: 'Hire Talent',
+    title: 'Build a Team',
     sections: [
       {
         title: 'Find & Hire',
@@ -76,7 +76,7 @@ const megaMenuData = {
     ]
   },
   findWork: {
-    title: 'Find Work',
+    title: 'Find Your Next Brief',
     sections: [
       {
         title: 'Opportunities',
@@ -95,7 +95,7 @@ const megaMenuData = {
     ]
   },
   resources: {
-    title: 'Resources',
+    title: 'Learn & Decide',
     sections: [
       {
         title: 'Learn & Explore',
@@ -280,6 +280,10 @@ export default function Header() {
           {/* Right Action Bar */}
           <div className={commonStyles.actionGroup}>
             <div className={commonStyles.desktopActions}>
+              <Link href="/login?demo=client" className="hidden items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 lg:inline-flex dark:text-blue-400 dark:hover:text-blue-300">
+                <PlayCircle size={15} aria-hidden="true" />
+                <span>View Demo</span>
+              </Link>
               <Link href="/login">
                 <Button variant="ghost" size="md">Sign In</Button>
               </Link>

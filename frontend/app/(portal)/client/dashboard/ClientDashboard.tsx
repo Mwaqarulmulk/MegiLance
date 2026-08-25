@@ -1155,13 +1155,13 @@ const ClientDashboard: React.FC = () => {
                   animationWidth={120}
                   animationHeight={120}
                   action={
-                    <Link href="/client/find-talent">
+                    <Link href="/create-project">
                       <Button
                         variant="primary"
                         size="md"
                         iconBefore={<Plus size={16} />}
                       >
-                        Find Talent
+                        Post a Project
                       </Button>
                     </Link>
                   }
@@ -1232,10 +1232,17 @@ const ClientDashboard: React.FC = () => {
               ) : (
                 <EmptyState
                   title="No recommendations yet"
-                  description="Complete your profile to get AI matches."
+                  description="Complete your profile so MegiLance can surface specialists who match your goals, budget, and working style."
                   animationData={aiSparkleAnimation}
                   animationWidth={100}
                   animationHeight={100}
+                  action={
+                    <Link href="/complete-profile">
+                      <Button variant="secondary" size="sm">
+                        Improve my matches
+                      </Button>
+                    </Link>
+                  }
                 />
               )}
             </div>

@@ -1,18 +1,18 @@
 ﻿/* @AI-HINT: Dark theme styles for the PortalNavbar with breadcrumbs and dropdowns */
 
 .navbar {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 100%);
-  border-bottom: 1px solid var(--bg-secondary-dark);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(16, 21, 43, 0.94) 0%, rgba(23, 29, 56, 0.9) 100%);
+  border-bottom: 1px solid rgba(139, 141, 246, 0.16);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 /* Breadcrumb */
 .breadcrumbLink {
-  color: #64748b;
+  color: #8e93a8;
 }
 
 .breadcrumbLink:hover {
-  color: #7aa5f5;
+  color: var(--ml-blue-light);
 }
 
 .breadcrumbSeparator {
@@ -32,9 +32,9 @@
 }
 
 .actionButton:hover {
-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(51, 65, 85, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(139, 141, 246, 0.12), rgba(56, 203, 182, 0.08));
   color: var(--text-primary-dark);
-  box-shadow: 0 2px 12px rgba(122, 165, 245, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .menuButton {
@@ -42,21 +42,21 @@
 }
 
 .menuButton:hover {
-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(51, 65, 85, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(139, 141, 246, 0.12), rgba(56, 203, 182, 0.08));
   color: var(--text-primary-dark);
-  box-shadow: 0 2px 12px rgba(122, 165, 245, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .searchContainer {
   background: linear-gradient(135deg, var(--bg-primary-dark) 0%, rgba(15, 23, 42, 0.8) 100%);
   border: 1px solid var(--bg-secondary-dark);
-  border-radius: 8px;
+  border-radius: 14px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .searchContainer:focus-within {
-  border-color: var(--ml-blue);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(122, 165, 245, 0.2), 0 2px 12px rgba(122, 165, 245, 0.15);
+  border-color: var(--ml-blue-light);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(139, 141, 246, 0.18), 0 4px 16px rgba(91, 92, 226, 0.16);
   background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(30, 41, 59, 0.8) 100%);
 }
 
@@ -66,7 +66,7 @@
 }
 
 .searchInput::placeholder {
-  color: #64748b;
+  color: #8e93a8;
 }
 
 /* Dropdown Theme Colors */
@@ -81,7 +81,7 @@
 }
 
 .searchItem:hover {
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(51, 65, 85, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(139, 141, 246, 0.11), rgba(56, 203, 182, 0.07));
 }
 
 .notificationDropdown {
@@ -95,7 +95,7 @@
 }
 
 .notificationItem:hover {
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(51, 65, 85, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(139, 141, 246, 0.11), rgba(56, 203, 182, 0.07));
 }
 
 .notificationItemTitle {
@@ -117,7 +117,7 @@
 }
 
 .helpItem:hover {
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(51, 65, 85, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(139, 141, 246, 0.11), rgba(56, 203, 182, 0.07));
 }
 
 .helpItemLabel {
@@ -125,5 +125,5 @@
 }
 
 .helpItemDesc {
-  color: #64748b;
+  color: #8e93a8;
 }

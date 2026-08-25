@@ -40,14 +40,14 @@ const CookieConsent: React.FC = () => {
   };
 
   return (
-    <div className={cn(commonStyles.banner, themeStyles.banner)} role="alert" aria-live="polite">
+    <div className={cn(commonStyles.banner, themeStyles.banner)} role="dialog" aria-label="Cookie preferences">
       <p className={cn(commonStyles.text, themeStyles.text)}>
-        We use cookies to enhance your experience. By continuing, you agree to our{' '}
-        <a href="/privacy" className={cn(commonStyles.link, themeStyles.link)}>Privacy Policy</a>.
+        We use essential cookies to keep MegiLance secure and optional analytics cookies to improve the product.{' '}
+        <a href="/cookies" className={cn(commonStyles.link, themeStyles.link)}>Read our cookie policy</a>.
       </p>
       <div className={commonStyles.actions}>
-        <Button variant="ghost" size="sm" onClick={handleDecline}>Decline</Button>
-        <Button variant="primary" size="sm" onClick={handleAccept}>Accept</Button>
+        <Button variant="ghost" size="sm" onClick={handleDecline}>Use essential only</Button>
+        <Button variant="primary" size="sm" onClick={handleAccept}>Allow analytics</Button>
       </div>
     </div>
   );

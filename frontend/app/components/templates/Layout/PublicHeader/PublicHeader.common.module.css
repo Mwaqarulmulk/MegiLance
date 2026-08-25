@@ -6,8 +6,8 @@
   left: 0;
   width: 100%;
   z-index: 50;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px); /* More blur for premium feel */
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
@@ -26,8 +26,8 @@
   justify-content: space-between;
   max-width: var(--max-width-desktop, 1280px);
   margin: 0 auto;
-  padding: 0.875rem 1.5rem; /* 14px 24px - Slightly taller */
-  height: var(--header-height, 72px);
+  padding: 0.75rem 1.25rem;
+  height: var(--header-height, 68px);
 }
 
 .logoContainer {
@@ -44,15 +44,15 @@
 .navList {
   display: flex;
   align-items: center;
-  gap: 2rem; /* 32px */
+  gap: clamp(1rem, 2.4vw, 2.25rem);
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .navLink {
-  font-size: 0.9375rem; /* 15px - More refined */
-  font-weight: 500;
+  font-size: 0.8125rem;
+  font-weight: 650;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -61,8 +61,8 @@
     opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   position: relative;
-  padding: 0.5rem 0;
-  letter-spacing: 0.01em;
+  padding: 0.5rem 0.15rem;
+  letter-spacing: 0.025em;
 }
 
 .navLink::after {
@@ -122,8 +122,8 @@
   left: 50%;
   transform: translateX(-50%);
   min-width: 320px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(16, 21, 43, 0.16), 0 0 0 1px rgba(91, 92, 226, 0.08);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   z-index: 100;
@@ -142,7 +142,7 @@
 }
 
 .dropdownContent {
-  padding: 0.5rem;
+  padding: 0.65rem;
 }
 
 .dropdownItem {
@@ -150,7 +150,7 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.875rem;
-  border-radius: 8px;
+  border-radius: 12px;
   text-decoration: none;
   transition: transform 0.2s ease,
     box-shadow 0.2s ease,

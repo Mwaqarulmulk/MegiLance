@@ -66,9 +66,22 @@
 .homeSection {
   position: relative;
   width: 100%;
-  padding: 3.5rem 0;
+  padding: clamp(4rem, 8vw, 8rem) 0;
   margin: 0;
   overflow-x: hidden;
+  isolation: isolate;
+}
+
+.homeSection::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.32;
+  background-image: linear-gradient(rgba(16, 21, 43, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 21, 43, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
 }
 
 .sectionCanvas {
@@ -94,7 +107,7 @@
 
 @media (min-width: 768px) {
   .homeSection {
-    padding: 4.5rem 0;
+    padding: clamp(5rem, 8vw, 9rem) 0;
   }
 
   .sectionContainer {
@@ -108,8 +121,8 @@
   }
 
   .sectionContainer {
-    max-width: 1280px;
-    padding: 0 2.5rem;
+    max-width: 1360px;
+    padding: 0 2.75rem;
   }
 }
 

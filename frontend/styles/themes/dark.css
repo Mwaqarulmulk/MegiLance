@@ -11,11 +11,11 @@ html.dark,
   --warning: var(--ml-yellow);
 
   /* UI Surfaces & Backgrounds */
-  --background: var(--neutral-900);
-  --surface: var(--neutral-800);
-  --surface-alt: var(--neutral-700);
-  --container-dark: var(--neutral-700);
-  --border: var(--neutral-700);
+  --background: var(--ml-ink);
+  --surface: #171d38;
+  --surface-alt: #222a4a;
+  --container-dark: #0a0e20;
+  --border: #303758;
 
   /* Text Colors */
   --text-primary: var(--neutral-50);
@@ -25,8 +25,10 @@ html.dark,
   --text-on-dark: var(--neutral-50);
 
   /* Extended Brand Palette */
-  --brand-indigo: #3C3C88;
-  --brand-electric-blue: #2F80ED;
+  --brand-indigo: #8f7cf6;
+  --brand-electric-blue: #8b8df6;
+  --surface-accent: #193b3b;
+  --surface-warm: #3b2b27;
 
   /* Legacy aliases for backward compatibility */
   --primary-4573df: var(--primary);

@@ -15,6 +15,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api/core";
 
 interface Deliverable {
@@ -226,12 +227,12 @@ export default function ClientDeliverablesPage() {
           <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
             When freelancers submit work for your active contract milestones, their deliverables, files, and notes will appear here for your review and approval.
           </p>
-          <a
+          <Link
             href="/client/contracts"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
           >
             View Active Contracts
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="space-y-4">

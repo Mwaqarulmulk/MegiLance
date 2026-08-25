@@ -89,6 +89,8 @@ interface ProjectData {
   attachments: string[];
 }
 
+const DRAFT_KEY = 'megilance_project_wizard_draft';
+
 const steps = [
   { id: 1, title: 'Project Details', icon: FileText },
   { id: 2, title: 'Budget & Timeline', icon: Banknote },
@@ -141,24 +143,39 @@ export default function ProjectWizard() {
     attachments: [],
   });
 
-  // Load pre-filled project data from sessionStorage if redirected from price estimator
+  // Restore either an estimator handoff or an interrupted project draft.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const pending = sessionStorage.getItem('megilance_pending_project');
-      if (pending) {
-        try {
-          const parsed = JSON.parse(pending);
-          setProjectData(prev => ({
-            ...prev,
-            ...parsed
-          }));
-          sessionStorage.removeItem('megilance_pending_project');
-        } catch (e) {
-          console.error('Failed to parse pending project data:', e);
-        }
+    if (typeof window === 'undefined') return;
+    const pending = sessionStorage.getItem('megilance_pending_project');
+    const draft = sessionStorage.getItem(DRAFT_KEY);
+    const source = pending || draft;
+    if (!source) return;
+
+    try {
+      const parsed = JSON.parse(source);
+      const restoredData = parsed.projectData || parsed;
+      setProjectData(prev => ({ ...prev, ...restoredData }));
+      if (draft && parsed.currentStep >= 1 && parsed.currentStep <= steps.length) {
+        setCurrentStep(parsed.currentStep);
       }
+      if (pending) sessionStorage.removeItem('megilance_pending_project');
+    } catch (e) {
+      console.error('Failed to restore project draft:', e);
+      sessionStorage.removeItem(DRAFT_KEY);
     }
   }, []);
+
+  // Keep long forms recoverable when users navigate away or refresh.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hasProgress = Boolean(
+      projectData.title || projectData.description || projectData.category ||
+      projectData.skills.length || projectData.budgetMin || projectData.budgetMax ||
+      projectData.duration || projectData.attachments.length,
+    );
+    if (!hasProgress) return;
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ projectData, currentStep, updatedAt: Date.now() }));
+  }, [projectData, currentStep]);
 
   const handleSuggestBudget = async () => {
     if (!projectData.title.trim() && !projectData.description.trim()) {
@@ -364,6 +381,7 @@ export default function ProjectWizard() {
       });
 
       const projectId = project?.id || project?.data?.id || project?.project_id || project?.project?.id;
+      sessionStorage.removeItem(DRAFT_KEY);
       if (projectId) {
         router.push(`/client/projects/${projectId}?new=true`);
       } else {
@@ -404,6 +422,7 @@ export default function ProjectWizard() {
             <h1 className={styles.title}>Post a Project</h1>
             <p className={styles.subtitle}>
               Tell us about your project and find the perfect freelancer
+              <span className="block mt-2 text-xs opacity-70">Your progress saves automatically on this device.</span>
             </p>
           </div>
         </ScrollReveal>

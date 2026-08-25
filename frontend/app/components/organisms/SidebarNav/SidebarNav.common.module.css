@@ -57,8 +57,8 @@
 
 /* Section headers for grouped navigation */
 .sidebarNavSectionHeader {
-  padding: 0.75rem 0.875rem 0.25rem;
-  margin-top: 0.625rem;
+  padding: 1rem 0.9rem 0.35rem;
+  margin-top: 0.75rem;
   list-style: none;
 }
 
@@ -69,8 +69,8 @@
 
 .sidebarNavSectionLabel {
   display: block;
-  font-size: 0.625rem;
-  font-weight: 700;
+  font-size: 0.64rem;
+  font-weight: 760;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   line-height: 1;
@@ -83,8 +83,8 @@
 }
 
 .sidebarNavItem {
-  padding: 0 0.375rem;
-  margin-bottom: 1px;
+  padding: 0 0.25rem;
+  margin-bottom: 0.15rem;
   position: relative;
 }
 
@@ -97,11 +97,11 @@
 .sidebarNavLink {
   display: flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  padding: 0.66rem 0.82rem;
+  border-radius: 12px;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.875rem;
+  font-weight: 560;
+  font-size: 0.84rem;
   transition: transform 0.15s ease,
     box-shadow 0.15s ease,
     border-color 0.15s ease,
@@ -110,8 +110,8 @@
     opacity 0.15s ease;
   white-space: nowrap;
   position: relative;
-  gap: 0.625rem;
-  line-height: 1.4;
+  gap: 0.75rem;
+  line-height: 1.35;
 }
 
 .sidebarNavLink:hover {
@@ -134,17 +134,17 @@
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 60%;
-  border-radius: 0 3px 3px 0;
+  height: 68%;
+  border-radius: 0 4px 4px 0;
   background-color: currentColor;
-  opacity: 0.6;
+  opacity: 0.9;
 }
 
 .sidebarNavIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
+  min-width: 22px;
   flex-shrink: 0;
   transition: transform 0.15s ease;
 }

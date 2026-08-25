@@ -43,9 +43,9 @@ const roleConfig = {
     label: "Freelancer",
     redirectPath: "/freelancer/dashboard",
     brandIcon: Laptop,
-    brandTitle: "Build the Future",
+    brandTitle: "Find work with more clarity",
     brandText:
-      "Access exclusive projects, secure your payments with USDC, and collaborate with top-tier clients from around the world.",
+      "Review better-matched opportunities, shape a clear proposal, and keep your work and payment milestones in one place.",
   },
   client: {
     id: "client" as UserRole,
@@ -53,9 +53,9 @@ const roleConfig = {
     label: "Client",
     redirectPath: "/client/dashboard",
     brandIcon: ListChecks,
-    brandTitle: "Assemble Your Dream Team",
+    brandTitle: "Turn a brief into progress",
     brandText:
-      "Find, hire, and manage elite talent. Our AI-powered platform ensures you connect with the perfect freelancers for your projects.",
+      "Post a focused project, compare relevant proposals, and move from first conversation to approved milestones with less back-and-forth.",
   },
   admin: {
     id: "admin" as UserRole,
@@ -63,9 +63,9 @@ const roleConfig = {
     label: "Admin",
     redirectPath: "/admin/dashboard",
     brandIcon: UserCog,
-    brandTitle: "Oversee the Ecosystem",
+    brandTitle: "Keep the marketplace dependable",
     brandText:
-      "Manage platform operations, ensure quality and security, and empower our community of freelancers and clients.",
+      "Review platform activity, protect account access, and resolve issues with clear operational context.",
   },
 };
 

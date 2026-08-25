@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import { PageTransition } from "@/app/components/Animations/PageTransition";
 import Button from "@/app/components/atoms/Button/Button";
-import { Clock, Banknote, Tag, User, CheckCircle } from "lucide-react";
+import { ArrowLeft, Clock, Banknote, Tag, User, CheckCircle, RefreshCw } from "lucide-react";
 import RecommendedFreelancers from "@/app/components/Matching/RecommendedFreelancers/RecommendedFreelancers";
 
 import commonStyles from "./ProjectDetails.common.module.css";
@@ -21,6 +21,7 @@ export default function ProjectDetailsPage() {
   const router = useRouter();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
 
   const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;
@@ -30,6 +31,8 @@ export default function ProjectDetailsPage() {
   }, [id]);
 
   const loadData = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const [projectData, userData] = await Promise.all([
         api.projects.get(id as string),
@@ -37,9 +40,10 @@ export default function ProjectDetailsPage() {
       ]);
       setProject(projectData);
       setUser(userData);
-    } catch (error) {
+    } catch (loadError) {
+      setError("We couldn’t load this project. Check your connection and try again.");
       if (process.env.NODE_ENV === "development") {
-        console.error("Failed to load data:", error);
+        console.error("Failed to load data:", loadError);
       }
     } finally {
       setLoading(false);
@@ -70,12 +74,27 @@ export default function ProjectDetailsPage() {
     );
   }
 
-  if (!project) {
+  if (error || !project) {
     return (
-      <div
-        className={cn(commonStyles.notFoundState, themeStyles.notFoundState)}
-      >
-        Project not found
+      <div className={cn(commonStyles.pageContainer, themeStyles.pageContainer)}>
+        <div className={commonStyles.innerContainer}>
+          <div className={cn(commonStyles.card, themeStyles.card, "text-center")} role={error ? "alert" : undefined}>
+            <h1 className={commonStyles.title}>{error ? "Project unavailable" : "Project not found"}</h1>
+            <p className={cn(commonStyles.descriptionText, themeStyles.descriptionText)}>
+              {error || "This project may have been removed or you may no longer have access to it."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <Button variant="outline" onClick={() => router.back()} iconBefore={<ArrowLeft size={16} />}>
+                Go back
+              </Button>
+              {error && (
+                <Button variant="primary" onClick={loadData} iconBefore={<RefreshCw size={16} />}>
+                  Try again
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -107,9 +126,9 @@ export default function ProjectDetailsPage() {
               <Button
                 variant="primary"
                 size="lg"
-                onClick={() => router.push("/freelancer/invitations")}
+                onClick={() => router.push(`/freelancer/submit-proposal?jobId=${encodeURIComponent(String(id))}`)}
               >
-                View Invitations
+                Submit a Proposal
               </Button>
             )}
             </div>

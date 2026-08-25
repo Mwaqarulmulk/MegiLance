@@ -1,17 +1,6 @@
 /* @AI-HINT: Premium 3D CSS Module - Premium visual effects with Apple/Stripe-level polish */
 
-/* ==========================================
-   PREMIUM CSS VARIABLES
-   ========================================== */
-:root {
-  --3d-primary: var(--ml-blue);
-  --3d-secondary: #8b5cf6;
-  --3d-accent: #f59e0b;
-  --3d-success: #10b981;
-  --3d-glow-intensity: 1;
-  --3d-animation-speed: 1;
-  --3d-blur-strength: 20px;
-}
+
 
 /* ==========================================
    3D CUBE - Liquid Metal Effect

@@ -1,16 +1,6 @@
 /* @AI-HINT: Premium scroll-triggered 3D scenes - Apple/Linear/Stripe-level animations */
 
-/* ==========================================
-   PREMIUM CSS VARIABLES
-   ========================================== */
-:root {
-  --scene-perspective: 1500px;
-  --scene-transition: 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  --scene-transition-fast: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  --scene-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --scene-glow-blue: rgba(69, 115, 223, 0.5);
-  --scene-glow-purple: rgba(139, 92, 246, 0.5);
-}
+
 
 /* ==========================================
    FLOATING DEVICE (Premium Product Mockup)

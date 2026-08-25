@@ -120,7 +120,7 @@ export default function FeaturesPage() {
             framed={true}
             glow={true}
           />
-          <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Enterprise-Grade Security</p>
+          <p style={{ marginTop: '1rem', fontWeight: 600, color: 'var(--ml-blue-dark, #29338f)' }}>Enterprise-Grade Security</p>
         </div>
         <div style={{ textAlign: 'center', width: '100%', maxWidth: '440px' }}>
           <BrandLottiePlayer
@@ -130,7 +130,7 @@ export default function FeaturesPage() {
             framed={true}
             glow={true}
           />
-          <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Smart Contract Escrow</p>
+          <p style={{ marginTop: '1rem', fontWeight: 600, color: 'var(--ml-blue-dark, #29338f)' }}>Smart Contract Escrow</p>
         </div>
       </section>
 

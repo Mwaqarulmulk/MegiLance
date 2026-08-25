@@ -236,10 +236,12 @@ const Dashboard: React.FC = () => {
       profileViews: analytics?.profileViews || 0,
       inquiryRate: Math.round(((analytics?.profileViews || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.profileViews || 1) : 0) * 100),
       winRate: Math.round(((analytics?.pendingProposals || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.pendingProposals || 1) : 0) * 100),
-      completionRate: sellerStats?.completionRate ?? 100,
-      responseRate: sellerStats?.responseRate ?? 100,
-      onTimeRate: sellerStats?.onTimeDeliveryRate ?? 100,
-      jssScore: sellerStats?.level.jssScore ?? 0,
+      // No completed work is not the same as perfect performance. Keep the
+      // metric neutral until the API has enough observations to calculate it.
+      completionRate: sellerStats?.completionRate ?? 0,
+      responseRate: sellerStats?.responseRate ?? 0,
+      onTimeRate: sellerStats?.onTimeDeliveryRate ?? 0,
+      jssScore: sellerStats?.level?.jssScore ?? 0,
       profileCompleteness: analytics?.profileCompleteness ?? 0,
     }),
     [analytics, sellerStats],

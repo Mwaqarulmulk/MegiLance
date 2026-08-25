@@ -7,6 +7,23 @@
 
 /* Global popup config removed to rely on custom 3-file CSS modules */
 
+/* Shared 3D scene properties used by CSS Modules. */
+:root {
+  --scene-perspective: 1500px;
+  --scene-transition: 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  --scene-transition-fast: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  --scene-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --scene-glow-blue: rgba(69, 115, 223, 0.5);
+  --scene-glow-purple: rgba(139, 92, 246, 0.5);
+  --3d-primary: var(--ml-blue);
+  --3d-secondary: #8b5cf6;
+  --3d-accent: #f59e0b;
+  --3d-success: #10b981;
+  --3d-glow-intensity: 1;
+  --3d-animation-speed: 1;
+  --3d-blur-strength: 20px;
+}
+
 /* Skip link for keyboard users */
 .skip-link {
   position: absolute;
@@ -45,9 +62,10 @@
 /*   FOCUS VISIBLE - accessible focus rings      */
 /* ============================================= */
 :focus-visible {
-  outline: 2px solid var(--ml-blue);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline: 2px solid var(--ml-blue-light, var(--ml-blue));
+  outline-offset: 3px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ml-blue) 18%, transparent);
 }
 
 /* Remove default focus outlines for mouse users */
@@ -86,6 +104,36 @@
 /* ============================================= */
 :root { color-scheme: light; }
 .dark { color-scheme: dark; }
+
+html {
+  background: var(--background, var(--ml-paper));
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--background, var(--ml-paper));
+  color: var(--text-primary, var(--ml-ink));
+}
+
+button,
+a,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active,
+a:active,
+[role='button']:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:active,
+  a:active,
+  [role='button']:active {
+    transform: none;
+  }
+}
 
 /* ============================================= */
 /*   SCROLLBAR GUTTER - prevents layout shift    */

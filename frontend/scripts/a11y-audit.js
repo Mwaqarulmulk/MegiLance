@@ -35,7 +35,11 @@ async function runAudit() {
     process.stdout.write(`  Auditing ${page.name} (${page.path})... `);
     
     try {
-      await tab.goto(url, { waitUntil: 'networkidle', timeout: 15000 });
+      // App pages may keep analytics/websocket connections open, so networkidle
+      // can hang even when the page is fully usable. Audit after DOM readiness
+      // plus a short settle window instead.
+      await tab.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await tab.waitForTimeout(750);
       
       // Inject and run axe-core
       await tab.addScriptTag({ path: require.resolve('axe-core') });
@@ -104,6 +108,9 @@ async function runAudit() {
         console.log(`    ${icon} [${v.impact}] ${v.id}: ${v.description}`);
         console.log(`       Help: ${v.helpUrl}`);
         console.log(`       Affected: ${v.nodes.length} element(s)`);
+        for (const node of v.nodes.slice(0, 5)) {
+          console.log(`       Target: ${JSON.stringify(node.target)} | HTML: ${node.html.slice(0, 180)}`);
+        }
       }
     }
   }

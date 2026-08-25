@@ -1,19 +1,20 @@
 .homePage {
   background: var(--bg-primary-dark);
   color: var(--text-primary-dark);
+  background-image: radial-gradient(circle at 12% 0%, rgba(139, 141, 246, 0.18), transparent 30rem), radial-gradient(circle at 88% 16%, rgba(56, 203, 182, 0.12), transparent 26rem);
 }
 
 .sectionCanvas {
-  background: var(--bg-primary-dark);
+  background: linear-gradient(180deg, rgba(16, 21, 43, 0.96), rgba(23, 29, 56, 0.98));
 }
 
 .sectionAlt {
-  background: rgba(15, 23, 42, 0.45);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(135deg, rgba(25, 59, 59, 0.44), rgba(59, 43, 39, 0.28));
+  border-top: 1px solid rgba(139, 141, 246, 0.14);
+  border-bottom: 1px solid rgba(139, 141, 246, 0.14);
+  backdrop-filter: blur(14px);
 }
 
 .gradientOrb {
-  background: radial-gradient(circle, rgba(69, 115, 223, 0.12) 0%, rgba(15, 23, 42, 0) 70%);
+  background: radial-gradient(circle, rgba(139, 141, 246, 0.2) 0%, rgba(16, 21, 43, 0) 70%);
 }

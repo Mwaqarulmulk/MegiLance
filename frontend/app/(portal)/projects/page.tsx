@@ -102,6 +102,7 @@ const formatTimeAgo = (dateStr: string) => {
 export default function PortalProjectsPage() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
+  const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -291,7 +292,6 @@ export default function PortalProjectsPage() {
     </div>
   );
 
-  const { user } = useAuth();
   const userRole = (user?.user_type || user?.role || (typeof window !== 'undefined' ? localStorage.getItem('portal_area') : 'client') || 'client').toLowerCase();
 
   const roleTitle = userRole === 'client' ? 'My Posted Projects & Hiring' : userRole === 'admin' ? 'Platform Projects & Moderation' : 'Explore & Apply to Projects';

@@ -1,9 +1,9 @@
 ﻿/* @AI-HINT: Light theme styles for the PortalNavbar with breadcrumbs and dropdowns */
 
 .navbar {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.88) 100%);
-  border-bottom: 1px solid var(--border-light);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(251, 250, 247, 0.94) 0%, rgba(244, 242, 237, 0.9) 100%);
+  border-bottom: 1px solid var(--ml-line);
+  box-shadow: 0 10px 24px rgba(16, 21, 43, 0.055);
 }
 
 /* Breadcrumb */
@@ -12,7 +12,7 @@
 }
 
 .breadcrumbLink:hover {
-  color: var(--ml-blue);
+  color: var(--ml-blue-dark);
 }
 
 .breadcrumbSeparator {
@@ -20,11 +20,11 @@
 }
 
 .breadcrumbCurrent {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .pageTitle {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .actionButton {
@@ -32,9 +32,9 @@
 }
 
 .actionButton:hover {
-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);
+  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));
   color: var(--color-text-primary-light);
-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.08);
+  box-shadow: 0 4px 12px rgba(91, 92, 226, 0.10);
 }
 
 .menuButton {
@@ -42,26 +42,26 @@
 }
 
 .menuButton:hover {
-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);
+  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));
   color: var(--color-text-primary-light);
-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.08);
+  box-shadow: 0 4px 12px rgba(91, 92, 226, 0.10);
 }
 
 .searchContainer {
   background: linear-gradient(135deg, var(--bg-secondary-light) 0%, var(--bg-tertiary-light) 100%);
   border: 1px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .searchContainer:focus-within {
   border-color: var(--ml-blue);
-  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.08), 0 2px 8px rgba(69, 115, 223, 0.12);
+  box-shadow: 0 0 0 4px rgba(91, 92, 226, 0.12), 0 4px 14px rgba(91, 92, 226, 0.10);
   background: linear-gradient(135deg, var(--bg-primary-light) 0%, var(--bg-secondary-light) 100%);
 }
 
 .searchInput {
-  color: #111827;
+  color: var(--ml-ink);
   background: transparent;
 }
 
@@ -77,11 +77,11 @@
 }
 
 .searchItem {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .searchItem:hover {
-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);
+  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));
 }
 
 .notificationDropdown {
@@ -91,15 +91,15 @@
 }
 
 .notificationItem {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .notificationItem:hover {
-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);
+  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));
 }
 
 .notificationItemTitle {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .notificationDesc {
@@ -113,15 +113,15 @@
 }
 
 .helpItem {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .helpItem:hover {
-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);
+  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));
 }
 
 .helpItemLabel {
-  color: #111827;
+  color: var(--ml-ink);
 }
 
 .helpItemDesc {

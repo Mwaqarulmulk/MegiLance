@@ -1,28 +1,28 @@
 /* @AI-HINT: MobileBottomNav dark theme colors */
 
 .bottomNav {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.92) 100%);
-  border-top-color: var(--bg-secondary-dark);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(16, 21, 43, 0.94), rgba(10, 14, 32, 0.99));
+  border-top-color: rgba(139, 141, 246, 0.18);
+  box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .tabItem {
-  color: #64748b;
+  color: #8e93a8;
 }
 
 .tabItemActive {
-  color: #7aa5f5;
+  color: #c7c8ff;
 }
 
 .tabLabel {
-  color: #64748b;
+  color: #8e93a8;
 }
 
 .tabLabelActive {
-  color: #7aa5f5;
-  font-weight: 600;
+  color: #c7c8ff;
+  font-weight: 700;
 }
 
 .activeIndicator {
-  background-color: #7aa5f5;
+  background-color: var(--ml-teal);
 }

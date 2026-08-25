@@ -3,12 +3,12 @@
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
-  background: var(--surface-card, rgba(15, 23, 42, 0.6));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: var(--surface-card, var(--bg-primary-light, #ffffff));
+  border: 1px solid var(--border-color, var(--border-light, #dfe3ea));
   border-radius: 1.25rem;
   backdrop-filter: blur(16px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--text-primary-light, #172033));
   font-family: inherit;
   transition: all 0.3s ease;
 }
@@ -37,9 +37,9 @@
 .sliderGroup {
   margin-bottom: 2rem;
   padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(91, 92, 226, 0.045);
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(91, 92, 226, 0.12);
 }
 
 .sliderHeader {
@@ -57,7 +57,7 @@
 .sliderValue {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #3b82f6;
+  color: var(--ml-blue-dark, #29338f);
 }
 
 .sliderInput {
@@ -97,8 +97,8 @@
 .card {
   padding: 1.25rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(23, 32, 51, 0.10);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -162,7 +162,7 @@
 
 .feeLost {
   font-size: 0.85rem;
-  color: #ef4444;
+  color: #b42318;
   font-weight: 600;
 }
 
@@ -201,7 +201,7 @@
   justify-content: center;
   padding: 0.85rem 1.5rem;
   background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--text-primary-light, #172033));
   font-weight: 600;
   border-radius: 0.75rem;
   text-decoration: none;
@@ -212,6 +212,26 @@
 
 .btnSecondary:hover {
   background: rgba(255, 255, 255, 0.15);
+}
+
+:global(.dark) .container {
+  background: var(--bg-secondary-dark, #10152b);
+  border-color: var(--border-dark, rgba(255, 255, 255, 0.12));
+  color: var(--text-primary-dark, #f7f5ef);
+}
+
+:global(.dark) .sliderGroup,
+:global(.dark) .card {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+:global(.dark) .sliderValue {
+  color: var(--ml-blue-light, #c7c8ff);
+}
+
+:global(.dark) .feeLost {
+  color: #ff8f87;
 }
 
 @media (max-width: 640px) {

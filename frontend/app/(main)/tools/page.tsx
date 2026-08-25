@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { 
   Calculator, TrendingUp, FileText, BarChart3, Brain, Layers, 
   DollarSign, Shield, Search, MessageSquare, ArrowRight, Sparkles,
-  Zap, Clock, Users, Globe, CheckCircle2, Star, Percent, Scale
+  Zap, Clock, Users, Globe, CheckCircle2, Star, Percent, Scale, Rocket
 } from 'lucide-react';
 import { 
   buildMeta, 

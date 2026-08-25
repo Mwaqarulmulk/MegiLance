@@ -151,3 +151,7 @@ show.ps1
 *.pdf
 *.docx
 *.svg
+
+# Development secret artifacts
+.dev_secret_key
+**/.dev_secret_key

@@ -9,12 +9,33 @@ import os
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
+from uuid import uuid4
 import boto3
 from botocore.exceptions import ClientError
 from app.core.config import get_settings
 logger = logging.getLogger(__name__)
 
 settings = get_settings()
+
+
+def _safe_upload_parts(filename: str, subfolder: str = "") -> tuple[str, str, str]:
+    """Return safe path components for untrusted upload metadata."""
+    safe_name = Path(filename or "upload").name
+    stem = Path(safe_name).stem or "upload"
+    suffix = Path(safe_name).suffix.lower()
+    safe_stem = "".join(ch for ch in stem if ch.isalnum() or ch in ("-", "_", "."))[:100] or "upload"
+    safe_folder = "/".join(part for part in Path(subfolder or "").parts if part not in ("", ".", ".."))
+    unique_filename = f"{safe_stem}_{uuid4().hex}{suffix}"
+    return safe_folder, unique_filename, f"{safe_folder}/{unique_filename}" if safe_folder else unique_filename
+
+
+def _safe_local_path(upload_dir: Path, file_path: str) -> Path:
+    """Resolve a stored path and reject traversal outside the upload directory."""
+    root = upload_dir.resolve()
+    candidate = (root / file_path).resolve()
+    if candidate != root and root not in candidate.parents:
+        raise ValueError("Invalid storage path")
+    return candidate
 
 
 class StorageBackend:
@@ -41,10 +62,7 @@ class S3Storage(StorageBackend):
         )
 
     def save_file(self, file_data: bytes, filename: str, subfolder: str = "") -> str:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        name, ext = os.path.splitext(filename)
-        unique_filename = f"{name}_{timestamp}{ext}"
-        key = f"{subfolder}/{unique_filename}" if subfolder else unique_filename
+        _, _, key = _safe_upload_parts(filename, subfolder)
         
         try:
             self.s3_client.put_object(
@@ -90,25 +108,17 @@ class LocalStorage(StorageBackend):
         Returns:
             Relative path to the saved file
         """
-        # Create subfolder if specified
-        target_dir = self.upload_dir / subfolder if subfolder else self.upload_dir
+        safe_folder, unique_filename, relative_path = _safe_upload_parts(filename, subfolder)
+        target_dir = _safe_local_path(self.upload_dir, safe_folder) if safe_folder else self.upload_dir
         target_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Generate unique filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        name, ext = os.path.splitext(filename)
-        unique_filename = f"{name}_{timestamp}{ext}"
-        
-        file_path = target_dir / unique_filename
+        file_path = _safe_local_path(target_dir, unique_filename)
         
         # Write file
         with open(file_path, "wb") as f:
             f.write(file_data)
         
-        # Return relative path for DB storage
-        if subfolder:
-            return f"{subfolder}/{unique_filename}"
-        return unique_filename
+        # Return normalized relative path for DB storage
+        return relative_path
 
 # Factory to get storage backend
 def get_storage_backend() -> StorageBackend:
@@ -140,7 +150,10 @@ def get_storage() -> StorageBackend:
 def get_file(file_path: str) -> Optional[bytes]:
     """Get file content from local storage"""
     if isinstance(storage, LocalStorage):
-        full_path = storage.upload_dir / file_path
+        try:
+            full_path = _safe_local_path(storage.upload_dir, file_path)
+        except ValueError:
+            return None
         if not full_path.exists():
             return None
         with open(full_path, "rb") as f:
@@ -151,6 +164,9 @@ def get_file(file_path: str) -> Optional[bytes]:
 def file_exists(file_path: str) -> bool:
     """Check if file exists"""
     if isinstance(storage, LocalStorage):
-        full_path = storage.upload_dir / file_path
+        try:
+            full_path = _safe_local_path(storage.upload_dir, file_path)
+        except ValueError:
+            return False
         return full_path.exists()
     return False

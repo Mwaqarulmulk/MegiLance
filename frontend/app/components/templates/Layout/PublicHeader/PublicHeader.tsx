@@ -98,6 +98,18 @@ const PublicHeader = () => {
     };
   }, []);
 
+  // Close on escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        setIsServicesOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Compute styles - use common styles during SSR to prevent hydration mismatch
   const styles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;
 
@@ -155,18 +167,6 @@ const PublicHeader = () => {
     }
     setIsServicesOpen(false);
   };
-
-  // Close on escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-        setIsServicesOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
   return (
     <>

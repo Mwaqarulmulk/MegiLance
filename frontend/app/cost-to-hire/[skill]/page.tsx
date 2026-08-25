@@ -271,10 +271,7 @@ export default async function CostToHirePage({ params }: Props) {
     buildServiceJsonLd(
       `How Much Does It Cost to Hire a ${data.name}?`,
       `Comprehensive 2026 rate and salary guide for hiring ${data.name}s. Compare junior, mid-level, and senior hourly rates across US, UK, Canada, Australia, and Europe.`,
-      `/cost-to-hire/${data.slug}`,
-      'USD',
-      data.ratesBySeniority.junior.min.toString(),
-      data.ratesBySeniority.senior.max.toString()
+      `/cost-to-hire/${data.slug}`
     ),
     buildFAQJsonLd(data.faqs),
     buildBreadcrumbJsonLd([

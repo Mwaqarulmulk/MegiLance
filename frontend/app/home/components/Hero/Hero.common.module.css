@@ -7,9 +7,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 6.5rem 1.5rem 5rem;
+  padding: clamp(5.5rem, 10vw, 8.5rem) 1.25rem clamp(4rem, 7vw, 6.5rem);
   overflow: hidden;
-  min-height: 90vh;
+  min-height: min(860px, 92vh);
   isolation: isolate;
 }
 
@@ -18,9 +18,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
-  background-size: 32px 32px;
-  opacity: 0.04;
+  background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.035;
   pointer-events: none;
   z-index: 0;
 }
@@ -41,12 +41,12 @@
 .content {
   position: relative;
   z-index: 10;
-  max-width: 1080px;
+  max-width: 1160px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.75rem;
+  gap: clamp(1.25rem, 2.4vw, 1.85rem);
 }
 
 .badges {
@@ -92,17 +92,17 @@
 }
 
 .title {
-  font-size: clamp(2.4rem, 4.8vw + 0.5rem, 4.2rem);
-  font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  max-width: 960px;
+  font-size: clamp(2.45rem, 5.2vw + 0.35rem, 5.15rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+  max-width: 1040px;
   margin: 0;
 }
 
 .highlight {
   display: inline;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);
+  background: linear-gradient(110deg, var(--ml-blue-dark) 0%, var(--ml-blue) 46%, var(--ml-teal) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -111,9 +111,10 @@
 .subtitle {
   font-size: clamp(1.05rem, 1.4vw, 1.25rem);
   line-height: 1.65;
-  max-width: 760px;
+  max-width: 720px;
   margin: 0 auto;
   font-weight: 450;
+  letter-spacing: -0.012em;
 }
 
 .actions {
@@ -128,7 +129,7 @@
 .ctaButton {
   min-height: 52px;
   padding: 0.85rem 2rem;
-  border-radius: 14px;
+  border-radius: 999px;
   border: 1px solid transparent;
   text-decoration: none;
   font-weight: 700;
@@ -205,7 +206,7 @@
 }
 
 .hudCard {
-  border-radius: 20px;
+  border-radius: 26px;
   border: 1px solid;
   overflow: hidden;
   backdrop-filter: blur(20px);

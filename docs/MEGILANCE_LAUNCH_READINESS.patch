@@ -1,0 +1,2951 @@
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex d1330d6a..dda926d6 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -151,3 +151,7 @@[m [mshow.ps1[m
+ *.pdf[m
+ *.docx[m
+ *.svg[m
+[32m+[m
+[32m+[m[32m# Development secret artifacts[m
+[32m+[m[32m.dev_secret_key[m
+[32m+[m[32m**/.dev_secret_key[m
+[1mdiff --git a/backend/.dev_secret_key b/backend/.dev_secret_key[m
+[1mdeleted file mode 100644[m
+[1mindex b6fa9521..00000000[m
+[1m--- a/backend/.dev_secret_key[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-7329ab29d20942c4b9548b0c57da7c1dbcd8ee49060d1c954ba46ce849eb7c34[m
+\ No newline at end of file[m
+[1mdiff --git a/backend/app/core/storage.py b/backend/app/core/storage.py[m
+[1mindex 13fc00c7..078a3360 100644[m
+[1m--- a/backend/app/core/storage.py[m
+[1m+++ b/backend/app/core/storage.py[m
+[36m@@ -8,16 +8,37 @@[m [mimport logging[m
+ import os[m
+ from pathlib import Path[m
+ from typing import Optional[m
+[31m-from datetime import datetime[m
+[31m-import boto3[m
+[32m+[m[32mfrom datetime import datetime[m
+[32m+[m[32mfrom uuid import uuid4[m
+[32m+[m[32mimport boto3[m
+ from botocore.exceptions import ClientError[m
+ from app.core.config import get_settings[m
+ logger = logging.getLogger(__name__)[m
+ [m
+[31m-settings = get_settings()[m
+[31m-[m
+[31m-[m
+[31m-class StorageBackend:[m
+[32m+[m[32msettings = get_settings()[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef _safe_upload_parts(filename: str, subfolder: str = "") -> tuple[str, str, str]:[m
+[32m+[m[32m    """Return safe path components for untrusted upload metadata."""[m
+[32m+[m[32m    safe_name = Path(filename or "upload").name[m
+[32m+[m[32m    stem = Path(safe_name).stem or "upload"[m
+[32m+[m[32m    suffix = Path(safe_name).suffix.lower()[m
+[32m+[m[32m    safe_stem = "".join(ch for ch in stem if ch.isalnum() or ch in ("-", "_", "."))[:100] or "upload"[m
+[32m+[m[32m    safe_folder = "/".join(part for part in Path(subfolder or "").parts if part not in ("", ".", ".."))[m
+[32m+[m[32m    unique_filename = f"{safe_stem}_{uuid4().hex}{suffix}"[m
+[32m+[m[32m    return safe_folder, unique_filename, f"{safe_folder}/{unique_filename}" if safe_folder else unique_filename[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef _safe_local_path(upload_dir: Path, file_path: str) -> Path:[m
+[32m+[m[32m    """Resolve a stored path and reject traversal outside the upload directory."""[m
+[32m+[m[32m    root = upload_dir.resolve()[m
+[32m+[m[32m    candidate = (root / file_path).resolve()[m
+[32m+[m[32m    if candidate != root and root not in candidate.parents:[m
+[32m+[m[32m        raise ValueError("Invalid storage path")[m
+[32m+[m[32m    return candidate[m
+[32m+[m
+[32m+[m
+[32m+[m[32mclass StorageBackend:[m
+     """Abstract base class for storage backends"""[m
+     def save_file(self, file_data: bytes, filename: str, subfolder: str = "") -> str:[m
+         raise NotImplementedError[m
+[36m@@ -41,10 +62,7 @@[m [mclass S3Storage(StorageBackend):[m
+         )[m
+ [m
+     def save_file(self, file_data: bytes, filename: str, subfolder: str = "") -> str:[m
+[31m-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")[m
+[31m-        name, ext = os.path.splitext(filename)[m
+[31m-        unique_filename = f"{name}_{timestamp}{ext}"[m
+[31m-        key = f"{subfolder}/{unique_filename}" if subfolder else unique_filename[m
+[32m+[m[32m        _, _, key = _safe_upload_parts(filename, subfolder)[m
+         [m
+         try:[m
+             self.s3_client.put_object([m
+[36m@@ -90,25 +108,17 @@[m [mclass LocalStorage(StorageBackend):[m
+         Returns:[m
+             Relative path to the saved file[m
+         """[m
+[31m-        # Create subfolder if specified[m
+[31m-        target_dir = self.upload_dir / subfolder if subfolder else self.upload_dir[m
+[31m-        target_dir.mkdir(parents=True, exist_ok=True)[m
+[31m-        [m
+[31m-        # Generate unique filename with timestamp[m
+[31m-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")[m
+[31m-        name, ext = os.path.splitext(filename)[m
+[31m-        unique_filename = f"{name}_{timestamp}{ext}"[m
+[31m-        [m
+[31m-        file_path = target_dir / unique_filename[m
+[32m+[m[32m        safe_folder, unique_filename, relative_path = _safe_upload_parts(filename, subfolder)[m
+[32m+[m[32m        target_dir = _safe_local_path(self.upload_dir, safe_folder) if safe_folder else self.upload_dir[m
+[32m+[m[32m        target_dir.mkdir(parents=True, exist_ok=True)[m
+[32m+[m[32m        file_path = _safe_local_path(target_dir, unique_filename)[m
+         [m
+         # Write file[m
+         with open(file_path, "wb") as f:[m
+             f.write(file_data)[m
+         [m
+[31m-        # Return relative path for DB storage[m
+[31m-        if subfolder:[m
+[31m-            return f"{subfolder}/{unique_filename}"[m
+[31m-        return unique_filename[m
+[32m+[m[32m        # Return normalized relative path for DB storage[m
+[32m+[m[32m        return relative_path[m
+ [m
+ # Factory to get storage backend[m
+ def get_storage_backend() -> StorageBackend:[m
+[36m@@ -140,8 +150,11 @@[m [mdef get_storage() -> StorageBackend:[m
+ def get_file(file_path: str) -> Optional[bytes]:[m
+     """Get file content from local storage"""[m
+     if isinstance(storage, LocalStorage):[m
+[31m-        full_path = storage.upload_dir / file_path[m
+[31m-        if not full_path.exists():[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            full_path = _safe_local_path(storage.upload_dir, file_path)[m
+[32m+[m[32m        except ValueError:[m
+[32m+[m[32m            return None[m
+[32m+[m[32m        if not full_path.exists():[m
+             return None[m
+         with open(full_path, "rb") as f:[m
+             return f.read()[m
+[36m@@ -151,6 +164,9 @@[m [mdef get_file(file_path: str) -> Optional[bytes]:[m
+ def file_exists(file_path: str) -> bool:[m
+     """Check if file exists"""[m
+     if isinstance(storage, LocalStorage):[m
+[31m-        full_path = storage.upload_dir / file_path[m
+[31m-        return full_path.exists()[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            full_path = _safe_local_path(storage.upload_dir, file_path)[m
+[32m+[m[32m        except ValueError:[m
+[32m+[m[32m            return False[m
+[32m+[m[32m        return full_path.exists()[m
+     return False[m
+[1mdiff --git a/frontend/app/(main)/contact/Contact.common.module.css b/frontend/app/(main)/contact/Contact.common.module.css[m
+[1mindex 1ec75d57..d7fb4416 100644[m
+[1m--- a/frontend/app/(main)/contact/Contact.common.module.css[m
+[1m+++ b/frontend/app/(main)/contact/Contact.common.module.css[m
+[36m@@ -89,7 +89,7 @@[m
+   align-items: center;[m
+   justify-content: center;[m
+   background: linear-gradient(135deg, rgba(69, 115, 223, 0.15), rgba(147, 51, 234, 0.15));[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+   flex-shrink: 0;[m
+ [m
+   padding: 10px;[m
+[1mdiff --git a/frontend/app/(main)/features/Features.common.module.css b/frontend/app/(main)/features/Features.common.module.css[m
+[1mindex 995cd559..26efd152 100644[m
+[1m--- a/frontend/app/(main)/features/Features.common.module.css[m
+[1m+++ b/frontend/app/(main)/features/Features.common.module.css[m
+[36m@@ -33,7 +33,7 @@[m
+   font-weight: 600;[m
+   letter-spacing: 0.02em;[m
+   background: linear-gradient(135deg, rgba(69, 115, 223, 0.15), rgba(147, 51, 234, 0.15));[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+   border: 1px solid rgba(69, 115, 223, 0.3);[m
+ }[m
+ [m
+[36m@@ -78,7 +78,7 @@[m
+   font-family: var(--font-heading, 'Poppins', sans-serif);[m
+   font-size: 2rem;[m
+   font-weight: 800;[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+ }[m
+ [m
+ .heroStatLabel {[m
+[36m@@ -122,7 +122,7 @@[m
+ }[m
+ [m
+ .tabActive {[m
+[31m-  background: #4573df !important;[m
+[32m+[m[32m  background: var(--ml-blue-dark, #29338f) !important;[m
+   color: #ffffff !important;[m
+   box-shadow: 0 4px 15px rgba(69, 115, 223, 0.35);[m
+ }[m
+[36m@@ -174,7 +174,7 @@[m
+   align-items: center;[m
+   justify-content: center;[m
+   background: linear-gradient(135deg, rgba(69, 115, 223, 0.15), rgba(147, 51, 234, 0.15));[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+ }[m
+ [m
+ .statusPill {[m
+[1mdiff --git a/frontend/app/(main)/features/page.tsx b/frontend/app/(main)/features/page.tsx[m
+[1mindex 5aefb35b..6c831d4a 100644[m
+[1m--- a/frontend/app/(main)/features/page.tsx[m
+[1m+++ b/frontend/app/(main)/features/page.tsx[m
+[36m@@ -120,7 +120,7 @@[m [mexport default function FeaturesPage() {[m
+             framed={true}[m
+             glow={true}[m
+           />[m
+[31m-          <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Enterprise-Grade Security</p>[m
+[32m+[m[32m          <p style={{ marginTop: '1rem', fontWeight: 600, color: 'var(--ml-blue-dark, #29338f)' }}>Enterprise-Grade Security</p>[m
+         </div>[m
+         <div style={{ textAlign: 'center', width: '100%', maxWidth: '440px' }}>[m
+           <BrandLottiePlayer[m
+[36m@@ -130,7 +130,7 @@[m [mexport default function FeaturesPage() {[m
+             framed={true}[m
+             glow={true}[m
+           />[m
+[31m-          <p style={{ marginTop: '1rem', fontWeight: 600, color: '#4573df' }}>Smart Contract Escrow</p>[m
+[32m+[m[32m          <p style={{ marginTop: '1rem', fontWeight: 600, color: 'var(--ml-blue-dark, #29338f)' }}>Smart Contract Escrow</p>[m
+         </div>[m
+       </section>[m
+ [m
+[1mdiff --git a/frontend/app/(main)/pricing/Pricing.common.module.css b/frontend/app/(main)/pricing/Pricing.common.module.css[m
+[1mindex d5078e72..655bba41 100644[m
+[1m--- a/frontend/app/(main)/pricing/Pricing.common.module.css[m
+[1m+++ b/frontend/app/(main)/pricing/Pricing.common.module.css[m
+[36m@@ -31,7 +31,7 @@[m
+   letter-spacing: 0.06em;[m
+   text-transform: uppercase;[m
+   background: linear-gradient(135deg, rgba(69, 115, 223, 0.15), rgba(147, 51, 234, 0.15));[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+   border: 1px solid rgba(69, 115, 223, 0.35);[m
+   box-shadow: 0 2px 8px rgba(69, 115, 223, 0.1);[m
+ }[m
+[36m@@ -107,7 +107,7 @@[m
+   align-items: center;[m
+   justify-content: center;[m
+   background: linear-gradient(135deg, rgba(69, 115, 223, 0.2), rgba(147, 51, 234, 0.2));[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+ }[m
+ [m
+ .howTitle {[m
+[36m@@ -160,7 +160,7 @@[m
+ }[m
+ [m
+ .tableHeadHighlight {[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+ }[m
+ [m
+ .tableRow {[m
+[36m@@ -255,7 +255,7 @@[m
+ }[m
+ [m
+ .noteLink {[m
+[31m-  color: #4573df;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+   font-weight: 600;[m
+   text-decoration: underline;[m
+   transition: opacity 0.2s ease;[m
+[1mdiff --git a/frontend/app/(main)/tools/page.tsx b/frontend/app/(main)/tools/page.tsx[m
+[1mindex 2ec5c230..4f654b04 100644[m
+[1m--- a/frontend/app/(main)/tools/page.tsx[m
+[1m+++ b/frontend/app/(main)/tools/page.tsx[m
+[36m@@ -4,7 +4,7 @@[m [mimport Link from 'next/link';[m
+ import { [m
+   Calculator, TrendingUp, FileText, BarChart3, Brain, Layers, [m
+   DollarSign, Shield, Search, MessageSquare, ArrowRight, Sparkles,[m
+[31m-  Zap, Clock, Users, Globe, CheckCircle2, Star, Percent, Scale[m
+[32m+[m[32m  Zap, Clock, Users, Globe, CheckCircle2, Star, Percent, Scale, Rocket[m
+ } from 'lucide-react';[m
+ import { [m
+   buildMeta, [m
+[1mdiff --git a/frontend/app/(portal)/client/dashboard/ClientDashboard.tsx b/frontend/app/(portal)/client/dashboard/ClientDashboard.tsx[m
+[1mindex b40e4a1e..ca56c2b9 100644[m
+[1m--- a/frontend/app/(portal)/client/dashboard/ClientDashboard.tsx[m
+[1m+++ b/frontend/app/(portal)/client/dashboard/ClientDashboard.tsx[m
+[36m@@ -1155,13 +1155,13 @@[m [mconst ClientDashboard: React.FC = () => {[m
+                   animationWidth={120}[m
+                   animationHeight={120}[m
+                   action={[m
+[31m-                    <Link href="/client/find-talent">[m
+[32m+[m[32m                    <Link href="/create-project">[m
+                       <Button[m
+                         variant="primary"[m
+                         size="md"[m
+                         iconBefore={<Plus size={16} />}[m
+                       >[m
+[31m-                        Find Talent[m
+[32m+[m[32m                        Post a Project[m
+                       </Button>[m
+                     </Link>[m
+                   }[m
+[36m@@ -1232,10 +1232,17 @@[m [mconst ClientDashboard: React.FC = () => {[m
+               ) : ([m
+                 <EmptyState[m
+                   title="No recommendations yet"[m
+[31m-                  description="Complete your profile to get AI matches."[m
+[32m+[m[32m                  description="Complete your profile so MegiLance can surface specialists who match your goals, budget, and working style."[m
+                   animationData={aiSparkleAnimation}[m
+                   animationWidth={100}[m
+                   animationHeight={100}[m
+[32m+[m[32m                  action={[m
+[32m+[m[32m                    <Link href="/complete-profile">[m
+[32m+[m[32m                      <Button variant="secondary" size="sm">[m
+[32m+[m[32m                        Improve my matches[m
+[32m+[m[32m                      </Button>[m
+[32m+[m[32m                    </Link>[m
+[32m+[m[32m                  }[m
+                 />[m
+               )}[m
+             </div>[m
+[1mdiff --git a/frontend/app/(portal)/client/deliverables/page.tsx b/frontend/app/(portal)/client/deliverables/page.tsx[m
+[1mindex cb14a96a..57d1ac08 100644[m
+[1m--- a/frontend/app/(portal)/client/deliverables/page.tsx[m
+[1m+++ b/frontend/app/(portal)/client/deliverables/page.tsx[m
+[36m@@ -15,6 +15,7 @@[m [mimport {[m
+   ThumbsUp,[m
+   ThumbsDown,[m
+ } from "lucide-react";[m
+[32m+[m[32mimport Link from "next/link";[m
+ import { apiFetch } from "@/lib/api/core";[m
+ [m
+ interface Deliverable {[m
+[36m@@ -226,12 +227,12 @@[m [mexport default function ClientDeliverablesPage() {[m
+           <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">[m
+             When freelancers submit work for your active contract milestones, their deliverables, files, and notes will appear here for your review and approval.[m
+           </p>[m
+[31m-          <a[m
+[32m+[m[32m          <Link[m
+             href="/client/contracts"[m
+             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"[m
+           >[m
+             View Active Contracts[m
+[31m-          </a>[m
+[32m+[m[32m          </Link>[m
+         </div>[m
+       ) : ([m
+         <div className="space-y-4">[m
+[1mdiff --git a/frontend/app/(portal)/freelancer/dashboard/Dashboard.tsx b/frontend/app/(portal)/freelancer/dashboard/Dashboard.tsx[m
+[1mindex 296f5113..def2d9e2 100644[m
+[1m--- a/frontend/app/(portal)/freelancer/dashboard/Dashboard.tsx[m
+[1m+++ b/frontend/app/(portal)/freelancer/dashboard/Dashboard.tsx[m
+[36m@@ -236,10 +236,12 @@[m [mconst Dashboard: React.FC = () => {[m
+       profileViews: analytics?.profileViews || 0,[m
+       inquiryRate: Math.round(((analytics?.profileViews || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.profileViews || 1) : 0) * 100),[m
+       winRate: Math.round(((analytics?.pendingProposals || 0) > 0 ? (analytics?.activeProjects || 0) / (analytics?.pendingProposals || 1) : 0) * 100),[m
+[31m-      completionRate: sellerStats?.completionRate ?? 100,[m
+[31m-      responseRate: sellerStats?.responseRate ?? 100,[m
+[31m-      onTimeRate: sellerStats?.onTimeDeliveryRate ?? 100,[m
+[31m-      jssScore: sellerStats?.level.jssScore ?? 0,[m
+[32m+[m[32m      // No completed work is not the same as perfect performance. Keep the[m
+[32m+[m[32m      // metric neutral until the API has enough observations to calculate it.[m
+[32m+[m[32m      completionRate: sellerStats?.completionRate ?? 0,[m
+[32m+[m[32m      responseRate: sellerStats?.responseRate ?? 0,[m
+[32m+[m[32m      onTimeRate: sellerStats?.onTimeDeliveryRate ?? 0,[m
+[32m+[m[32m      jssScore: sellerStats?.level?.jssScore ?? 0,[m
+       profileCompleteness: analytics?.profileCompleteness ?? 0,[m
+     }),[m
+     [analytics, sellerStats],[m
+[1mdiff --git a/frontend/app/(portal)/projects/[id]/page.tsx b/frontend/app/(portal)/projects/[id]/page.tsx[m
+[1mindex d5ddc3fe..d729c5c5 100644[m
+[1m--- a/frontend/app/(portal)/projects/[id]/page.tsx[m
+[1m+++ b/frontend/app/(portal)/projects/[id]/page.tsx[m
+[36m@@ -8,7 +8,7 @@[m [mimport { cn } from "@/lib/utils";[m
+ import api from "@/lib/api";[m
+ import { PageTransition } from "@/app/components/Animations/PageTransition";[m
+ import Button from "@/app/components/atoms/Button/Button";[m
+[31m-import { Clock, Banknote, Tag, User, CheckCircle } from "lucide-react";[m
+[32m+[m[32mimport { ArrowLeft, Clock, Banknote, Tag, User, CheckCircle, RefreshCw } from "lucide-react";[m
+ import RecommendedFreelancers from "@/app/components/Matching/RecommendedFreelancers/RecommendedFreelancers";[m
+ [m
+ import commonStyles from "./ProjectDetails.common.module.css";[m
+[36m@@ -21,6 +21,7 @@[m [mexport default function ProjectDetailsPage() {[m
+   const router = useRouter();[m
+   const [project, setProject] = useState<any>(null);[m
+   const [loading, setLoading] = useState(true);[m
+[32m+[m[32m  const [error, setError] = useState<string | null>(null);[m
+   const [user, setUser] = useState<any>(null);[m
+ [m
+   const themeStyles = resolvedTheme === "dark" ? darkStyles : lightStyles;[m
+[36m@@ -30,6 +31,8 @@[m [mexport default function ProjectDetailsPage() {[m
+   }, [id]);[m
+ [m
+   const loadData = async () => {[m
+[32m+[m[32m    setLoading(true);[m
+[32m+[m[32m    setError(null);[m
+     try {[m
+       const [projectData, userData] = await Promise.all([[m
+         api.projects.get(id as string),[m
+[36m@@ -37,9 +40,10 @@[m [mexport default function ProjectDetailsPage() {[m
+       ]);[m
+       setProject(projectData);[m
+       setUser(userData);[m
+[31m-    } catch (error) {[m
+[32m+[m[32m    } catch (loadError) {[m
+[32m+[m[32m      setError("We couldn’t load this project. Check your connection and try again.");[m
+       if (process.env.NODE_ENV === "development") {[m
+[31m-        console.error("Failed to load data:", error);[m
+[32m+[m[32m        console.error("Failed to load data:", loadError);[m
+       }[m
+     } finally {[m
+       setLoading(false);[m
+[36m@@ -70,12 +74,27 @@[m [mexport default function ProjectDetailsPage() {[m
+     );[m
+   }[m
+ [m
+[31m-  if (!project) {[m
+[32m+[m[32m  if (error || !project) {[m
+     return ([m
+[31m-      <div[m
+[31m-        className={cn(commonStyles.notFoundState, themeStyles.notFoundState)}[m
+[31m-      >[m
+[31m-        Project not found[m
+[32m+[m[32m      <div className={cn(commonStyles.pageContainer, themeStyles.pageContainer)}>[m
+[32m+[m[32m        <div className={commonStyles.innerContainer}>[m
+[32m+[m[32m          <div className={cn(commonStyles.card, themeStyles.card, "text-center")} role={error ? "alert" : undefined}>[m
+[32m+[m[32m            <h1 className={commonStyles.title}>{error ? "Project unavailable" : "Project not found"}</h1>[m
+[32m+[m[32m            <p className={cn(commonStyles.descriptionText, themeStyles.descriptionText)}>[m
+[32m+[m[32m              {error || "This project may have been removed or you may no longer have access to it."}[m
+[32m+[m[32m            </p>[m
+[32m+[m[32m            <div className="mt-6 flex flex-wrap justify-center gap-3">[m
+[32m+[m[32m              <Button variant="outline" onClick={() => router.back()} iconBefore={<ArrowLeft size={16} />}>[m
+[32m+[m[32m                Go back[m
+[32m+[m[32m              </Button>[m
+[32m+[m[32m              {error && ([m
+[32m+[m[32m                <Button variant="primary" onClick={loadData} iconBefore={<RefreshCw size={16} />}>[m
+[32m+[m[32m                  Try again[m
+[32m+[m[32m                </Button>[m
+[32m+[m[32m              )}[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </div>[m
+       </div>[m
+     );[m
+   }[m
+[36m@@ -107,9 +126,9 @@[m [mexport default function ProjectDetailsPage() {[m
+               <Button[m
+                 variant="primary"[m
+                 size="lg"[m
+[31m-                onClick={() => router.push("/freelancer/invitations")}[m
+[32m+[m[32m                onClick={() => router.push(`/freelancer/submit-proposal?jobId=${encodeURIComponent(String(id))}`)}[m
+               >[m
+[31m-                View Invitations[m
+[32m+[m[32m                Submit a Proposal[m
+               </Button>[m
+             )}[m
+             </div>[m
+[1mdiff --git a/frontend/app/(portal)/projects/page.tsx b/frontend/app/(portal)/projects/page.tsx[m
+[1mindex 6a9fb801..999af464 100644[m
+[1m--- a/frontend/app/(portal)/projects/page.tsx[m
+[1m+++ b/frontend/app/(portal)/projects/page.tsx[m
+[36m@@ -102,6 +102,7 @@[m [mconst formatTimeAgo = (dateStr: string) => {[m
+ export default function PortalProjectsPage() {[m
+   const { resolvedTheme } = useTheme();[m
+   const router = useRouter();[m
+[32m+[m[32m  const { user } = useAuth();[m
+   const [mounted, setMounted] = useState(false);[m
+   const [projects, setProjects] = useState<any[]>([]);[m
+   const [loading, setLoading] = useState(true);[m
+[36m@@ -291,7 +292,6 @@[m [mexport default function PortalProjectsPage() {[m
+     </div>[m
+   );[m
+ [m
+[31m-  const { user } = useAuth();[m
+   const userRole = (user?.user_type || user?.role || (typeof window !== 'undefined' ? localStorage.getItem('portal_area') : 'client') || 'client').toLowerCase();[m
+ [m
+   const roleTitle = userRole === 'client' ? 'My Posted Projects & Hiring' : userRole === 'admin' ? 'Platform Projects & Moderation' : 'Explore & Apply to Projects';[m
+[1mdiff --git a/frontend/app/components/AppLayout/AppLayout.common.module.css b/frontend/app/components/AppLayout/AppLayout.common.module.css[m
+[1mindex c5383837..346650b7 100644[m
+[1m--- a/frontend/app/components/AppLayout/AppLayout.common.module.css[m
+[1m+++ b/frontend/app/components/AppLayout/AppLayout.common.module.css[m
+[36m@@ -15,21 +15,21 @@[m
+   position: relative;[m
+   width: 100%;[m
+   min-width: 0;[m
+[31m-  padding-left: 272px;[m
+[31m-  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);[m
+[32m+[m[32m  padding-left: var(--size-sidebar-width, 280px);[m
+[32m+[m[32m  transition: padding-left 0.24s cubic-bezier(0.23, 1, 0.32, 1);[m
+ }[m
+ [m
+ .mainContentCollapsed {[m
+[31m-  padding-left: 72px;[m
+[32m+[m[32m  padding-left: var(--size-sidebar-collapsed-width, 72px);[m[41m[m
+ }[m
+ [m
+ .pageContent {[m
+   flex: 1;[m
+   width: 100%;[m
+[31m-  padding: 1.5rem 2rem 3rem;[m
+[31m-  max-width: 1600px;[m
+[31m-  margin: 0 auto;[m
+[31m-  min-height: calc(100vh - 70px);[m
+[32m+[m[32m  padding: clamp(1.25rem, 2.8vw, 2.75rem) clamp(1rem, 3vw, 3.25rem) 5rem;[m
+[32m+[m[32m  max-width: 1680px;[m
+[32m+[m[32m  margin: 0 auto;[m
+[32m+[m[32m  min-height: calc(100vh - var(--size-navbar-height, 68px));[m
+ }[m
+ [m
+ /* Mobile overlay backdrop */[m
+[36m@@ -39,8 +39,8 @@[m
+   z-index: var(--z-overlay, 900);[m
+   opacity: 0;[m
+   pointer-events: none;[m
+[31m-  backdrop-filter: blur(4px);[m
+[31m-  transition: opacity 0.25s ease-out;[m
+[32m+[m[32m  backdrop-filter: blur(8px) saturate(120%);[m
+[32m+[m[32m  transition: opacity 0.22s cubic-bezier(0.23, 1, 0.32, 1);[m
+ }[m
+ [m
+ .mobileOverlayVisible {[m
+[36m@@ -89,7 +89,7 @@[m
+   }[m
+ [m
+   .pageContent {[m
+[31m-    padding: 1rem 1rem 2rem;[m
+[32m+[m[32m    padding: 1rem 1rem 5rem;[m[41m[m
+   }[m
+ }[m
+ [m
+[1mdiff --git a/frontend/app/components/AppLayout/AppLayout.dark.module.css b/frontend/app/components/AppLayout/AppLayout.dark.module.css[m
+[1mindex f30862d3..ce4eeafe 100644[m
+[1m--- a/frontend/app/components/AppLayout/AppLayout.dark.module.css[m
+[1m+++ b/frontend/app/components/AppLayout/AppLayout.dark.module.css[m
+[36m@@ -1,20 +1,21 @@[m
+ /* @AI-HINT: Dark theme styles for AppLayout */[m
+ [m
+ .appLayout {[m
+[31m-  background-color: var(--bg-primary-dark);[m
+[31m-  color: var(--text-primary-dark);[m
+[32m+[m[32m  background-color: var(--bg-primary-dark);[m
+[32m+[m[32m  color: var(--text-primary-dark);[m
+[32m+[m[32m  background-image: radial-gradient(circle at 92% 0%, rgba(139, 141, 246, 0.14), transparent 28rem), radial-gradient(circle at 0% 86%, rgba(56, 203, 182, 0.08), transparent 24rem);[m
+ }[m
+ [m
+ .mainContent {[m
+[31m-  background: radial-gradient(circle at top right, rgba(69, 115, 223, 0.08) 0%, transparent 600px);[m
+[32m+[m[32m  background: radial-gradient(circle at top right, rgba(139, 141, 246, 0.12) 0%, transparent 560px), linear-gradient(180deg, rgba(23, 29, 56, 0.26), transparent 32%);[m[41m[m
+ }[m
+ [m
+ .mobileOverlay {[m
+[31m-  background: rgba(2, 6, 23, 0.6);[m
+[32m+[m[32m  background: rgba(5, 8, 21, 0.68);[m[41m[m
+ }[m
+ [m
+ .skipLink {[m
+[31m-  background: var(--ml-blue);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue), var(--ml-purple));[m[41m[m
+   color: white;[m
+ }[m
+ [m
+[1mdiff --git a/frontend/app/components/AppLayout/AppLayout.light.module.css b/frontend/app/components/AppLayout/AppLayout.light.module.css[m
+[1mindex e72d75ae..fd6969e7 100644[m
+[1m--- a/frontend/app/components/AppLayout/AppLayout.light.module.css[m
+[1m+++ b/frontend/app/components/AppLayout/AppLayout.light.module.css[m
+[36m@@ -1,20 +1,21 @@[m
+ /* @AI-HINT: Light theme styles for AppLayout */[m
+ [m
+ .appLayout {[m
+[31m-  background-color: var(--bg-secondary-light);[m
+[31m-  color: var(--text-primary-light);[m
+[32m+[m[32m  background-color: var(--bg-secondary-light);[m
+[32m+[m[32m  color: var(--text-primary-light);[m
+[32m+[m[32m  background-image: radial-gradient(circle at 92% 0%, rgba(91, 92, 226, 0.08), transparent 26rem), radial-gradient(circle at 0% 86%, rgba(56, 203, 182, 0.07), transparent 24rem);[m
+ }[m
+ [m
+ .mainContent {[m
+[31m-  background: radial-gradient(circle at top right, rgba(69, 115, 223, 0.03) 0%, transparent 600px);[m
+[32m+[m[32m  background: radial-gradient(circle at top right, rgba(91, 92, 226, 0.08) 0%, transparent 560px), linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 32%);[m[41m[m
+ }[m
+ [m
+ .mobileOverlay {[m
+[31m-  background: rgba(15, 23, 42, 0.4);[m
+[32m+[m[32m  background: rgba(16, 21, 43, 0.48);[m[41m[m
+ }[m
+ [m
+ .skipLink {[m
+[31m-  background: var(--ml-blue);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue-dark), var(--ml-blue));[m[41m[m
+   color: white;[m
+ }[m
+ [m
+[1mdiff --git a/frontend/app/components/Project/ProjectWizard/ProjectWizard.tsx b/frontend/app/components/Project/ProjectWizard/ProjectWizard.tsx[m
+[1mindex bd46c6e2..452d3b16 100644[m
+[1m--- a/frontend/app/components/Project/ProjectWizard/ProjectWizard.tsx[m
+[1m+++ b/frontend/app/components/Project/ProjectWizard/ProjectWizard.tsx[m
+[36m@@ -89,8 +89,10 @@[m [minterface ProjectData {[m
+   attachments: string[];[m
+ }[m
+ [m
+[31m-const steps = [[m
+[31m-  { id: 1, title: 'Project Details', icon: FileText },[m
+[32m+[m[32mconst DRAFT_KEY = 'megilance_project_wizard_draft';[m
+[32m+[m
+[32m+[m[32mconst steps = [[m
+[32m+[m[32m  { id: 1, title: 'Project Details', icon: FileText },[m
+   { id: 2, title: 'Budget & Timeline', icon: Banknote },[m
+   { id: 3, title: 'Skills Required', icon: Users },[m
+   { id: 4, title: 'Review & Post', icon: CheckCircle },[m
+[36m@@ -141,24 +143,39 @@[m [mexport default function ProjectWizard() {[m
+     attachments: [],[m
+   });[m
+ [m
+[31m-  // Load pre-filled project data from sessionStorage if redirected from price estimator[m
+[31m-  useEffect(() => {[m
+[31m-    if (typeof window !== 'undefined') {[m
+[31m-      const pending = sessionStorage.getItem('megilance_pending_project');[m
+[31m-      if (pending) {[m
+[31m-        try {[m
+[31m-          const parsed = JSON.parse(pending);[m
+[31m-          setProjectData(prev => ({[m
+[31m-            ...prev,[m
+[31m-            ...parsed[m
+[31m-          }));[m
+[31m-          sessionStorage.removeItem('megilance_pending_project');[m
+[31m-        } catch (e) {[m
+[31m-          console.error('Failed to parse pending project data:', e);[m
+[31m-        }[m
+[31m-      }[m
+[31m-    }[m
+[31m-  }, []);[m
+[32m+[m[32m  // Restore either an estimator handoff or an interrupted project draft.[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    if (typeof window === 'undefined') return;[m
+[32m+[m[32m    const pending = sessionStorage.getItem('megilance_pending_project');[m
+[32m+[m[32m    const draft = sessionStorage.getItem(DRAFT_KEY);[m
+[32m+[m[32m    const source = pending || draft;[m
+[32m+[m[32m    if (!source) return;[m
+[32m+[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const parsed = JSON.parse(source);[m
+[32m+[m[32m      const restoredData = parsed.projectData || parsed;[m
+[32m+[m[32m      setProjectData(prev => ({ ...prev, ...restoredData }));[m
+[32m+[m[32m      if (draft && parsed.currentStep >= 1 && parsed.currentStep <= steps.length) {[m
+[32m+[m[32m        setCurrentStep(parsed.currentStep);[m
+[32m+[m[32m      }[m
+[32m+[m[32m      if (pending) sessionStorage.removeItem('megilance_pending_project');[m
+[32m+[m[32m    } catch (e) {[m
+[32m+[m[32m      console.error('Failed to restore project draft:', e);[m
+[32m+[m[32m      sessionStorage.removeItem(DRAFT_KEY);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+[32m+[m[32m  // Keep long forms recoverable when users navigate away or refresh.[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    if (typeof window === 'undefined') return;[m
+[32m+[m[32m    const hasProgress = Boolean([m
+[32m+[m[32m      projectData.title || projectData.description || projectData.category ||[m
+[32m+[m[32m      projectData.skills.length || projectData.budgetMin || projectData.budgetMax ||[m
+[32m+[m[32m      projectData.duration || projectData.attachments.length,[m
+[32m+[m[32m    );[m
+[32m+[m[32m    if (!hasProgress) return;[m
+[32m+[m[32m    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ projectData, currentStep, updatedAt: Date.now() }));[m
+[32m+[m[32m  }, [projectData, currentStep]);[m
+ [m
+   const handleSuggestBudget = async () => {[m
+     if (!projectData.title.trim() && !projectData.description.trim()) {[m
+[36m@@ -364,6 +381,7 @@[m [mexport default function ProjectWizard() {[m
+       });[m
+ [m
+       const projectId = project?.id || project?.data?.id || project?.project_id || project?.project?.id;[m
+[32m+[m[32m      sessionStorage.removeItem(DRAFT_KEY);[m
+       if (projectId) {[m
+         router.push(`/client/projects/${projectId}?new=true`);[m
+       } else {[m
+[36m@@ -402,9 +420,10 @@[m [mexport default function ProjectWizard() {[m
+         <ScrollReveal>[m
+           <div className={styles.header}>[m
+             <h1 className={styles.title}>Post a Project</h1>[m
+[31m-            <p className={styles.subtitle}>[m
+[31m-              Tell us about your project and find the perfect freelancer[m
+[31m-            </p>[m
+[32m+[m[32m            <p className={styles.subtitle}>[m
+[32m+[m[32m              Tell us about your project and find the perfect freelancer[m
+[32m+[m[32m              <span className="block mt-2 text-xs opacity-70">Your progress saves automatically on this device.</span>[m
+[32m+[m[32m            </p>[m
+           </div>[m
+         </ScrollReveal>[m
+ [m
+[1mdiff --git a/frontend/app/components/organisms/CookieConsent/CookieConsent.common.module.css b/frontend/app/components/organisms/CookieConsent/CookieConsent.common.module.css[m
+[1mindex ec73cceb..f414b3a9 100644[m
+[1m--- a/frontend/app/components/organisms/CookieConsent/CookieConsent.common.module.css[m
+[1m+++ b/frontend/app/components/organisms/CookieConsent/CookieConsent.common.module.css[m
+[36m@@ -6,14 +6,15 @@[m
+   left: 0;[m
+   right: 0;[m
+   z-index: var(--z-index-toast);[m
+[31m-  padding: 1rem 1.5rem;[m
+[31m-  display: flex;[m
+[31m-  align-items: center;[m
+[31m-  justify-content: center;[m
+[31m-  gap: 1rem;[m
+[32m+[m[32m  padding: 0.75rem 1.25rem;[m
+[32m+[m[32m  display: flex;[m
+[32m+[m[32m  align-items: center;[m
+[32m+[m[32m  justify-content: center;[m
+[32m+[m[32m  gap: 0.85rem;[m
+   flex-wrap: wrap;[m
+[31m-  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);[m
+[31m-  backdrop-filter: blur(12px);[m
+[32m+[m[32m  animation: slideUp 0.3s cubic-bezier(0.23, 1, 0.32, 1);[m
+[32m+[m[32m  backdrop-filter: blur(18px) saturate(125%);[m
+[32m+[m[32m  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));[m
+ }[m
+ [m
+ @keyframes slideUp {[m
+[36m@@ -24,7 +25,8 @@[m
+ .text {[m
+   font-size: 0.875rem;[m
+   line-height: 1.5;[m
+[31m-  max-width: 640px;[m
+[32m+[m[32m  max-width: 720px;[m
+[32m+[m[32m  margin: 0;[m[41m[m
+ }[m
+ [m
+ .link {[m
+[36m@@ -42,6 +44,6 @@[m
+   .banner {[m
+     flex-direction: column;[m
+     text-align: center;[m
+[31m-    padding: 1rem;[m
+[32m+[m[32m    padding: 0.85rem 1rem max(0.85rem, env(safe-area-inset-bottom));[m[41m[m
+   }[m
+ }[m
+[1mdiff --git a/frontend/app/components/organisms/CookieConsent/CookieConsent.tsx b/frontend/app/components/organisms/CookieConsent/CookieConsent.tsx[m
+[1mindex 194e98fb..03741b71 100644[m
+[1m--- a/frontend/app/components/organisms/CookieConsent/CookieConsent.tsx[m
+[1m+++ b/frontend/app/components/organisms/CookieConsent/CookieConsent.tsx[m
+[36m@@ -39,18 +39,18 @@[m [mconst CookieConsent: React.FC = () => {[m
+     setVisible(false);[m
+   };[m
+ [m
+[31m-  return ([m
+[31m-    <div className={cn(commonStyles.banner, themeStyles.banner)} role="alert" aria-live="polite">[m
+[31m-      <p className={cn(commonStyles.text, themeStyles.text)}>[m
+[31m-        We use cookies to enhance your experience. By continuing, you agree to our{' '}[m
+[31m-        <a href="/privacy" className={cn(commonStyles.link, themeStyles.link)}>Privacy Policy</a>.[m
+[31m-      </p>[m
+[31m-      <div className={commonStyles.actions}>[m
+[31m-        <Button variant="ghost" size="sm" onClick={handleDecline}>Decline</Button>[m
+[31m-        <Button variant="primary" size="sm" onClick={handleAccept}>Accept</Button>[m
+[31m-      </div>[m
+[31m-    </div>[m
+[31m-  );[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className={cn(commonStyles.banner, themeStyles.banner)} role="dialog" aria-label="Cookie preferences">[m
+[32m+[m[32m      <p className={cn(commonStyles.text, themeStyles.text)}>[m
+[32m+[m[32m        We use essential cookies to keep MegiLance secure and optional analytics cookies to improve the product.{' '}[m
+[32m+[m[32m        <a href="/cookies" className={cn(commonStyles.link, themeStyles.link)}>Read our cookie policy</a>.[m
+[32m+[m[32m      </p>[m
+[32m+[m[32m      <div className={commonStyles.actions}>[m
+[32m+[m[32m        <Button variant="ghost" size="sm" onClick={handleDecline}>Use essential only</Button>[m
+[32m+[m[32m        <Button variant="primary" size="sm" onClick={handleAccept}>Allow analytics</Button>[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+ };[m
+ [m
+ export default CookieConsent;[m
+[1mdiff --git a/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.common.module.css b/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.common.module.css[m
+[1mindex ccb642d3..b4d0ca44 100644[m
+[1m--- a/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.common.module.css[m
+[1m+++ b/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.common.module.css[m
+[36m@@ -8,11 +8,11 @@[m
+   left: 0;[m
+   right: 0;[m
+   z-index: 600;[m
+[31m-  height: 64px;[m
+[31m-  padding-bottom: env(safe-area-inset-bottom, 0px);[m
+[32m+[m[32m  height: 72px;[m
+[32m+[m[32m  padding: 0.35rem 0 env(safe-area-inset-bottom, 0px);[m
+   border-top: 1px solid transparent;[m
+[31m-  backdrop-filter: blur(20px) saturate(180%);[m
+[31m-  -webkit-backdrop-filter: blur(20px) saturate(180%);[m
+[32m+[m[32m  backdrop-filter: blur(18px) saturate(145%);[m
+[32m+[m[32m  -webkit-backdrop-filter: blur(18px) saturate(145%);[m
+   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);[m
+ }[m
+ [m
+[36m@@ -31,8 +31,8 @@[m
+   align-items: center;[m
+   justify-content: center;[m
+   flex: 1;[m
+[31m-  gap: 2px;[m
+[31m-  padding: 6px 2px 8px;[m
+[32m+[m[32m  gap: 4px;[m
+[32m+[m[32m  padding: 7px 2px 8px;[m
+   text-decoration: none;[m
+   border: none;[m
+   background: transparent;[m
+[36m@@ -60,9 +60,9 @@[m
+   display: flex;[m
+   align-items: center;[m
+   justify-content: center;[m
+[31m-  width: 28px;[m
+[31m-  height: 28px;[m
+[31m-  border-radius: 14px;[m
+[32m+[m[32m  width: 32px;[m
+[32m+[m[32m  height: 32px;[m
+[32m+[m[32m  border-radius: 12px;[m
+   transition: background-color 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);[m
+ }[m
+ [m
+[36m@@ -98,8 +98,8 @@[m
+ [m
+ /* ===== LABEL ===== */[m
+ .tabLabel {[m
+[31m-  font-size: 0.625rem;[m
+[31m-  font-weight: 500;[m
+[32m+[m[32m  font-size: 0.66rem;[m
+[32m+[m[32m  font-weight: 620;[m
+   letter-spacing: 0.01em;[m
+   line-height: 1;[m
+   white-space: nowrap;[m
+[36m@@ -129,7 +129,7 @@[m
+ /* ===== SMALL SCREENS ===== */[m
+ @media (max-width: 380px) {[m
+   .bottomNav {[m
+[31m-    height: 58px;[m
+[32m+[m[32m    height: 64px;[m[41m[m
+   }[m
+ [m
+   .tabLabel {[m
+[36m@@ -138,8 +138,8 @@[m
+   }[m
+ [m
+   .tabIconWrap {[m
+[31m-    width: 24px;[m
+[31m-    height: 24px;[m
+[32m+[m[32m    width: 28px;[m
+[32m+[m[32m    height: 28px;[m
+   }[m
+ [m
+   .tabIconWrap svg {[m
+[1mdiff --git a/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.dark.module.css b/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.dark.module.css[m
+[1mindex abcf106c..8dad462c 100644[m
+[1m--- a/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.dark.module.css[m
+[1m+++ b/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.dark.module.css[m
+[36m@@ -1,28 +1,28 @@[m
+ /* @AI-HINT: MobileBottomNav dark theme colors */[m
+ [m
+ .bottomNav {[m
+[31m-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.92) 100%);[m
+[31m-  border-top-color: var(--bg-secondary-dark);[m
+[31m-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(16, 21, 43, 0.94), rgba(10, 14, 32, 0.99));[m
+[32m+[m[32m  border-top-color: rgba(139, 141, 246, 0.18);[m
+[32m+[m[32m  box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04);[m
+ }[m
+ [m
+ .tabItem {[m
+[31m-  color: #64748b;[m
+[32m+[m[32m  color: #8e93a8;[m[41m[m
+ }[m
+ [m
+ .tabItemActive {[m
+[31m-  color: #7aa5f5;[m
+[32m+[m[32m  color: #c7c8ff;[m[41m[m
+ }[m
+ [m
+ .tabLabel {[m
+[31m-  color: #64748b;[m
+[32m+[m[32m  color: #8e93a8;[m[41m[m
+ }[m
+ [m
+ .tabLabelActive {[m
+[31m-  color: #7aa5f5;[m
+[31m-  font-weight: 600;[m
+[32m+[m[32m  color: #c7c8ff;[m[41m[m
+[32m+[m[32m  font-weight: 700;[m[41m[m
+ }[m
+ [m
+ .activeIndicator {[m
+[31m-  background-color: #7aa5f5;[m
+[32m+[m[32m  background-color: var(--ml-teal);[m[41m[m
+ }[m
+[1mdiff --git a/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.light.module.css b/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.light.module.css[m
+[1mindex 98964586..0ceef309 100644[m
+[1m--- a/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.light.module.css[m
+[1m+++ b/frontend/app/components/organisms/MobileBottomNav/MobileBottomNav.light.module.css[m
+[36m@@ -1,27 +1,27 @@[m
+ /* @AI-HINT: MobileBottomNav light theme colors */[m
+ [m
+ .bottomNav {[m
+[31m-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 250, 251, 0.92) 100%);[m
+[31m-  border-top-color: var(--border-light);[m
+[31m-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(251, 250, 247, 0.92), rgba(244, 242, 237, 0.98));[m
+[32m+[m[32m  border-top-color: var(--ml-line);[m
+[32m+[m[32m  box-shadow: 0 -10px 28px rgba(16, 21, 43, 0.08);[m
+ }[m
+ [m
+ .tabItem {[m
+   color: var(--text-tertiary-light);[m
+ }[m
+ [m
+[31m-.tabItemActive {[m
+[31m-  color: var(--ml-blue);[m
+[31m-}[m
+[32m+[m[32m.tabItemActive {[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+[32m+[m[32m}[m
+ [m
+ .tabLabel {[m
+   color: var(--text-tertiary-light);[m
+ }[m
+ [m
+[31m-.tabLabelActive {[m
+[31m-  color: var(--ml-blue);[m
+[31m-  font-weight: 600;[m
+[31m-}[m
+[32m+[m[32m.tabLabelActive {[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+[32m+[m[32m  font-weight: 700;[m
+[32m+[m[32m}[m
+ [m
+ .activeIndicator {[m
+   background-color: var(--ml-blue);[m
+[1mdiff --git a/frontend/app/components/organisms/Sidebar/Sidebar.common.module.css b/frontend/app/components/organisms/Sidebar/Sidebar.common.module.css[m
+[1mindex d3aa0f08..c64d2f6f 100644[m
+[1m--- a/frontend/app/components/organisms/Sidebar/Sidebar.common.module.css[m
+[1m+++ b/frontend/app/components/organisms/Sidebar/Sidebar.common.module.css[m
+[36m@@ -6,10 +6,10 @@[m
+   flex-direction: column;[m
+   height: 100vh;[m
+   height: 100dvh;[m
+[31m-  transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),[m
+[31m-    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),[m
+[31m-    opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),[m
+[31m-    box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);[m
+[32m+[m[32m  transition: width 0.24s cubic-bezier(0.23, 1, 0.32, 1),[m
+[32m+[m[32m    transform 0.24s cubic-bezier(0.23, 1, 0.32, 1),[m
+[32m+[m[32m    opacity 0.24s cubic-bezier(0.23, 1, 0.32, 1),[m
+[32m+[m[32m    box-shadow 0.24s cubic-bezier(0.23, 1, 0.32, 1);[m
+   overflow-x: hidden;[m
+   overflow-y: hidden;[m
+   position: fixed;[m
+[36m@@ -20,14 +20,14 @@[m
+   border-right-style: solid;[m
+   will-change: width, transform, box-shadow;[m
+   animation: none !important;[m
+[31m-  backdrop-filter: blur(8px) saturate(120%);[m
+[31m-  -webkit-backdrop-filter: blur(8px) saturate(120%);[m
+[32m+[m[32m  backdrop-filter: blur(18px) saturate(125%);[m
+[32m+[m[32m  -webkit-backdrop-filter: blur(18px) saturate(125%);[m
+ }[m
+ [m
+ /* ===== SIZE STATES ===== */[m
+[31m-.sidebarExpanded {[m
+[31m-  width: 272px;[m
+[31m-}[m
+[32m+[m[32m.sidebarExpanded {[m
+[32m+[m[32m  width: var(--size-sidebar-width, 280px);[m
+[32m+[m[32m}[m
+ [m
+ .sidebarCollapsed {[m
+   width: 72px;[m
+[36m@@ -38,11 +38,11 @@[m
+   display: flex;[m
+   align-items: center;[m
+   justify-content: space-between;[m
+[31m-  padding: 1.125rem 1rem;[m
+[31m-  flex-shrink: 0;[m
+[31m-  border-bottom-width: 1px;[m
+[31m-  border-bottom-style: solid;[m
+[31m-  min-height: 64px;[m
+[32m+[m[32m  padding: 1rem 1.1rem;[m
+[32m+[m[32m  flex-shrink: 0;[m
+[32m+[m[32m  border-bottom-width: 1px;[m
+[32m+[m[32m  border-bottom-style: solid;[m
+[32m+[m[32m  min-height: 68px;[m
+   gap: 0.5rem;[m
+ }[m
+ [m
+[36m@@ -57,8 +57,8 @@[m
+ [m
+ .logoIcon {[m
+   flex-shrink: 0;[m
+[31m-  width: 34px;[m
+[31m-  height: 34px;[m
+[32m+[m[32m  width: 36px;[m
+[32m+[m[32m  height: 36px;[m
+   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);[m
+   will-change: transform;[m
+ }[m
+[36m@@ -68,8 +68,8 @@[m
+ }[m
+ [m
+ .logoText {[m
+[31m-  font-size: 1.1875rem;[m
+[31m-  font-weight: 700;[m
+[32m+[m[32m  font-size: 1.05rem;[m
+[32m+[m[32m  font-weight: 760;[m
+   white-space: nowrap;[m
+   opacity: 1;[m
+   transition: opacity 0.2s ease, transform 0.2s ease;[m
+[36m@@ -150,7 +150,7 @@[m
+   flex-grow: 1;[m
+   overflow-y: auto;[m
+   overflow-x: hidden;[m
+[31m-  padding: 0.75rem 0.625rem;[m
+[32m+[m[32m  padding: 1rem 0.7rem;[m[41m[m
+   scrollbar-width: thin;[m
+   scrollbar-color: var(--ml-border, #e2e8f0) transparent;[m
+   min-height: 0;[m
+[36m@@ -204,8 +204,8 @@[m
+   align-items: center;[m
+   gap: 0.625rem;[m
+   overflow: hidden;[m
+[31m-  padding: 0.625rem;[m
+[31m-  border-radius: 10px;[m
+[32m+[m[32m  padding: 0.7rem;[m
+[32m+[m[32m  border-radius: 14px;[m
+   transition: background-color 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);[m
+   border: 1px solid transparent;[m
+ }[m
+[1mdiff --git a/frontend/app/components/organisms/Sidebar/Sidebar.dark.module.css b/frontend/app/components/organisms/Sidebar/Sidebar.dark.module.css[m
+[1mindex e531a439..06a9f992 100644[m
+[1m--- a/frontend/app/components/organisms/Sidebar/Sidebar.dark.module.css[m
+[1m+++ b/frontend/app/components/organisms/Sidebar/Sidebar.dark.module.css[m
+[36m@@ -1,19 +1,19 @@[m
+ /* @AI-HINT: Overhauled dark theme for Sidebar - modern, clean, polished design */[m
+ [m
+ .sidebar {[m
+[31m-  background: linear-gradient(135deg, var(--bg-primary-dark) 0%, #1a1f2e 100%);[m
+[31m-  border-right-color: var(--bg-secondary-dark);[m
+[31m-  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(107, 147, 245, 0.08);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(16, 21, 43, 0.98) 0%, rgba(10, 14, 32, 0.98) 100%);[m
+[32m+[m[32m  border-right-color: rgba(139, 141, 246, 0.16);[m
+[32m+[m[32m  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.16), inset -1px 0 0 rgba(139, 141, 246, 0.06);[m
+ }[m
+ [m
+ .sidebarHeader {[m
+[31m-  background: linear-gradient(135deg, var(--bg-primary-dark) 0%, #1a1f2e 100%);[m
+[31m-  border-bottom-color: var(--bg-secondary-dark);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(16, 21, 43, 0.98), rgba(10, 14, 32, 0.96));[m
+[32m+[m[32m  border-bottom-color: rgba(139, 141, 246, 0.14);[m
+ }[m
+ [m
+ .logoText {[m
+   color: var(--text-primary-dark);[m
+[31m-  background: linear-gradient(135deg, #ffffff 0%, #a5a5a5 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, #f7f5ef 0%, #a7acd3 100%);[m[41m[m
+   -webkit-background-clip: text;[m
+   -webkit-text-fill-color: transparent;[m
+   background-clip: text;[m
+[36m@@ -21,18 +21,18 @@[m
+ [m
+ .toggleButton {[m
+   color: var(--text-tertiary-dark);[m
+[31m-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, #0f1825 100%);[m
+[31m-  border-color: rgba(107, 147, 245, 0.12);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(34, 42, 74, 0.84), rgba(16, 21, 43, 0.9));[m
+[32m+[m[32m  border-color: rgba(139, 141, 246, 0.18);[m
+ }[m
+ [m
+ .toggleButton:hover {[m
+[31m-  background: linear-gradient(135deg, var(--border-dark) 0%, var(--bg-secondary-dark) 100%);[m
+[31m-  color: #60a5fa;[m
+[31m-  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.15);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.16), rgba(56, 203, 182, 0.10));[m
+[32m+[m[32m  color: var(--ml-blue-light);[m
+[32m+[m[32m  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.18);[m
+ }[m
+ [m
+ .sidebarNavContainer {[m
+[31m-  background-color: var(--bg-primary-dark);[m
+[32m+[m[32m  background-color: rgba(16, 21, 43, 0.72);[m[41m[m
+ }[m
+ [m
+ .sidebarNavContainer::-webkit-scrollbar-thumb {[m
+[36m@@ -48,19 +48,19 @@[m
+ }[m
+ [m
+ .sidebarFooter {[m
+[31m-  background: linear-gradient(135deg, var(--bg-primary-dark) 0%, #1a1f2e 100%);[m
+[31m-  border-top-color: var(--bg-secondary-dark);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(10, 14, 32, 0.9), rgba(16, 21, 43, 0.96));[m
+[32m+[m[32m  border-top-color: rgba(139, 141, 246, 0.14);[m
+ }[m
+ [m
+ .userInfo {[m
+[31m-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, #1a253a 100%);[m
+[31m-  border: 1px solid rgba(107, 147, 245, 0.15);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(34, 42, 74, 0.82), rgba(23, 29, 56, 0.9));[m
+[32m+[m[32m  border: 1px solid rgba(139, 141, 246, 0.16);[m
+ }[m
+ [m
+ .userInfo:hover {[m
+[31m-  background: linear-gradient(135deg, #1e3a5f 0%, #1a2f50 100%);[m
+[31m-  border-color: #2d5cb8;[m
+[31m-  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.12), inset 0 1px 0 rgba(107, 147, 245, 0.1);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.18), rgba(56, 203, 182, 0.10));[m
+[32m+[m[32m  border-color: rgba(139, 141, 246, 0.34);[m
+[32m+[m[32m  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);[m
+ }[m
+ [m
+ .avatar {[m
+[36m@@ -79,5 +79,5 @@[m
+ .userRole {[m
+   color: var(--text-tertiary-dark);[m
+ }[m
+[31m-/* Deep gradient 2026 */[m
+[31m-.sidebarHeader, .sidebar, .sidebarFooter { background: linear-gradient(180deg, var(--bg-primary-dark) 0%, #020617 100%); border-color: rgba(255,255,255,0.1); backdrop-filter: blur(12px); }[m
+\ No newline at end of file[m
+[32m+[m[32m/* Workbench glass: keep the rail calm and legible in dark mode. */[m
+[32m+[m[32m.sidebarHeader, .sidebar, .sidebarFooter { backdrop-filter: blur(18px) saturate(125%); }[m
+\ No newline at end of file[m
+[1mdiff --git a/frontend/app/components/organisms/Sidebar/Sidebar.light.module.css b/frontend/app/components/organisms/Sidebar/Sidebar.light.module.css[m
+[1mindex 571e2a32..5850639d 100644[m
+[1m--- a/frontend/app/components/organisms/Sidebar/Sidebar.light.module.css[m
+[1m+++ b/frontend/app/components/organisms/Sidebar/Sidebar.light.module.css[m
+[36m@@ -1,14 +1,14 @@[m
+ /* @AI-HINT: Overhauled light theme for Sidebar - modern, clean, polished design */[m
+ [m
+ .sidebar {[m
+[31m-  background: linear-gradient(135deg, var(--bg-primary-light) 0%, #f9fafb 100%);[m
+[31m-  border-right-color: #edf0f4;[m
+[31m-  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.8);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(251, 250, 247, 0.96) 0%, rgba(244, 242, 237, 0.9) 100%);[m
+[32m+[m[32m  border-right-color: var(--ml-line);[m
+[32m+[m[32m  box-shadow: 10px 0 30px rgba(16, 21, 43, 0.045), inset -1px 0 0 rgba(255, 255, 255, 0.7);[m
+ }[m
+ [m
+ .sidebarHeader {[m
+[31m-  background: linear-gradient(135deg, var(--bg-primary-light) 0%, #f9fafb 100%);[m
+[31m-  border-bottom-color: #f0f2f5;[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(251, 250, 247, 0.98), rgba(244, 242, 237, 0.9));[m
+[32m+[m[32m  border-bottom-color: var(--ml-line);[m
+ }[m
+ [m
+ .logoText {[m
+[36m@@ -17,18 +17,18 @@[m
+ [m
+ .toggleButton {[m
+   color: var(--color-text-secondary-light);[m
+[31m-  background: linear-gradient(135deg, #f5f7fa 0%, var(--bg-tertiary-light) 100%);[m
+[31m-  border-color: rgba(69, 115, 223, 0.12);[m
+[32m+[m[32m  background: linear-gradient(135deg, #ffffff, #f1f0eb);[m
+[32m+[m[32m  border-color: rgba(91, 92, 226, 0.15);[m
+ }[m
+ [m
+ .toggleButton:hover {[m
+[31m-  background: linear-gradient(135deg, #edf2ff 0%, #e0e7ff 100%);[m
+[31m-  color: var(--ml-blue);[m
+[31m-  box-shadow: 0 2px 12px rgba(69, 115, 223, 0.12);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.12), rgba(56, 203, 182, 0.09));[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+[32m+[m[32m  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.12);[m
+ }[m
+ [m
+ .sidebarNavContainer {[m
+[31m-  background-color: var(--bg-primary-light);[m
+[32m+[m[32m  background-color: rgba(251, 250, 247, 0.7);[m[41m[m
+ }[m
+ [m
+ .sidebarNavContainer::-webkit-scrollbar-thumb {[m
+[36m@@ -44,19 +44,19 @@[m
+ }[m
+ [m
+ .sidebarFooter {[m
+[31m-  background: linear-gradient(135deg, #fafbfc 0%, #f8f9fb 100%);[m
+[31m-  border-top-color: #f0f2f5;[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(244, 242, 237, 0.6), rgba(251, 250, 247, 0.92));[m
+[32m+[m[32m  border-top-color: var(--ml-line);[m
+ }[m
+ [m
+ .userInfo {[m
+[31m-  background: linear-gradient(135deg, #f8f9fb 0%, #f5f7fa 100%);[m
+[31m-  border: 1px solid rgba(69, 115, 223, 0.12);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(244, 242, 237, 0.75));[m
+[32m+[m[32m  border: 1px solid rgba(91, 92, 226, 0.13);[m
+ }[m
+ [m
+ .userInfo:hover {[m
+[31m-  background: linear-gradient(135deg, #edf2ff 0%, #e0e7ff 100%);[m
+[31m-  border-color: #b8ccf0;[m
+[31m-  box-shadow: 0 2px 12px rgba(69, 115, 223, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.10), rgba(56, 203, 182, 0.07));[m
+[32m+[m[32m  border-color: rgba(91, 92, 226, 0.28);[m
+[32m+[m[32m  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.65);[m
+ }[m
+ [m
+ .avatar {[m
+[36m@@ -75,5 +75,5 @@[m
+ .userRole {[m
+   color: var(--color-text-secondary-light);[m
+ }[m
+[31m-/* Light glass 2026 */[m
+[31m-.sidebarHeader, .sidebar, .sidebarFooter { background: rgba(255,255,255,0.7); border-color: rgba(0,0,0,0.05); backdrop-filter: blur(12px); }[m
+\ No newline at end of file[m
+[32m+[m[32m/* Workbench glass: keep the rail quiet so task content remains dominant. */[m
+[32m+[m[32m.sidebarHeader, .sidebar, .sidebarFooter { backdrop-filter: blur(18px) saturate(120%); }[m
+\ No newline at end of file[m
+[1mdiff --git a/frontend/app/components/organisms/SidebarNav/SidebarNav.common.module.css b/frontend/app/components/organisms/SidebarNav/SidebarNav.common.module.css[m
+[1mindex f2e7ced5..2ceaaa00 100644[m
+[1m--- a/frontend/app/components/organisms/SidebarNav/SidebarNav.common.module.css[m
+[1m+++ b/frontend/app/components/organisms/SidebarNav/SidebarNav.common.module.css[m
+[36m@@ -57,8 +57,8 @@[m
+ [m
+ /* Section headers for grouped navigation */[m
+ .sidebarNavSectionHeader {[m
+[31m-  padding: 0.75rem 0.875rem 0.25rem;[m
+[31m-  margin-top: 0.625rem;[m
+[32m+[m[32m  padding: 1rem 0.9rem 0.35rem;[m
+[32m+[m[32m  margin-top: 0.75rem;[m
+   list-style: none;[m
+ }[m
+ [m
+[36m@@ -69,8 +69,8 @@[m
+ [m
+ .sidebarNavSectionLabel {[m
+   display: block;[m
+[31m-  font-size: 0.625rem;[m
+[31m-  font-weight: 700;[m
+[32m+[m[32m  font-size: 0.64rem;[m
+[32m+[m[32m  font-weight: 760;[m
+   text-transform: uppercase;[m
+   letter-spacing: 0.1em;[m
+   line-height: 1;[m
+[36m@@ -83,8 +83,8 @@[m
+ }[m
+ [m
+ .sidebarNavItem {[m
+[31m-  padding: 0 0.375rem;[m
+[31m-  margin-bottom: 1px;[m
+[32m+[m[32m  padding: 0 0.25rem;[m
+[32m+[m[32m  margin-bottom: 0.15rem;[m
+   position: relative;[m
+ }[m
+ [m
+[36m@@ -97,11 +97,11 @@[m
+ .sidebarNavLink {[m
+   display: flex;[m
+   align-items: center;[m
+[31m-  padding: 0.5rem 0.75rem;[m
+[31m-  border-radius: 8px;[m
+[32m+[m[32m  padding: 0.66rem 0.82rem;[m
+[32m+[m[32m  border-radius: 12px;[m
+   text-decoration: none;[m
+[31m-  font-weight: 500;[m
+[31m-  font-size: 0.875rem;[m
+[32m+[m[32m  font-weight: 560;[m
+[32m+[m[32m  font-size: 0.84rem;[m
+   transition: transform 0.15s ease,[m
+     box-shadow 0.15s ease,[m
+     border-color 0.15s ease,[m
+[36m@@ -110,8 +110,8 @@[m
+     opacity 0.15s ease;[m
+   white-space: nowrap;[m
+   position: relative;[m
+[31m-  gap: 0.625rem;[m
+[31m-  line-height: 1.4;[m
+[32m+[m[32m  gap: 0.75rem;[m
+[32m+[m[32m  line-height: 1.35;[m
+ }[m
+ [m
+ .sidebarNavLink:hover {[m
+[36m@@ -134,18 +134,18 @@[m
+   top: 50%;[m
+   transform: translateY(-50%);[m
+   width: 3px;[m
+[31m-  height: 60%;[m
+[31m-  border-radius: 0 3px 3px 0;[m
+[32m+[m[32m  height: 68%;[m
+[32m+[m[32m  border-radius: 0 4px 4px 0;[m
+   background-color: currentColor;[m
+[31m-  opacity: 0.6;[m
+[32m+[m[32m  opacity: 0.9;[m[41m[m
+ }[m
+ [m
+ .sidebarNavIcon {[m
+   display: inline-flex;[m
+   align-items: center;[m
+   justify-content: center;[m
+[31m-  min-width: 20px;[m
+[31m-  flex-shrink: 0;[m
+[32m+[m[32m  min-width: 22px;[m
+[32m+[m[32m  flex-shrink: 0;[m
+   transition: transform 0.15s ease;[m
+ }[m
+ [m
+[1mdiff --git a/frontend/app/components/organisms/SidebarNav/SidebarNav.dark.module.css b/frontend/app/components/organisms/SidebarNav/SidebarNav.dark.module.css[m
+[1mindex a949df25..0dfa35ad 100644[m
+[1m--- a/frontend/app/components/organisms/SidebarNav/SidebarNav.dark.module.css[m
+[1m+++ b/frontend/app/components/organisms/SidebarNav/SidebarNav.dark.module.css[m
+[36m@@ -1,37 +1,37 @@[m
+ /* @AI-HINT: Overhauled dark theme for SidebarNav - modern, refined, with tooltip */[m
+ [m
+[31m-.navLinkInactive {[m
+[31m-  color: #94a3b8;[m
+[31m-  background-color: transparent;[m
+[31m-}[m
+[32m+[m[32m.navLinkInactive {[m
+[32m+[m[32m  color: #aeb3c4;[m
+[32m+[m[32m  background-color: transparent;[m
+[32m+[m[32m}[m
+ [m
+[31m-.navLinkInactive:hover {[m
+[31m-  background-color: rgba(255, 255, 255, 0.06);[m
+[31m-  color: #f8fafc;[m
+[31m-}[m
+[32m+[m[32m.navLinkInactive:hover {[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.12), rgba(56, 203, 182, 0.07));[m
+[32m+[m[32m  color: #f7f5ef;[m
+[32m+[m[32m}[m
+ [m
+[31m-.navLinkActive {[m
+[31m-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.22) 0%, rgba(37, 99, 235, 0.15) 100%);[m
+[31m-  color: #60a5fa;[m
+[31m-  font-weight: 600;[m
+[31m-  box-shadow: 0 2px 12px -2px rgba(59, 130, 246, 0.25);[m
+[31m-  border: 1px solid rgba(96, 165, 250, 0.2);[m
+[31m-}[m
+[32m+[m[32m.navLinkActive {[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.18), rgba(56, 203, 182, 0.10));[m
+[32m+[m[32m  color: #c7c8ff;[m
+[32m+[m[32m  font-weight: 650;[m
+[32m+[m[32m  box-shadow: 0 8px 20px -10px rgba(91, 92, 226, 0.45);[m
+[32m+[m[32m  border: 1px solid rgba(139, 141, 246, 0.24);[m
+[32m+[m[32m}[m
+ [m
+[31m-.navLinkActive:hover {[m
+[31m-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.28) 0%, rgba(37, 99, 235, 0.2) 100%);[m
+[31m-  color: #93c5fd;[m
+[31m-}[m
+[32m+[m[32m.navLinkActive:hover {[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.24), rgba(56, 203, 182, 0.14));[m
+[32m+[m[32m  color: #e2e1ff;[m
+[32m+[m[32m}[m
+ [m
+ .badge {[m
+   background-color: rgba(255, 255, 255, 0.1);[m
+   color: #cbd5e1;[m
+ }[m
+ [m
+[31m-.navLinkActive .badge {[m
+[31m-  background-color: #3b82f6;[m
+[31m-  color: #ffffff;[m
+[31m-}[m
+[32m+[m[32m.navLinkActive .badge {[m
+[32m+[m[32m  background-color: var(--ml-teal);[m
+[32m+[m[32m  color: #071a1a;[m
+[32m+[m[32m}[m
+ [m
+ .sidebarNavSubLink {[m
+   background-color: transparent;[m
+[36m@@ -44,15 +44,15 @@[m
+   color: #f8fafc;[m
+ }[m
+ [m
+[31m-.sidebarNavSubLink.navLinkActive {[m
+[31m-  background-color: rgba(59, 130, 246, 0.15);[m
+[31m-  border-left-color: #3b82f6;[m
+[31m-  color: #60a5fa;[m
+[31m-}[m
+[32m+[m[32m.sidebarNavSubLink.navLinkActive {[m
+[32m+[m[32m  background-color: rgba(139, 141, 246, 0.14);[m
+[32m+[m[32m  border-left-color: var(--ml-teal);[m
+[32m+[m[32m  color: #c7c8ff;[m
+[32m+[m[32m}[m
+ [m
+[31m-.sectionLabel {[m
+[31m-  color: #64748b;[m
+[31m-}[m
+[32m+[m[32m.sectionLabel {[m
+[32m+[m[32m  color: #8e93a8;[m
+[32m+[m[32m}[m
+ [m
+ .sidebarNavSectionDivider {[m
+   background-color: rgba(255, 255, 255, 0.08);[m
+[1mdiff --git a/frontend/app/components/organisms/SidebarNav/SidebarNav.light.module.css b/frontend/app/components/organisms/SidebarNav/SidebarNav.light.module.css[m
+[1mindex f5df19bd..0078528d 100644[m
+[1m--- a/frontend/app/components/organisms/SidebarNav/SidebarNav.light.module.css[m
+[1m+++ b/frontend/app/components/organisms/SidebarNav/SidebarNav.light.module.css[m
+[36m@@ -1,26 +1,26 @@[m
+ /* @AI-HINT: Overhauled light theme for SidebarNav - modern, refined, with tooltip */[m
+ [m
+[31m-.navLinkInactive {[m
+[31m-  color: #4b5563;[m
+[31m-  background-color: transparent;[m
+[31m-}[m
+[32m+[m[32m.navLinkInactive {[m
+[32m+[m[32m  color: #5e6375;[m
+[32m+[m[32m  background-color: transparent;[m
+[32m+[m[32m}[m
+ [m
+[31m-.navLinkInactive:hover {[m
+[31m-  background-color: #f1f5f9;[m
+[31m-  color: #0f172a;[m
+[31m-}[m
+[32m+[m[32m.navLinkInactive:hover {[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));[m
+[32m+[m[32m  color: var(--ml-ink);[m
+[32m+[m[32m}[m
+ [m
+[31m-.navLinkActive {[m
+[31m-  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);[m
+[31m-  color: #2563eb;[m
+[31m-  font-weight: 600;[m
+[31m-  box-shadow: 0 2px 8px -2px rgba(37, 99, 235, 0.15);[m
+[31m-}[m
+[32m+[m[32m.navLinkActive {[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.14), rgba(56, 203, 182, 0.08));[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+[32m+[m[32m  font-weight: 650;[m
+[32m+[m[32m  box-shadow: 0 8px 18px -10px rgba(91, 92, 226, 0.38);[m
+[32m+[m[32m}[m
+ [m
+[31m-.navLinkActive:hover {[m
+[31m-  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);[m
+[31m-  color: #1d4ed8;[m
+[31m-}[m
+[32m+[m[32m.navLinkActive:hover {[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.18), rgba(56, 203, 182, 0.10));[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+[32m+[m[32m}[m
+ [m
+ .badge {[m
+   background-color: #e2e8f0;[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.common.module.css b/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.common.module.css[m
+[1mindex b59587ed..c849e640 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.common.module.css[m
+[1m+++ b/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.common.module.css[m
+[36m@@ -5,8 +5,8 @@[m
+   top: 0;[m
+   z-index: var(--z-header, 500);[m
+   width: 100%;[m
+[31m-  height: 56px;[m
+[31m-  backdrop-filter: blur(20px) saturate(180%);[m
+[32m+[m[32m  height: var(--size-navbar-height, 68px);[m
+[32m+[m[32m  backdrop-filter: blur(18px) saturate(145%);[m
+   -webkit-backdrop-filter: blur(20px) saturate(180%);[m
+   border-bottom: 1px solid transparent;[m
+   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),[m
+[36m@@ -21,15 +21,16 @@[m
+   align-items: center;[m
+   justify-content: space-between;[m
+   height: 100%;[m
+[31m-  padding: 0 1.5rem;[m
+[31m-  max-width: 100%;[m
+[31m-  gap: 1rem;[m
+[32m+[m[32m  padding: 0 clamp(1rem, 3vw, 2.75rem);[m
+[32m+[m[32m  max-width: 1680px;[m
+[32m+[m[32m  margin: 0 auto;[m
+[32m+[m[32m  gap: clamp(0.75rem, 2vw, 1.5rem);[m
+ }[m
+ [m
+[31m-.leftSection {[m
+[31m-  display: flex;[m
+[31m-  align-items: center;[m
+[31m-  gap: 0.625rem;[m
+[32m+[m[32m.leftSection {[m
+[32m+[m[32m  display: flex;[m
+[32m+[m[32m  align-items: center;[m
+[32m+[m[32m  gap: 0.75rem;[m
+   flex-shrink: 1;[m
+   min-width: 0;[m
+   overflow: hidden;[m
+[36m@@ -103,13 +104,13 @@[m
+   min-width: 0;[m
+ }[m
+ [m
+[31m-.roleBadge {[m
+[31m-  display: inline-flex;[m
+[31m-  align-items: center;[m
+[31m-  gap: 0.35rem;[m
+[31m-  padding: 0.25rem 0.5rem;[m
+[31m-  border-radius: 9999px;[m
+[31m-  font-size: 0.7rem;[m
+[32m+[m[32m.roleBadge {[m
+[32m+[m[32m  display: inline-flex;[m
+[32m+[m[32m  align-items: center;[m
+[32m+[m[32m  gap: 0.35rem;[m
+[32m+[m[32m  padding: 0.35rem 0.65rem;[m
+[32m+[m[32m  border-radius: 9999px;[m
+[32m+[m[32m  font-size: 0.66rem;[m
+   font-weight: 700;[m
+   text-transform: uppercase;[m
+   letter-spacing: 0.05em;[m
+[36m@@ -139,11 +140,11 @@[m [mhtml[class="dark"] .roleBadge_client { color: #60a5fa; }[m
+   flex-shrink: 0;[m
+ }[m
+ [m
+[31m-.breadcrumb {[m
+[31m-  display: flex;[m
+[31m-  align-items: center;[m
+[31m-  gap: var(--spacing-sm); /* Using UI grid spacing */[m
+[31m-  font-size: var(--font-size-sm);[m
+[32m+[m[32m.breadcrumb {[m
+[32m+[m[32m  display: flex;[m
+[32m+[m[32m  align-items: center;[m
+[32m+[m[32m  gap: 0.55rem;[m
+[32m+[m[32m  font-size: 0.78rem;[m
+   font-weight: 500;[m
+   white-space: nowrap;[m
+   overflow: hidden;[m
+[36m@@ -158,7 +159,7 @@[m [mhtml[class="dark"] .roleBadge_client { color: #60a5fa; }[m
+   transition: color 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);[m
+   flex-shrink: 0;[m
+   padding: var(--spacing-xs) 0;[m
+[31m-  min-height: 48px; /* Make links easily tappable */[m
+[32m+[m[32m  min-height: 44px;[m[41m[m
+ }[m
+ [m
+ .breadcrumbHomeIcon {[m
+[36m@@ -170,9 +171,9 @@[m [mhtml[class="dark"] .roleBadge_client { color: #60a5fa; }[m
+   opacity: 0.35;[m
+ }[m
+ [m
+[31m-.breadcrumbCurrent {[m
+[31m-  font-weight: 600;[m
+[31m-  font-size: 0.875rem;[m
+[32m+[m[32m.breadcrumbCurrent {[m
+[32m+[m[32m  font-weight: 650;[m
+[32m+[m[32m  font-size: 0.82rem;[m
+   overflow: hidden;[m
+   text-overflow: ellipsis;[m
+   white-space: nowrap;[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.dark.module.css b/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.dark.module.css[m
+[1mindex 88989871..fbfb1b01 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.dark.module.css[m
+[1m+++ b/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.dark.module.css[m
+[36m@@ -1,18 +1,18 @@[m
+ ﻿/* @AI-HINT: Dark theme styles for the PortalNavbar with breadcrumbs and dropdowns */[m
+ [m
+ .navbar {[m
+[31m-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 100%);[m
+[31m-  border-bottom: 1px solid var(--bg-secondary-dark);[m
+[31m-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(16, 21, 43, 0.94) 0%, rgba(23, 29, 56, 0.9) 100%);[m
+[32m+[m[32m  border-bottom: 1px solid rgba(139, 141, 246, 0.16);[m
+[32m+[m[32m  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);[m
+ }[m
+ [m
+ /* Breadcrumb */[m
+ .breadcrumbLink {[m
+[31m-  color: #64748b;[m
+[32m+[m[32m  color: #8e93a8;[m[41m[m
+ }[m
+ [m
+ .breadcrumbLink:hover {[m
+[31m-  color: #7aa5f5;[m
+[32m+[m[32m  color: var(--ml-blue-light);[m[41m[m
+ }[m
+ [m
+ .breadcrumbSeparator {[m
+[36m@@ -32,9 +32,9 @@[m
+ }[m
+ [m
+ .actionButton:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(51, 65, 85, 0.8) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.12), rgba(56, 203, 182, 0.08));[m[41m[m
+   color: var(--text-primary-dark);[m
+[31m-  box-shadow: 0 2px 12px rgba(122, 165, 245, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);[m
+[32m+[m[32m  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);[m[41m[m
+ }[m
+ [m
+ .menuButton {[m
+[36m@@ -42,21 +42,21 @@[m
+ }[m
+ [m
+ .menuButton:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(51, 65, 85, 0.8) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.12), rgba(56, 203, 182, 0.08));[m[41m[m
+   color: var(--text-primary-dark);[m
+[31m-  box-shadow: 0 2px 12px rgba(122, 165, 245, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);[m
+[32m+[m[32m  box-shadow: 0 6px 16px rgba(91, 92, 226, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);[m[41m[m
+ }[m
+ [m
+ .searchContainer {[m
+   background: linear-gradient(135deg, var(--bg-primary-dark) 0%, rgba(15, 23, 42, 0.8) 100%);[m
+   border: 1px solid var(--bg-secondary-dark);[m
+[31m-  border-radius: 8px;[m
+[32m+[m[32m  border-radius: 14px;[m[41m[m
+   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);[m
+ }[m
+ [m
+ .searchContainer:focus-within {[m
+[31m-  border-color: var(--ml-blue);[m
+[31m-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(122, 165, 245, 0.2), 0 2px 12px rgba(122, 165, 245, 0.15);[m
+[32m+[m[32m  border-color: var(--ml-blue-light);[m
+[32m+[m[32m  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(139, 141, 246, 0.18), 0 4px 16px rgba(91, 92, 226, 0.16);[m
+   background: linear-gradient(135deg, var(--bg-secondary-dark) 0%, rgba(30, 41, 59, 0.8) 100%);[m
+ }[m
+ [m
+[36m@@ -66,7 +66,7 @@[m
+ }[m
+ [m
+ .searchInput::placeholder {[m
+[31m-  color: #64748b;[m
+[32m+[m[32m  color: #8e93a8;[m[41m[m
+ }[m
+ [m
+ /* Dropdown Theme Colors */[m
+[36m@@ -81,7 +81,7 @@[m
+ }[m
+ [m
+ .searchItem:hover {[m
+[31m-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(51, 65, 85, 0.6) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.11), rgba(56, 203, 182, 0.07));[m[41m[m
+ }[m
+ [m
+ .notificationDropdown {[m
+[36m@@ -95,7 +95,7 @@[m
+ }[m
+ [m
+ .notificationItem:hover {[m
+[31m-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(51, 65, 85, 0.6) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.11), rgba(56, 203, 182, 0.07));[m[41m[m
+ }[m
+ [m
+ .notificationItemTitle {[m
+[36m@@ -117,7 +117,7 @@[m
+ }[m
+ [m
+ .helpItem:hover {[m
+[31m-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(51, 65, 85, 0.6) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(139, 141, 246, 0.11), rgba(56, 203, 182, 0.07));[m[41m[m
+ }[m
+ [m
+ .helpItemLabel {[m
+[36m@@ -125,5 +125,5 @@[m
+ }[m
+ [m
+ .helpItemDesc {[m
+[31m-  color: #64748b;[m
+[32m+[m[32m  color: #8e93a8;[m[41m[m
+ }[m
+\ No newline at end of file[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.light.module.css b/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.light.module.css[m
+[1mindex b295dd49..83f347f4 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.light.module.css[m
+[1m+++ b/frontend/app/components/templates/Layout/PortalNavbar/PortalNavbar.light.module.css[m
+[36m@@ -1,9 +1,9 @@[m
+ ﻿/* @AI-HINT: Light theme styles for the PortalNavbar with breadcrumbs and dropdowns */[m
+ [m
+ .navbar {[m
+[31m-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.88) 100%);[m
+[31m-  border-bottom: 1px solid var(--border-light);[m
+[31m-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(251, 250, 247, 0.94) 0%, rgba(244, 242, 237, 0.9) 100%);[m
+[32m+[m[32m  border-bottom: 1px solid var(--ml-line);[m
+[32m+[m[32m  box-shadow: 0 10px 24px rgba(16, 21, 43, 0.055);[m
+ }[m
+ [m
+ /* Breadcrumb */[m
+[36m@@ -12,7 +12,7 @@[m
+ }[m
+ [m
+ .breadcrumbLink:hover {[m
+[31m-  color: var(--ml-blue);[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m[41m[m
+ }[m
+ [m
+ .breadcrumbSeparator {[m
+[36m@@ -20,11 +20,11 @@[m
+ }[m
+ [m
+ .breadcrumbCurrent {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .pageTitle {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .actionButton {[m
+[36m@@ -32,9 +32,9 @@[m
+ }[m
+ [m
+ .actionButton:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));[m[41m[m
+   color: var(--color-text-primary-light);[m
+[31m-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.08);[m
+[32m+[m[32m  box-shadow: 0 4px 12px rgba(91, 92, 226, 0.10);[m[41m[m
+ }[m
+ [m
+ .menuButton {[m
+[36m@@ -42,26 +42,26 @@[m
+ }[m
+ [m
+ .menuButton:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));[m[41m[m
+   color: var(--color-text-primary-light);[m
+[31m-  box-shadow: 0 2px 8px rgba(69, 115, 223, 0.08);[m
+[32m+[m[32m  box-shadow: 0 4px 12px rgba(91, 92, 226, 0.10);[m[41m[m
+ }[m
+ [m
+ .searchContainer {[m
+   background: linear-gradient(135deg, var(--bg-secondary-light) 0%, var(--bg-tertiary-light) 100%);[m
+   border: 1px solid var(--border-light);[m
+[31m-  border-radius: 8px;[m
+[32m+[m[32m  border-radius: 14px;[m[41m[m
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);[m
+ }[m
+ [m
+ .searchContainer:focus-within {[m
+[31m-  border-color: var(--ml-blue);[m
+[31m-  box-shadow: 0 0 0 3px rgba(69, 115, 223, 0.08), 0 2px 8px rgba(69, 115, 223, 0.12);[m
+[32m+[m[32m  border-color: var(--ml-blue);[m
+[32m+[m[32m  box-shadow: 0 0 0 4px rgba(91, 92, 226, 0.12), 0 4px 14px rgba(91, 92, 226, 0.10);[m
+   background: linear-gradient(135deg, var(--bg-primary-light) 0%, var(--bg-secondary-light) 100%);[m
+ }[m
+ [m
+ .searchInput {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+   background: transparent;[m
+ }[m
+ [m
+[36m@@ -77,11 +77,11 @@[m
+ }[m
+ [m
+ .searchItem {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .searchItem:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));[m[41m[m
+ }[m
+ [m
+ .notificationDropdown {[m
+[36m@@ -91,15 +91,15 @@[m
+ }[m
+ [m
+ .notificationItem {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .notificationItem:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));[m[41m[m
+ }[m
+ [m
+ .notificationItemTitle {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .notificationDesc {[m
+[36m@@ -113,15 +113,15 @@[m
+ }[m
+ [m
+ .helpItem {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .helpItem:hover {[m
+[31m-  background: linear-gradient(135deg, var(--bg-tertiary-light) 0%, #e8eef8 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(91, 92, 226, 0.08), rgba(56, 203, 182, 0.06));[m[41m[m
+ }[m
+ [m
+ .helpItemLabel {[m
+[31m-  color: #111827;[m
+[32m+[m[32m  color: var(--ml-ink);[m[41m[m
+ }[m
+ [m
+ .helpItemDesc {[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.common.module.css b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.common.module.css[m
+[1mindex c4b48a18..df12109d 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.common.module.css[m
+[1m+++ b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.common.module.css[m
+[36m@@ -6,8 +6,8 @@[m
+   left: 0;[m
+   width: 100%;[m
+   z-index: 50;[m
+[31m-  -webkit-backdrop-filter: blur(10px);[m
+[31m-  backdrop-filter: blur(10px); /* More blur for premium feel */[m
+[32m+[m[32m  -webkit-backdrop-filter: blur(18px) saturate(135%);[m
+[32m+[m[32m  backdrop-filter: blur(18px) saturate(135%);[m
+   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),[m
+     box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),[m
+     border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),[m
+[36m@@ -26,8 +26,8 @@[m
+   justify-content: space-between;[m
+   max-width: var(--max-width-desktop, 1280px);[m
+   margin: 0 auto;[m
+[31m-  padding: 0.875rem 1.5rem; /* 14px 24px - Slightly taller */[m
+[31m-  height: var(--header-height, 72px);[m
+[32m+[m[32m  padding: 0.75rem 1.25rem;[m
+[32m+[m[32m  height: var(--header-height, 68px);[m
+ }[m
+ [m
+ .logoContainer {[m
+[36m@@ -44,15 +44,15 @@[m
+ .navList {[m
+   display: flex;[m
+   align-items: center;[m
+[31m-  gap: 2rem; /* 32px */[m
+[32m+[m[32m  gap: clamp(1rem, 2.4vw, 2.25rem);[m[41m[m
+   list-style: none;[m
+   padding: 0;[m
+   margin: 0;[m
+ }[m
+ [m
+ .navLink {[m
+[31m-  font-size: 0.9375rem; /* 15px - More refined */[m
+[31m-  font-weight: 500;[m
+[32m+[m[32m  font-size: 0.8125rem;[m
+[32m+[m[32m  font-weight: 650;[m
+   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),[m
+     box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),[m
+     border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),[m
+[36m@@ -61,8 +61,8 @@[m
+     opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);[m
+   text-decoration: none;[m
+   position: relative;[m
+[31m-  padding: 0.5rem 0;[m
+[31m-  letter-spacing: 0.01em;[m
+[32m+[m[32m  padding: 0.5rem 0.15rem;[m
+[32m+[m[32m  letter-spacing: 0.025em;[m
+ }[m
+ [m
+ .navLink::after {[m
+[36m@@ -122,8 +122,8 @@[m
+   left: 50%;[m
+   transform: translateX(-50%);[m
+   min-width: 320px;[m
+[31m-  border-radius: 12px;[m
+[31m-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);[m
+[32m+[m[32m  border-radius: 18px;[m
+[32m+[m[32m  box-shadow: 0 20px 50px rgba(16, 21, 43, 0.16), 0 0 0 1px rgba(91, 92, 226, 0.08);[m
+   -webkit-backdrop-filter: blur(10px);[m
+   backdrop-filter: blur(10px);[m
+   z-index: 100;[m
+[36m@@ -142,16 +142,16 @@[m
+ }[m
+ [m
+ .dropdownContent {[m
+[31m-  padding: 0.5rem;[m
+[31m-}[m
+[32m+[m[32m  padding: 0.65rem;[m
+[32m+[m[32m}[m
+ [m
+ .dropdownItem {[m
+   display: flex;[m
+   align-items: flex-start;[m
+   gap: 0.75rem;[m
+   padding: 0.875rem;[m
+[31m-  border-radius: 8px;[m
+[31m-  text-decoration: none;[m
+[32m+[m[32m  border-radius: 12px;[m
+[32m+[m[32m  text-decoration: none;[m
+   transition: transform 0.2s ease,[m
+     box-shadow 0.2s ease,[m
+     border-color 0.2s ease,[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.dark.module.css b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.dark.module.css[m
+[1mindex 4719a1e7..0a1ded32 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.dark.module.css[m
+[1m+++ b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.dark.module.css[m
+[36m@@ -1,13 +1,13 @@[m
+ ﻿/* @AI-HINT: Dark theme styles for the PublicHeader. */[m
+ [m
+ .header {[m
+[31m-  background-color: rgba(11, 15, 25, 0.7);[m
+[31m-  border-bottom: 1px solid var(--border-dark);[m
+[32m+[m[32m  background-color: rgba(16, 21, 43, 0.78);[m
+[32m+[m[32m  border-bottom: 1px solid rgba(139, 141, 246, 0.16);[m
+ }[m
+ [m
+ .header.scrolled {[m
+[31m-  background-color: rgba(11, 15, 25, 0.95);[m
+[31m-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);[m
+[32m+[m[32m  background-color: rgba(16, 21, 43, 0.96);[m
+[32m+[m[32m  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.24);[m
+ }[m
+ [m
+ .navLink {[m
+[36m@@ -23,7 +23,7 @@[m
+ }[m
+ [m
+ .signInButton:hover {[m
+[31m-  background-color: rgba(255,255,255,0.06);[m
+[32m+[m[32m  background-color: rgba(139, 141, 246, 0.1);[m[41m[m
+   color: var(--text-primary-dark);[m
+ }[m
+ [m
+[36m@@ -45,8 +45,8 @@[m
+ }[m
+ [m
+ .mobileNavLink:hover {[m
+[31m-  color: #6b8de6;[m
+[31m-  background-color: rgba(255,255,255,0.06);[m
+[32m+[m[32m  color: var(--ml-blue-light);[m[41m[m
+[32m+[m[32m  background-color: rgba(139, 141, 246, 0.1);[m[41m[m
+ }[m
+ [m
+ /* Dropdown Styles */[m
+[36m@@ -60,12 +60,12 @@[m
+ }[m
+ [m
+ .dropdownItem:hover {[m
+[31m-  background-color: rgba(255,255,255,0.06);[m
+[32m+[m[32m  background-color: rgba(139, 141, 246, 0.1);[m[41m[m
+ }[m
+ [m
+ .dropdownItemIcon {[m
+[31m-  background-color: rgba(69, 115, 223, 0.15);[m
+[31m-  color: #6b8de6;[m
+[32m+[m[32m  background-color: rgba(139, 141, 246, 0.16);[m[41m[m
+[32m+[m[32m  color: var(--ml-blue-light);[m[41m[m
+ }[m
+ [m
+ .dropdownItemTitle {[m
+[36m@@ -86,22 +86,22 @@[m
+ [m
+ /* Explore Link */[m
+ .exploreLink {[m
+[31m-  background: linear-gradient(135deg, #58a6ff 0%, var(--ml-blue) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue) 0%, var(--ml-purple) 64%, var(--ml-teal) 140%);[m[41m[m
+   color: #fff;[m
+[31m-  box-shadow: 0 2px 12px rgba(88, 166, 255, 0.35);[m
+[32m+[m[32m  box-shadow: 0 8px 24px rgba(91, 92, 226, 0.28);[m[41m[m
+ }[m
+ [m
+ .exploreLink:hover {[m
+[31m-  background: linear-gradient(135deg, #79b8ff 0%, #6b8ceb 100%);[m
+[31m-  box-shadow: 0 4px 20px rgba(88, 166, 255, 0.5);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue-light) 0%, var(--ml-blue) 100%);[m[41m[m
+[32m+[m[32m  box-shadow: 0 10px 28px rgba(139, 141, 246, 0.32);[m[41m[m
+ }[m
+ [m
+ .mobileExploreLink {[m
+[31m-  background: linear-gradient(135deg, #58a6ff 0%, var(--ml-blue) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue) 0%, var(--ml-purple) 64%, var(--ml-teal) 140%);[m[41m[m
+   color: #fff;[m
+[31m-  box-shadow: 0 2px 12px rgba(88, 166, 255, 0.35);[m
+[32m+[m[32m  box-shadow: 0 8px 24px rgba(91, 92, 226, 0.28);[m[41m[m
+ }[m
+ [m
+ .mobileExploreLink:hover {[m
+[31m-  background: linear-gradient(135deg, #79b8ff 0%, #6b8ceb 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue-light) 0%, var(--ml-blue) 100%);[m[41m[m
+ }[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.light.module.css b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.light.module.css[m
+[1mindex dfdf594a..80105d87 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.light.module.css[m
+[1m+++ b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.light.module.css[m
+[36m@@ -1,17 +1,17 @@[m
+ ﻿/* @AI-HINT: Light theme styles for the PublicHeader. */[m
+ [m
+ .header {[m
+[31m-  background-color: rgba(255, 255, 255, 0.8);[m
+[31m-  border-bottom: 1px solid var(--border-light);[m
+[32m+[m[32m  background-color: rgba(251, 250, 247, 0.84);[m
+[32m+[m[32m  border-bottom: 1px solid var(--ml-line);[m
+ }[m
+ [m
+ .header.scrolled {[m
+[31m-  background-color: rgba(255, 255, 255, 0.95);[m
+[31m-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);[m
+[32m+[m[32m  background-color: rgba(251, 250, 247, 0.96);[m
+[32m+[m[32m  box-shadow: 0 12px 28px rgba(16, 21, 43, 0.08);[m
+ }[m
+ [m
+ .navLink {[m
+[31m-  color: var(--color-text-secondary-light);[m
+[32m+[m[32m  color: #5e6375;[m[41m[m
+ }[m
+ [m
+ .navLink:hover {[m
+[36m@@ -19,7 +19,7 @@[m
+ }[m
+ [m
+ .signInButton {[m
+[31m-  color: var(--color-text-secondary-light);[m
+[32m+[m[32m  color: #5e6375;[m[41m[m
+ }[m
+ [m
+ .signInButton:hover {[m
+[36m@@ -32,7 +32,7 @@[m
+ }[m
+ [m
+ .mobileMenuButton:hover {[m
+[31m-  background-color: rgba(0, 0, 0, 0.05);[m
+[32m+[m[32m  background-color: rgba(91, 92, 226, 0.08);[m[41m[m
+ }[m
+ [m
+ .mobileMenu {[m
+[36m@@ -64,8 +64,8 @@[m
+ }[m
+ [m
+ .dropdownItemIcon {[m
+[31m-  background-color: rgba(69, 115, 223, 0.1);[m
+[31m-  color: var(--ml-blue);[m
+[32m+[m[32m  background-color: rgba(91, 92, 226, 0.11);[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+ }[m
+ [m
+ .dropdownItemTitle {[m
+[36m@@ -73,32 +73,32 @@[m
+ }[m
+ [m
+ .dropdownItemDesc {[m
+[31m-  color: var(--color-text-secondary-light);[m
+[32m+[m[32m  color: #5e6375;[m[41m[m
+ }[m
+ [m
+ .mobileNavCategory {[m
+[31m-  color: var(--color-text-secondary-light);[m
+[32m+[m[32m  color: #5e6375;[m[41m[m
+ }[m
+ [m
+ .mobileNavLinkDesc {[m
+[31m-  color: var(--color-text-secondary-light);[m
+[32m+[m[32m  color: #5e6375;[m[41m[m
+ }[m
+ [m
+ .exploreLink {[m
+[31m-  background: linear-gradient(135deg, var(--ml-blue) 0%, #6b8ceb 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue-dark) 0%, var(--ml-blue) 68%, var(--ml-teal) 140%);[m[41m[m
+   color: #fff;[m
+ }[m
+ [m
+ .exploreLink:hover {[m
+[31m-  background: linear-gradient(135deg, #3a62c4 0%, var(--ml-blue) 100%);[m
+[31m-  box-shadow: 0 4px 20px rgba(69, 115, 223, 0.4);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-ink) 0%, var(--ml-blue-dark) 100%);[m
+[32m+[m[32m  box-shadow: 0 8px 24px rgba(91, 92, 226, 0.28);[m
+ }[m
+ [m
+ .mobileExploreLink {[m
+[31m-  background: linear-gradient(135deg, var(--ml-blue) 0%, #6b8ceb 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue-dark) 0%, var(--ml-blue) 68%, var(--ml-teal) 140%);[m[41m[m
+   color: #fff;[m
+ }[m
+ [m
+ .mobileExploreLink:hover {[m
+[31m-  background: linear-gradient(135deg, #3a62c4 0%, var(--ml-blue) 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-ink) 0%, var(--ml-blue-dark) 100%);[m[41m[m
+ }[m
+[1mdiff --git a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx[m
+[1mindex eba360cc..8a9b078e 100644[m
+[1m--- a/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx[m
+[1m+++ b/frontend/app/components/templates/Layout/PublicHeader/PublicHeader.tsx[m
+[36m@@ -98,8 +98,20 @@[m [mconst PublicHeader = () => {[m
+     };[m
+   }, []);[m
+ [m
+[31m-  // Compute styles - use common styles during SSR to prevent hydration mismatch[m
+[31m-  const styles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;[m
+[32m+[m[32m  // Close on escape key[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    const handleKeyDown = (e: KeyboardEvent) => {[m
+[32m+[m[32m      if (e.key === 'Escape') {[m
+[32m+[m[32m        setIsMobileMenuOpen(false);[m
+[32m+[m[32m        setIsServicesOpen(false);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    };[m
+[32m+[m[32m    window.addEventListener('keydown', handleKeyDown);[m
+[32m+[m[32m    return () => window.removeEventListener('keydown', handleKeyDown);[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+[32m+[m[32m  // Compute styles - use common styles during SSR to prevent hydration mismatch[m
+[32m+[m[32m  const styles = mounted && resolvedTheme === 'dark' ? darkStyles : lightStyles;[m
+ [m
+   // Prevent hydration mismatch by using a minimal skeleton on server[m
+   if (!mounted) {[m
+[36m@@ -156,19 +168,7 @@[m [mconst PublicHeader = () => {[m
+     setIsServicesOpen(false);[m
+   };[m
+ [m
+[31m-  // Close on escape key[m
+[31m-  useEffect(() => {[m
+[31m-    const handleKeyDown = (e: KeyboardEvent) => {[m
+[31m-      if (e.key === 'Escape') {[m
+[31m-        setIsMobileMenuOpen(false);[m
+[31m-        setIsServicesOpen(false);[m
+[31m-      }[m
+[31m-    };[m
+[31m-    window.addEventListener('keydown', handleKeyDown);[m
+[31m-    return () => window.removeEventListener('keydown', handleKeyDown);[m
+[31m-  }, []);[m
+[31m-[m
+[31m-  return ([m
+[32m+[m[32m  return ([m
+     <>[m
+       <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} className={cn(commonStyles.header, styles.header, isScrolled && commonStyles.scrolled, isScrolled && styles.scrolled)}>[m
+         <div className={cn(commonStyles.container, styles.container)}>[m
+[1mdiff --git a/frontend/app/components/widgets/FeeSavingsCalculator.module.css b/frontend/app/components/widgets/FeeSavingsCalculator.module.css[m
+[1mindex 5ca8ce27..e693cedb 100644[m
+[1m--- a/frontend/app/components/widgets/FeeSavingsCalculator.module.css[m
+[1m+++ b/frontend/app/components/widgets/FeeSavingsCalculator.module.css[m
+[36m@@ -3,12 +3,12 @@[m
+   max-width: 900px;[m
+   margin: 2rem auto;[m
+   padding: 2rem;[m
+[31m-  background: var(--surface-card, rgba(15, 23, 42, 0.6));[m
+[31m-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));[m
+[32m+[m[32m  background: var(--surface-card, var(--bg-primary-light, #ffffff));[m
+[32m+[m[32m  border: 1px solid var(--border-color, var(--border-light, #dfe3ea));[m
+   border-radius: 1.25rem;[m
+   backdrop-filter: blur(16px);[m
+   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);[m
+[31m-  color: var(--text-primary, #ffffff);[m
+[32m+[m[32m  color: var(--text-primary, var(--text-primary-light, #172033));[m
+   font-family: inherit;[m
+   transition: all 0.3s ease;[m
+ }[m
+[36m@@ -37,9 +37,9 @@[m
+ .sliderGroup {[m
+   margin-bottom: 2rem;[m
+   padding: 1.25rem;[m
+[31m-  background: rgba(255, 255, 255, 0.03);[m
+[32m+[m[32m  background: rgba(91, 92, 226, 0.045);[m
+   border-radius: 0.75rem;[m
+[31m-  border: 1px solid rgba(255, 255, 255, 0.05);[m
+[32m+[m[32m  border: 1px solid rgba(91, 92, 226, 0.12);[m
+ }[m
+ [m
+ .sliderHeader {[m
+[36m@@ -57,7 +57,7 @@[m
+ .sliderValue {[m
+   font-size: 1.5rem;[m
+   font-weight: 800;[m
+[31m-  color: #3b82f6;[m
+[32m+[m[32m  color: var(--ml-blue-dark, #29338f);[m
+ }[m
+ [m
+ .sliderInput {[m
+[36m@@ -97,8 +97,8 @@[m
+ .card {[m
+   padding: 1.25rem;[m
+   border-radius: 1rem;[m
+[31m-  background: rgba(255, 255, 255, 0.02);[m
+[31m-  border: 1px solid rgba(255, 255, 255, 0.08);[m
+[32m+[m[32m  background: rgba(255, 255, 255, 0.72);[m
+[32m+[m[32m  border: 1px solid rgba(23, 32, 51, 0.10);[m
+   display: flex;[m
+   flex-direction: column;[m
+   justify-content: space-between;[m
+[36m@@ -162,7 +162,7 @@[m
+ [m
+ .feeLost {[m
+   font-size: 0.85rem;[m
+[31m-  color: #ef4444;[m
+[32m+[m[32m  color: #b42318;[m
+   font-weight: 600;[m
+ }[m
+ [m
+[36m@@ -201,7 +201,7 @@[m
+   justify-content: center;[m
+   padding: 0.85rem 1.5rem;[m
+   background: rgba(255, 255, 255, 0.08);[m
+[31m-  color: var(--text-primary, #ffffff);[m
+[32m+[m[32m  color: var(--text-primary, var(--text-primary-light, #172033));[m
+   font-weight: 600;[m
+   border-radius: 0.75rem;[m
+   text-decoration: none;[m
+[36m@@ -214,6 +214,26 @@[m
+   background: rgba(255, 255, 255, 0.15);[m
+ }[m
+ [m
+[32m+[m[32m:global(.dark) .container {[m
+[32m+[m[32m  background: var(--bg-secondary-dark, #10152b);[m
+[32m+[m[32m  border-color: var(--border-dark, rgba(255, 255, 255, 0.12));[m
+[32m+[m[32m  color: var(--text-primary-dark, #f7f5ef);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m:global(.dark) .sliderGroup,[m
+[32m+[m[32m:global(.dark) .card {[m
+[32m+[m[32m  background: rgba(255, 255, 255, 0.045);[m
+[32m+[m[32m  border-color: rgba(255, 255, 255, 0.10);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m:global(.dark) .sliderValue {[m
+[32m+[m[32m  color: var(--ml-blue-light, #c7c8ff);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m:global(.dark) .feeLost {[m
+[32m+[m[32m  color: #ff8f87;[m
+[32m+[m[32m}[m
+[32m+[m
+ @media (max-width: 640px) {[m
+   .container {[m
+     padding: 1.25rem;[m
+[1mdiff --git a/frontend/app/cost-to-hire/[skill]/page.tsx b/frontend/app/cost-to-hire/[skill]/page.tsx[m
+[1mindex b482c781..88c50b7c 100644[m
+[1m--- a/frontend/app/cost-to-hire/[skill]/page.tsx[m
+[1m+++ b/frontend/app/cost-to-hire/[skill]/page.tsx[m
+[36m@@ -271,10 +271,7 @@[m [mexport default async function CostToHirePage({ params }: Props) {[m
+     buildServiceJsonLd([m
+       `How Much Does It Cost to Hire a ${data.name}?`,[m
+       `Comprehensive 2026 rate and salary guide for hiring ${data.name}s. Compare junior, mid-level, and senior hourly rates across US, UK, Canada, Australia, and Europe.`,[m
+[31m-      `/cost-to-hire/${data.slug}`,[m
+[31m-      'USD',[m
+[31m-      data.ratesBySeniority.junior.min.toString(),[m
+[31m-      data.ratesBySeniority.senior.max.toString()[m
+[32m+[m[32m      `/cost-to-hire/${data.slug}`[m
+     ),[m
+     buildFAQJsonLd(data.faqs),[m
+     buildBreadcrumbJsonLd([[m
+[1mdiff --git a/frontend/app/globals.css b/frontend/app/globals.css[m
+[1mindex 485d3972..0be5e620 100644[m
+[1m--- a/frontend/app/globals.css[m
+[1m+++ b/frontend/app/globals.css[m
+[36m@@ -45,9 +45,10 @@[m
+ /*   FOCUS VISIBLE - accessible focus rings      */[m
+ /* ============================================= */[m
+ :focus-visible {[m
+[31m-  outline: 2px solid var(--ml-blue);[m
+[31m-  outline-offset: 2px;[m
+[31m-  border-radius: 2px;[m
+[32m+[m[32m  outline: 2px solid var(--ml-blue-light, var(--ml-blue));[m
+[32m+[m[32m  outline-offset: 3px;[m
+[32m+[m[32m  border-radius: 4px;[m
+[32m+[m[32m  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ml-blue) 18%, transparent);[m
+ }[m
+ [m
+ /* Remove default focus outlines for mouse users */[m
+[36m@@ -84,8 +85,38 @@[m
+ /* ============================================= */[m
+ /*   COLOR SCHEME FOR NATIVE CONTROLS           */[m
+ /* ============================================= */[m
+[31m-:root { color-scheme: light; }[m
+[31m-.dark { color-scheme: dark; }[m
+[32m+[m[32m:root { color-scheme: light; }[m
+[32m+[m[32m.dark { color-scheme: dark; }[m
+[32m+[m
+[32m+[m[32mhtml {[m
+[32m+[m[32m  background: var(--background, var(--ml-paper));[m
+[32m+[m[32m  text-rendering: optimizeLegibility;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mbody {[m
+[32m+[m[32m  background: var(--background, var(--ml-paper));[m
+[32m+[m[32m  color: var(--text-primary, var(--ml-ink));[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mbutton,[m
+[32m+[m[32ma,[m
+[32m+[m[32m[role='button'] {[m
+[32m+[m[32m  -webkit-tap-highlight-color: transparent;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mbutton:active,[m
+[32m+[m[32ma:active,[m
+[32m+[m[32m[role='button']:active {[m
+[32m+[m[32m  transform: scale(0.985);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@media (prefers-reduced-motion: reduce) {[m
+[32m+[m[32m  button:active,[m
+[32m+[m[32m  a:active,[m
+[32m+[m[32m  [role='button']:active {[m
+[32m+[m[32m    transform: none;[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+ [m
+ /* ============================================= */[m
+ /*   SCROLLBAR GUTTER - prevents layout shift    */[m
+[1mdiff --git a/frontend/app/home/Home.common.module.css b/frontend/app/home/Home.common.module.css[m
+[1mindex 7f463ad7..64553f04 100644[m
+[1m--- a/frontend/app/home/Home.common.module.css[m
+[1m+++ b/frontend/app/home/Home.common.module.css[m
+[36m@@ -63,13 +63,26 @@[m
+   overflow-x: hidden;[m
+ }[m
+ [m
+[31m-.homeSection {[m
+[31m-  position: relative;[m
+[31m-  width: 100%;[m
+[31m-  padding: 3.5rem 0;[m
+[31m-  margin: 0;[m
+[31m-  overflow-x: hidden;[m
+[31m-}[m
+[32m+[m[32m.homeSection {[m
+[32m+[m[32m  position: relative;[m
+[32m+[m[32m  width: 100%;[m
+[32m+[m[32m  padding: clamp(4rem, 8vw, 8rem) 0;[m
+[32m+[m[32m  margin: 0;[m
+[32m+[m[32m  overflow-x: hidden;[m
+[32m+[m[32m  isolation: isolate;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.homeSection::after {[m
+[32m+[m[32m  content: '';[m
+[32m+[m[32m  position: absolute;[m
+[32m+[m[32m  inset: 0;[m
+[32m+[m[32m  z-index: -1;[m
+[32m+[m[32m  pointer-events: none;[m
+[32m+[m[32m  opacity: 0.32;[m
+[32m+[m[32m  background-image: linear-gradient(rgba(16, 21, 43, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 21, 43, 0.035) 1px, transparent 1px);[m
+[32m+[m[32m  background-size: 32px 32px;[m
+[32m+[m[32m  mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);[m
+[32m+[m[32m}[m
+ [m
+ .sectionCanvas {[m
+   /* Inherits from light/dark theme module */[m
+[36m@@ -93,9 +106,9 @@[m
+ }[m
+ [m
+ @media (min-width: 768px) {[m
+[31m-  .homeSection {[m
+[31m-    padding: 4.5rem 0;[m
+[31m-  }[m
+[32m+[m[32m  .homeSection {[m
+[32m+[m[32m    padding: clamp(5rem, 8vw, 9rem) 0;[m
+[32m+[m[32m  }[m
+ [m
+   .sectionContainer {[m
+     padding: 0 2rem;[m
+[36m@@ -108,8 +121,8 @@[m
+   }[m
+ [m
+   .sectionContainer {[m
+[31m-    max-width: 1280px;[m
+[31m-    padding: 0 2.5rem;[m
+[32m+[m[32m    max-width: 1360px;[m
+[32m+[m[32m    padding: 0 2.75rem;[m
+   }[m
+ }[m
+ [m
+[1mdiff --git a/frontend/app/home/Home.dark.module.css b/frontend/app/home/Home.dark.module.css[m
+[1mindex 852ee05b..7fb4aadf 100644[m
+[1m--- a/frontend/app/home/Home.dark.module.css[m
+[1m+++ b/frontend/app/home/Home.dark.module.css[m
+[36m@@ -1,19 +1,20 @@[m
+ .homePage {[m
+   background: var(--bg-primary-dark);[m
+   color: var(--text-primary-dark);[m
+[32m+[m[32m  background-image: radial-gradient(circle at 12% 0%, rgba(139, 141, 246, 0.18), transparent 30rem), radial-gradient(circle at 88% 16%, rgba(56, 203, 182, 0.12), transparent 26rem);[m
+ }[m
+ [m
+ .sectionCanvas {[m
+[31m-  background: var(--bg-primary-dark);[m
+[32m+[m[32m  background: linear-gradient(180deg, rgba(16, 21, 43, 0.96), rgba(23, 29, 56, 0.98));[m
+ }[m
+ [m
+ .sectionAlt {[m
+[31m-  background: rgba(15, 23, 42, 0.45);[m
+[31m-  border-top: 1px solid rgba(255, 255, 255, 0.05);[m
+[31m-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);[m
+[31m-  backdrop-filter: blur(8px);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(25, 59, 59, 0.44), rgba(59, 43, 39, 0.28));[m
+[32m+[m[32m  border-top: 1px solid rgba(139, 141, 246, 0.14);[m
+[32m+[m[32m  border-bottom: 1px solid rgba(139, 141, 246, 0.14);[m
+[32m+[m[32m  backdrop-filter: blur(14px);[m
+ }[m
+ [m
+ .gradientOrb {[m
+[31m-  background: radial-gradient(circle, rgba(69, 115, 223, 0.12) 0%, rgba(15, 23, 42, 0) 70%);[m
+[32m+[m[32m  background: radial-gradient(circle, rgba(139, 141, 246, 0.2) 0%, rgba(16, 21, 43, 0) 70%);[m
+ }[m
+[1mdiff --git a/frontend/app/home/Home.light.module.css b/frontend/app/home/Home.light.module.css[m
+[1mindex cf0726cf..e2f0a767 100644[m
+[1m--- a/frontend/app/home/Home.light.module.css[m
+[1m+++ b/frontend/app/home/Home.light.module.css[m
+[36m@@ -1,19 +1,20 @@[m
+ .homePage {[m
+   background: var(--bg-primary-light);[m
+   color: var(--text-primary-light);[m
+[32m+[m[32m  background-image: radial-gradient(circle at 12% 0%, rgba(91, 92, 226, 0.08), transparent 28rem), radial-gradient(circle at 92% 18%, rgba(56, 203, 182, 0.09), transparent 24rem);[m
+ }[m
+ [m
+ .sectionCanvas {[m
+[31m-  background: var(--bg-primary-light);[m
+[32m+[m[32m  background: color-mix(in srgb, var(--bg-primary-light) 86%, var(--ml-mint-wash));[m
+ }[m
+ [m
+ .sectionAlt {[m
+[31m-  background: rgba(248, 250, 252, 0.7);[m
+[31m-  border-top: 1px solid rgba(226, 232, 240, 0.6);[m
+[31m-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);[m
+[31m-  backdrop-filter: blur(8px);[m
+[32m+[m[32m  background: linear-gradient(135deg, rgba(232, 247, 241, 0.72), rgba(255, 241, 229, 0.54));[m
+[32m+[m[32m  border-top: 1px solid rgba(231, 228, 220, 0.9);[m
+[32m+[m[32m  border-bottom: 1px solid rgba(231, 228, 220, 0.9);[m
+[32m+[m[32m  backdrop-filter: blur(12px);[m
+ }[m
+ [m
+ .gradientOrb {[m
+[31m-  background: radial-gradient(circle, rgba(69, 115, 223, 0.06) 0%, rgba(255, 255, 255, 0) 70%);[m
+[32m+[m[32m  background: radial-gradient(circle, rgba(91, 92, 226, 0.12) 0%, rgba(255, 255, 255, 0) 70%);[m
+ }[m
+[1mdiff --git a/frontend/app/home/components/AIToolsHub.tsx b/frontend/app/home/components/AIToolsHub.tsx[m
+[1mindex f108c343..959a4c0f 100644[m
+[1m--- a/frontend/app/home/components/AIToolsHub.tsx[m
+[1m+++ b/frontend/app/home/components/AIToolsHub.tsx[m
+[36m@@ -34,7 +34,7 @@[m [mconst leftTools = [[m
+     id: 'price-estimator',[m
+     icon: DollarSign, [m
+     label: 'AI Price Estimator', [m
+[31m-    desc: 'Calculate market budgets, developer hours, and milestones based on live scope indices.', [m
+[32m+[m[32m    desc: 'Estimate a practical budget range, effort, and milestone shape from your project brief.',[m[41m [m
+     href: '/ai/price-estimator', [m
+     category: 'pricing',[m
+     badge: 'Popular',[m
+[36m@@ -45,10 +45,10 @@[m [mconst leftTools = [[m
+     id: 'proposal-writer',[m
+     icon: FileText, [m
+     label: 'AI Proposal Writer', [m
+[31m-    desc: 'Generate high-converting freelance proposals with structured deliverables and milestones.', [m
+[32m+[m[32m    desc: 'Turn your experience and project understanding into a clear proposal with deliverables and milestones.',[m[41m [m
+     href: '/ai/proposal-writer', [m
+     category: 'proposals',[m
+[31m-    badge: 'High Win-Rate',[m
+[32m+[m[32m    badge: 'Proposal structure',[m
+     color: '#8b5cf6',[m
+     runs: '24k+ runs'[m
+   },[m
+[36m@@ -81,10 +81,10 @@[m [mconst rightTools = [[m
+     id: 'contract-builder',[m
+     icon: Lock, [m
+     label: 'Milestone Contract Builder', [m
+[31m-    desc: 'Generate legally solid freelance contracts with milestone escrow terms and IP clauses.', [m
+[32m+[m[32m    desc: 'Draft a contract starting point with milestone, payment, and IP terms to review before signing.',[m[41m [m
+     href: '/tools/contract-builder', [m
+     category: 'contracts',[m
+[31m-    badge: 'Legal Grade',[m
+[32m+[m[32m    badge: 'Contract basics',[m
+     color: '#6366f1',[m
+     runs: '14k+ runs'[m
+   },[m
+[36m@@ -92,7 +92,7 @@[m [mconst rightTools = [[m
+     id: 'fraud-check',[m
+     icon: Shield, [m
+     label: 'Risk & Scam Checker', [m
+[31m-    desc: 'Scan job posts and communications for scam indicators and payment risk red flags.', [m
+[32m+[m[32m    desc: 'Check a job post or message for common scam signals and payment-risk red flags.',[m[41m [m
+     href: '/ai/fraud-check', [m
+     category: 'contracts',[m
+     badge: 'Security',[m
+[36m@@ -149,13 +149,13 @@[m [mexport default function AIToolsHub() {[m
+         <div className={commonStyles.header}>[m
+           <div className={cn(commonStyles.badge, themeStyles.badge)}>[m
+             <Sparkles size={13} className="text-amber-500" />[m
+[31m-            <span>11 Free Productivity Tools · 0 Signup Barrier</span>[m
+[32m+[m[32m            <span>Free tools for clearer decisions · No signup to explore</span>[m
+           </div>[m
+           <h2 className={cn(commonStyles.title, themeStyles.title)}>[m
+[31m-            Instant AI Tools to Price, Plan &amp; Protect Your Work[m
+[32m+[m[32m            Practical tools for pricing, planning, and safer work[m
+           </h2>[m
+           <p className={cn(commonStyles.subtitle, themeStyles.subtitle)}>[m
+[31m-            Zero signup required. Run calculations, generate legally solid milestone scopes, and write winning proposals before hiring or bidding on MegiLance.[m
+[32m+[m[32m            Explore the tools first, then decide when you are ready to create an account. Turn a rough brief into clearer scope, budget, milestones, and communication.[m
+           </p>[m
+ [m
+           {/* Filter Navigation Tabs */}[m
+[36m@@ -243,16 +243,16 @@[m [mexport default function AIToolsHub() {[m
+             <div className={cn(commonStyles.centerCardContent, themeStyles.centerCardContent)}>[m
+               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 mb-2">[m
+                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />[m
+[31m-                <span>11 AI Engines Live</span>[m
+[32m+[m[32m                <span>Tools designed around real project decisions</span>[m
+               </div>[m
+               <h3 className={cn(commonStyles.centerHubTitle, themeStyles.centerHubTitle)}>[m
+[31m-                MegiLance Neural Core[m
+[32m+[m[32m                MegiLance decision toolkit[m
+               </h3>[m
+               <p className={cn(commonStyles.centerHubSubtitle, themeStyles.centerHubSubtitle)}>[m
+[31m-                Grounded in 50,000+ real marketplace deliverables. No training on user data.[m
+[32m+[m[32m                Built to help you reason through scope, rates, proposals, and delivery risks. Review every suggestion before you act.[m
+               </p>[m
+               <Link href="/ai" className={cn(commonStyles.centerHubCta, themeStyles.centerHubCta)}>[m
+[31m-                <span>Explore AI Command Hub</span>[m
+[32m+[m[32m                <span>See all tools</span>[m
+                 <ChevronRight size={14} />[m
+               </Link>[m
+             </div>[m
+[36m@@ -332,7 +332,7 @@[m [mexport default function AIToolsHub() {[m
+         {/* Footer Hub Link */}[m
+         <div className={commonStyles.ctaWrapper}>[m
+           <Link href="/ai" className={cn(commonStyles.allToolsBtn, themeStyles.allToolsBtn)}>[m
+[31m-            <span>Explore All 11 Free AI Scoping &amp; Productivity Tools</span>[m
+[32m+[m[32m            Explore the complete free toolkit[m
+             <ArrowRight size={16} />[m
+           </Link>[m
+         </div>[m
+[1mdiff --git a/frontend/app/home/components/Hero/Hero.common.module.css b/frontend/app/home/components/Hero/Hero.common.module.css[m
+[1mindex a77ec2b9..a44f6b52 100644[m
+[1m--- a/frontend/app/home/components/Hero/Hero.common.module.css[m
+[1m+++ b/frontend/app/home/components/Hero/Hero.common.module.css[m
+[36m@@ -7,9 +7,9 @@[m
+   align-items: center;[m
+   justify-content: center;[m
+   text-align: center;[m
+[31m-  padding: 6.5rem 1.5rem 5rem;[m
+[32m+[m[32m  padding: clamp(5.5rem, 10vw, 8.5rem) 1.25rem clamp(4rem, 7vw, 6.5rem);[m
+   overflow: hidden;[m
+[31m-  min-height: 90vh;[m
+[32m+[m[32m  min-height: min(860px, 92vh);[m
+   isolation: isolate;[m
+ }[m
+ [m
+[36m@@ -18,9 +18,9 @@[m
+   content: '';[m
+   position: absolute;[m
+   inset: 0;[m
+[31m-  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);[m
+[31m-  background-size: 32px 32px;[m
+[31m-  opacity: 0.04;[m
+[32m+[m[32m  background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px);[m
+[32m+[m[32m  background-size: 44px 44px;[m
+[32m+[m[32m  opacity: 0.035;[m
+   pointer-events: none;[m
+   z-index: 0;[m
+ }[m
+[36m@@ -41,12 +41,12 @@[m
+ .content {[m
+   position: relative;[m
+   z-index: 10;[m
+[31m-  max-width: 1080px;[m
+[32m+[m[32m  max-width: 1160px;[m
+   width: 100%;[m
+   display: flex;[m
+   flex-direction: column;[m
+   align-items: center;[m
+[31m-  gap: 1.75rem;[m
+[32m+[m[32m  gap: clamp(1.25rem, 2.4vw, 1.85rem);[m
+ }[m
+ [m
+ .badges {[m
+[36m@@ -92,17 +92,17 @@[m
+ }[m
+ [m
+ .title {[m
+[31m-  font-size: clamp(2.4rem, 4.8vw + 0.5rem, 4.2rem);[m
+[31m-  font-weight: 900;[m
+[31m-  line-height: 1.1;[m
+[31m-  letter-spacing: -0.04em;[m
+[31m-  max-width: 960px;[m
+[32m+[m[32m  font-size: clamp(2.45rem, 5.2vw + 0.35rem, 5.15rem);[m
+[32m+[m[32m  font-weight: 800;[m
+[32m+[m[32m  line-height: 1.02;[m
+[32m+[m[32m  letter-spacing: -0.055em;[m
+[32m+[m[32m  max-width: 1040px;[m
+   margin: 0;[m
+ }[m
+ [m
+ .highlight {[m
+   display: inline;[m
+[31m-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);[m
+[32m+[m[32m  background: linear-gradient(110deg, var(--ml-blue-dark) 0%, var(--ml-blue) 46%, var(--ml-teal) 100%);[m
+   -webkit-background-clip: text;[m
+   -webkit-text-fill-color: transparent;[m
+   background-clip: text;[m
+[36m@@ -111,9 +111,10 @@[m
+ .subtitle {[m
+   font-size: clamp(1.05rem, 1.4vw, 1.25rem);[m
+   line-height: 1.65;[m
+[31m-  max-width: 760px;[m
+[32m+[m[32m  max-width: 720px;[m
+   margin: 0 auto;[m
+   font-weight: 450;[m
+[32m+[m[32m  letter-spacing: -0.012em;[m
+ }[m
+ [m
+ .actions {[m
+[36m@@ -128,7 +129,7 @@[m
+ .ctaButton {[m
+   min-height: 52px;[m
+   padding: 0.85rem 2rem;[m
+[31m-  border-radius: 14px;[m
+[32m+[m[32m  border-radius: 999px;[m
+   border: 1px solid transparent;[m
+   text-decoration: none;[m
+   font-weight: 700;[m
+[36m@@ -205,7 +206,7 @@[m
+ }[m
+ [m
+ .hudCard {[m
+[31m-  border-radius: 20px;[m
+[32m+[m[32m  border-radius: 26px;[m
+   border: 1px solid;[m
+   overflow: hidden;[m
+   backdrop-filter: blur(20px);[m
+[1mdiff --git a/frontend/app/home/components/Hero/Hero.dark.module.css b/frontend/app/home/components/Hero/Hero.dark.module.css[m
+[1mindex eac32370..f70536c1 100644[m
+[1m--- a/frontend/app/home/components/Hero/Hero.dark.module.css[m
+[1m+++ b/frontend/app/home/components/Hero/Hero.dark.module.css[m
+[36m@@ -2,19 +2,19 @@[m
+ [m
+ .hero {[m
+   background:[m
+[31m-    radial-gradient(ellipse 90% 70% at 50% -15%, rgba(79, 70, 229, 0.25) 0%, transparent 65%),[m
+[31m-    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 60%),[m
+[31m-    radial-gradient(ellipse 60% 50% at 10% 60%, rgba(6, 182, 212, 0.1) 0%, transparent 60%),[m
+[31m-    linear-gradient(180deg, #070a14 0%, #0b0f1e 50%, #070914 100%);[m
+[31m-  color: #f8fafc;[m
+[32m+[m[32m    radial-gradient(ellipse 90% 70% at 50% -15%, rgba(139, 141, 246, 0.28) 0%, transparent 65%),[m
+[32m+[m[32m    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(56, 203, 182, 0.14) 0%, transparent 60%),[m
+[32m+[m[32m    radial-gradient(ellipse 60% 50% at 10% 60%, rgba(244, 162, 97, 0.10) 0%, transparent 60%),[m
+[32m+[m[32m    linear-gradient(180deg, #0b1020 0%, #10152b 50%, #0b1020 100%);[m
+[32m+[m[32m  color: #f7f5ef;[m
+ }[m
+ [m
+ .hero::before {[m
+[31m-  color: rgba(99, 102, 241, 0.4);[m
+[32m+[m[32m  color: rgba(139, 141, 246, 0.42);[m
+ }[m
+ [m
+ .hero::after {[m
+[31m-  background: radial-gradient(ellipse at center, rgba(79, 70, 229, 0.22) 0%, transparent 70%);[m
+[32m+[m[32m  background: radial-gradient(ellipse at center, rgba(139, 141, 246, 0.24) 0%, transparent 70%);[m
+ }[m
+ [m
+ .content {[m
+[36m@@ -22,17 +22,17 @@[m
+ }[m
+ [m
+ .title {[m
+[31m-  color: #ffffff;[m
+[32m+[m[32m  color: #f7f5ef;[m
+ }[m
+ [m
+ .subtitle {[m
+[31m-  color: #94a3b8;[m
+[32m+[m[32m  color: #c3c5d2;[m
+ }[m
+ [m
+ .badge {[m
+[31m-  background: rgba(255, 255, 255, 0.06);[m
+[31m-  color: #a5b4fc;[m
+[31m-  border: 1px solid rgba(165, 180, 252, 0.2);[m
+[32m+[m[32m  background: rgba(139, 141, 246, 0.10);[m
+[32m+[m[32m  color: #c7c8ff;[m
+[32m+[m[32m  border: 1px solid rgba(139, 141, 246, 0.26);[m
+ }[m
+ [m
+ .welcomeBadge {[m
+[36m@@ -42,9 +42,9 @@[m
+ }[m
+ [m
+ .ctaPrimary {[m
+[31m-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue) 0%, var(--ml-purple) 68%, var(--ml-teal) 140%);[m
+   color: #ffffff;[m
+[31m-  box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.5), 0 0 25px rgba(99, 102, 241, 0.25);[m
+[32m+[m[32m  box-shadow: 0 14px 34px -8px rgba(91, 92, 226, 0.46), 0 0 28px rgba(56, 203, 182, 0.12);[m
+ }[m
+ [m
+ .ctaPrimary:hover {[m
+[36m@@ -52,9 +52,9 @@[m
+ }[m
+ [m
+ .ctaSecondary {[m
+[31m-  background: rgba(255, 255, 255, 0.05);[m
+[31m-  color: #f1f5f9;[m
+[31m-  border: 1px solid rgba(255, 255, 255, 0.12);[m
+[32m+[m[32m  background: rgba(255, 255, 255, 0.055);[m
+[32m+[m[32m  color: #f7f5ef;[m
+[32m+[m[32m  border: 1px solid rgba(139, 141, 246, 0.2);[m
+   backdrop-filter: blur(12px);[m
+   -webkit-backdrop-filter: blur(12px);[m
+ }[m
+[1mdiff --git a/frontend/app/home/components/Hero/Hero.light.module.css b/frontend/app/home/components/Hero/Hero.light.module.css[m
+[1mindex dd710e45..a808d955 100644[m
+[1m--- a/frontend/app/home/components/Hero/Hero.light.module.css[m
+[1m+++ b/frontend/app/home/components/Hero/Hero.light.module.css[m
+[36m@@ -2,19 +2,19 @@[m
+ [m
+ .hero {[m
+   background:[m
+[31m-    radial-gradient(ellipse 90% 70% at 50% -15%, rgba(79, 70, 229, 0.12) 0%, transparent 65%),[m
+[31m-    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),[m
+[31m-    radial-gradient(ellipse 60% 50% at 10% 60%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),[m
+[31m-    linear-gradient(180deg, #f8faff 0%, #edf3ff 50%, #f8faff 100%);[m
+[31m-  color: #0f172a;[m
+[32m+[m[32m    radial-gradient(ellipse 90% 70% at 50% -15%, rgba(91, 92, 226, 0.16) 0%, transparent 65%),[m
+[32m+[m[32m    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(56, 203, 182, 0.10) 0%, transparent 60%),[m
+[32m+[m[32m    radial-gradient(ellipse 60% 50% at 10% 60%, rgba(244, 162, 97, 0.08) 0%, transparent 60%),[m
+[32m+[m[32m    linear-gradient(180deg, #fbfaf7 0%, #f1f1fb 50%, #fbfaf7 100%);[m
+[32m+[m[32m  color: var(--ml-ink);[m
+ }[m
+ [m
+ .hero::before {[m
+[31m-  color: rgba(79, 70, 229, 0.35);[m
+[32m+[m[32m  color: rgba(91, 92, 226, 0.28);[m
+ }[m
+ [m
+ .hero::after {[m
+[31m-  background: radial-gradient(ellipse at center, rgba(79, 70, 229, 0.15) 0%, transparent 70%);[m
+[32m+[m[32m  background: radial-gradient(ellipse at center, rgba(91, 92, 226, 0.16) 0%, transparent 70%);[m
+ }[m
+ [m
+ .content {[m
+[36m@@ -22,17 +22,17 @@[m
+ }[m
+ [m
+ .title {[m
+[31m-  color: #0f172a;[m
+[32m+[m[32m  color: var(--ml-ink);[m
+ }[m
+ [m
+ .subtitle {[m
+[31m-  color: #475569;[m
+[32m+[m[32m  color: #5e6375;[m
+ }[m
+ [m
+ .badge {[m
+[31m-  background: rgba(255, 255, 255, 0.85);[m
+[31m-  color: #4338ca;[m
+[31m-  border: 1px solid rgba(79, 70, 229, 0.22);[m
+[32m+[m[32m  background: rgba(255, 255, 255, 0.76);[m
+[32m+[m[32m  color: var(--ml-blue-dark);[m
+[32m+[m[32m  border: 1px solid rgba(91, 92, 226, 0.2);[m
+ }[m
+ [m
+ .welcomeBadge {[m
+[36m@@ -42,9 +42,9 @@[m
+ }[m
+ [m
+ .ctaPrimary {[m
+[31m-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);[m
+[32m+[m[32m  background: linear-gradient(135deg, var(--ml-blue-dark) 0%, var(--ml-blue) 68%, var(--ml-teal) 140%);[m
+   color: #ffffff;[m
+[31m-  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4), 0 4px 10px rgba(79, 70, 229, 0.2);[m
+[32m+[m[32m  box-shadow: 0 14px 30px -8px rgba(91, 92, 226, 0.38), 0 4px 12px rgba(16, 21, 43, 0.12);[m
+ }[m
+ [m
+ .ctaPrimary:hover {[m
+[36m@@ -52,9 +52,9 @@[m
+ }[m
+ [m
+ .ctaSecondary {[m
+[31m-  background: rgba(255, 255, 255, 0.9);[m
+[31m-  color: #1e293b;[m
+[31m-  border: 1px solid rgba(203, 213, 225, 0.9);[m
+[32m+[m[32m  background: rgba(255, 255, 255, 0.78);[m
+[32m+[m[32m  color: var(--ml-ink);[m
+[32m+[m[32m  border: 1px solid rgba(231, 228, 220, 0.95);[m
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);[m
+ }[m
+ [m
+[1mdiff --git a/frontend/lib/seo.ts b/frontend/lib/seo.ts[m
+[1mindex cca8e90e..c6f36b51 100644[m
+[1m--- a/frontend/lib/seo.ts[m
+[1m+++ b/frontend/lib/seo.ts[m
+[36m@@ -279,9 +279,12 @@[m [mexport function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {[m
+       })),[m
+     ],[m
+   };[m
+[31m-}[m
+[31m-[m
+[31m-/** FAQPage – Shows expandable FAQ answers directly in Google SERP */[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m/** Backward-compatible alias for pages using the earlier pluralized helper name. */[m
+[32m+[m[32mexport const buildBreadcrumbsJsonLd = buildBreadcrumbJsonLd;[m
+[32m+[m
+[32m+[m[32m/** FAQPage – Shows expandable FAQ answers directly in Google SERP */[m
+ export function buildFAQJsonLd(faqs: FAQItem[]) {[m
+   return {[m
+     '@context': 'https://schema.org',[m
+[1mdiff --git a/frontend/scripts/a11y-audit.js b/frontend/scripts/a11y-audit.js[m
+[1mindex c66809a7..eb814437 100644[m
+[1m--- a/frontend/scripts/a11y-audit.js[m
+[1m+++ b/frontend/scripts/a11y-audit.js[m
+[36m@@ -35,9 +35,13 @@[m [masync function runAudit() {[m
+     process.stdout.write(`  Auditing ${page.name} (${page.path})... `);[m
+     [m
+     try {[m
+[31m-      await tab.goto(url, { waitUntil: 'networkidle', timeout: 15000 });[m
+[31m-      [m
+[31m-      // Inject and run axe-core[m
+[32m+[m[32m      // App pages may keep analytics/websocket connections open, so networkidle[m
+[32m+[m[32m      // can hang even when the page is fully usable. Audit after DOM readiness[m
+[32m+[m[32m      // plus a short settle window instead.[m
+[32m+[m[32m      await tab.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });[m
+[32m+[m[32m      await tab.waitForTimeout(750);[m
+[32m+[m[41m      [m
+[32m+[m[32m      // Inject and run axe-core[m
+       await tab.addScriptTag({ path: require.resolve('axe-core') });[m
+       [m
+       const results = await tab.evaluate(async () => {[m
+[36m@@ -103,7 +107,10 @@[m [masync function runAudit() {[m
+         const icon = v.impact === 'critical' ? '🔴' : v.impact === 'serious' ? '🟠' : v.impact === 'moderate' ? '🟡' : '🔵';[m
+         console.log(`    ${icon} [${v.impact}] ${v.id}: ${v.description}`);[m
+         console.log(`       Help: ${v.helpUrl}`);[m
+[31m-        console.log(`       Affected: ${v.nodes.length} element(s)`);[m
+[32m+[m[32m        console.log(`       Affected: ${v.nodes.length} element(s)`);[m
+[32m+[m[32m        for (const node of v.nodes.slice(0, 5)) {[m
+[32m+[m[32m          console.log(`       Target: ${JSON.stringify(node.target)} | HTML: ${node.html.slice(0, 180)}`);[m
+[32m+[m[32m        }[m[41m[m
+       }[m
+     }[m
+   }[m
+[1mdiff --git a/frontend/styles/themes/dark.css b/frontend/styles/themes/dark.css[m
+[1mindex ceb3da3e..817f438d 100644[m
+[1m--- a/frontend/styles/themes/dark.css[m
+[1m+++ b/frontend/styles/themes/dark.css[m
+[36m@@ -11,11 +11,11 @@[m [mhtml.dark,[m
+   --warning: var(--ml-yellow);[m
+ [m
+   /* UI Surfaces & Backgrounds */[m
+[31m-  --background: var(--neutral-900);[m
+[31m-  --surface: var(--neutral-800);[m
+[31m-  --surface-alt: var(--neutral-700);[m
+[31m-  --container-dark: var(--neutral-700);[m
+[31m-  --border: var(--neutral-700);[m
+[32m+[m[32m  --background: var(--ml-ink);[m
+[32m+[m[32m  --surface: #171d38;[m
+[32m+[m[32m  --surface-alt: #222a4a;[m
+[32m+[m[32m  --container-dark: #0a0e20;[m
+[32m+[m[32m  --border: #303758;[m
+ [m
+   /* Text Colors */[m
+   --text-primary: var(--neutral-50);[m
+[36m@@ -25,8 +25,10 @@[m [mhtml.dark,[m
+   --text-on-dark: var(--neutral-50);[m
+ [m
+   /* Extended Brand Palette */[m
+[31m-  --brand-indigo: #3C3C88;[m
+[31m-  --brand-electric-blue: #2F80ED;[m
+[32m+[m[32m  --brand-indigo: #8f7cf6;[m
+[32m+[m[32m  --brand-electric-blue: #8b8df6;[m
+[32m+[m[32m  --surface-accent: #193b3b;[m
+[32m+[m[32m  --surface-warm: #3b2b27;[m
+ [m
+   /* Legacy aliases for backward compatibility */[m
+   --primary-4573df: var(--primary);[m
+[1mdiff --git a/frontend/styles/themes/light.css b/frontend/styles/themes/light.css[m
+[1mindex 0ad01a93..dd666220 100644[m
+[1m--- a/frontend/styles/themes/light.css[m
+[1m+++ b/frontend/styles/themes/light.css[m
+[36m@@ -11,11 +11,11 @@[m [mhtml.light {[m
+   --warning: var(--ml-yellow);[m
+ [m
+   /* UI Surfaces & Backgrounds */[m
+[31m-  --background: #ffffff;[m
+[31m-  --surface: var(--neutral-50);[m
+[31m-  --surface-alt: var(--neutral-100);[m
+[31m-  --container-dark: var(--neutral-800);[m
+[31m-  --border: var(--neutral-200);[m
+[32m+[m[32m  --background: var(--ml-paper);[m
+[32m+[m[32m  --surface: #ffffff;[m
+[32m+[m[32m  --surface-alt: #f4f2ed;[m
+[32m+[m[32m  --container-dark: var(--ml-ink);[m
+[32m+[m[32m  --border: var(--ml-line);[m
+ [m
+   /* Text Colors */[m
+   --text-primary: var(--neutral-900);[m
+[36m@@ -25,8 +25,10 @@[m [mhtml.light {[m
+   --text-on-dark: #ffffff;[m
+ [m
+   /* Extended Brand Palette */[m
+[31m-  --brand-indigo: #3C3C88;[m
+[31m-  --brand-electric-blue: #2F80ED;[m
+[32m+[m[32m  --brand-indigo: #3d3fa8;[m
+[32m+[m[32m  --brand-electric-blue: #5b5ce2;[m
+[32m+[m[32m  --surface-accent: var(--ml-mint-wash);[m
+[32m+[m[32m  --surface-warm: #fff1e5;[m
+ [m
+   /* Legacy aliases for backward compatibility */[m
+   --primary-4573df: var(--primary);[m
+[1mdiff --git a/frontend/styles/tokens.css b/frontend/styles/tokens.css[m
+[1mindex 52cd4a23..0f0f3afa 100644[m
+[1m--- a/frontend/styles/tokens.css[m
+[1m+++ b/frontend/styles/tokens.css[m
+[36m@@ -4,45 +4,50 @@[m
+   /* ========================================[m
+      BRAND COLORS - Premium Gradient System[m
+      ======================================== */[m
+[31m-  --ml-blue: #4573df;[m
+[31m-  --ml-blue-light: #6b93f5;[m
+[31m-  --ml-blue-dark: #2952b8;[m
+[31m-  --ml-orange: #ff9800;[m
+[31m-  --ml-orange-light: #ffb74d;[m
+[31m-  --ml-orange-dark: #f57c00;[m
+[31m-  --ml-green: #27AE60;[m
+[31m-  --ml-green-light: #4cdc8a;[m
+[31m-  --ml-green-dark: #1e8449;[m
+[31m-  --ml-red: #e81123;[m
+[31m-  --ml-red-light: #ff4757;[m
+[31m-  --ml-red-dark: #c0392b;[m
+[31m-  --ml-yellow: #F2C94C;[m
+[31m-  --ml-purple: #9b59b6;[m
+[31m-  --ml-purple-light: #bb6bd9;[m
+[31m-  --ml-teal: #00cec9;[m
+[31m-  --ml-pink: #fd79a8;[m
+[32m+[m[32m  /* Core identity: an editorial workbench for serious independent work. */[m
+[32m+[m[32m  --ml-blue: #5b5ce2;[m
+[32m+[m[32m  --ml-blue-light: #8b8df6;[m
+[32m+[m[32m  --ml-blue-dark: #3d3fa8;[m
+[32m+[m[32m  --ml-orange: #f4a261;[m
+[32m+[m[32m  --ml-orange-light: #ffd09a;[m
+[32m+[m[32m  --ml-orange-dark: #d97745;[m
+[32m+[m[32m  --ml-green: #2bb673;[m
+[32m+[m[32m  --ml-green-light: #70e0a8;[m
+[32m+[m[32m  --ml-green-dark: #18794d;[m
+[32m+[m[32m  --ml-red: #d94f70;[m
+[32m+[m[32m  --ml-red-light: #f58ba3;[m
+[32m+[m[32m  --ml-red-dark: #a83250;[m
+[32m+[m[32m  --ml-yellow: #e9c46a;[m
+[32m+[m[32m  --ml-purple: #8f7cf6;[m
+[32m+[m[32m  --ml-purple-light: #b9adff;[m
+[32m+[m[32m  --ml-teal: #38cbb6;[m
+[32m+[m[32m  --ml-pink: #e78ac3;[m
+[32m+[m[32m  --ml-ink: #10152b;[m
+[32m+[m[32m  --ml-paper: #fbfaf7;[m
+[32m+[m[32m  --ml-line: #e7e4dc;[m
+[32m+[m[32m  --ml-mint-wash: #e8f7f1;[m
+ [m
+   /* ========================================[m
+      LIGHT THEME COLORS[m
+      ======================================== */[m
+[31m-  --bg-primary-light: #ffffff;[m
+[31m-  --bg-secondary-light: #f8fafc;[m
+[31m-  --bg-tertiary-light: #f1f5f9;[m
+[31m-  --text-primary-light: #0f172a;[m
+[31m-  --text-secondary-light: #475569;[m
+[31m-  --text-tertiary-light: #94a3b8;[m
+[31m-  --border-light: #e2e8f0;[m
+[32m+[m[32m  --bg-primary-light: var(--ml-paper);[m
+[32m+[m[32m  --bg-secondary-light: #f4f2ed;[m
+[32m+[m[32m  --bg-tertiary-light: #eeece6;[m
+[32m+[m[32m  --text-primary-light: var(--ml-ink);[m
+[32m+[m[32m  --text-secondary-light: #5e6375;[m
+[32m+[m[32m  --text-tertiary-light: #9295a1;[m
+[32m+[m[32m  --border-light: var(--ml-line);[m
+ [m
+   /* ========================================[m
+      DARK THEME COLORS[m
+      ======================================== */[m
+[31m-  --bg-primary-dark: #0f172a;[m
+[31m-  --bg-secondary-dark: #1e293b;[m
+[31m-  --bg-tertiary-dark: #334155;[m
+[31m-  --text-primary-dark: #f8fafc;[m
+[31m-  --text-secondary-dark: #cbd5e1;[m
+[31m-  --text-tertiary-dark: #94a3b8;[m
+[31m-  --border-dark: #334155;[m
+[32m+[m[32m  --bg-primary-dark: var(--ml-ink);[m
+[32m+[m[32m  --bg-secondary-dark: #171d38;[m
+[32m+[m[32m  --bg-tertiary-dark: #222a4a;[m
+[32m+[m[32m  --text-primary-dark: #f7f5ef;[m
+[32m+[m[32m  --text-secondary-dark: #c3c5d2;[m
+[32m+[m[32m  --text-tertiary-dark: #8e93a8;[m
+[32m+[m[32m  --border-dark: #303758;[m
+ [m
+   /* ========================================[m
+      LEGACY COLOR ALIASES (for compatibility)[m
+[36m@@ -124,10 +129,10 @@[m
+   /* ========================================[m
+      TYPOGRAPHY - Premium Font Stack[m
+      ======================================== */[m
+[31m-  --font-heading: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';[m
+[31m-  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';[m
+[31m-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;[m
+[31m-  --font-display: 'Poppins', 'Inter', system-ui, sans-serif;[m
+[32m+[m[32m  --font-heading: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;[m
+[32m+[m[32m  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;[m
+[32m+[m[32m  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;[m
+[32m+[m[32m  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;[m
+ [m
+   /* ========================================[m
+      SPACING SCALE - Golden Ratio Based / 8px Grid[m

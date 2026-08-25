@@ -816,7 +816,7 @@ function StepCategory({ categories, selectedCategory, currentCategoryServices, o
             aria-label={`Select ${svc.label}`}
           >
             <p className={cn(cs.serviceLabel, ts.serviceLabel)}>{svc.label}</p>
-            <span className={cn(cs.serviceRate, ts.serviceRate)}>${typeof svc.avg_rate === 'number' ? svc.avg_rate : svc.avg_rate}/hr</span>
+            <span className={cn(cs.serviceRate, ts.serviceRate)}>{typeof svc.avg_rate === 'number' ? `$${svc.avg_rate}/hr` : svc.avg_rate}</span>
             <span
               className={cn(
                 cs.serviceDemand,
@@ -1454,11 +1454,11 @@ ${result.hours_breakdown ? `• Core Development: ${result.hours_breakdown.core_
         <p className={cn(cs.priceHeroLabel, ts.priceHeroLabel)}>Estimated Project Cost</p>
         <div className={cs.priceHeroRange}>
           <span className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
-            <NumberTicker value={estimate.low_estimate} prefix="$" />
+            ${fmt(estimate.low_estimate)}
           </span>
           <span className={cn(cs.priceHeroDivider, ts.priceHeroDivider)}>—</span>
           <span className={cn(cs.priceHeroValue, ts.priceHeroValue)}>
-            <NumberTicker value={estimate.high_estimate} prefix="$" />
+            ${fmt(estimate.high_estimate)}
           </span>
         </div>
         <div className={cs.priceHeroMeta}>
