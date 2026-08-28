@@ -32,7 +32,7 @@ httpx==0.28.1  # Async HTTP client
 slowapi==0.1.9
 
 # Payments
-stripe==11.5.0
+stripe==15.1.0
 
 # WebSocket & Real-time
 python-socketio==5.14.3
