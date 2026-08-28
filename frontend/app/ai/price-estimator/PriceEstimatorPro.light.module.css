@@ -2,8 +2,8 @@
 
 /* Container */
 .container {
-  background: linear-gradient(135deg, #f0f4ff 0%, #fdf8ff 50%, #fff7ed 100%);
-  color: #1a1f36;
+  background: transparent;
+  color: #1e293b;
 }
 
 .loadingContainer {

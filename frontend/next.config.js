@@ -289,6 +289,26 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/hr',
+        destination: '/tools/ai-startup-advisor',
+        permanent: true,
+      },
+      {
+        source: '/docs',
+        destination: '/support',
+        permanent: true,
+      },
+      {
+        source: '/&',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/$',
+        destination: '/',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.megilance.site' }],
         destination: 'https://megilance.site/:path*',

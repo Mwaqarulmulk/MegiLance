@@ -600,7 +600,7 @@ export default function SkillAnalyzer() {
           {step > 0 && step < 2 && <button className={cn(cs.navButtonBack, ts.navButtonBack)} onClick={() => setStep(step - 1)}><ArrowLeft size={16} /> Back</button>}
           <div className={cs.navSpacer} />
           {step === 0 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} disabled={selected.length === 0} onClick={() => setStep(1)}>Next <ArrowRight size={16} /></button>}
-          {step === 1 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={handleSubmit}>Analyze Skills <ArrowRight size={16} /></button>}
+          {step === 1 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} disabled={!targetRole?.trim()} onClick={handleSubmit}>Analyze Skills <ArrowRight size={16} /></button>}
           {step === 2 && result && (
             <div className={cn(cs.actionsBar, "flex flex-wrap gap-2 items-center")}>
               <button className={cn(cs.actionBtnSecondary, ts.actionBtnSecondary)} onClick={reset}><RotateCcw size={16} /> New Analysis</button>

@@ -1,42 +1,74 @@
 /* @AI-HINT: Dark theme colors for ProfileCompletion */
 .container {
-  color: var(--color-text-primary, #f9fafb);
+  color: #f8fafc;
 }
 
 .title {
-  color: var(--color-text-primary, #f9fafb);
+  color: #ffffff;
+}
+
+.subtitle {
+  color: #cbd5e1;
+  opacity: 1;
+}
+
+.progressText {
+  color: #ffffff;
+}
+
+.progressLabel {
+  color: #e2e8f0;
+  opacity: 1;
 }
 
 .sectionCard {
-  background: var(--color-bg-secondary, #1a1a2e);
-  border-color: var(--color-border, #2d2d44);
+  background: #0f172a;
+  border-color: #334155;
+  color: #f8fafc;
 }
 
 .sectionCard:hover {
-  background: var(--color-bg-secondary, #1a1a2e);
+  background: #1e293b;
+  border-color: #60a5fa;
+}
+
+.sectionTitle {
+  color: #ffffff;
+}
+
+.sectionDescription {
+  color: #94a3b8;
+  opacity: 1;
 }
 
 .sectionIcon {
-  background: var(--color-bg-tertiary, #2d2d44);
-  color: var(--color-text-secondary, #9ca3af);
+  background: #1e293b;
+  color: #cbd5e1;
 }
 
 .sectionIconComplete {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(16, 185, 129, 0.2);
   color: #34d399;
 }
 
 .editorPanel {
-  background: var(--color-bg-secondary, #1a1a2e);
-  border-color: var(--color-border, #2d2d44);
+  background: #0f172a;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.editorTitle {
+  color: #ffffff;
 }
 
 .portfolioCard {
-  background: var(--color-bg-primary, #0f0f1a);
-  border-color: var(--color-border, #2d2d44);
+  background: #020617;
+  border-color: #334155;
+  color: #f8fafc;
 }
 
 .completionFooter {
-  background: var(--color-bg-secondary, #1a1a2e);
-  border-color: var(--color-border, #2d2d44);
+  background: #0f172a;
+  border-color: #334155;
+  color: #f8fafc;
 }

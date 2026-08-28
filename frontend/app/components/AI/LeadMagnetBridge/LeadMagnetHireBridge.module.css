@@ -1,9 +1,11 @@
 .container {
   position: relative;
+  width: 100%;
+  grid-column: 1 / -1;
   overflow: hidden;
   border-radius: 1.25rem;
-  padding: 1.75rem;
-  margin: 1.5rem 0;
+  padding: 1.75rem 2rem;
+  margin: 2rem 0;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
 }
@@ -157,9 +159,9 @@
 /* Trust Badges Grid */
 .trustGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 0.875rem;
-  padding-top: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
 

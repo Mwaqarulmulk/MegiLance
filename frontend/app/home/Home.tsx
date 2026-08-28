@@ -36,7 +36,7 @@ const Home: React.FC = () => {
           </ScrollReveal>
         </section>
 
-        {/* 2. Choose Your Goal (Alt Surface) */}
+        {/* 2. Choose Your Goal & Smart Scoping (Alt Surface) */}
         <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Choose your goal">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up" delay={0.1}>
@@ -54,17 +54,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 4. Example AI Tool Result Showcase (Alt Surface) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Example AI tool result demonstration">
-          <div className={commonStyles.sectionContainer}>
-            <ScrollReveal width="100%" direction="up" delay={0.1}>
-              <ToolResultShowcase />
-            </ScrollReveal>
-          </div>
-        </section>
-
-        {/* 5. How an AI Result Becomes Real Work (Canvas) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="How an AI result becomes real work">
+        {/* 4. How an AI Result Becomes Real Work (Alt Surface) */}
+        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="How an AI result becomes real work">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up" delay={0.1}>
               <AIResultToWork />
@@ -72,8 +63,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 6. For Clients & Freelancers — Solutions & Workrooms (Alt Surface) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Why MegiLance — solutions for clients and freelancers">
+        {/* 5. Why MegiLance — Zero Commission & Milestone Safety (Canvas) */}
+        <section className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="Why MegiLance — solutions for clients and freelancers">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up" delay={0.1}>
               <PainSolutions />
@@ -81,8 +72,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 7. Interactive Interface Showcase (Canvas) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="Interactive dashboard showcase">
+        {/* 6. Interactive Workroom & Dashboard Showcase (Alt Surface) */}
+        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Interactive dashboard showcase">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up" delay={0.1}>
               <DashboardShowcase />
@@ -90,26 +81,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 8. Trust & Escrow Protection (Alt Surface) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Platform trust, security and escrow">
-          <div className={commonStyles.sectionContainer}>
-            <ScrollReveal width="100%" delay={0.2}>
-              <TrustIndicators />
-            </ScrollReveal>
-          </div>
-        </section>
-
-        {/* 9. How It Works (Canvas) */}
-        <section id="how-it-works" className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="How it works">
-          <div className={commonStyles.sectionContainer}>
-            <ScrollReveal width="100%" direction="left">
-              <HowItWorks />
-            </ScrollReveal>
-          </div>
-        </section>
-
-        {/* 10. Verified Testimonials & Social Proof (Alt Surface) */}
-        <section id="testimonials" className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Client and freelancer testimonials">
+        {/* 7. Verified Testimonials & Social Proof (Canvas) */}
+        <section id="testimonials" className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="Client and freelancer testimonials">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up">
               <Testimonials />
@@ -117,21 +90,17 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 11. FAQ (Canvas) */}
-        <section id="faq" className={cn(commonStyles.homeSection, commonStyles.sectionCanvas, themeStyles.sectionCanvas)} aria-label="Frequently asked questions">
+        {/* 8. FAQ & Final High-Impact CTA (Alt Surface) */}
+        <section id="faq" className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Frequently asked questions and getting started">
           <div className={commonStyles.sectionContainer}>
             <ScrollReveal width="100%" direction="up">
               <HomeFAQ />
             </ScrollReveal>
-          </div>
-        </section>
-
-        {/* 12. Final CTA (Alt Surface / Highlight) */}
-        <section className={cn(commonStyles.homeSection, commonStyles.sectionAlt, themeStyles.sectionAlt)} aria-label="Get started CTA">
-          <div className={commonStyles.sectionContainer}>
-            <ScrollReveal width="100%" direction="up">
-              <HomeFinalCTA />
-            </ScrollReveal>
+            <div className="mt-12">
+              <ScrollReveal width="100%" direction="up" delay={0.1}>
+                <HomeFinalCTA />
+              </ScrollReveal>
+            </div>
           </div>
         </section>
       </main>

@@ -77,7 +77,7 @@ const quickLinks = [
   { href: '/freelancer/support/knowledge-base', icon: BookOpen, label: 'Knowledge Base', desc: 'Browse articles & guides' },
   { href: '/freelancer/help', icon: HelpCircle, label: 'Help Center', desc: 'Common questions answered' },
   { href: '/freelancer/messages', icon: MessageCircle, label: 'Messages', desc: 'Chat with your clients' },
-  { href: '/docs', icon: FileText, label: 'Documentation', desc: 'Platform documentation' },
+  { href: '/support', icon: FileText, label: 'Documentation', desc: 'Platform documentation & guides' },
 ];
 
 const SupportPage: React.FC = () => {

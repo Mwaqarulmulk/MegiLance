@@ -214,6 +214,9 @@
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .reviewItem {
@@ -222,6 +225,9 @@
   gap: 0.5rem;
   padding: 1rem 0;
   border-bottom: 1px solid;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .reviewItem:last-child {
@@ -240,6 +246,10 @@
   font-size: 1rem;
   font-family: var(--font-family-body);
   line-height: 1.6;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .actions {

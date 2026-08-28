@@ -39,9 +39,8 @@ const CookiesPage: React.FC = () => {
         <section className={common.section}>
           <h2 className={common.sectionTitle}>What Are Cookies?</h2>
           <p className={common.content}>
-            Cookies are small text files that are stored on your device when you visit our website. 
-            They help us provide you with a better experience by remembering your preferences and 
-            analyzing how you use our site.
+            <strong>Cookies</strong> are small text files stored securely on your browser or device when you visit MegiLance. 
+            They help us provide a seamless authentication experience, maintain active sessions, and ensure robust <strong>milestone escrow security</strong>.
           </p>
         </section>
 
@@ -49,31 +48,27 @@ const CookiesPage: React.FC = () => {
           <h2 className={common.sectionTitle}>Types of Cookies We Use</h2>
           <div className={common.cookiesGrid}>
             <div className={common.cookieCard}>
-              <h3 className={common.cookieTitle}>Essential Cookies</h3>
+              <h3 className={common.cookieTitle}>1. Essential &amp; Authentication Cookies</h3>
               <p className={common.cookieDescription}>
-                These cookies are necessary for the website to function properly. They enable basic 
-                functions like page navigation and access to secure areas.
+                <strong>Strictly Necessary:</strong> Required for account login, cryptographic JWT sessions, CSRF protection, and milestone escrow authorization. These cannot be disabled.
               </p>
             </div>
             <div className={common.cookieCard}>
-              <h3 className={common.cookieTitle}>Analytics Cookies</h3>
+              <h3 className={common.cookieTitle}>2. Performance &amp; Telemetry Cookies</h3>
               <p className={common.cookieDescription}>
-                These cookies help us understand how visitors interact with our website by collecting 
-                and reporting information anonymously.
+                <strong>Anonymous Analytics:</strong> Measure API latency, page load speed, and server uptime. No personal identifiable information (PII) is recorded or shared.
               </p>
             </div>
             <div className={common.cookieCard}>
-              <h3 className={common.cookieTitle}>Functional Cookies</h3>
+              <h3 className={common.cookieTitle}>3. Functional &amp; Theme Cookies</h3>
               <p className={common.cookieDescription}>
-                These cookies enable enhanced functionality and personalization, such as remembering 
-                your preferences and settings.
+                <strong>User Preferences:</strong> Remember your light/dark theme preference, sound settings, workspace sidebar state, and language selection.
               </p>
             </div>
             <div className={common.cookieCard}>
-              <h3 className={common.cookieTitle}>Marketing Cookies</h3>
+              <h3 className={common.cookieTitle}>4. Zero 3rd-Party Tracking Guarantee</h3>
               <p className={common.cookieDescription}>
-                These cookies are used to track visitors across websites to display relevant and 
-                engaging advertisements.
+                <strong>Zero Ad Networks:</strong> MegiLance does <strong>not</strong> use invasive third-party ad retargeting trackers or sell browsing data to data brokers.
               </p>
             </div>
           </div>
@@ -82,18 +77,14 @@ const CookiesPage: React.FC = () => {
         <section className={common.section}>
           <h2 className={common.sectionTitle}>Managing Your Cookie Preferences</h2>
           <p className={common.content}>
-            You can control and manage cookies through your browser settings. However, disabling 
-            certain cookies may affect the functionality of our website. For more information about 
-            managing cookies, please visit your browser&apos;s help section.
+            You can control or clear cookies directly through your <strong>browser settings</strong> (Chrome, Firefox, Safari, or Edge). Note that blocking essential session cookies will prevent login to protected client and freelancer dashboards.
           </p>
         </section>
 
         <section className={common.section}>
-          <h2 className={common.sectionTitle}>Updates to This Policy</h2>
+          <h2 className={common.sectionTitle}>Updates &amp; Contact</h2>
           <p className={common.content}>
-            We may update this Cookie Policy from time to time to reflect changes in our practices 
-            or for other operational, legal, or regulatory reasons. We will notify you of any 
-            material changes by posting the new policy on this page.
+            We review our cookie practices periodically. For inquiries regarding our cookie standards or privacy policies, please reach out to <a href="mailto:support@megilance.site" className={common.emailLink}>support@megilance.site</a>.
           </p>
         </section>
 

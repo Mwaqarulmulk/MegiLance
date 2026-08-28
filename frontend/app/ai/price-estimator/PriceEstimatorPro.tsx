@@ -419,8 +419,8 @@ export default function PriceEstimatorPro() {
     if (e.key === 'Enter') { e.preventDefault(); addFeature(); }
   }, [addFeature]);
 
-  const canProceedStep1 = selectedCategory && selectedService;
-  const canProceedStep2 = true; // details are all optional
+  const canProceedStep1 = Boolean(selectedCategory && selectedService);
+  const canProceedStep2 = Boolean(description.trim().length >= 10 || features.length >= 1 || (typeof estimatedHours === 'number' && estimatedHours > 0));
 
   /* ----- Submit estimate ----- */
   const submitEstimate = useCallback(async () => {
@@ -871,7 +871,7 @@ function StepDetails({ description, setDescription, features, featureInput, setF
         <div className={cs.formGroup}>
           <label className={cn(cs.label, ts.label)}>
             <PenTool /> Project Description
-            <span className={cn(cs.labelHint, ts.labelHint)}>Optional — improves accuracy</span>
+            <span className={cn(cs.labelHint, ts.labelHint)}>Required: At least 10 chars description, 1 feature, or estimated hours</span>
           </label>
           <textarea
             className={cn(cs.textarea, ts.textarea)}

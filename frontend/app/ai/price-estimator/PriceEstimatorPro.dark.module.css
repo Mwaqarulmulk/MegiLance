@@ -2,7 +2,7 @@
 
 /* Container */
 .container {
-  background: linear-gradient(135deg, #0c0f1a 0%, var(--bg-primary-dark) 50%, #0f1724 100%);
+  background: transparent;
   color: #e2e8f0;
 }
 

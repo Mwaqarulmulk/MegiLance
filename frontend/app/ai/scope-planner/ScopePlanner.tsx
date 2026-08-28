@@ -583,7 +583,8 @@ export default function ScopePlanner() {
         <div className={cs.navBar}>
           {step > 0 && step < 3 && <button className={cn(cs.navButtonBack, ts.navButtonBack)} onClick={() => setStep(step - 1)}><ArrowLeft size={16} /> Back</button>}
           <div className={cs.navSpacer} />
-          {step < 2 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => setStep(step + 1)}>Next <ArrowRight size={16} /></button>}
+          {step === 0 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} disabled={!form.project_name?.trim()} onClick={() => setStep(1)}>Next <ArrowRight size={16} /></button>}
+          {step === 1 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={() => setStep(2)}>Next <ArrowRight size={16} /></button>}
           {step === 2 && <button className={cn(cs.navButtonNext, ts.navButtonNext)} onClick={handleSubmit}>Plan Project <ArrowRight size={16} /></button>}
           {step === 3 && result && (
             <div className={cn(cs.actionsBar, "flex flex-wrap gap-2 items-center")}>

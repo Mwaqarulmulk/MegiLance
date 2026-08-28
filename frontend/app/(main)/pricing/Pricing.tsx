@@ -17,7 +17,6 @@ import FeeSavingsCalculator from '@/app/components/widgets/FeeSavingsCalculator'
 import commonStyles from './Pricing.common.module.css';
 import lightStyles from './Pricing.light.module.css';
 import darkStyles from './Pricing.dark.module.css';
-import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 import { PRICING_CONFIG, PLATFORM_STATUS } from '@/lib/platform-config';
 
 const Pricing: React.FC = () => {
@@ -79,16 +78,6 @@ const Pricing: React.FC = () => {
             <p className={styles.subtitle}>
               {PRICING_CONFIG.LAUNCH_POLICY_NOTICE}
             </p>
-
-            <div className="mt-8 flex justify-center">
-              <BrandLottiePlayer
-                src="/lottie/07_data_analytics_growth.json"
-                ariaLabel="Data Analytics & Fee Savings Growth Lottie Animation"
-                className="w-full max-w-md h-56 md:h-72"
-                framed={true}
-                glow={true}
-              />
-            </div>
           </div>
         </ScrollReveal>
 

@@ -81,11 +81,15 @@ const AppChromeClient: React.FC<{ children: React.ReactNode }> = ({ children }) 
   }
 
   const isMinimalChrome = isPortalOrAuthRoute(pathname);
+  const showGlobalBreadcrumbs = !isMinimalChrome && 
+    pathname !== '/' && 
+    !pathname?.startsWith('/tools') && 
+    !pathname?.startsWith('/ai');
 
   return (
     <div className={cn(commonStyles.wrapper, themeStyles.wrapper)} suppressHydrationWarning>
       {!isMinimalChrome && <Header />}
-      {!isMinimalChrome && (
+      {showGlobalBreadcrumbs && (
         <div className={commonStyles.breadcrumbContainer}>
           <Breadcrumbs />
         </div>
@@ -112,7 +116,6 @@ const AppChromeClient: React.FC<{ children: React.ReactNode }> = ({ children }) 
         )}
       >
         <ThemeToggleButton />
-        <LanguageSwitcher />
       </FloatingActionButtons>
       
       <GlobalErrorReporter />

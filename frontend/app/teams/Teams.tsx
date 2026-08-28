@@ -125,9 +125,9 @@ const Teams: React.FC = () => {
           {/* CTA */}
           <section className={common.section} aria-label="Get started">
             <ScrollReveal>
-              <div className={cn(common.ctaBox, themed.ctaBox)}>
-                <h2 className={common.ctaTitle}>Ready to Scale?</h2>
-                <p className={common.ctaDesc}>Tell us what you need and we&apos;ll propose a team within 48 hours — no commitment required.</p>
+              <div className={cn(common.ctaBox, themed.ctaBox, "text-center flex flex-col items-center justify-center")}>
+                <h2 className={common.ctaTitle}>Ready to Scale Your Team with Verified Freelance Talent?</h2>
+                <p className={common.ctaDesc}>Tell us what you need and we&apos;ll propose a dedicated team within 48 hours — no commitment required.</p>
                 <div className={common.ctaButtons}>
                   <a href="/contact" className={cn(common.button, themed.button)}>Request a Team</a>
                   <a href="/pricing" className={cn(common.button, common.buttonSecondary, themed.buttonSecondary)}>View Pricing</a>

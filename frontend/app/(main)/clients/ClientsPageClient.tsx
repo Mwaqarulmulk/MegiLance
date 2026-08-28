@@ -1,134 +1,294 @@
 // @AI-HINT: Clients directory - for companies looking to hire talent — fully theme-aware via 3-file CSS module system
 "use client";
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
+
+import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import commonStyles from "./Clients.common.module.css";
-import lightStyles from "./Clients.light.module.css";
-import darkStyles from "./Clients.dark.module.css";
+import { 
+  ShieldCheck, Sparkles, ArrowRight, Zap, CheckCircle2, Lock, 
+  Users, DollarSign, Award, Clock, FileText, ChevronRight, Star,
+  Code, Layers, Search, Briefcase, Building2, HelpCircle
+} from "lucide-react";
+import Breadcrumbs from "@/app/components/molecules/Breadcrumbs/Breadcrumbs";
+
+const CLIENT_BENEFITS = [
+  {
+    icon: ShieldCheck,
+    title: "100% Pre-Funded Milestone Escrow",
+    desc: "Your capital never leaves escrow until you personally verify and approve the delivered milestones and source code.",
+    badge: "Financial Safety",
+  },
+  {
+    icon: DollarSign,
+    title: "0% Client Platform Markup",
+    desc: "Unlike traditional platforms taking 5% to 20% in client fees and payment processing markups, MegiLance operates with 0% commission.",
+    badge: "Zero Hidden Fees",
+  },
+  {
+    icon: Award,
+    title: "Top 1% Rigorously Vetted Talent",
+    desc: "Every engineer and designer in our network is screened for architectural rigor, clear communication, and proven production records.",
+    badge: "Verified Quality",
+  },
+  {
+    icon: Sparkles,
+    title: "Instant AI Scoping & Blueprints",
+    desc: "Convert project ideas into milestone sprint timelines, deliverables lists, and market-accurate budget forecasts in seconds.",
+    badge: "Smart Tooling",
+  },
+];
+
+const HIRING_ROLES = [
+  { role: "Next.js & React Engineers", rate: "$65 – $95/hr", count: "120+ Available", link: "/hire/react-developer", icon: "⚡" },
+  { role: "Python & AI Specialists", rate: "$75 – $120/hr", count: "85+ Available", link: "/hire/python-developer", icon: "🤖" },
+  { role: "UI/UX & Product Designers", rate: "$55 – $85/hr", count: "95+ Available", link: "/hire/ui-ux-designer", icon: "🎨" },
+  { role: "Mobile App Developers (Flutter/RN)", rate: "$60 – $90/hr", count: "70+ Available", link: "/hire/mobile-developer", icon: "📱" },
+  { role: "Full-Stack Web Architects", rate: "$70 – $110/hr", count: "110+ Available", link: "/hire/fullstack-developer", icon: "🏗️" },
+  { role: "DevOps & Cloud Engineers", rate: "$80 – $115/hr", count: "60+ Available", link: "/hire/devops-engineer", icon: "☁️" },
+];
+
+const WORKFLOW_STEPS = [
+  {
+    num: "01",
+    title: "Scope & Price in Minutes",
+    desc: "Use our free AI Project Cost Estimator to draft deliverables, milestones, and realistic market budgets.",
+  },
+  {
+    num: "02",
+    title: "Match Top Candidates",
+    desc: "Receive AI-ranked proposals from vetted specialists whose verified experience aligns with your exact stack.",
+  },
+  {
+    num: "03",
+    title: "Fund Milestone Escrow",
+    desc: "Deposit milestone funds safely into code-enforced escrow before work begins. Zero upfront payout risk.",
+  },
+  {
+    num: "04",
+    title: "Review & Instant Release",
+    desc: "Inspect deliverables in your dedicated workroom. Release payments only when milestones meet your quality bar.",
+  },
+];
 
 export default function ClientsPageClient() {
-  const { resolvedTheme } = useTheme();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const t = (mounted && resolvedTheme === "light") ? lightStyles : darkStyles;
 
   return (
-    <main className={cn(commonStyles.container, t.container)}>
-      <header className={cn(commonStyles.hero, t.hero)}>
-        {/* Client Workspace screenshot */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
-          <Image
-            src="/images/hero/client-workspace.png"
-            alt="MegiLance Client Workspace — manage projects, track progress, communicate with freelancers"
-            width={900}
-            height={540}
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
-            style={{ width: '100%', maxWidth: '900px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px -8px rgba(0,0,0,0.15)' }}
-          />
-        </div>
-        <h1 className={commonStyles.heroTitle}>
-          Hire the top 1% of freelance talent.
-        </h1>
-        <p className={cn(commonStyles.heroSubtitle, t.heroSubtitle)}>
-          MegiLance connects you with vetted professionals for your most
-          important projects. Scale your team on demand.
-        </p>
-        <div className={commonStyles.heroActions}>
-          <button
-            className={cn(commonStyles.btnPrimary, t.btnPrimary)}
-            onClick={() => router.push("/create-project")}
-            aria-label="Post a job on MegiLance"
-          >
-            Post a Job
-          </button>
-          <button
-            className={cn(commonStyles.btnOutline, t.btnOutline)}
-            onClick={() => router.push("/freelancers")}
-            aria-label="Browse available talent"
-          >
-            Browse Talent
-          </button>
-        </div>
-      </header>
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-16">
+        
+        {/* Breadcrumb */}
+        <Breadcrumbs />
 
-      <section className={commonStyles.featuresSection}>
-        <h2 className={cn(commonStyles.featuresTitle, t.featuresTitle)}>
-          Why companies choose MegiLance
-        </h2>
-        <div className={commonStyles.featuresGrid}>
-          <div className={cn(commonStyles.featureCard, t.featureCard)}>
-            <h3 className={cn(commonStyles.featureCardTitle, t.featureCardTitle)}>
-              AI Matching
-            </h3>
-            <p className={cn(commonStyles.featureCardText, t.featureCardText)}>
-              Our AI algorithms analyze your project requirements and instantly
-              match you with the best candidates.
+        {/* Hero Section */}
+        <header className="text-center max-w-3xl mx-auto space-y-6 pt-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-sm">
+            <Building2 size={13} className="text-blue-500" />
+            <span>Built for Modern Tech Teams &amp; Visionary Founders</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+            Hire Elite Talent with{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+              Escrow Protection
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-slate-650 dark:text-slate-350 leading-relaxed max-w-2xl mx-auto">
+            Eliminate delivery risk, agency markups, and hiring delays. Match with top 1% independent specialists and manage projects with pre-funded milestone escrow contracts.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <button
+              type="button"
+              onClick={() => router.push("/create-project")}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base transition shadow-lg hover:shadow-xl active:scale-[0.98] cursor-pointer"
+            >
+              <Zap size={16} />
+              <span>Post a Project Free</span>
+              <ArrowRight size={16} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => router.push("/freelancers")}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold border border-slate-300 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-900 text-slate-900 dark:text-white text-sm sm:text-base transition shadow-sm cursor-pointer"
+            >
+              <Search size={16} />
+              <span>Browse Vetted Talent</span>
+            </button>
+          </div>
+
+          {/* Social Proof Strip */}
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 size={15} className="text-emerald-500" /> 0% Platform Markup
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 size={15} className="text-emerald-500" /> Milestone-Based Release
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 size={15} className="text-emerald-500" /> Full IP &amp; NDA Ownership
+            </span>
+          </div>
+        </header>
+
+        {/* 4-Step Client Workflow Pipeline */}
+        <section className="space-y-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+              How Hiring Works on MegiLance
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              From instant scoping to verified release in 4 straightforward steps.
             </p>
           </div>
-          <div className={cn(commonStyles.featureCard, t.featureCard)}>
-            <h3 className={cn(commonStyles.featureCardTitle, t.featureCardTitle)}>
-              Vetted Talent
-            </h3>
-            <p className={cn(commonStyles.featureCardText, t.featureCardText)}>
-              Every freelancer goes through a rigorous screening process to
-              ensure high-quality delivery.
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {WORKFLOW_STEPS.map((step) => (
+              <div
+                key={step.num}
+                className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-blue-300 dark:hover:border-blue-800 transition"
+              >
+                <div>
+                  <span className="text-2xl font-black text-blue-600 dark:text-blue-400 font-mono block mb-3">
+                    {step.num}
+                  </span>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Client Value Matrix */}
+        <section className="space-y-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+              Why High-Growth Companies Choose MegiLance
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Built to replace chaotic bidding platforms with guaranteed delivery standards.
             </p>
           </div>
-          <div className={cn(commonStyles.featureCard, t.featureCard)}>
-            <h3 className={cn(commonStyles.featureCardTitle, t.featureCardTitle)}>
-              Secure Payments
-            </h3>
-            <p className={cn(commonStyles.featureCardText, t.featureCardText)}>
-              Payment is held safely in escrow until you approve the work.
-              Milestone-based tracking available.
+
+          <div className="grid sm:grid-cols-2 gap-6">
+            {CLIENT_BENEFITS.map((benefit) => {
+              const Icon = benefit.icon;
+              return (
+                <div
+                  key={benefit.title}
+                  className="p-7 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <Icon size={24} />
+                      </div>
+                      <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        {benefit.badge}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      {benefit.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Roles Quick Browse */}
+        <section className="space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+                Hire Specialists Across Core Domains
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                Explore real-time hourly benchmarks and vetted freelancer availability.
+              </p>
+            </div>
+            <Link
+              href="/freelancers"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition"
+            >
+              <span>View All Talent</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {HIRING_ROLES.map((r) => (
+              <Link
+                key={r.role}
+                href={r.link}
+                className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 hover:border-blue-400 dark:hover:border-blue-600 shadow-sm hover:shadow-md transition group flex flex-col justify-between space-y-3"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{r.icon}</span>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                      {r.role}
+                    </h3>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
+                      {r.rate}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-850">
+                  <span>{r.count}</span>
+                  <span className="text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform">
+                    Explore →
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Final Client CTA Banner */}
+        <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 text-white shadow-2xl text-center space-y-6">
+          <div className="max-w-2xl mx-auto space-y-4">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-white/20 text-white backdrop-blur-md">
+              <ShieldCheck size={14} className="text-emerald-300" /> Start with Zero Risk
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black">
+              Ready to Hire Your Next Lead Specialist?
+            </h2>
+            <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
+              Post your project in under 2 minutes. Receive AI-aligned proposals and release payments only on verified milestone completion.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* Client Trust Visual */}
-      <section style={{ padding: '2rem', textAlign: 'center', background: 'transparent' }}>
-        <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Image
-            src="/images/sections/client-trust.png"
-            alt="Trusted by global clients — 100+ happy clients, from startups to enterprises"
-            width={460}
-            height={380}
-            sizes="(max-width: 640px) 100vw, 460px"
-            style={{ width: '100%', maxWidth: '460px', height: 'auto' }}
-          />
-          <Image
-            src="/images/sections/client-manage.png"
-            alt="Find and manage clients — connect with trusted clients and manage projects professionally"
-            width={420}
-            height={360}
-            sizes="(max-width: 640px) 100vw, 420px"
-            style={{ width: '100%', maxWidth: '420px', height: 'auto' }}
-          />
-        </div>
-      </section>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <button
+              type="button"
+              onClick={() => router.push("/create-project")}
+              className="px-8 py-4 rounded-xl font-bold bg-white text-blue-900 hover:bg-slate-50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl text-sm sm:text-base cursor-pointer"
+            >
+              Post a Project Free
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/signup?role=client")}
+              className="px-8 py-4 rounded-xl font-bold border border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all text-sm sm:text-base cursor-pointer"
+            >
+              Create Client Account
+            </button>
+          </div>
+        </section>
 
-      <section className={cn(commonStyles.ctaSection, t.ctaSection)}>
-        <h2 className={cn(commonStyles.ctaTitle, t.ctaTitle)}>
-          Ready to build something amazing?
-        </h2>
-        <button
-          className={cn(commonStyles.btnPrimary, t.btnPrimary)}
-          onClick={() => router.push("/signup?role=client")}
-          aria-label="Sign up as a client"
-        >
-          Sign up as a Client
-        </button>
-      </section>
+      </div>
     </main>
   );
 }

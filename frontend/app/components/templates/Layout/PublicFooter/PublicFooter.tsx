@@ -71,6 +71,19 @@ const socialLinks = [
 
 const PublicFooter = () => {
   const styles = useThemeStyles(lightStyles, darkStyles);
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) return;
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      setSubscribed(true);
+    }, 400);
+  };
 
   return (
     <motion.footer initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }} className={cn(commonStyles.footer, styles.footer)}>
@@ -112,18 +125,32 @@ const PublicFooter = () => {
             {/* Newsletter CTA */}
             <div className={commonStyles.newsletterSection}>
               <p className={cn(commonStyles.newsletterLabel, styles.newsletterLabel)}>Stay Updated</p>
-              <form className={commonStyles.newsletterForm} onSubmit={(e) => e.preventDefault()}>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your email"
-                  className={cn(commonStyles.newsletterInput, styles.newsletterInput)}
-                  aria-label="Email address for newsletter subscription"
-                />
-                <button type="submit" className={cn(commonStyles.newsletterButton, styles.newsletterButton)}>
-                  Subscribe
-                </button>
-              </form>
+              {subscribed ? (
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
+                  <ShieldCheck size={16} />
+                  <span>🎉 Successfully subscribed to MegiLance updates!</span>
+                </div>
+              ) : (
+                <form className={commonStyles.newsletterForm} onSubmit={handleSubscribe}>
+                  <input
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="Your email"
+                    className={cn(commonStyles.newsletterInput, styles.newsletterInput)}
+                    aria-label="Email address for newsletter subscription"
+                  />
+                  <button 
+                    type="submit" 
+                    disabled={submitting}
+                    className={cn(commonStyles.newsletterButton, styles.newsletterButton)}
+                  >
+                    {submitting ? 'Subscribing...' : 'Subscribe'}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
           <div className={commonStyles.linksGrid}>

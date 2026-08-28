@@ -50,40 +50,47 @@ async function fetchProjects() {
 
 function ExploreClient() {
   return (
-    <main style={{ minHeight: '100vh' }}>
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {/* Hero Header with Search */}
-      <header style={{ textAlign: 'center', padding: '4rem 2rem 3rem', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: 'white' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '999px', background: 'rgba(69,115,223,0.2)', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem', color: '#93c5fd' }}>
+      <header className="text-center py-16 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white relative overflow-hidden">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 text-xs font-semibold mb-6 text-blue-300 border border-blue-400/30">
           <Zap size={14} />
           <span>AI-Powered Search</span>
         </div>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: '0 0 0.75rem', letterSpacing: '-0.02em' }}>Explore MegiLance</h1>
-        <p style={{ fontSize: '1.25rem', color: '#94a3b8', margin: 0, maxWidth: '600px', marginInline: 'auto' }}>
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-3">Explore MegiLance</h1>
+        <p className="text-lg text-slate-350 max-w-xl mx-auto">
           Discover top freelancers, ready-made services, and open jobs tailored to your skills.
         </p>
 
         {/* Search Bar */}
-        <form action="/freelancers" method="GET" style={{ display: 'flex', gap: '0.75rem', maxWidth: '700px', margin: '2rem auto 0' }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0 1.25rem', borderRadius: '14px', height: '56px', background: 'rgba(255,255,255,0.1)', border: '1.5px solid rgba(255,255,255,0.15)' }}>
-            <Search size={20} style={{ opacity: 0.5 }} />
+        <form action="/freelancers" method="GET" className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mt-8">
+          <div className="flex-1 flex items-center gap-3 px-4 rounded-xl h-14 bg-white/10 border border-white/20 backdrop-blur-md">
+            <Search size={20} className="text-slate-400" />
             <input
               type="search"
               name="q"
               placeholder="Search for skills, services, freelancers..."
-              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '1.05rem', color: 'white' }}
+              className="flex-1 bg-transparent border-none outline-none text-base text-white placeholder:text-slate-400"
             />
           </div>
-          <button type="submit" style={{ background: '#4573df', color: 'white', border: 'none', padding: '0 2rem', borderRadius: '14px', fontSize: '1.05rem', fontWeight: 600, cursor: 'pointer', height: '56px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            Search
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-xl font-bold h-14 flex items-center justify-center gap-2 transition cursor-pointer"
+          >
+            <span>Search</span>
             <ArrowRight size={18} />
           </button>
         </form>
 
         {/* Quick Links */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Popular:</span>
+        <div className="flex justify-center items-center gap-2 mt-6 flex-wrap text-xs">
+          <span className="text-slate-400">Popular:</span>
           {['React Developer', 'UI/UX Designer', 'Python Developer', 'Content Writer', 'SEO Expert'].map(tag => (
-            <Link key={tag} href={`/freelancers?q=${encodeURIComponent(tag)}`} style={{ fontSize: '0.85rem', color: '#93c5fd', textDecoration: 'none', padding: '0.2rem 0.6rem', borderRadius: '999px', background: 'rgba(147,197,253,0.1)' }}>
+            <Link
+              key={tag}
+              href={`/freelancers?q=${encodeURIComponent(tag)}`}
+              className="text-blue-300 px-3 py-1 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-400/20 transition"
+            >
               {tag}
             </Link>
           ))}
@@ -91,37 +98,52 @@ function ExploreClient() {
       </header>
 
       {/* Section Links Grid */}
-      <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-          <Link href="/client/find-talent" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-              <Users size={24} style={{ color: '#3b82f6' }} />
+      <section className="max-w-6xl mx-auto py-12 px-4 sm:px-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link
+            href="/client/find-talent"
+            className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 shadow-sm hover:shadow-md transition text-center flex flex-col items-center justify-between space-y-4 group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <Users size={26} />
             </div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>Top Talent</h2>
-            <p style={{ color: '#64748b', margin: '0 0 1rem', fontSize: '0.9rem' }}>Find the perfect specialist for your next big project.</p>
-            <span style={{ color: '#4573df', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Top Talent</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Find the perfect specialist for your next big project.</p>
+            </div>
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400 inline-flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
               Browse Freelancers <ArrowRight size={14} />
             </span>
           </Link>
 
-          <Link href="/search?tab=jobs" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#fefce8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-              <Briefcase size={24} style={{ color: '#ca8a04' }} />
+          <Link
+            href="/search?tab=jobs"
+            className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 shadow-sm hover:shadow-md transition text-center flex flex-col items-center justify-between space-y-4 group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-100 dark:border-amber-900/50 flex items-center justify-center text-amber-600 dark:text-amber-400">
+              <Briefcase size={26} />
             </div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>Projects</h2>
-            <p style={{ color: '#64748b', margin: '0 0 1rem', fontSize: '0.9rem' }}>Browse available projects tailored to your skills.</p>
-            <span style={{ color: '#4573df', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Projects</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Browse available projects tailored to your skills.</p>
+            </div>
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400 inline-flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
               Find Work <ArrowRight size={14} />
             </span>
           </Link>
 
-          <Link href="/ai" style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1.5px solid #e2e8f0', textDecoration: 'none', color: 'inherit', textAlign: 'center', transition: 'all 0.25s ease' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#faf5ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-              <Bot size={24} style={{ color: '#a855f7' }} />
+          <Link
+            href="/ai"
+            className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 shadow-sm hover:shadow-md transition text-center flex flex-col items-center justify-between space-y-4 group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border border-purple-100 dark:border-purple-900/50 flex items-center justify-center text-purple-600 dark:text-purple-400">
+              <Bot size={26} />
             </div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#0f172a' }}>AI Tools</h2>
-            <p style={{ color: '#64748b', margin: '0 0 1rem', fontSize: '0.9rem' }}>Estimate prices, draft proposals, and advise your rates.</p>
-            <span style={{ color: '#4573df', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">AI Tools</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Estimate prices, draft proposals, and advise your rates.</p>
+            </div>
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400 inline-flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
               Use AI Hub <ArrowRight size={14} />
             </span>
           </Link>
@@ -129,7 +151,7 @@ function ExploreClient() {
       </section>
 
       {/* Live Data Sections */}
-      <Suspense fallback={<div style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>Loading marketplace data...</div>}>
+      <Suspense fallback={<div className="py-16 text-center text-slate-400">Loading marketplace data...</div>}>
         <LiveDataSections />
       </Suspense>
     </main>
@@ -146,34 +168,42 @@ async function LiveDataSections() {
     <>
       {/* Featured Freelancers */}
       {freelancers.length > 0 && (
-        <section style={{ padding: '3rem 2rem', background: '#f8fafc', borderTop: '1px solid #f1f5f9' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <section className="py-12 px-4 sm:px-6 bg-slate-100/70 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-850">
+          <div className="max-w-6xl mx-auto space-y-6">
+            <div className="flex justify-between items-end">
               <div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.25rem' }}>Featured Freelancers</h2>
-                <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Top-rated talent ready for your project</p>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white">Featured Freelancers</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Top-rated talent ready for your project</p>
               </div>
-              <Link href="/client/find-talent" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
+              <Link href="/client/find-talent" className="inline-flex items-center gap-1 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
                 View All <ArrowRight size={14} />
               </Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {freelancers.map((f: any) => (
-                <Link key={f.id} href={`/freelancers/${f.id}`} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.25rem', borderRadius: '14px', border: '1.5px solid #e2e8f0', background: 'white', textDecoration: 'none', color: 'inherit', transition: 'all 0.2s' }}>
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1rem', color: '#475569', flexShrink: 0 }}>
-                      {f.profile_image_url ? <img src={f.profile_image_url} alt={f.name ? `${f.name} profile photo` : 'Freelancer profile photo'} style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }} /> : (f.name?.charAt(0) || 'F')}
+                <Link
+                  key={f.id}
+                  href={`/freelancers/${f.id}`}
+                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-700 dark:text-slate-200 overflow-hidden flex-shrink-0">
+                      {f.profile_image_url ? (
+                        <img src={f.profile_image_url} alt={f.name || 'Freelancer'} className="w-full h-full object-cover" />
+                      ) : (
+                        (f.name?.charAt(0) || 'F')
+                      )}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h3 style={{ fontSize: '1rem', fontWeight: 650, margin: '0 0 0.15rem', color: '#0f172a' }}>{f.name || 'Freelancer'}</h3>
-                      <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.headline || f.bio?.substring(0, 50) || 'Freelancer'}</p>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">{f.name || 'Freelancer'}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{f.headline || f.bio?.substring(0, 50) || 'Specialist'}</p>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 700, color: '#0f172a' }}>${f.hourly_rate || 0}/hr</span>
+                  <div className="flex justify-between items-center text-xs font-semibold pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-900 dark:text-white font-mono">${f.hourly_rate || 45}/hr</span>
                     {f.avg_rating > 0 && (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.8rem', color: '#ca8a04' }}>
-                        <Star size={12} fill="#ca8a04" /> {Number(f.avg_rating).toFixed(1)}
+                      <span className="flex items-center gap-1 text-amber-500">
+                        <Star size={12} fill="currentColor" /> {Number(f.avg_rating).toFixed(1)}
                       </span>
                     )}
                   </div>
@@ -186,29 +216,35 @@ async function LiveDataSections() {
 
       {/* Open Projects */}
       {projects.length > 0 && (
-        <section style={{ padding: '3rem 2rem', background: '#f8fafc', borderTop: '1px solid #f1f5f9' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <section className="py-12 px-4 sm:px-6 bg-slate-100/70 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-850">
+          <div className="max-w-6xl mx-auto space-y-6">
+            <div className="flex justify-between items-end">
               <div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.25rem' }}>Open Projects</h2>
-                <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Apply now and start earning</p>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white">Open Projects</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Apply now and start earning</p>
               </div>
-              <Link href="/search?tab=jobs" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4573df', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}>
+              <Link href="/search?tab=jobs" className="inline-flex items-center gap-1 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
                 View All <ArrowRight size={14} />
               </Link>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className="space-y-3">
               {projects.map((p: any) => (
-                <Link key={p.id} href={`/jobs/${p.id}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'white', textDecoration: 'none', color: 'inherit', transition: 'all 0.2s' }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 650, margin: '0 0 0.25rem', color: '#0f172a' }}>{p.title}</h3>
-                    <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.8rem', color: '#64748b' }}>
-                      <span>{p.category || 'General'}</span>
+                <Link
+                  key={p.id}
+                  href={`/jobs/${p.id}`}
+                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex items-center justify-between"
+                >
+                  <div className="min-w-0 flex-1 pr-4">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">{p.title}</h3>
+                    <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      <span>{p.category || 'Engineering'}</span>
                       <span>•</span>
-                      <span>{p.budget_type === 'hourly' ? `$${p.budget_min || 0}-${p.budget_max || 0}/hr` : `$${p.budget_max || 'TBD'}`}</span>
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                        {p.budget_type === 'hourly' ? `$${p.budget_min || 30}-${p.budget_max || 80}/hr` : `$${p.budget_max || 1200}`}
+                      </span>
                     </div>
                   </div>
-                  <ChevronRight size={16} style={{ color: '#94a3b8' }} />
+                  <ChevronRight size={18} className="text-slate-400 flex-shrink-0" />
                 </Link>
               ))}
             </div>
@@ -217,23 +253,23 @@ async function LiveDataSections() {
       )}
 
       {/* Platform Stats */}
-      <section style={{ padding: '3rem 2rem', textAlign: 'center' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2rem' }}>
-          <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>11</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Free AI Tools</div>
+      <section className="py-16 px-4 sm:px-6 text-center">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="text-3xl font-black text-blue-600 dark:text-blue-400">11</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Free AI Tools</div>
           </div>
-          <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>70+</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Countries Supported</div>
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="text-3xl font-black text-blue-600 dark:text-blue-400">70+</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Countries Supported</div>
           </div>
-          <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>0%</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Launch Platform Fee</div>
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">0%</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Launch Platform Fee</div>
           </div>
-          <div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#4573df' }}>100%</div>
-            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Milestone Escrow</div>
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="text-3xl font-black text-purple-600 dark:text-purple-400">100%</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Milestone Escrow</div>
           </div>
         </div>
       </section>

@@ -8,10 +8,12 @@ import {
   FileText, 
   Handshake, 
   CheckCircle, 
+  CheckCircle2, 
   UserCircle, 
   Briefcase, 
   DollarSign,
   Shield,
+  ShieldCheck,
   Brain,
   Lock,
   Star,
@@ -299,43 +301,58 @@ const HowItWorksPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Technical Architecture Overview */}
-        <section className={commonStyles.section} aria-labelledby="architecture">
+        {/* Product Trust & Escrow Guarantee Matrix */}
+        <section className={commonStyles.section} aria-labelledby="guarantees">
           <ScrollReveal>
-            <h2 id="architecture" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
-              The Technology Behind It
+            <h2 id="guarantees" className={cn(commonStyles.sectionTitle, themeStyles.sectionTitle)}>
+              Code-Enforced Milestone Guarantees
             </h2>
+            <p className={cn(commonStyles.sectionSubtitle, themeStyles.subtitle)}>
+              MegiLance is engineered from the ground up to protect both sides of every freelance engagement.
+            </p>
           </ScrollReveal>
-          <div className={cn(commonStyles.architectureCard, themeStyles.architectureCard)}>
-            <div className={commonStyles.archLayer}>
-              <h3>Frontend Layer</h3>
-              <p><strong>Next.js 16 + React 19 + TypeScript</strong></p>
-              <p>Fast, SEO-optimized pages with responsive design. Server-side rendering and static generation for instant loading. Tailwind CSS for styling.</p>
-            </div>
-            <div className={commonStyles.archArrow}>↓</div>
-            <div className={commonStyles.archLayer}>
-              <h3>Backend Layer</h3>
-              <p><strong>FastAPI + Python 3.11+</strong></p>
-              <p>High-performance async API with Pydantic validation, JWT authentication, rate limiting, and comprehensive error handling.</p>
-            </div>
-            <div className={commonStyles.archArrow}>↓</div>
-            <div className={commonStyles.archLayerSplit}>
-              <div className={commonStyles.archLayer}>
-                <h3>AI Services</h3>
-                <p><strong>Python ML Pipeline</strong></p>
-                <p>7-factor talent matching, price estimation, sentiment analysis, fraud detection, and proposal generation.</p>
+
+          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6 my-8">
+            <div className="p-7 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-left">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck size={24} />
               </div>
-              <div className={commonStyles.archLayer}>
-                <h3>Real-time & Payments</h3>
-                <p><strong>Socket.io + Stripe</strong></p>
-                <p>Real-time messaging, notifications, and collaboration. Stripe, PayPal, and cryptocurrency payment processing.</p>
-              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Client Protection Pledge</h3>
+              <ul className="space-y-2.5 text-xs text-slate-650 dark:text-slate-400 leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span>Funds remain 100% in escrow until you verify each milestone deliverable.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span>Full intellectual property (IP) transfer and automated NDA generation upon release.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span>Neutral dispute mediation with time-stamped workroom delivery logs.</span>
+                </li>
+              </ul>
             </div>
-            <div className={commonStyles.archArrow}>↓</div>
-            <div className={commonStyles.archLayer}>
-              <h3>Database</h3>
-              <p><strong>Turso (libSQL) + MongoDB</strong></p>
-              <p>Edge-distributed SQL database for core data with low-latency worldwide access. MongoDB for blog/CMS content.</p>
+
+            <div className="p-7 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-left">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <Zap size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Freelancer Earnings Guarantee</h3>
+              <ul className="space-y-2.5 text-xs text-slate-650 dark:text-slate-400 leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                  <span>Work only on pre-funded contracts. You never start a sprint without guaranteed escrow.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                  <span>0% platform commission during 2026 launch — keep 100% of your earnings.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                  <span>Instant multi-currency withdrawals to bank accounts, Stripe, or crypto wallets.</span>
+                </li>
+              </ul>
             </div>
           </div>
         </section>

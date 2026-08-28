@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { MegiLanceLogo } from '@/app/components/atoms/MegiLanceLogo/MegiLanceLogo';
 import Button from '@/app/components/atoms/Button/Button';
 import FeatureStatusPill, { type FeatureStatus } from '@/app/components/molecules/FeatureStatusPill/FeatureStatusPill';
+import { useAuth } from '@/hooks/useAuth';
 
 import commonStyles from './Header.common.module.css';
 import lightStyles from './Header.light.module.css';
@@ -127,10 +128,17 @@ export default function Header() {
   const [activeMobileSection, setActiveMobileSection] = useState<MenuKey>('hireTalent');
   const pathname = usePathname();
 
+  const { user, isAuthenticated } = useAuth();
   const isDarkMode = mode === 'dark';
   const themeStyles = useThemeStyles(lightStyles, darkStyles);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
+
+  const dashboardUrl = user?.user_type === 'client' 
+    ? '/client/dashboard' 
+    : user?.user_type === 'admin' 
+    ? '/admin/dashboard' 
+    : '/freelancer/dashboard';
 
   // Hydration handling
   useEffect(() => setIsMounted(true), []);
@@ -237,7 +245,7 @@ export default function Header() {
                   className={cn(
                     commonStyles.megaMenu, 
                     activeMenu === key && commonStyles.megaMenuActive,
-                    key === 'aiSuite' && commonStyles.megaMenuAlignRight
+                    (key === 'aiSuite' || key === 'hireTalent') ? commonStyles.megaMenuAlignLeft : commonStyles.megaMenuAlignRight
                   )}
                   role="region"
                   aria-label={`${megaMenuData[key].title} Submenu`}
@@ -280,16 +288,29 @@ export default function Header() {
           {/* Right Action Bar */}
           <div className={commonStyles.actionGroup}>
             <div className={commonStyles.desktopActions}>
-              <Link href="/login?demo=client" className="hidden items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 lg:inline-flex dark:text-blue-400 dark:hover:text-blue-300">
-                <PlayCircle size={15} aria-hidden="true" />
-                <span>View Demo</span>
-              </Link>
-              <Link href="/login">
-                <Button variant="ghost" size="md">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="primary" size="md">Get Started</Button>
-              </Link>
+              {isAuthenticated ? (
+                <div className="flex items-center gap-3">
+                  <Link href={dashboardUrl}>
+                    <Button variant="primary" size="md">
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Link href={user?.user_type === 'client' ? '/client/profile' : '/freelancer/profile'} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:opacity-80 transition-opacity">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button variant="ghost" size="md">Log In</Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button variant="primary" size="md">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Hamburger Hook */}
@@ -372,12 +393,20 @@ export default function Header() {
         </div>
 
         <div className={cn(commonStyles.mobileFooter, themeStyles.mobileFooter)}>
-          <Link href="/login" className={commonStyles.mobileFooterLink} onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="outline" size="lg" fullWidth>Sign In</Button>
-          </Link>
-          <Link href="/signup" className={commonStyles.mobileFooterLink} onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="primary" size="lg" fullWidth>Get Started</Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href={dashboardUrl} className={commonStyles.mobileFooterLink} onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="primary" size="lg" fullWidth>Go to Dashboard</Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className={commonStyles.mobileFooterLink} onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" size="lg" fullWidth>Log In</Button>
+              </Link>
+              <Link href="/signup" className={commonStyles.mobileFooterLink} onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="primary" size="lg" fullWidth>Get Started</Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>

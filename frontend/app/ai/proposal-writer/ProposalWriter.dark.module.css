@@ -1,6 +1,6 @@
 /* @AI-HINT: ProposalWriter dark theme – orange/amber accent */
 
-.container { background: #0d0d1a; color: #e0e0e0; }
+.container { background: transparent; color: #e0e0e0; }
 .headerBadge { background: rgba(230,126,34,0.15); color: #f0a04b; }
 .title { color: #ffffff; }
 .subtitle { color: #888; }

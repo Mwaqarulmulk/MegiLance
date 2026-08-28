@@ -48,10 +48,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date();
 
   // ── Fetch dynamic content in parallel ─────────────────────────────────
-  const [freelancers, blogPosts] = await Promise.all([
-    fetchPublicList<{ id: number; updated_at?: string }>('/marketplace/freelancers'),
+  const [freelancers, marketplaceFreelancers, blogPosts] = await Promise.all([
+    fetchPublicList<{ id: number | string; profile_slug?: string; updated_at?: string }>('/v1/freelancers'),
+    fetchPublicList<{ id: number | string; profile_slug?: string; updated_at?: string }>('/marketplace/freelancers'),
     fetchPublicList<{ slug: string; updated_at?: string; created_at?: string }>('/blog', { is_published: 'true' }),
   ]);
+
+  const allFreelancers = [...freelancers, ...marketplaceFreelancers].filter(
+    (f, idx, arr) => arr.findIndex((item) => String(item.id) === String(f.id)) === idx
+  );
 
   // ── Static / marketing pages ──────────────────────────────────────────
   const topLevelPaths = [
@@ -218,10 +223,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── Dynamic content pages ────────────────────────────────────────────
-  const freelancerPages: MetadataRoute.Sitemap = freelancers.map((f) => ({
-    url: `${baseUrl}/freelancers/${f.id}`,
+  const freelancerPages: MetadataRoute.Sitemap = allFreelancers.map((f) => ({
+    url: `${baseUrl}/freelancers/${f.profile_slug || f.id}`,
     lastModified: f.updated_at ? new Date(f.updated_at) : currentDate,
-    changeFrequency: 'weekly' as const,
+    changeFrequency: 'daily' as const,
     priority: 0.8,
   }));
 

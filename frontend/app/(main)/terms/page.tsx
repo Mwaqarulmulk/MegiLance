@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { buildMeta } from '../../../lib/seo';
+import Breadcrumbs from '@/app/components/molecules/Breadcrumbs/Breadcrumbs';
+import { Scale, ShieldCheck, CheckCircle2, DollarSign, FileCode, Users, AlertCircle } from 'lucide-react';
 
 export const metadata: Metadata = buildMeta({
   title: 'Terms of Service | MegiLance',
@@ -7,74 +9,89 @@ export const metadata: Metadata = buildMeta({
   path: '/terms',
 });
 
+const TERMS_SECTIONS = [
+  {
+    num: "01",
+    title: "Acceptance & Eligibility",
+    content: "By creating an account, browsing talent, posting opportunities, or using any MegiLance AI scoping tools, you agree to comply with these Terms of Service. You must be at least 18 years of age and legally authorized to enter binding contracts in your jurisdiction.",
+  },
+  {
+    num: "02",
+    title: "0% Commission Platform Scope",
+    content: "MegiLance connects clients with independent specialists and provides AI scoping, real-time workrooms, and milestone escrow management. During promotional launch periods, 0% platform commission applies to eligible completed projects.",
+  },
+  {
+    num: "03",
+    title: "Code-Enforced Milestone Escrow",
+    content: "All fixed-price contracts operate under pre-funded milestone escrow. Clients deposit funds prior to sprint inception. Funds are released exclusively upon client inspection and approval or formal dispute mediation resolution.",
+  },
+  {
+    num: "04",
+    title: "Full Intellectual Property (IP) Transfer",
+    content: "Upon complete payment release from milestone escrow, all copyrights, source code ownership, design assets, and intellectual property transfer automatically and unconditionally from the freelancer to the client, unless explicitly agreed otherwise.",
+  },
+  {
+    num: "05",
+    title: "Platform Conduct & Anti-Fraud",
+    content: "Users must not engage in off-platform payment circumvention, artificial review manipulation, malicious code delivery, or deceptive identity representation. Violations result in immediate account suspension and escrow freeze.",
+  },
+  {
+    num: "06",
+    title: "Fair Dispute Resolution",
+    content: "In the event of milestone delivery disputes, our compliance team reviews time-stamped workroom delivery logs, agreed milestone requirements, and commits to deliver an impartial binding determination.",
+  },
+];
+
 export default function TermsPage() {
   return (
-    <main style={{ minHeight: '100vh', padding: '6rem 2rem 4rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '2rem', color: 'var(--text-primary, #0f172a)' }}>Terms of Service</h1>
-      <p style={{ color: 'var(--text-secondary, #64748b)', marginBottom: '1.5rem' }}>Last updated: March 2026</p>
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto space-y-10">
+        <Breadcrumbs />
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>1. Acceptance of Terms</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          By accessing or using MegiLance, you agree to be bound by these Terms of Service. If you do not agree, please do not use our platform.
-        </p>
-      </section>
+        <header className="text-center space-y-4 pt-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+            <Scale size={13} className="text-indigo-500" />
+            <span>Platform Agreement &amp; Standards</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
+            Terms of Service
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Last updated: March 2026 · Legally Binding Escrow Protocol
+          </p>
+        </header>
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>2. Platform Description</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          MegiLance is an AI-powered freelancing platform that connects clients with freelancers. We provide tools for project management, secure payments via escrow, real-time messaging, and AI-assisted matching.
-        </p>
-      </section>
+        <div className="space-y-6">
+          {TERMS_SECTIONS.map((sec) => (
+            <section
+              key={sec.num}
+              className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-black font-mono px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900">
+                  {sec.num}
+                </span>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  {sec.title}
+                </h2>
+              </div>
+              <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed pl-1">
+                {sec.content}
+              </p>
+            </section>
+          ))}
+        </div>
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>3. User Accounts</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          You must provide accurate information when creating an account. You are responsible for maintaining the security of your account credentials. One person may not maintain more than one account.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>4. Fees and Payments</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          MegiLance charges a platform fee on payments processed through the platform. Fee structures are outlined in our Pricing page. Escrow payments protect both clients and freelancers during project milestones.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>5. User Conduct</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          Users must act professionally and ethically. Harassment, fraud, misrepresentation, and violation of intellectual property rights are prohibited. We reserve the right to suspend accounts that violate these terms.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>6. Intellectual Property</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          Unless otherwise agreed, freelancers retain ownership of their work product. Clients receive rights upon full payment as defined in the project contract. MegiLance retains ownership of its platform and AI technology.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>7. Limitation of Liability</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          MegiLance facilitates connections between clients and freelancers but is not a party to service agreements. We are not liable for the quality of work, disputes between users, or damages arising from platform use.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>8. Termination</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8, marginBottom: '1rem' }}>
-          Either party may terminate the agreement with proper notice. We reserve the right to suspend or terminate accounts for violations of these terms.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary, #0f172a)' }}>9. Contact</h2>
-        <p style={{ color: 'var(--text-secondary, #475569)', lineHeight: 1.8 }}>
-          For questions about these terms, contact us at <a href="mailto:support@megilance.site" style={{ color: 'var(--ml-blue, #4573df)' }}>support@megilance.site</a>.
-        </p>
-      </section>
+        <section className="p-6 sm:p-8 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60 text-center space-y-3">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">Contract &amp; Legal Support</h3>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+            Have questions regarding enterprise agreements or milestone disputes? Contact{' '}
+            <a href="mailto:support@megilance.site" className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+              support@megilance.site
+            </a>
+          </p>
+        </section>
+      </div>
     </main>
   );
 }

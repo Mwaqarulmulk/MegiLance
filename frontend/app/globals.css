@@ -550,3 +550,23 @@ This project follows strict CSS Module architecture:
   outline-offset: 2px;
 }
 
+/* ============================================= */
+/*   GLOBAL FORM & DROPDOWN CHEVRON FIXES       */
+/*   Prevents repeating/oversized chevron SVGs   */
+/* ============================================= */
+select {
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 1rem 1rem !important;
+}
+
+/* Ensure strong text contrast on all colored CTA buttons in light and dark mode */
+.btn-cta-primary,
+button[class*="bg-blue"],
+button[class*="bg-indigo"],
+a[class*="bg-blue"],
+a[class*="bg-indigo"] {
+  color: #ffffff;
+}
+
+

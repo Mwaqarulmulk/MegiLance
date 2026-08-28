@@ -183,13 +183,27 @@ export default function PainSolutions() {
             </div>
           </div>
           
-          <div className="flex-shrink-0 w-full md:w-72 h-52 md:h-64 flex items-center justify-center">
-            <BrandLottiePlayer
-              src="/lottie/10_product_launch_rocket.json"
-              ariaLabel="Rocket Launch Animation"
-              className="w-full h-full"
-              glow={false}
-            />
+          <div className="flex-shrink-0 w-full md:w-80 p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl flex flex-col gap-4 text-white">
+            <div className="flex items-center justify-between border-b border-white/15 pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                <CheckCircle2 size={14} /> Escrow Active
+              </span>
+              <span className="text-xs font-mono font-bold bg-white/20 px-2 py-0.5 rounded">0% Fee</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-white/80">Project Budget</span>
+                <strong className="font-mono text-white">$4,500.00</strong>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/80">Milestone 1</span>
+                <span className="text-emerald-300 font-semibold">100% Pre-Funded</span>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-white/15 flex items-center gap-2 text-xs text-white/90">
+              <ShieldCheck size={16} className="text-emerald-300 flex-shrink-0" />
+              <span>Funds held securely until your sign-off</span>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 /* @AI-HINT: Scope Planner – light theme colors */
 
-.container { background: linear-gradient(135deg, var(--bg-secondary-light) 0%, #eef2ff 100%); color: #1a1f36; }
+.container { background: transparent; color: #1a1f36; }
 .headerBadge { background: rgba(69,115,223,0.1); color: var(--ml-blue); }
 .title { color: #1a1f36; }
 .subtitle { color: var(--color-text-secondary-light); }

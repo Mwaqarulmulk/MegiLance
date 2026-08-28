@@ -35,10 +35,10 @@ const defaultStats = [
 ];
 
 const TRUST_AVATARS = [
-  { name: 'Alex M.', role: 'Full-Stack Lead', bg: 'from-blue-600 to-indigo-600' },
-  { name: 'Sarah L.', role: 'AI Specialist', bg: 'from-purple-600 to-pink-600' },
-  { name: 'David K.', role: 'UI/UX Architect', bg: 'from-emerald-600 to-teal-600' },
-  { name: 'Elena P.', role: 'Smart Contract Dev', bg: 'from-amber-600 to-orange-600' },
+  { name: 'Alex Rivera', role: 'Full-Stack Lead', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80', bg: 'from-blue-600 to-indigo-600' },
+  { name: 'Sarah Chen', role: 'AI Specialist', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&auto=format&fit=crop&q=80', bg: 'from-purple-600 to-pink-600' },
+  { name: 'Marcus Vance', role: 'UI/UX Architect', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80', bg: 'from-emerald-600 to-teal-600' },
+  { name: 'Elena Popova', role: 'Smart Contract Dev', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80', bg: 'from-amber-600 to-orange-600' },
 ];
 
 type QuickTab = 'estimate' | 'escrow' | 'talent';
@@ -174,11 +174,19 @@ export default function Hero({ stats = defaultStats }) {
             {TRUST_AVATARS.map((av, i) => (
               <div
                 key={i}
-                className={cn(commonStyles.avatar, themeStyles.avatar, `bg-gradient-to-tr ${av.bg}`)}
+                className={cn(commonStyles.avatar, themeStyles.avatar, `bg-gradient-to-tr ${av.bg}`, 'overflow-hidden border-2 border-white dark:border-slate-900')}
                 title={`${av.name} · ${av.role}`}
                 aria-hidden="true"
               >
-                {av.name[0]}
+                <img
+                  src={av.img}
+                  alt={av.name}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = 'none';
+                  }}
+                />
               </div>
             ))}
           </div>

@@ -4,6 +4,12 @@
   color: #0f172a;
 }
 
+.heroBadge {
+  background: rgba(79, 70, 229, 0.08);
+  color: #4338ca;
+  border-color: rgba(79, 70, 229, 0.25);
+}
+
 .title {
   color: #0f172a;
 }

@@ -4,6 +4,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Globe, Calculator, Sparkles, ArrowRight, CheckCircle2, DollarSign, 
   Layers, ShieldCheck, Code, Server, Smartphone, ShoppingCart, Rocket 
@@ -82,10 +84,25 @@ const WEBSITE_TIERS: Record<WebsiteType, WebsiteTier> = {
 };
 
 export default function WebsiteCostCalculatorPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const [showFreelancerNotice, setShowFreelancerNotice] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState<WebsiteType>('business');
   const [hasCustomDesign, setHasCustomDesign] = useState<boolean>(true);
   const [hasEcommerce, setHasEcommerce] = useState<boolean>(false);
   const [hasAiChatbot, setHasAiChatbot] = useState<boolean>(false);
+
+  const handlePostProject = () => {
+    if (user?.role === 'freelancer') {
+      setShowFreelancerNotice(true);
+      return;
+    }
+    if (!user) {
+      router.push(`/signup?role=client&redirect=${encodeURIComponent('/create-project')}`);
+      return;
+    }
+    router.push('/create-project');
+  };
 
   const tier = WEBSITE_TIERS[selectedType];
 
@@ -161,123 +178,150 @@ export default function WebsiteCostCalculatorPage() {
       />
       <main className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
+          {/* Breadcrumb Navigation */}
           <div className="mb-6">
             <Breadcrumbs />
           </div>
 
-          {/* Hero Header */}
-          <header className="mb-10 text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 mb-4 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/50 shadow-sm">
-              <DollarSign size={13} className="text-emerald-600" />
-              2026 Website Pricing Guide &amp; Estimator
+          {/* Freelancer Role Alert Modal */}
+          {showFreelancerNotice && (
+            <div className="mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <strong className="block font-bold">Client Account Required</strong>
+                <p className="text-xs text-amber-800 dark:text-amber-300">
+                  You are currently signed in as a Freelancer. Creating and funding escrow projects requires a Client account.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Link
+                  href="/login?role=client"
+                  className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition"
+                >
+                  Switch / Login as Client
+                </Link>
+                <button
+                  onClick={() => setShowFreelancerNotice(false)}
+                  className="px-3 py-2 rounded-xl border border-amber-300 dark:border-amber-700 text-xs font-semibold hover:bg-amber-100 dark:hover:bg-amber-900/50"
+                >
+                  Dismiss
+                </button>
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
-              How Much Does It Cost to Build a Website?
+          )}
+
+          {/* Heading */}
+          <header className="mb-10 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider mb-4 border border-emerald-200 dark:border-emerald-800">
+              <Sparkles size={14} className="text-emerald-500" />
+              <span>Interactive Pricing Engine (2026 Edition)</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
+              Website Development Cost Calculator
             </h1>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-350 leading-relaxed">
-              Calculate accurate development budgets for landing pages, WordPress sites, Shopify stores, and custom web applications with <strong>0% platform markup</strong>.
+            <p className="text-base sm:text-lg text-slate-650 dark:text-slate-350 leading-relaxed">
+              Calculate accurate software and website design costs with zero agency markups. MegiLance provides transparent market rates with 100% pre-funded milestone escrow.
             </p>
           </header>
 
-          {/* Interactive Calculator Section */}
-          <div className="grid md:grid-cols-12 gap-8 mb-12">
-            {/* Controls */}
-            <div className="md:col-span-6 bg-white dark:bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Calculator className="text-emerald-500" size={20} />
-                Select Website Type:
-              </h2>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                {[
-                  { id: 'landing', label: 'Landing Page', icon: '🚀' },
-                  { id: 'business', label: 'Business (5-10 pgs)', icon: '🏢' },
-                  { id: 'ecommerce', label: 'E-Commerce Store', icon: '🛒' },
-                  { id: 'custom-saas', label: 'Custom SaaS / App', icon: '⚡' },
-                ].map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setSelectedType(t.id as any)}
-                    className={`p-3.5 rounded-2xl border text-left transition flex items-center gap-2.5 ${
-                      selectedType === t.id
-                        ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-white font-bold ring-2 ring-emerald-500/20'
-                        : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <span className="text-xl">{t.icon}</span>
-                    <span className="text-xs font-semibold">{t.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Add-ons Checklist */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-850 space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Optional Add-on Features:
-                </h3>
-                <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-slate-700 dark:text-slate-300">
-                  <input
-                    type="checkbox"
-                    checked={hasCustomDesign}
-                    onChange={(e) => setHasCustomDesign(e.target.checked)}
-                    className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span>Bespoke Figma UI/UX Design System (+~$500)</span>
-                </label>
-                <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-slate-700 dark:text-slate-300">
-                  <input
-                    type="checkbox"
-                    checked={hasAiChatbot}
-                    onChange={(e) => setHasAiChatbot(e.target.checked)}
-                    className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span>AI Customer Support Chatbot / Tool Calling (+~$1,200)</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Live Result View */}
-            <div className="md:col-span-6 flex flex-col justify-between space-y-4">
-              <div className="bg-gradient-to-br from-emerald-600 via-teal-700 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex-1 flex flex-col justify-between">
+          {/* Interactive Calculator Bento Box */}
+          <div className="bg-white dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl p-6 sm:p-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+              {/* Type Selection */}
+              <div className="md:col-span-6 space-y-6">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 text-white inline-block mb-3">
-                    {tier.name}
-                  </span>
-                  <div className="text-4xl sm:text-5xl font-black mb-2 tracking-tight font-mono">
-                    ${calculatedMin.toLocaleString()} – ${calculatedMax.toLocaleString()}
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+                    1. Select Website Category
+                  </label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {(Object.keys(WEBSITE_TIERS) as WebsiteType[]).map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setSelectedType(type)}
+                        className={`p-3.5 rounded-2xl border text-left transition-all ${
+                          selectedType === type
+                            ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-bold shadow-sm'
+                            : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="text-xs font-bold capitalize">{type.replace('-', ' ')}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
+                          From ${WEBSITE_TIERS[type].baseCostMin.toLocaleString()}
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                  <p className="text-emerald-100 text-sm leading-relaxed mb-4">
-                    Estimated delivery: <strong>{tier.timelineWeeks}</strong> with verified specialist talent.
-                  </p>
                 </div>
 
-                <div className="pt-4 border-t border-white/20 grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <span className="text-emerald-200 block mb-0.5">Agency Savings</span>
-                    <strong className="text-white font-bold text-sm">Save 40–60% vs Agencies</strong>
-                  </div>
-                  <div>
-                    <span className="text-emerald-200 block mb-0.5">Platform Fee</span>
-                    <strong className="text-emerald-300 font-bold text-sm">$0.00 (0% Launch Fee)</strong>
-                  </div>
+                {/* Add-ons */}
+                <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-850">
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    2. Optional Add-ons & Scope
+                  </label>
+                  <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <input
+                      type="checkbox"
+                      checked={hasCustomDesign}
+                      onChange={(e) => setHasCustomDesign(e.target.checked)}
+                      className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>Bespoke Figma UI/UX Design System (+~$500)</span>
+                  </label>
+                  <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <input
+                      type="checkbox"
+                      checked={hasAiChatbot}
+                      onChange={(e) => setHasAiChatbot(e.target.checked)}
+                      className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>AI Customer Support Chatbot / Tool Calling (+~$1,200)</span>
+                  </label>
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Link
-                  href={`/create-project?title=Website+Development&budget=${calculatedMax}`}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white text-sm transition shadow-md"
-                >
-                  <Rocket size={16} />
-                  <span>Post Project with this Budget</span>
-                </Link>
-                <Link
-                  href="/tools/ai-startup-advisor"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-900 dark:text-white text-sm transition"
-                >
-                  <span>Full Tech Blueprint</span>
-                </Link>
+              {/* Live Result View */}
+              <div className="md:col-span-6 flex flex-col justify-between space-y-4">
+                <div className="bg-gradient-to-br from-emerald-600 via-teal-700 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 text-white inline-block mb-3">
+                      {tier.name}
+                    </span>
+                    <div className="text-4xl sm:text-5xl font-black mb-2 tracking-tight font-mono">
+                      ${calculatedMin.toLocaleString()} – ${calculatedMax.toLocaleString()}
+                    </div>
+                    <p className="text-emerald-100 text-sm leading-relaxed mb-4">
+                      Estimated delivery: <strong>{tier.timelineWeeks}</strong> with verified specialist talent.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/20 grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <span className="text-emerald-200 block mb-0.5">Agency Savings</span>
+                      <strong className="text-white font-bold text-sm">Save 40–60% vs Agencies</strong>
+                    </div>
+                    <div>
+                      <span className="text-emerald-200 block mb-0.5">Platform Fee</span>
+                      <strong className="text-emerald-300 font-bold text-sm">$0.00 (0% Launch Fee)</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handlePostProject}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white !text-white text-sm transition shadow-md cursor-pointer"
+                  >
+                    <Rocket size={16} />
+                    <span className="text-white">Post Project with this Budget</span>
+                  </button>
+                  <Link
+                    href="/tools/ai-startup-advisor"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-900 dark:text-white text-sm transition"
+                  >
+                    <span>Full Tech Blueprint</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

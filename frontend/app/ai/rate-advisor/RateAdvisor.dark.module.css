@@ -1,6 +1,6 @@
 /* @AI-HINT: Rate Advisor – dark theme colors */
 
-.container { background: linear-gradient(135deg, #0c0f1a 0%, #0a1a12 100%); color: var(--color-text-primary-dark); }
+.container { background: transparent; color: var(--color-text-primary-dark); }
 .headerBadge { background: rgba(39,174,96,0.15); color: #2ecc71; }
 .title { color: var(--color-text-primary-dark); }
 .subtitle { color: var(--text-tertiary-dark); }

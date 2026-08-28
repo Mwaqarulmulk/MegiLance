@@ -170,7 +170,8 @@
 /* Responsive Design */
 @media (min-width: 640px) {
   .linksGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
 
   .bottomBar {
@@ -181,8 +182,13 @@
 
 @media (min-width: 1024px) {
   .mainContent {
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 5rem;
+    grid-template-columns: 300px 1fr;
+    gap: 3.5rem;
+  }
+
+  .linksGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.5rem;
   }
 }
 

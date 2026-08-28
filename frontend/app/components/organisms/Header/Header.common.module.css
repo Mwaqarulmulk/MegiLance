@@ -100,7 +100,14 @@
   z-index: 1000; /* Ensure it stays above content */
 }
 
-/* Align Resources to the right to avoid edge clipping */
+/* Align Left for early dropdowns to avoid screen left clipping */
+.megaMenuAlignLeft {
+  left: 0;
+  right: auto;
+  transform: translateX(0) translateY(10px) scale(0.98);
+}
+
+/* Align Resources/late dropdowns to the right to avoid edge clipping */
 .megaMenuAlignRight {
   left: auto;
   right: 0;
@@ -112,6 +119,10 @@
   visibility: visible;
   transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
+}
+
+.megaMenuAlignLeft.megaMenuActive {
+  transform: translateX(0) translateY(0) scale(1);
 }
 
 .megaMenuAlignRight.megaMenuActive {

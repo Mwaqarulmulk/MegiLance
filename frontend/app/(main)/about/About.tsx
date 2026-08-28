@@ -23,7 +23,6 @@ import { useMounted } from '@/app/hooks/useMounted';
 import common from './About.common.module.css';
 import light from './About.light.module.css';
 import dark from './About.dark.module.css';
-import BrandLottiePlayer from '@/app/components/ui/BrandLottiePlayer';
 import { PRICING_CONFIG, PLATFORM_STATUS } from '@/lib/platform-config';
 
 const About: React.FC = () => {
@@ -132,15 +131,6 @@ const About: React.FC = () => {
               <h2 id="team-title" className={styles.sectionTitle}>Leadership &amp; Core Engineering</h2>
               <span aria-hidden="true" className={styles.sectionNote}>The team behind MegiLance</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
-              <BrandLottiePlayer
-                src="/lottie/16_team_collaboration.json"
-                ariaLabel="MegiLance Team Collaboration Animation"
-                className="w-full max-w-lg h-64 md:h-80"
-                framed={true}
-                glow={true}
-              />
-            </div>
           </ScrollReveal>
           <StaggerContainer className={styles.valuesGrid}>
             <StaggerItem className={styles.valueItem} tabIndex={0}>
@@ -176,12 +166,12 @@ const About: React.FC = () => {
         {/* Origin & Development */}
         <section aria-labelledby="origin-title" style={{ margin: '4rem 0' }}>
           <ScrollReveal>
-            <div className={styles.sectionHeader}>
+            <div className={styles.sectionHeader} style={{ textAlign: 'center' }}>
               <h2 id="origin-title" className={styles.sectionTitle}>Platform Origin &amp; Status</h2>
               <span aria-hidden="true" className={styles.sectionNote}>Built from research into a scalable product</span>
             </div>
-            <div className={styles.card} style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-              <p className={styles.cardBody} style={{ fontSize: '1.05rem', lineHeight: 1.75 }}>
+            <div className={styles.card} style={{ maxWidth: '800px', margin: '1.5rem auto 0', padding: '2.5rem', textAlign: 'center' }}>
+              <p className={styles.cardBody} style={{ fontSize: '1.05rem', lineHeight: 1.8, margin: 0 }}>
                 MegiLance began as an advanced software engineering project exploring how AI-assisted scope planning and transparent milestone payments could resolve common friction in online freelancing. Today, MegiLance operates in early access / public beta, continuously expanding its free tool suite and verified global talent network.
               </p>
             </div>
