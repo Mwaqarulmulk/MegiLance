@@ -1,4 +1,4 @@
-/* @AI-HINT: Centralized SEO helpers for public pages. Use in generateMetadata() for consistency.
+﻿/* @AI-HINT: Centralized SEO helpers for public pages. Use in generateMetadata() for consistency.
  * Includes structured data builders for Google Rich Results: BreadcrumbList, FAQPage,
  * Organization, WebSite (with Sitelinks SearchBox), SoftwareApplication, etc.
  * Also contains comprehensive keyword taxonomy for maximum search engine coverage.
@@ -274,6 +274,16 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
       ...items.map((item, i) => ({
         '@type': 'ListItem',
         position: i + 2,
+        name: item.name,
+        item: toAbsoluteUrl(item.path),
+      })),
+    ],
+  };
+}
+
+// ─── Keyword Categories ───────────────────────────────────────────────────────
+
+export const SEO_KEYWORDS = {
   // COMPARISON & INFORMATIONAL keywords (competitor-positioning)
   // "upwork alternative" 210/mo CI:28 | "sites similar to upwork" 110/mo CI:45
   // "like fiverr" 210/mo CI:50 | "best freelance websites" 140/mo CI:54
