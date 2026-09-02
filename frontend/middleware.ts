@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://inference.do-ai.run wss: https://*.turso.io",
+      "connect-src 'self' https://megilance.site https://*.megilance.site https://api.megilance.site https://*.herokuapp.com https://api.stripe.com https://www.google-analytics.com https://inference.do-ai.run wss: wss://megilance.site wss://*.megilance.site wss://api.megilance.site wss://*.herokuapp.com https://*.turso.io https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
       "frame-ancestors 'none'",
       "form-action 'self'",
       "base-uri 'self'",
