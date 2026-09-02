@@ -3,9 +3,45 @@
 /** Unified resource ID type — use for all API method parameters that accept IDs */
 export type ResourceId = string | number;
 
-// In production on DO App Platform: /api/v1 routes directly to backend
-// In local dev: /api is proxied via next.config.js rewrites → backend /api/v1
-const API_BASE_URL = "/api/v1";
+export function getApiBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+  }
+  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+    return `${process.env.NEXT_PUBLIC_BACKEND_URL.replace(/\/+$/, "")}/api/v1`;
+  }
+  return "/api/v1";
+}
+
+export function buildRequestUrl(endpoint: string): string {
+  if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
+    return endpoint;
+  }
+  const base = getApiBaseUrl();
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  return `${base}${cleanEndpoint}`;
+}
+
+interface APIErrorPayload {
+  detail?: string;
+  error_type?: string;
+  [key: string]: unknown;
+}
+
+async function safeParseJson<R = any>(response: Response): Promise<R> {
+  const text = await response.text();
+  if (!text || !text.trim()) return undefined as R;
+  try {
+    return JSON.parse(text) as R;
+  } catch {
+    const cleanText = text.replace(/<[^>]*>?/gm, "").trim();
+    const fallback: APIErrorPayload = {
+      detail: cleanText.length > 300 ? `${cleanText.slice(0, 300)}...` : (cleanText || `HTTP ${response.status}`),
+    };
+    return fallback as unknown as R;
+  }
+}
+
 
 let authToken: string | null = null;
 
@@ -237,7 +273,8 @@ async function attemptTokenRefresh(): Promise<string | null> {
         ? localStorage.getItem("refresh_token")
         : null;
 
-    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    const refreshUrl = buildRequestUrl("/auth/refresh");
+    const response = await fetch(refreshUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(refreshToken ? { refresh_token: refreshToken } : {}),
@@ -249,8 +286,8 @@ async function attemptTokenRefresh(): Promise<string | null> {
       return null;
     }
 
-    const data = await response.json();
-    const newToken = data.access_token;
+    const data = await safeParseJson<{ access_token?: string; refresh_token?: string }>(response);
+    const newToken = data?.access_token;
     if (newToken) {
       setAuthToken(newToken);
       if (data.refresh_token) {
@@ -336,7 +373,8 @@ export async function apiFetch<T = unknown>(
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
       try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const targetUrl = buildRequestUrl(endpoint);
+        const response = await fetch(targetUrl, {
           ...options,
           headers: headers as HeadersInit,
           signal: controller.signal,
@@ -387,27 +425,26 @@ export async function apiFetch<T = unknown>(
             if (newToken) {
               onTokenRefreshed(newToken);
               headers["Authorization"] = `Bearer ${newToken}`;
-              const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
+              const retryResponse = await fetch(buildRequestUrl(endpoint), {
                 ...options,
                 headers: headers as HeadersInit,
                 credentials: "include",
               });
 
               if (!retryResponse.ok) {
-                const error = await retryResponse
-                  .json()
-                  .catch(() => ({
+                const error = await safeParseJson<APIErrorPayload>(retryResponse)
+                  .catch((): APIErrorPayload => ({
                     detail: "Request failed after token refresh",
                   }));
                 throw new APIError(
-                  error.detail || `HTTP ${retryResponse.status}`,
+                  error?.detail || `HTTP ${retryResponse.status}`,
                   retryResponse.status,
-                  error.error_type,
+                  error?.error_type,
                   error,
                 );
               }
               if (retryResponse.status === 204) return undefined as T;
-              return retryResponse.json();
+              return await safeParseJson<T>(retryResponse);
             } else {
               onTokenRefreshFailed();
               if (typeof window !== "undefined") {
@@ -423,16 +460,16 @@ export async function apiFetch<T = unknown>(
             return new Promise<T>((resolve, reject) => {
               addRefreshSubscriber((newToken: string) => {
                 headers["Authorization"] = `Bearer ${newToken}`;
-                fetch(`${API_BASE_URL}${endpoint}`, {
+                fetch(buildRequestUrl(endpoint), {
                   ...options,
                   headers: headers as HeadersInit,
                   credentials: "include",
                 })
-                  .then((res) => {
+                  .then(async (res) => {
                     if (res.status === 204) return undefined as T;
                     if (!res.ok)
                       throw new APIError("Request failed", res.status);
-                    return res.json();
+                    return await safeParseJson<T>(res);
                   })
                   .then(resolve)
                   .catch(reject);
@@ -442,13 +479,12 @@ export async function apiFetch<T = unknown>(
         }
 
         if (!response.ok) {
-          const error = await response
-            .json()
-            .catch(() => ({ detail: "Unknown error" }));
+          const error = await safeParseJson<APIErrorPayload>(response)
+            .catch((): APIErrorPayload => ({ detail: "Unknown error" }));
           lastError = new APIError(
-            error.detail || `HTTP ${response.status}`,
+            error?.detail || `HTTP ${response.status}`,
             response.status,
-            error.error_type,
+            error?.error_type,
             error,
           );
           if (shouldRetry(method, response.status, attempt)) {
@@ -458,7 +494,7 @@ export async function apiFetch<T = unknown>(
         }
 
         if (response.status === 204) return undefined as T;
-        const data = await response.json();
+        const data = await safeParseJson<T>(response);
 
         // Cache successful GET responses
         if (shouldUseResponseCache) {

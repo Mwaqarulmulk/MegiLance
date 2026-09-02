@@ -2,7 +2,10 @@
 // This proxies any /api/* request that doesn't have a specific Next.js handler to FastAPI
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND_URL =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 
 async function handler(request: NextRequest) {
   // Get the path from the URL

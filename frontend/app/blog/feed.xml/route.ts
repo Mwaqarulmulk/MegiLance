@@ -2,7 +2,10 @@
 // Accessible at /blog/feed.xml - helps search engines discover new blog content faster.
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND_URL =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://megilance.site';
 
 interface BlogPost {

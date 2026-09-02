@@ -161,8 +161,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 // ============ DATA FETCHING ============
 async function getFreelancers(skillSlug: string, industrySlug: string) {
   try {
-    // Use internal Docker network URL if available, otherwise localhost
-    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const baseUrl =
+      process.env.BACKEND_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      'https://api.megilance.site';
     const res = await fetch(
       `${baseUrl}/api/v1/skills/freelancers/match?skill_slug=${skillSlug}&industry_slug=${industrySlug}&limit=6`,
       { next: { revalidate: 3600 } }

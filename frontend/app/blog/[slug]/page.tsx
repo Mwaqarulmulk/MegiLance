@@ -8,7 +8,10 @@ type Props = {
 };
 
 async function getPost(slug: string) {
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+  const API_URL =
+    process.env.BACKEND_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    'https://api.megilance.site';
   try {
     const res = await fetch(`${API_URL}/api/v1/blog/${slug}`, { next: { revalidate: 3600 } });
     if (!res.ok) return null;

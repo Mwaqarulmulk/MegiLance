@@ -3,7 +3,10 @@
 // landing pages, AND dynamic content (jobs, gigs, freelancers, blog posts).
 import type { MetadataRoute } from 'next';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND_URL =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 
 /** Safely fetch a paginated list from the backend API, returning [] on failure. */
 async function fetchPublicList<T>(path: string, params: Record<string, string> = {}): Promise<T[]> {

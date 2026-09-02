@@ -16,7 +16,10 @@ import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { Search, ArrowRight, Briefcase, Users, Bot, TrendingUp, Star, Zap, ChevronRight } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+const API_URL =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 
 async function fetchFreelancers() {
   try {

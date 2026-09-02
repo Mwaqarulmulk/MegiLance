@@ -233,7 +233,25 @@ const nextConfig = {
   },
 
   async rewrites() {
-    return [];
+    const backendUrl =
+      process.env.BACKEND_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      'https://api.megilance.site';
+
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${backendUrl}/api/v1/:path*`,
+      },
+      {
+        source: '/api/v1',
+        destination: `${backendUrl}/api/v1`,
+      },
+      {
+        source: '/health',
+        destination: `${backendUrl}/health`,
+      },
+    ];
   },
 
   async redirects() {

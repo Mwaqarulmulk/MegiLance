@@ -16,7 +16,10 @@ import Link from 'next/link';
 import { ArrowRight, Briefcase, Code, Palette, PenTool, BarChart3, Shield, Smartphone, Database, Cloud, Brain, Globe, Zap, TrendingUp } from 'lucide-react';
 import commonStyles from './Categories.common.module.css';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+const API_URL =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 
 async function fetchCategories() {
   try {

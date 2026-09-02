@@ -3,7 +3,10 @@ import type { Metadata } from 'next';
 import { buildMeta, buildBreadcrumbJsonLd, jsonLdScriptProps, BASE_URL } from '@/lib/seo';
 import JobDetailClient, { PublicJobData } from './JobDetailClient';
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 
 const SAMPLE_JOBS: Record<string, PublicJobData> = {
   '1': {

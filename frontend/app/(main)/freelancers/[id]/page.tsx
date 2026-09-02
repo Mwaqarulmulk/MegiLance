@@ -6,7 +6,10 @@ import { buildMeta, buildBreadcrumbJsonLd, jsonLdScriptProps, BASE_URL } from '@
 import Link from 'next/link';
 import { ArrowLeft, Sparkles, Shield, CheckCircle2 } from 'lucide-react';
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'https://api.megilance.site';
 
 const VERIFIED_SPECIALISTS = [
   {
