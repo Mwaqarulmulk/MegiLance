@@ -83,59 +83,67 @@ export default function RealTimeNotifications({
 
   // WebSocket connection
   useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    let wsInstance: WebSocket | null = null;
+    let isMounted = true;
+
     const connectWebSocket = () => {
+      if (!isMounted) return;
       const token = getAuthToken();
       if (!token) return;
 
-      const wsUrl = `${apiBaseUrl.replace('http', 'ws')}/api/realtime/notifications?token=${token}`;
-      const websocket = new WebSocket(wsUrl);
+      const base = apiBaseUrl.replace(/\/api\/v1\/?$/, '').replace(/\/+$/, '');
+      const wsProtocol = base.startsWith('https') ? 'wss' : 'ws';
+      const wsHost = base.replace(/^https?:\/\//, '');
+      const wsUrl = `${wsProtocol}://${wsHost}/ws/notifications?token=${encodeURIComponent(token)}`;
 
-      websocket.onopen = () => {
-        setConnectionStatus('connected');
-      };
+      try {
+        const websocket = new WebSocket(wsUrl);
+        wsInstance = websocket;
 
-      websocket.onmessage = (event) => {
-        try {
-          const msg = JSON.parse(event.data);
-          if (msg.type === 'notification') {
-            // Backend wraps payload in msg.data; fall back to flat structure for compatibility
-            const payload = msg.data || msg;
-            const newNotification: Notification = {
-              id: payload.id || msg.id || Date.now().toString(),
-              type: payload.type || payload.notification_type || 'system',
-              title: payload.title || 'New notification',
-              message: payload.content || payload.message || '',
-              timestamp: new Date(msg.timestamp || payload.timestamp || Date.now()),
-              read: false,
-              actionUrl: payload.action_url,
-              data: payload.data,
-            };
-            setNotifications((prev) => [newNotification, ...prev].slice(0, 50)); // Keep last 50
-            
-            // Show browser notification if permission granted
-            if (Notification.permission === 'granted') {
-              new Notification(newNotification.title, {
-                body: newNotification.message,
-                icon: '/favicon.ico',
-              });
+        websocket.onopen = () => {
+          if (!isMounted) return;
+          setConnectionStatus('connected');
+        };
+
+        websocket.onmessage = (event) => {
+          if (!isMounted) return;
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'notification') {
+              const payload = msg.data || msg;
+              const newNotification: Notification = {
+                id: payload.id || msg.id || Date.now().toString(),
+                type: payload.type || payload.notification_type || 'system',
+                title: payload.title || 'New notification',
+                message: payload.content || payload.message || '',
+                timestamp: new Date(msg.timestamp || payload.timestamp || Date.now()),
+                read: false,
+                actionUrl: payload.action_url,
+                data: payload.data,
+              };
+              setNotifications((prev) => [newNotification, ...prev].slice(0, 50));
             }
+          } catch {
+            // Silently ignore malformed messages
           }
-        } catch {
-          // Silently ignore malformed messages
-        }
-      };
+        };
 
-      websocket.onerror = () => {
+        websocket.onerror = () => {
+          if (!isMounted) return;
+          setConnectionStatus('disconnected');
+        };
+
+        websocket.onclose = () => {
+          if (!isMounted) return;
+          setConnectionStatus('disconnected');
+          timer = setTimeout(connectWebSocket, 15000);
+        };
+
+        setWs(websocket);
+      } catch {
         setConnectionStatus('disconnected');
-      };
-
-      websocket.onclose = () => {
-        setConnectionStatus('disconnected');
-        // Attempt to reconnect after 5 seconds
-        setTimeout(connectWebSocket, 5000);
-      };
-
-      setWs(websocket);
+      }
     };
 
     connectWebSocket();
@@ -146,7 +154,11 @@ export default function RealTimeNotifications({
     }
 
     return () => {
-      ws?.close();
+      isMounted = false;
+      if (timer) clearTimeout(timer);
+      if (wsInstance) {
+        wsInstance.close();
+      }
     };
   }, [userId, apiBaseUrl]);
 
